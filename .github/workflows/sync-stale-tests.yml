@@ -1,0 +1,117 @@
+name: Detect and assign stale doc-tests
+
+# Scheduled, not push-triggered: this workflow eventually needs a PAT with issue-assign
+# permissions (see the "Assign to Copilot" step), and a privileged token should not run
+# on every merge to a public repo's history -- only on a controlled schedule. Matches
+# the pattern of every existing sync workflow in solo-io/docs (all scheduled, none
+# push-triggered), for the same reason.
+#
+# What this does: agentgateway-oss-website pages reference test content in this repo via
+# {{< doc-test paths="X" file="products/..." >}}. When the doc's own visible example (the
+# config a reader copies) changes, the file this repo holds for it may now be stale -- it
+# was written to match the OLD example. This workflow finds those cases and opens an
+# issue here, assigned to GitHub Copilot's coding agent, so the fix gets proposed as a
+# PR without a human having to notice the drift first.
+#
+# What this does NOT do: verify Copilot's proposed fix is correct. There is no CI in this
+# repo today that can run doc_test_run.py against a real page (that only happens from
+# agentgateway-oss-website, which pulls this repo in as DOCS_TESTS_ROOT) -- see the
+# Verification note in scripts/CI_WORKFLOW_SKETCH.md for why. A reviewer must actually
+# run the test locally, or wait for agentgateway-oss-website's own scheduled doc-tests
+# run against main, before merging. Treat every PR this produces as a proposal, not a
+# verified fix.
+
+on:
+  schedule:
+    - cron: '15 7 * * *'   # daily 07:15 UTC — unique off-peak minute
+  workflow_dispatch:
+    inputs:
+      since:
+        description: "Git revision/ref to diff agentgateway-oss-website against (default: ~26h ago, matching the daily schedule)"
+        type: string
+        default: ''
+
+concurrency:
+  group: sync-stale-tests
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  detect-and-assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout docs-tests
+        uses: actions/checkout@v6
+
+      # Public repo, no token needed. Full history so `--since` can resolve a commit
+      # from ~a day ago; a shallow clone would have nothing to diff against.
+      - name: Checkout agentgateway-oss-website
+        uses: actions/checkout@v6
+        with:
+          repository: agentgateway/website
+          path: agentgateway-oss-website
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Resolve --since revision
+        id: since
+        run: |
+          if [ -n "${{ inputs.since }}" ]; then
+            REV="${{ inputs.since }}"
+          else
+            REV=$(git -C agentgateway-oss-website rev-list -1 --before="26 hours ago" HEAD)
+          fi
+          if [ -z "$REV" ]; then
+            echo "Could not resolve a --since revision (repo history too short?); nothing to diff against."
+            echo "revision=" >> "$GITHUB_OUTPUT"
+          else
+            echo "revision=$REV" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Diffing against: $REV"
+
+      - name: Detect stale docs-tests references
+        id: detect
+        if: steps.since.outputs.revision != ''
+        run: |
+          python3 scripts/detect_stale_tests.py \
+            --repo-root agentgateway-oss-website \
+            --since "${{ steps.since.outputs.revision }}" \
+            --output findings.json
+          echo "count=$(jq 'length' findings.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure tracking label exists
+        if: steps.detect.outputs.count != '' && steps.detect.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create stale-test --color FBCA04 \
+            --description "Auto-detected: a doc's example changed, this repo's test file may be stale" \
+            --force
+
+      # Issue creation only needs the default token (write access to this repo's own
+      # issues). Assigning the issue to Copilot is the part that needs a PAT -- a
+      # missing/expired one only breaks assignment, not visibility: the issue is still
+      # created and findable by a human. See scripts/assign_stale_tests.py.
+      - name: Create and assign issues
+        if: steps.detect.outputs.count != '' && steps.detect.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COPILOT_ASSIGN_TOKEN: ${{ secrets.COPILOT_ASSIGN_TOKEN }}
+        run: |
+          python3 scripts/assign_stale_tests.py --findings findings.json --repo "${{ github.repository }}"
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ "${{ steps.detect.outputs.count }}" = "" ] || [ "${{ steps.detect.outputs.count }}" = "0" ]; then
+            echo "No stale docs-tests references detected."
+          else
+            echo "Detected ${{ steps.detect.outputs.count }} potentially stale reference(s). See created issues labeled 'stale-test'."
+          fi

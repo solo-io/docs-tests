@@ -26,6 +26,17 @@ class CodeBlock:
     paths: List[str]
     content: str
     hidden: bool = False
+    # True for a block synthesized from a front-matter step's `assert:` list
+    # rather than parsed from an inline {{< doc-test >}} shortcode in the page
+    # body. start_line is borrowed from its anchor block in this case (see
+    # _synthesize_assert_blocks) -- callers use this flag to label it correctly.
+    from_metadata: bool = False
+    # None for every block extracted directly from text (real blocks never
+    # share a start_line, so ordering among them is unambiguous). Set to
+    # group_index*1000+offset for a synthesized block, to order it immediately
+    # after its anchor -- which shares the same start_line -- and relative to
+    # sibling entries from the same assert: list. See select_blocks().
+    synthetic_order: Optional[int] = None
 
 
 @dataclass
@@ -109,6 +120,13 @@ class Extractor:
         self.main_file = self._resolve_workspace_path(definition["main_file"])
 
         self.path_selectors_by_file: Dict[Path, Set[str]] = {}
+        # A step's `assert:` list (docs-tests-relative paths, in order) names the
+        # hidden assertion content directly in front matter, instead of requiring
+        # an inline {{< doc-test paths="X" file="Y" >}} shortcode in the page body.
+        # Keyed by source file, value is a list of (path_selector, [assert files])
+        # in declaration order -- a file can have more than one scenario's step
+        # (e.g. two named scenarios both stepping through the same page).
+        self.external_asserts_by_file: Dict[Path, List[Tuple[str, List[str]]]] = {}
         for source in self.sources:
             source_file = self._resolve_workspace_path(source["file"])
             selectors = set(source.get("paths", []))
@@ -116,6 +134,13 @@ class Extractor:
                 self.path_selectors_by_file[source_file].update(selectors)
             else:
                 self.path_selectors_by_file[source_file] = selectors
+
+            assert_files = source.get("assert")
+            if assert_files:
+                for selector in source.get("paths", []):
+                    self.external_asserts_by_file.setdefault(source_file, []).append(
+                        (selector, list(assert_files))
+                    )
 
         self.file_cache: Dict[Path, FileResult] = {}
         self.visited: Set[Path] = set()
@@ -449,6 +474,57 @@ class Extractor:
 
         return blocks
 
+    def _synthesize_assert_blocks(self, source_file: Path, existing_blocks: List[CodeBlock]) -> List[CodeBlock]:
+        """Build hidden CodeBlocks for a step's front-matter `assert:` list.
+
+        Anchored to the FIRST existing block (visible or inline-hidden) in this
+        file carrying the same path selector, and given that block's exact
+        start_line -- not a sentinel. A page's own paths="X" selector is often
+        reused by more than one block (e.g. the apply step and, much later, a
+        Cleanup section's `kubectl delete`); sorting a synthesized assertion to
+        the very end of the file would run it after that later block instead of
+        right after the step it actually asserts on. select_blocks()'s sort_key
+        uses synthetic_order to break the resulting tie in declaration order,
+        after the real anchor block.
+        """
+        blocks: List[CodeBlock] = []
+        entries = self.external_asserts_by_file.get(source_file.resolve(), [])
+        for group_index, (path_selector, assert_files) in enumerate(entries):
+            anchor_line = next(
+                (b.start_line for b in existing_blocks if path_selector in b.paths),
+                None,
+            )
+            if anchor_line is None:
+                # No block anywhere in this file carries this selector -- nothing to
+                # anchor to. Shouldn't happen for a correctly-declared scenario,
+                # since paths= is exactly what ties an assert: list to its config
+                # block; fall back to sorting after everything rather than crashing.
+                anchor_line = max((b.start_line for b in existing_blocks), default=0) + 10**6
+            for offset, rel_file in enumerate(assert_files):
+                resolved = (self.docs_tests_root / rel_file).resolve()
+                if not resolved.exists():
+                    raise FileNotFoundError(
+                        f"doc-test assert file not found: {rel_file} (resolved to {resolved}, "
+                        f"declared in front matter for {source_file} path={path_selector}; "
+                        f"docs_tests_root={self.docs_tests_root})"
+                    )
+                content = resolved.read_text(encoding="utf-8").strip("\n")
+                if not content:
+                    continue
+                blocks.append(
+                    CodeBlock(
+                        file_path=source_file,
+                        start_line=anchor_line,
+                        language="sh",
+                        paths=[path_selector],
+                        content=content + "\n",
+                        hidden=True,
+                        from_metadata=True,
+                        synthetic_order=group_index * 1000 + offset,
+                    )
+                )
+        return blocks
+
     def _extract_test_includes(self, source_file: Path, text: str) -> List[TestInclude]:
         includes: List[TestInclude] = []
         pattern = re.compile(r"<!--\s*doc-test-include\b([^>]*)-->")
@@ -487,6 +563,7 @@ class Extractor:
         expanded = self._expand_text(file_path, raw, depth)
         code_blocks = self._extract_code_blocks(file_path, expanded)
         code_blocks.extend(self._extract_hidden_shell_blocks(file_path, expanded))
+        code_blocks.extend(self._synthesize_assert_blocks(file_path, code_blocks))
         test_includes = self._extract_test_includes(file_path, expanded)
         links = self._extract_links(expanded)
 
@@ -542,9 +619,15 @@ class Extractor:
                     selected.append(block)
         # Emit blocks in source order (prereqs first), then by line within each file,
         # so hidden blocks (e.g. start server in background) appear before dependent blocks.
-        def sort_key(b: CodeBlock) -> Tuple[int, int]:
+        # A synthesized assert block (see _synthesize_assert_blocks) shares its anchor
+        # block's start_line by design -- real blocks never collide on start_line, so
+        # the synthetic_order tiebreak (-1 for every real block) only ever activates
+        # for that one case, sorting the synthetic block right after its anchor and
+        # before any later block, in assert: list order.
+        def sort_key(b: CodeBlock) -> Tuple[int, int, int]:
             idx = source_order.get(b.file_path.resolve(), 999)
-            return (idx, b.start_line)
+            tie = -1 if b.synthetic_order is None else b.synthetic_order
+            return (idx, b.start_line, tie)
 
         selected.sort(key=sort_key)
         #selected.sort(key=lambda b: (b.file_path, b.start_line))
@@ -574,7 +657,9 @@ class Extractor:
                 continue
             seen.add(content)
             rel = block.file_path.relative_to(self.repo_root).as_posix()
-            if block.hidden:
+            if block.hidden and block.from_metadata:
+                lines.append(f"# Hidden source (front-matter assert, anchored at {rel}:{block.start_line}): paths={','.join(block.paths)}")
+            elif block.hidden:
                 lines.append(f"# Hidden source: {rel}:{block.start_line} paths={','.join(block.paths)}")
             else:
                 lines.append(f"# Source: {rel}:{block.start_line} paths={','.join(block.paths)}")
@@ -628,6 +713,7 @@ class Extractor:
                     "language": b.language,
                     "paths": b.paths,
                     "hidden": b.hidden,
+                    "from_metadata": b.from_metadata,
                     "preview": b.content.splitlines()[0] if b.content.splitlines() else "",
                 }
                 for b in blocks

@@ -7,10 +7,11 @@ each product's own CI workflow.
 This repo currently holds two things:
 
 - `scripts/` — the extractor/runner tooling (`doc_test_extract.py`, `doc_test_run.py`,
-  `doc_test_inject_status.py`, `doc_test_fetch_artifacts.sh`), copied here from
-  `agentgateway-oss-website` while the external-reference mechanism below is
-  prototyped and validated. Consuming repos still run their own copy of these scripts
-  today; nothing has been migrated for real yet.
+  `doc_test_schema_check.py`, `doc_test_inject_status.py`, `doc_test_fetch_artifacts.sh`,
+  `merge_test_results.py`, `report_summary.py`, `list_untested_docs.py`). This is the
+  canonical copy — `agentgateway-oss-website`'s CI and Makefile check this repo out and
+  invoke these scripts directly (`docs-tests/scripts/doc_test_run.py --repo-root .`, etc.);
+  it no longer keeps its own copies.
 - `products/` — the actual test content, one directory per product and version,
   mirroring the doc's own path, e.g.
   `products/agentgateway/main/traffic-management/transformations/rewrite.sh`. Kept as
@@ -72,6 +73,48 @@ This is unrelated to the `<!-- doc-test-include file="..." -->` HTML comment som
 the extractor's code still supports — that mechanism runs an external `bun test <file>`
 as a separate subprocess (built for a different kind of test) and is not used for this
 external-content use case.
+
+### Referencing external test content from front matter instead
+
+The `file="..."` shortcode above still leaves one line of test scaffolding sitting in
+the page body for every hidden block. A step in a page's `test:` front matter can name
+the same external content directly instead, via an `assert:` list, so the page body
+carries nothing but the real content and the `paths="X"` tag on the visible block:
+
+```yaml
+test:
+  host-rewrite:
+    type: functional
+    steps:
+    - file: ${versionRoot}/quickstart/install.md
+      path: experimental
+    - file: ${versionRoot}/traffic-management/rewrite/host.md
+      path: host-rewrite
+      assert:
+      - products/agentgateway/main/traffic-management/rewrite/host-rewrite-wait.sh
+      - products/agentgateway/main/traffic-management/rewrite/host-rewrite-warmup.sh
+      - products/agentgateway/main/traffic-management/rewrite/host-rewrite-assert.sh
+```
+
+Each entry in `assert:` is a `docs-tests`-relative path, run in list order. This
+replaces what would otherwise be three separate `{{< doc-test paths="host-rewrite"
+file="..." >}}{{< /doc-test >}}` lines physically sitting in the page. Both mechanisms
+are supported and can coexist across different pages — `assert:` is the newer, cleaner
+form; `file="..."` on an inline shortcode still works for pages that haven't been
+converted.
+
+**Ordering**: `assert:` doesn't say *where* in the page these files logically belong,
+so the extractor anchors each entry to the first block (visible or hidden) in that same
+file whose `paths=` matches the step's `path:` — the same anchor a reader would expect
+from where the inline shortcode used to sit — and runs the whole `assert:` list
+immediately after it, before anything else in the file. This matters because a single
+`paths=` value is often reused later in the same page for something unrelated (a
+`Cleanup` section's `kubectl delete`, say); anchoring to the *first* matching block, not
+just appending at the end of the file, keeps assertions running before cleanup rather
+than after it.
+
+Only scenarios that actually execute something need an `assert:` list — a `type: schema`
+step never runs anything, so it has no equivalent.
 
 ---
 
@@ -149,6 +192,80 @@ test:
 ```
 
 Multiple scenarios on the same page each get their own kind cluster and generated script.
+
+### Typing scenarios
+
+A scenario can declare a `type:` alongside its `file`/`path` entries, renamed `steps:` under it:
+
+```yaml
+test:
+  rewrite:
+    type: functional
+    steps:
+    - file: content/docs/kubernetes/main/quickstart/install.md
+      path: experimental
+    - file: content/docs/kubernetes/main/traffic-management/transformations/rewrite.md
+      path: rewrite
+```
+
+A bare list (no `type:`/`steps:` wrapper) is still accepted and treated as `functional` —
+every scenario written before this typing existed already applies real config and
+asserts on a real response, which is what `functional` means.
+
+| Type | What it checks | Needs | Blocks the PR? |
+|---|---|---|---|
+| `schema` | The doc's own example custom resource validates against the real CRD's OpenAPI schema (renamed/removed/mistyped fields, wrong types) | Nothing — no cluster, no execution (`doc_test_schema_check.py`) | Yes, in its own job |
+| `functional` | Real behavior in a real cluster (apply config, assert on a real response) | A `kind` cluster, no vendor credentials | Yes |
+| `live` | A real external endpoint is reachable and returns the documented unauthenticated response | A real public endpoint, no credentials | Yes, alongside `functional` |
+| `credentialed` | Full behavior against a real vendor with real credentials | Named secrets, provisioned out of band | No — scheduled, non-blocking, never on a PR |
+
+`schema` needs no prerequisite chain — since nothing executes, only the step that shows
+the custom resource itself matters:
+
+```yaml
+test:
+  rewrite-schema:
+    type: schema
+    steps:
+    - file: content/docs/kubernetes/main/traffic-management/transformations/rewrite.md
+      path: rewrite
+```
+
+**Known gap, not a mechanism limitation:** some enterprise-only pages (Entra token
+exchange, for one) can't reach `live` today because there's no shared dev tenant to test
+against — registering a real Entra app/tenant is manual, one-time setup with no
+vendor-provided sandbox. That test stays tagged at whatever type it can actually reach,
+with the gap tracked, rather than silently passing at a narrower type than the page's own
+content would suggest.
+
+### Declaring more than one type on the same scenario
+
+`type:` also accepts a list, so one `steps:` chain gets validated more than one way
+without copy-pasting the whole scenario into a same-named `-schema` sibling just to add a
+second type:
+
+```yaml
+test:
+  rewrite:
+    type: [schema, functional]
+    steps:
+    - file: content/docs/kubernetes/main/quickstart/install.md
+      path: experimental
+    - file: content/docs/kubernetes/main/traffic-management/transformations/rewrite.md
+      path: rewrite
+```
+
+This produces two independent test cases, `rewrite::schema` and `rewrite::functional`,
+sharing the same `steps:` — the same shape as hand-writing two separate scenarios, minus
+the duplication. `--test rewrite` selects both; `--test rewrite::schema` selects only the
+schema one. A single-type scenario is unaffected: its name, generated filenames, and
+report key stay exactly as before — the `name::type` suffix only appears once a scenario
+declares more than one type.
+
+Add `schema` this way only when the scenario's final step is a recognized custom-resource
+kind with a local CRD schema (currently `AgentgatewayPolicy`/`AgentgatewayBackend`) — a
+plain Gateway API resource (`HTTPRoute`, `Gateway`) has nothing to validate against and
+would only ever pass vacuously, so `schema` is opt-in per scenario, not automatic.
 
 ---
 
@@ -406,6 +523,7 @@ The `version` context (used to resolve `{{< version include-if="..." >}}` blocks
 - **Duplicate blocks** (same content) are emitted only once.
 - Blocks without a `paths=` attribute are skipped.
 - **`{{< doc-test file="..." >}}`** — content is read from the `docs-tests` checkout instead of the shortcode body (see above).
+- **A step's `assert:` list** — synthesizes the same kind of hidden block directly from front matter, anchored to the first block in that file sharing the step's `paths=` selector (see above).
 
 ---
 
@@ -419,6 +537,60 @@ The `version` context (used to resolve `{{< version include-if="..." >}}` blocks
 6. **Write the `test:` front matter** on the feature page, listing sources in dependency order (install → setup → prereqs → feature).
 7. **Regenerate** with `--generate-only` and inspect the script for unresolved shortcodes or missing commands.
 8. **Run locally** with `bash out/tests/generated/<script>.sh` against an existing cluster to verify before committing.
+
+---
+
+## Keeping tests in sync with doc changes
+
+Content in this repo is only ever correct as of when it was written against a doc's
+example. When that example changes, the file here can silently go stale — nothing forces
+an author editing `agentgateway-oss-website` to also update the corresponding file here.
+
+The `sync-stale-tests` workflow (`.github/workflows/sync-stale-tests.yml`) catches this
+automatically:
+
+1. **Daily**, it diffs `assets/agw-docs/pages/**/*.md` in `agentgateway-oss-website`
+   against its state ~26 hours earlier (`scripts/detect_stale_tests.py`).
+2. For every `paths="X"` value that carries both a visible fenced block (the config a
+   reader copies) and a hidden `{{< doc-test paths="X" file="..." >}}` reference, it
+   checks whether that visible block's text changed.
+3. For each one that did, it opens a GitHub issue here with the old/new content inline,
+   and assigns it to GitHub Copilot's coding agent, which proposes a PR updating the
+   test file.
+
+This is a heuristic, not a guarantee. It only catches drift that shows up as a change to
+the block a reader actually copies — a behavior change with no corresponding config
+change (a newly-documented status code against unchanged YAML, say) isn't detectable this
+way and still needs a human to notice, same as before this existed. Over-flagging is the
+intended failure mode: a raw-text change that turns out to be cosmetic (a renamed
+`{{< reuse >}}` snippet that resolves to the same value, for instance) still gets flagged,
+and Copilot or a reviewer just closes it as a no-op.
+
+**This workflow does not verify its own output.** There is no CI in this repo that can
+run `doc_test_run.py` against a real page — that only happens from
+`agentgateway-oss-website`, which checks this repo out as `DOCS_TESTS_ROOT`. Every PR
+Copilot opens against this repo needs a human to actually run the test (or wait for
+`agentgateway-oss-website`'s own scheduled doc-tests run) before merging.
+
+**Setup required, not yet done:** assigning an issue to Copilot needs a PAT — the default
+`GITHUB_TOKEN` can't add the Copilot bot as an assignee, since Copilot billing attributes
+to the PAT's user. Add one as the `COPILOT_ASSIGN_TOKEN` repo secret (scoped to issues:
+read/write) before this workflow's assignment step will do anything; until then it still
+creates the issue, just unassigned, and logs a workflow warning saying so.
+
+**Both mechanisms are detected.** `detect_stale_tests.py` finds the docs-tests file(s)
+for a changed `paths=` value two ways: the inline `{{< doc-test paths="X" file="..." >}}`
+shortcode in the same assets page (the original mechanism), or a step's `assert:` list in
+a *different* file's front matter — the versioned `content/docs/...` page that
+`{{< reuse >}}`s the changed assets page (see [Referencing external test content from
+front matter instead](#referencing-external-test-content-from-front-matter-instead)).
+For the latter, it resolves the changed assets page back to every versioned content page
+that reuses it (`find_reusing_content_pages`), then reads each one's matching `assert:`
+entry (`assert_files_for_selector`) the same way `doc_test_run.py` itself would. A
+selector with no reference found via either path has no known assertion content, so it's
+silently skipped — same fail-closed behavior either mechanism has always had. A finding's
+`docs_tests_files` is a list (not a single file) since an `assert:` scenario commonly
+names more than one, e.g. `wait`/`warmup`/`assert`.
 
 ---
 

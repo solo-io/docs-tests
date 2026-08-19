@@ -11,7 +11,7 @@ import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 try:
     import yaml  # type: ignore[import-not-found]
@@ -35,9 +35,10 @@ DEFAULT_OPTIONS = {
 class TestCase:
     document: Path
     name: str
-    sources: List[Dict[str, str]]
+    sources: List[Dict[str, Any]]
     script_path: Path
     manifest_path: Path
+    type: str = "functional"
 
 
 def parse_front_matter(markdown_path: Path) -> Dict:
@@ -59,7 +60,7 @@ def sanitize_name(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
 
 
-def infer_version_from_sources(sources: List[Dict[str, str]], fallback: str) -> str:
+def infer_version_from_sources(sources: List[Dict[str, Any]], fallback: str) -> str:
     """Extract the link-version token (e.g. 'latest', 'main') from source file paths.
 
     Source files live under paths like:
@@ -142,12 +143,34 @@ def build_test_cases_from_file(
     for test_name, entries in tests.items():
         if not isinstance(test_name, str) or not test_name:
             continue
-        if filter_test_name and test_name != filter_test_name:
+        # A multi-type scenario's individual TestCases are named "test_name::type"
+        # (see effective_name below) -- filter_test_name may be either the bare
+        # scenario name (selects every declared type) or one specific "name::type".
+        # The exact effective_name match happens per-type below, once test_types is
+        # known; this is just a cheap early skip for scenarios that can't match at all.
+        if filter_test_name and filter_test_name != test_name and not filter_test_name.startswith(f"{test_name}::"):
             continue
+
+        # A scenario is either a bare list of {file, path} steps (legacy form,
+        # implicitly "functional" -- every test written before this typing existed
+        # already applies real config and asserts on real behavior, which is what
+        # "functional" means) or a dict with an explicit `type:` alongside `steps:`.
+        # `type:` also accepts a list (e.g. `[schema, functional]`) so one scenario's
+        # steps can be validated more than one way without duplicating the whole
+        # `steps:` chain into a second, separate scenario -- see test_types below.
+        raw_type: Any = "functional"
+        if isinstance(entries, dict):
+            raw_type = entries.get("type", "functional")
+            entries = entries.get("steps")
         if not isinstance(entries, list):
             continue
 
-        sources: List[Dict[str, str]] = []
+        test_types = raw_type if isinstance(raw_type, list) else [raw_type]
+        test_types = [t for t in test_types if isinstance(t, str) and t]
+        if not test_types:
+            continue
+
+        sources: List[Dict[str, Any]] = []
         tokens = version_path_tokens(rel_doc)
         for entry in entries:
             if not isinstance(entry, dict):
@@ -166,24 +189,45 @@ def build_test_cases_from_file(
             source_file = entry.get("file") or rel_doc
             for token, value in tokens.items():
                 source_file = source_file.replace(token, value)
-            sources.append({"file": source_file, "path": source_path})
+            source: Dict[str, object] = {"file": source_file, "path": source_path}
+            # Optional: names the hidden assertion content directly (docs-tests-relative
+            # paths, in order) instead of requiring an inline {{< doc-test file="..." >}}
+            # shortcode in the page body for this path. See doc_test_extract.py's
+            # external_asserts_by_file / _synthesize_assert_blocks.
+            assert_files = entry.get("assert")
+            if assert_files:
+                source["assert"] = assert_files
+            sources.append(source)
 
         if not sources:
             continue
 
-        test_slug = sanitize_name(test_name)
-        script_name = f"{doc_slug}-{test_slug}.sh"
-        manifest_name = f"{doc_slug}-{test_slug}.manifest.json"
+        # A single-type scenario keeps its plain name (and therefore its existing
+        # script/manifest filenames and report key) unchanged, for backward
+        # compatibility with every scenario declared before list-form `type:`
+        # existed. A multi-type scenario gets one TestCase per type, distinguished
+        # by a `name::type` suffix -- sanitize_name() turns e.g. "rewrite::schema"
+        # into "rewrite-schema", the exact filename shape already used by the
+        # existing hand-written `<name>-schema` scenarios, so this is consistent
+        # with the established convention rather than inventing a new one.
+        for test_type in test_types:
+            effective_name = test_name if len(test_types) == 1 else f"{test_name}::{test_type}"
+            if filter_test_name and filter_test_name not in (test_name, effective_name):
+                continue
+            test_slug = sanitize_name(effective_name)
+            script_name = f"{doc_slug}-{test_slug}.sh"
+            manifest_name = f"{doc_slug}-{test_slug}.manifest.json"
 
-        test_cases.append(
-            TestCase(
-                document=md_file,
-                name=test_name,
-                sources=sources,
-                script_path=generated_dir / script_name,
-                manifest_path=generated_dir / manifest_name,
+            test_cases.append(
+                TestCase(
+                    document=md_file,
+                    name=effective_name,
+                    sources=sources,
+                    script_path=generated_dir / script_name,
+                    manifest_path=generated_dir / manifest_name,
+                    type=test_type,
+                )
             )
-        )
 
     return test_cases, sorted(set(tested_documents))
 
@@ -679,6 +723,17 @@ def main() -> int:
     )
     parser.add_argument("--cluster-prefix", default="doc-test", help="Kind cluster name prefix")
     parser.add_argument(
+        "--types",
+        default=None,
+        metavar="LIST",
+        help="Comma-separated test types to run, e.g. 'functional,live'. Default: all types. "
+        "'schema' = config-vs-schema comparison, no execution. 'functional' = static "
+        "validation against a real cluster, always runs, no vendor dependency (the default "
+        "for any scenario that doesn't declare a type). 'live' = reachable-but-unauthenticated "
+        "check against a real external endpoint. 'credentialed' = check against a real "
+        "vendor; run this on its own non-blocking schedule, never on a doc PR.",
+    )
+    parser.add_argument(
         "--verbose",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -739,9 +794,30 @@ def main() -> int:
     else:
         test_cases, tested_documents, total_by_version, total_documents = build_test_cases(repo_root, args.docs_glob, generated_dir)
 
+    # "schema" (config-vs-schema, no execution) has no cluster-based run path in this
+    # script at all -- it has no prereq chain (nothing installs its CRDs) and no
+    # assertion block, only the bare CR to validate statically. Running it through
+    # run_test_case would just fail with "no matches for kind ..." against an empty
+    # cluster. It's handled exclusively by doc_test_schema_check.py; exclude it here
+    # unconditionally, not just when --types happens to ask for something else.
+    schema_cases = [tc for tc in test_cases if tc.type == "schema"]
+    test_cases = [tc for tc in test_cases if tc.type != "schema"]
+    for tc in schema_cases:
+        logger.debug(
+            "Skipping %s::%s (type 'schema' has no cluster-based run path; use doc_test_schema_check.py)",
+            tc.document.relative_to(repo_root).as_posix(), tc.name,
+        )
+
+    if args.types:
+        allowed_types = {t.strip() for t in args.types.split(",") if t.strip()}
+        skipped = [tc for tc in test_cases if tc.type not in allowed_types]
+        test_cases = [tc for tc in test_cases if tc.type in allowed_types]
+        for tc in skipped:
+            logger.debug("Skipping %s::%s (type '%s' not in --types %s)", tc.document.relative_to(repo_root).as_posix(), tc.name, tc.type, args.types)
+
     if args.list_tests:
         entries = [
-            {"file": tc.document.relative_to(repo_root).as_posix(), "test": tc.name}
+            {"file": tc.document.relative_to(repo_root).as_posix(), "test": tc.name, "type": tc.type}
             for tc in test_cases
         ]
         print(json.dumps(entries))
@@ -763,7 +839,14 @@ def main() -> int:
                 "product": args.product,
             },
             "options": DEFAULT_OPTIONS,
-            "sources": [{"file": src["file"], "paths": [src["path"]]} for src in test_case.sources],
+            "sources": [
+                {
+                    "file": src["file"],
+                    "paths": [src["path"]],
+                    **({"assert": src["assert"]} if src.get("assert") else {}),
+                }
+                for src in test_case.sources
+            ],
             "output": {
                 "script": test_case.script_path.relative_to(repo_root).as_posix(),
                 "manifest": test_case.manifest_path.relative_to(repo_root).as_posix(),
@@ -789,8 +872,9 @@ def main() -> int:
         doc_rel = test_case.document.relative_to(repo_root).as_posix()
         key = f"{doc_rel}::{test_case.name}"
         result = run_test_case(repo_root, test_case, args.cluster_prefix, context_base_dir=context_base_dir, pause=args.pause, keep_cluster=args.keep_cluster)
+        result["type"] = test_case.type
         status_icon = "PASSED" if result.get("status") == "passed" else "FAILED"
-        logger.info("%s: %s", status_icon, key)
+        logger.info("%s: %s (%s)", status_icon, key, test_case.type)
         test_results[key] = result
         if args.keep_cluster and result.get("cluster"):
             kept_clusters.append(result["cluster"])
