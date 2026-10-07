@@ -3,8 +3,8 @@ name: Detect and assign stale doc-tests
 # Scheduled, not push-triggered: this workflow eventually needs a PAT with issue-assign
 # permissions (see the "Assign to Copilot" step), and a privileged token should not run
 # on every merge to a public repo's history -- only on a controlled schedule. Matches
-# the pattern of every existing sync workflow in solo-io/docs (all scheduled, none
-# push-triggered), for the same reason.
+# the pattern every existing sync workflow in the internal docs repo follows (all
+# scheduled, none push-triggered), for the same reason.
 #
 # What this does: agentgateway-oss-website pages reference test content in this repo via
 # {{< doc-test paths="X" file="products/..." >}}. When the doc's own visible example (the
