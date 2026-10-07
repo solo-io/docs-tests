@@ -4,6 +4,7 @@ import argparse
 import json
 import logging
 import os
+import hashlib
 import re
 import subprocess
 import sys
@@ -569,9 +570,34 @@ def contains_port_forward(script_content: str) -> bool:
     return False
 
 
+# kind names the control-plane container "<cluster>-control-plane" and that
+# becomes the Kubernetes Node name, which must be a single DNS label: 63 chars.
+# Over that, kubeadm init fails well before any doc content runs, with
+# "[-]poststarthook/rbac/bootstrap-roles failed" and a livez timeout rather than
+# anything naming the real problem.
+#
+# The old flat [:50] truncation had 7 chars of headroom and lost it when a
+# scenario declaring more than one `type:` started producing `name::type` test
+# names: "per-try-timeout-in-gatewaylistener::functional" lands on exactly 64.
+# The budget is derived here instead of hardcoded, and a truncated name keeps a
+# hash of the full one so two long scenarios sharing a prefix cannot collide.
+KIND_NODE_SUFFIX = "-control-plane"
+MAX_DNS_LABEL = 63
+MAX_CLUSTER_NAME = MAX_DNS_LABEL - len(KIND_NODE_SUFFIX)
+
+
+def make_cluster_name(prefix: str, test_slug: str) -> str:
+    """A kind cluster name whose control-plane node name stays a valid DNS label."""
+    name = f"{prefix}-{test_slug}"
+    if len(name) <= MAX_CLUSTER_NAME:
+        return name
+    digest = hashlib.sha1(name.encode()).hexdigest()[:8]
+    return f"{name[:MAX_CLUSTER_NAME - 9]}-{digest}"
+
+
 def run_test_case(repo_root: Path, test_case: TestCase, cluster_prefix: str, context_base_dir: Optional[Path] = None, pause: bool = False, keep_cluster: bool = False) -> Dict:
     test_slug = sanitize_name(test_case.name)
-    cluster_name = f"{cluster_prefix}-{test_slug}"[:50]
+    cluster_name = make_cluster_name(cluster_prefix, test_slug)
 
     # Build a unique context dir slug from the full report key (doc_rel::test_name),
     # e.g. content/docs/kubernetes/main/security/csrf.md::default  ->
