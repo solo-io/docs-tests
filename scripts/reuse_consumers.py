@@ -253,6 +253,98 @@ def build_test_dependency_index(root: pathlib.Path) -> dict[str, set[str]]:
     return index
 
 
+
+# ---------------------------------------------------------------------------
+# Cross-repo rebase edges
+#
+# Some consuming sites do not reuse a snippet, they REBASE a whole upstream
+# page: the consumer page is a shell whose only body is
+#
+#     {{< rebase file="<assetDir>/<mode>/<rest>" >}}
+#
+# and the upstream page's content is unioned in at build time. Two things make
+# that edge invisible to the reverse index above:
+#
+#  * The path it names resolves to an ASSEMBLED asset directory that is
+#    gitignored and does not exist until the site is built, so there is nothing
+#    on disk to point at.
+#  * The real source is in a DIFFERENT repository, so no single-root index can
+#    reach it.
+#
+# It inverts cleanly though, with no assembly required. The `file=` value
+# carries the mode and the path below it but no version; the version comes from
+# the consumer page's own path, and the consumer's site config maps each of its
+# versions to the upstream version root that feeds it. So:
+#
+#     <assetDir>/<mode>/<rest>  on a consumer page at version V
+#       -> content/docs/<mode>/<upstream_version_for[V]>/<rest>  upstream
+#
+# Verified against a real pair of repos: all 43 rebase shells in one subject
+# area resolved, none unresolved.
+REBASE_RE = re.compile(r"""\{\{[<%]\s*rebase\s+file="([^"]+)"[^}]*[>%]\}\}""")
+
+UPSTREAM_CONTENT_DIR = "content/docs"
+
+
+def rebase_targets(path: pathlib.Path) -> set[str]:
+    """The raw `file=` values this page rebases. Usually zero or one."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return set()
+    return set(REBASE_RE.findall(text))
+
+
+def resolve_rebase_target(
+    file_value: str,
+    consumer_page_rel: str,
+    upstream_version_for: dict[str, str],
+) -> str | None:
+    """One rebase `file=` -> the upstream repo-relative content path it means.
+
+    Returns None when the consumer page sits at a version the map does not
+    cover. That is normal and not an error: a consumer version whose upstream
+    root is a frozen release tree is deliberately absent from the map, because
+    nothing tests those trees.
+    """
+    parts = file_value.strip("/").split("/")
+    if len(parts) < 3:
+        return None
+    _asset_dir, mode, rest = parts[0], parts[1], "/".join(parts[2:])
+
+    segments = consumer_page_rel.replace("\\", "/").split("/")
+    version = next((seg for seg in segments if seg in upstream_version_for), None)
+    if version is None:
+        return None
+    return f"{UPSTREAM_CONTENT_DIR}/{mode}/{upstream_version_for[version]}/{rest}"
+
+
+def build_rebase_index(
+    consumer_root: pathlib.Path,
+    upstream_version_for: dict[str, str],
+    consumer_content_dir: str = "content",
+) -> dict[str, set[str]]:
+    """``upstream content path -> {consumer pages that rebase it}``.
+
+    The mirror of build_reverse_index, across repositories. Only the consumer
+    tree is walked: the upstream path is computed, not looked up, so this needs
+    no upstream checkout to build. Callers that want to confirm the upstream
+    page exists should check it themselves, and will usually want to, since a
+    silently unresolvable edge is how coverage goes missing.
+    """
+    index: dict[str, set[str]] = {}
+    base = consumer_root / consumer_content_dir
+    if not base.is_dir():
+        return index
+    for path in base.rglob("*.md"):
+        rel = path.relative_to(consumer_root).as_posix()
+        for file_value in rebase_targets(path):
+            upstream = resolve_rebase_target(file_value, rel, upstream_version_for)
+            if upstream:
+                index.setdefault(upstream, set()).add(rel)
+    return index
+
+
 def consumers(
     changed: list[str],
     index: dict[str, set[str]],

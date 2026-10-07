@@ -418,5 +418,81 @@ class RealRepositoryTests(unittest.TestCase):
         )
 
 
+
+class RebaseResolutionTests(unittest.TestCase):
+    """Cross-repo rebase edges.
+
+    A consumer page that is only `{{< rebase file="..." >}}` points at an
+    assembled asset directory that is gitignored and does not exist until the
+    site is built, in a DIFFERENT repo. These assert the static inversion that
+    avoids needing either.
+    """
+
+    VMAP = {"latest": "latest", "2026.9.x": "latest"}
+
+    def test_resolves_mode_and_path_below_it(self):
+        self.assertEqual(
+            rc.resolve_rebase_target(
+                "agw-docs/kubernetes/documentation/traffic-management/buffering.md",
+                "content/en/p/kubernetes/latest/documentation/traffic-management/buffering.md",
+                self.VMAP,
+            ),
+            "content/docs/kubernetes/latest/documentation/traffic-management/buffering.md",
+        )
+
+    def test_the_version_comes_from_the_page_not_the_file_value(self):
+        """One `file=` value serves every consumer version; the page decides."""
+        ref = "agw-docs/kubernetes/documentation/traffic-management/buffering.md"
+        a = rc.resolve_rebase_target(ref, "content/en/p/kubernetes/latest/x.md", self.VMAP)
+        b = rc.resolve_rebase_target(ref, "content/en/p/kubernetes/2026.9.x/x.md", self.VMAP)
+        self.assertEqual(a, b)
+        self.assertIn("/latest/", a)
+
+    def test_a_version_outside_the_map_resolves_to_nothing(self):
+        """Versions fed by a frozen upstream tree are deliberately absent.
+
+        Returning None keeps them out rather than silently resolving them to a
+        tree nothing tests.
+        """
+        self.assertIsNone(
+            rc.resolve_rebase_target(
+                "agw-docs/kubernetes/documentation/traffic-management/buffering.md",
+                "content/en/p/kubernetes/2.3.x/documentation/traffic-management/buffering.md",
+                self.VMAP,
+            )
+        )
+
+    def test_a_malformed_file_value_resolves_to_nothing(self):
+        for bad in ("", "agw-docs", "agw-docs/kubernetes"):
+            with self.subTest(value=bad):
+                self.assertIsNone(
+                    rc.resolve_rebase_target(bad, "content/en/p/kubernetes/latest/x.md", self.VMAP)
+                )
+
+    def test_different_modes_resolve_to_different_upstream_trees(self):
+        k = rc.resolve_rebase_target(
+            "agw-docs/kubernetes/documentation/x.md", "content/en/p/kubernetes/latest/x.md", self.VMAP)
+        s = rc.resolve_rebase_target(
+            "agw-docs/standalone/documentation/x.md", "content/en/p/standalone/latest/x.md", self.VMAP)
+        self.assertNotEqual(k, s)
+        self.assertIn("/kubernetes/", k)
+        self.assertIn("/standalone/", s)
+
+    def test_the_index_maps_upstream_pages_to_every_consumer_shell(self):
+        root = pathlib.Path(tempfile.mkdtemp())
+        for version in ("latest", "2026.9.x"):
+            write(root, f"content/en/p/kubernetes/{version}/documentation/buffering.md",
+                  '---\ntitle: B\n---\n\n{{< rebase file="agw-docs/kubernetes/documentation/buffering.md" >}}\n')
+        index = rc.build_rebase_index(root, self.VMAP)
+        upstream = "content/docs/kubernetes/latest/documentation/buffering.md"
+        self.assertIn(upstream, index)
+        self.assertEqual(len(index[upstream]), 2)
+
+    def test_a_page_with_no_rebase_contributes_no_edge(self):
+        root = pathlib.Path(tempfile.mkdtemp())
+        write(root, "content/en/p/kubernetes/latest/documentation/plain.md",
+              "---\ntitle: P\n---\n\nJust prose.\n")
+        self.assertEqual(rc.build_rebase_index(root, self.VMAP), {})
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
