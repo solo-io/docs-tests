@@ -1,0 +1,537 @@
+# Doc-test scenario definitions for agentgateway, kubernetes mode.
+#
+# PILOT: traffic-management only. Every other subject area still declares its
+# scenarios in the consuming repo's page front matter; both forms are read.
+#
+# Scenarios are keyed by the assets/ file a page reuses, not by the page's own
+# path, because over the 7 weeks after agentgateway/website#920 opened,
+# content/docs/ churned 89% (1,992 of 2,232 files changed path, almost all of it
+# the docTabs partition) while assets/agw-docs/ churned 2% (8 of 478).
+#
+#   source:  an assets/ path. The runner resolves it to every live version root
+#            that reuses it, so one entry covers latest and main.
+#   page:    a version-root-relative content path. The fallback for a page that
+#            carries its own body and so has no single reuse source.
+#   needs:   named prerequisites, defined once below. In front matter these were
+#            restated per page: documentation/setup/gateway.md [all] alone
+#            appeared 266 times across the tree.
+#
+# Scenario names are unique per MODE, not globally: 9 names (direct-response,
+# extproc, csrf, ...) exist in both the kubernetes and standalone trees and mean
+# different things, which is why this file is per-mode.
+version: 1
+mode: kubernetes
+prerequisites:
+  gateway:
+    page: documentation/setup/gateway.md
+    path: all
+  httpbin:
+    page: documentation/install/sample-app.md
+    path: install-httpbin
+  install-experimental:
+    page: documentation/quickstart/install.md
+    path: experimental
+  install-standard:
+    page: documentation/quickstart/install.md
+    path: standard
+scenarios:
+  access-logs:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/access-logs.md
+    path: access-logs
+  access-logs-filter:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/access-logs.md
+    path: access-logs-filter
+  add-request-header:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/header-control/request-header.md
+    path: add-request-header
+  add-response-header:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/header-control/response-header.md
+    path: add-response-header
+  basic:
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/traffic-management/route-delegation/basic.md
+      path: route-delegation-prereq
+    source: agw-docs/pages/traffic-management/route-delegation/basic.md
+    path: basic
+  buffering:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    source: agw-docs/pages/traffic-management/buffering.md
+    path: buffering
+  change-response-status:
+    type: functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/status.md
+    path: change-response-status
+    assert:
+    - products/agentgateway/main/traffic-management/transformations/status.sh
+  change-response-status-schema:
+    type: schema
+    source: agw-docs/pages/traffic-management/transformations/status.md
+    path: change-response-status
+  decode:
+    type: functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/encode.md
+    path: decode
+    assert:
+    - products/agentgateway/main/traffic-management/transformations/decode.sh
+  decode-schema:
+    type: schema
+    source: agw-docs/pages/traffic-management/transformations/encode.md
+    path: decode
+  dfp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/dfp.md
+    path: dfp
+  direct-response:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/direct-response.md
+    path: direct-response
+  encode:
+    type: functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/encode.md
+    path: encode
+    assert:
+    - products/agentgateway/main/traffic-management/transformations/encode.sh
+  encode-schema:
+    type: schema
+    source: agw-docs/pages/traffic-management/transformations/encode.md
+    path: encode
+  extproc:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/extproc.md
+    path: extproc
+  filter-request-body:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/filter-request-body.md
+    path: filter-request-body
+  forward:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/forward.md
+    path: forward
+  grpc:
+    needs:
+    - install-standard
+    source: agw-docs/pages/traffic-management/grpc.md
+    path: grpc
+  header-match-exact:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/header.md
+    path: header-match-exact
+  header-match-regex:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/header.md
+    path: header-match-regex
+  header-query:
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/traffic-management/route-delegation/header-query.md
+      path: route-delegation-prereq
+    source: agw-docs/pages/traffic-management/route-delegation/header-query.md
+    path: header-query
+  host-match:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/host.md
+    path: host-match
+  host-redirect:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/redirect/host.md
+    path: host-redirect
+  host-rewrite:
+    type: functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/rewrite/host.md
+    path: host-rewrite
+    assert:
+    - products/agentgateway/main/traffic-management/rewrite/host-rewrite-wait.sh
+    - products/agentgateway/main/traffic-management/rewrite/host-rewrite-warmup.sh
+    - products/agentgateway/main/traffic-management/rewrite/host-rewrite-assert.sh
+  https-redirect:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/redirect/https.md
+    path: https-redirect
+  inject-body-field-into-body:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/inject-response-body.md
+    path: inject-body-field-into-body
+  inject-header-into-body:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/inject-response-body.md
+    path: inject-header-into-body
+  inject-response-headers:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/inject-response-headers.md
+    path: inject-response-headers
+  label:
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/traffic-management/route-delegation/label.md
+      path: route-delegation-prereq
+    source: agw-docs/pages/traffic-management/route-delegation/label.md
+    path: label
+  llm-model-headers:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/transformations.md
+    path: llm-model-headers
+  llm-transformations:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/transformations.md
+    path: llm-transformations
+  locality-aware-routing:
+    needs:
+    - install-experimental
+    source: agw-docs/pages/traffic-management/locality-aware-routing.md
+    path: locality-aware-routing
+  method-match:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/method.md
+    path: method-match
+  multi-level:
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/traffic-management/route-delegation/multi-level-delegation.md
+      path: route-delegation-prereq
+    source: agw-docs/pages/traffic-management/route-delegation/multi-level-delegation.md
+    path: multi-level
+  native-policies:
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/traffic-management/route-delegation/inheritance/native-policies.md
+      path: route-delegation-prereq
+    source: agw-docs/pages/traffic-management/route-delegation/inheritance/native-policies.md
+    path: native-policies
+  path-match-exact:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/path.md
+    path: path-match-exact
+  path-match-prefix:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/path.md
+    path: path-match-prefix
+  path-match-regex:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/path.md
+    path: path-match-regex
+  path-method:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/path-method.md
+    path: path-method
+  path-redirect-full:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/redirect/path.md
+    path: path-redirect-full
+  path-redirect-prefix:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/redirect/path.md
+    path: path-redirect-prefix
+  path-rewrite-full:
+    type: functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/rewrite/path.md
+    path: path-rewrite-full
+    assert:
+    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-full-wait.sh
+    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-full-warmup.sh
+    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-full-assert.sh
+  path-rewrite-prefix:
+    type: functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/rewrite/path.md
+    path: path-rewrite-prefix
+    assert:
+    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-prefix-wait.sh
+    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-prefix-warmup.sh
+    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-prefix-assert.sh
+  query:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/query.md
+    path: query
+  query-match:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/query.md
+    path: query-match
+  remove-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/remove-header.md
+    path: remove-header
+  remove-request-header:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/header-control/request-header.md
+    path: remove-request-header
+  remove-reserved-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/header-control/early-request-header-modifier.md
+    path: remove-reserved-header
+  remove-response-header:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/header-control/response-header.md
+    path: remove-response-header
+  rewrite:
+    type: functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/rewrite.md
+    path: rewrite
+    assert:
+    - products/agentgateway/main/traffic-management/transformations/rewrite.sh
+  rewrite-schema:
+    type: schema
+    source: agw-docs/pages/traffic-management/transformations/rewrite.md
+    path: rewrite
+  set-request-header:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/header-control/request-header.md
+    path: set-request-header
+  set-response-header:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/header-control/response-header.md
+    path: set-response-header
+  tracing:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/tracing.md
+    path: tracing
+  traffic-split-llm-models:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/traffic-management/traffic-split.md
+    path: traffic-split-llm
+  trafficpolicies:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/traffic-management/route-delegation/inheritance/trafficpolicies.md
+      path: route-delegation-prereq
+    source: agw-docs/pages/traffic-management/route-delegation/inheritance/trafficpolicies.md
+    path: trafficpolicies
+  validate-defaults:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/validate.md
+    path: validate-defaults
+  validate-skip:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/traffic-management/transformations/validate.md
+    path: validate-skip

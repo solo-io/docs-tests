@@ -1,0 +1,58 @@
+# Doc-test scenario definitions for agentgateway, standalone mode.
+#
+# PILOT: traffic-management only. Every other subject area still declares its
+# scenarios in the consuming repo's page front matter; both forms are read.
+#
+# Scenarios are keyed by the assets/ file a page reuses, not by the page's own
+# path, because over the 7 weeks after agentgateway/website#920 opened,
+# content/docs/ churned 89% (1,992 of 2,232 files changed path, almost all of it
+# the docTabs partition) while assets/agw-docs/ churned 2% (8 of 478).
+#
+#   source:  an assets/ path. The runner resolves it to every live version root
+#            that reuses it, so one entry covers latest and main.
+#   page:    a version-root-relative content path. The fallback for a page that
+#            carries its own body and so has no single reuse source.
+#   needs:   named prerequisites, defined once below. In front matter these were
+#            restated per page: documentation/setup/gateway.md [all] alone
+#            appeared 266 times across the tree.
+#
+# Scenario names are unique per MODE, not globally: 9 names (direct-response,
+# extproc, csrf, ...) exist in both the kubernetes and standalone trees and mean
+# different things, which is why this file is per-mode.
+version: 1
+mode: standalone
+prerequisites: {}
+scenarios:
+  buffer:
+    page: documentation/configuration/traffic-management/buffer.md
+    path: buffer
+  direct-response:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/direct-response.md
+    path: direct-response
+  extproc:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/extproc.md
+    path: extproc
+  manipulation:
+    page: documentation/configuration/traffic-management/manipulation.md
+    path: manipulation
+  matching:
+    page: documentation/configuration/traffic-management/matching.md
+    path: matching
+  redirects:
+    page: documentation/configuration/traffic-management/redirects.md
+    path: redirects
+  rewrites:
+    page: documentation/configuration/traffic-management/rewrites.md
+    path: rewrites
+  route-delegation:
+    page: documentation/configuration/traffic-management/route-delegation.md
+    path: route-delegation
+  transformations:
+    page: documentation/configuration/traffic-management/transformations.md
+    path: transformations
