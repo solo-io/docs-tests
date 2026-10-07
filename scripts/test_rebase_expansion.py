@@ -91,5 +91,57 @@ class RebaseExpansionTests(unittest.TestCase):
             e.process_file(cp)
 
 
+class ShadowedSnippetTests(unittest.TestCase):
+    """The consuming site's own assets must win over the upstream copies.
+
+    This is how a site overrides a shared snippet, and the case that caught it
+    was an install snippet whose consumer copy adds enterprise licensing steps
+    and whose upstream copy has none. Resolving upstream-first silently
+    installed the wrong build and passed.
+    """
+
+    REL = "content/en/p/kubernetes/latest/documentation/install.md"
+    VMAP = {"latest": "latest"}
+
+    def build(self, shadow: bool):
+        consumer = pathlib.Path(tempfile.mkdtemp())
+        upstream = pathlib.Path(tempfile.mkdtemp())
+        cp = consumer / self.REL
+        cp.parent.mkdir(parents=True, exist_ok=True)
+        cp.write_text('---\ntitle: I\n---\n\n{{< rebase file="agw-docs/kubernetes/documentation/install.md" >}}\n')
+        up = upstream / "content/docs/kubernetes/latest/documentation/install.md"
+        up.parent.mkdir(parents=True, exist_ok=True)
+        up.write_text('---\ntitle: I\n---\n\n{{< reuse "agw-docs/snippets/install.md" >}}\n')
+        us = upstream / "assets/agw-docs/snippets/install.md"
+        us.parent.mkdir(parents=True, exist_ok=True)
+        us.write_text('```sh {paths="standard"}\nhelm install oss\n```\n')
+        if shadow:
+            cs = consumer / "assets/agw-docs/snippets/install.md"
+            cs.parent.mkdir(parents=True, exist_ok=True)
+            cs.write_text('```sh {paths="standard"}\nhelm install enterprise --set license=KEY\n```\n')
+        return consumer, upstream, cp
+
+    def extract(self, consumer, upstream, cp):
+        e = Extractor(
+            repo_root=consumer,
+            definition={"main_file": self.REL,
+                        "sources": [{"file": self.REL, "path": "standard"}],
+                        "context": {"product": "kubernetes", "version": "latest"}},
+            upstream_root=upstream, upstream_version_for=self.VMAP,
+        )
+        return e.process_file(cp)
+
+    def test_a_shadowing_snippet_wins_over_the_upstream_copy(self):
+        consumer, upstream, cp = self.build(shadow=True)
+        text = "\n".join(b.content for b in self.extract(consumer, upstream, cp).code_blocks)
+        self.assertIn("enterprise", text)
+        self.assertNotIn("helm install oss", text)
+
+    def test_without_a_shadow_the_upstream_copy_is_used(self):
+        consumer, upstream, cp = self.build(shadow=False)
+        text = "\n".join(b.content for b in self.extract(consumer, upstream, cp).code_blocks)
+        self.assertIn("helm install oss", text)
+
+
 if __name__ == "__main__":
     unittest.main()

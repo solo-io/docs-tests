@@ -129,8 +129,18 @@ class Extractor:
         docs_tests_root: Optional[Path] = None,
         upstream_root: Optional[Path] = None,
         upstream_version_for: Optional[Dict[str, str]] = None,
+        asset_roots: Optional[List[Path]] = None,
     ):
         self.repo_root = repo_root
+        # Where `{{< reuse >}}` targets are looked up, in order. Normally just this
+        # repo. When expanding content rebased from upstream it is [consumer,
+        # upstream], because the consuming site's own assets SHADOW the upstream
+        # copies it unions in -- that is how a site overrides a shared snippet.
+        # Resolving upstream-first would silently pick the generic copy: the real
+        # case that prompted this is an install snippet whose consumer copy adds
+        # the enterprise license steps and whose upstream copy has none, so the
+        # test would have installed the wrong build and passed.
+        self.asset_roots: List[Path] = [r.resolve() for r in (asset_roots or [repo_root])]
         # A consuming site may REBASE a whole upstream page rather than reuse a
         # snippet: the page's entire body is `{{< rebase file="..." >}}`, and the
         # upstream content is unioned in when the site builds. Without these two,
@@ -263,8 +273,13 @@ class Extractor:
         if depth > self.max_depth:
             return ""
         trimmed = asset_path.lstrip("/")
-        candidate = (self.repo_root / "assets" / trimmed).resolve()
-        if not candidate.exists():
+        candidate = None
+        for root in self.asset_roots:
+            attempt = (root / "assets" / trimmed).resolve()
+            if attempt.exists():
+                candidate = attempt
+                break
+        if candidate is None:
             return ""
         self.recursion_edges.append((source_file.as_posix(), candidate.as_posix(), "reuse"))
         return self._expand_text(candidate, self._read_file(candidate), depth + 1).rstrip("\n")
@@ -383,6 +398,7 @@ class Extractor:
                     "context": {"product": mode, "version": self.upstream_version_for[version]},
                 },
                 docs_tests_root=self.docs_tests_root,
+                asset_roots=[self.repo_root, self.upstream_root],
             )
             self._upstream_extractors[key] = extractor
         return extractor._expand_text(upstream_file, body, depth + 1)
