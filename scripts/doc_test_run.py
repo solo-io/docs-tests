@@ -12,7 +12,7 @@ import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 try:
     import yaml  # type: ignore[import-not-found]
@@ -253,6 +253,16 @@ def _version_key(doc_path: str) -> str:
 TESTED_VERSIONS = ("latest", "main")
 
 
+def _mode_segment(doc_path: str) -> str:
+    """Extract the deployment mode ('kubernetes', 'standalone') from a doc path."""
+    parts = doc_path.replace("\\", "/").split("/")
+    try:
+        idx = parts.index("docs")
+    except ValueError:
+        return ""
+    return parts[idx + 1] if len(parts) > idx + 1 else ""
+
+
 def _version_segment(doc_path: str) -> str:
     """Extract the version directory ('main', '1.3.x') from a doc path.
 
@@ -266,15 +276,205 @@ def _version_segment(doc_path: str) -> str:
     return parts[idx + 2] if len(parts) > idx + 2 else ""
 
 
+
+# ---------------------------------------------------------------------------
+# Manifest discovery
+#
+# A scenario can be declared here, in this repo, instead of in the consuming
+# page's front matter. See products/<product>/<mode>/tests.yaml.
+#
+# A manifest entry is keyed by the assets/ file its page reuses, not by the
+# page's own path, and ONE entry covers every live version root. That is the
+# point: over the seven weeks after agentgateway/website#920 opened,
+# content/docs/ churned 89% while assets/agw-docs/ churned 2%, and a page-keyed
+# definition would have needed fixing on nearly every page.
+#
+# Manifests and front matter coexist. A scenario named by a manifest WINS: the
+# front-matter copy of the same (mode, name) is ignored rather than producing a
+# second, duplicate test case. That is what makes the migration incremental --
+# an area can move to a manifest, be verified, and have its front matter
+# stripped later as pure cleanup, with no window where tests run twice.
+MANIFEST_RELATIVE_GLOB = "products/*/*/tests.yaml"
+
+
+def _manifest_mode(manifest_path: Path) -> str:
+    """products/<product>/<mode>/tests.yaml -> <mode> (e.g. 'kubernetes')."""
+    return manifest_path.parent.name
+
+
+def load_test_manifests(docs_tests_root: Optional[Path]) -> List[Tuple[Path, str, Dict[str, Any]]]:
+    """[(path, mode, parsed)] for every manifest in the docs-tests checkout."""
+    if yaml is None or docs_tests_root is None:
+        return []
+    found = []
+    for mpath in sorted(docs_tests_root.glob(MANIFEST_RELATIVE_GLOB)):
+        try:
+            data = yaml.safe_load(mpath.read_text(encoding="utf-8")) or {}
+        except Exception as exc:
+            raise RuntimeError(f"{mpath}: could not be parsed as YAML: {exc}") from exc
+        if not isinstance(data, dict) or not isinstance(data.get("scenarios"), dict):
+            raise RuntimeError(f"{mpath}: no `scenarios:` mapping.")
+        found.append((mpath, _manifest_mode(mpath), data))
+    return found
+
+
+def _resolve_manifest_ref(
+    ref: Dict[str, Any],
+    mode: str,
+    version: str,
+    reverse_index: Dict[str, Set[str]],
+    manifest_path: Path,
+    scenario: str,
+) -> Optional[str]:
+    """A manifest step -> the content path it means in THIS version root.
+
+    Returns None when the ref names a page that does not exist in this root,
+    which is normal: a guide added after a release is absent from the older
+    tree, and that scenario simply does not apply there.
+    """
+    root_prefix = f"content/docs/{mode}/{version}/"
+    if "page" in ref:
+        return root_prefix + str(ref["page"]).lstrip("/")
+    source = ref.get("source")
+    if not source:
+        raise RuntimeError(
+            f"{manifest_path}: scenario '{scenario}' has a step with neither "
+            f"`source:` nor `page:`."
+        )
+    key = f"assets/{str(source).lstrip('/')}"
+    candidates = sorted(c for c in reverse_index.get(key, ()) if c.startswith(root_prefix))
+    if not candidates:
+        return None
+    if len(candidates) > 1:
+        # Ambiguity is a real authoring error, not something to guess at: two
+        # pages in one version root reusing the same snippet means `source:`
+        # cannot identify which one the scenario is about.
+        raise RuntimeError(
+            f"{manifest_path}: scenario '{scenario}' step source '{source}' resolves to "
+            f"{len(candidates)} pages under {root_prefix}: {', '.join(candidates)}. "
+            f"Name the page directly with `page:` instead."
+        )
+    return candidates[0]
+
+
+def build_test_cases_from_manifests(
+    repo_root: Path,
+    docs_tests_root: Optional[Path],
+    generated_dir: Path,
+    filter_test_name: Optional[str] = None,
+) -> Tuple[List[TestCase], Set[Tuple[str, str]], List[str]]:
+    """Test cases declared in docs-tests manifests.
+
+    Also returns the (page, scenario-name) pairs the manifests actually resolved,
+    so the front-matter pass can skip exactly those and nothing else.
+
+    Keyed by resolved PAGE rather than by (mode, name): a scenario name is not
+    unique within a mode either. `llm-model-headers` is declared both on
+    traffic-management/transformations/llm-model-headers.md and on
+    llm/transformations.md, and `tracing` on both a transformations page and
+    observability/traces/setup.md. Claiming by name alone silently dropped the
+    other page's test.
+    """
+    manifests = load_test_manifests(docs_tests_root)
+    if not manifests:
+        return [], set(), []
+
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from reuse_consumers import build_reverse_index
+    except Exception as exc:
+        raise RuntimeError(f"manifest discovery needs reuse_consumers.py: {exc}") from exc
+    reverse_index = build_reverse_index(repo_root)
+
+    test_cases: List[TestCase] = []
+    claimed: Set[Tuple[str, str]] = set()
+    tested_documents: List[str] = []
+
+    for mpath, mode, data in manifests:
+        prerequisites = data.get("prerequisites") or {}
+        for name, entry in (data.get("scenarios") or {}).items():
+            if filter_test_name and filter_test_name != name and not filter_test_name.startswith(f"{name}::"):
+                continue
+            if not isinstance(entry, dict):
+                raise RuntimeError(f"{mpath}: scenario '{name}' is not a mapping.")
+
+            refs: List[Dict[str, Any]] = []
+            for need in entry.get("needs") or []:
+                if need not in prerequisites:
+                    raise RuntimeError(
+                        f"{mpath}: scenario '{name}' needs '{need}', which is not in `prerequisites:`."
+                    )
+                refs.append(prerequisites[need])
+            refs.extend(entry.get("before") or [])
+            own = {k: v for k, v in entry.items() if k in ("source", "page", "path", "assert")}
+            if own:
+                refs.append(own)
+            if not refs:
+                raise RuntimeError(f"{mpath}: scenario '{name}' has no steps.")
+
+            raw_type = entry.get("type", "functional")
+            test_types = raw_type if isinstance(raw_type, list) else [raw_type]
+            test_types = [t for t in test_types if isinstance(t, str) and t]
+            if not test_types:
+                raise RuntimeError(f"{mpath}: scenario '{name}' has an empty `type:`.")
+
+            for version in TESTED_VERSIONS:
+                if not (repo_root / "content" / "docs" / mode / version).is_dir():
+                    continue
+                sources: List[Dict[str, Any]] = []
+                incomplete = False
+                for ref in refs:
+                    resolved = _resolve_manifest_ref(ref, mode, version, reverse_index, mpath, name)
+                    if resolved is None:
+                        incomplete = True
+                        break
+                    src: Dict[str, Any] = {"file": resolved, "path": ref.get("path")}
+                    if ref.get("assert"):
+                        src["assert"] = list(ref["assert"])
+                    sources.append(src)
+                if incomplete or not sources:
+                    continue
+
+                document = repo_root / sources[-1]["file"]
+                rel_doc = sources[-1]["file"]
+                claimed.add((rel_doc, name))
+                tested_documents.append(rel_doc)
+                doc_slug = sanitize_name(str(Path(rel_doc).with_suffix("")))
+                for test_type in test_types:
+                    effective_name = name if len(test_types) == 1 else f"{name}::{test_type}"
+                    if filter_test_name and filter_test_name not in (name, effective_name):
+                        continue
+                    test_slug = sanitize_name(effective_name)
+                    test_cases.append(
+                        TestCase(
+                            document=document,
+                            name=effective_name,
+                            sources=sources,
+                            script_path=generated_dir / f"{doc_slug}-{test_slug}.sh",
+                            manifest_path=generated_dir / f"{doc_slug}-{test_slug}.manifest.json",
+                            type=test_type,
+                        )
+                    )
+
+    return test_cases, claimed, sorted(set(tested_documents))
+
+
 def build_test_cases(
     repo_root: Path,
     docs_glob: str,
     generated_dir: Path,
+    docs_tests_root: Optional[Path] = None,
 ) -> Tuple[List[TestCase], List[str], Dict[str, int], int]:
     test_cases: List[TestCase] = []
     tested_documents: List[str] = []
     total_by_version: Dict[str, int] = {}
     total_documents = 0
+
+    manifest_cases, claimed, manifest_docs = build_test_cases_from_manifests(
+        repo_root, docs_tests_root, generated_dir
+    )
+    test_cases.extend(manifest_cases)
+    tested_documents.extend(manifest_docs)
 
     for md_file in sorted(repo_root.glob(docs_glob)):
         rel = md_file.relative_to(repo_root).as_posix()
@@ -284,6 +484,13 @@ def build_test_cases(
         total_by_version[vk] = total_by_version.get(vk, 0) + 1
         total_documents += 1
         cases, docs = build_test_cases_from_file(repo_root, md_file, generated_dir)
+        # A manifest declaration wins over the front-matter copy of the SAME
+        # scenario on the SAME page, so a converted area does not run twice
+        # while its front matter is still present. Page-scoped because a
+        # scenario name identifies nothing on its own: it repeats across modes
+        # (csrf, extproc, direct-response) and across pages within one mode
+        # (llm-model-headers, tracing).
+        cases = [c for c in cases if (rel, c.name.split("::")[0]) not in claimed]
         test_cases.extend(cases)
         tested_documents.extend(docs)
 
@@ -857,10 +1064,10 @@ def main() -> int:
                 ", ".join(f"{k}: {n}" for k, n in sorted(by_version.items())),
                 "/".join(TESTED_VERSIONS),
             )
-        _, all_tested_documents, total_by_version, total_documents = build_test_cases(repo_root, args.docs_glob, generated_dir)
+        _, all_tested_documents, total_by_version, total_documents = build_test_cases(repo_root, args.docs_glob, generated_dir, docs_tests_root=docs_tests_root)
         tested_documents = sorted(set(tested_docs) | set(all_tested_documents))
     else:
-        test_cases, tested_documents, total_by_version, total_documents = build_test_cases(repo_root, args.docs_glob, generated_dir)
+        test_cases, tested_documents, total_by_version, total_documents = build_test_cases(repo_root, args.docs_glob, generated_dir, docs_tests_root=docs_tests_root)
 
     # "schema" (config-vs-schema, no execution) has no cluster-based run path in this
     # script at all -- it has no prereq chain (nothing installs its CRDs) and no

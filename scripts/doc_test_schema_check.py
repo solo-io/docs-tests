@@ -225,7 +225,10 @@ def main() -> int:
             cases, _ = build_test_cases_from_file(repo_root, md_file, generated_dir=repo_root / "out/tests/generated")
             test_cases.extend(cases)
     else:
-        test_cases, _, _, _ = build_test_cases(repo_root, args.docs_glob, generated_dir=repo_root / "out/tests/generated")
+        test_cases, _, _, _ = build_test_cases(
+            repo_root, args.docs_glob, generated_dir=repo_root / "out/tests/generated",
+            docs_tests_root=docs_tests_root,
+        )
 
     schema_cases = [tc for tc in test_cases if tc.type == "schema"]
     if not schema_cases:

@@ -19,14 +19,39 @@ for p in subprocess.run(["git","ls-files","content/docs"],capture_output=True,te
         try: pages[p] = pathlib.Path(p).read_text(encoding="utf-8")
         except Exception: pass
 
+# The reuse graph, from the same module discovery uses. Deciding keyability from
+# the real graph rather than a per-page heuristic matters: a snippet reused by
+# TWO pages in one version root cannot identify either of them, and `source:`
+# would be ambiguous. doc_test_run.py refuses to guess in that case, so the
+# generator has to notice it here and fall back to `page:`.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from reuse_consumers import build_reverse_index  # noqa: E402
+
+REPO_ROOT = pathlib.Path(subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip())
+REVERSE_INDEX = build_reverse_index(REPO_ROOT)
+
+
 def wrapper_source(path):
+    """The assets file this page reuses, if it uniquely identifies the page."""
     t = pages.get(path)
     if not t: return None
     parts = t.split("---", 2)
     body = parts[2] if len(parts) >= 3 else t
     if len(re.sub(r'\{\{[<%].*?[>%]\}\}', '', body, flags=re.S).strip()) >= 200: return None
     r = re.findall(r'\{\{[<%]\s*reuse\s+"([^"]+)"', body)
-    return r[0] if len(r) == 1 else None
+    if len(r) != 1: return None
+    candidate = r[0]
+    # Ambiguous in ANY live root disqualifies it, not just this one: one manifest
+    # entry has to resolve in every root it covers.
+    parts_p = path.split("/")
+    mode = parts_p[2]
+    for version in LIVE:
+        prefix = f"content/docs/{mode}/{version}/"
+        hits = [c for c in REVERSE_INDEX.get(f"assets/{candidate}", ()) if c.startswith(prefix)]
+        if len(hits) > 1:
+            return None
+    return candidate
 
 # ---- collect scenarios from the live trees --------------------------------
 raw = {}                      # name -> list of (vroot, page, type, steps)
