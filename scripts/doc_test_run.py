@@ -325,6 +325,7 @@ def _resolve_manifest_ref(
     reverse_index: Dict[str, Set[str]],
     manifest_path: Path,
     scenario: str,
+    content_root: str = "content/docs",
 ) -> Optional[str]:
     """A manifest step -> the content path it means in THIS version root.
 
@@ -332,7 +333,7 @@ def _resolve_manifest_ref(
     which is normal: a guide added after a release is absent from the older
     tree, and that scenario simply does not apply there.
     """
-    root_prefix = f"content/docs/{mode}/{version}/"
+    root_prefix = f"{content_root}/{mode}/{version}/"
     if "page" in ref:
         return root_prefix + str(ref["page"]).lstrip("/")
     source = ref.get("source")
@@ -391,6 +392,11 @@ def build_test_cases_from_manifests(
     tested_documents: List[str] = []
 
     for mpath, mode, data in manifests:
+        # Consuming sites do not all lay content out the same way: one puts it at
+        # content/docs/<mode>/<version>/, another at
+        # content/<lang>/<product>/<mode>/<version>/. The manifest says which,
+        # rather than this guessing from the tree.
+        content_root = str(data.get("content_root") or "content/docs").strip("/")
         prerequisites = data.get("prerequisites") or {}
         for name, entry in (data.get("scenarios") or {}).items():
             if filter_test_name and filter_test_name != name and not filter_test_name.startswith(f"{name}::"):
@@ -419,12 +425,14 @@ def build_test_cases_from_manifests(
                 raise RuntimeError(f"{mpath}: scenario '{name}' has an empty `type:`.")
 
             for version in TESTED_VERSIONS:
-                if not (repo_root / "content" / "docs" / mode / version).is_dir():
+                if not (repo_root / content_root / mode / version).is_dir():
                     continue
                 sources: List[Dict[str, Any]] = []
                 incomplete = False
                 for ref in refs:
-                    resolved = _resolve_manifest_ref(ref, mode, version, reverse_index, mpath, name)
+                    resolved = _resolve_manifest_ref(
+                        ref, mode, version, reverse_index, mpath, name, content_root
+                    )
                     if resolved is None:
                         incomplete = True
                         break
@@ -503,11 +511,19 @@ def generate_script_and_manifest(
     script_path: Path,
     manifest_path: Path,
     docs_tests_root: Optional[Path] = None,
+    upstream_root: Optional[Path] = None,
+    upstream_version_for: Optional[Dict[str, str]] = None,
 ) -> None:
     if yaml is None:
         raise RuntimeError("PyYAML is required. Install it with: pip install pyyaml")
 
-    extractor = Extractor(repo_root=repo_root, definition=definition, docs_tests_root=docs_tests_root)
+    extractor = Extractor(
+        repo_root=repo_root,
+        definition=definition,
+        docs_tests_root=docs_tests_root,
+        upstream_root=upstream_root,
+        upstream_version_for=upstream_version_for,
+    )
     extractor.walk()
 
     blocks = extractor.select_blocks()
@@ -958,6 +974,22 @@ def main() -> int:
         "content. Defaults to a sibling 'docs-tests' directory next to --repo-root. "
         "Can also be set via the DOCS_TESTS_ROOT environment variable.",
     )
+    parser.add_argument(
+        "--upstream-root",
+        default=None,
+        help="Path to a checkout of the repo this site rebases its content from. Only "
+        "needed for a site whose pages are {{< rebase >}} shells: without it such a "
+        "page extracts to nothing, because the shell is all there is on disk. Can also "
+        "be set via the UPSTREAM_ROOT environment variable.",
+    )
+    parser.add_argument(
+        "--upstream-versions",
+        default=None,
+        help="JSON object mapping this site's versions to the upstream version root "
+        "that feeds each, e.g. '{\"latest\": \"latest\"}'. A version left out is "
+        "skipped rather than guessed, which is how versions fed by a frozen upstream "
+        "tree stay out. Can also be set via UPSTREAM_VERSIONS.",
+    )
     parser.add_argument("--docs-glob", default="content/docs/**/*.md", help="Glob to discover markdown docs")
     parser.add_argument("--version", default="2.2.x", help="Default context.version")
     parser.add_argument("--product", default="kubernetes", help="Default context.product")
@@ -1020,6 +1052,25 @@ def main() -> int:
     report_path = (repo_root / args.report_file).resolve()
     docs_tests_root_value = args.docs_tests_root or os.environ.get("DOCS_TESTS_ROOT")
     docs_tests_root = Path(docs_tests_root_value).resolve() if docs_tests_root_value else None
+
+    upstream_root_value = args.upstream_root or os.environ.get("UPSTREAM_ROOT")
+    upstream_root = Path(upstream_root_value).resolve() if upstream_root_value else None
+    upstream_versions_value = args.upstream_versions or os.environ.get("UPSTREAM_VERSIONS")
+    upstream_version_for: Dict[str, str] = {}
+    if upstream_versions_value:
+        try:
+            upstream_version_for = json.loads(upstream_versions_value)
+        except json.JSONDecodeError as exc:
+            logger.error("--upstream-versions is not valid JSON: %s", exc)
+            return 1
+    if upstream_root and not upstream_version_for:
+        # Fail rather than expand nothing: a rebase shell with no version map
+        # extracts to an empty script that passes, which is the failure mode this
+        # whole framework exists to avoid.
+        logger.error("--upstream-root was given without --upstream-versions; a rebase "
+                     "shell cannot be resolved without knowing which upstream version "
+                     "feeds each of this site's versions.")
+        return 1
 
     if args.file:
         filter_test_name = args.test if len(args.file) == 1 else None
@@ -1127,7 +1178,11 @@ def main() -> int:
                 "manifest": test_case.manifest_path.relative_to(repo_root).as_posix(),
             },
         }
-        generate_script_and_manifest(repo_root, definition, test_case.script_path, test_case.manifest_path, docs_tests_root=docs_tests_root)
+        generate_script_and_manifest(
+            repo_root, definition, test_case.script_path, test_case.manifest_path,
+            docs_tests_root=docs_tests_root, upstream_root=upstream_root,
+            upstream_version_for=upstream_version_for,
+        )
 
     if args.generate_only:
         write_report(report_path, tested_documents, {}, total_documents, total_by_version)

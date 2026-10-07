@@ -122,8 +122,26 @@ def _load_link_version_map(repo_root: Path, product: Optional[str] = None) -> Di
 
 
 class Extractor:
-    def __init__(self, repo_root: Path, definition: dict, docs_tests_root: Optional[Path] = None):
+    def __init__(
+        self,
+        repo_root: Path,
+        definition: dict,
+        docs_tests_root: Optional[Path] = None,
+        upstream_root: Optional[Path] = None,
+        upstream_version_for: Optional[Dict[str, str]] = None,
+    ):
         self.repo_root = repo_root
+        # A consuming site may REBASE a whole upstream page rather than reuse a
+        # snippet: the page's entire body is `{{< rebase file="..." >}}`, and the
+        # upstream content is unioned in when the site builds. Without these two,
+        # such a page extracts to zero code blocks -- the shell is all there is on
+        # disk. `upstream_root` is a checkout of the repo the content comes from;
+        # `upstream_version_for` maps each of this site's versions to the upstream
+        # version root that feeds it. Both unset means rebase is left unexpanded,
+        # which is correct for any site that does not use it.
+        self.upstream_root = upstream_root.resolve() if upstream_root else None
+        self.upstream_version_for = dict(upstream_version_for or {})
+        self._upstream_extractors: Dict[str, "Extractor"] = {}
         # Root of a `docs-tests` checkout, used to resolve `{{< doc-test file="..." >}}`
         # external content. Defaults to a sibling directory of repo_root, matching how
         # this repo and docs-tests are cloned side by side on disk. This is independent
@@ -285,6 +303,11 @@ class Extractor:
 
         text = re.sub(r"\{\{[<%]\s*(reuse|reuse-append)\s+\"([^\"]+)\"\s*[>%]\}\}", replace_reuse, text)
 
+        def replace_rebase(match: re.Match) -> str:
+            return self._resolve_rebase(source_file, match.group(1), depth)
+
+        text = re.sub(r"\{\{[<%]\s*rebase\s+file=\"([^\"]+)\"[^}]*[>%]\}\}", replace_rebase, text)
+
         def replace_include(match: re.Match) -> str:
             include_path = match.group(1)
             if not self.follow_include:
@@ -301,6 +324,68 @@ class Extractor:
         text = self._resolve_conditional_text_blocks(text)
 
         return text
+
+
+    def _resolve_rebase(self, source_file: Path, file_value: str, depth: int) -> str:
+        """Inline an upstream page in place of a `{{< rebase >}}` shortcode.
+
+        The `file=` value names a mode and a path below it but carries NO version:
+        the version comes from the consuming page's own path, which is how one
+        shell serves several of the site's versions. It also points at an
+        assembled asset directory that is gitignored and only exists after a
+        build, so the path is inverted to the upstream repo's source rather than
+        looked up.
+
+        The inlined text is expanded against the UPSTREAM root, because any
+        `{{< reuse >}}` inside it names upstream assets that do not exist here.
+        The resulting blocks stay attributed to the consuming page, which is what
+        a scenario's `path:` selectors are declared against, and matches what the
+        site itself renders.
+        """
+        if self.upstream_root is None or not self.upstream_version_for:
+            return ""
+        parts = file_value.strip("/").split("/")
+        if len(parts) < 3:
+            return ""
+        mode, rest = parts[1], "/".join(parts[2:])
+
+        rel = source_file.resolve().relative_to(self.repo_root.resolve()).as_posix()
+        version = next((seg for seg in rel.split("/") if seg in self.upstream_version_for), None)
+        if version is None:
+            # A version deliberately absent from the map (its upstream root is a
+            # frozen release tree). Expanding it would imply coverage that cannot
+            # exist, so leave the page empty rather than silently borrow another
+            # version's content.
+            return ""
+
+        upstream_rel = f"content/docs/{mode}/{self.upstream_version_for[version]}/{rest}"
+        upstream_file = self.upstream_root / upstream_rel
+        if not upstream_file.is_file():
+            raise FileNotFoundError(
+                f"rebase target not found: {source_file} references {file_value!r}, "
+                f"which resolves to {upstream_rel} in the upstream checkout at "
+                f"{self.upstream_root}. The page exists but its source does not, so "
+                f"it would silently test nothing."
+            )
+
+        text = upstream_file.read_text(encoding="utf-8")
+        body = text.split("---", 2)[2] if text.startswith("---") and text.count("---") >= 2 else text
+
+        key = f"{mode}/{self.upstream_version_for[version]}"
+        extractor = self._upstream_extractors.get(key)
+        if extractor is None:
+            extractor = Extractor(
+                repo_root=self.upstream_root,
+                definition={
+                    "main_file": upstream_rel,
+                    "sources": [],
+                    "options": self.definition.get("options", {}),
+                    "context": {"product": mode, "version": self.upstream_version_for[version]},
+                },
+                docs_tests_root=self.docs_tests_root,
+            )
+            self._upstream_extractors[key] = extractor
+        return extractor._expand_text(upstream_file, body, depth + 1)
 
     def _resolve_conditional_text_blocks(self, text: str) -> str:
         pattern = re.compile(
