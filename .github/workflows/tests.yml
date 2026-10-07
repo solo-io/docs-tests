@@ -1,0 +1,71 @@
+name: Tests
+
+# The scripts in this repo decide which doc tests run in every consuming repo,
+# and until now nothing here ran their test suite. The cost of that showed up as
+# a kind cluster name that overflowed the 63-character DNS label limit: it took
+# four failed CI shards in agentgateway/website, about four minutes each, to
+# surface a fault a unit test catches in milliseconds.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  # Half this suite runs against a real consuming repo (see DOCS_REPO_ROOT
+  # below), so it can start failing because agentgateway/website changed, with
+  # nothing happening here at all. The daily run is what notices that; without
+  # it the drift would sit undetected until someone happened to open a PR.
+  schedule:
+    - cron: '40 7 * * *'   # daily 07:40 UTC — unique off-peak minute
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  unittest:
+    name: Python unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      # Public repo, no token needed. test_reuse_consumers.py builds the reuse
+      # graph twice: once over a fixture tree, and once over a REAL consumer
+      # tree, because the bug that script was written for was a heuristic that
+      # passed against a fixture and did not match the tree it was aimed at.
+      #
+      # This is checked out at main, not at any pinned ref, which is deliberate:
+      # the selector has to be correct against the tree it will actually run on.
+      # The trade is that a content change over there can turn this job red --
+      # if that happens, the fix usually belongs in the consumer repo or in this
+      # suite's known-orphans list, not in the selector.
+      - name: Checkout agentgateway/website
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: agentgateway/website
+          path: consumer
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: pip install pyyaml
+
+      - name: Run unit tests
+        env:
+          # The real-repository half of the suite RAISES rather than skipping
+          # when this is unset or does not look like a docs repo. A skip would
+          # reproduce the exact failure the suite exists to catch: a check that
+          # reports success having examined nothing.
+          DOCS_REPO_ROOT: ${{ github.workspace }}/consumer
+          # `__pycache__/` is gitignored, so this is not about the tree; it keeps
+          # the checkout identical to the one that was cloned, which is one less
+          # difference to rule out when CI and a local run disagree.
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: python3 -m unittest discover -s scripts -p 'test_*.py' --verbose
