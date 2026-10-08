@@ -1,0 +1,93 @@
+# Doc-test scenario definitions for the enterprise agentgateway docs, kubernetes mode.
+#
+# PILOT: a subset of traffic-management. The consuming site publishes the
+# enterprise docs from its own repo; almost every page there is a rebase shell,
+# a stub whose whole body is one {{< rebase file="agw-docs/kubernetes/..." >}}
+# line that the site expands from the open source agentgateway/website repo at
+# build time.
+#
+# How that differs from ../../agentgateway/kubernetes/tests.yaml:
+#
+#   page:, never source:. A shell reuses nothing from its own assets/, so there
+#            is no snippet to key on. The shell paths mirror the upstream page
+#            paths one for one, so `page:` here is the same string as the
+#            upstream scenario's page.
+#   content_root: the consuming site lays content out as
+#            content/en/agentgateway/<mode>/<version>/.
+#
+# The runner expands a shell from the upstream checkout given by
+# --upstream-root, using the version map in --upstream-versions. The
+# consuming site's own assets/ still SHADOW the upstream copies: that is the
+# only place the enterprise install differs from open source (the get-started
+# snippet adds the license key), so the install prerequisite below tests
+# enterprise content even though its page is a shell. The consuming site adds
+# no test markup to its content; see tag_snippet below.
+#
+# Scenario names and paths are copied from the upstream manifest, so a
+# scenario here and its open source twin select the same blocks. One deliberate
+# difference: every scenario here needs install-standard, even where its twin
+# needs install-experimental. The enterprise install snippet documents one
+# channel (released build, standard Gateway API CRDs), which tag_snippet tags
+# `standard`; it has no experimental path, so a scenario that asked for one
+# would extract no install steps at all and fail for the wrong reason.
+version: 1
+mode: kubernetes
+content_root: content/en/agentgateway
+prerequisites:
+  gateway:
+    page: documentation/setup/gateway.md
+    path: all
+  httpbin:
+    page: documentation/install/sample-app.md
+    path: install-httpbin
+  install-standard:
+    page: documentation/quickstart/install.md
+    path: standard
+    # The consuming site keeps test markup out of its content, so its install
+    # snippet carries no paths= tags. tag_snippet tags the snippet's runnable
+    # blocks with this step's path in memory, skips the license placeholder
+    # (`export AGENTGATEWAY_LICENSE_KEY=<...>`: bash reads `<...>` as a file
+    # redirect, and the real key comes from the CI secret), and runs `verify`
+    # after the snippet's last block. It fails if the snippet stops being reused
+    # or has nothing left to tag.
+    tag_snippet:
+      file: agw-docs/snippets/agentgateway/get-started.md
+      exclude:
+      - '^export AGENTGATEWAY_LICENSE_KEY=<'
+      verify: products/agentgateway-enterprise/kubernetes/install/install-standard-verify.sh
+scenarios:
+  add-request-header:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/header-control/request-header.md
+    path: add-request-header
+  set-response-header:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/header-control/response-header.md
+    path: set-response-header
+  host-match:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/host.md
+    path: host-match
+  path-match-prefix:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/path.md
+    path: path-match-prefix
+  direct-response:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/direct-response.md
+    path: direct-response

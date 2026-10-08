@@ -412,7 +412,7 @@ def build_test_cases_from_manifests(
                     )
                 refs.append(prerequisites[need])
             refs.extend(entry.get("before") or [])
-            own = {k: v for k, v in entry.items() if k in ("source", "page", "path", "assert")}
+            own = {k: v for k, v in entry.items() if k in ("source", "page", "path", "assert", "tag_snippet")}
             if own:
                 refs.append(own)
             if not refs:
@@ -439,6 +439,8 @@ def build_test_cases_from_manifests(
                     src: Dict[str, Any] = {"file": resolved, "path": ref.get("path")}
                     if ref.get("assert"):
                         src["assert"] = list(ref["assert"])
+                    if ref.get("tag_snippet"):
+                        src["tag_snippet"] = dict(ref["tag_snippet"])
                     sources.append(src)
                 if incomplete or not sources:
                     continue
@@ -1082,6 +1084,19 @@ def main() -> int:
         test_cases = []
         tested_docs: List[str] = []
         skipped_frozen: List[str] = []
+        # A named file's scenarios can live in a manifest instead of its front
+        # matter, and once an area is converted its front matter is stripped.
+        # Reading front matter alone here made a PR's changed-file selection log
+        # "No test metadata" and drop those tests, and made the per-test run
+        # (`--file X --test Y`) fail with "No test named" for a test that
+        # full discovery had just listed. Same page-scoped precedence as
+        # build_test_cases(): the manifest wins over front matter on one page.
+        manifest_cases, claimed, _ = build_test_cases_from_manifests(
+            repo_root, docs_tests_root, generated_dir, filter_test_name=filter_test_name
+        )
+        manifest_cases_by_doc: Dict[str, List[TestCase]] = {}
+        for tc in manifest_cases:
+            manifest_cases_by_doc.setdefault(tc.document.relative_to(repo_root).as_posix(), []).append(tc)
         for f in args.file:
             md_file = Path(f)
             if not md_file.is_absolute():
@@ -1094,6 +1109,16 @@ def main() -> int:
                 skipped_frozen.append(f)
                 continue
             cases, docs = build_test_cases_from_file(repo_root, md_file, generated_dir, filter_test_name=filter_test_name)
+            try:
+                rel_f = md_file.resolve().relative_to(repo_root).as_posix()
+            except ValueError:
+                rel_f = None
+            if rel_f is not None:
+                cases = [c for c in cases if (rel_f, c.name.split("::")[0]) not in claimed]
+                from_manifest = manifest_cases_by_doc.get(rel_f, [])
+                cases.extend(from_manifest)
+                if from_manifest:
+                    docs = sorted(set(docs) | {rel_f})
             tested_docs.extend(docs)
             if not cases:
                 if args.test and len(args.file) == 1:
@@ -1170,6 +1195,7 @@ def main() -> int:
                     "file": src["file"],
                     "paths": [src["path"]],
                     **({"assert": src["assert"]} if src.get("assert") else {}),
+                    **({"tag_snippet": src["tag_snippet"]} if src.get("tag_snippet") else {}),
                 }
                 for src in test_case.sources
             ],

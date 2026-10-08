@@ -47,7 +47,7 @@ for name, e in man["scenarios"].items():
         steps = []
         for n in e.get("needs", []): steps.append(resolve(n, root))
         for b in e.get("before", []): steps.append(resolve(b, root))
-        own = {k: v for k, v in e.items() if k in ("source","page","path","assert")}
+        own = {k: v for k, v in e.items() if k in ("source","page","path","assert","tag_snippet")}
         if own: steps.append(resolve(own, root))
         expanded[(root, name)] = (e.get("type"), steps)
 
