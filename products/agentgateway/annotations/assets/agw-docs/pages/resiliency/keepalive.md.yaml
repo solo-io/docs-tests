@@ -1,0 +1,113 @@
+format: 1
+source: assets/agw-docs/pages/resiliency/keepalive.md
+blocks:
+- 670b483c2c491577 yaml
+- 66b96bd4b0301ce2 sh
+- 379066d21984156a sh
+- 3999da5219961386 json
+- 42d0798257534b9e sh
+- 0dd6a196a3447c7d yaml
+- 66b96bd4b0301ce2 sh
+- 83180136e34ecb45 sh
+- d6d19604cf9cecc0 json
+- 42d0798257534b9e sh
+tags:
+- paths: tcp-keepalive
+  block: 0
+  fingerprint: 670b483c2c491577
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb7d9e34 0f10c5bc 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 c126c71d 8e7ca00d 29894ee3 eba01a3f e07c5e4a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tcp-keepalive"
+    only: true
+    lead: ' '
+- paths: tcp-keepalive
+  block: 4
+  fingerprint: 42d0798257534b9e
+  lang: sh
+  lines: 42d07982
+  preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} httpbin-keepalive -n '
+  form:
+    attr: paths="tcp-keepalive"
+    only: true
+    lead: ' '
+- paths: http-keepalive
+  block: 5
+  fingerprint: 0dd6a196a3447c7d
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb7d9e34 0f10c5bc 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 1c31dda0 0e450507 30432f9a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-keepalive"
+    only: true
+    lead: ' '
+- paths: http-keepalive
+  block: 9
+  fingerprint: 42d0798257534b9e
+  lang: sh
+  lines: 42d07982
+  preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} httpbin-keepalive -n '
+  form:
+    attr: paths="http-keepalive"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 5d5b9de6d9b95f3e
+    occurrence: 0
+    words: ''
+    block_before:
+      block: 3
+      fingerprint: 3999da5219961386
+      lang: json
+      lines: 021fb596 71665d64 eec87ff8 25a12f19 f679a25f bc17aec6 e52a1813 e344786a 51b29305 f7674dd0 3fe97849 5ed36ff9 d10b36aa e52a1813 f414d680 56878bba 9f939f87 303bbafc afa07114 a457f994 9a827356 5276303f d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="tcp-keepalive" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for tcp keepalive policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-keepalive
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 5d5b9de6d9b95f3e
+    occurrence: 2
+    words: ''
+    block_before:
+      block: 8
+      fingerprint: d6d19604cf9cecc0
+      lang: json
+      lines: 021fb596 d36cc5c8 eec87ff8 25a12f19 f679a25f bc17aec6 e52a1813 e344786a 51b29305 f7674dd0 3fe97849 5ed36ff9 d10b36aa e52a1813 f414d680 56878bba b460f44f 084f7725 bf523a4a 90552a6f 6007f8b2 e85855a1 c48d3b10 2733fff5 f087149b d10b36aa d10b36aa d10b36aa d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="http-keepalive" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for http keepalive policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-keepalive
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}

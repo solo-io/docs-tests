@@ -1,0 +1,140 @@
+format: 1
+source: assets/agw-docs/pages/resiliency/retry/retry.md
+blocks:
+- 09f0f045c8c6a035 sh
+- 72bd13d9e4b03e2d yaml
+- 53572b7a4167aea8 sh
+- c6141a9466e44fe7 sh
+- 1618a5d73f075f33 json
+- 5b76a91a4d3a1252 yaml
+- f6ccf182076da03a yaml
+- 53572b7a4167aea8 sh
+- 4318a4e30ec3a573 sh
+- 2d03db409f6864c0 json
+- bd539f5efc888c96 yaml
+- 0ca3bd5e55dadfa0 yaml
+- 53572b7a4167aea8 sh
+- 4318a4e30ec3a573 sh
+- 11aba2bfe79c1e94 json
+- ef3e071356a365d8 sh
+- 95b795d66e0dc307 sh
+- 4476789f3b046fc3
+- 7f0d155bc243962e sh
+- 55a340e85da274bf txt
+- 336893714e994673 sh
+- 24b00f52ccd49033 sh
+- f320e6736508af64
+- 7f0d155bc243962e sh
+- 81a3597518c2facc
+- 81a3b8af53e7fa72 sh
+- 41252cb3cb66f5fb sh
+tags:
+- paths: retry-in-httproute
+  block: 1
+  fingerprint: 72bd13d9e4b03e2d
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 7f8a9998 7be3ae06 67c4b1f3 da134923 3a2d8669 d559bb7d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="retry-in-httproute"
+    only: true
+    lead: ' '
+- paths: retry-in-agentgateway
+  block: 5
+  fingerprint: 5b76a91a4d3a1252
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c 0f10c5bc bca8e5f7 9278ed91 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="retry-in-agentgateway"
+    only: true
+    lead: ' '
+- paths: retry-in-agentgateway
+  block: 6
+  fingerprint: f6ccf182076da03a
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 7c7a9799 0f10c5bc 36184fa5 588a5d84 d6b03630 350955ef 7c7a9799 e4741808 e4f6a86d 7f8a9998 7be3ae06 67c4b1f3 da134923 3a2d8669 d559bb7d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="retry-in-agentgateway"
+    only: true
+    lead: ' '
+- paths: retry-in-gatewaylistener
+  block: 10
+  fingerprint: bd539f5efc888c96
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c 0f10c5bc bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="retry-in-gatewaylistener"
+    only: true
+    lead: ' '
+- paths: retry-in-gatewaylistener
+  block: 11
+  fingerprint: 0ca3bd5e55dadfa0
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 7c7a9799 8af957d1 36184fa5 588a5d84 7115e129 350955ef 89b06424 e4741808 e4f6a86d 7f8a9998 7be3ae06 67c4b1f3 da134923 3a2d8669 d559bb7d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="retry-in-gatewaylistener"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 24
+    fingerprint: 81a3597518c2facc
+    lang: ''
+    lines: 344ab5da e71b608a 917ac6a1 799b3078 d0de74f9
+    preview: "info\trequest gateway=agentgateway-system/agentgateway-proxy"
+  blank_before: []
+  content: |2-
+      {{< doc-test paths="retry-in-httproute,retry-in-agentgateway,retry-in-gatewaylistener" >}}
+      YAMLTest -f - <<'EOF'
+      - name: wait for retry HTTPRoute to be accepted
+        wait:
+          target:
+            kind: HTTPRoute
+            metadata:
+              namespace: httpbin
+              name: retry
+          jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+          jsonPathExpectation:
+            comparator: equals
+            value: "True"
+          polling:
+            timeoutSeconds: 300
+            intervalSeconds: 5
+      - name: verify request to retry route succeeds
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}"
+          path: /headers
+          method: GET
+          headers:
+            host: retry.example
+        source:
+          type: local
+        expect:
+          statusCode: 200
+      - name: verify request to retry route fails
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}"
+          path: /status/500
+          method: GET
+          headers:
+            host: retry.example
+        source:
+          type: local
+        expect:
+          statusCode: 500
+      - name: Verify that the request was retried. Look for retry.attempt=3 in the output
+        retries: 10
+        command:
+          command: "kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} -l gateway.networking.k8s.io/gateway-name=agentgateway-proxy --tail=1"
+        source:
+          type: local
+        expect:
+          exitCode: 0
+          stdout:
+            contains: "retry.example"
+      EOF
+      {{< /doc-test >}}

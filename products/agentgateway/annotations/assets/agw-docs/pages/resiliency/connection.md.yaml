@@ -1,0 +1,96 @@
+format: 1
+source: assets/agw-docs/pages/resiliency/connection.md
+blocks:
+- fb5a99b55f044e53 yaml
+- 66b96bd4b0301ce2 sh
+- e2ec1b4b4950c64e sh
+- 615ed152a03b7e31 json
+- b1f7990fcc52e998 sh
+- a16d09d92ebeeaa8 yaml
+- 66b96bd4b0301ce2 sh
+- 516cbdde684d4ee1 sh
+- 0307598baf7cccb3 json
+- a8ed480721a4ebe3 sh
+tags:
+- paths: connection-http1
+  block: 0
+  fingerprint: fb5a99b55f044e53
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 044603b8 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 1c31dda0 9ca2b0b4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="connection-http1"
+    only: true
+    lead: ' '
+- paths: connection-http2-flow
+  block: 5
+  fingerprint: a16d09d92ebeeaa8
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 51b68764 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 1c31dda0 8ba201bf 20ba695c 38523f2a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="connection-http2-flow"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 615ed152a03b7e31
+    lang: json
+    lines: 021fb596 de6eeddd eec87ff8 25a12f19 9e34177d af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 5ed36ff9 d10b36aa e52a1813 f414d680 56878bba b460f44f 54f42f61 c4fba247 744875f7 6007f8b2 e85855a1 c48d3b10 0af85b4a d0ce918a d10b36aa d10b36aa d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="connection-http1" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for http1 policy in config dump
+      retries: 20
+      http:
+        url: http://localhost:15000
+        skipSslVerification: true
+        method: GET
+        path: /config_dump
+      source:
+        type: pod
+        usePortForward: true
+        selector:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+      expect:
+        bodyContains:
+        - '"http1MaxHeaders"'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 0307598baf7cccb3
+    lang: json
+    lines: 021fb596 de184df3 eec87ff8 25a12f19 7fb7dc84 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 5ed36ff9 d10b36aa e52a1813 f414d680 56878bba b460f44f 54f42f61 bf523a4a 744875f7 b24dd049 1e1db7d8 4f46c2c8 0af85b4a d0ce918a d10b36aa d10b36aa d10b36aa d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="connection-http2-flow" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for http2-flow policy in config dump
+         retries: 20
+         http:
+           url: http://localhost:15000
+           skipSslVerification: true
+           method: GET
+           path: /config_dump
+         source:
+           type: pod
+           usePortForward: true
+           selector:
+             kind: Deployment
+             metadata:
+               namespace: agentgateway-system
+               name: agentgateway-proxy
+         expect:
+           bodyContains:
+           - '"http2WindowSize"'
+           - '"http2ConnectionWindowSize"'
+           - '"http2FrameSize"'
+           - '65536'
+       EOF
+       {{< /doc-test >}}

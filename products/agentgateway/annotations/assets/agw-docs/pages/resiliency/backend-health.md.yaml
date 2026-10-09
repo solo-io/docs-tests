@@ -1,0 +1,71 @@
+format: 1
+source: assets/agw-docs/pages/resiliency/backend-health.md
+blocks:
+- 75274f2270ce1704 yaml
+- 66b96bd4b0301ce2 sh
+- 15cd4f8d31446036 sh
+- 61de1419bc5ac54e json
+- 68a0779acfee342a sh
+- d13ade6c62874937 sh
+- 50108d3433ddd379 sh
+- 41f6ad30aba55cdb sh
+tags:
+- paths: backend-health
+  block: 0
+  fingerprint: 75274f2270ce1704
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb9d9a01 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 bb85cefe d1a43947 a628d7d2 0001b31c 25b45c1a ab675ed6 3c44877d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-health"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 61de1419bc5ac54e
+    lang: json
+    lines: 021fb596 46be6bbe eec87ff8 25a12f19 34020823 bc17aec6 e52a1813 e344786a 4c3a9017 71d0c63e 484fa265 bc17aec6 d10b36aa d10b36aa e52a1813 f414d680 4c3a9017 1835f19f 69b16155 c6f8feb2 06ec02cb a9969bd1 b1f0d65f d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="backend-health" >}}
+       # This test verifies that the health policy is accepted and present in the config dump.
+       # Eviction behavior is not exercised here: the quickstart deploys a single httpbin endpoint,
+       # so the load balancer falls back to the evicted endpoint instead of shifting traffic away.
+       # Observing eviction requires multiple endpoints, which is called out in the manual steps below.
+       YAMLTest -f - <<'EOF'
+       - name: wait for httpbin-health policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: httpbin
+               name: httpbin-health
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for httpbin-health policy in config dump
+         retries: 20
+         http:
+           url: http://localhost:15000
+           skipSslVerification: true
+           method: GET
+           path: /config_dump
+         source:
+           type: pod
+           usePortForward: true
+           selector:
+             kind: Deployment
+             metadata:
+               namespace: agentgateway-system
+               name: agentgateway-proxy
+         expect:
+           bodyContains:
+           - '"httpbin-health"'
+           - '"unhealthyExpression"'
+       EOF
+       {{< /doc-test >}}

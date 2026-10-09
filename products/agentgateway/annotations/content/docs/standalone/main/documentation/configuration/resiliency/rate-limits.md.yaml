@@ -1,0 +1,344 @@
+format: 1
+source: content/docs/standalone/main/documentation/configuration/resiliency/rate-limits.md
+blocks:
+- a0a4ab9ddb57304a yaml
+- 4a8bcc6aeefcd189 yaml
+- 3e9a229697d41a23 yaml
+- ff7d534c8a0f1e76 yaml
+- 6cfcae30a85bc3bc yaml
+- b5caed4968c840a5 yaml
+- 9eb8d5dbebe36c08 yaml
+- 43ca4350f273037b yaml
+- 7ee1a61a71d595bf yaml
+- 026ac65fb2239de9 yaml
+- 331e4dcccd52bea8 sh
+- 3797ea22c0fd1b92 sh
+- 9514aff55484e690 yaml
+- 5add27c8203e9c1a yaml
+- 6da5496d1b903f49 yaml
+- f54155693ba1eed7 yaml
+- 5d11c8b5bb93c55a yaml
+hidden:
+- after:
+    line: 714405c4ca3422b9
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 9e5cb570
+    block_before: null
+  content: |-
+    {{< doc-test paths="rate-limits" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 2
+      fingerprint: 3e9a229697d41a23
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c ecfe91fe 15fec6fc 54ea4e89 822e2aa9 e13b1f8e d72f261d c64a4012
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="rate-limits" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The request-based localRateLimit policy is accepted by agentgateway in the
+    #     routing-based (gateways), simplified LLM (llm.policies), and simplified MCP
+    #     (mcp.policies) forms.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That requests are actually limited at runtime — requires driving traffic
+    #     past the configured bucket, which the page does not exercise.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        localRateLimit:
+        - maxTokens: 10
+          tokensPerFill: 1
+          fillInterval: 60s
+          type: requests
+      backends:
+      - host: localhost:8080
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    cat <<'EOF' > config-llm.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        localRateLimit:
+        - maxTokens: 10
+          tokensPerFill: 1
+          fillInterval: 60s
+          type: requests
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config-llm.yaml --validate-only
+
+    cat <<'EOF' > config-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        localRateLimit:
+        - maxTokens: 10
+          tokensPerFill: 1
+          fillInterval: 60s
+          type: requests
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-mcp.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 6
+      fingerprint: 9eb8d5dbebe36c08
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c ecfe91fe 08b5239b 8eff81dc 10404a9c fef6e5b9 c176f56c 6bd72f9a f39f45f5 54ea4e89 ce6b8f0b e13b1f8e d72f261d c64a4012
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="rate-limits" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The Local example config (5000 tokens/hour and 60 requests/second) is
+    #     accepted by agentgateway in the routing-based (gateways), simplified LLM
+    #     (llm.policies), and simplified MCP (mcp.policies) forms.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That the token-bucket limits actually refill and throttle at runtime —
+    #     requires sustained traffic over the fill intervals, which the page omits.
+    #   * The token-based and failOpen fragments on this page are focused field-
+    #     reference snippets, not standalone configs, so they are not tested here.
+    cat <<'EOF' > config2.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        localRateLimit:
+        - maxTokens: 5000
+          # Every hour, refill 5000 tokens
+          tokensPerFill: 5000
+          fillInterval: 1h
+          type: tokens
+        - maxTokens: 60
+          # Every second, refill 1 token
+          tokensPerFill: 1
+          fillInterval: 1s
+          type: requests
+      backends:
+      - host: localhost:8080
+    EOF
+    agentgateway -f config2.yaml --validate-only
+
+    cat <<'EOF' > config2-llm.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        localRateLimit:
+        - maxTokens: 5000
+          # Every hour, refill 5000 tokens
+          tokensPerFill: 5000
+          fillInterval: 1h
+          type: tokens
+        - maxTokens: 60
+          # Every second, refill 1 token
+          tokensPerFill: 1
+          fillInterval: 1s
+          type: requests
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config2-llm.yaml --validate-only
+
+    cat <<'EOF' > config2-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        localRateLimit:
+        - maxTokens: 5000
+          # Every hour, refill 5000 tokens
+          tokensPerFill: 5000
+          fillInterval: 1h
+          type: tokens
+        - maxTokens: 60
+          # Every second, refill 1 token
+          tokensPerFill: 1
+          fillInterval: 1s
+          type: requests
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config2-mcp.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 43ca4350f273037b
+    lang: yaml
+    lines: a7f80a73 3af99526 c8f3f59a e5522222 b0299c0e 1fe7fd13 b0f0e951 8c8c4228 cb473c79 b3b0300a 8c8c4228 e22a2214 ecfe91fe 97957484 0fe1151b 3678f762 fef6e5b9 c176f56c 78c54060 fef6e121 6bd72f9a 44f624ca 822e2aa9 e13b1f8e 78c54060 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="rate-limits" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The per-key example (two localRateLimit rules keyed on `apiKey.user`) is
+    #     accepted by agentgateway, which also compiles each `key` as a CEL
+    #     expression and fails validation if it does not compile.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That each key gets its own bucket at runtime — requires an LLM backend and
+    #     enough traffic per key to drain a bucket, which the page does not exercise.
+    cat <<'EOF' > config-perkey.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        apiKey:
+          mode: strict
+          keys:
+          - key: sk-alice-abc123def456
+            metadata:
+              user: alice
+          - key: sk-bob-xyz789uvw012
+            metadata:
+              user: bob
+        localRateLimit:
+        # Each API key gets its own budget of 1000 tokens per hour.
+        - maxTokens: 1000
+          tokensPerFill: 1000
+          fillInterval: 1h
+          type: tokens
+          key: apiKey.user
+        # Each API key also gets its own limit of 60 requests per minute.
+        - maxTokens: 60
+          tokensPerFill: 60
+          fillInterval: 60s
+          type: requests
+          key: apiKey.user
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config-perkey.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 14
+      fingerprint: 6da5496d1b903f49
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 4cf35fb7 773ccabd 7e3d734c 63e7970b 4cafe606 b7b5f484 630c812d 8902dc3d 8afe8781 5abdbf91 ba86cf75 60fbdaef f8bf7d5e e10733bd a1bcba77 d72f261d c64a4012
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="rate-limits" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The Remote example config (remoteRateLimit with descriptors) is accepted
+    #     by agentgateway in the routing-based (gateways), simplified LLM
+    #     (llm.policies), and simplified MCP (mcp.policies) forms.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That limits are actually enforced at runtime — requires an external Envoy
+    #     rate limit server the page omits to define and enforce the descriptors.
+    #   * The failOpen and backend-connection-policy snippets below are focused
+    #     field-reference fragments, not standalone configs, so they are not tested.
+    cat <<'EOF' > config3.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        remoteRateLimit:
+          # The address to access the rate limit server
+          host: localhost:8081
+          # Arbitrary 'domain' to match limits on the rate limit server
+          domain: example.com
+          descriptors:
+          # Rate limit requests based on a header, whether the user is authenticated, and a static value (used to match a specific rate limit rule on the rate limit server)
+          - entries:
+            - key: some-static-value
+              value: '"something"'
+            - key: organization
+              value: 'request.headers["x-organization"]'
+            - key: authenticated
+              value: 'has(jwt.sub)'
+            type: tokens # or 'requests'
+      backends:
+      - host: localhost:8080
+    EOF
+    agentgateway -f config3.yaml --validate-only
+
+    cat <<'EOF' > config3-llm.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        remoteRateLimit:
+          # The address to access the rate limit server
+          host: localhost:8081
+          # Arbitrary 'domain' to match limits on the rate limit server
+          domain: example.com
+          descriptors:
+          # Rate limit requests based on a header, whether the user is authenticated, and a static value (used to match a specific rate limit rule on the rate limit server)
+          - entries:
+            - key: some-static-value
+              value: '"something"'
+            - key: organization
+              value: 'request.headers["x-organization"]'
+            - key: authenticated
+              value: 'has(jwt.sub)'
+            type: tokens # or 'requests'
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config3-llm.yaml --validate-only
+
+    cat <<'EOF' > config3-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        remoteRateLimit:
+          # The address to access the rate limit server
+          host: localhost:8081
+          # Arbitrary 'domain' to match limits on the rate limit server
+          domain: example.com
+          descriptors:
+          # Rate limit requests based on a header, whether the user is authenticated, and a static value (used to match a specific rate limit rule on the rate limit server)
+          - entries:
+            - key: some-static-value
+              value: '"something"'
+            - key: organization
+              value: 'request.headers["x-organization"]'
+            - key: authenticated
+              value: 'has(jwt.sub)'
+            type: tokens # or 'requests'
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config3-mcp.yaml --validate-only
+    {{< /doc-test >}}

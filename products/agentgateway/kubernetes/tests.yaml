@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# Covers traffic-management, llm (documentation/llm/), security and mcp (documentation/mcp/). Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/) and resiliency. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -84,6 +84,12 @@ skip:
 - page: documentation/mcp/guardrails/_index.md
 - page: documentation/mcp/guardrails/about.md
 - page: documentation/mcp/spec-compatibility.md
+- page: documentation/resiliency/_index.md
+- page: documentation/resiliency/retry/_index.md
+- page: documentation/resiliency/retry/about.md
+- page: documentation/resiliency/timeouts/_index.md
+- page: documentation/resiliency/timeouts/about.md
+- page: documentation/resiliency/timeouts/per-try-timeout.md
 scenarios:
   access-logs:
     type:
@@ -1026,3 +1032,169 @@ scenarios:
     - gateway
     source: agw-docs/pages/agentgateway/mcp/multiplex.md
     path: virtual-mcp
+  # --- resiliency (documentation/resiliency/) ---
+  backend-health:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/backend-health.md
+    path: backend-health
+  backend-timeouts:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/timeouts/backend.md
+    path: backend-timeouts
+  connection-general:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/connection.md
+    path: connection-general
+  connection-http1:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/connection.md
+    path: connection-http1
+  connection-http2-flow:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/connection.md
+    path: connection-http2-flow
+  delay-in-trafficpolicy:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/fault-injection.md
+    path: delay-in-trafficpolicy
+  http-keepalive:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/keepalive.md
+    path: http-keepalive
+  idle-timeout:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/timeouts/idle.md
+    path: idle-timeout
+  per-try-timeout-in-agentgateway:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-in-agentgateway
+  per-try-timeout-in-gatewaylistener:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-in-gatewaylistener
+  per-try-timeout-in-httproute:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-in-httproute
+  retry-in-agentgateway:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/retry/retry.md
+    path: retry-in-agentgateway
+  retry-in-gatewaylistener:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/retry/retry.md
+    path: retry-in-gatewaylistener
+  retry-in-httproute:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/retry/retry.md
+    path: retry-in-httproute
+  tcp-keepalive:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/keepalive.md
+    path: tcp-keepalive
+  timeout-in-gatewaylistener:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/timeouts/request.md
+    path: timeout-in-gatewaylistener
+  timeout-in-httproute:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/timeouts/request.md
+    path: timeout-in-httproute
+  timeout-in-trafficpolicy:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/resiliency/timeouts/request.md
+    path: timeout-in-trafficpolicy

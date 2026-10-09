@@ -1,0 +1,143 @@
+format: 1
+source: assets/agw-docs/pages/resiliency/timeouts/request.md
+blocks:
+- e5ca2904c7801de0 yaml
+- 53572b7a4167aea8 sh
+- f665ab01437db0b8 sh
+- ab5728a26864f396 json
+- 9091c59ff6e56346 yaml
+- f7a3a766ad7d370b yaml
+- 87a19e254e05098a sh
+- 8c461c3630f4eccb json
+- 1eda7c0da2670548 yaml
+- 2226b9e6775a89dd yaml
+- 87a19e254e05098a sh
+- dac40ae855085139 json
+- ad360c72463dab19 sh
+- 24f37c1445a2eb08 sh
+- b6b53569e55933df
+- f5c049a4dc99889e sh
+- 2f13ffa46bb1733c txt
+- 7fed84656ba820bc sh
+- cd95e784bcc32ef2 sh
+- 02bed5eb2f5efb83
+- f5c049a4dc99889e sh
+- 49d10e0ce06e0382 txt
+- ccc67bc07a777e64 sh
+- 7d2ab5fd58949615 sh
+tags:
+- paths: timeout-in-httproute
+  block: 0
+  fingerprint: e5ca2904c7801de0
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 ddf6cde1 0f10c5bc 36184fa5 301e1bfa 21d73962 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 0f009c8f 94ae491e 80e9487c bca8e5f7 0f10c5bc dbf95901 69df20c9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="timeout-in-httproute"
+    only: true
+    lead: ' '
+- paths: timeout-in-trafficpolicy
+  block: 4
+  fingerprint: 9091c59ff6e56346
+  lang: yaml
+  lines: 0859a758 8c67597e 56bf9360 8c8c4228 ddf6cde1 0f10c5bc 36184fa5 301e1bfa 21d73962 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 0f009c8f 94ae491e 1615198c d217c891 bca8e5f7 84e04f5f abc56510
+  preview: kubectl apply -n httpbin -f- <<EOF
+  form:
+    attr: paths="timeout-in-trafficpolicy"
+    only: true
+    lead: ' '
+- paths: timeout-in-trafficpolicy
+  block: 5
+  fingerprint: f7a3a766ad7d370b
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 84e04f5f 0f10c5bc 36184fa5 588a5d84 d6b03630 350955ef ddf6cde1 7746f3e7 e4f6a86d dbf95901 69df20c9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="timeout-in-trafficpolicy"
+    only: true
+    lead: ' '
+- paths: timeout-in-gatewaylistener
+  block: 8
+  fingerprint: 1eda7c0da2670548
+  lang: yaml
+  lines: 0859a758 8c67597e 56bf9360 8c8c4228 ddf6cde1 0f10c5bc 36184fa5 301e1bfa 21d73962 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 0f009c8f 94ae491e 1615198c d217c891 bca8e5f7 abc56510
+  preview: kubectl apply -n httpbin -f- <<EOF
+  form:
+    attr: paths="timeout-in-gatewaylistener"
+    only: true
+    lead: ' '
+- paths: timeout-in-gatewaylistener
+  block: 9
+  fingerprint: 2226b9e6775a89dd
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 84e04f5f 8af957d1 36184fa5 588a5d84 7115e129 350955ef 89b06424 e4741808 e4f6a86d dbf95901 69df20c9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="timeout-in-gatewaylistener"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 21
+    fingerprint: 49d10e0ce06e0382
+    lang: txt
+    lines: 714fb65d 65e830cd bad7e175 bb986d3f
+    preview: "info\trequest gateway=agentgateway-system/agentgateway-proxy listener=http"
+  content: |-
+    {{< doc-test paths="timeout-in-httproute,timeout-in-trafficpolicy,timeout-in-gatewaylistener" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin-timeout HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-timeout
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: verify request under timeout limit succeeds
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}"
+        path: /delay/1
+        method: GET
+        headers:
+          host: timeout.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: verify request over timeout limit returns 504
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}"
+        path: /delay/5
+        method: GET
+        headers:
+          host: timeout.example
+      source:
+        type: local
+      expect:
+        statusCode: 504
+    - name: verify timeout in config dump
+      http:
+        url: http://localhost:15000
+        skipSslVerification: true
+        method: GET
+        path: /config_dump
+      source:
+        type: pod
+        usePortForward: true
+        selector:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+      expect:
+        bodyContains:
+        - '"requestTimeout":"2s'
+    EOF
+    {{< /doc-test >}}

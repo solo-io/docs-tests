@@ -1,0 +1,126 @@
+format: 1
+source: assets/agw-docs/pages/resiliency/fault-injection.md
+blocks:
+- 482470c2debd76dd yaml
+- a41d7bddcaf53421 yaml
+- 39ea22f1f6ae8136 sh
+- b05ff15c763b53da sh
+- 85c593f76c1f1eb5 console
+- 53572b7a4167aea8 sh
+- fd0098562195172a sh
+- d57d88b45c63c027 yaml
+- 3e3f9c572115db54 sh
+tags:
+- paths: delay-in-trafficpolicy
+  block: 0
+  fingerprint: 482470c2debd76dd
+  lang: yaml
+  lines: 0859a758 8c67597e 56bf9360 8c8c4228 20f8cdb7 0f10c5bc 36184fa5 301e1bfa 22d6abd6 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 1615198c d217c891 bca8e5f7 abc56510
+  preview: kubectl apply -n httpbin -f- <<EOF
+  form:
+    attr: paths="delay-in-trafficpolicy"
+    only: true
+    lead: ' '
+- paths: delay-in-trafficpolicy
+  block: 1
+  fingerprint: a41d7bddcaf53421
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 20f8cdb7 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 20f8cdb7 e4f6a86d 6c474e8d e44db037 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delay-in-trafficpolicy"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 7
+    fingerprint: d57d88b45c63c027
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 20f8cdb7 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 20f8cdb7 e4f6a86d 6c474e8d 27bdfadc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="delay-in-trafficpolicy" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The httpbin-delay HTTPRoute (host faultinjection.example) is Accepted.
+    #   * The httpbin-delay AgentgatewayPolicy (traffic.delay.duration: 2s) is Accepted.
+    #   * A request to /get with host faultinjection.example returns 200 (the injected
+    #     delay does not break the request).
+    #   * The delay policy is present in the proxy config dump.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That the response is actually delayed by ~2s — Different layer: YAMLTest has
+    #     no response-latency assertion, so timing is not measured.
+    #   * The probabilistic/random CEL delay example — Display-only block, not tagged.
+    # Warm up the new faultinjection.example hostname before asserting (two-phase proxy warmup).
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/get" -H "host: faultinjection.example" && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: d57d88b45c63c027
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 20f8cdb7 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 20f8cdb7 e4f6a86d 6c474e8d 27bdfadc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="delay-in-trafficpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin-delay HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-delay
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for httpbin-delay AgentgatewayPolicy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-delay
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: verify request through the delayed route returns 200
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /get
+        method: GET
+        headers:
+          host: "faultinjection.example"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: verify delay policy in config dump
+      http:
+        url: http://localhost:15000
+        skipSslVerification: true
+        method: GET
+        path: /config_dump
+      source:
+        type: pod
+        usePortForward: true
+        selector:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+      expect:
+        bodyContains:
+        - '"duration"'
+    EOF
+    {{< /doc-test >}}

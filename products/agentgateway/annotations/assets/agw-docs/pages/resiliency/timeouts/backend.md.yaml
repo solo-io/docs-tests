@@ -1,0 +1,72 @@
+format: 1
+source: assets/agw-docs/pages/resiliency/timeouts/backend.md
+blocks:
+- e5b3dffd9fa8acc2 yaml
+- d534ef9433f6da7d sh
+- c11f48336c675607 sh
+- 274734e745f1c3f3 sh
+tags:
+- paths: backend-timeouts
+  block: 0
+  fingerprint: e5b3dffd9fa8acc2
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 0893e443 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 bb85cefe c126c71d 6a150230 1c31dda0 15d56a6c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-timeouts"
+    only: true
+    lead: ' '
+- paths: backend-timeouts
+  block: 3
+  fingerprint: 274734e745f1c3f3
+  lang: sh
+  lines: 8f866688 bf91d088
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} \
+  form:
+    attr: paths="backend-timeouts"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: c11f48336c675607
+    lang: sh
+    lines: 1e3cff73 2d7ef1b1 fbb97a21 ebe424e7 315eb999
+    preview: kubectl port-forward deployment/agentgateway-proxy \
+  content: |-
+    {{< doc-test paths="backend-timeouts" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for backend timeout policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-backend-timeouts
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    - name: wait for backend timeouts in config dump
+      retries: 20
+      http:
+        url: http://localhost:15000
+        path: /config_dump
+      source:
+        type: pod
+        usePortForward: true
+        selector:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+      expect:
+        bodyContains:
+        - '"httpbin-backend-timeouts"'
+        - '"connectTimeout":"2s"'
+        - '"requestTimeout":"5s"'
+    EOF
+    {{< /doc-test >}}

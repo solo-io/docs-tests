@@ -1,0 +1,53 @@
+format: 1
+source: assets/agw-docs/pages/resiliency/timeouts/idle.md
+blocks:
+- 5c0f4126dbfa1b3d yaml
+- 66b96bd4b0301ce2 sh
+- e2ec1b4b4950c64e sh
+- 5e9caf2f529d6ee9 json
+- 2d6f711ab0346f08 sh
+tags:
+- paths: idle-timeout
+  block: 0
+  fingerprint: 5c0f4126dbfa1b3d
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 cedff171 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 1c31dda0 ee820540 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="idle-timeout"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 5e9caf2f529d6ee9
+    lang: json
+    lines: 021fb596 8c11fa02 eec87ff8 25a12f19 af64e4a8 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 5ed36ff9 d10b36aa e52a1813 f414d680 56878bba b460f44f 084f7725 bf523a4a 79135de4 6007f8b2 e85855a1 c48d3b10 0af85b4a d0ce918a d10b36aa d10b36aa d10b36aa d10b36aa
+    preview: '{'
+  blank_before:
+  - ''
+  - '      '
+  content: |-
+    {{< doc-test paths="idle-timeout" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for idle-time policy in config dump
+      retries: 20
+      http:
+        url: http://localhost:15000
+        skipSslVerification: true
+        method: GET
+        path: /config_dump
+      source:
+        type: pod
+        usePortForward: true
+        selector:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+      expect:
+        bodyContains:
+        - '"http1IdleTimeout"'
+        - '"30s"'
+    EOF
+    {{< /doc-test >}}

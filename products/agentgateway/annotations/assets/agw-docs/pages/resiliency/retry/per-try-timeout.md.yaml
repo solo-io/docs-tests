@@ -1,0 +1,239 @@
+format: 1
+source: assets/agw-docs/pages/resiliency/retry/per-try-timeout.md
+blocks:
+- 09f0f045c8c6a035 sh
+- 924099cbe7b927e2 yaml
+- 53572b7a4167aea8 sh
+- 6592043263f473ee sh
+- 39bc832d5412b472 json
+- 6c080a77ba608bed yaml
+- 6d484d208f99abc7 yaml
+- 53572b7a4167aea8 sh
+- 400c038b4fd68682 sh
+- 3568f16f0fd4a98e json
+- 34e5e44051f5d041 yaml
+- 2e0781b9f3ee8ccb yaml
+- 53572b7a4167aea8 sh
+- 400c038b4fd68682 sh
+- 89dc278ff9a864ec json
+- e952d15e0f7f96ba sh
+tags:
+- paths: per-try-timeout-in-httproute
+  block: 1
+  fingerprint: 924099cbe7b927e2
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 7f8a9998 7be3ae06 67c4b1f3 da134923 b3e24dad dbf95901 6d3f1ba3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout-in-httproute"
+    only: true
+    lead: ' '
+- paths: per-try-timeout-in-agentgateway
+  block: 5
+  fingerprint: 6c080a77ba608bed
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 84e04f5f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout-in-agentgateway"
+    only: true
+    lead: ' '
+- paths: per-try-timeout-in-agentgateway
+  block: 6
+  fingerprint: 6d484d208f99abc7
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 7c7a9799 0f10c5bc 36184fa5 588a5d84 d6b03630 350955ef 7c7a9799 7746f3e7 e4f6a86d 7f8a9998 7be3ae06 67c4b1f3 6b75f5a8 dbf95901 d4853325 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout-in-agentgateway"
+    only: true
+    lead: ' '
+- paths: per-try-timeout-in-gatewaylistener
+  block: 10
+  fingerprint: 34e5e44051f5d041
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout-in-gatewaylistener"
+    only: true
+    lead: ' '
+- paths: per-try-timeout-in-gatewaylistener
+  block: 11
+  fingerprint: 2e0781b9f3ee8ccb
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 7c7a9799 8af957d1 36184fa5 588a5d84 7115e129 350955ef 89b06424 e4741808 e4f6a86d 7f8a9998 7be3ae06 67c4b1f3 6b75f5a8 dbf95901 d4853325 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout-in-gatewaylistener"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 14
+      fingerprint: 89dc278ff9a864ec
+      lang: json
+      lines: 021fb596 86fc7ab3 b97a03ec eec87ff8 25a12f19 523b4b21 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 40303eaa d10b36aa e52a1813 f414d680 f19864c8 7a34f38f 86fc7ab3 0230ff44 3abd9320 94752c5a 330c77d0 cfae0d42 d10b36aa d10b36aa d10b36aa e52a1813 e87a5e3a 216227b7 eec87ff8 25a12f19 523b4b21 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 40303eaa d10b36aa e52a1813 f414d680 f19864c8 7a34f38f e87a5e3a a31d7d39 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="per-try-timeout-in-httproute,per-try-timeout-in-agentgateway,per-try-timeout-in-gatewaylistener" >}}
+      YAMLTest -f - <<'EOF'
+      - name: wait for retry HTTPRoute to be accepted
+        wait:
+          target:
+            kind: HTTPRoute
+            metadata:
+              namespace: httpbin
+              name: retry
+          jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+          jsonPathExpectation:
+            comparator: equals
+            value: "True"
+          polling:
+            timeoutSeconds: 300
+            intervalSeconds: 5
+      - name: verify request to retry route succeeds
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}"
+          path: /headers
+          method: GET
+          headers:
+            host: retry.example
+        source:
+          type: local
+        expect:
+          statusCode: 200
+      EOF
+      {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 14
+      fingerprint: 89dc278ff9a864ec
+      lang: json
+      lines: 021fb596 86fc7ab3 b97a03ec eec87ff8 25a12f19 523b4b21 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 40303eaa d10b36aa e52a1813 f414d680 f19864c8 7a34f38f 86fc7ab3 0230ff44 3abd9320 94752c5a 330c77d0 cfae0d42 d10b36aa d10b36aa d10b36aa e52a1813 e87a5e3a 216227b7 eec87ff8 25a12f19 523b4b21 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 40303eaa d10b36aa e52a1813 f414d680 f19864c8 7a34f38f e87a5e3a a31d7d39 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa
+      preview: '{'
+  blank_before: []
+  content: |2-
+      {{< doc-test paths="per-try-timeout-in-httproute" >}}
+      YAMLTest -f - <<'EOF'
+      - name: Check configdump for per-try timeout
+        http:
+          url: http://localhost:15000
+          skipSslVerification: true
+          method: GET
+          path: /config_dump
+        source:
+          type: pod
+          usePortForward: true
+          selector:
+            kind: Deployment
+            metadata:
+              namespace: agentgateway-system
+              name: agentgateway-proxy
+        expect:
+          bodyContains:
+          - '"backendRequestTimeout":"5s'
+      EOF
+      {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 14
+      fingerprint: 89dc278ff9a864ec
+      lang: json
+      lines: 021fb596 86fc7ab3 b97a03ec eec87ff8 25a12f19 523b4b21 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 40303eaa d10b36aa e52a1813 f414d680 f19864c8 7a34f38f 86fc7ab3 0230ff44 3abd9320 94752c5a 330c77d0 cfae0d42 d10b36aa d10b36aa d10b36aa e52a1813 e87a5e3a 216227b7 eec87ff8 25a12f19 523b4b21 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 40303eaa d10b36aa e52a1813 f414d680 f19864c8 7a34f38f e87a5e3a a31d7d39 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa
+      preview: '{'
+  blank_before: []
+  content: |2-
+      {{< doc-test paths="per-try-timeout-in-agentgateway" >}}
+      YAMLTest -f - <<'EOF'
+      - name: wait for retry policy to be accepted
+        wait:
+          target:
+            kind: AgentgatewayPolicy
+            metadata:
+              namespace: httpbin
+              name: retry
+          jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+          jsonPathExpectation:
+            comparator: equals
+            value: "True"
+          polling:
+            timeoutSeconds: 120
+            intervalSeconds: 2
+      - name: Check configdump for per-try timeout
+        http:
+          url: http://localhost:15000
+          skipSslVerification: true
+          method: GET
+          path: /config_dump
+        source:
+          type: pod
+          usePortForward: true
+          selector:
+            kind: Deployment
+            metadata:
+              namespace: agentgateway-system
+              name: agentgateway-proxy
+        expect:
+          bodyContains:
+          - '"requestTimeout":"5s'
+      EOF
+      {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 14
+      fingerprint: 89dc278ff9a864ec
+      lang: json
+      lines: 021fb596 86fc7ab3 b97a03ec eec87ff8 25a12f19 523b4b21 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 40303eaa d10b36aa e52a1813 f414d680 f19864c8 7a34f38f 86fc7ab3 0230ff44 3abd9320 94752c5a 330c77d0 cfae0d42 d10b36aa d10b36aa d10b36aa e52a1813 e87a5e3a 216227b7 eec87ff8 25a12f19 523b4b21 af5ae08a e52a1813 e344786a 51b29305 f7674dd0 f8657440 40303eaa d10b36aa e52a1813 f414d680 f19864c8 7a34f38f e87a5e3a a31d7d39 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa
+      preview: '{'
+  blank_before: []
+  content: |2-
+      {{< doc-test paths="per-try-timeout-in-gatewaylistener" >}}
+      YAMLTest -f - <<'EOF'
+      - name: wait for retry policy to be accepted
+        wait:
+          target:
+            kind: AgentgatewayPolicy
+            metadata:
+              namespace: agentgateway-system
+              name: retry
+          jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+          jsonPathExpectation:
+            comparator: equals
+            value: "True"
+          polling:
+            timeoutSeconds: 120
+            intervalSeconds: 2
+      - name: Check configdump for per-try timeout
+        retries: 5
+        http:
+          url: http://localhost:15000
+          skipSslVerification: true
+          method: GET
+          path: /config_dump
+        source:
+          type: pod
+          usePortForward: true
+          selector:
+            kind: Deployment
+            metadata:
+              namespace: agentgateway-system
+              name: agentgateway-proxy
+        expect:
+          bodyContains:
+          - '"requestTimeout":"5s'
+      EOF
+      {{< /doc-test >}}
