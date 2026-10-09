@@ -1,0 +1,143 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-key-standalone.md
+blocks:
+- 8581356f5bdd3e46 yaml
+- b5b36c214f0e03ca yaml
+- 6c3f7d0c7233e965 yaml
+- 4bc70bed70efd405 yaml
+- 6f2b6bc3f70b94ee yaml
+- b523252ff0ee5a9e yaml
+- 206de44a3f53208d yaml
+- 505ba0ba76aca431 yaml
+- ab611b145643846b yaml
+hidden:
+- after:
+    line: 714405c4ca3422b9
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 9e5cb570
+    block_before: null
+  content: |-
+    {{< doc-test paths="backend-authn-key" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export MY_API_KEY="${MY_API_KEY:-dummy}"
+    export MY_TENANT_KEY="${MY_TENANT_KEY:-dummy}"
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 1
+      fingerprint: b5b36c214f0e03ca
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b c64a4012 c8f3f59a 81b74571 71338152 a0efc653
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="backend-authn-key" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The static-key backendAuth example config is accepted by agentgateway in
+    #     both the routing-based (gateways) and simplified MCP (mcp.policies) forms.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The file-path, location, and passthrough snippets are field-reference
+    #     fragments with no `gateways:`, so they are not standalone configs as
+    #     written. The `credentials` fragments at the end of the page are covered by
+    #     a second test, which wraps each one in the missing scaffolding first.
+    #   * That a backend accepts any of these credentials -- requires config the page
+    #     omits: every example points at a placeholder host.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: localhost:8080
+        policies:
+          backendAuth:
+            key:
+              value: $MY_API_KEY
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    cat <<'EOF' > config-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        backendAuth:
+          key:
+            value: $MY_API_KEY
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-mcp.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 4200e56c9dd452d6
+    occurrence: 0
+    words: b9776d7d 631aada4 a330395c fa51fd49 254bb97b 37b322c5 b8d31e85 ca978112 10e08a41 8e7fc023 56e57ada b080c643 9c6725dc ca978112 94a35fdc ca978112 803a5ac8 10e08a41 66312e5e b9776d7d 2c70e12b 5b7e6bf2 f905b195
+    block_before:
+      block: 8
+      fingerprint: ab611b145643846b
+      lang: yaml
+      lines: 81b74571 71338152 a0efc653 545c1d9d fb7cb22b 30ff4d98 76b9012f 5b6b0fce fb7cb22b c31c813b ba2f8a29 71338152 6d78e663
+      preview: 'backendAuth:'
+  content: |-
+    {{< doc-test paths="backend-authn-key" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * Both `credentials` fragments above are accepted once wrapped in the
+    #     gateways/routes scaffolding that the page tells the reader to add: the
+    #     additive form alongside a primary `key`, and the list on its own.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That the extra credentials arrive at the backend -- covered on the
+    #     Kubernetes page for this method, which asserts all three against httpbin.
+    #     Asserting it twice would not test anything new about the data plane.
+    #   * The tunnel restriction in the note above -- requires config the page omits:
+    #     a tunnel-bound backend, which belongs to the backend tunnel guide.
+    echo dummy > subscription-key
+    credentials_case() {
+      local name="$1"
+      { cat <<'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: backend.example.com:443
+        policies:
+          backendAuth:
+    EOF
+        sed 's/^/        /'
+      } > "config-credentials-$name.yaml"
+      agentgateway -f "config-credentials-$name.yaml" --validate-only
+    }
+
+    credentials_case additive <<'EOF'
+    key:
+      value: $MY_API_KEY
+    credentials:
+    - location:
+        header:
+          name: x-tenant-key
+      key: $MY_TENANT_KEY
+    - location:
+        queryParameter:
+          name: subscription
+      key:
+        file: subscription-key
+    EOF
+
+    credentials_case alone <<'EOF'
+    credentials:
+    - location:
+        header:
+          name: x-tenant-key
+      key: $MY_TENANT_KEY
+    EOF
+
+    echo "credentials configuration verified"
+    {{< /doc-test >}}

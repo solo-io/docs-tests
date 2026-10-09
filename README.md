@@ -79,8 +79,8 @@ of the day's close matches and moved pages; a failed refresh also posts to
 `#doctopus-builds`. Posting needs a `DOCS_TESTS_SLACK_BOT_TOKEN` secret on this
 repo; until it is set, the step skips with a warning.
 
-For the sections moved so far (traffic-management, and llm under
-`documentation/llm/`), scenario definitions live in the `tests.yaml`
+For the sections moved so far (traffic-management, llm under
+`documentation/llm/`, and security), scenario definitions live in the `tests.yaml`
 manifests, so their annotations were exported with `--front-matter none`. A
 manifest key must be unique, but a scenario name need not be: set `name:` when
 two pages in one mode declare the same name. Pages

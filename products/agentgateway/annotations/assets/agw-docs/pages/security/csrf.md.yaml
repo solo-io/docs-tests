@@ -1,0 +1,77 @@
+format: 1
+source: assets/agw-docs/pages/security/csrf.md
+blocks:
+- 4407b57d930e8854 mermaid
+- 01cf30cb88d566f6 yaml
+- 6b70742d9f4f7212 sh
+- ea33aa69df92ee7f sh
+- d66e6c8cda3b9a2f console
+- 73ee30753953ecb6 sh
+- 0665ba8ca6d05a49 sh
+- c159589e2c7ff178 console
+- a42a28da2d4ffdab sh
+tags:
+- paths: csrf
+  block: 1
+  fingerprint: 01cf30cb88d566f6
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 44dee0a4 8af957d1 36184fa5 ad714be7 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 2a495861 99c02176 81bc8c9a 82e7ef59 2a04e34a b1edacca abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="csrf"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: ddb642e80daa818e
+    occurrence: 0
+    words: c112f938 a330395c 28391d3b 7b476727 70110e84 8e7fc023 ba78973d eabc01f1 663ea1bf d05aa2a1 ec72420d 663ea1bf 4d040d3f a172cedc 5e8818d1 b9776d7d 636646ce ec72420d 1eb79602 fa51fd49 a62ed7b9 10c22bcf a9a08919 06cb75f1 9e9d0116 7175517a 7608fa0f 70110e84 9a43b6da c0cbff04 a6b7efa8
+    block_before:
+      block: 1
+      fingerprint: 01cf30cb88d566f6
+      lang: yaml
+      lines: abbd1bdc fbc30693 7f57603a 8c8c4228 44dee0a4 8af957d1 36184fa5 ad714be7 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 2a495861 99c02176 81bc8c9a 82e7ef59 2a04e34a b1edacca abc56510
+      preview: kubectl apply -f - <<EOF
+  blank_before:
+  - ''
+  - ''
+  content: |-
+    {{< doc-test paths="csrf" >}}
+    YAMLTest -f - <<'EOF'
+    - name: CSRF allows POST with no origin header
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /post
+        method: POST
+        headers:
+          host: www.example.com
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: CSRF allows POST from trusted additional origin
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /post
+        method: POST
+        headers:
+          host: www.example.com
+          origin: allowThisOne.example.com
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: CSRF blocks POST from untrusted origin
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /post
+        method: POST
+        headers:
+          host: www.example.com
+          origin: malicioussite.com
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}

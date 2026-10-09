@@ -1,0 +1,102 @@
+format: 1
+source: content/docs/standalone/main/documentation/configuration/security/basic-authn.md
+blocks:
+- 398810ff468d9292 yaml
+- 84aa9ab14184db66 yaml
+- ab0a6e396b6c7637 yaml
+- 901951f79b1e9e8c shell
+hidden:
+- after:
+    line: 714405c4ca3422b9
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 9e5cb570
+    block_before: null
+  content: |-
+    {{< doc-test paths="basic-authn" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 2
+      fingerprint: ab0a6e396b6c7637
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a de77b3a7 b0299c0e 976d9b45 77563d3e 0174a4e1 bf440ccc d0b3f193 24265f4a 9e94e0d5 041ffed4 d67b54bf d897654b c64a4012
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="basic-authn" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The basicAuth authentication policy is accepted by agentgateway in all
+    #     three configuration forms: routing-based (gateways), simplified LLM
+    #     (llm.policies), and simplified MCP (mcp.policies).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That credentials are actually enforced at runtime — requires a backend
+    #     the page omits to forward to.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+        basicAuth:
+          mode: strict
+          # Generated with `htpasswd -nb -B user1 agentgateway`
+          # You can also use:
+          # htpasswd:
+          #   file: /path/to/htpasswd
+          # With inline configuration, $ must be escaped to $$.
+          htpasswd: |
+            user1:$$2y$$05$$LMZ.8WGNqvagmtJz2Gw6VuiE6khXc2zc0FDTHrfWJyLT66HM8BMAa
+          realm: example.com
+    routes:
+    - backends:
+      - host: localhost:8080
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    cat <<'EOF' > config-llm.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        basicAuth:
+          mode: strict
+          # Generated with `htpasswd -nb -B user1 agentgateway`
+          # You can also use:
+          # htpasswd:
+          #   file: /path/to/htpasswd
+          # With inline configuration, $ must be escaped to $$.
+          htpasswd: |
+            user1:$$2y$$05$$LMZ.8WGNqvagmtJz2Gw6VuiE6khXc2zc0FDTHrfWJyLT66HM8BMAa
+          realm: example.com
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config-llm.yaml --validate-only
+
+    cat <<'EOF' > config-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        basicAuth:
+          mode: strict
+          # Generated with `htpasswd -nb -B user1 agentgateway`
+          # You can also use:
+          # htpasswd:
+          #   file: /path/to/htpasswd
+          # With inline configuration, $ must be escaped to $$.
+          htpasswd: |
+            user1:$$2y$$05$$LMZ.8WGNqvagmtJz2Gw6VuiE6khXc2zc0FDTHrfWJyLT66HM8BMAa
+          realm: example.com
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-mcp.yaml --validate-only
+    {{< /doc-test >}}

@@ -1,0 +1,188 @@
+format: 1
+source: assets/agw-docs/pages/security/access-logging.md
+blocks:
+- 0464a7c30afbff50 sh
+- 83b6675b43262b27 sh
+- 693cea08fda68ae5 sh
+- af82b11651327126 console
+- 8067bb1b87c530d3 yaml
+- 3957c7b2bc64c2ae console
+- 59eab08ac8cd6593 yaml
+- 3e52c069b5c95ef5 yaml
+- 9d386e0bb362b3c8 sh
+- 55d1c318fa650810 sh
+- 693cea08fda68ae5 sh
+- 9230c7fd6a9a1822 console
+- 0464a7c30afbff50 sh
+- 83b6675b43262b27 sh
+- 693cea08fda68ae5 sh
+- 9230c7fd6a9a1822 console
+- 8bd101cb0bbcc4d0 yaml
+- fb606a0472c82631 sh
+- 3692be4e0fa13e8f sh
+- 693cea08fda68ae5 sh
+- efbdee36c24d622a console
+- cfb86f6d899ef570 yaml
+- 522d46f68f20f318 yaml
+- 0422482d519f753d sh
+- cf9f9061af5a2b66 yaml
+- 5a85429987ce9aa1 sh
+tags:
+- paths: access-logging
+  block: 7
+  fingerprint: 3e52c069b5c95ef5
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 b2a76230 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-logging"
+    pos: 1
+    sep: ','
+- paths: access-logging
+  block: 16
+  fingerprint: 8bd101cb0bbcc4d0
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 73c054bf 274fdf3f 87d549a0 a68324b2 f1565857 c5a9bbf9 0a282488 521b7d5f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-logging"
+    pos: 1
+    sep: ','
+- paths: access-logging
+  block: 25
+  fingerprint: 5a85429987ce9aa1
+  lang: sh
+  lines: 5a854299
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< re
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 3714bdeef2b3f1b3
+    occurrence: 0
+    words: 663ea1bf dfc3376b 77bc06c5 ec72420d ba78973d 7baa9965 7175517a 99f71fc2 836ff184 bfe5d697 aa9e9b5c dfc3376b a0561fd6 98f38f12 5472a79e 6201111b 7e9e5ac3 6201111b 7e5608ab 836ff184 bfe5d697 dee0c8b1 5ca4f385 bff0f177 328c3816 0cbc8c90 f8564e68 22720057 9e9611a4 704f1b83 663ea1bf d46aee08 a0561fd6 98f38f12 663ea1bf ea325d76 3c462384 10e08a41 5fb6a47e e81fa7c0 aa9e9b5c d46aee08 98f38f12 5fb6a47e e81fa7c0 fa42bed0 a0af9f86 caf9f906 58ee0007 3374a1ad d46aee08 5ca4f385
+    block_before:
+      block: 3
+      fingerprint: af82b11651327126
+      lang: console
+      lines: 344ab5da 06c34a8a 49c09966 5bc866f4 7eaa7dcf
+      preview: "info\trequest gateway=agentgateway-system/agentgateway-proxy"
+  content: |2-
+      {{< doc-test paths="access-logging" >}}
+      YAMLTest -f - <<'EOF'
+      - name: verify request to httpbin returns 200
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}"
+          path: /get
+          method: GET
+          headers:
+            host: www.example.com
+        source:
+          type: local
+        expect:
+          statusCode: 200
+      - name: verify access log entry appears in stdout
+        command:
+          command: "kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deployments/agentgateway-proxy"
+        source:
+          type: local
+        expect:
+          exitCode: 0
+          stdout:
+            contains: "http.path=/get"
+      EOF
+      {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 9230c7fd6a9a1822
+    lang: console
+    lines: 344ab5da 06c34a8a 49c09966 0f7da3c3 7eaa7dcf
+    preview: "info\trequest gateway=agentgateway-system/agentgateway-proxy"
+  content: |2-
+      {{< doc-test paths="access-logging" >}}
+      YAMLTest -f - <<'EOF'
+      - name: verify 400 request is returned
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}"
+          path: /status/400
+          method: GET
+          headers:
+            host: www.example.com
+        source:
+          type: local
+        expect:
+          statusCode: 400
+      - name: verify 400 request was logged
+        command:
+          command: "kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deployments/agentgateway-proxy"
+        source:
+          type: local
+        expect:
+          exitCode: 0
+          stdout:
+            contains: "http.status=400"
+      - name: verify 200 request is returned
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}"
+          path: /get
+          method: GET
+          headers:
+            host: www.example.com
+        source:
+          type: local
+        expect:
+          statusCode: 200
+      - name: verify 200 request was not logged (last log entry is still the 400)
+        command:
+          command: "kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deployments/agentgateway-proxy | tail -1"
+        source:
+          type: local
+        expect:
+          exitCode: 0
+          stdout:
+            contains: "http.status=400"
+      EOF
+      {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: efbdee36c24d622a
+    lang: console
+    lines: 344ab5da 06c34a8a 34f23c6e d7599dc0 81730e9e
+    preview: "info\trequest gateway=agentgateway-system/agentgateway-proxy"
+  content: |2-
+      {{< doc-test paths="access-logging" >}}
+      YAMLTest -f - <<'EOF'
+      - name: verify request with x-user-id header returns 200
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}"
+          path: /get
+          method: GET
+          headers:
+            host: www.example.com
+            x-user-id: user-123
+        source:
+          type: local
+        expect:
+          statusCode: 200
+      - name: verify user_id custom field appears in logs
+        command:
+          command: "kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deployments/agentgateway-proxy"
+        source:
+          type: local
+        expect:
+          exitCode: 0
+          stdout:
+            contains: "user_id=\"user-123\""
+      - name: verify env custom field appears in logs
+        command:
+          command: "kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deployments/agentgateway-proxy"
+        source:
+          type: local
+        expect:
+          exitCode: 0
+          stdout:
+            contains: "env=\"production\""
+      EOF
+      {{< /doc-test >}}

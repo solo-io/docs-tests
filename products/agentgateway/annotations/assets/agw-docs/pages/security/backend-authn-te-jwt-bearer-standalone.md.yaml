@@ -1,0 +1,108 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-te-jwt-bearer-standalone.md
+blocks:
+- db2cf67de3d76745 sh
+- f6931a7b2e59dbc5 sh
+- cf539f04f4cca366 sh
+- 71ac064bc7d79a74 sh
+- 6ffccf1b6be32c3e sh
+- d9062b46479b5b96 sh
+- d6b2bf36d53487ff json
+- 27d18564266748bc yaml
+- 518a14f446c27c09 sh
+hidden:
+- after:
+    line: 89dd968bbc61f9b7
+    occurrence: 0
+    words: b9776d7d 55959cb5 50d858e0 9472f22c ea325d76 6c6b013c 8a84e406 6201111b ca978112 ec864fe9 3c469e9d b6bf7bc8 a1d98908 8e7fc023 bb0347a4 9f584196 14a60637 b9776d7d fa79d474 15ca7cc3 1f58b914 b9776d7d 4ea5ee68 c626da0c 10c22bcf 41ffd8b7 aa9e9b5c b9776d7d 50d858e0 711a6108 3e194352 3aeb0024 56e57ada 56e57ada dc9c5edb 0d6e4079 c590b3c9 05f60b27 55959cb5
+    block_before:
+      block: 7
+      fingerprint: 27d18564266748bc
+      lang: yaml
+      lines: 81b74571 0b661b52 e15101f0 701a625f ea80b7c9 6787571b 3f97174d ed65e9d3 bec91672 61d9749c bd28d03e 5e3afc83 3484140d
+      preview: 'backendAuth:'
+  content: |-
+    {{< doc-test paths="te-jwt-bearer-standalone" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The Entra on-behalf-of config above is a complete, loadable standalone config, including the
+    #     clientSecretPost method, the scopes list, and the additionalParams map.
+    #   * grantType really is camelCase here: the PascalCase spelling that the Kubernetes CRDs use is
+    #     rejected, which is the mode difference this section depends on.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The docker-compose walkthrough earlier on this page -- it runs a live Keycloak stack and a
+    #     long-lived gateway process, neither of which the config-validation harness starts.
+    #   * The CEL quoting of additionalParams values -- a bare `on_behalf_of` also passes validation,
+    #     because the expression is only resolved when a request is exchanged. The quoting note on this
+    #     page is about runtime behavior, not about whether the config loads.
+    #   * That Entra accepts the request -- external dependency: it needs a real tenant.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export CLIENT_ID="${CLIENT_ID:-my-gateway}"
+    export CLIENT_SECRET="${CLIENT_SECRET:-not-a-real-secret}"
+    {{< /doc-test >}}
+- after:
+    line: 89dd968bbc61f9b7
+    occurrence: 0
+    words: b9776d7d 55959cb5 50d858e0 9472f22c ea325d76 6c6b013c 8a84e406 6201111b ca978112 ec864fe9 3c469e9d b6bf7bc8 a1d98908 8e7fc023 bb0347a4 9f584196 14a60637 b9776d7d fa79d474 15ca7cc3 1f58b914 b9776d7d 4ea5ee68 c626da0c 10c22bcf 41ffd8b7 aa9e9b5c b9776d7d 50d858e0 711a6108 3e194352 3aeb0024 56e57ada 56e57ada dc9c5edb 0d6e4079 c590b3c9 05f60b27 55959cb5
+    block_before:
+      block: 7
+      fingerprint: 27d18564266748bc
+      lang: yaml
+      lines: 81b74571 0b661b52 e15101f0 701a625f ea80b7c9 6787571b 3f97174d ed65e9d3 bec91672 61d9749c bd28d03e 5e3afc83 3484140d
+      preview: 'backendAuth:'
+  content: |-
+    {{< doc-test paths="te-jwt-bearer-standalone" >}}
+    # The snippet above shows the backendAuth block only, so wrap it in the config it belongs to.
+    obo_case() {
+      local name="$1" expect="$2"
+      { cat <<'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: backend.example.com:443
+        policies:
+          backendAuth:
+    EOF
+        sed 's/^/        /'
+      } > "config-obo-$name.yaml"
+      if agentgateway -f "config-obo-$name.yaml" --validate-only > "obo-$name.log" 2>&1; then
+        [ "$expect" = ok ] || { echo "FAIL: $name was accepted but should be rejected"; exit 1; }
+        echo "ok       $name"
+      else
+        [ "$expect" = fail ] || { echo "FAIL: $name was rejected"; cat "obo-$name.log"; exit 1; }
+        echo "rejected $name (as expected)"
+      fi
+    }
+
+    # The on-behalf-of config exactly as the section above shows it.
+    obo_case entra-obo ok <<'EOF'
+    oauthTokenExchange:
+      host: login.microsoftonline.com:443
+      path: /TENANT_ID/oauth2/v2.0/token
+      grantType: jwtBearer
+      clientAuth:
+        clientId: $CLIENT_ID
+        clientSecret: $CLIENT_SECRET
+        method: clientSecretPost
+      scopes:
+      - https://graph.microsoft.com/.default
+      additionalParams:
+        requested_token_use: '"on_behalf_of"'
+    EOF
+
+    # The Kubernetes spelling of the grant must not be accepted here.
+    obo_case pascal-grant fail <<'EOF'
+    oauthTokenExchange:
+      host: login.microsoftonline.com:443
+      path: /TENANT_ID/oauth2/v2.0/token
+      grantType: JwtBearer
+      clientAuth:
+        clientId: $CLIENT_ID
+        clientSecret: $CLIENT_SECRET
+        method: clientSecretPost
+    EOF
+
+    echo "standalone jwt bearer config verified"
+    {{< /doc-test >}}

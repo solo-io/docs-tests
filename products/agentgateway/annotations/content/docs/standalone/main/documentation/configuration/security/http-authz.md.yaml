@@ -1,0 +1,98 @@
+format: 1
+source: content/docs/standalone/main/documentation/configuration/security/http-authz.md
+blocks:
+- 4ea73c6ca4791ab4 yaml
+- 3dfedcf0b00d77be yaml
+- f9ecc8fe94477d3f yaml
+- 18c583c7cba71f89 yaml
+- f845fc7f37637eb2 yaml
+- 748d75d0ebaa6460 yaml
+hidden:
+- after:
+    line: 714405c4ca3422b9
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 9e5cb570
+    block_before: null
+  content: |-
+    {{< doc-test paths="http-authz" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 2
+      fingerprint: f9ecc8fe94477d3f
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c d48a6346 3de9d845 7c674e9c d90b2a80 d0f8d002 3f0e09c9 8df8b0c8 d72f261d c64a4012
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="http-authz" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The authorization policy with allow/deny/require and legacy rules is
+    #     accepted by agentgateway in all three configuration forms: routing-based
+    #     (gateways), simplified LLM (llm.policies), and simplified MCP (mcp.policies).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That requests are actually allowed/denied at runtime — requires a backend
+    #     and traffic the page omits.
+    #   * The `### Require rules` snippets and the model-layer `llm:` example are
+    #     focused fragments, so they are not tested.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        authorization:
+          rules:
+          - allow: 'request.path == "/authz/public"'
+          - deny: 'request.path == "/authz/deny"'
+          - require: 'jwt.aud == "my-service"'
+          # legacy format; same as `allow: ...`
+          - 'request.headers["x-allow"] == "true"'
+      backends:
+      - host: localhost:8080
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    cat <<'EOF' > config-llm.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        authorization:
+          rules:
+          - allow: 'request.path == "/authz/public"'
+          - deny: 'request.path == "/authz/deny"'
+          - require: 'jwt.aud == "my-service"'
+          # legacy format; same as `allow: ...`
+          - 'request.headers["x-allow"] == "true"'
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config-llm.yaml --validate-only
+
+    cat <<'EOF' > config-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        authorization:
+          rules:
+          - allow: 'request.path == "/authz/public"'
+          - deny: 'request.path == "/authz/deny"'
+          - require: 'jwt.aud == "my-service"'
+          # legacy format; same as `allow: ...`
+          - 'request.headers["x-allow"] == "true"'
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-mcp.yaml --validate-only
+    {{< /doc-test >}}

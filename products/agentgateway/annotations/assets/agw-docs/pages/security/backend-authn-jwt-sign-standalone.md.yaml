@@ -1,0 +1,68 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-jwt-sign-standalone.md
+blocks:
+- 40f831150eed3d06 yaml
+- e9ef58f352b11f6f
+- c0711baf5dc8edda
+hidden:
+- after:
+    block: 2
+    fingerprint: c0711baf5dc8edda
+    lang: ''
+    lines: c0711baf
+    preview: 'Error: failed to parse jwtSign signingKey: failed to load RSA signing key'
+  content: |-
+    {{< doc-test paths="backend-authn-jwt-sign" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: c0711baf5dc8edda
+    lang: ''
+    lines: c0711baf
+    preview: 'Error: failed to parse jwtSign signingKey: failed to load RSA signing key'
+  content: |-
+    {{< doc-test paths="backend-authn-jwt-sign" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The jwtSign backendAuth example is accepted as a complete standalone config, with the signing
+    #     key read from a file.
+    #   * The reserved-claim and alg/key-mismatch errors quoted above are the errors that the binary
+    #     actually emits.
+    openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out signing-key.pem
+
+    cat <<EOF > config-jwt-sign.yaml
+    # yaml-language-server: \$schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: localhost:8080
+        policies:
+          backendAuth:
+            jwtSign:
+              signingKey:
+                file: $(pwd)/signing-key.pem
+              alg: ES256
+              kid: my-signing-key
+              claims:
+                iss: MYACCOUNT.MYUSER.SHA256:my-public-key-fingerprint
+                sub: MYACCOUNT.MYUSER
+                aud: https://myaccount.snowflakecomputing.com
+              ttl: 60s
+    EOF
+    agentgateway -f config-jwt-sign.yaml --validate-only
+
+    # A reserved claim is rejected when the configuration loads.
+    python3 -c 'import sys; s=open("config-jwt-sign.yaml").read(); open("config-jwt-sign-reserved.yaml","w").write(s.replace("            iss:", "            iat: 12345\n            iss:"))'
+    if agentgateway -f config-jwt-sign-reserved.yaml --validate-only 2>/dev/null; then
+      echo "FAILED: expected the reserved iat claim to be rejected"; exit 1
+    fi
+
+    # An alg that disagrees with the key family is rejected the same way.
+    sed 's/          alg: ES256/          alg: RS256/' config-jwt-sign.yaml > config-jwt-sign-mismatch.yaml
+    if agentgateway -f config-jwt-sign-mismatch.yaml --validate-only 2>/dev/null; then
+      echo "FAILED: expected the RS256 and EC key mismatch to be rejected"; exit 1
+    fi
+    echo "jwtSign standalone configuration verified"
+    {{< /doc-test >}}

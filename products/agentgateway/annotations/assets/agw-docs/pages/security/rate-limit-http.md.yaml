@@ -1,0 +1,91 @@
+format: 1
+source: assets/agw-docs/pages/security/rate-limit-http.md
+blocks:
+- 8c413dfc3cc3f39d yaml
+- 3c33092ece0b9211 yaml
+- 7a30992c1e8ea699
+- 3c33092ece0b9211 yaml
+- ebe7f15c015fbdc6 sh
+- 4b79750abb3b6aab json
+- a798e59b4ea81720 sh
+- 5f9bc01e801adf57 sh
+- 4d563e587bb22992
+- 278c17cebe9d8d45
+- 9a5f74df34b27619 sh
+- 0c11b71a638f9c0f sh
+tags:
+- paths: local-rate-limit
+  block: 3
+  fingerprint: 3c33092ece0b9211
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 b1e5bf60 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d a50da420 f971795d 63a18fbb 9482fbfc 52cf7828 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local-rate-limit"
+    only: true
+    lead: ' '
+- paths: local-rate-limit,claim-level-rate-limit
+  block: 11
+  fingerprint: 0c11b71a638f9c0f
+  lang: sh
+  lines: 0c11b71a
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} httpbin-rate-limit -n
+  form:
+    attr: paths="local-rate-limit,claim-level-rate-limit"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 3c33092ece0b9211
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 b1e5bf60 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d a50da420 f971795d 63a18fbb 9482fbfc 52cf7828 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="local-rate-limit" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for httpbin rate limit policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: httpbin
+               name: httpbin-rate-limit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 9a5f74df34b27619
+    lang: sh
+    lines: ca311ac1 644f4847 e01864c6
+    preview: sleep 1 && curl -o /dev/null -w "%{http_code}\n" \
+  content: |2-
+       {{< doc-test paths="local-rate-limit" >}}
+       # Test rate limiting by sending requests in rapid succession
+       for i in $(seq 1 6); do
+         curl -s -o /dev/null http://${INGRESS_GW_ADDRESS}:80/anything -H "host: www.example.com" &
+       done
+       wait
+
+       # Now verify the rate limit is active
+       YAMLTest -f - <<'EOF'
+       - name: Verify rate limit kicks in after burst
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         expect:
+           statusCode: 429
+         retries: 3
+       EOF
+       {{< /doc-test >}}

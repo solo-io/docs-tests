@@ -1,0 +1,237 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-te-mcp.md
+blocks:
+- 0948a7ad99ea06e6 yaml
+- 1a815c14c24936bf yaml
+- dc843fdbf274805d yaml
+- f559fbec874ce12c sh
+- 3a21231b48898c55
+- 4b133185b922072b yaml
+- 065db7140053e0da yaml
+- 820ac130329f886a yaml
+- 5ada129887e37bef sh
+- 388515b7828b7873 sh
+- bea9f196a0fca114 sh
+- ff360893f9b9a955 json
+- 6ffccf1b6be32c3e sh
+- 1ad79d59acdb9e67 sh
+- 0db6d3653d44a121 json
+- a2dbf6fe59306d39 sh
+- 379b94fae0f15b55 sh
+tags:
+- paths: te-mcp
+  block: 0
+  fingerprint: 0948a7ad99ea06e6
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 d5a94596 0f10c5bc fa1e8330 2cbda8fa 36184fa5 97bcd5e0 8432e015 839a5cac 2cbda8fa a58565b2 8c8c4228 fa1e8330 2cbda8fa 36184fa5 04968f51 6b6c602b 6b082843 ff42c2c6 ee2747db 0ff65a1a 960ec756 82f2bc7e d76df690 f98c047b cb3f91d5 f1540154 0d6480f0 8c8c4228 d5a94596 0f10c5bc fa1e8330 2cbda8fa 36184fa5 8432e015 2cbda8fa 0ff65a1a 25a54da6 d706a49c 56c7990c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-mcp"
+    only: true
+    lead: ' '
+- paths: te-mcp
+  block: 1
+  fingerprint: 1a815c14c24936bf
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 ee3fffb6 0f10c5bc 36184fa5 4352159f 3035507a 6a717282 8432e015 449ac08a 839a5cac 2cbda8fa abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-mcp"
+    only: true
+    lead: ' '
+- paths: te-mcp
+  block: 2
+  fingerprint: dc843fdbf274805d
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 3459aa2f 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e faf79fcb b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-mcp"
+    only: true
+    lead: ' '
+- paths: te-mcp
+  block: 3
+  fingerprint: f559fbec874ce12c
+  lang: sh
+  lines: f559fbec
+  preview: kubectl -n httpbin get httproute mcp-echo -o jsonpath='{.status.parents[*].condi
+  form:
+    attr: paths="te-mcp"
+    only: true
+    lead: ' '
+- paths: te-mcp
+  block: 5
+  fingerprint: 4b133185b922072b
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 1c8560cd 0f10c5bc 36184fa5 2efcbf93 4ee01b17 c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-mcp"
+    only: true
+    lead: ' '
+- paths: te-mcp
+  block: 6
+  fingerprint: 065db7140053e0da
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 21499732 0f10c5bc 1426decf 2f7c298d 700eb2cd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-mcp"
+    only: true
+    lead: ' '
+- paths: te-mcp
+  block: 7
+  fingerprint: 820ac130329f886a
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 23fed4b1 0f10c5bc 36184fa5 588a5d84 453bdfd0 99d7dba1 ee3fffb6 bb85cefe 146e11c6 0b661b52 70c97555 b6e1c19c 99d7dba1 1c8560cd c36d2f66 3e301076 837dc1fd 2e32215f 6787571b 11698326 27737a36 9ebc4789 21499732 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-mcp"
+    only: true
+    lead: ' '
+- paths: te-mcp
+  block: 16
+  fingerprint: 379b94fae0f15b55
+  lang: sh
+  lines: 4a61c901 cfc41d56 64626d64 4330da45 b16e6e09 10fd7957 5c4dda8f
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-token-exchange -n
+  form:
+    attr: paths="te-mcp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 14
+    fingerprint: 0db6d3653d44a121
+    lang: json
+    lines: 021fb596 2707c0cc 537437e7 c7fbdbd0 d10b36aa 021fb596 2707c0cc 73d71784 17b73d41 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="te-mcp" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The echo MCP server, the MCP AgentgatewayBackend, and the HTTPRoute apply and become ready.
+    #   * The oauthTokenExchange policy is accepted when targetRefs names an AgentgatewayBackend rather
+    #     than a Service -- the one thing this guide does differently from the other two.
+    #   * End to end: an MCP tools/call reaches the echo server carrying an *exchanged* token, issued for
+    #     target-client with requester-client as the authorized party, not the token the caller sent.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The MCP Inspector CLI in the visible steps -- it needs npx and a network fetch, so the hidden
+    #     test speaks the same streamable HTTP protocol with curl instead. Same requests, no toolchain.
+
+    # Expose the Keycloak token endpoint through the gateway so the token can be minted without a
+    # port-forward.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: keycloak
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: agentgateway-proxy
+        namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+      hostnames:
+      - "keycloak.local"
+      rules:
+      - backendRefs:
+        - name: keycloak
+          port: 8080
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 0db6d3653d44a121
+    lang: json
+    lines: 021fb596 2707c0cc 537437e7 c7fbdbd0 d10b36aa 021fb596 2707c0cc 73d71784 17b73d41 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="te-mcp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the mcp token exchange policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: httpbin
+            name: mcp-token-exchange
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 0db6d3653d44a121
+    lang: json
+    lines: 021fb596 2707c0cc 537437e7 c7fbdbd0 d10b36aa 021fb596 2707c0cc 73d71784 17b73d41 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="te-mcp" >}}
+    # Mint the incoming token. Keycloak readiness and data plane programming both lag the rollout, and
+    # an unready upstream answers 503, so retry until a real token comes back.
+    INBOUND_TOKEN=""
+    for i in $(seq 1 60); do
+      INBOUND_TOKEN=$(curl -s --max-time 10 "http://${INGRESS_GW_ADDRESS}:80/realms/backend-oauth/protocol/openid-connect/token" -H "host: keycloak.local" -u initial-client:initial-secret -d grant_type=password -d username=testuser -d password=testpass | jq -r '.access_token // empty' 2>/dev/null || true)
+      [ -n "$INBOUND_TOKEN" ] && break
+      sleep 2
+    done
+    test -n "$INBOUND_TOKEN" || { echo "FAILED: could not mint the incoming token"; exit 1; }
+
+    # Speak MCP streamable HTTP directly, so the test needs no npx. Open a session, complete the
+    # handshake, then call the echo tool asking it to reflect the headers the MCP server received.
+    MCP_URL="http://${INGRESS_GW_ADDRESS}:80/mcp"
+    ACCEPT='application/json, text/event-stream'
+    AZP=""
+    BODY=""
+    for i in $(seq 1 30); do
+      SID=$(curl -sD- -o /dev/null --max-time 15 -X POST "$MCP_URL" \
+        -H 'content-type: application/json' -H "accept: $ACCEPT" \
+        -H "authorization: Bearer $INBOUND_TOKEN" \
+        -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"doc-test","version":"1"}}}' \
+        | grep -i '^mcp-session-id:' | tr -d '\r' | cut -d' ' -f2- || true)
+      if [ -n "$SID" ]; then
+        curl -s --max-time 15 -o /dev/null -X POST "$MCP_URL" \
+          -H 'content-type: application/json' -H "accept: $ACCEPT" \
+          -H "authorization: Bearer $INBOUND_TOKEN" -H "mcp-session-id: $SID" \
+          -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' || true
+        BODY=$(curl -s --max-time 15 -X POST "$MCP_URL" \
+          -H 'content-type: application/json' -H "accept: $ACCEPT" \
+          -H "authorization: Bearer $INBOUND_TOKEN" -H "mcp-session-id: $SID" \
+          -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"echo","arguments":{"input":"test","includeHttpHeaders":true}}}' || true)
+        AZP=$(printf '%s' "$BODY" | python3 -c '
+    import sys,json,base64,re
+    try:
+        raw=sys.stdin.read()
+        line=[l for l in raw.splitlines() if l.startswith("data: ")][-1][6:]
+        items=json.loads(line)["result"]["content"]
+        req=json.loads(items[1]["text"])
+        tok=req["headers"]["authorization"].split()[1]
+        seg=tok.split(".")[1]
+        print(json.loads(base64.urlsafe_b64decode(seg+"="*(-len(seg)%4)))["azp"])
+    except Exception:
+        pass')
+      fi
+      [ "$AZP" = "requester-client" ] && break
+      sleep 2
+    done
+    if [ "$AZP" != "requester-client" ]; then
+      echo "FAILED: expected the token the MCP server received to have azp=requester-client, got '$AZP'"
+      echo "last response (first 500 chars): $(printf '%s' "$BODY" | head -c 500)"
+      exit 1
+    fi
+    echo "mcp token exchange verified (token reaching the MCP server has azp=$AZP)"
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 379b94fae0f15b55
+    lang: sh
+    lines: 4a61c901 cfc41d56 64626d64 4330da45 b16e6e09 10fd7957 5c4dda8f
+    preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-token-exchange -n
+  content: |-
+    {{< doc-test paths="te-mcp" >}}
+    kubectl delete httproute keycloak -n httpbin --ignore-not-found
+    {{< /doc-test >}}

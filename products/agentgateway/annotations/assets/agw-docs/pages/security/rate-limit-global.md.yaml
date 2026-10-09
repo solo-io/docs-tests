@@ -1,0 +1,199 @@
+format: 1
+source: assets/agw-docs/pages/security/rate-limit-global.md
+blocks:
+- 5ed293e69a774172 mermaid
+- ebd571a9d95404a6 yaml
+- f468bd91e44b1a32 sh
+- 926d573f30a99031 yaml
+- 1f7294013b2dfd55 yaml
+- 6f7d34f3e77e7be3 yaml
+- cc13a18babeeafab sh
+- 8a0df16106d0b50e
+- 8194bf07b71fa9ac yaml
+- c6a8dd088ef595fc sh
+- d375113f69649f1e sh
+- 1ccc3354a57bb9b2
+- 5ac4f0b2b01eda0e yaml
+- 0464a7c30afbff50 sh
+- 83b6675b43262b27 sh
+- 21f0f8cad667f246 sh
+- acad9caad8404c87 sh
+- 483a9a5b677bd808
+- c77d10a04c163e03 yaml
+- 5b8865dc4bbc08aa sh
+- 7f317b06ca1c3ac9 sh
+- 41daae9f767ae588 yaml
+- 0464a7c30afbff50 sh
+- 83b6675b43262b27 sh
+- 75769b0d29fdf36f yaml
+- ac4e0cad1a9afd16 yaml
+- 3b655a3bc454ea49 sh
+- 6b79b3c0c9bd6535 sh
+- 7ef309127801c9e3 yaml
+- 21f0f8cad667f246 sh
+- acad9caad8404c87 sh
+- 93f87fef3e6dc1ef sh
+tags:
+- paths: global-rate-limit-by-ip,deploy-rate-limit-server
+  block: 2
+  fingerprint: f468bd91e44b1a32
+  lang: sh
+  lines: f468bd91
+  preview: kubectl create namespace ratelimit
+  form:
+    attr: paths="global-rate-limit-by-ip,deploy-rate-limit-server"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-by-ip,deploy-rate-limit-server
+  block: 3
+  fingerprint: 926d573f30a99031
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 ed6b9b8e e6444300 36184fa5 97bcd5e0 8432e015 839a5cac 58241f87 a58565b2 8c8c4228 fa1e8330 58241f87 36184fa5 04968f51 8021c05b 46b5823e 0ff65a1a 6fa3f590 cb3f91d5 f1540154 0d6480f0 8c8c4228 ed6b9b8e e6444300 36184fa5 8432e015 58241f87 0ff65a1a 43914331 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-by-ip,deploy-rate-limit-server"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-by-ip,deploy-rate-limit-server
+  block: 4
+  fingerprint: 1f7294013b2dfd55
+  lang: yaml
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 981457e9 e6444300 ff72caa3 8192af0a 253adb5a b7b5f484 b2f65218 d1d87427 5d74f63c 69d5a543 60a22262 999f4689 93d8f3b8 92199427 5d74f63c 8a9553b5 15e2f30d 1ca930ca 782c2d4b 915858bc 5d74f63c 69d5a543 15e2f30d 782c2d4b 880542df 5d74f63c 69d5a543 823606ae ac4690bc eef55bb8 5d74f63c 69d5a543 66ea0bf7 3772f74b eef55bb8 f1afd6f7 5d74f63c 69d5a543 a1a5b567 b2115d8f a0517c7b d83328ef 5d74f63c 69d5a543 975d9fac a0517c7b 7f1d1bbf 5d74f63c 69d5a543 15e2f30d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-by-ip,deploy-rate-limit-server"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-by-ip,deploy-rate-limit-server
+  block: 5
+  fingerprint: 6f7d34f3e77e7be3
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 02bf0210 e6444300 36184fa5 97bcd5e0 8432e015 839a5cac d161ac41 a58565b2 8c8c4228 fa1e8330 d161ac41 36184fa5 04968f51 b0d2210e 4e299de8 fa2efedb 8db70061 95859ef9 4d05a913 3c7b2a9b 1f28240b b99bfed2 66a7309d 5931997b bf7194fe db5d62e1 8affd970 0d1146aa 8affd970 0ff65a1a 7b9c3fc1 4c46ad82 fcd8c64a 0d315c70 eb434b85 56025bae c5d7714b 0d315c70 889016e3 981457e9 cb3f91d5 f1540154 0d6480f0 8c8c4228 02bf0210 e6444300 36184fa5 8432e015 d161ac41 0ff65a1a 9be9ce38 dfb1a8e0 c67d4d12 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-by-ip,deploy-rate-limit-server"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-by-ip
+  block: 8
+  fingerprint: 8194bf07b71fa9ac
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 2a9ae068 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d a50da420 c14c1813 70c97555 02bf0210 e6444300 dfb1a8e0 253adb5a b7b5f484 8902dc3d d39272cf dfcdcd05 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-by-ip"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-by-ip
+  block: 31
+  fingerprint: 93f87fef3e6dc1ef
+  lang: sh
+  lines: a4021376 69c90926 c503831a 1ca22667 890c0bf7 910776f7 c7b36e41 451a932f e8e94c12 ea22d5b5
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} ip-rate-limit -n http
+  form:
+    attr: paths="global-rate-limit-by-ip"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 5
+    fingerprint: 6f7d34f3e77e7be3
+    lang: yaml
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 02bf0210 e6444300 36184fa5 97bcd5e0 8432e015 839a5cac d161ac41 a58565b2 8c8c4228 fa1e8330 d161ac41 36184fa5 04968f51 b0d2210e 4e299de8 fa2efedb 8db70061 95859ef9 4d05a913 3c7b2a9b 1f28240b b99bfed2 66a7309d 5931997b bf7194fe db5d62e1 8affd970 0d1146aa 8affd970 0ff65a1a 7b9c3fc1 4c46ad82 fcd8c64a 0d315c70 eb434b85 56025bae c5d7714b 0d315c70 889016e3 981457e9 cb3f91d5 f1540154 0d6480f0 8c8c4228 02bf0210 e6444300 36184fa5 8432e015 d161ac41 0ff65a1a 9be9ce38 dfb1a8e0 c67d4d12 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="global-rate-limit-by-ip,deploy-rate-limit-server" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for redis deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: ratelimit
+               name: redis
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       - name: wait for ratelimit deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: ratelimit
+               name: ratelimit
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 8194bf07b71fa9ac
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 2a9ae068 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d a50da420 c14c1813 70c97555 02bf0210 e6444300 dfb1a8e0 253adb5a b7b5f484 8902dc3d d39272cf dfcdcd05 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="global-rate-limit-by-ip" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for ip-rate-limit policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: httpbin
+               name: ip-rate-limit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 1ccc3354a57bb9b2
+    lang: ''
+    lines: 1ef92b8a 70b65d9e ab5df625 950ea6a2 bff140b7 8a7b694f ab5df625 b5c48621
+    preview: 'Request 1: HTTP 200'
+  content: |2-
+       {{< doc-test paths="global-rate-limit-by-ip" >}}
+       # Wait until the proxy enforces the policy. Accepted status can land before
+       # the data plane picks up the policy, and unlimited requests don't count.
+       for attempt in $(seq 1 30); do
+         if curl -s -D - -o /dev/null http://${INGRESS_GW_ADDRESS}:80/get -H "host: www.example.com" | grep -qi '^x-ratelimit-limit:'; then
+           break
+         fi
+         sleep 2
+       done
+
+       # Send 15 requests rapidly to exceed the 10 req/min limit
+       for i in $(seq 1 15); do
+         curl -s -o /dev/null http://${INGRESS_GW_ADDRESS}:80/get -H "host: www.example.com" &
+       done
+       wait
+
+       # Verify rate limit is active
+       YAMLTest -f - <<'EOF'
+       - name: Verify global rate limit by IP
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/get"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         expect:
+           statusCode: 429
+         retries: 3
+       EOF
+       {{< /doc-test >}}

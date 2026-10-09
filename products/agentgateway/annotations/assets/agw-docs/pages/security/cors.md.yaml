@@ -1,0 +1,108 @@
+format: 1
+source: assets/agw-docs/pages/security/cors.md
+blocks:
+- 64ca6d3480988c61 mermaid
+- 7f68eb563cbbfa91 sh
+- 9cf52bafd11e3f06 sh
+- 0b376d5bac6a34e1 sh
+- a89cd2b0c5a7b27e sh
+- fcc7b3c00fcb431b console
+- ff2c637093bf4a9c sh
+- f993fde3642fcdee sh
+- 641adb7c27992178 console
+- bb72aaa1fd80a588 sh
+- c6ddf23b0b350a01 sh
+- 8f79c4a061156252 console
+- 0fb5e1befb7bc778 yaml
+- 1e6e39d1b9807358 sh
+tags:
+- paths: cors-in-httproute
+  block: 1
+  fingerprint: 7f68eb563cbbfa91
+  lang: sh
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 6e95318c a602752c 19c2fa74 6def2dca fd12af70 6bacf137 afd95d43 be536e21 25d8505d 08e0e4bc ead663af 5b742131 4c0dfc57 0f27179b 6bacf137 d5908f8d d4f669b2 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cors-in-httproute"
+    only: true
+    lead: ' '
+- paths: cors-in-agentgatewaypolicy
+  block: 2
+  fingerprint: 9cf52bafd11e3f06
+  lang: sh
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c74551b 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 19c2fa74 6def2dca fd12af70 d070d137 f5e36e99 1a4c11df afd95d43 d31e88e1 7556d13d 3d5ef289 ead663af 5b742131 4c0dfc57 0f27179b d070d137 961d261d d4f669b2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cors-in-agentgatewaypolicy"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 1a406b001e6d80da
+    occurrence: 1
+    words: 7508386a
+    block_before:
+      block: 2
+      fingerprint: 9cf52bafd11e3f06
+      lang: sh
+      lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c74551b 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 19c2fa74 6def2dca fd12af70 d070d137 f5e36e99 1a4c11df afd95d43 d31e88e1 7556d13d 3d5ef289 ead663af 5b742131 4c0dfc57 0f27179b d070d137 961d261d d4f669b2 abc56510
+      preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |2-
+      {{< doc-test paths="cors-in-httproute,cors-in-agentgatewaypolicy" >}}
+      YAMLTest -f - <<'EOF'
+      - name: CORS preflight returns expected headers
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}:80/get"
+          method: OPTIONS
+          headers:
+            host: www.example.com
+            Origin: https://example.com
+        source:
+          type: local
+        expect:
+          statusCode: 200
+          headers:
+            - name: access-control-allow-origin
+              comparator: equals
+              value: https://example.com
+            - name: access-control-allow-methods
+              comparator: contains
+              value: GET
+            - name: access-control-max-age
+              comparator: equals
+              value: "86400"
+      EOF
+      {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 8f79c4a061156252
+    lang: console
+    lines: 92413e97 a152bc23 3e670794 befea1e7 18e0a468 15357256
+    preview: HTTP/1.1 200 OK
+  content: |2-
+      {{< doc-test paths="cors-in-httproute,cors-in-agentgatewaypolicy" >}}
+      YAMLTest -f - <<'EOF'
+      - name: CORS preflight returns expected headers
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}:80/get"
+          method: OPTIONS
+          headers:
+            host: www.example.com
+            Origin: https://notallowed.com
+        source:
+          type: local
+        expect:
+          statusCode: 200
+          headers:
+            - name: access-control-allow-origin
+              comparator: equals
+              value: https://notallowed.com
+            - name: access-control-allow-methods
+              comparator: contains
+              value: HEAD # contains all methods not just the ones you configured, because the origin is not allowed
+            - name: access-control-max-age
+              comparator: equals
+              value: "3600"
+      EOF
+      {{< /doc-test >}}

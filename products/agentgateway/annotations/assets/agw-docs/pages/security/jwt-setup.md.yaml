@@ -1,0 +1,262 @@
+format: 1
+source: assets/agw-docs/pages/security/jwt-setup.md
+blocks:
+- a37da4c4c9a42b81 yaml
+- 24f23d8e2a9ca144 sh
+- 28b6c9349c5ac3ac sh
+- 1a1d7641506a4ebb sh
+- 8bb6a04fbce36ab1
+- 9ad46302d65123c8 sh
+- 38819afcd81bc6ab sh
+- 1dbb8de32b1a3508 sh
+- b036576a4f03e936 sh
+- 3dfda450d15bda7e
+- 3f8fff45937f29cf yaml
+- 1dbb8de32b1a3508 sh
+- f5b4c8c15094dd70 sh
+- 4bac4e326b0a5219
+- 40af53a4edc012c0 yaml
+- 2f97d3fd28da58f8 yaml
+- e2043dc894ee6c3c yaml
+- c89a90df5bdaad74 yaml
+- 50cb457b97d2631f yaml
+- 8b6ba497c09a9e28 yaml
+- 34313c1195072801 yaml
+- 25c7d29777b42fb5 yaml
+- 8f6a3ee570f075c7 yaml
+- aff6f96deddd14f9 yaml
+- 60c5e6cef8378cbc sh
+- d2956139f55649fe sh
+- 0f42b045a8c534ae json
+- e3382a4836b67a1f yaml
+- 60c5e6cef8378cbc sh
+- ff5d086018315ae1 json
+- 3136c67ea31d50e0 yaml
+- 0f2267cca5278cb8 sh
+tags:
+- paths: jwt-claims
+  block: 5
+  fingerprint: 9ad46302d65123c8
+  lang: sh
+  lines: 41ce0624 67c5a3ac b0cead6d 4f797bf3 29fa7ee7 11214f0e e9a0adf0 f53385aa 76cae5e4 438525b1 ddce3fc8
+  preview: REGISTRATION=$(curl --fail --silent --show-error \
+  form:
+    attr: paths="jwt-claims"
+    only: true
+    lead: ' '
+- paths: jwt-claims
+  block: 6
+  fingerprint: 38819afcd81bc6ab
+  lang: sh
+  lines: c319447c a8d73eaf 7ec3569a c7ff650f aa5b1908
+  preview: ACCESS_TOKEN=$(curl -s -u "${KEYCLOAK_CLIENT}:${KEYCLOAK_SECRET}" \
+  form:
+    attr: paths="jwt-claims"
+    only: true
+    lead: ' '
+- paths: jwt-claims
+  block: 10
+  fingerprint: 3f8fff45937f29cf
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 0e1d25e1 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d a9110e4f d3cb008e a1343bf6 1f41fa96 44ec9b74 b93c9907 4d0a926f 8072210d 70c97555 9d5a3bb5 0d6480f0 28101486 5e1d80db c095a45d 8cad21dc d48a6346 d25a61e1 1188488c 0a06a173 1db3f863 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="jwt-claims"
+    only: true
+    lead: ' '
+- paths: jwt-claims
+  block: 12
+  fingerprint: f5b4c8c15094dd70
+  lang: sh
+  lines: 654c1cdc 67c5a3ac b0cead6d 8096e4d9 29fa7ee7 11214f0e e9a0adf0 f53385aa 37b099eb 0cdcd184 a8d73eaf 7ec3569a c7ff650f 013bbbbf
+  preview: OTHER_REGISTRATION=$(curl --fail --silent --show-error \
+  form:
+    attr: paths="jwt-claims"
+    only: true
+    lead: ' '
+- paths: jwt-claims
+  block: 23
+  fingerprint: aff6f96deddd14f9
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 0e1d25e1 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d a9110e4f d3cb008e a1343bf6 1f41fa96 44ec9b74 b93c9907 4d0a926f 8072210d 70c97555 9d5a3bb5 0d6480f0 28101486 5e1d80db c095a45d c65eff4f 8905bcef 14ddcd05 207d5e5e b77938e8 e23edca7 94898b38 ab9bc0b4 57e12b4c 34ba28a9 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="jwt-claims"
+    only: true
+    lead: ' '
+- paths: jwt-claims
+  block: 27
+  fingerprint: e3382a4836b67a1f
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 0e1d25e1 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 5a52fee2 a9110e4f d3cb008e a1343bf6 1f41fa96 44ec9b74 b93c9907 4d0a926f 8072210d 70c97555 9d5a3bb5 0d6480f0 28101486 5e1d80db c095a45d 8905bcef 14ddcd05 207d5e5e adf9f26f b60b82ed abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="jwt-claims"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: 38819afcd81bc6ab
+    lang: sh
+    lines: c319447c a8d73eaf 7ec3569a c7ff650f aa5b1908
+    preview: ACCESS_TOKEN=$(curl -s -u "${KEYCLOAK_CLIENT}:${KEYCLOAK_SECRET}" \
+  content: |2-
+       {{< doc-test paths="jwt-claims" >}}
+       if [ -z "${ACCESS_TOKEN:-}" ] || [ "${ACCESS_TOKEN}" = "null" ]; then
+         echo "no access token issued for the client; check the client registration in the previous step"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    line: cf13c3ed53edb275
+    occurrence: 0
+    words: cbb82ebe 1f64fff0 f905b195 f3959239 b9d90628 df448a78 ca978112 1f58b914 0695b563 ca978112 ffa63583 7175517a f1234d75 3c469e9d c1481e2e fc93cb07 b9d90628 6201111b 153b2a38 ca978112 dcaadad1 6db7d803 d6a7cd2a b8bc0e4f fa51fd49 e255d11c cbb82ebe f0244b49 7187f067 ca978112 d26eae87
+    block_before:
+      block: 10
+      fingerprint: 3f8fff45937f29cf
+      lang: yaml
+      lines: abbd1bdc fbc30693 7f57603a 8c8c4228 0e1d25e1 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d a9110e4f d3cb008e a1343bf6 1f41fa96 44ec9b74 b93c9907 4d0a926f 8072210d 70c97555 9d5a3bb5 0d6480f0 28101486 5e1d80db c095a45d 8cad21dc d48a6346 d25a61e1 1188488c 0a06a173 1db3f863 abc56510
+      preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="jwt-claims" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for jwt-auth-policy with authorization to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: jwt-auth-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 4bac4e326b0a5219
+    lang: ''
+    lines: ab5df625 f4d99b6a 4267b899 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="jwt-claims" >}}
+    # The visible blocks set both tokens as shell variables; export them so that
+    # YAMLTest (a child process that interpolates them from its environment) can read them.
+    export ACCESS_TOKEN
+    export OTHER_TOKEN
+    YAMLTest -f - <<'EOF'
+    - name: the registered client matches the allow rule
+      retries: 3
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+          authorization: "Bearer ${ACCESS_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: a second client is authenticated but not authorized
+      retries: 3
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+          authorization: "Bearer ${OTHER_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: aff6f96deddd14f9
+    lang: yaml
+    lines: abbd1bdc fbc30693 7f57603a 8c8c4228 0e1d25e1 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d a9110e4f d3cb008e a1343bf6 1f41fa96 44ec9b74 b93c9907 4d0a926f 8072210d 70c97555 9d5a3bb5 0d6480f0 28101486 5e1d80db c095a45d c65eff4f 8905bcef 14ddcd05 207d5e5e b77938e8 e23edca7 94898b38 ab9bc0b4 57e12b4c 34ba28a9 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="jwt-claims" >}}
+       # WHAT THIS TEST VALIDATES:
+       #   * The transformation reads validated JWT claims — x-auth-issuer is set from
+       #     jwt.iss, proving the jwt CEL variable is populated before the transformation runs.
+       #   * default() falls back correctly — x-user-role is 'user' because the token has no
+       #     top-level 'role' claim, exercising default(jwt.role, 'user').
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The exact jwt.sub value (x-user-id) — Different layer: the value is a dynamic
+       #     Keycloak user UUID, so only issuer/role (deterministic) are asserted.
+       #   * The full claim-based routing split (premium vs free backend) — Requires
+       #     config/traffic the page omits: real premium-backend / free-backend Services and a
+       #     token carrying a 'tier' claim (the default token has none). The Claim-based routing
+       #     section instead tests the piece that IS deterministic: a later jwt-claims assertion
+       #     confirms the PreRouting transformation derives x-user-tier='free' from default().
+       #
+       # The visible token block sets ACCESS_TOKEN as a shell variable; export it so that
+       # YAMLTest (a child process that interpolates ${ACCESS_TOKEN} from its environment)
+       # can read it.
+       export ACCESS_TOKEN
+       {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: aff6f96deddd14f9
+    lang: yaml
+    lines: abbd1bdc fbc30693 7f57603a 8c8c4228 0e1d25e1 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d a9110e4f d3cb008e a1343bf6 1f41fa96 44ec9b74 b93c9907 4d0a926f 8072210d 70c97555 9d5a3bb5 0d6480f0 28101486 5e1d80db c095a45d c65eff4f 8905bcef 14ddcd05 207d5e5e b77938e8 e23edca7 94898b38 ab9bc0b4 57e12b4c 34ba28a9 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="jwt-claims" >}}
+       YAMLTest -f - <<'EOF'
+       - name: validated JWT claims are injected as request headers
+         retries: 3
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+           method: GET
+           headers:
+             host: www.example.com
+             authorization: "Bearer ${ACCESS_TOKEN}"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.headers.X-Auth-Issuer[0]"
+               comparator: contains
+               value: "realms/master"
+             - path: "$.headers.X-User-Role[0]"
+               comparator: contains
+               value: "user"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 28
+    fingerprint: 60c5e6cef8378cbc
+    lang: sh
+    lines: 60c5e6ce
+    preview: 'curl -s "${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" -H "Author'
+  content: |2-
+       {{< doc-test paths="jwt-claims" >}}
+       YAMLTest -f - <<'EOF'
+       - name: PreRouting transformation derives the routing header from the JWT claim
+         retries: 3
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+           method: GET
+           headers:
+             host: www.example.com
+             authorization: "Bearer ${ACCESS_TOKEN}"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.headers.X-User-Tier[0]"
+               comparator: contains
+               value: "free"
+       EOF
+       {{< /doc-test >}}

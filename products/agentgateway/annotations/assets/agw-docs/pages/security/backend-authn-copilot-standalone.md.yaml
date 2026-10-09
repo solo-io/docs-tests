@@ -1,0 +1,193 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-copilot-standalone.md
+blocks:
+- a1590e251b4b3167 yaml
+- 7efc22912bf8f8ba sh
+- d0344414da81ae07
+hidden:
+- after:
+    line: a3230cf2cd400c83
+    occurrence: 0
+    words: b9776d7d 5b7e6bf2 82c6db3d 846b3a92 663ea1bf 1fe28920 02bd175f b8d31e85 66a424a9 1f58b914 6201111b 2ad8a704 b21c22ee b9776d7d cd42404d 8e7fc023 b9776d7d 948fe603 7afbb334 ac0b52a2 254bb97b a3b142af b9776d7d 5b7e6bf2 b8d31e85 ca978112 8a84e406 8e7fc023 47e8d6fa ca978112 230d8358 28391d3b ae448ac8 1303c06b
+    block_before:
+      block: 1
+      fingerprint: 7efc22912bf8f8ba
+      lang: sh
+      lines: ef0a3a50 f6931a7b
+      preview: export GH_COPILOT_TOKEN="<your-token>"
+  content: |-
+    {{< doc-test paths="backend-authn-copilot" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * `backendAuth: copilot` is accepted as a complete standalone config, and the map form
+    #     `copilot: {}` is rejected.
+    #   * Both token environment variables work, and the backend receives the token plus all seven
+    #     headers that the "What agentgateway sends" table lists.
+    #   * A configuration with no token available still loads, and the request then fails with the
+    #     500 and the message that the Troubleshoot section quotes.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The three file-backed token sources (github-copilot/hosts.json, apps.json, gh/hosts.yml) --
+    #     external dependency: the file layouts belong to the GitHub tools, and a fixture proving
+    #     agentgateway can read a file it wrote itself would assert nothing about the real format.
+    #   * That the Copilot API accepts the token -- external dependency: needs a real account with a
+    #     Copilot subscription. The test forwards to a local echo backend instead, which is what makes
+    #     the injected headers observable at all.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: a3230cf2cd400c83
+    occurrence: 0
+    words: b9776d7d 5b7e6bf2 82c6db3d 846b3a92 663ea1bf 1fe28920 02bd175f b8d31e85 66a424a9 1f58b914 6201111b 2ad8a704 b21c22ee b9776d7d cd42404d 8e7fc023 b9776d7d 948fe603 7afbb334 ac0b52a2 254bb97b a3b142af b9776d7d 5b7e6bf2 b8d31e85 ca978112 8a84e406 8e7fc023 47e8d6fa ca978112 230d8358 28391d3b ae448ac8 1303c06b
+    block_before:
+      block: 1
+      fingerprint: 7efc22912bf8f8ba
+      lang: sh
+      lines: ef0a3a50 f6931a7b
+      preview: export GH_COPILOT_TOKEN="<your-token>"
+  content: |-
+    {{< doc-test paths="backend-authn-copilot" >}}
+    # A local echo backend, so the headers that the copilot method injects are observable. Port 8099
+    # is used because no documented config binds it, and doc tests share a shell.
+    cat <<'PY' > copilot-echo.py
+    import json
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+
+    class H(BaseHTTPRequestHandler):
+        def do_GET(self):
+            body = json.dumps({"headers": {k.lower(): v for k, v in self.headers.items()}}).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        do_POST = do_GET
+        def log_message(self, *a):
+            pass
+
+    HTTPServer(("127.0.0.1", 8099), H).serve_forever()
+    PY
+    python3 copilot-echo.py &
+    ECHO_PID=$!
+
+    # The gateway is restarted once per token source, so its lifetime is per case. The echo backend
+    # has to outlive every case, so only the EXIT trap stops it.
+    stop_gateway() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    cleanup() {
+      stop_gateway
+      [ -n "${ECHO_PID:-}" ] && { kill "$ECHO_PID" 2>/dev/null || true; wait "$ECHO_PID" 2>/dev/null || true; }
+      return 0
+    }
+    trap cleanup EXIT
+
+    # Probe for a response only this backend produces, so a stale process on the port cannot satisfy
+    # the readiness check.
+    for i in $(seq 1 30); do
+      curl -sf --max-time 5 http://127.0.0.1:8099/ 2>/dev/null | grep -q '"headers"' && break
+      sleep 1
+    done
+    if ! curl -sf --max-time 5 http://127.0.0.1:8099/ 2>/dev/null | grep -q '"headers"'; then
+      echo "FAIL: the echo backend did not come up on 127.0.0.1:8099 (is the port already in use?)"
+      exit 1
+    fi
+
+    cat <<'EOF' > config-copilot.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: 127.0.0.1:8099
+        policies:
+          backendAuth: copilot
+    EOF
+    agentgateway -f config-copilot.yaml --validate-only
+
+    # The map form must be rejected, which is the gotcha the page warns about.
+    cat <<'EOF' > config-copilot-map.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: 127.0.0.1:8099
+        policies:
+          backendAuth:
+            copilot: {}
+    EOF
+    if agentgateway -f config-copilot-map.yaml --validate-only 2>/dev/null; then
+      echo "FAIL: expected the copilot map form to be rejected"
+      exit 1
+    fi
+
+    start_gateway() {
+      agentgateway -f config-copilot.yaml > "agw-$1.log" 2>&1 &
+      AGW_PID=$!
+      for i in $(seq 1 30); do
+        curl -s --max-time 5 -o /dev/null "http://127.0.0.1:3000/get" && return 0
+        sleep 1
+      done
+      echo "FAIL: the gateway did not come up on port 3000"
+      cat "agw-$1.log"
+      exit 1
+    }
+
+    # Every source below must be the only one set, or the precedence order decides the answer instead
+    # of the variable under test.
+    unset GH_COPILOT_TOKEN COPILOT_GITHUB_TOKEN
+    export XDG_CONFIG_HOME="$PWD/no-copilot-config"
+    mkdir -p "$XDG_CONFIG_HOME"
+
+    check_headers() {
+      python3 -c '
+    import json, sys
+    want = {
+        "authorization": "Bearer " + sys.argv[2],
+        "content-type": "application/json",
+        "x-github-api-version": None,
+        "editor-version": None,
+        "x-initiator": "agent",
+        "x-interaction-type": "conversation-agent",
+        "openai-intent": "conversation-agent",
+    }
+    h = json.load(open(sys.argv[1]))["headers"]
+    for name, expected in want.items():
+        assert name in h, f"{name} was not sent to the backend: {sorted(h)}"
+        if expected is not None:
+            assert h[name] == expected, f"{name}: expected {expected!r}, got {h[name]!r}"
+    assert h["editor-version"].startswith("agentgateway/"), h["editor-version"]
+    print("all seven copilot headers verified")' "$1" "$2"
+    }
+
+    # Source 1: GH_COPILOT_TOKEN.
+    export GH_COPILOT_TOKEN="fake-copilot-token-1"
+    start_gateway gh
+    curl -s --max-time 15 http://127.0.0.1:3000/get > copilot-gh.json
+    stop_gateway
+    check_headers copilot-gh.json fake-copilot-token-1
+    unset GH_COPILOT_TOKEN
+
+    # Source 2: COPILOT_GITHUB_TOKEN.
+    export COPILOT_GITHUB_TOKEN="fake-copilot-token-2"
+    start_gateway alt
+    curl -s --max-time 15 http://127.0.0.1:3000/get > copilot-alt.json
+    stop_gateway
+    check_headers copilot-alt.json fake-copilot-token-2
+    unset COPILOT_GITHUB_TOKEN
+
+    # No token anywhere: the config still loads, and the request fails at runtime with the documented
+    # message.
+    agentgateway -f config-copilot.yaml --validate-only
+    start_gateway notoken
+    CODE=$(curl -s --max-time 15 -o copilot-notoken.txt -w '%{http_code}' http://127.0.0.1:3000/get)
+    stop_gateway
+    [ "$CODE" = "500" ] || { echo "FAIL: expected 500 with no token, got $CODE"; cat copilot-notoken.txt; exit 1; }
+    grep -q 'Copilot token not found' copilot-notoken.txt || {
+      echo "FAIL: the documented error message changed"; cat copilot-notoken.txt; exit 1; }
+    echo "copilot backend authentication verified"
+    {{< /doc-test >}}

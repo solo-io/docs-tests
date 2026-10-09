@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# Covers traffic-management and llm (documentation/llm/). Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/) and security. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -66,6 +66,13 @@ skip:
 - page: documentation/llm/models/_index.md
 - page: documentation/llm/models/about.md
 - page: documentation/llm/providers.md
+- page: documentation/security/_index.md
+- page: documentation/security/backend-authn/_index.md
+- page: documentation/security/backend-authn/providers/_index.md
+- page: documentation/security/backend-authn/token-exchange/_index.md
+- page: documentation/security/extauth/_index.md
+- page: documentation/security/jwt/_index.md
+- page: documentation/security/jwt/about.md
 scenarios:
   access-logs:
     type:
@@ -754,3 +761,141 @@ scenarios:
       path: serve-model
     page: documentation/llm/models/virtual.md
     path: virtual-models
+  # --- security (documentation/security/) ---
+  authorization:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    before:
+    - source: agw-docs/pages/security/authorization.md
+      path: authorization
+    source: agw-docs/pages/security/authorization.md
+    path: backend-authorization
+  backend-authn-key:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/backend-authn-key.md
+    path: backend-authn-key
+  backendtls-secret-ca:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    source: agw-docs/pages/security/backendtls.md
+    path: backendtls-secret-ca
+  claim-level-rate-limit:
+    needs:
+    - helm-standard
+    - gateway
+    - httpbin
+    page: documentation/security/rate-limit-http.md
+    path: claim-level-rate-limit
+  cors-in-agentgatewaypolicy:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/cors.md
+    path: cors-in-agentgatewaypolicy
+  cors-in-httproute:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/cors.md
+    path: cors-in-httproute
+  cross-app-access:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/backend-authn-cross-app-access.md
+    path: cross-app-access
+  csrf:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/csrf.md
+    path: csrf
+  global-rate-limit-by-ip:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    - httpbin
+    page: documentation/security/rate-limit-global.md
+    path: global-rate-limit-by-ip
+  jwt-claims:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    before:
+    - source: agw-docs/pages/security/jwt-setup.md
+      path: setup-keycloak
+    source: agw-docs/pages/security/jwt-setup.md
+    path: jwt-claims
+  jwt-sign:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/backend-authn-jwt-sign.md
+    path: jwt-sign
+  local-rate-limit:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    - httpbin
+    page: documentation/security/rate-limit-http.md
+    path: local-rate-limit
+  te-jwt-bearer:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/backend-authn-te-jwt-bearer.md
+    path: te-jwt-bearer
+  te-mcp:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/backend-authn-te-mcp.md
+    path: te-mcp
+  te-standard:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/backend-authn-te-standard.md
+    path: te-standard

@@ -1,0 +1,167 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-jwt-sign.md
+blocks:
+- a467366cdf776f2d sh
+- c8dd83ff83c2b6c5 sh
+- a779d60aee0ce736 sh
+- 655fc1fdb3cfa79f yaml
+- 6ef3318bfccf238e sh
+- c3a4f8bf14db469b
+- aa6cfd227565c6b1 sh
+- 3917fba6d9a17659
+- 526ffe294bc83e3b sh
+- 19237a98e1672c8a sh
+tags:
+- paths: jwt-sign
+  block: 0
+  fingerprint: a467366cdf776f2d
+  lang: sh
+  lines: a467366c
+  preview: openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out signing-key.
+  form:
+    attr: paths="jwt-sign"
+    only: true
+    lead: ' '
+- paths: jwt-sign
+  block: 2
+  fingerprint: a779d60aee0ce736
+  lang: sh
+  lines: 7ffb7692 bc917519 fedf36e4
+  preview: kubectl create secret generic jwt-signing-key \
+  form:
+    attr: paths="jwt-sign"
+    only: true
+    lead: ' '
+- paths: jwt-sign
+  block: 3
+  fingerprint: 655fc1fdb3cfa79f
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 42e3c4f5 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 bb85cefe 146e11c6 d08c02ad 78df40f7 cb6e446d 90594d7e c65e3a42 cc7b1e58 752a1c8e 6c048c2c 120b336a c9210314 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-sign"
+    only: true
+    lead: ' '
+- paths: jwt-sign
+  block: 4
+  fingerprint: 6ef3318bfccf238e
+  lang: sh
+  lines: a032c350 a48482b8 8f98fb05 198e834b 14b8cba3 c084ed23 4a9a11d8 90bdf54a 7f9e76e4
+  preview: 'curl -s "http://$INGRESS_GW_ADDRESS:80/headers" -H "host: www.example.com" | pyt'
+  form:
+    attr: paths="jwt-sign"
+    only: true
+    lead: ' '
+- paths: jwt-sign
+  block: 6
+  fingerprint: aa6cfd227565c6b1
+  lang: sh
+  lines: bd1ed5c5 fbb97a21 bd1ed5c5
+  preview: 'curl -s "http://$INGRESS_GW_ADDRESS:80/headers" -H "host: www.example.com" | pyt'
+  form:
+    attr: paths="jwt-sign"
+    only: true
+    lead: ' '
+- paths: jwt-sign
+  block: 9
+  fingerprint: 19237a98e1672c8a
+  lang: sh
+  lines: d7b84856 e5627f9e
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} jwt-sign-backend-auth
+  form:
+    attr: paths="jwt-sign"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 46b76e50b1b79960
+    occurrence: 0
+    words: e6eaea18 ec91fdd9 e6eaea18 8e7fc023 b9776d7d 4ea5ee68 531995e8 b9776d7d 4a3cdfae 3c469e9d 663ea1bf 0f37e81d 663ea1bf b9776d7d cbb82ebe 1e0584a2 0695b563 ca978112 2454ad61 e7a2e8b2 6ee0eb49 24065231 7692c3ad 28391d3b 1e0584a2 2fb5944c 7175517a d7e83e28 663ea1bf 12ea12ea 2ad8a704 b1d6b91b ca978112 6cdfd271 e6eaea18 b9776d7d 4ea5ee68 531995e8 b9776d7d 9b828d53 3c469e9d 0695b563 9390298f 2454ad61 e7a2e8b2
+    block_before:
+      block: 3
+      fingerprint: 655fc1fdb3cfa79f
+      lang: yaml
+      lines: 16c71da1 fbc30693 7f57603a 8c8c4228 42e3c4f5 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 bb85cefe 146e11c6 d08c02ad 78df40f7 cb6e446d 90594d7e c65e3a42 cc7b1e58 752a1c8e 6c048c2c 120b336a c9210314 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jwt-sign" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the jwtSign policy to be accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: jwt-sign-backend-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 46b76e50b1b79960
+    occurrence: 0
+    words: e6eaea18 ec91fdd9 e6eaea18 8e7fc023 b9776d7d 4ea5ee68 531995e8 b9776d7d 4a3cdfae 3c469e9d 663ea1bf 0f37e81d 663ea1bf b9776d7d cbb82ebe 1e0584a2 0695b563 ca978112 2454ad61 e7a2e8b2 6ee0eb49 24065231 7692c3ad 28391d3b 1e0584a2 2fb5944c 7175517a d7e83e28 663ea1bf 12ea12ea 2ad8a704 b1d6b91b ca978112 6cdfd271 e6eaea18 b9776d7d 4ea5ee68 531995e8 b9776d7d 9b828d53 3c469e9d 0695b563 9390298f 2454ad61 e7a2e8b2
+    block_before:
+      block: 3
+      fingerprint: 655fc1fdb3cfa79f
+      lang: yaml
+      lines: 16c71da1 fbc30693 7f57603a 8c8c4228 42e3c4f5 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 bb85cefe 146e11c6 d08c02ad 78df40f7 cb6e446d 90594d7e c65e3a42 cc7b1e58 752a1c8e 6c048c2c 120b336a c9210314 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jwt-sign" >}}
+    # Programming the backend auth policy can lag route readiness, so poll until the backend reports a
+    # signed token. A single-shot request can catch the data plane mid-programming and get the client's
+    # own request through unsigned, or a non-JSON response.
+    for i in $(seq 1 60); do
+      BODY=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" || true)
+      echo "${BODY}" | grep -q '"Authorization"' && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: aa6cfd227565c6b1
+    lang: sh
+    lines: bd1ed5c5 fbb97a21 bd1ed5c5
+    preview: 'curl -s "http://$INGRESS_GW_ADDRESS:80/headers" -H "host: www.example.com" | pyt'
+  content: |-
+    {{< doc-test paths="jwt-sign" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * An EC P-256 signing key stores as a Secret under the signingKey data key, and the jwtSign
+    #     policy applies cleanly against the nightly CRD and reports Accepted.
+    #   * The backend receives a token the client never sent, signed with the configured alg and kid,
+    #     carrying the configured claims.
+    #   * The signer owns the time claims: exp minus iat is the 60-second ttl plus the 10-second iat
+    #     backdate, and no nbf claim is written.
+    #   * Nothing is cached: two requests a second apart produce different tokens.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The RSA key and default RS256 path -- the visible alternative would overwrite signing-key.pem
+    #     and contradict the ES256 policy that the rest of the guide applies.
+    #   * The Troubleshoot section -- each case needs a deliberately broken policy, which would leave
+    #     the route failing closed for any later step.
+    curl -s --max-time 15 "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" > jwt-sign-first.json
+    sleep 2
+    curl -s --max-time 15 "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" > jwt-sign-second.json
+    python3 -c '
+    import json,base64
+    def tok(path):
+        h=json.load(open(path))["headers"]
+        v=(h.get("Authorization") or h.get("authorization"))
+        return (v[0] if isinstance(v,list) else v).split()[1]
+    def seg(t,i): return json.loads(base64.urlsafe_b64decode(t.split(".")[i]+"=="))
+    t=tok("jwt-sign-first.json")
+    head,payload=seg(t,0),seg(t,1)
+    assert head["alg"]=="ES256", head
+    assert head["kid"]=="my-signing-key", head
+    assert payload["sub"]=="MYACCOUNT.MYUSER", payload
+    assert payload["aud"]=="https://myaccount.snowflakecomputing.com", payload
+    assert payload["exp"]-payload["iat"]==70, payload
+    assert "nbf" not in payload, payload
+    assert tok("jwt-sign-second.json")!=t, "tokens were identical across two requests"
+    print("jwtSign backend authentication verified")'
+    {{< /doc-test >}}

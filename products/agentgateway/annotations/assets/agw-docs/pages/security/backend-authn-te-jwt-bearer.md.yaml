@@ -1,0 +1,204 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-te-jwt-bearer.md
+blocks:
+- 4b133185b922072b yaml
+- 065db7140053e0da yaml
+- 14ddaa9384cbeb92 yaml
+- 42557c9bf108e388 sh
+- 307167ece2d38519 sh
+- 7e87ac3567520942 sh
+- d2645ff6c65608d0 sh
+- 53ee028903abb49a json
+- f51d2bd49b77bacd yaml
+- bac9c2a475757d0b sh
+tags:
+- paths: te-jwt-bearer
+  block: 0
+  fingerprint: 4b133185b922072b
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 1c8560cd 0f10c5bc 36184fa5 2efcbf93 4ee01b17 c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-jwt-bearer"
+    only: true
+    lead: ' '
+- paths: te-jwt-bearer
+  block: 1
+  fingerprint: 065db7140053e0da
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 21499732 0f10c5bc 1426decf 2f7c298d 700eb2cd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-jwt-bearer"
+    only: true
+    lead: ' '
+- paths: te-jwt-bearer
+  block: 2
+  fingerprint: 14ddaa9384cbeb92
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 e8d434f4 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 bb85cefe 146e11c6 0b661b52 70c97555 b6e1c19c 99d7dba1 1c8560cd c36d2f66 faffb6f9 837dc1fd 2e32215f 6787571b 11698326 27737a36 9ebc4789 21499732 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-jwt-bearer"
+    only: true
+    lead: ' '
+- paths: te-jwt-bearer
+  block: 9
+  fingerprint: bac9c2a475757d0b
+  lang: sh
+  lines: f3a048eb 93a14162 4330da45 fe1d1914 ff000288 5c4dda8f
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} backend-token-exchang
+  form:
+    attr: paths="te-jwt-bearer"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 7
+    fingerprint: 53ee028903abb49a
+    lang: json
+    lines: 021fb596 2707c0cc 73d71784 7f6a5a53 ccd2bead d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="te-jwt-bearer" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The same Keycloak stack, backend, and Secret apply, and the policy is accepted with
+    #     grantType: JwtBearer.
+    #   * End to end: a token minted in the `idp` realm is presented to the `backend-oauth` realm as an
+    #     RFC 7523 assertion, and httpbin receives a token issued by `backend-oauth` for target-client
+    #     with requester-client as the authorized party -- proving the realms really are federated.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The port-forward in the visible steps -- local forwarding is unsupported in automated tests, so
+    #     the hidden test mints through the gateway instead. KC_HOSTNAME pins the issuer either way.
+    #   * The Microsoft Entra on-behalf-of variant -- external dependency: it needs a real Entra tenant.
+
+    # Expose the Keycloak token endpoint through the gateway so the assertion can be minted without a
+    # port-forward.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: keycloak
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: agentgateway-proxy
+        namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+      hostnames:
+      - "keycloak.local"
+      rules:
+      - backendRefs:
+        - name: keycloak
+          port: 8080
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 53ee028903abb49a
+    lang: json
+    lines: 021fb596 2707c0cc 73d71784 7f6a5a53 ccd2bead d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="te-jwt-bearer" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the jwt bearer token exchange policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: httpbin
+            name: backend-token-exchange
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 53ee028903abb49a
+    lang: json
+    lines: 021fb596 2707c0cc 73d71784 7f6a5a53 ccd2bead d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="te-jwt-bearer" >}}
+    # Mint the assertion from the `idp` realm. Keycloak readiness and data plane programming both lag
+    # the rollout, and an unready upstream answers 503, so retry until a real token comes back.
+    mint_assertion() {
+      local out=""
+      for i in $(seq 1 60); do
+        out=$(curl -s --max-time 10 "http://${INGRESS_GW_ADDRESS}:80/realms/idp/protocol/openid-connect/token" -H "host: keycloak.local" -u idp-app:idp-secret -d grant_type=password -d username=idpuser -d password=idppass | jq -r '.access_token // empty' 2>/dev/null || true)
+        [ -n "$out" ] && { printf '%s' "$out"; return 0; }
+        sleep 2
+      done
+      return 1
+    }
+
+    ASSERTION=$(mint_assertion) || { echo "FAILED: could not mint the assertion from the idp realm"; exit 1; }
+    test -n "$ASSERTION" || { echo "FAILED: could not mint the assertion from the idp realm"; exit 1; }
+
+    # The assertion is issued by the idp realm; the exchanged token must come from backend-oauth.
+    ASSERTION_ISS=$(printf '%s' "$ASSERTION" | python3 -c '
+    import sys,json,base64
+    try:
+        seg=sys.stdin.read().strip().split(".")[1]
+        print(json.loads(base64.urlsafe_b64decode(seg+"="*(-len(seg)%4)))["iss"])
+    except Exception:
+        pass')
+    case "$ASSERTION_ISS" in
+      */realms/idp) : ;;
+      *) echo "FAILED: expected the assertion to be issued by the idp realm, got '$ASSERTION_ISS'"; exit 1 ;;
+    esac
+
+    AZP=""
+    RESP=""
+    for i in $(seq 1 30); do
+      RESP=$(curl -s --max-time 15 "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" -H "authorization: Bearer $ASSERTION")
+      AZP=$(printf '%s' "$RESP" | python3 -c '
+    import sys,json,base64
+    try:
+        h=json.load(sys.stdin)["headers"]
+        tok=h.get("Authorization") or h.get("authorization")
+        tok=(tok[0] if isinstance(tok,list) else tok).split()[1]
+        seg=tok.split(".")[1]
+        print(json.loads(base64.urlsafe_b64decode(seg+"="*(-len(seg)%4)))["azp"])
+    except Exception:
+        pass')
+      [ "$AZP" = "requester-client" ] && break
+      sleep 2
+    done
+    if [ "$AZP" != "requester-client" ]; then
+      echo "FAILED: expected the forwarded token azp=requester-client, got '$AZP'"
+      echo "last response body (first 500 chars): $(printf '%s' "$RESP" | head -c 500)"
+      exit 1
+    fi
+
+    FWD_ISS=$(printf '%s' "$RESP" | python3 -c '
+    import sys,json,base64
+    try:
+        h=json.load(sys.stdin)["headers"]
+        tok=h.get("Authorization") or h.get("authorization")
+        tok=(tok[0] if isinstance(tok,list) else tok).split()[1]
+        seg=tok.split(".")[1]
+        print(json.loads(base64.urlsafe_b64decode(seg+"="*(-len(seg)%4)))["iss"])
+    except Exception:
+        pass')
+    case "$FWD_ISS" in
+      */realms/backend-oauth) : ;;
+      *) echo "FAILED: expected the exchanged token to be issued by backend-oauth, got '$FWD_ISS'"; exit 1 ;;
+    esac
+    echo "jwt bearer exchange verified (assertion iss=$ASSERTION_ISS -> exchanged iss=$FWD_ISS azp=$AZP)"
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: bac9c2a475757d0b
+    lang: sh
+    lines: f3a048eb 93a14162 4330da45 fe1d1914 ff000288 5c4dda8f
+    preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} backend-token-exchang
+  content: |-
+    {{< doc-test paths="te-jwt-bearer" >}}
+    kubectl delete httproute keycloak -n httpbin --ignore-not-found
+    {{< /doc-test >}}

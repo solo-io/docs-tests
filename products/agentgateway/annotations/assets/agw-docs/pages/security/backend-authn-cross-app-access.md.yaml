@@ -1,0 +1,221 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-cross-app-access.md
+blocks:
+- 998407d919d4a842 mermaid
+- bda7b72215a3cc8b yaml
+- fc545f4cba8a5225 sh
+- e54c3618c519f0f3 sh
+- 09d0d38eeca2cc18 sh
+- 7bc18982234dc546
+- 4b133185b922072b yaml
+- fed23b3076ce8268 yaml
+- 6757b9edf9018bbc yaml
+- c9d34f5fb85f33cc yaml
+- 42557c9bf108e388 sh
+- 910bbe181ee01de7 sh
+- adef38acd3d826d8 sh
+- 5aed49f92bccb686
+- be970fd4eed528c3 sh
+- 1633663713cecdfb
+- 22f6af7002943cbf yaml
+- f916bfee1dd677df yaml
+- 3b654210f02f6707 yaml
+- 83fd1a9fe8ad2784 sh
+tags:
+- paths: cross-app-access
+  block: 1
+  fingerprint: bda7b72215a3cc8b
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 28101486 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac 6ecd9479 a58565b2 8c8c4228 fa1e8330 6ecd9479 36184fa5 04968f51 a5b107cc 1f1e3f8d 8627c797 8db70061 37ad689e 1793f584 4c4631fd 1793f584 1a0cef8e 8ecb7d53 8f5c7d8b 8affd970 ec9be729 8affd970 0ff65a1a a46d7c6d 8cce0fd9 6cd6b4f8 82f2bc7e 69d7f213 65bc5439 c095a45d 86a2f3f6 79bb435b 8e71c43c cb3f91d5 f1540154 0d6480f0 8c8c4228 28101486 0f10c5bc 36184fa5 8432e015 6ecd9479 0ff65a1a 82601aaa c095a45d b1d5c800 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 2
+  fingerprint: fc545f4cba8a5225
+  lang: sh
+  lines: fc545f4c
+  preview: kubectl rollout status deployment/keycloak -n httpbin --timeout=300s
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 3
+  fingerprint: e54c3618c519f0f3
+  lang: sh
+  lines: f03ff12f 09a79453
+  preview: git clone https://github.com/agentgateway/agentgateway.git
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 4
+  fingerprint: 09d0d38eeca2cc18
+  lang: sh
+  lines: b9bde7e0 4360d473 c873d6fa b2b0be15 773802c6
+  preview: POD=$(kubectl get pod -n httpbin -l app=keycloak -o jsonpath='{.items[0].metadat
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 6
+  fingerprint: 4b133185b922072b
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 1c8560cd 0f10c5bc 36184fa5 2efcbf93 4ee01b17 c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 7
+  fingerprint: fed23b3076ce8268
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 405f456b 0f10c5bc 1426decf 2f7c298d cb570dd4 cb3f91d5 f1540154 a67acb0a 8c8c4228 62ce6b9e 0f10c5bc 1426decf 2f7c298d acd7a318 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 8
+  fingerprint: 6757b9edf9018bbc
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 bc71a97d 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d a9110e4f d3cb008e a1343bf6 34ff11e7 837dc1fd 5910b53c 44ec9b74 b93c9907 543c4abf 8072210d 70c97555 9d5a3bb5 0d6480f0 28101486 0f10c5bc c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 9
+  fingerprint: c9d34f5fb85f33cc
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 fd109607 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 bb85cefe 146e11c6 9442b1ee 44d567a5 70c97555 b6e1c19c 99d7dba1 1c8560cd 3361a8f8 6787571b 4d225a56 27737a36 9ebc4789 405f456b 4c678603 70c97555 b6e1c19c 99d7dba1 1c8560cd 3361a8f8 6787571b f34e9912 27737a36 9ebc4789 62ce6b9e 21cb419c 26ffdce3 8e57fcbc af07df08 61d9749c d50d8693 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 19
+  fingerprint: 83fd1a9fe8ad2784
+  lang: sh
+  lines: f224f8e8 93a14162 a5db639b fe1d1914 ff000288
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} backend-cross-app-acc
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 15
+    fingerprint: 1633663713cecdfb
+    lang: ''
+    lines: 31c411a3 0ddab6fa
+    preview: no token   -> 401
+  content: |-
+    {{< doc-test paths="cross-app-access" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * Keycloak (ceposta/keycloak:id-jag) deploys and the idjag-demo realm configures via the example script.
+    #   * The AgentgatewayBackend, both client-secret Secrets, the route-level jwtAuthentication policy,
+    #     and the backend-level crossAppAccess policy all apply cleanly against the nightly CRD.
+    #   * End to end: a valid inbound OIDC ID token is exchanged, and the httpbin backend receives a
+    #     different, backend-scoped Bearer token whose authorized party (azp) is resource-client.
+    #   * jwtAuthentication rejects requests with no token and with an invalid token (HTTP 401).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The forwarded local mint path in the visible steps -- local forwarding is unsupported in
+    #     automated tests, so the hidden test mints alice's token through the gateway instead (a Keycloak
+    #     HTTPRoute created below). The pinned KC_HOSTNAME keeps the issuer identical either way.
+    #   * The PrivateKeyJwt example -- display-only snippet, needs an external IdP that requires it.
+
+    # Expose the Keycloak token endpoint through the gateway so the token can be minted without a
+    # port-forward. The issuer stays the pinned in-cluster hostname, so jwtAuthentication still matches.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: keycloak
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: agentgateway-proxy
+        namespace: agentgateway-system
+      hostnames:
+      - "keycloak.local"
+      rules:
+      - backendRefs:
+        - name: keycloak
+          port: 8080
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 1633663713cecdfb
+    lang: ''
+    lines: 31c411a3 0ddab6fa
+    preview: no token   -> 401
+  content: |-
+    {{< doc-test paths="cross-app-access" >}}
+    # Warm up the new keycloak.local virtual host (any HTTP response signals the data plane is ready).
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/realms/idjag-demo/protocol/openid-connect/token" -H "host: keycloak.local" && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 1633663713cecdfb
+    lang: ''
+    lines: 31c411a3 0ddab6fa
+    preview: no token   -> 401
+  content: |-
+    {{< doc-test paths="cross-app-access" >}}
+    # Mint alice's OIDC ID token through the gateway, exchange it, and assert the backend received a
+    # token whose azp is resource-client. Non-zero exit fails the test.
+    ID_TOKEN=$(curl -s --max-time 15 -X POST "http://${INGRESS_GW_ADDRESS}:80/realms/idjag-demo/protocol/openid-connect/token" \
+      -H "host: keycloak.local" \
+      -d grant_type=password -d client_id=agent-client -d client_secret=agent-secret \
+      -d username=alice -d password=alice -d scope=openid | jq -r .id_token)
+    test -n "$ID_TOKEN" -a "$ID_TOKEN" != "null" || { echo "FAILED: could not mint alice's ID token"; exit 1; }
+
+    # The crossAppAccess exchange (remote JWKS fetch + backend policy programming) can lag route
+    # readiness, so poll until the backend reports azp=resource-client. A single-shot request can catch
+    # the data plane mid-programming and get an empty or non-JSON response, so this tolerates both.
+    AZP=""
+    RESP=""
+    for i in $(seq 1 30); do
+      RESP=$(curl -s --max-time 15 "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" \
+        -H "Authorization: Bearer $ID_TOKEN")
+      AZP=$(printf '%s' "$RESP" | python3 -c '
+    import sys,json,base64
+    try:
+        h=json.load(sys.stdin)["headers"]
+        tok=h.get("Authorization") or h.get("authorization")
+        tok=(tok[0] if isinstance(tok,list) else tok).split()[1]
+        print(json.loads(base64.urlsafe_b64decode(tok.split(".")[1]+"=="))["azp"])
+    except Exception:
+        pass')
+      [ "$AZP" = "resource-client" ] && break
+      sleep 2
+    done
+    echo "backend token azp: $AZP"
+    if [ "$AZP" != "resource-client" ]; then
+      CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "http://${INGRESS_GW_ADDRESS}:80/headers" \
+        -H "host: www.example.com" -H "Authorization: Bearer $ID_TOKEN")
+      echo "FAILED: expected azp=resource-client, got '$AZP' (last HTTP status: $CODE)"
+      echo "last response body (first 500 chars): $(printf '%s' "$RESP" | head -c 500)"
+      exit 1
+    fi
+
+    NO_TOKEN=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com")
+    [ "$NO_TOKEN" = "401" ] || { echo "FAILED: expected 401 with no token, got $NO_TOKEN"; exit 1; }
+    BAD_TOKEN=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" -H "Authorization: Bearer not.a.jwt")
+    [ "$BAD_TOKEN" = "401" ] || { echo "FAILED: expected 401 with bad token, got $BAD_TOKEN"; exit 1; }
+    echo "cross-app-access exchange verified"
+    {{< /doc-test >}}

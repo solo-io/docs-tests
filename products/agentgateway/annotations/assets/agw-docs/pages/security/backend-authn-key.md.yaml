@@ -1,0 +1,206 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-key.md
+blocks:
+- 9779d0daeb36e7ca sh
+- 8538851f3ca4d54b yaml
+- 23397f60e1b80675 sh
+- 3b59d6d659ba8cb2
+- de1789043e7b7cbb yaml
+- d97e93ea70fd4a70 yaml
+- f72d4e8863b3a765 sh
+- 0b7eb4f448f13815
+- 365283e398739736 yaml
+- 53287a8117c16211 yaml
+- 400747f6c0b47be2 sh
+- 3fd4d674ba89f55b yaml
+- 49dc98e66b132ad0 sh
+- 15d4d24eafd2a844
+- bc9ffd1a87c146ab sh
+tags:
+- paths: backend-authn-key
+  block: 0
+  fingerprint: 9779d0daeb36e7ca
+  lang: sh
+  lines: b5b60ac1 bc917519 faca71b2
+  preview: kubectl create secret generic backend-api-key \
+  form:
+    attr: paths="backend-authn-key"
+    only: true
+    lead: ' '
+- paths: backend-authn-key
+  block: 1
+  fingerprint: 8538851f3ca4d54b
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 54928f09 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 bb85cefe 146e11c6 9ebc4789 a2343b79 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-authn-key"
+    only: true
+    lead: ' '
+- paths: backend-authn-key
+  block: 2
+  fingerprint: 23397f60e1b80675
+  lang: sh
+  lines: 23397f60
+  preview: 'curl -s "http://$INGRESS_GW_ADDRESS:80/headers" -H "host: www.example.com" | jq '
+  form:
+    attr: paths="backend-authn-key"
+    only: true
+    lead: ' '
+- paths: backend-authn-key
+  block: 5
+  fingerprint: d97e93ea70fd4a70
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 54928f09 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 bb85cefe 146e11c6 9ebc4789 a2343b79 aa85f165 30ff4d98 4210997a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-authn-key"
+    only: true
+    lead: ' '
+- paths: backend-authn-key
+  block: 6
+  fingerprint: f72d4e8863b3a765
+  lang: sh
+  lines: f72d4e88
+  preview: 'curl -s "http://$INGRESS_GW_ADDRESS:80/headers" -H "host: www.example.com" | jq '
+  form:
+    attr: paths="backend-authn-key"
+    only: true
+    lead: ' '
+- paths: backend-authn-key
+  block: 10
+  fingerprint: 400747f6c0b47be2
+  lang: sh
+  lines: c994ead3 bc917519 1173e8b4 0489db7e
+  preview: kubectl create secret generic extra-credentials \
+  form:
+    attr: paths="backend-authn-key"
+    only: true
+    lead: ' '
+- paths: backend-authn-key
+  block: 11
+  fingerprint: 3fd4d674ba89f55b
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 54928f09 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 bb85cefe 146e11c6 9ebc4789 a2343b79 545c1d9d fb7cb22b 30ff4d98 76b9012f 9ebc4789 4bd9ec4e 782833a0 fb7cb22b c31c813b ba2f8a29 9ebc4789 4bd9ec4e e3deaa41 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-authn-key"
+    only: true
+    lead: ' '
+- paths: backend-authn-key
+  block: 12
+  fingerprint: 49dc98e66b132ad0
+  lang: sh
+  lines: 49dc98e6
+  preview: 'curl -s "http://$INGRESS_GW_ADDRESS:80/get" -H "host: www.example.com" | jq ''{he'
+  form:
+    attr: paths="backend-authn-key"
+    only: true
+    lead: ' '
+- paths: backend-authn-key
+  block: 14
+  fingerprint: bc9ffd1a87c146ab
+  lang: sh
+  lines: 6ec1d679 0d8749df
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} static-backend-auth -
+  form:
+    attr: paths="backend-authn-key"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 983ccec7a36ea251
+    occurrence: 0
+    words: 824d80d7 b9776d7d 9b828d53 3c469e9d 58296753 b9776d7d 2bb80d53 b9776d7d 4ea5ee68 c50b22e2 ca978112 2454ad61 e7a2e8b2 f905b195 15eaa752 2ad8a704 3566cf23 b9776d7d cbb82ebe 2c70e12b 6201111b 21af6f12 9f5f2ead b9776d7d e7a2e8b2 8e7fc023 b9776d7d e6eaea18 4cfd97d8 ca978112 cd42404d 28391d3b 2454ad61 c793a412 d767748a 8e7fc023 2c70e12b bae0db18 94e8566d 90c7ac52 f4bf9f7f 2454ad61 c793a412 d767748a d6a7cd2a d9298a10 2c70e12b b9776d7d e7a2e8b2 fa51fd49 254bb97b 8531d896 a1d98908 b9776d7d 0967115f cd42404d 90c7ac52 f4bf9f7f 2454ad61 2454ad61 c793a412 87d05cd0 58296753 b9776d7d 631aada4 a330395c ba78973d 6497e4b3 8531d896 939eb5ae 2c70e12b 151e58a8 3316348d
+    block_before:
+      block: 3
+      fingerprint: 3b59d6d659ba8cb2
+      lang: ''
+      lines: 245843ab c7505795 cfae0d42
+      preview: '['
+  content: |-
+    {{< doc-test paths="backend-authn-key" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the static backend auth policy to be accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: static-backend-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    EOF
+
+    # WHAT THIS TEST VALIDATES:
+    #   * The secretRef policy is accepted, and the backend receives the Secret value with the
+    #     `Bearer ` prefix that the default location adds.
+    # Programming the backend auth policy can lag route readiness, so poll until the credential shows
+    # up rather than sending one request and trusting the timing.
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" > key-secretref.json || true
+      grep -q 'Bearer my-backend-token' key-secretref.json && break
+      sleep 2
+    done
+    grep -q 'Bearer my-backend-token' key-secretref.json || { echo "FAILED: the backend never received the credential"; exit 1; }
+    echo "secretRef backend authentication verified"
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 365283e398739736
+    lang: yaml
+    lines: aa85f165 30ff4d98 4210997a 06ec324d
+    preview: 'location:'
+  content: |-
+    {{< doc-test paths="backend-authn-key" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * A custom header location moves the credential and writes the bare value, with no `Bearer `
+    #     prefix.
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" > key-location.json || true
+      grep -qi 'x-api-key' key-location.json && break
+      sleep 2
+    done
+    python3 -c '
+    import json
+    h={k.lower():v for k,v in json.load(open("key-location.json"))["headers"].items()}
+    one=lambda v: v[0] if isinstance(v,list) else v
+    assert one(h.get("x-api-key"))=="my-backend-token", h.get("x-api-key")
+    assert "authorization" not in h, h.get("authorization")
+    print("custom credential location verified")'
+    {{< /doc-test >}}
+- after:
+    line: cbda9f05f071e8c5
+    occurrence: 0
+    words: b9776d7d 631aada4 a330395c bb8c8605 93f6e11d b8d31e85 ea103d6c 5b397565 7175517a 0cfcdc2f d6a7cd2a d9298a10 986a1b71 5b7e6bf2 c266ada2 95579919 6201111b b9776d7d 4ea5ee68 c626da0c f905b195 b9776d7d 87d05cd0 58296753 b9776d7d a330395c 6ee0eb49 f534b141 99262a02 6201111b b9776d7d 4ea5ee68 b4a27519 b9776d7d 948fe603 043a7187 fc93cb07 0cfcdc2f c9a8dc33
+    block_before:
+      block: 13
+      fingerprint: 15d4d24eafd2a844
+      lang: ''
+      lines: 021fb596 2e253c22 e19c1993 c7505795 39d4b54e 1d6871b3 29fb324f 39d4b54e ab5df625 e52a1813 b5735b5e 81a96dcb b62e0370 cfae0d42 d10b36aa d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="backend-authn-key" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * credentials is additive: the primary secretRef credential and both list entries all arrive,
+    #     across two different location types (header and query parameter).
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:80/get" -H "host: www.example.com" > key-credentials.json || true
+      grep -q 'my-subscription-key' key-credentials.json && break
+      sleep 2
+    done
+    python3 -c '
+    import json
+    d=json.load(open("key-credentials.json"))
+    h={k.lower():v for k,v in d["headers"].items()}
+    one=lambda v: v[0] if isinstance(v,list) else v
+    assert one(h.get("authorization"))=="Bearer my-backend-token", h.get("authorization")
+    assert one(h.get("x-tenant-key"))=="my-tenant-key", h.get("x-tenant-key")
+    assert one(d["args"].get("subscription"))=="my-subscription-key", d["args"]
+    print("additive credentials verified")'
+    {{< /doc-test >}}

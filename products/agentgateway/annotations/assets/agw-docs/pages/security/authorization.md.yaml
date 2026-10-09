@@ -1,0 +1,229 @@
+format: 1
+source: assets/agw-docs/pages/security/authorization.md
+blocks:
+- 1c9bd05e4c413c66 yaml
+- abc3b06beb7b00cd sh
+- cf99f1a00586718a sh
+- 22bb86b792105305 sh
+- 1a1d7641506a4ebb sh
+- 63282280f2ffab49
+- ce667e1f04354197 sh
+- aeeb0f28423becd6 sh
+- 8310b5e00816dd33
+- 36c86dcb423611ad sh
+- 12d3cf3a4bd49978 sh
+- 92413e9787e7d079
+- f357c007d9ce3d30 yaml
+- 86898bc37aba11d4 sh
+- 2542a3dd28a176f8 sh
+- 2d73ec57f5923233 console
+- ea6cc647a96eae76 sh
+- 83d6262827b5575f yaml
+- b530ac65d9cf2918 yaml
+- 5e3a52eaf3ef5b54 yaml
+- 6a10b32c652319b1 sh
+- 8deeeec5a29fb6ac yaml
+- 1b6381a0d25d2f81 yaml
+- 344fc01b248c0ee7 sh
+- 56b709cee7616c10 sh
+- 27badc983df1780b console
+- 34387d317901bdb2 sh
+- 2ac9a6746aca543a console
+- b6d89ce88c64723b sh
+- c84c7b0f028f66b9 console
+- 211eafc7e9c5dc1e sh
+- 4e4453302e63a076 sh
+tags:
+- paths: authorization
+  block: 0
+  fingerprint: 1c9bd05e4c413c66
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 a46c4ffc 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d a9110e4f d3cb008e a1343bf6 81661d30 44ec9b74 71d7d0b6 d48a6346 d25a61e1 1188488c 0a06a173 3f29b277 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="authorization"
+    only: true
+    lead: ' '
+- paths: authorization
+  block: 1
+  fingerprint: abc3b06beb7b00cd
+  lang: sh
+  lines: abc3b06b
+  preview: export ALICE_JWT="eyJhbGciOiJSUzI1NiIsImtpZCI6IjU4OTE2NDUwMzIxNTk4OTQzODMiLCJ0eX
+  form:
+    attr: paths="authorization"
+    only: true
+    lead: ' '
+- paths: authorization
+  block: 2
+  fingerprint: cf99f1a00586718a
+  lang: sh
+  lines: cf99f1a0
+  preview: export BOB_JWT="eyJhbGciOiJSUzI1NiIsImtpZCI6IjU4OTE2NDUwMzIxNTk4OTQzODMiLCJ0eXAi
+  form:
+    attr: paths="authorization"
+    only: true
+    lead: ' '
+- paths: backend-authorization
+  block: 12
+  fingerprint: f357c007d9ce3d30
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 7586a169 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 bb85cefe d48a6346 d25a61e1 1188488c 0a06a173 e0aae37d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-authorization"
+    only: true
+    lead: ' '
+- paths: backend-authorization
+  block: 16
+  fingerprint: ea6cc647a96eae76
+  lang: sh
+  lines: ea6cc647
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} httpbin-backend-authz
+  form:
+    attr: paths="backend-authorization"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 1c9bd05e4c413c66
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 a46c4ffc 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d a9110e4f d3cb008e a1343bf6 81661d30 44ec9b74 71d7d0b6 d48a6346 d25a61e1 1188488c 0a06a173 3f29b277 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="authorization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the authorization policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: agentgateway-system
+            name: authz-guide
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 63282280f2ffab49
+    lang: ''
+    lines: '63282280'
+    preview: HTTP/1.1 401 Unauthorized
+  content: |2-
+       {{< doc-test paths="authorization" >}}
+       code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
+         "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com")
+       if [ "$code" != "401" ]; then
+         echo "expected 401 for a request with no JWT, got $code"
+         exit 1
+       fi
+       echo "OK: request with no JWT returned 401"
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 8310b5e00816dd33
+    lang: ''
+    lines: 8310b5e0
+    preview: HTTP/1.1 403 Forbidden
+  content: |2-
+       {{< doc-test paths="authorization" >}}
+       code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
+         "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" \
+         -H "Authorization: Bearer ${BOB_JWT}")
+       if [ "$code" != "403" ]; then
+         echo "expected 403 for Bob's JWT, got $code"
+         exit 1
+       fi
+       echo "OK: valid JWT that does not match the Allow rule returned 403"
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 92413e9787e7d079
+    lang: ''
+    lines: 92413e97
+    preview: HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="authorization" >}}
+       code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 \
+         "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" \
+         -H "Authorization: Bearer ${ALICE_JWT}")
+       if [ "$code" != "200" ]; then
+         echo "expected 200 for Alice's JWT, got $code"
+         exit 1
+       fi
+       echo "OK: valid JWT that matches the Allow rule returned 200"
+       {{< /doc-test >}}
+- after:
+    line: 2c933bba5c50b397
+    occurrence: 0
+    words: 1a276656 77f6a166 f905b195 ec72420d 55efa093 e0603c49 5b7e6bf2 fa51fd49 2998b323
+    block_before:
+      block: 12
+      fingerprint: f357c007d9ce3d30
+      lang: yaml
+      lines: 16c71da1 fbc30693 7f57603a 8c8c4228 7586a169 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 bb85cefe d48a6346 d25a61e1 1188488c 0a06a173 e0aae37d abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="backend-authorization" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for backend authorization to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: httpbin
+               name: httpbin-backend-authz
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       - name: wait for backend authorization to be attached
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: httpbin
+               name: httpbin-backend-authz
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 2d73ec57f5923233
+    lang: console
+    lines: 27badc98 d26eae87
+    preview: '200'
+  content: |2-
+       {{< doc-test paths="backend-authorization" >}}
+       for attempt in $(seq 1 30); do
+         allowed=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 \
+           "http://${INGRESS_GW_ADDRESS}:80/headers" \
+           -H 'host: www.example.com' -H "Authorization: Bearer ${ALICE_JWT}")
+         denied=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 -X POST \
+           "http://${INGRESS_GW_ADDRESS}:80/headers" \
+           -H 'host: www.example.com' -H "Authorization: Bearer ${ALICE_JWT}")
+         if [ "$allowed" = 200 ] && [ "$denied" = 403 ]; then break; fi
+         sleep 1
+       done
+       test "$allowed" = 200 && test "$denied" = 403 || {
+         echo "expected GET=200 and POST=403, got GET=$allowed POST=$denied"
+         exit 1
+       }
+       echo 'OK: backend authorization allows GET and denies POST'
+       {{< /doc-test >}}

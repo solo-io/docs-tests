@@ -1,0 +1,311 @@
+format: 1
+source: assets/agw-docs/pages/security/backendtls.md
+blocks:
+- bdf735f43dc04512 sh
+- 521ed31b7e6d8233 yaml
+- a00080a406d443fb shell
+- c765e10a8066d27e
+- 6b5d78b1bb5c3a04 sh
+- d35be6863e0748a6 yaml
+- 9ec36cbfd731ee7f yaml
+- 7279af5491197474 sh
+- 4cc8da5698fdb63f sh
+- feb8eb4d6fc904c9
+- 2ab4f5602c9c2b66 yaml
+- 6c04010eafc1d6d8 yaml
+- 4b6f679d673f0f51 yaml
+- b82b308e238a6565 sh
+- c4196575bad914f7 sh
+- d026e23afb03c066 console
+- 1c29dc355cadd04e sh
+- c585e85d772f9c59 sh
+- 64ba8235c6c881da yaml
+- 7279af5491197474 sh
+- 4cc8da5698fdb63f sh
+- 4a5a4890d19f7d4e
+- 121f906ac4c0cbef sh
+- cf89e32b2bcec126 yaml
+- 7279af5491197474 sh
+- 4cc8da5698fdb63f sh
+- 3dcc845ddebab2dd sh
+- 5102e726c4c13ab5
+- 9b637902c147d92f sh
+- d0785ef21edc58bc sh
+- 82445b672810fcd6 sh
+- bf5de1e8570e1da7 sh
+tags:
+- paths: backendtls-secret-ca
+  block: 0
+  fingerprint: bdf735f43dc04512
+  lang: sh
+  lines: c6fee811 ee808175 79697b0a 3ba69cac
+  preview: kubectl create secret tls nginx-server-cert \
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 1
+  fingerprint: 521ed31b7e6d8233
+  lang: yaml
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 bf2b569a 8af957d1 fa1e8330 734e8faf ff72caa3 d1fe37d2 98531702 9df10491 0310a8b5 7823f11a e1d4db11 b435453f e73459a9 b280e4a8 9c825bbf d10b36aa d10b36aa d10b36aa cb3f91d5 58584366 ab78925c 8c8c4228 f7734d83 8af957d1 fa1e8330 734e8faf 36184fa5 97bcd5e0 8432e015 839a5cac 4483b2bc a58565b2 8c8c4228 fa1e8330 4483b2bc 36184fa5 04968f51 57249e4b 797f2e3c 0ff65a1a 451cb444 7fe9b156 fcd8c64a d0b75ea0 491b9537 c8761a7b 06672678 795633dc 4fb8b4ed c5d7714b d0b75ea0 889016e3 bf2b569a 06672678 035b1576 d6fc9616 cb3f91d5 f1540154 0d6480f0 8c8c4228 f7734d83 8af957d1 fa1e8330 734e8faf 36184fa5 8432e015 4483b2bc 0ff65a1a 83feb025 f51d9754 469955a7 c8857053 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 6
+  fingerprint: 9ec36cbfd731ee7f
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 80e375f8 8af957d1 fa1e8330 734e8faf 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa c4280beb 3de9d845 a3b86ab6 57249e4b f51d9754 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 16
+  fingerprint: 1c29dc355cadd04e
+  lang: sh
+  lines: 1c29dc35
+  preview: kubectl delete backendtlspolicy tls-policy -n {{< reuse "agw-docs/snippets/names
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 17
+  fingerprint: c585e85d772f9c59
+  lang: sh
+  lines: bfd9bcae ee418ed4 3ba69cac
+  preview: kubectl create secret generic nginx-ca \
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 18
+  fingerprint: 64ba8235c6c881da
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 3c22a3b0 8af957d1 fa1e8330 734e8faf 36184fa5 588a5d84 e6365cc1 0d6480f0 f7734d83 eeab523b bb85cefe 3195c5f5 0389f557 d147a09b a67acb0a 4447d429 a1260076 ef480e5f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 22
+  fingerprint: 121f906ac4c0cbef
+  lang: sh
+  lines: c974cc53 fef9d367 3ba69cac
+  preview: kubectl create secret generic nginx-ca-custom-key \
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 23
+  fingerprint: cf89e32b2bcec126
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 3c22a3b0 8af957d1 fa1e8330 734e8faf 36184fa5 588a5d84 e6365cc1 0d6480f0 f7734d83 eeab523b bb85cefe 3195c5f5 0389f557 1afc355e a67acb0a f2138701 4447d429 a1260076 ef480e5f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 28
+  fingerprint: 9b637902c147d92f
+  lang: sh
+  lines: 92cc2e89 7725dd95 d3df603e
+  preview: kubectl delete deployment,service,backendtlspolicy,configmap,httproute -A -l app
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 29
+  fingerprint: d0785ef21edc58bc
+  lang: sh
+  lines: d0785ef2
+  preview: cd .. && rm -rf example_certs
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: backendtls-secret-ca
+  block: 31
+  fingerprint: bf5de1e8570e1da7
+  lang: sh
+  lines: fa0bef47 7cb3528c
+  preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} nginx-backend-tls -n '
+  form:
+    attr: paths="backendtls-secret-ca"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 521ed31b7e6d8233
+    lang: yaml
+    lines: 16c71da1 f1540154 033792b5 8c8c4228 bf2b569a 8af957d1 fa1e8330 734e8faf ff72caa3 d1fe37d2 98531702 9df10491 0310a8b5 7823f11a e1d4db11 b435453f e73459a9 b280e4a8 9c825bbf d10b36aa d10b36aa d10b36aa cb3f91d5 58584366 ab78925c 8c8c4228 f7734d83 8af957d1 fa1e8330 734e8faf 36184fa5 97bcd5e0 8432e015 839a5cac 4483b2bc a58565b2 8c8c4228 fa1e8330 4483b2bc 36184fa5 04968f51 57249e4b 797f2e3c 0ff65a1a 451cb444 7fe9b156 fcd8c64a d0b75ea0 491b9537 c8761a7b 06672678 795633dc 4fb8b4ed c5d7714b d0b75ea0 889016e3 bf2b569a 06672678 035b1576 d6fc9616 cb3f91d5 f1540154 0d6480f0 8c8c4228 f7734d83 8af957d1 fa1e8330 734e8faf 36184fa5 8432e015 4483b2bc 0ff65a1a 83feb025 f51d9754 469955a7 c8857053 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="backendtls-secret-ca" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The certificate generation shared with the mTLS guide - the openssl CA and
+    #     server-cert commands actually run, so the guide cannot rot the way the old
+    #     hardcoded PEM did (it expired 2026-07-07 and broke this page silently).
+    #   * The NGINX sample app it deploys: the nginx-server-cert Secret, nginx-conf
+    #     ConfigMap, Deployment, and Service reach an available state.
+    #   * The "CA certificate in a Secret" section end to end - the nginx-route
+    #     HTTPRoute, the nginx-ca Secret, and the nginx-backend-tls
+    #     AgentgatewayPolicy - and asserts a 200 through the gateway, which only
+    #     succeeds if the gateway resolved the CA from the Secret and verified the
+    #     backend certificate against it.
+    #   * That `sectionName: "8443"` on a Service targetRef is accepted (the API
+    #     rejects a port NAME here, so this guards the documented value).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The "In-cluster service" BackendTLSPolicy section - display-only for this
+    #     scenario; it has no test path of its own, so its `ca` ConfigMap and
+    #     BackendTLSPolicy blocks never run.
+    #   * The "External service" section - external dependency (httpbin.org egress).
+    #   * The `kind: ConfigMap` / omitted-kind variants of caCertificateRefs -
+    #     requires config the page omits; the page documents only the Secret variant.
+    #   * The port-forward tab of the verification step - the framework rejects any
+    #     script that runs `kubectl port-forward`, so the assertion goes through
+    #     ${INGRESS_GW_ADDRESS} instead.
+    YAMLTest -f - <<'EOF'
+    - name: wait for the NGINX TLS sample app to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: nginx
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 4a5a4890d19f7d4e
+    lang: ''
+    lines: 6364ab47 92413e97
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="backendtls-secret-ca" >}}
+    # Secret CA scenario: wait for the policy to attach before sending traffic.
+    YAMLTest -f - <<'EOF'
+    - name: nginx-backend-tls policy is accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: agentgateway-system
+            name: nginx-backend-tls
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 4a5a4890d19f7d4e
+    lang: ''
+    lines: 6364ab47 92413e97
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="backendtls-secret-ca" >}}
+    # Secret CA scenario: example.com is a new hostname for the proxy, so warm up
+    # the data plane before asserting (Phase 1 of the two-phase proxy behavior).
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/" -H "host: example.com" && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 4a5a4890d19f7d4e
+    lang: ''
+    lines: 6364ab47 92413e97
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="backendtls-secret-ca" >}}
+    YAMLTest -f - <<'EOF'
+    - name: gateway originates TLS to NGINX using the CA from the Secret
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /
+        method: GET
+        headers:
+          host: "example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 27
+    fingerprint: 5102e726c4c13ab5
+    lang: ''
+    lines: 2a25f221 cf603edd
+    preview: '"message": "error extracting CA cert from Secret agentgateway-system/nginx-ca-cu'
+  content: |-
+    {{< doc-test paths="backendtls-secret-ca" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * A CA bundle stored under a non-default key is resolved when the policy
+    #     names that key: the gateway originates TLS to NGINX and returns 200, which
+    #     only succeeds if it read the certificate from `corporate-roots.pem`.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The failure case shown in the step above - asserting it would leave a
+    #     broken policy attached for the rest of the scenario.
+    YAMLTest -f - <<'EOF'
+    - name: nginx-backend-tls policy with a custom CA key is accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: agentgateway-system
+            name: nginx-backend-tls
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].reason"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Valid"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/" -H "host: example.com" && break
+      sleep 2
+    done
+
+    YAMLTest -f - <<'EOF'
+    - name: gateway reads the CA from the key that the policy names
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /
+        method: GET
+        headers:
+          host: "example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, standalone mode.
 #
-# Covers traffic-management and llm (documentation/llm/). Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/) and security. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -44,6 +44,10 @@ skip:
 - page: documentation/llm/playground.md
 - page: documentation/llm/prompt-guards/_index.md
 - page: documentation/llm/providers.md
+- page: documentation/configuration/security/_index.md
+- page: documentation/configuration/security/backend-authn/_index.md
+- page: documentation/configuration/security/backend-authn/providers/_index.md
+- page: documentation/configuration/security/backend-authn/token-exchange/_index.md
 scenarios:
   buffer:
     page: documentation/configuration/traffic-management/buffer.md
@@ -104,3 +108,61 @@ scenarios:
   virtual-models:
     page: documentation/llm/virtual-models.md
     path: virtual-models
+  # --- security (documentation/configuration/security/) ---
+  apikey-authn:
+    page: documentation/configuration/security/apikey-authn.md
+    path: apikey-authn
+  backend-authn-aws:
+    source: agw-docs/pages/security/backend-authn-aws-standalone.md
+    path: backend-authn-aws
+  backend-authn-azure:
+    source: agw-docs/pages/security/backend-authn-azure-standalone.md
+    path: backend-authn-azure
+  backend-authn-copilot:
+    source: agw-docs/pages/security/backend-authn-copilot-standalone.md
+    path: backend-authn-copilot
+  backend-authn-gcp:
+    source: agw-docs/pages/security/backend-authn-gcp-standalone.md
+    path: backend-authn-gcp
+  backend-authn-jwt-sign:
+    source: agw-docs/pages/security/backend-authn-jwt-sign-standalone.md
+    path: backend-authn-jwt-sign
+  backend-authn-key:
+    source: agw-docs/pages/security/backend-authn-key-standalone.md
+    path: backend-authn-key
+  backend-tls:
+    page: documentation/configuration/security/backend-tls.md
+    path: backend-tls
+  basic-authn:
+    page: documentation/configuration/security/basic-authn.md
+    path: basic-authn
+  client-auth:
+    source: agw-docs/pages/security/backend-authn-te-standard-standalone.md
+    path: client-auth
+  cors:
+    page: documentation/configuration/security/cors.md
+    path: cors
+  csrf:
+    page: documentation/configuration/security/csrf.md
+    path: csrf
+  external-authz:
+    page: documentation/configuration/security/external-authz.md
+    path: external-authz
+  http-authz:
+    page: documentation/configuration/security/http-authz.md
+    path: http-authz
+  jwt-authn:
+    page: documentation/configuration/security/jwt-authn.md
+    path: jwt-authn
+  mcp-authn:
+    page: documentation/configuration/security/mcp-authn.md
+    path: mcp-authn
+  mcp-authz-config:
+    page: documentation/configuration/security/mcp-authz.md
+    path: mcp-authz-config
+  network-authz:
+    page: documentation/configuration/security/network-authz.md
+    path: network-authz
+  te-jwt-bearer-standalone:
+    source: agw-docs/pages/security/backend-authn-te-jwt-bearer-standalone.md
+    path: te-jwt-bearer-standalone

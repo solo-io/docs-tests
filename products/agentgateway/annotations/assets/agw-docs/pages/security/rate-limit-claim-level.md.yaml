@@ -1,0 +1,88 @@
+format: 1
+source: assets/agw-docs/pages/security/rate-limit-claim-level.md
+blocks:
+- 7d7d9c7c6817db56 yaml
+- a8473ca85b5d485f yaml
+- c3e114f2e88776c1 sh
+- 7a95aa1e43b9ba59 sh
+- 7340416096e45ba7
+- e3fdc6d9ffe8a787 sh
+- f059e058313f681d sh
+- e5f54f6a9efca6ef
+tags:
+- paths: claim-level-rate-limit
+  block: 1
+  fingerprint: a8473ca85b5d485f
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 b1e5bf60 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d a50da420 f971795d 7573b77b 78544aa5 90907e06 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="claim-level-rate-limit"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: a8473ca85b5d485f
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 b1e5bf60 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d a50da420 f971795d 7573b77b 78544aa5 90907e06 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="claim-level-rate-limit" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the claim-level rate limit policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: httpbin
+               name: httpbin-rate-limit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: e5f54f6a9efca6ef
+    lang: ''
+    lines: 8626b0fb 10fb1ca8 7edacd37
+    preview: 'bob request 1: HTTP 200'
+  content: |2-
+       {{< doc-test paths="claim-level-rate-limit" >}}
+       # Drain one user's bucket, then confirm that a different user still gets through.
+       for i in $(seq 1 3); do
+         curl -s -o /dev/null http://${INGRESS_GW_ADDRESS}:80/anything \
+           -H "host: www.example.com" -H "x-user: alice"
+       done
+
+       YAMLTest -f - <<'EOF'
+       - name: the drained user is rate limited
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything"
+           method: GET
+           headers:
+             host: www.example.com
+             x-user: alice
+         source:
+           type: local
+         expect:
+           statusCode: 429
+         retries: 3
+       - name: a different user has its own bucket
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything"
+           method: GET
+           headers:
+             host: www.example.com
+             x-user: bob
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
