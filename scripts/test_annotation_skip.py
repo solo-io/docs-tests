@@ -5,6 +5,7 @@ Without this, a tag that stayed needs update would leave its block out of the
 generated script, and the scenario would pass having skipped a step.
 """
 import contextlib
+import importlib.util
 import io
 import os
 import pathlib
@@ -170,6 +171,10 @@ spec:
 """
 
 
+# Consumer repos run this suite in jobs that install only PyYAML; the schema
+# check needs jsonschema and exits early without it. docs-tests' own CI installs
+# it, so these always run there.
+@unittest.skipUnless(importlib.util.find_spec("jsonschema"), "jsonschema is not installed")
 class SchemaSkipTests(unittest.TestCase):
     """The schema check, too, skips a scenario whose markup did not attach."""
 
