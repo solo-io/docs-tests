@@ -1,0 +1,90 @@
+format: 1
+source: content/docs/kubernetes/1.3.x/documentation/observability/tracing.md
+blocks:
+- 403d421aea2792da sh
+- afd883758b6fa00b sh
+- af886d189f098ed5 console
+- bc5a2db6ceeeaa40 yaml
+- 1617162f294e6bc8 sh
+- 12a2df9fbe32b8c1 sh
+- 45c566fcdb8ceccc sh
+- ec4b827f77c25ec2 sh
+- 7e7daab8830f8d53 console
+- 15f9504ab18c9a1d yaml
+- fd4deab47750b4d4 sh
+- 7d298a50dcce5f3d sh
+- a0aa3f0a626256a6 sh
+tags:
+- paths: tracing
+  block: 0
+  fingerprint: 403d421aea2792da
+  lang: sh
+  lines: c32f326b 908fd025 e2911944 76ef6b74 9e66685e 77141b8e 48c9d4da 2a24ff0e 0748bda0 2180b199 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 1c31dda0 bdecf485 23e4c81d 99526e59 91758741 3195c5f5 0caee1db fbb64f63 ada604fb 3897150c 1738e439 80a766f7 6f411f1c bd3874e4 d2fc02aa abc56510
+  preview: helm upgrade --install opentelemetry-collector-traces opentelemetry-collector \
+  form:
+    attr: paths="tracing"
+    only: true
+    lead: ' '
+- paths: tracing
+  block: 3
+  fingerprint: bc5a2db6ceeeaa40
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 be85e8da b0c4deaf 5a41b93f e9ef40ee 57d78469 3e371bf8 cab2be2b 21be7e8f c5a9bbf9 3b7b4319 f1dec8de 73c054bf 274fdf3f dc7b65c9 f6dd48f5 0d849ff0 98250509 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tracing"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 403d421aea2792da
+    lang: sh
+    lines: c32f326b 908fd025 e2911944 76ef6b74 9e66685e 77141b8e 48c9d4da 2a24ff0e 0748bda0 2180b199 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 1c31dda0 bdecf485 23e4c81d 99526e59 91758741 3195c5f5 0caee1db fbb64f63 ada604fb 3897150c 1738e439 80a766f7 6f411f1c bd3874e4 d2fc02aa abc56510
+    preview: helm upgrade --install opentelemetry-collector-traces opentelemetry-collector \
+  content: |2-
+       {{< doc-test paths="tracing" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for OTel collector deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: telemetry
+               name: opentelemetry-collector-traces
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 5
+      fingerprint: 12a2df9fbe32b8c1
+      lang: sh
+      lines: 5f32f2d0 0d5c4183 cee680d3
+      preview: curl -vi -X POST localhost:8080/post \
+  content: |2-
+       {{< doc-test paths="tracing" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify tracing setup - POST returns 200
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: /post
+           method: POST
+           headers:
+             host: "www.example.com"
+             x-header-tag: custom-tracing
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

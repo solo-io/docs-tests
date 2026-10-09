@@ -1,0 +1,175 @@
+format: 1
+source: assets/agw-docs/pages/observability/access-logs/export.md
+blocks:
+- d19d545c712b7c4c sh
+- afd883758b6fa00b sh
+- 484c1617aa388710 console
+- 522d46f68f20f318 yaml
+- 0464a7c30afbff50 sh
+- 83b6675b43262b27 sh
+- 0422482d519f753d sh
+- 3c8432802d54c212 sh
+- d8bf030755a43898 console
+- 3c8432802d54c212 sh
+- a871532c55850ab0 console
+- 6103959b5d73438f yaml
+- 0464a7c30afbff50 sh
+- 83b6675b43262b27 sh
+- 16fe136335c100f9 sh
+- c158609e1a699367 sh
+- 177cd1fe9bf38e62 sh
+- e3714d18bf3381ac sh
+- 541b9341a519cf35 console
+- 40d3298653b59039 console
+- 9c5e5e9f018dacdc sh
+- a54409387001605c console
+- cf3f37e70eb088f4 yaml
+- 03eb55172ef3d45e yaml
+- 0ce516776ddf1110 sh
+- 2060ea3dff20ebb0 sh
+- f956fb9f83df700f sh
+- 962ed85a07386f97 console
+- 3c8432802d54c212 sh
+- 44ad8b1538c81ecb console
+- 97def03d923888bb console
+- 5a85429987ce9aa1 sh
+- 5a85429987ce9aa1 sh
+- a9e65eeb1efe9de2 sh
+- a0aa3f0a626256a6 sh
+tags:
+- paths: access-log-otlp
+  block: 0
+  fingerprint: d19d545c712b7c4c
+  lang: sh
+  lines: e60f7448 908fd025 e2911944 76ef6b74 9e66685e 77141b8e 48c9d4da 2a24ff0e 0748bda0 2180b199 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 23e4c81d fbb64f63 ada604fb 3897150c 1738e439 eb330b86 6f411f1c bd3874e4 91ef1ed6 abc56510
+  preview: helm upgrade --install opentelemetry-collector-logs opentelemetry-collector \
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 3
+  fingerprint: 522d46f68f20f318
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 a5e38d64 b0c4deaf 5a41b93f e9ef40ee abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 11
+  fingerprint: 6103959b5d73438f
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 a5e38d64 b0c4deaf 5a41b93f e9ef40ee b2a76230 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 22
+  fingerprint: cf3f37e70eb088f4
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 a5e38d64 b0c4deaf 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 521b7d5f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 23
+  fingerprint: 03eb55172ef3d45e
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 a5e38d64 b0c4deaf 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 d532a41e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 31
+  fingerprint: 5a85429987ce9aa1
+  lang: sh
+  lines: 5a854299
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< re
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 32
+  fingerprint: 5a85429987ce9aa1
+  lang: sh
+  lines: 5a854299
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< re
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 33
+  fingerprint: a9e65eeb1efe9de2
+  lang: sh
+  lines: a9e65eeb
+  preview: helm uninstall opentelemetry-collector-logs -n telemetry
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 34
+  fingerprint: a0aa3f0a626256a6
+  lang: sh
+  lines: a0aa3f0a
+  preview: kubectl delete namespace telemetry
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: d19d545c712b7c4c
+    lang: sh
+    lines: e60f7448 908fd025 e2911944 76ef6b74 9e66685e 77141b8e 48c9d4da 2a24ff0e 0748bda0 2180b199 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 23e4c81d fbb64f63 ada604fb 3897150c 1738e439 eb330b86 6f411f1c bd3874e4 91ef1ed6 abc56510
+    preview: helm upgrade --install opentelemetry-collector-logs opentelemetry-collector \
+  content: |2-
+       {{< doc-test paths="access-log-otlp" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for OTel collector logs deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: telemetry
+               name: opentelemetry-collector-logs
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 522d46f68f20f318
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 a5e38d64 b0c4deaf 5a41b93f e9ef40ee abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="access-log-otlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify access log OTLP policy is accepted
+      command:
+        command: "kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.status.ancestors[*].conditions[?(@.type==\"Accepted\")].status}'"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: "True"
+    EOF
+    {{< /doc-test >}}

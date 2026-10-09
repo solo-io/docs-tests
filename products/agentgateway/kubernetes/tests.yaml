@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/) and resiliency. Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency and observability. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -90,6 +90,10 @@ skip:
 - page: documentation/resiliency/timeouts/_index.md
 - page: documentation/resiliency/timeouts/about.md
 - page: documentation/resiliency/timeouts/per-try-timeout.md
+- page: documentation/observability/_index.md
+- page: documentation/observability/metrics/dataplane.md
+- page: documentation/observability/metrics/overview.md
+- page: documentation/observability/traces/attribute-reference.md
 scenarios:
   access-logs:
     type:
@@ -1198,3 +1202,67 @@ scenarios:
     - httpbin
     source: agw-docs/pages/resiliency/timeouts/request.md
     path: timeout-in-trafficpolicy
+  # --- observability (documentation/observability/) ---
+  access-log-otlp:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    source: agw-docs/pages/observability/access-logs/export.md
+    path: access-log-otlp
+  access-logging:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/access-logging.md
+    path: access-logging
+  admin-ui:
+    needs:
+    - helm-standard
+    - gateway
+    source: agw-docs/pages/observability/ui.md
+    path: ui-k8s
+  capture:
+    needs:
+    - helm-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/quickstart/mcp.md
+      path: setup-mcp-server
+    - source: agw-docs/pages/agentgateway/quickstart/non-agentic-http.md
+      path: install-httpbin
+    source: agw-docs/pages/observability/ui.md
+    path: ui-k8s-capture
+  control-plane-metrics:
+    needs:
+    - install-standard
+    page: documentation/observability/metrics/control-plane.md
+    path: control-plane-metrics
+  nacks:
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/observability/metrics/nacks.md
+    path: nacks
+  otel-stack:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/observability/otel-stack.md
+    path: otel-stack
+  observability/tracing:
+    name: tracing
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    source: agw-docs/pages/observability/traces/setup.md
+    path: tracing

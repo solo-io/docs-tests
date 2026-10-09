@@ -1,0 +1,57 @@
+format: 1
+source: assets/agw-docs/pages/observability/metrics/nacks.md
+blocks:
+- c0af55a713b9fc11 sh
+- 3172f39ec5347571 sh
+- 1fd708861405a22a console
+- 566ad935d9627d9c console
+- 03f2f0a5fc8e0f26 sh
+- df742f28d9031d04 sh
+tags:
+- paths: nacks
+  block: 4
+  fingerprint: 03f2f0a5fc8e0f26
+  lang: sh
+  lines: 03f2f0a5
+  preview: kubectl get events -n {{< reuse "agw-docs/snippets/namespace.md" >}} --field-sel
+  form:
+    attr: paths="nacks"
+    only: true
+    lead: ' '
+- paths: nacks
+  block: 5
+  fingerprint: df742f28d9031d04
+  lang: sh
+  lines: df742f28
+  preview: kubectl describe gateway agentgateway-proxy -n {{< reuse "agw-docs/snippets/name
+  form:
+    attr: paths="nacks"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 1fd708861405a22a
+    lang: console
+    lines: 0b2207b5 68fa2bdb 70d40264
+    preview: '# HELP agentgateway_xds_rejects_total Total number of xDS responses rejected by '
+  content: |-
+    {{< doc-test paths="nacks" >}}
+    YAMLTest -f - <<'EOF'
+    - name: Control plane metrics endpoint is accessible
+      retries: 3
+      http:
+        url: "http://localhost:9092/metrics"
+        method: GET
+      source:
+        type: pod
+        usePortForward: true
+        selector:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

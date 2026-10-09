@@ -1,0 +1,36 @@
+format: 1
+source: assets/agw-docs/pages/observability/control-plane-metrics.md
+blocks:
+- dd7d4f41ddcc0365 yaml
+- 5106a5ac7f692f22 sh
+- 4271e430322d8d4f sh
+- 5afe9d3df4809559 console
+- 869d1fb842eeb60f sh
+- 72f2caea7236585c console
+hidden:
+- after:
+    block: 5
+    fingerprint: 72f2caea7236585c
+    lang: console
+    lines: 388255da 10113811 7db4f8ad 2ff81d04 7017997a
+    preview: '# HELP agentgateway_controller_reconciliations_total Total number of controller '
+  content: |-
+    {{< doc-test paths="control-plane-metrics" >}}
+    YAMLTest -f - <<'EOF'
+    - name: Control plane metrics endpoint returns HTTP 200
+      retries: 3
+      http:
+        url: "http://localhost:9092/metrics"
+        method: GET
+      source:
+        type: pod
+        usePortForward: true
+        selector:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

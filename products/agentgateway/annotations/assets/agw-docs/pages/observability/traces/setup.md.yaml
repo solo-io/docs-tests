@@ -1,0 +1,52 @@
+format: 1
+source: assets/agw-docs/pages/observability/traces/setup.md
+blocks:
+- a006ac48288683ac yaml
+- e6deb289da21eadd sh
+- 099e31a923b288a4 sh
+- 0422482d519f753d sh
+- 45c566fcdb8ceccc sh
+- b32966ae4920f4c5 yaml
+- 2148a59452e747a4 yaml
+- c7e7a9c67f43f85a yaml
+- d9fac0a39627fee0 yaml
+- 5c0199052c01f973 yaml
+- fd4deab47750b4d4 sh
+tags:
+- paths: tracing
+  block: 0
+  fingerprint: a006ac48288683ac
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 be85e8da b0c4deaf 5a41b93f e9ef40ee 3e371bf8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tracing"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 2
+      fingerprint: 099e31a923b288a4
+      lang: sh
+      lines: 5f32f2d0 036345c8
+      preview: curl -vi -X POST localhost:8080/post \
+  content: |2-
+       {{< doc-test paths="tracing" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify tracing setup - POST returns 200
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: /post
+           method: POST
+           headers:
+             host: "www.example.com"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

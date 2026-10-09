@@ -1,0 +1,44 @@
+format: 1
+source: content/docs/kubernetes/1.5.x/documentation/observability/otel-stack.md
+blocks:
+- 566d6997802af500 sh
+- 9561bcd6298cf33b sh
+- 1b0b1722ae15648d sh
+- 47bea922f84785af sh
+- 067e6104febc800b sh
+- a0aa3f0a626256a6 sh
+hidden:
+- after:
+    line: 864b114414a934c5
+    occurrence: 0
+    words: 8fe8b7f5 5ef5ef03 7f7265e2 b9776d7d cace491b 6c8b4535 5b90071a 6201111b 0cf67fc7 66cd9688 a03aa3a0 75857a45 d6a7cd2a 9359f3bb 58296753 b9776d7d 164cf1ca 663ea1bf 55ea09e5 b9776d7d 2b1b73aa 663ea1bf 5b90071a a03aa3a0 75857a45 aa9e9b5c 90d08e58 66cd9688 fa44132b deb538b5 2b1b73aa b1b1bdb4 a0af9f86 caf9f906 58ee0007 177a7ea3 bd445c46 5955b8b2
+    block_before: null
+  content: |-
+    {{< doc-test paths="otel-stack" >}}
+    YAMLTest -f - <<'EOF'
+    # Confirm that Grafana auto-loaded the Agentgateway dashboard from the ConfigMap created
+    # by monitoring.enabled in Step 4. The Authorization header is "admin:prom-operator"
+    # (the default Grafana credentials) base64-encoded for HTTP basic auth.
+    - name: Agentgateway dashboard is loaded in Grafana
+      retries: 30
+      http:
+        url: "http://localhost:3000/api/dashboards/uid/agentgateway"
+        method: GET
+        headers:
+          authorization: "Basic YWRtaW46cHJvbS1vcGVyYXRvcg=="
+      source:
+        type: pod
+        usePortForward: true
+        selector:
+          kind: Deployment
+          metadata:
+            namespace: telemetry
+            name: kube-prometheus-stack-grafana
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.dashboard.title"
+            comparator: contains
+            value: Agentgateway
+    EOF
+    {{< /doc-test >}}

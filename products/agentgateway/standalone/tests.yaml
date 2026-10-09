@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, standalone mode.
 #
-# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/) and resiliency. Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency and observability. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -58,6 +58,19 @@ skip:
 - page: documentation/mcp/mcp-authz.md
 - page: documentation/mcp/spec-compatibility.md
 - page: documentation/configuration/resiliency/_index.md
+- page: documentation/observability/_index.md
+- page: documentation/observability/access-logs/_index.md
+- page: documentation/observability/access-logs/database.md
+- page: documentation/observability/access-logs/view.md
+- page: documentation/observability/metrics/_index.md
+- page: documentation/observability/metrics/overview.md
+- page: documentation/observability/metrics/reference.md
+- page: documentation/observability/traces/_index.md
+- page: documentation/observability/traces/attribute-reference.md
+- page: documentation/observability/traces/configs/_index.md
+- page: documentation/observability/traces/configs/grafana-cloud.md
+- page: documentation/observability/traces/configs/honeycomb.md
+- page: documentation/observability/traces/setup.md
 scenarios:
   buffer:
     page: documentation/configuration/traffic-management/buffer.md
@@ -199,3 +212,7 @@ scenarios:
   timeouts:
     page: documentation/configuration/resiliency/timeouts.md
     path: timeouts
+  # --- observability (documentation/observability/) ---
+  grafana:
+    page: documentation/observability/metrics/grafana.md
+    path: grafana
