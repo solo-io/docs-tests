@@ -34,7 +34,7 @@ try:
 except ModuleNotFoundError:
     jsonschema = None
 
-from doc_test_extract import Extractor
+from doc_test_extract import Extractor, resolve_docs_tests_root
 from doc_test_run import (
     DEFAULT_OPTIONS,
     build_test_cases,
@@ -238,7 +238,7 @@ def main() -> int:
 
     repo_root = Path(args.repo_root).resolve()
     crd_dir = Path(args.crd_dir).resolve()
-    docs_tests_root = Path(args.docs_tests_root).resolve() if args.docs_tests_root else None
+    docs_tests_root = resolve_docs_tests_root(args.docs_tests_root)
     schemas = load_crd_schemas(crd_dir)
     logger.info("Loaded %d CRD schema(s) from %s: %s", len(schemas), crd_dir, ", ".join(sorted(schemas)))
 

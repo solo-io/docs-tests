@@ -19,7 +19,7 @@ try:
 except ModuleNotFoundError:
     yaml = None
 
-from doc_test_extract import Extractor
+from doc_test_extract import Extractor, resolve_docs_tests_root
 
 logger = logging.getLogger(__name__)
 
@@ -1050,8 +1050,8 @@ def main() -> int:
         "--docs-tests-root",
         default=None,
         help="Path to a docs-tests checkout, for {{< doc-test file=\"...\" >}} external "
-        "content. Defaults to a sibling 'docs-tests' directory next to --repo-root. "
-        "Can also be set via the DOCS_TESTS_ROOT environment variable.",
+        "content and scenario manifests. Defaults to $DOCS_TESTS_ROOT, else the docs-tests "
+        "checkout this script runs from.",
     )
     parser.add_argument(
         "--upstream-root",
@@ -1138,8 +1138,7 @@ def main() -> int:
     repo_root = Path(args.repo_root).resolve()
     generated_dir = (repo_root / args.generated_dir).resolve()
     report_path = (repo_root / args.report_file).resolve()
-    docs_tests_root_value = args.docs_tests_root or os.environ.get("DOCS_TESTS_ROOT")
-    docs_tests_root = Path(docs_tests_root_value).resolve() if docs_tests_root_value else None
+    docs_tests_root = resolve_docs_tests_root(args.docs_tests_root)
 
     upstream_root_value = args.upstream_root or os.environ.get("UPSTREAM_ROOT")
     upstream_root = Path(upstream_root_value).resolve() if upstream_root_value else None

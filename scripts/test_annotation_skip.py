@@ -261,6 +261,25 @@ class ManifestNameTests(unittest.TestCase):
         self.assertIn(("content/docs/kubernetes/main/documentation/b.md", "headers"), claimed)
 
 
+class DocsTestsRootTests(unittest.TestCase):
+    """Without a docs-tests root the runner read no manifests, and every
+    manifest-only scenario vanished from a PR run's listing without an error."""
+
+    def test_defaults_to_this_checkout(self):
+        import doc_test_extract
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("DOCS_TESTS_ROOT", None)
+            root = doc_test_extract.resolve_docs_tests_root(None)
+        self.assertEqual(root, pathlib.Path(__file__).resolve().parent.parent)
+        self.assertTrue(any(root.glob(doc_test_run.MANIFEST_RELATIVE_GLOB)))
+
+    def test_explicit_and_env_win(self):
+        import doc_test_extract
+        with mock.patch.dict(os.environ, {"DOCS_TESTS_ROOT": "/env/root"}):
+            self.assertEqual(doc_test_extract.resolve_docs_tests_root(None), pathlib.Path("/env/root"))
+            self.assertEqual(doc_test_extract.resolve_docs_tests_root("/flag/root"), pathlib.Path("/flag/root"))
+
+
 class ReportTests(unittest.TestCase):
     """A skip survives merging shards and shows as a warning, not a pass."""
 
