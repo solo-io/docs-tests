@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency, observability, operations, about, migrate and agent. Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency, observability, operations, about, migrate, agent and reference. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -118,6 +118,14 @@ skip:
 - page: documentation/migrate/reference/cli/_index.md
 - page: documentation/agent/_index.md
 - page: documentation/agent/about.md
+- page: reference/_index.md
+- page: reference/api.md
+- page: reference/cel/_index.md
+- page: reference/cel/variables.md
+- page: reference/cel/yaml-and-examples.md
+- page: reference/helm/agentgateway-crds.md
+- page: reference/helm/agentgateway.md
+- dir: reference/agctl/
 scenarios:
   access-logs:
     type:

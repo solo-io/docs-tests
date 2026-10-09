@@ -1,0 +1,52 @@
+format: 1
+source: assets/agw-docs/pages/reference/cel/custom-functions.md
+blocks:
+- 226733367f33fa45 yaml
+- 5a7dbade7f87e6bb yaml
+- 2054fc3922706992 yaml
+- 641623ebb3d706d5 yaml
+- 25fbe9eb467b3b9a yaml
+- 4f59eebb9d784e09 yaml
+- 35aabd0e0b871240 yaml
+- 05991aa55ecbe989 sh
+- 3192859b7fcc9404 yaml
+hidden:
+- after:
+    block: 2
+    fingerprint: 2054fc3922706992
+    lang: yaml
+    lines: a7f80a73 2180b199 ca433a9d 6713ca7f 3c42dd1c d10b36aa c1e9a86f bf35c61e d10b36aa 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c d48a6346 3de9d845 3a945ae4 f372f1cb 14ddcd05 274fdf3f f77ef2ed d72f261d c64a4012
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="custom-cel-functions" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    config:
+      customFunctions: |
+        isInternal() {
+          request.headers["x-env"] == "internal"
+        }
+
+        this.hasTenantPrefix(tenant) {
+          this.startsWith("/tenants/" + tenant + "/")
+        }
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        authorization:
+          rules:
+          - allow: 'isInternal() || request.path.hasTenantPrefix("acme")'
+        transformations:
+          request:
+            add:
+              x-internal-request: 'string(isInternal())'
+      backends:
+      - host: localhost:8080
+    EOF
+
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}

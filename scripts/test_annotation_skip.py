@@ -235,6 +235,19 @@ class ManifestSkipTests(unittest.TestCase):
         _, _, docs = doc_test_run.build_test_cases_from_manifests(repo, docs_tests, repo / "out")
         self.assertEqual(docs, [f"content/docs/kubernetes/{v}/documentation/section/_index.md" for v in ("latest", "main")])
 
+    def test_dir_skips_every_page_under_it(self):
+        repo = pathlib.Path(tempfile.mkdtemp())
+        docs_tests = pathlib.Path(tempfile.mkdtemp())
+        for rel in ("reference/cli/a.md", "reference/cli/sub/b.md", "reference/api.md"):
+            page = repo / f"content/docs/kubernetes/latest/{rel}"
+            page.parent.mkdir(parents=True, exist_ok=True)
+            page.write_text("---\ntitle: x\n---\n")
+        manifest = docs_tests / "products/p/kubernetes/tests.yaml"
+        manifest.parent.mkdir(parents=True)
+        manifest.write_text("version: 1\nmode: kubernetes\nskip:\n- dir: reference/cli/\n- dir: reference/gone/\nscenarios: {}\n")
+        _, _, docs = doc_test_run.build_test_cases_from_manifests(repo, docs_tests, repo / "out")
+        self.assertEqual(docs, [f"content/docs/kubernetes/latest/reference/cli/{p}" for p in ("a.md", "sub/b.md")])
+
 
 class ManifestNameTests(unittest.TestCase):
     """Two pages in one mode can declare the same scenario name."""

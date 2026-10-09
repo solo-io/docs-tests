@@ -474,11 +474,19 @@ def build_test_cases_from_manifests(
         # `skip:` names pages that deliberately have no test (a section index,
         # a concept page), the manifest form of front matter `test: skip`. They
         # count as covered, so coverage measures pages someone decided about.
+        # `dir:` skips every page under a folder, for generated pages such as
+        # a CLI reference, where new pages appear without anyone editing here.
         for ref in data.get("skip") or []:
             if not isinstance(ref, dict):
-                raise RuntimeError(f"{mpath}: each `skip:` entry needs `page:` or `source:`.")
+                raise RuntimeError(f"{mpath}: each `skip:` entry needs `page:`, `source:` or `dir:`.")
             for version in TESTED_VERSIONS:
                 if not (repo_root / content_root / mode / version).is_dir():
+                    continue
+                if "dir" in ref:
+                    folder = repo_root / content_root / mode / version / str(ref["dir"]).strip("/")
+                    tested_documents.extend(
+                        p.relative_to(repo_root).as_posix() for p in folder.rglob("*.md")
+                    )
                     continue
                 resolved = _resolve_manifest_ref(ref, mode, version, reverse_index, mpath, "skip", content_root)
                 if resolved and (repo_root / resolved).is_file():
