@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# Covers traffic-management, llm (documentation/llm/) and security. Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/), security and mcp (documentation/mcp/). Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -34,6 +34,9 @@ prerequisites:
   install-standard:
     page: documentation/quickstart/install.md
     path: standard
+  helm-experimental:
+    page: documentation/install/helm.md
+    path: experimental
   helm-standard:
     page: documentation/install/helm.md
     path: standard
@@ -73,6 +76,14 @@ skip:
 - page: documentation/security/extauth/_index.md
 - page: documentation/security/jwt/_index.md
 - page: documentation/security/jwt/about.md
+- page: documentation/mcp/_index.md
+- page: documentation/mcp/about.md
+- page: documentation/mcp/apps.md
+- page: documentation/mcp/auth/_index.md
+- page: documentation/mcp/auth/about.md
+- page: documentation/mcp/guardrails/_index.md
+- page: documentation/mcp/guardrails/about.md
+- page: documentation/mcp/spec-compatibility.md
 scenarios:
   access-logs:
     type:
@@ -899,3 +910,119 @@ scenarios:
     - httpbin
     source: agw-docs/pages/security/backend-authn-te-standard.md
     path: te-standard
+  # --- mcp (documentation/mcp/) ---
+  dynamic-mcp:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/mcp/dynamic.md
+    path: dynamic-mcp
+  mcp-auth-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/mcp/static.md
+      path: setup-mcp-server
+    - source: agw-docs/pages/agentgateway/mcp/mcp-auth-keycloak.md
+      path: setup-keycloak
+    source: agw-docs/pages/agentgateway/mcp/mcp-auth-setup.md
+    path: mcp-auth-setup
+  mcp-guardrails:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    page: documentation/mcp/guardrails/setup.md
+    path: mcp-guardrails
+  mcp-local-rate-limit:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/mcp/static.md
+      path: setup-mcp-server
+    source: agw-docs/pages/agentgateway/mcp/rate-limit.md
+    path: mcp-local-rate-limit
+  setup-auth0:
+    needs:
+    - helm-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/mcp/static.md
+      path: setup-mcp-server
+    source: agw-docs/pages/agentgateway/mcp/mcp-auth-auth0.md
+    path: setup-auth0
+  setup-authentik:
+    needs:
+    - helm-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/mcp/static.md
+      path: setup-mcp-server
+    source: agw-docs/pages/agentgateway/mcp/mcp-auth-authentik.md
+    path: setup-authentik
+  setup-descope:
+    needs:
+    - helm-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/mcp/static.md
+      path: setup-mcp-server
+    source: agw-docs/pages/agentgateway/mcp/mcp-auth-descope.md
+    path: setup-descope
+  setup-entra:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/mcp/static.md
+      path: setup-mcp-server
+    source: agw-docs/pages/agentgateway/mcp/mcp-auth-entra.md
+    path: setup-entra
+  setup-keycloak:
+    needs:
+    - helm-experimental
+    source: agw-docs/pages/agentgateway/mcp/mcp-auth-keycloak.md
+    path: setup-keycloak
+  setup-mcp-server:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/mcp/static.md
+    path: setup-mcp-server
+  setup-okta:
+    needs:
+    - helm-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/mcp/static.md
+      path: setup-mcp-server
+    source: agw-docs/pages/agentgateway/mcp/mcp-auth-okta.md
+    path: setup-okta
+  virtual-mcp:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/mcp/multiplex.md
+    path: virtual-mcp

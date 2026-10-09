@@ -1,0 +1,150 @@
+format: 1
+source: content/docs/standalone/main/documentation/mcp/guardrails/setup.md
+blocks:
+- 46bac2b6b5af4791 sh
+- f1b47be7844c6d6a yaml
+- f6931a7b2e59dbc5 sh
+- 1014e2dcc47483bb sh
+- 9c738027f048c7f1 sh
+- 22f6e495f3f29d6c sh
+- 4f6b7bdaa1a078f9 console
+- 02c6e3a5e5f383f9 sh
+- 8f0dff5915d22ae3 console
+- d96402de8d6ec25f sh
+- 32ba5d98173ef459 sh
+hidden:
+- after:
+    line: 13bf0f96d587d261
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 dddece3d
+    block_before: null
+  content: |-
+    {{< doc-test paths="mcp-guardrails" >}}
+    # Install agentgateway binary
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 46bac2b6b5af4791
+    lang: sh
+    lines: 46bac2b6
+    preview: docker run --rm -p 9001:9001 gcr.io/solo-public/docs/testbox:latest
+  content: |2-
+       {{< doc-test paths="mcp-guardrails" >}}
+       docker rm -f ext-mcp-server >/dev/null 2>&1 || true
+       docker run -d --name ext-mcp-server -p 9001:9001 gcr.io/solo-public/docs/testbox:latest
+       for i in $(seq 1 30); do (echo > /dev/tcp/localhost/9001) 2>/dev/null && break; sleep 1; done
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: f1b47be7844c6d6a
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 19c2fa74 ead663af 9d7e2b17 fd12af70 ff9fe88b d31d0ec6 622b2ab2 0f27179b 726c2761 a56659ca 3e81ada3 a9754a97 5865dbb9 33334de0 b36fa061 890e4049 a18343a1 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |2-
+       {{< doc-test paths="mcp-guardrails" >}}
+       cat <<'EOF' > config.yaml
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - policies:
+           cors:
+             allowOrigins:
+             - "*"
+             allowHeaders:
+             - mcp-protocol-version
+             - content-type
+             - mcp-session-id
+             exposeHeaders:
+             - "Mcp-Session-Id"
+           mcpGuardrails:
+             processors:
+             - kind: remote
+               host: "localhost:9001"
+               failureMode: failClosed
+               methods:
+                 tools/call: request
+                 tools/list: response
+         backends:
+         - mcp:
+             targets:
+             - name: everything
+               stdio:
+                 cmd: npx
+                 args: ["@modelcontextprotocol/server-everything"]
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="mcp-guardrails" >}}
+       agentgateway -f config.yaml &
+       AGW_PID=$!
+       trap 'kill $AGW_PID 2>/dev/null; docker rm -f ext-mcp-server >/dev/null 2>&1' EXIT
+       # Wait for the stdio MCP backend to be ready. On first run, agentgateway downloads
+       # @modelcontextprotocol/server-everything via npx, which can take a while.
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/mcp \
+           -H 'Content-Type: application/json' \
+           -H 'Accept: application/json, text/event-stream' \
+           -H 'MCP-Protocol-Version: 2025-03-26' \
+           -d '{"jsonrpc":"2.0","id":0,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"warmup","version":"1.0"}}}' || true)
+         [ "$code" = "200" ] && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: d96402de8d6ec25f
+    lang: sh
+    lines: 2b185ce9 67c5a3ac 4347ff3f d31d31d3 6bbbbab2 0a505e01
+    preview: curl -s http://localhost:3000/mcp \
+  content: |-
+    {{< doc-test paths="mcp-guardrails" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * MCP session handshake (initialize + notifications/initialized) — steps 1-2
+    #   * ExtMCP response-phase mutation — tools/list descriptions annotated with [extmcp] (step 3)
+    #   * ExtMCP request-phase deny — tools/call for a "forbidden" tool returns JSON-RPC -32001 (step 4)
+    #   * Allowed tool call passes through — echo returns its result (step 5)
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Build your own ExtMCP server" callout — display-only guidance, no runnable command
+    #   * failOpen behavior — the page documents failClosed only; failOpen is not exercised
+    export MCP_SESSION_ID=$(curl -s -D - http://localhost:3000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "MCP-Protocol-Version: 2025-03-26" \
+      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"curl","version":"1.0.0"}}}' \
+      | grep -i "mcp-session-id:" | sed 's/.*: //' | tr -d '\r')
+    curl -s http://localhost:3000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "MCP-Protocol-Version: 2025-03-26" \
+      -H "mcp-session-id: $MCP_SESSION_ID" \
+      -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' >/dev/null
+    TL=$(curl -s http://localhost:3000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "MCP-Protocol-Version: 2025-03-26" \
+      -H "mcp-session-id: $MCP_SESSION_ID" \
+      -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}')
+    echo "$TL" | grep -q '\[extmcp\]' && echo "✓ tools/list descriptions annotated with [extmcp]" || { echo "FAIL: [extmcp] annotation missing: $TL"; exit 1; }
+    FB=$(curl -s http://localhost:3000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "MCP-Protocol-Version: 2025-03-26" \
+      -H "mcp-session-id: $MCP_SESSION_ID" \
+      -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"forbidden-tool","arguments":{}}}')
+    echo "$FB" | grep -q 'is not allowed' && echo "✓ forbidden tool call denied by ExtMCP" || { echo "FAIL: forbidden tool was not denied: $FB"; exit 1; }
+    EC=$(curl -s http://localhost:3000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "MCP-Protocol-Version: 2025-03-26" \
+      -H "mcp-session-id: $MCP_SESSION_ID" \
+      -d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"echo","arguments":{"message":"hello"}}}')
+    echo "$EC" | grep -q 'Echo: hello' && echo "✓ allowed tool call (echo) succeeded" || { echo "FAIL: echo call did not succeed: $EC"; exit 1; }
+    {{< /doc-test >}}

@@ -1,0 +1,180 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/mcp/mcp-auth-descope.md
+blocks:
+- 09f0f045c8c6a035 sh
+- 455dd20cadad626a bash
+- 7db3733aecea946b yaml
+- e410f630f24ff3d3 yaml
+- 249bd921167c0f62 yaml
+- b262324426c335c7 sh
+- 3f35cc7c4bb780f4 yaml
+- 4adde065965bc1d3 sh
+- 5bbc58dd3cbf8ecd sh
+- 7d9c05e572e159fe sh
+- d90ae2bb215ebceb
+- e3280d38a90691e8 sh
+- 38dfcdd2297d727b sh
+- 1e3234f904fb918a sh
+tags:
+- paths: setup-descope
+  block: 0
+  fingerprint: 09f0f045c8c6a035
+  lang: sh
+  lines: 09f0f045
+  preview: kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
+  form:
+    attr: paths="setup-descope"
+    only: true
+    lead: ' '
+- paths: setup-descope
+  block: 2
+  fingerprint: 7db3733aecea946b
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 ef213c08 36184fa5 2efcbf93 aa0a31cf c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-descope"
+    only: true
+    lead: ' '
+- paths: setup-descope
+  block: 3
+  fingerprint: e410f630f24ff3d3
+  lang: yaml
+  lines: 16c71da1 8c67597e cf153f9d 8c8c4228 ef213c08 36184fa5 588a5d84 8e174320 99d7dba1 22aec9ce d2ba729d 042a8844 9efe4f94 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-descope"
+    only: true
+    lead: ' '
+- paths: setup-descope
+  block: 4
+  fingerprint: 249bd921167c0f62
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 feab3003 36184fa5 f381f6d5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a9110e4f d3cb008e a1343bf6 e8bf8c57 03a60764 ff082b73 837dc1fd 32ea2053 44ec9b74 b93c9907 70c97555 ef213c08 99d7dba1 22aec9ce c6ba4159 fb6ae0db 7b18a0d0 82726b6f 38d165f5 3eb152f2 ddebc367 093c4113 92db8240 d0c2be99 2e4ca762 4112252c d8541eca 087d168d ef164a49 d37651c6 d48a6346 d25a61e1 1188488c 0a06a173 3575d548 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="setup-descope"
+    only: true
+    lead: ' '
+- paths: setup-descope
+  block: 5
+  fingerprint: b262324426c335c7
+  lang: sh
+  lines: b2623244
+  preview: kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} mcp-descope-authn -o yam
+  form:
+    attr: paths="setup-descope"
+    only: true
+    lead: ' '
+- paths: setup-descope
+  block: 6
+  fingerprint: 3f35cc7c4bb780f4
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 f497f0e2 3de9d845 6e95318c c10ebf93 a602752c 19c2fa74 6def2dca fd12af70 6bacf137 ff1599cf ec530ff5 afd95d43 9d7e2b17 ead663af 9d7e2b17 0f27179b 6bacf137 e7c3d778 d4f669b2 94ae491e e9a46ca1 99d7dba1 fe9784a0 eaaad965 e502497a aeca2b3d bf068a96 7981fdab ae4641d3 aeca2b3d bf068a96 213904e6 345fad7f 3f1863ee aeca2b3d bf068a96 d7d8d890 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="setup-descope"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 8044de170ff83396
+    occurrence: 0
+    words: cfc95b53 4d040d3f 10182ab8 b3eacd33 043a7187 efa1f375 28e5ebab 77bc06c5 4137b01e 4945a70f b9776d7d 10182ab8 b3eacd33 28e5ebab 58296753 4efb305a 4efb305a 82c6db3d b9776d7d 4275d71e dd1b3c31 28391d3b ea103d6c c51e455b 663ea1bf 1eb79602 cd42404d
+    block_before:
+      block: 1
+      fingerprint: 455dd20cadad626a
+      lang: bash
+      lines: edce6877 0a86f1a4 a88d7fb2 1deade55
+      preview: export DESCOPE_PROJECT_ID=<your-project-id>
+  content: |-
+    {{< doc-test paths="setup-descope" >}}
+    # Descope has no public sample project that serves a JWKS, so this test cannot
+    # resolve real keys. The values below are placeholders that let the resources
+    # render and validate against the Kubernetes API server. Replace them with your
+    # real project, MCP server, client, and MCP server URL when you follow the guide.
+    export DESCOPE_PROJECT_ID="${DESCOPE_PROJECT_ID:-P2placeholderprojectid}"
+    export DESCOPE_SERVER_ID="${DESCOPE_SERVER_ID:-placeholder-mcp-server}"
+    export DESCOPE_CLIENT_ID="${DESCOPE_CLIENT_ID:-placeholder-client-id}"
+    export DESCOPE_MCP_SERVER_URL="${DESCOPE_MCP_SERVER_URL:-https://mcp.example.com/mcp}"
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 1e3234f904fb918a
+    lang: sh
+    lines: 6e0b5327 16ff1c28 4217e901
+    preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-descope-authn
+  content: |-
+    {{< doc-test paths="setup-descope" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The descope-jwks backend and BackendTLSPolicy, the mcp-descope-authn
+    #     AgentgatewayPolicy with provider: Descope, the project-level JWKS path,
+    #     clientId, and the roles authorization rule, and the updated HTTPRoute are
+    #     all accepted by the Kubernetes API server and by the agentgateway control
+    #     plane.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That the policy programs on the data plane, the 401 challenge, the proxied
+    #     authorization-server metadata, the proxied client registration endpoint,
+    #     runtime token verification, and the 403 that the authorization rule returns
+    #     for a token without the Tenant Admin role. Descope has no public sample
+    #     project that serves a JWKS, so the control plane cannot resolve keys for the
+    #     placeholder project and the policy never reaches the proxy. Set DESCOPE_PROJECT_ID,
+    #     DESCOPE_SERVER_ID, DESCOPE_CLIENT_ID, and DESCOPE_MCP_SERVER_URL to a real
+    #     Descope project to exercise the full flow.
+    YAMLTest -f - <<'EOF'
+    - name: wait for descope-jwks BackendTLSPolicy to be accepted
+      wait:
+        target:
+          kind: BackendTLSPolicy
+          metadata:
+            namespace: default
+            name: descope-jwks
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: wait for mcp-descope-authn policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: mcp-descope-authn
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: wait for mcp HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: mcp
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 1e3234f904fb918a
+    lang: sh
+    lines: 6e0b5327 16ff1c28 4217e901
+    preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-descope-authn
+  content: |-
+    {{< doc-test paths="setup-descope" >}}
+    kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-descope-authn --ignore-not-found
+    kubectl delete backendtlspolicy descope-jwks --ignore-not-found
+    kubectl delete {{< reuse "agw-docs/snippets/backend.md" >}} descope-jwks --ignore-not-found
+    {{< /doc-test >}}

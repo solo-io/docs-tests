@@ -1,0 +1,241 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/mcp/mcp-auth-setup.md
+blocks:
+- 09f0f045c8c6a035 sh
+- f3596c38b2ef642d yaml
+- 1a48fab695852003 sh
+- 4d59ce33cb4c9f61 yaml
+- e9a032ddd341c001 sh
+- 071d126580fbbb9d sh
+tags:
+- paths: mcp-auth-setup
+  block: 0
+  fingerprint: 09f0f045c8c6a035
+  lang: sh
+  lines: 09f0f045
+  preview: kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
+  form:
+    attr: paths="mcp-auth-setup"
+    only: true
+    lead: ' '
+- paths: mcp-auth-setup
+  block: 1
+  fingerprint: f3596c38b2ef642d
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 de0bb930 36184fa5 f381f6d5 588a5d84 b5a028c9 56bf9360 d2ace77c c582ab43 e4f6a86d a9110e4f 76375f13 d3cb008e a1343bf6 d27c8ece 878ce673 4008472d 837dc1fd b04757ef ec737d96 44ec9b74 b93c9907 704c9f5f 70c97555 28101486 0d6480f0 5e1d80db c095a45d 3fb5fe50 4d0a926f bc6e3db2 82726b6f 165a7b87 efebcf5c bf598885 92db8240 1ac37d81 2c86d0ac c0834283 2e4ca762 9519f874 4a0a502e 087d168d ef164a49 7d0bbca2 02c2ee13 518f008f d48a6346 d25a61e1 1188488c 0a06a173 e0ff5fd4 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="mcp-auth-setup"
+    only: true
+    lead: ' '
+- paths: mcp-auth-setup
+  block: 2
+  fingerprint: 1a48fab695852003
+  lang: sh
+  lines: 1a48fab6
+  preview: kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} mcp-echo-authn -o yaml
+  form:
+    attr: paths="mcp-auth-setup"
+    only: true
+    lead: ' '
+- paths: mcp-auth-setup
+  block: 3
+  fingerprint: 4d59ce33cb4c9f61
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 4d010064 d3d416e7 b5a028c9 cd44d8cd 89b06424 f497f0e2 3de9d845 6e95318c c10ebf93 a602752c 19c2fa74 6def2dca fd12af70 6bacf137 ff1599cf ec530ff5 afd95d43 9d7e2b17 ead663af 9d7e2b17 0f27179b 6bacf137 d5908f8d d4f669b2 498cd271 94ae491e e9a46ca1 f84e6062 fe9784a0 51400be2 eaaad965 e502497a aeca2b3d bf068a96 7981fdab ae4641d3 aeca2b3d bf068a96 213904e6 db57117d aeca2b3d bf068a96 d7d8d890 f8abcbd9 aeca2b3d bf068a96 84353d85 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="mcp-auth-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 1a48fab695852003
+    lang: sh
+    lines: 1a48fab6
+    preview: kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} mcp-echo-authn -o yaml
+  content: |-
+    {{< doc-test paths="mcp-auth-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for mcp-echo-authn policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: mcp-echo-authn
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 4d59ce33cb4c9f61
+    lang: yaml
+    lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 4d010064 d3d416e7 b5a028c9 cd44d8cd 89b06424 f497f0e2 3de9d845 6e95318c c10ebf93 a602752c 19c2fa74 6def2dca fd12af70 6bacf137 ff1599cf ec530ff5 afd95d43 9d7e2b17 ead663af 9d7e2b17 0f27179b 6bacf137 d5908f8d d4f669b2 498cd271 94ae491e e9a46ca1 f84e6062 fe9784a0 51400be2 eaaad965 e502497a aeca2b3d bf068a96 7981fdab ae4641d3 aeca2b3d bf068a96 213904e6 db57117d aeca2b3d bf068a96 d7d8d890 f8abcbd9 aeca2b3d bf068a96 84353d85 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="mcp-auth-setup" >}}
+    DCR_SERVICE_CLIENT=$(curl --fail --silent --show-error \
+      -H "Content-Type: application/json" \
+      -d '{
+        "client_name": "DCR service token test",
+        "grant_types": ["client_credentials"],
+        "token_endpoint_auth_method": "client_secret_basic"
+      }' \
+      "$KEYCLOAK_URL/realms/master/clients-registrations/openid-connect")
+
+    DCR_SERVICE_CLIENT_ID=$(jq -r .client_id <<<"$DCR_SERVICE_CLIENT")
+    DCR_SERVICE_CLIENT_SECRET=$(jq -r .client_secret <<<"$DCR_SERVICE_CLIENT")
+    export DCR_SERVICE_TOKEN=$(curl --fail --silent --show-error \
+      -u "$DCR_SERVICE_CLIENT_ID:$DCR_SERVICE_CLIENT_SECRET" \
+      -d grant_type=client_credentials \
+      "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
+      | jq -r .access_token)
+
+    YAMLTest -f - <<'EOF'
+    - name: wait for mcp HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: mcp
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: unauthenticated MCP request returns 401 (connect-time auth enforced)
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/mcp"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        headers:
+          - name: www-authenticate
+            comparator: contains
+            value: resource_metadata
+      retries: 3
+    - name: DCR service token without a user group returns 403
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/mcp"
+        method: GET
+        headers:
+          authorization: "Bearer ${DCR_SERVICE_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+      retries: 3
+    - name: resource metadata discovery returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/.well-known/oauth-protected-resource/mcp"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.resource"
+            comparator: contains
+            value: "/mcp"
+      retries: 3
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 139d08b64663b3c1
+    occurrence: 0
+    words: 227907a1 a9c0ad21 b29814cf b48165c6
+    block_before:
+      block: 4
+      fingerprint: e9a032ddd341c001
+      lang: sh
+      lines: e9a032dd
+      preview: npx @modelcontextprotocol/inspector@{{% reuse "agw-docs/versions/mcp-inspector.m
+  content: |-
+    {{< doc-test paths="mcp-auth-setup" >}}
+    # Automated equivalent of the MCP inspector walkthrough above. An MCP client
+    # discovers the authorization server through the gateway, registers itself with
+    # DCR, sends the user through a browser login with PKCE, and calls the MCP
+    # endpoint with the resulting token. No administrator credential is used.
+    GW="http://${INGRESS_GW_ADDRESS}:80"
+    REDIRECT="http://localhost:9999/callback"
+    COOKIES=$(mktemp)
+    # `sed -n 1p` rather than `head -1`: head closes the pipe early, which raises
+    # SIGPIPE in the upstream command and trips `set -o pipefail`.
+    location_of() { grep -i '^location:' | tail -1 | tr -d '\r' | sed 's/^[Ll]ocation: //'; }
+    form_action_of() { grep -o 'action="[^"]*"' | sed -n '1p' | sed 's/action="//; s/"$//; s/&amp;/\&/g'; }
+
+    # 1. Discovery. The client learns the authorization server from the gateway.
+    AS_METADATA=$(curl --fail --silent --show-error "$GW/.well-known/oauth-authorization-server/mcp")
+    REGISTRATION_ENDPOINT=$(jq -r .registration_endpoint <<<"$AS_METADATA")
+    AUTHORIZATION_ENDPOINT=$(jq -r .authorization_endpoint <<<"$AS_METADATA")
+    TOKEN_ENDPOINT=$(jq -r .token_endpoint <<<"$AS_METADATA")
+
+    # 2. Dynamic client registration.
+    REGISTRATION=$(curl --fail --silent --show-error -H "Content-Type: application/json" \
+      -d "{\"client_name\":\"doc test mcp client\",\"redirect_uris\":[\"$REDIRECT\"],\"grant_types\":[\"authorization_code\"],\"response_types\":[\"code\"],\"token_endpoint_auth_method\":\"client_secret_basic\"}" \
+      "$REGISTRATION_ENDPOINT")
+    CLIENT_ID=$(jq -r .client_id <<<"$REGISTRATION")
+    CLIENT_SECRET=$(jq -r .client_secret <<<"$REGISTRATION")
+
+    # 3. PKCE verifier and S256 challenge.
+    VERIFIER=$(openssl rand -hex 32)
+    CHALLENGE=$(printf '%s' "$VERIFIER" | openssl dgst -binary -sha256 | openssl base64 | tr '+/' '-_' | tr -d '=')
+
+    # 4. Sign in as user1 on the Keycloak login form.
+    LOGIN_PAGE=$(curl --silent -c "$COOKIES" -b "$COOKIES" -L \
+      "$AUTHORIZATION_ENDPOINT?client_id=$CLIENT_ID&response_type=code&scope=openid&redirect_uri=$REDIRECT&code_challenge=$CHALLENGE&code_challenge_method=S256&state=doc-test")
+    LOGIN_FORM=$(form_action_of <<<"$LOGIN_PAGE")
+    if [ -z "$LOGIN_FORM" ]; then echo "no Keycloak login form at the authorization endpoint"; exit 1; fi
+    LOCATION=$(curl --silent -c "$COOKIES" -b "$COOKIES" -o /dev/null -D - -X POST "$LOGIN_FORM" \
+      --data-urlencode "username=user1" --data-urlencode "password=password" | location_of)
+
+    # 5. Approve the consent screen. Keycloak requires consent for an anonymously
+    #    registered client, so a real MCP client shows this screen to the user too.
+    CODE=$(sed -n 's/.*[?&]code=\([^&]*\).*/\1/p' <<<"$LOCATION")
+    if [ -z "$CODE" ]; then
+      CONSENT_PAGE=$(curl --silent -c "$COOKIES" -b "$COOKIES" -L "$LOCATION")
+      CONSENT_FORM=$(form_action_of <<<"$CONSENT_PAGE")
+      case "$CONSENT_FORM" in /*) CONSENT_FORM="${KEYCLOAK_URL}${CONSENT_FORM}" ;; esac
+      CONSENT_CODE=$(grep -o 'name="code" value="[^"]*"' <<<"$CONSENT_PAGE" | sed -n '1p' | sed 's/.*value="//; s/"$//')
+      LOCATION=$(curl --silent -c "$COOKIES" -b "$COOKIES" -o /dev/null -D - -X POST "$CONSENT_FORM" \
+        --data-urlencode "code=$CONSENT_CODE" --data-urlencode "accept=Yes" | location_of)
+      CODE=$(sed -n 's/.*[?&]code=\([^&]*\).*/\1/p' <<<"$LOCATION")
+    fi
+    if [ -z "$CODE" ]; then echo "the login flow returned no authorization code"; exit 1; fi
+
+    # 6. Exchange the code for a token by using the PKCE verifier.
+    MCP_USER_TOKEN=$(curl --fail --silent --show-error -u "$CLIENT_ID:$CLIENT_SECRET" \
+      -X POST "$TOKEN_ENDPOINT" \
+      -d grant_type=authorization_code -d "code=$CODE" -d "redirect_uri=$REDIRECT" \
+      -d "code_verifier=$VERIFIER" | jq -r .access_token)
+    if [ -z "$MCP_USER_TOKEN" ] || [ "$MCP_USER_TOKEN" = "null" ]; then echo "code exchange returned no token"; exit 1; fi
+
+    # 7. The token carries the claims that the policy checks.
+    jq -R --arg audience "$MCP_RESOURCE" '
+      split(".") | .[1] | gsub("-"; "+") | gsub("_"; "/") | @base64d | fromjson
+      | if ([.aud] | flatten | index($audience)) == null then error("aud does not contain \($audience)") else . end
+      | if (.groups // [] | index("users")) == null then error("token has no users group") else . end
+    ' >/dev/null <<<"$MCP_USER_TOKEN"
+
+    # 8. The gateway accepts the token on the MCP endpoint.
+    code=$(curl -s -o /dev/null -w '%{http_code}' "$GW/mcp" -X POST \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "Authorization: Bearer $MCP_USER_TOKEN" \
+      -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"doc-test","version":"1.0"}},"id":1}')
+    if [ "$code" != "200" ]; then echo "expected 200 from /mcp with a DCR user token, got $code"; exit 1; fi
+    echo "DCR, authorization code with PKCE, and MCP access all succeeded"
+    {{< /doc-test >}}

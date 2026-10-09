@@ -1,0 +1,171 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/mcp/multiplex.md
+blocks:
+- fe694dca28e5262c yaml
+- 6ec010e535564d6e yaml
+- 01c9860cf692e3ae yaml
+- bc25e03160cf6c08 yaml
+- edaf7a3fa402f69a sh
+- 54f1eca12a12c623
+- ab98ccb3362617e1 sh
+- d13ade6c62874937 sh
+- e9a032ddd341c001 sh
+- 35a6effdc543c57f sh
+tags:
+- paths: virtual-mcp
+  block: 0
+  fingerprint: fe694dca28e5262c
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 430aaeeb fa1e8330 ace6e20f 36184fa5 97bcd5e0 8432e015 839a5cac ace6e20f a58565b2 8c8c4228 fa1e8330 ace6e20f 36184fa5 04968f51 d9994e9d f9526432 8d468630 f1a80b56 0ff65a1a 874ae35f 82f2bc7e e690b653 4aee8d36 ce075631 8f33a14d f2c26b54 cb3f91d5 f1540154 0d6480f0 8c8c4228 430aaeeb fa1e8330 ace6e20f 36184fa5 8432e015 ace6e20f 0ff65a1a 83feb025 4aee8d36 3ef91722 56c7990c 08a3b86e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="virtual-mcp"
+    only: true
+    lead: ' '
+- paths: virtual-mcp
+  block: 1
+  fingerprint: 6ec010e535564d6e
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 94299a3d 36184fa5 8432e015 839a5cac 65f7ff6a a58565b2 8c8c4228 fa1e8330 65f7ff6a 36184fa5 04968f51 f7b9d9c2 0f8a659d 67658a05 cb3f91d5 f1540154 0d6480f0 8c8c4228 94299a3d fa1e8330 65f7ff6a 36184fa5 8432e015 65f7ff6a 0ff65a1a 0baaa92b ad63f385 56c7990c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="virtual-mcp"
+    only: true
+    lead: ' '
+- paths: virtual-mcp
+  block: 2
+  fingerprint: 01c9860cf692e3ae
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 d2ace77c 36184fa5 82726b6f 3035507a d9994e9d 8432e015 449ac08a 839a5cac ace6e20f f7b9d9c2 2efcbf93 067411b0 da480536 91f2837c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="virtual-mcp"
+    only: true
+    lead: ' '
+- paths: virtual-mcp
+  block: 3
+  fingerprint: bc25e03160cf6c08
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 f1be08d9 22aec9ce 99d7dba1 eaaad965 aeca2b3d bf068a96 7981fdab abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="virtual-mcp"
+    only: true
+    lead: ' '
+- paths: virtual-mcp
+  block: 9
+  fingerprint: 35a6effdc543c57f
+  lang: sh
+  lines: 8024908c dd8535ab 34918565 9a6da75c
+  preview: kubectl delete Deployment mcp-server-everything mcp-website-fetcher
+  form:
+    attr: paths="virtual-mcp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 6ec010e535564d6e
+    lang: yaml
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 94299a3d 36184fa5 8432e015 839a5cac 65f7ff6a a58565b2 8c8c4228 fa1e8330 65f7ff6a 36184fa5 04968f51 f7b9d9c2 0f8a659d 67658a05 cb3f91d5 f1540154 0d6480f0 8c8c4228 94299a3d fa1e8330 65f7ff6a 36184fa5 8432e015 65f7ff6a 0ff65a1a 0baaa92b ad63f385 56c7990c abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="virtual-mcp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for mcp-server-everything deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: mcp-server-everything
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: wait for mcp-website-fetcher deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: mcp-website-fetcher
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: bc25e03160cf6c08
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 f1be08d9 22aec9ce 99d7dba1 eaaad965 aeca2b3d bf068a96 7981fdab abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="virtual-mcp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for mcp HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: mcp
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: bc25e03160cf6c08
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 f1be08d9 22aec9ce 99d7dba1 eaaad965 aeca2b3d bf068a96 7981fdab abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="virtual-mcp" >}}
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:80/mcp" || true)
+      case "${code}" in
+        5*|"") sleep 2 ;;
+        *) break ;;
+      esac
+    done
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: bc25e03160cf6c08
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 f1be08d9 22aec9ce 99d7dba1 eaaad965 aeca2b3d bf068a96 7981fdab abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="virtual-mcp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: MCP endpoint accepts initialize request
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /mcp
+        method: POST
+        headers:
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

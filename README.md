@@ -80,8 +80,9 @@ of the day's close matches and moved pages; a failed refresh also posts to
 repo; until it is set, the step skips with a warning.
 
 For the sections moved so far (traffic-management, llm under
-`documentation/llm/`, and security), scenario definitions live in the `tests.yaml`
-manifests, so their annotations were exported with `--front-matter none`. A
+`documentation/llm/`, security, and mcp under `documentation/mcp/`), scenario
+definitions live in the `tests.yaml` manifests, so their annotations were
+exported with `--front-matter none`. A
 manifest key must be unique, but a scenario name need not be: set `name:` when
 two pages in one mode declare the same name. Pages
 that deliberately have no test are listed under the manifest's `skip:` key, the
@@ -111,9 +112,8 @@ the same `paths=` selection and script assembly as an inline block.
 
 - `doc_test_extract.py` and `doc_test_run.py` both accept `--docs-tests-root <path>`,
   or the `DOCS_TESTS_ROOT` environment variable.
-- If neither is set, it defaults to a sibling directory next to the consuming repo's
-  own root (e.g. `agentgateway-oss-website/` and `docs-tests/` cloned side by side),
-  so a plain local checkout of both repos works with no extra configuration.
+- If neither is set, it defaults to the docs-tests checkout the script itself runs
+  from, so the manifests in `products/` are always read.
 - In CI, add a checkout step for `docs-tests` and pass its path through either
   mechanism — see `scripts/CI_WORKFLOW_SKETCH.md` for the concrete workflow change.
 - A missing or misspelled `file=` path fails the extractor immediately with a

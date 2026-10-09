@@ -1,0 +1,181 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/mcp/mcp-auth-okta.md
+blocks:
+- 09f0f045c8c6a035 sh
+- 2ca0964688390c09 bash
+- 2ec6d2a18bd78166 yaml
+- d965cbfc9c592dac yaml
+- 512f4409b7c5e21d yaml
+- 2c2cce525c608c79 sh
+- 3f35cc7c4bb780f4 yaml
+- 4adde065965bc1d3 sh
+- 5bbc58dd3cbf8ecd sh
+- 7d9c05e572e159fe sh
+- d90ae2bb215ebceb
+- e3280d38a90691e8 sh
+- 38dfcdd2297d727b sh
+- 2f7566c9ac937c93 json
+- 2734b894f571bd36 sh
+tags:
+- paths: setup-okta
+  block: 0
+  fingerprint: 09f0f045c8c6a035
+  lang: sh
+  lines: 09f0f045
+  preview: kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
+  form:
+    attr: paths="setup-okta"
+    only: true
+    lead: ' '
+- paths: setup-okta
+  block: 2
+  fingerprint: 2ec6d2a18bd78166
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 c27689ef 36184fa5 2efcbf93 2a2a1d03 c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-okta"
+    only: true
+    lead: ' '
+- paths: setup-okta
+  block: 3
+  fingerprint: d965cbfc9c592dac
+  lang: yaml
+  lines: 16c71da1 8c67597e cf153f9d 8c8c4228 c27689ef 36184fa5 588a5d84 f12f4724 99d7dba1 22aec9ce d2ba729d 8fdfb964 9efe4f94 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-okta"
+    only: true
+    lead: ' '
+- paths: setup-okta
+  block: 4
+  fingerprint: 512f4409b7c5e21d
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 ffbc595e 36184fa5 f381f6d5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a9110e4f d3cb008e a1343bf6 152ed7f5 1dbe5921 837dc1fd 76f64a34 44ec9b74 b93c9907 70c97555 c27689ef 99d7dba1 22aec9ce c6ba4159 2d78bb36 c941385b 82726b6f 28377219 597b35a0 ddebc367 90a4e05e 92db8240 d0c2be99 2e4ca762 4112252c d8541eca 087d168d ef164a49 c44780df d48a6346 d25a61e1 1188488c 0a06a173 cd9fda03 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="setup-okta"
+    only: true
+    lead: ' '
+- paths: setup-okta
+  block: 5
+  fingerprint: 2c2cce525c608c79
+  lang: sh
+  lines: 2c2cce52
+  preview: kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} mcp-okta-authn -o yaml
+  form:
+    attr: paths="setup-okta"
+    only: true
+    lead: ' '
+- paths: setup-okta
+  block: 6
+  fingerprint: 3f35cc7c4bb780f4
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 f497f0e2 3de9d845 6e95318c c10ebf93 a602752c 19c2fa74 6def2dca fd12af70 6bacf137 ff1599cf ec530ff5 afd95d43 9d7e2b17 ead663af 9d7e2b17 0f27179b 6bacf137 e7c3d778 d4f669b2 94ae491e e9a46ca1 99d7dba1 fe9784a0 eaaad965 e502497a aeca2b3d bf068a96 7981fdab ae4641d3 aeca2b3d bf068a96 213904e6 345fad7f 3f1863ee aeca2b3d bf068a96 d7d8d890 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="setup-okta"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: a5e774d812a57916
+    occurrence: 0
+    words: 663ea1bf 3f267c2a b9776d7d 535c6f8e 6201111b 78236fd5 a0af9f86 10c22bcf 4d040d3f cbb82ebe b3eacd33 2348f998 ea103d6c 45447b7a 43cc23fa b1d6b91b 3e194352 c34eda51 cedd88e8 d8ad572d 068d8dbd d91ec1b4 a94db13c 6201111b 20f65c28 b9776d7d 535c6f8e 6201111b 559df7bb bfe5d697
+    block_before:
+      block: 1
+      fingerprint: 2ca0964688390c09
+      lang: bash
+      lines: 3226a376 37c50413 f2fc876b 629a8fcc
+      preview: export OKTA_DOMAIN=<your-org>.okta.com
+  content: |-
+    {{< doc-test paths="setup-okta" >}}
+    # Okta has no public sample org that serves a JWKS, so this test cannot resolve
+    # real keys. The values below are placeholders that let the resources render and
+    # validate against the Kubernetes API server. Replace them with your real org,
+    # authorization server, app, and audience values when you follow the guide.
+    export OKTA_DOMAIN="${OKTA_DOMAIN:-dev-1234567.okta.com}"
+    export OKTA_AUTH_SERVER="${OKTA_AUTH_SERVER:-default}"
+    export OKTA_CLIENT_ID="${OKTA_CLIENT_ID:-0oa1placeholderclientid}"
+    export OKTA_AUDIENCE="${OKTA_AUDIENCE:-api://default}"
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 2734b894f571bd36
+    lang: sh
+    lines: 674353df 87f549de 4ee96236
+    preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-okta-authn
+  content: |-
+    {{< doc-test paths="setup-okta" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The okta-jwks backend and BackendTLSPolicy, the mcp-okta-authn
+    #     AgentgatewayPolicy with provider: Okta, an explicit Okta JWKS path,
+    #     clientId, and the groups authorization rule, and the updated HTTPRoute are
+    #     all accepted by the Kubernetes API server and by the agentgateway control
+    #     plane.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That the policy programs on the data plane, the 401 challenge, the proxied
+    #     authorization-server metadata, the audience query parameter, the proxied
+    #     client registration endpoint, runtime token verification, and the 403 that
+    #     the authorization rule returns for a token without the AI-Users group.
+    #     Okta has no public sample org that serves a JWKS, so the control plane
+    #     cannot resolve keys for the placeholder domain and the policy never reaches
+    #     the proxy. Set OKTA_DOMAIN, OKTA_AUTH_SERVER, OKTA_CLIENT_ID, and
+    #     OKTA_AUDIENCE to a real Okta org to exercise the full flow.
+    YAMLTest -f - <<'EOF'
+    - name: wait for okta-jwks BackendTLSPolicy to be accepted
+      wait:
+        target:
+          kind: BackendTLSPolicy
+          metadata:
+            namespace: default
+            name: okta-jwks
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: wait for mcp-okta-authn policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: mcp-okta-authn
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: wait for mcp HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: mcp
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 2734b894f571bd36
+    lang: sh
+    lines: 674353df 87f549de 4ee96236
+    preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-okta-authn
+  content: |-
+    {{< doc-test paths="setup-okta" >}}
+    kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-okta-authn --ignore-not-found
+    kubectl delete backendtlspolicy okta-jwks --ignore-not-found
+    kubectl delete {{< reuse "agw-docs/snippets/backend.md" >}} okta-jwks --ignore-not-found
+    {{< /doc-test >}}

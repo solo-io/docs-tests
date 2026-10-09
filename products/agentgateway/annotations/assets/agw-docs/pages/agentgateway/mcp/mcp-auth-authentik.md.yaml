@@ -1,0 +1,443 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/mcp/mcp-auth-authentik.md
+blocks:
+- 09f0f045c8c6a035 sh
+- 40d716b4579a0538 sh
+- e7f566bb28aa4fff sh
+- 9f1da36da48ab734 sh
+- 08ca5197bd0d33be sh
+- 439d3c344e309c6f sh
+- 7397a60655048c74
+- fdcb803090f1c14c sh
+- 019c31dd872e140e sh
+- 6e596a586bdd3189 sh
+- 71b67b2ac4a5adeb sh
+- 62fe8c7ab198b476 sh
+- 63cb3ae54deacffc sh
+- d9112e753ae0220f sh
+- 3a8eab5e9814e152 sh
+- c5aba9e937ba62ca yaml
+- 078d01c0a3d9f0ce sh
+- 9521b8cbcab03f3e yaml
+- 4adde065965bc1d3 sh
+- 5bbc58dd3cbf8ecd sh
+- 7d9c05e572e159fe sh
+- d90ae2bb215ebceb
+- e3280d38a90691e8 sh
+- eac76b9cf07ebe78 json
+- 38dfcdd2297d727b sh
+- ef186c35052b2c20 json
+- 0ff18572cf0c16a5 sh
+- 90528690f617a852 sh
+tags:
+- paths: setup-authentik
+  block: 0
+  fingerprint: 09f0f045c8c6a035
+  lang: sh
+  lines: 09f0f045
+  preview: kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 1
+  fingerprint: 40d716b4579a0538
+  lang: sh
+  lines: c1971efa f6179cb3
+  preview: helm repo add authentik https://charts.goauthentik.io
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 2
+  fingerprint: e7f566bb28aa4fff
+  lang: sh
+  lines: ff4bb29f b8c37316 b172548f
+  preview: export AUTHENTIK_SECRET_KEY=$(openssl rand -base64 36 | tr -d '\n')
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 3
+  fingerprint: 9f1da36da48ab734
+  lang: sh
+  lines: bdabb63e bd0c49da a691f70f f3d6bc61 e004b788 a78324d6 4a29eba8 a3d32473 147bc82d 92f1881e c3d985d4 30960f10 efe85056 4ab1bd01 4f9b6671
+  preview: helm upgrade --install authentik authentik/authentik \
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 4
+  fingerprint: 08ca5197bd0d33be
+  lang: sh
+  lines: 72962180 05b467c8
+  preview: kubectl wait --for=condition=Available deployment/authentik-server \
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 5
+  fingerprint: 439d3c344e309c6f
+  lang: sh
+  lines: 439d3c34
+  preview: kubectl get pods -n authentik
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 7
+  fingerprint: fdcb803090f1c14c
+  lang: sh
+  lines: abbd1bdc f1540154 0d6480f0 8c8c4228 24f56d4c 28ecf7ae 36184fa5 e6d673c3 8432e015 27bd5ed0 6f9444fe 87fa4d21 0ff65a1a 82601aaa 102f028c 7811827d abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 8
+  fingerprint: 019c31dd872e140e
+  lang: sh
+  lines: eb5045a3 be30be5b 2393e52d
+  preview: export AUTHENTIK_ADDRESS=$(kubectl get svc -n authentik authentik-admin \
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 10
+  fingerprint: 71b67b2ac4a5adeb
+  lang: sh
+  lines: e69f13c0 82e4cb15 4ff9e0e1 e84d28b1 0167b075 4e1a909f a47d5d02 b54cf899 007aa41f d190ed6d f5043787 9dcf5079 fc681f0d 2dc02a59 3e58407d 640709ef 14ebe56a b4bdc848 6aae6ef4 a4c3ed04 b83c5910 80ed8240 cad4829e 62fa2ae2
+  preview: export AUTHENTIK_API=http://${AUTHENTIK_ADDRESS}/api/v3
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 11
+  fingerprint: 62fe8c7ab198b476
+  lang: sh
+  lines: 9e22316d 7fc9ea25 e8b6fdea 600e085b c65f2e22 84d3c2a7 7e2d630e 73a6b72e 6af5879d ca261872 8e1d1485 2f1fe278 f71d5af4 ffed26ee 4f8e1f56
+  preview: export AK_PROVIDER_RESPONSE=$(curl -s -X POST -H "${AK_AUTH_HEADER}" -H "Content
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 12
+  fingerprint: 63cb3ae54deacffc
+  lang: sh
+  lines: 98fd68c8 8021a104 b96baba8 2373db39 4e3616b3 623eb6c3 aff97733 ecf21a42
+  preview: export AK_PROVIDER_PK=$(curl -s -H "${AK_AUTH_HEADER}" \
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 13
+  fingerprint: d9112e753ae0220f
+  lang: sh
+  lines: 3e60e843 ce236bd8 0d59a7b6 c28dbe72 b96baba8 5af9e014 f6f8dc3c
+  preview: 'export AK_GROUP_PK=$(curl -s -X POST -H "${AK_AUTH_HEADER}" -H "Content-Type: ap'
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 14
+  fingerprint: 3a8eab5e9814e152
+  lang: sh
+  lines: ca5a8071 c1cad666
+  preview: export AUTHENTIK_ISSUER="http://authentik-server.authentik.svc.cluster.local/app
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 15
+  fingerprint: c5aba9e937ba62ca
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 9532363d 36184fa5 f381f6d5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a9110e4f d3cb008e a1343bf6 50eae9d7 d97a93f7 d2a77790 837dc1fd 80575c85 44ec9b74 b93c9907 c1bff082 70c97555 ed037236 0d6480f0 28ecf7ae da480536 de7f1561 44c5fb17 82726b6f b80d7cd1 d3ad413c 8c2c4a30 df6dd50d 92db8240 d0c2be99 2e4ca762 4112252c d8541eca 087d168d ef164a49 406dceb9 d48a6346 d25a61e1 1188488c 0a06a173 55ae9952 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 16
+  fingerprint: 078d01c0a3d9f0ce
+  lang: sh
+  lines: 078d01c0
+  preview: kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} mcp-authentik-authn -o y
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 17
+  fingerprint: 9521b8cbcab03f3e
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 f497f0e2 3de9d845 6e95318c c10ebf93 a602752c 19c2fa74 6def2dca fd12af70 6bacf137 ff1599cf ec530ff5 afd95d43 9d7e2b17 ead663af 9d7e2b17 0f27179b 6bacf137 e7c3d778 d4f669b2 94ae491e e9a46ca1 99d7dba1 fe9784a0 eaaad965 e502497a aeca2b3d bf068a96 7981fdab ae4641d3 aeca2b3d bf068a96 213904e6 345fad7f 37de2b04 aeca2b3d bf068a96 d7d8d890 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+- paths: setup-authentik
+  block: 18
+  fingerprint: 4adde065965bc1d3
+  lang: sh
+  lines: 7f5ae30f 5a7cc868 cdb8a07c
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  form:
+    attr: paths="setup-authentik"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 9
+      fingerprint: 6e596a586bdd3189
+      lang: sh
+      lines: 8c7b271e 1113c598
+      preview: kubectl port-forward -n authentik svc/authentik-server 9000:80 &
+  content: |-
+    {{< doc-test paths="setup-authentik" >}}
+    # Wait for the LoadBalancer to assign an address to the authentik-admin Service,
+    # then poll the API until it answers. A ready Deployment is not enough on its own:
+    # authentik finishes migrating its database before it serves API requests, and the
+    # LoadBalancer address is assigned independently of pod readiness.
+    YAMLTest -f - <<'EOF'
+    - name: wait for the authentik-admin LoadBalancer address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: authentik
+            name: authentik-admin
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+
+    export AUTHENTIK_ADDRESS=$(kubectl get svc -n authentik authentik-admin \
+      -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}"):9000
+    for i in $(seq 1 90); do
+      curl -s --max-time 5 -o /dev/null "http://${AUTHENTIK_ADDRESS}/api/v3/root/config/" && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    line: 999736cbcc183e4a
+    occurrence: 0
+    words: 935f6831 d6a7cd2a 28391d3b b808e156 89445ea0 ba78973d 94e8566d 2e1cfa82 f3959239 b9776d7d 254637f7 37dfcd31 20f65c28 b9776d7d 07a07ff2 87eba76e 98f38f12 0695b563 7a7f09de 98f38f12 1b16b1df 07a07ff2 aee50b18 eaa41be4 6201111b a12dd3a7 8e7fc023 2e48f8ed a5408438 b9776d7d cd42404d 8e7fc023 bb0347a4 a51a6c19 07a07ff2 0695b563
+    block_before:
+      block: 10
+      fingerprint: 71b67b2ac4a5adeb
+      lang: sh
+      lines: e69f13c0 82e4cb15 4ff9e0e1 e84d28b1 0167b075 4e1a909f a47d5d02 b54cf899 007aa41f d190ed6d f5043787 9dcf5079 fc681f0d 2dc02a59 3e58407d 640709ef 14ebe56a b4bdc848 6aae6ef4 a4c3ed04 b83c5910 80ed8240 cad4829e 62fa2ae2
+      preview: export AUTHENTIK_API=http://${AUTHENTIK_ADDRESS}/api/v3
+  content: |-
+    {{< doc-test paths="setup-authentik" >}}
+    # Fail here rather than in the provider request below, so that a slow authentik
+    # bootstrap is reported as a missing flow, key, or scope instead of an empty client ID.
+    AK_SCOPE_COUNT=$(echo "${AK_SCOPES:-[]}" | jq 'length' 2>/dev/null || echo 0)
+    if [ -z "${AK_FLOW:-}" ] || [ -z "${AK_INVALIDATION_FLOW:-}" ] \
+      || [ -z "${AK_SIGNING_KEY:-}" ] || [ "${AK_SCOPE_COUNT}" -ne 3 ]; then
+      echo "authentik did not finish creating its default objects in time"
+      echo "  flow=${AK_FLOW:-} invalidation_flow=${AK_INVALIDATION_FLOW:-} signing_key=${AK_SIGNING_KEY:-} scopes=${AK_SCOPES:-}"
+      kubectl logs -n authentik deployment/authentik-worker --tail=50 || true
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 63cb3ae54deacffc
+    lang: sh
+    lines: 98fd68c8 8021a104 b96baba8 2373db39 4e3616b3 623eb6c3 aff97733 ecf21a42
+    preview: export AK_PROVIDER_PK=$(curl -s -H "${AK_AUTH_HEADER}" \
+  content: |-
+    {{< doc-test paths="setup-authentik" >}}
+    # Fail fast with a clear message if the provider or application was not created,
+    # rather than letting an empty client ID flow into the policy below.
+    if [ -z "${AUTHENTIK_CLIENT_ID:-}" ]; then
+      echo "AUTHENTIK_CLIENT_ID is empty: the authentik OAuth2 provider was not created"
+      echo "authentik response: ${AK_PROVIDER_RESPONSE:-<none>}"
+      exit 1
+    fi
+    if [ -z "${AK_PROVIDER_PK:-}" ] || [ "${AK_PROVIDER_PK}" = "null" ]; then
+      echo "AK_PROVIDER_PK is empty: could not look up the authentik provider"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    line: 5fab079a2d04bada
+    occurrence: 0
+    words: 25e2b6b1 b9776d7d 9b863d70 1f58b914 10c22bcf bec16879 04f8996d 8e7fc023 bb0347a4 8656aa55 663ea1bf 0895a532 a0561fd6 663ea1bf b9776d7d 10182ab8 b3eacd33
+    block_before:
+      block: 13
+      fingerprint: d9112e753ae0220f
+      lang: sh
+      lines: 3e60e843 ce236bd8 0d59a7b6 c28dbe72 b96baba8 5af9e014 f6f8dc3c
+      preview: 'export AK_GROUP_PK=$(curl -s -X POST -H "${AK_AUTH_HEADER}" -H "Content-Type: ap'
+  content: |-
+    {{< doc-test paths="setup-authentik" >}}
+    # Confirm the group exists and that akadmin is a member, because the authorization
+    # rule in the policy below denies every token that does not carry this group.
+    if [ -z "${AK_GROUP_PK:-}" ] || [ "${AK_GROUP_PK}" = "null" ]; then
+      echo "AK_GROUP_PK is empty: the mcp-agent group was not created"
+      exit 1
+    fi
+    curl -s -H "${AK_AUTH_HEADER}" "${AUTHENTIK_API}/core/groups/?search=mcp-agent" \
+      | jq -e '[.results[] | select(.name == "mcp-agent") | .users_obj[].username] | index("akadmin")' >/dev/null
+    {{< /doc-test >}}
+- after:
+    line: 2aa2f5f1fcfd451f
+    occurrence: 0
+    words: b9776d7d 68752bf6 948fe603 a5614527 a5408438 b9776d7d e4027a3d cd42404d 8e7fc023 bb0347a4 20158224 58296753 b9776d7d 823412d1
+    block_before:
+      block: 26
+      fingerprint: 0ff18572cf0c16a5
+      lang: sh
+      lines: 2911f2be 67c5a3ac aa0542db 2b471344
+      preview: curl -s -X POST http://$INGRESS_GW_ADDRESS:80/.well-known/oauth-authorization-se
+  content: |-
+    {{< doc-test paths="setup-authentik" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * authentik installs in the cluster and its server becomes ready.
+    #   * The OAuth2 provider and application are created, and authentik serves JWKS
+    #     at the derived {issuer}/jwks/ path that the Authentik provider expects.
+    #   * The mcp-agent group is created and the akadmin user is a member of it.
+    #   * The mcp-authentik-authn AgentgatewayPolicy (provider: Authentik, clientId,
+    #     a cross-namespace remote JWKS backendRef, and the group authorization rule)
+    #     is accepted and attached, and the updated HTTPRoute is accepted.
+    #   * The gateway enforces the connect-time 401 challenge, serves the protected
+    #     resource metadata, serves authorization server metadata proxied from
+    #     authentik, injects a registration_endpoint that authentik does not publish,
+    #     and answers Dynamic Client Registration with the pre-registered client.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The full interactive OAuth sign-in flow, which requires a real user signing
+    #     in through a browser that can reach authentik. In this test authentik is
+    #     only reachable inside the cluster.
+    #   * That a token from a user in the mcp-agent group is admitted and one from a
+    #     user outside it is denied with a 403. Minting a token from the command line
+    #     needs a service account and the client_credentials grant, which is a
+    #     different flow from the authorization code flow that this guide documents.
+    YAMLTest -f - <<'EOF'
+    - name: wait for authentik server to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: authentik
+            name: authentik-server
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 600
+          intervalSeconds: 10
+    - name: wait for mcp-authentik-authn policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: mcp-authentik-authn
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: wait for mcp-authentik-authn policy to be attached
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: mcp-authentik-authn
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: wait for mcp HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: mcp
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 2aa2f5f1fcfd451f
+    occurrence: 0
+    words: b9776d7d 68752bf6 948fe603 a5614527 a5408438 b9776d7d e4027a3d cd42404d 8e7fc023 bb0347a4 20158224 58296753 b9776d7d 823412d1
+    block_before:
+      block: 26
+      fingerprint: 0ff18572cf0c16a5
+      lang: sh
+      lines: 2911f2be 67c5a3ac aa0542db 2b471344
+      preview: curl -s -X POST http://$INGRESS_GW_ADDRESS:80/.well-known/oauth-authorization-se
+  content: |-
+    {{< doc-test paths="setup-authentik" >}}
+    # Assert the MCP auth behaviors that the Authentik provider is responsible for.
+    # The gateway must challenge unauthenticated requests, and it must inject a
+    # registration endpoint into authentik's metadata and answer DCR with clientId.
+    code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/mcp" -X POST \
+      -H "Content-Type: application/json" \
+      -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{}},"id":1}')
+    if [ "$code" != "401" ]; then echo "expected 401 from unauthenticated /mcp, got $code"; exit 1; fi
+
+    curl -sf "http://${INGRESS_GW_ADDRESS}:80/.well-known/oauth-protected-resource/mcp" >/dev/null
+
+    reg=$(curl -sf "http://${INGRESS_GW_ADDRESS}:80/.well-known/oauth-authorization-server/mcp" | jq -r '.registration_endpoint')
+    case "$reg" in
+      */client-registration) ;;
+      *) echo "expected an injected client-registration endpoint, got '$reg'"; exit 1 ;;
+    esac
+
+    dcr_client=$(curl -sf -X POST "$reg" -H "Content-Type: application/json" \
+      -d '{"client_name":"doc-test-client","redirect_uris":["http://localhost:9999/callback"]}' | jq -r '.client_id')
+    if [ "$dcr_client" != "${AUTHENTIK_CLIENT_ID}" ]; then
+      echo "expected DCR to return the pre-registered client ${AUTHENTIK_CLIENT_ID}, got '$dcr_client'"; exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 27
+    fingerprint: 90528690f617a852
+    lang: sh
+    lines: d6645d5f 12238d1c af9cfd1c
+    preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-authentik-authn
+  content: |-
+    {{< doc-test paths="setup-authentik" >}}
+    kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-authentik-authn --ignore-not-found
+    helm uninstall authentik -n authentik --ignore-not-found || true
+    kubectl delete namespace authentik --ignore-not-found
+    {{< /doc-test >}}

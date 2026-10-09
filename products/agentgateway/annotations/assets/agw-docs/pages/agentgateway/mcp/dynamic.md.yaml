@@ -1,0 +1,142 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/mcp/dynamic.md
+blocks:
+- eec17df124e9b1b1 yaml
+- 3e7faa09f277f60b yaml
+- 33c18d69064c9b96 yaml
+- ab98ccb3362617e1 sh
+- d13ade6c62874937 sh
+- e9a032ddd341c001 sh
+- 37782aa773edc09d sh
+tags:
+- paths: dynamic-mcp
+  block: 0
+  fingerprint: eec17df124e9b1b1
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 430aaeeb fa1e8330 ace6e20f 36184fa5 97bcd5e0 8432e015 839a5cac ace6e20f a58565b2 8c8c4228 fa1e8330 ace6e20f 36184fa5 04968f51 d9994e9d f9526432 8d468630 f1a80b56 0ff65a1a 874ae35f cb3f91d5 f1540154 0d6480f0 8c8c4228 430aaeeb fa1e8330 ace6e20f 36184fa5 8432e015 ace6e20f 0ff65a1a 83feb025 4aee8d36 3ef91722 56c7990c 08a3b86e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dynamic-mcp"
+    only: true
+    lead: ' '
+- paths: dynamic-mcp
+  block: 1
+  fingerprint: 3e7faa09f277f60b
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 fe9784a0 36184fa5 82726b6f 3035507a d9994e9d 8432e015 449ac08a 839a5cac ace6e20f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dynamic-mcp"
+    only: true
+    lead: ' '
+- paths: dynamic-mcp
+  block: 2
+  fingerprint: 33c18d69064c9b96
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d2ace77c fa1e8330 683d521d 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 6808b904 22aec9ce 99d7dba1 eaaad965 aeca2b3d bf068a96 7981fdab abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dynamic-mcp"
+    only: true
+    lead: ' '
+- paths: dynamic-mcp
+  block: 6
+  fingerprint: 37782aa773edc09d
+  lang: sh
+  lines: 607f0808 0d3a454d 477646b6 9a6da75c
+  preview: kubectl delete Deployment mcp-server-everything
+  form:
+    attr: paths="dynamic-mcp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: eec17df124e9b1b1
+    lang: yaml
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 430aaeeb fa1e8330 ace6e20f 36184fa5 97bcd5e0 8432e015 839a5cac ace6e20f a58565b2 8c8c4228 fa1e8330 ace6e20f 36184fa5 04968f51 d9994e9d f9526432 8d468630 f1a80b56 0ff65a1a 874ae35f cb3f91d5 f1540154 0d6480f0 8c8c4228 430aaeeb fa1e8330 ace6e20f 36184fa5 8432e015 ace6e20f 0ff65a1a 83feb025 4aee8d36 3ef91722 56c7990c 08a3b86e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="dynamic-mcp" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for mcp-server-everything deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: default
+               name: mcp-server-everything
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 33c18d69064c9b96
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d2ace77c fa1e8330 683d521d 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 6808b904 22aec9ce 99d7dba1 eaaad965 aeca2b3d bf068a96 7981fdab abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dynamic-mcp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for mcp HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: mcp
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 33c18d69064c9b96
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d2ace77c fa1e8330 683d521d 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 6808b904 22aec9ce 99d7dba1 eaaad965 aeca2b3d bf068a96 7981fdab abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dynamic-mcp" >}}
+    for i in $(seq 1 90); do
+      STATUS=$(curl -s --max-time 5 -o /dev/null -w "%{http_code}" -X POST "http://${INGRESS_GW_ADDRESS}:80/mcp" -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}' 2>/dev/null)
+      if [ "$STATUS" = "200" ]; then break; fi
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 33c18d69064c9b96
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d2ace77c fa1e8330 683d521d 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 6808b904 22aec9ce 99d7dba1 eaaad965 aeca2b3d bf068a96 7981fdab abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dynamic-mcp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: MCP endpoint accepts initialize request
+      retries: 3
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /mcp
+        method: POST
+        headers:
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

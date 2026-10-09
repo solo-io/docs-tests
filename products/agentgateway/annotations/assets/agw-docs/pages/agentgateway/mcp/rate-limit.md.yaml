@@ -1,0 +1,67 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/mcp/rate-limit.md
+blocks:
+- 51975dfcbf299f00 yaml
+- cb043212086350b2 yaml
+- 5f8b97323cc290fe sh
+- 6fa96e07a206f2d0 json
+- 9fe65890098f1be4 sh
+- 9d4590346ba06127 sh
+- d565773889b98397
+- 617acddcd42b92d7 json
+- a3af9595bfab65e5 yaml
+- afe88be5eeab144e yaml
+- 73fdfbf59552cb9d yaml
+- 4ece21a4bb4cb2db sh
+- 7d140cf2ccc87130 sh
+- e99f31f74fce05f0 sh
+- a0ee2dbb976ad454
+- 3c1fb9230028e861 json
+- 088c579eee820e59 sh
+tags:
+- paths: mcp-local-rate-limit
+  block: 1
+  fingerprint: cb043212086350b2
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 d4cf8077 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a50da420 f971795d e58a0870 9482fbfc db022252 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-local-rate-limit"
+    only: true
+    lead: ' '
+- paths: mcp-local-rate-limit
+  block: 16
+  fingerprint: 088c579eee820e59
+  lang: sh
+  lines: 088c579e
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} mcp-rate-limit -n def
+  form:
+    attr: paths="mcp-local-rate-limit"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: cb043212086350b2
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 d4cf8077 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a50da420 f971795d e58a0870 9482fbfc db022252 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="mcp-local-rate-limit" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for mcp-rate-limit policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: default
+               name: mcp-rate-limit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}

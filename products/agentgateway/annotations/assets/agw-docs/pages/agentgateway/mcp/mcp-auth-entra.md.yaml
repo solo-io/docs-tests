@@ -1,0 +1,269 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/mcp/mcp-auth-entra.md
+blocks:
+- 09f0f045c8c6a035 sh
+- 3aa6cf7e31c078a9 bash
+- f18382cf591bbc5f json
+- f008e6104000ccbf yaml
+- 47b28fccb27b5dc2 yaml
+- b5996bc7eb196d1c yaml
+- f6711e5f422531f8 sh
+- 03920f8af49ee067 yaml
+- 4adde065965bc1d3 sh
+- 5bbc58dd3cbf8ecd sh
+- 7d9c05e572e159fe sh
+- d90ae2bb215ebceb
+- e3280d38a90691e8 sh
+- e367c879a2b3cc53 json
+- f181de41b8713d92 sh
+- 298509bd08e20a71 json
+- a4ce0b4540f1e6b7 sh
+- fa71b9c7e0bbb639 json
+- e9a032ddd341c001 sh
+- 2958188e128eb347 sh
+tags:
+- paths: setup-entra
+  block: 0
+  fingerprint: 09f0f045c8c6a035
+  lang: sh
+  lines: 09f0f045
+  preview: kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
+  form:
+    attr: paths="setup-entra"
+    only: true
+    lead: ' '
+- paths: setup-entra
+  block: 3
+  fingerprint: f008e6104000ccbf
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 de02dd5c 36184fa5 2efcbf93 ab1a39d7 c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-entra"
+    only: true
+    lead: ' '
+- paths: setup-entra
+  block: 4
+  fingerprint: 47b28fccb27b5dc2
+  lang: yaml
+  lines: 16c71da1 8c67597e cf153f9d 8c8c4228 de02dd5c 36184fa5 588a5d84 599f0185 99d7dba1 22aec9ce d2ba729d 02668b00 9efe4f94 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-entra"
+    only: true
+    lead: ' '
+- paths: setup-entra
+  block: 5
+  fingerprint: b5996bc7eb196d1c
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 37b027f7 36184fa5 f381f6d5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a9110e4f d3cb008e a1343bf6 4eea4694 932b1ba3 b2d8499a aa002ac1 8a613c36 837dc1fd 20cd4423 aeaf42c0 44ec9b74 b93c9907 70c97555 de02dd5c 99d7dba1 b6e1c19c c6ba4159 2545fd4e 82726b6f 1308022f e226d059 6fa17109 9bebf37c 09f5a495 c0b1fb9d cd6c20b1 bb331792 92db8240 2e4ca762 3f1e3c6d 087d168d ef164a49 fbf45062 d48a6346 d25a61e1 1188488c 0a06a173 f991ba2b abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="setup-entra"
+    only: true
+    lead: ' '
+- paths: setup-entra
+  block: 6
+  fingerprint: f6711e5f422531f8
+  lang: sh
+  lines: f6711e5f
+  preview: kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} mcp-entra-authn -o yaml
+  form:
+    attr: paths="setup-entra"
+    only: true
+    lead: ' '
+- paths: setup-entra
+  block: 7
+  fingerprint: 03920f8af49ee067
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 8af957d1 3de9d845 6e95318c a602752c 19c2fa74 6def2dca fd12af70 6bacf137 ff1599cf ec530ff5 afd95d43 9d7e2b17 ead663af 9d7e2b17 0f27179b 6bacf137 d5908f8d d4f669b2 94ae491e 453bdfd0 99d7dba1 fe9784a0 eaaad965 e502497a aeca2b3d bf068a96 7981fdab ae4641d3 aeca2b3d bf068a96 213904e6 d0ff49a9 aeca2b3d bf068a96 d7d8d890 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="setup-entra"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: d14134dff0db41cd
+    occurrence: 0
+    words: e7f6c011 b1a36d25 a172cedc 66cf5513 6201111b e5c7ffac fa8847b0 a172cedc 4b168d88 e08d706b ca978112 dfbb889c 82a3537f 6201111b 6ee0eb49 b9776d7d cd42404d 663ea1bf b8071da0 21af6f12 9300b4d2 b9776d7d 4b168d88 663ea1bf b9776d7d 7dfb4cf6 7175517a 4ed379d4 8e7fc023 be8dff00 a0561fd6 663ea1bf 4d040d3f 10182ab8 b3eacd33 bb0347a4 a3b142af 1eb79602 4b168d88 58296753 b9776d7d cbb82ebe 7369949b 8e7fc023 bb0347a4 90d08e58 1d9283d8
+    block_before:
+      block: 2
+      fingerprint: f18382cf591bbc5f
+      lang: json
+      lines: b7f8dd50 d0da08a5 d10b36aa
+      preview: '"api": {'
+  content: |-
+    {{< doc-test paths="setup-entra" >}}
+    # The controller fetches the provider's remote JWKS when it translates the policy,
+    # so the test uses Microsoft's real multi-tenant `common` endpoint
+    # (https://login.microsoftonline.com/common/discovery/v2.0/keys) to resolve keys
+    # without a dedicated tenant. The client ID is a placeholder; it is not validated
+    # for the unauthenticated requests the test makes. Replace both with your real
+    # tenant and app registration IDs when you follow the guide.
+    export ENTRA_TENANT_ID="${ENTRA_TENANT_ID:-common}"
+    export ENTRA_CLIENT_ID="${ENTRA_CLIENT_ID:-aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee}"
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: f6711e5f422531f8
+    lang: sh
+    lines: f6711e5f
+    preview: kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} mcp-entra-authn -o yaml
+  content: |-
+    {{< doc-test paths="setup-entra" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for entra-jwks BackendTLSPolicy to be accepted
+      wait:
+        target:
+          kind: BackendTLSPolicy
+          metadata:
+            namespace: default
+            name: entra-jwks
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: wait for mcp-entra-authn policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: mcp-entra-authn
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: b7d3ac33dbb836fd
+    occurrence: 0
+    words: b9776d7d 4ea5ee68 0e9a0002 b9776d7d fa44132b 9b16b44d 6201111b b9776d7d 48c237a6 4a2dbd90 3c469e9d 6201111b 19d86ef4 a46c629d 6db7d803 2ad8a704 ceba0f45 fdc38cf6 ec38063c 0695b563 b9776d7d 3a3127f5 823412d1 b8d31e85 b9776d7d 8a84e406 a511aeee 10182ab8 8f4d9088 be8dff00 c9a8dc33 663ea1bf 6a8da52e 8044aae1 663ea1bf 20dc65af bb0347a4 ac0b52a2 254bb97b be8dff00 ca978112 80ed840f 8a84e406 7175517a 823412d1 663ea1bf 42d8a7ea c9a8dc33 47951833 b9776d7d 4ea5ee68 0e9a0002 b808e156 504dbd7e f905b195 15eaa752 b9776d7d e5381597 a5408438 c9a8dc33 935f6831 bb0347a4 af193190 762069bc ca978112 fa44132b a0af9f86 b9776d7d 112e24f2 2dd00bd7 94e8566d c54a061d 8f4d9088 663ea1bf 2ad8a704 6201111b b9776d7d 948fe603 c1481e2e 15eaa752 b9776d7d a0af9f86 153b2a38 ca978112 6b3c238e e0603c49 a9f4b3d2 5694d08a
+    block_before:
+      block: 7
+      fingerprint: 03920f8af49ee067
+      lang: yaml
+      lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 8af957d1 3de9d845 6e95318c a602752c 19c2fa74 6def2dca fd12af70 6bacf137 ff1599cf ec530ff5 afd95d43 9d7e2b17 ead663af 9d7e2b17 0f27179b 6bacf137 d5908f8d d4f669b2 94ae491e 453bdfd0 99d7dba1 fe9784a0 eaaad965 e502497a aeca2b3d bf068a96 7981fdab ae4641d3 aeca2b3d bf068a96 213904e6 d0ff49a9 aeca2b3d bf068a96 d7d8d890 abc56510
+      preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="setup-entra" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The Entra MCP auth resources (entra-jwks backend + BackendTLSPolicy, the
+    #     mcp-entra-authn AgentgatewayPolicy with provider: Entra, clientId, and the
+    #     app role authorization rule, and the updated HTTPRoute) are accepted, and
+    #     the provider's JWKS resolves from the Entra `common` endpoint so the policy
+    #     programs on the data plane.
+    #   * The gateway enforces the connect-time 401 challenge and serves the
+    #     protected-resource metadata. The discovery endpoints stay reachable with the
+    #     authorization rule in place, because the rule applies only after a token is
+    #     verified.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The full interactive OAuth sign-in flow and the 403 that the authorization
+    #     rule returns for a token without the mcp.admin app role. Both require a real
+    #     user signing in to a configured Entra app registration, which an automated
+    #     test cannot perform.
+    YAMLTest -f - <<'EOF'
+    - name: wait for mcp HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: mcp
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: unauthenticated MCP request returns 401 (connect-time auth enforced)
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/mcp"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        headers:
+          - name: www-authenticate
+            comparator: contains
+            value: resource_metadata
+      retries: 3
+    - name: resource metadata discovery returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/.well-known/oauth-protected-resource/mcp"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.resource"
+            comparator: contains
+            value: "/mcp"
+      retries: 3
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: fa71b9c7e0bbb639
+    lang: json
+    lines: 021fb596 701cc002 e946a006 a2c4dccd 3efbe0b9 4b5559f4 ea019be4 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="setup-entra" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * With no `resource` configured in mcp.resourceMetadata, the gateway derives
+    #     the advertised resource from the request URL, so it carries the gateway
+    #     address that the client used instead of a fixed value.
+    #   * Client registration is short-circuited: the gateway answers with the
+    #     pre-registered clientId as a public client, without calling Entra.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The bridged authorization server metadata, because the gateway builds it
+    #     from Entra's live OIDC discovery document at request time, which would make
+    #     the test depend on login.microsoftonline.com availability.
+    YAMLTest -f - <<EOF
+    - name: protected resource metadata derives the resource from the request URL
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/.well-known/oauth-protected-resource/mcp"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "\$.resource"
+            comparator: contains
+            value: "${INGRESS_GW_ADDRESS}"
+      retries: 3
+    - name: client registration returns the pre-registered Entra client ID
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/.well-known/oauth-authorization-server/mcp/client-registration"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"client_name":"test","redirect_uris":["http://localhost:8080/callback"],"grant_types":["authorization_code"],"response_types":["code"],"token_endpoint_auth_method":"none"}
+      source:
+        type: local
+      expect:
+        statusCode: 201
+        bodyJsonPath:
+          - path: "\$.client_id"
+            comparator: equals
+            value: "${ENTRA_CLIENT_ID}"
+          - path: "\$.token_endpoint_auth_method"
+            comparator: equals
+            value: "none"
+      retries: 3
+    EOF
+    {{< /doc-test >}}

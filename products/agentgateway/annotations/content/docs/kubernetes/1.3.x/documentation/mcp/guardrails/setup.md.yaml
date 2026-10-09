@@ -1,0 +1,211 @@
+format: 1
+source: content/docs/kubernetes/1.3.x/documentation/mcp/guardrails/setup.md
+blocks:
+- 6ec010e535564d6e yaml
+- a4239ad74dbe30ef yaml
+- 6b75f1ece98d74dd yaml
+- ec3c2254e556a8d8 yaml
+- 0a478760ceb4468e yaml
+- 5e85fa09f0b18b08 sh
+- d13ade6c62874937 sh
+- 8b573aceacef58b8 sh
+- 5f492d0b47a00437 sh
+- d18e6437e0dc7cf1 sh
+- ad243274ca1c74f4 sh
+- c697d19cd4576fd3 console
+- 49cadf6c3621fa99 sh
+- 8f0dff5915d22ae3 console
+- 18f87b083ddf864d sh
+- 4ccf4918d63eb5f0 console
+- f13ddb88e78edd03 yaml
+- 0312e90bb02472b8 sh
+tags:
+- paths: mcp-guardrails
+  block: 0
+  fingerprint: 6ec010e535564d6e
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 94299a3d 36184fa5 8432e015 839a5cac 65f7ff6a a58565b2 8c8c4228 fa1e8330 65f7ff6a 36184fa5 04968f51 f7b9d9c2 0f8a659d 67658a05 cb3f91d5 f1540154 0d6480f0 8c8c4228 94299a3d fa1e8330 65f7ff6a 36184fa5 8432e015 65f7ff6a 0ff65a1a 0baaa92b ad63f385 56c7990c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-guardrails"
+    only: true
+    lead: ' '
+- paths: mcp-guardrails
+  block: 1
+  fingerprint: a4239ad74dbe30ef
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 42fa7e5e 36184fa5 8432e015 839a5cac 455cb47b a58565b2 8c8c4228 fa1e8330 455cb47b 36184fa5 1dbe8698 c0967c8f e848799c 13c7f350 04968f51 8a4ff61b fedad65d 82f2bc7e 69d7f213 7c781356 da480536 79bb435b 31baaab3 cb3f91d5 f1540154 0d6480f0 8c8c4228 ed586721 fa1e8330 a220922d 36184fa5 8432e015 455cb47b 0ff65a1a 36433640 366a670b 9693ecf1 7d42f305 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-guardrails"
+    only: true
+    lead: ' '
+- paths: mcp-guardrails
+  block: 2
+  fingerprint: 6b75f1ece98d74dd
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 fe9784a0 36184fa5 82726b6f 3035507a cbd1477e 2efcbf93 067411b0 da480536 91f2837c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-guardrails"
+    only: true
+    lead: ' '
+- paths: mcp-guardrails
+  block: 3
+  fingerprint: ec3c2254e556a8d8
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d2ace77c 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e 6808b904 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-guardrails"
+    only: true
+    lead: ' '
+- paths: mcp-guardrails
+  block: 4
+  fingerprint: 0a478760ceb4468e
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 08033dc1 36184fa5 588a5d84 453bdfd0 99d7dba1 fe9784a0 bb85cefe 82726b6f e8bd2b8e 3e81ada3 2ba13e7e 70c97555 ed586721 5fb81848 f14f4904 b36fa061 278b4a2d 8d812f16 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-guardrails"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: a4239ad74dbe30ef
+    lang: yaml
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 42fa7e5e 36184fa5 8432e015 839a5cac 455cb47b a58565b2 8c8c4228 fa1e8330 455cb47b 36184fa5 1dbe8698 c0967c8f e848799c 13c7f350 04968f51 8a4ff61b fedad65d 82f2bc7e 69d7f213 7c781356 da480536 79bb435b 31baaab3 cb3f91d5 f1540154 0d6480f0 8c8c4228 ed586721 fa1e8330 a220922d 36184fa5 8432e015 455cb47b 0ff65a1a 36433640 366a670b 9693ecf1 7d42f305 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mcp-guardrails" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for mcp-website-fetcher deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: mcp-website-fetcher
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: wait for ext-mcp-server deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: ext-mcp-server
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 9f1ff2eef063e935
+    occurrence: 0
+    words: 3f386731 b9776d7d 10182ab8 3f386731 663ea1bf 8a84e406 9c6725dc b9776d7d 823412d1 b3eacd33 6201111b b9776d7d 02195b8e 10c22bcf bec16879 f9d35d43 7edb360f 1f58b914 c626da0c bec16879 7c9bbe5e 7edb360f 663ea1bf b9776d7d b3eacd33 6db7d803 2ad8a704 b080c643 b9776d7d 10182ab8 10e08a41 a1d98908 b9776d7d b3eacd33 9f584196 41008373 3f440ef4 7175517a 3026a0ca b9776d7d 7edb360f f9d35d43 a330395c a9f4b3d2 c626da0c b9776d7d 7c9bbe5e 0fc4dfc4 663ea1bf b9776d7d b3eacd33 f3959239 b9776d7d 10e08a41 153b2a38 2ad8a704 a1d98908 b9776d7d b3eacd33 9f584196 dfc3376b 7175517a 9c299759 b9776d7d a330395c 10c22bcf b9776d7d a18b869b a330395c 28391d3b 865bbcf9 6201111b 5b7e6bf2 e0705e68 aa9e9b5c a4262e1c 10182ab8 5dc897f8 fa42bed0 a0af9f86 caf9f906 10182ab8 5dc897f8 a4262e1c
+    block_before:
+      block: 4
+      fingerprint: 0a478760ceb4468e
+      lang: yaml
+      lines: 16c71da1 fbc30693 7f57603a 8c8c4228 08033dc1 36184fa5 588a5d84 453bdfd0 99d7dba1 fe9784a0 bb85cefe 82726b6f e8bd2b8e 3e81ada3 2ba13e7e 70c97555 ed586721 5fb81848 f14f4904 b36fa061 278b4a2d 8d812f16 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mcp-guardrails" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for mcp-guardrails policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: mcp-guardrails
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 4ccf4918d63eb5f0
+    lang: console
+    lines: 4ccf4918
+    preview: 'data: {"jsonrpc":"2.0","id":4,"result":{"content":[{"type":"text","text":"<!doct'
+  content: |-
+    {{< doc-test paths="mcp-guardrails" >}}
+    YAMLTest -f - <<'EOF'
+    - name: MCP endpoint accepts initialize request
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /mcp
+        method: POST
+        headers:
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+          mcp-protocol-version: "2025-03-26"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 4ccf4918d63eb5f0
+    lang: console
+    lines: 4ccf4918
+    preview: 'data: {"jsonrpc":"2.0","id":4,"result":{"content":[{"type":"text","text":"<!doct'
+  content: |-
+    {{< doc-test paths="mcp-guardrails" >}}
+    # Assert the guardrails behaviors end-to-end: response-phase mutation,
+    # request-phase deny, and request-phase allow.
+    MCP_ADDR="http://${INGRESS_GW_ADDRESS}:80/mcp"
+    HDRS=(-H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -H "MCP-Protocol-Version: 2025-03-26")
+
+    # Retry until the route is programmed and the policy-server connection is warm.
+    LIST=""
+    for attempt in $(seq 1 20); do
+      SID=$(curl -s --max-time 10 -D - "${HDRS[@]}" "$MCP_ADDR" \
+        -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' \
+        | grep -i "mcp-session-id:" | sed 's/.*: //' | tr -d '\r')
+      if [ -z "$SID" ]; then sleep 5; continue; fi
+      curl -s --max-time 10 "${HDRS[@]}" -H "mcp-session-id: $SID" "$MCP_ADDR" \
+        -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' >/dev/null || true
+      LIST=$(curl -s --max-time 15 "${HDRS[@]}" -H "mcp-session-id: $SID" "$MCP_ADDR" \
+        -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}')
+      echo "$LIST" | grep -q '\[extmcp\]' && break
+      sleep 5
+    done
+
+    # Response phase: the policy server appended " [extmcp]" to tool descriptions.
+    echo "$LIST" | grep -q '\[extmcp\]' || { echo "FAIL: tools/list was not mutated: $LIST"; exit 1; }
+
+    # Request phase: a tool whose name contains "forbidden" is denied.
+    DENY=$(curl -s --max-time 10 "${HDRS[@]}" -H "mcp-session-id: $SID" "$MCP_ADDR" \
+      -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"forbidden-tool","arguments":{}}}')
+    echo "$DENY" | grep -q 'is not allowed' || { echo "FAIL: forbidden tool was not denied: $DENY"; exit 1; }
+
+    # Request phase: the allowed "fetch" tool passes through and returns a result.
+    ALLOW=$(curl -s --max-time 15 "${HDRS[@]}" -H "mcp-session-id: $SID" "$MCP_ADDR" \
+      -d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"fetch","arguments":{"url":"https://example.com"}}}')
+    echo "$ALLOW" | grep -q '"result"' || { echo "FAIL: allowed tool did not return a result: $ALLOW"; exit 1; }
+
+    echo "PASS: MCP guardrails mutate, deny, and allow behaviors verified"
+    {{< /doc-test >}}
