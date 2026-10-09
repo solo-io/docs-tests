@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, standalone mode.
 #
-# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency, observability and operations. Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency, observability, operations, about, migrate and agent. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -76,6 +76,9 @@ skip:
 - page: documentation/operations/config-resources.md
 - page: documentation/operations/inspect-config.md
 - page: documentation/operations/upgrade.md
+- page: documentation/about/_index.md
+- page: documentation/agent/_index.md
+- page: documentation/agent/about.md
 scenarios:
   buffer:
     page: documentation/configuration/traffic-management/buffer.md
@@ -228,3 +231,7 @@ scenarios:
   trace-validate:
     page: documentation/operations/trace-requests.md
     path: trace-validate
+  # --- agent (documentation/agent/) ---
+  agentcore-standalone:
+    source: agw-docs/pages/agentgateway/agent/agentcore-standalone.md
+    path: agentcore-standalone

@@ -1,0 +1,88 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/agent/agentcore-standalone.md
+blocks:
+- 91908329dcbb2561 yaml
+- f6931a7b2e59dbc5 sh
+- 7a42127535ad27f7 sh
+- 4a13ffc002680ab3 yaml
+- 18cae43c4ae7ae58 sh
+- 8b79133a6b14fdfe yaml
+- 500dedba82e3b726 sh
+- 5fcb9359a3cef8f4 json
+- 4e6772cb5b3a3143 text
+- 81782aa0c1de30d4 sh
+tags:
+- paths: agentcore-standalone
+  block: 0
+  fingerprint: 91908329dcbb2561
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 1af3f6f8 d72f261d e9b24b68 7a65612b cf60f85c abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="agentcore-standalone"
+    only: true
+    lead: ' '
+- paths: agentcore-standalone
+  block: 2
+  fingerprint: 7a42127535ad27f7
+  lang: sh
+  lines: 7a421275
+  preview: echo -n "$AGENTCORE_JWT" > agentcore-token.jwt
+  form:
+    attr: paths="agentcore-standalone"
+    only: true
+    lead: ' '
+- paths: agentcore-standalone
+  block: 3
+  fingerprint: 4a13ffc002680ab3
+  lang: yaml
+  lines: f42073f4 a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 1af3f6f8 d72f261d e9b24b68 7a65612b cf60f85c c8f3f59a 81b74571 71338152 03a5afea d2615940 abc56510
+  preview: cat <<'EOF' > config-jwt.yaml
+  form:
+    attr: paths="agentcore-standalone"
+    only: true
+    lead: ' '
+- paths: agentcore-standalone
+  block: 9
+  fingerprint: 81782aa0c1de30d4
+  lang: sh
+  lines: 81782aa0
+  preview: rm -f config.yaml config-jwt.yaml agentcore-token.jwt
+  form:
+    attr: paths="agentcore-standalone"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before: null
+  content: |-
+    {{< doc-test paths="agentcore-standalone" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export AGENTCORE_JWT="${AGENTCORE_JWT:-test-token}"
+    {{< /doc-test >}}
+- after:
+    line: 07c421255ec0c491
+    occurrence: 0
+    words: 0604cd31 0695b563 10e08a41 b9d90628 5d28a90f d9c0d341 ea62dcb6 21a355f1 4cb44bc8 0e031e95 254bb97b fdf09cdf 631aada4 b1d6b91b 5ef5ef03 a1d98908 9390298f 1f58b914 b63b99f6 4a3cdfae ca978112 5d28a90f 776a8803 7edb360f 7f26104f 1eb79602 44c5e707
+    block_before:
+      block: 8
+      fingerprint: 4e6772cb5b3a3143
+      lang: text
+      lines: 4e6772cb
+      preview: "info\trequest gateway=default/default listener=default route=default/route0 endpo"
+  content: |-
+    {{< doc-test paths="agentcore-standalone" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * Both AgentCore configurations on this page, the SigV4 default and the
+    #     backendAuth.key JWT override, are accepted by agentgateway. The JWT
+    #     config is validated only after the token file exists, because
+    #     --validate-only reads a `file` reference and fails when it is missing.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That requests reach a runtime and return an agent response — requires an
+    #     AWS account with a deployed AgentCore runtime, which the page omits.
+    agentgateway -f config.yaml --validate-only
+    agentgateway -f config-jwt.yaml --validate-only
+    {{< /doc-test >}}

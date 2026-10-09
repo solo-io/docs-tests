@@ -1,0 +1,136 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/agent/a2a.md
+blocks:
+- efe066a236c8f743 sh
+- c05f122f3cc3eb0b sh
+- 2eee9b20a0e3dc89 sh
+- e162a4eb2a01bfa7 yaml
+- 2b5b847bde595be6 yaml
+- 158719c3ea5558d5 yaml
+- 99d906d1512e061b yaml
+- 274a3bb4bbb3876d yaml
+- 1de67cc7a5496217 yaml
+- 2b5b847bde595be6 yaml
+- 158719c3ea5558d5 yaml
+- ab98ccb3362617e1 sh
+- d13ade6c62874937 sh
+- 9c7ee26f95de1b99 sh
+- 8d532da29f46028c sh
+- a2d30152f933d986 json
+- 0dccf60d0df0a7d6 sh
+tags:
+- paths: a2a
+  block: 4
+  fingerprint: 2b5b847bde595be6
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 1925864f fa1e8330 14adf0a0 36184fa5 8432e015 839a5cac 14adf0a0 a58565b2 8c8c4228 fa1e8330 14adf0a0 36184fa5 04968f51 4b60d4db 786570ff 0ff65a1a c09fb5af cb3f91d5 f1540154 0d6480f0 8c8c4228 1925864f 36184fa5 8432e015 14adf0a0 08a3b86e 0ff65a1a 83feb025 d22b0e16 6a310683 37528e72 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+- paths: a2a
+  block: 5
+  fingerprint: 158719c3ea5558d5
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2c183b22 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 a2b6e046 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 4b60d4db d22b0e16 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+- paths: a2a
+  block: 6
+  fingerprint: 99d906d1512e061b
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 1925864f fa1e8330 14adf0a0 36184fa5 8432e015 839a5cac 14adf0a0 a58565b2 8c8c4228 fa1e8330 14adf0a0 36184fa5 04968f51 4b60d4db 786570ff 0ff65a1a c09fb5af cb3f91d5 f1540154 0d6480f0 8c8c4228 1925864f 36184fa5 8432e015 14adf0a0 08a3b86e 0ff65a1a 83feb025 d22b0e16 6a310683 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+- paths: a2a
+  block: 7
+  fingerprint: 274a3bb4bbb3876d
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 8bb19c25 36184fa5 4de1f613 8b3ef00f d22b0e16 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+- paths: a2a
+  block: 8
+  fingerprint: 1de67cc7a5496217
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2c183b22 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 a2b6e046 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 0d2b72b0 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+- paths: a2a
+  block: 11
+  fingerprint: ab98ccb3362617e1
+  lang: sh
+  lines: f8124845 4059cfa2
+  preview: 'export INGRESS_GW_ADDRESS=$(kubectl get gateway agentgateway-proxy -n {{< reuse '
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+- paths: a2a
+  block: 13
+  fingerprint: 9c7ee26f95de1b99
+  lang: sh
+  lines: 4db36718 67c5a3ac d9d6aad0 b0cead6d 362c024a 029e1dd1 e23724cc dc0575f0 029e1dd1 3b4971d4 09d1b3dd a1534cbd 021fb596 093e0d0d c6e27770 d10b36aa cfae0d42 d10b36aa d10b36aa c83aa0a4
+  preview: curl -X POST http://$INGRESS_GW_ADDRESS/myagent \
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+- paths: a2a
+  block: 16
+  fingerprint: 0dccf60d0df0a7d6
+  lang: sh
+  lines: cfae1e6b 85e76af7 ac5d3b59 5b5abff3
+  preview: kubectl delete Deployment a2a-agent --ignore-not-found
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 5970a397bfbad100
+    occurrence: 1
+    words: 5ca4f385
+    block_before:
+      block: 10
+      fingerprint: 158719c3ea5558d5
+      lang: yaml
+      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2c183b22 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 a2b6e046 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 4b60d4db d22b0e16 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="a2a" >}}
+    kubectl wait deployment/a2a-agent --for=condition=Available --timeout=120s
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 12
+      fingerprint: d13ade6c62874937
+      lang: sh
+      lines: d13ade6c
+      preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
+  content: |-
+    {{< doc-test paths="a2a" >}}
+    for i in $(seq 1 30); do
+      STATUS=$(curl -s --max-time 5 -o /dev/null -w "%{http_code}" -X POST "http://${INGRESS_GW_ADDRESS}:80/myagent" \
+        -H "Content-Type: application/json" \
+        -d '{"jsonrpc":"2.0","id":"test","method":"tasks/send","params":{"id":"test","message":{"role":"user","parts":[{"type":"text","text":"ping"}]}}}')
+      [ "$STATUS" = "200" ] && break
+      sleep 2
+    done
+    {{< /doc-test >}}

@@ -81,8 +81,8 @@ repo; until it is set, the step skips with a warning.
 
 For the sections moved so far (traffic-management, llm under
 `documentation/llm/`, security, mcp under `documentation/mcp/`, resiliency,
-observability under `documentation/observability/`, and operations), scenario
-definitions live in the `tests.yaml` manifests, so their annotations were
+observability under `documentation/observability/`, operations, about,
+migrate, and agent), scenario definitions live in the `tests.yaml` manifests, so their annotations were
 exported with `--front-matter none`. A
 manifest key must be unique, but a scenario name need not be: set `name:` when
 two pages in one mode declare the same name. Pages

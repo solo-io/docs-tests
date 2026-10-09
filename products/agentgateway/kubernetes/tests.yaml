@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency, observability and operations. Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency, observability, operations, about, migrate and agent. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -98,6 +98,26 @@ skip:
 - page: documentation/operations/agctl.md
 - page: documentation/operations/inspect-config.md
 - page: documentation/operations/trace-requests.md
+- page: documentation/about/_index.md
+- page: documentation/about/architecture.md
+- page: documentation/about/gateway-api.md
+- page: documentation/about/overview.md
+- page: documentation/about/policies/_index.md
+- page: documentation/about/policies/conditional-policies.md
+- page: documentation/about/policies/filter-order.md
+- page: documentation/about/policies/overview.md
+- page: documentation/about/policies/target-merge.md
+- page: documentation/migrate/_index.md
+- page: documentation/migrate/emitters/_index.md
+- page: documentation/migrate/emitters/agentgateway/_index.md
+- page: documentation/migrate/examples/_index.md
+- page: documentation/migrate/install/_index.md
+- page: documentation/migrate/providers/_index.md
+- page: documentation/migrate/providers/ingressnginx/_index.md
+- page: documentation/migrate/reference/_index.md
+- page: documentation/migrate/reference/cli/_index.md
+- page: documentation/agent/_index.md
+- page: documentation/agent/about.md
 scenarios:
   access-logs:
     type:
@@ -1281,3 +1301,12 @@ scenarios:
     - install-standard
     source: agw-docs/pages/operations/upgrade.md
     path: upgrade
+  # --- agent (documentation/agent/) ---
+  a2a:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    source: agw-docs/pages/agentgateway/agent/a2a.md
+    path: a2a
