@@ -87,6 +87,14 @@ class SkipTests(unittest.TestCase):
         p = self.repo / REL
         p.write_text(p.read_text().replace(old, new))
 
+    def test_report_directory_is_created(self):
+        """CI starts from a fresh checkout: the report's directory does not exist yet."""
+        report = self.repo / "out/annotations/attach-report.json"
+        self.assertFalse(report.parent.exists())
+        code = quiet(A.main, ["attach", "--repo", str(self.repo), "--annotations", str(self.adir), "--report", str(report)])
+        self.assertEqual(code, 0)
+        self.assertTrue(report.is_file())
+
     def test_everything_attaches_nothing_skipped(self):
         code, report = self.attach_and_run()
         self.assertEqual(code, 0)

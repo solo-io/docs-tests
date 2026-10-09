@@ -792,6 +792,7 @@ def write_report(results: Dict[str, List[Placement]], missing: List[str], path: 
             if p.state != EXACT:
                 rows.append({"page": src, **p.__dict__})
     if path:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
         Path(path).write_text(json.dumps({"repo": str(repo.resolve()) if repo else None, "totals": total,
                                           "pages_missing": missing, "changed": rows}, indent=1))
     return total
