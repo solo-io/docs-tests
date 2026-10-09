@@ -1,0 +1,40 @@
+format: 1
+source: assets/agw-docs/pages/operations/trace-requests-standalone-13x.md
+blocks:
+- 2c0f4cee5681428a mermaid
+- 5e63eb33458b1f87 sh
+- 84d0409a720f90ca sh
+- fc592739a84f3fa0 yaml
+- f6931a7b2e59dbc5 sh
+- e4854b4116b853c6
+- 09daf50cbf55acbd sh
+- 6fba51dec3651002 sh
+- b944736692daa4aa json
+- e9c97135b90e484d sh
+- 23e4e106d500c154 sh
+- ca874b4e3242b583 sh
+- 1e31532bce6dcf5e console
+hidden:
+- after:
+    block: 3
+    fingerprint: fc592739a84f3fa0
+    lang: yaml
+    lines: a7f80a73 05ca4235 796eea4c c10d7538 fe67aa7e d67b54bf 80e9487c d72f261d 6c4e3f1e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="trace-validate" >}}
+    # Install agentgateway binary
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    cat > /tmp/agctl-trace-config.yaml << 'EOF'
+    binds:
+    - port: 3000
+      listeners:
+      - protocol: HTTP
+        routes:
+        - name: httpbin
+          backends:
+          - host: 127.0.0.1:8000
+    EOF
+    agentgateway -f /tmp/agctl-trace-config.yaml --validate-only
+    {{< /doc-test >}}

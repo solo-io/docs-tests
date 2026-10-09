@@ -1,0 +1,98 @@
+format: 1
+source: assets/agw-docs/pages/operations/uninstall.md
+blocks:
+- 06feb5e661c3754e sh
+- e769dacf6f2919da sh
+- 283442435d1d85cb sh
+- d3bd32755798c70b sh
+- 967de5eec7a0c1d3 sh
+- 5c8e6c7ba97e0b0c sh
+- 81e5e00e157ded51 sh
+- 98313c40fcb16bc1 sh
+- 1bc490b3b1acec8a sh
+- 71ea1c3037df5dbc sh
+- c7c5b3d2117d0b84 sh
+- 47a49d1ba2c456ba sh
+- d6b994d4cd0c2d58 sh
+- f872f293567207c2 txt
+- 1bc490b3b1acec8a sh
+- 971bfe13fc1e0891 sh
+- 47a49d1ba2c456ba sh
+- 367461b902e4622f sh
+- 469075b54e736c88 sh
+- e42fbc0c2e553607 txt
+- f0fd538e7da74454 sh
+- 37f9805ed094bf5f txt
+- d6b994d4cd0c2d58 sh
+- f872f293567207c2 txt
+- 1bc490b3b1acec8a sh
+- 971bfe13fc1e0891 sh
+- ff59c8cb34a22415 sh
+- d6b994d4cd0c2d58 sh
+- f872f293567207c2 txt
+- 1bc490b3b1acec8a sh
+- 05b672fef52ee8e5 sh
+tags:
+- paths: uninstall
+  block: 6
+  fingerprint: 81e5e00e157ded51
+  lang: sh
+  lines: 81e5e00e
+  preview: helm uninstall {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< re
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 7
+  fingerprint: 98313c40fcb16bc1
+  lang: sh
+  lines: 98313c40
+  preview: helm uninstall {{< reuse "/agw-docs/snippets/helm-agentgateway-crds.md" >}} -n {
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 8
+  fingerprint: 1bc490b3b1acec8a
+  lang: sh
+  lines: 1bc490b3
+  preview: kubectl delete namespace {{< reuse "agw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 9
+  fingerprint: 71ea1c3037df5dbc
+  lang: sh
+  lines: 71ea1c30
+  preview: 'kubectl get crds | grep {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} '
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 10
+  fingerprint: c7c5b3d2117d0b84
+  lang: sh
+  lines: c7c5b3d2
+  preview: kubectl delete -f https://github.com/kubernetes-sigs/gateway-api/releases/downlo
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 5
+    fingerprint: 5c8e6c7ba97e0b0c
+    lang: sh
+    lines: 5c8e6c7b
+    preview: kubectl delete -n <namespace> gateway <gateway-name>
+  content: |-
+    {{< doc-test paths="uninstall" >}}
+    kubectl delete gateway agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
+    kubectl delete httproutes --all -A --ignore-not-found
+    kubectl delete referencegrants --all -A --ignore-not-found
+    {{< /doc-test >}}

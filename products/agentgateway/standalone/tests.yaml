@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, standalone mode.
 #
-# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency and observability. Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency, observability and operations. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -71,6 +71,11 @@ skip:
 - page: documentation/observability/traces/configs/grafana-cloud.md
 - page: documentation/observability/traces/configs/honeycomb.md
 - page: documentation/observability/traces/setup.md
+- page: documentation/operations/_index.md
+- page: documentation/operations/agctl.md
+- page: documentation/operations/config-resources.md
+- page: documentation/operations/inspect-config.md
+- page: documentation/operations/upgrade.md
 scenarios:
   buffer:
     page: documentation/configuration/traffic-management/buffer.md
@@ -216,3 +221,10 @@ scenarios:
   grafana:
     page: documentation/observability/metrics/grafana.md
     path: grafana
+  # --- operations (documentation/operations/) ---
+  admin-address:
+    page: documentation/operations/debug.md
+    path: admin-address
+  trace-validate:
+    page: documentation/operations/trace-requests.md
+    path: trace-validate

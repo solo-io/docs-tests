@@ -1,0 +1,44 @@
+format: 1
+source: assets/agw-docs/pages/operations/trace-requests-standalone-12x.md
+blocks:
+- fd435a3f939bf19b mermaid
+- bca7f57f92e10d8d sh
+- 8b55e944dfddd84a sh
+- fc592739a84f3fa0 yaml
+- f6931a7b2e59dbc5 sh
+- e4854b4116b853c6
+- 1d70f920292f8323 sh
+- 6fba51dec3651002 sh
+- df0fa05ca7805359 json
+- 0689dae61292e4ce sh
+- 50364189c1a277bb sh
+- d9ebaf14fb992b31 sh
+- 1e31532bce6dcf5e console
+hidden:
+- after:
+    block: 3
+    fingerprint: fc592739a84f3fa0
+    lang: yaml
+    lines: a7f80a73 05ca4235 796eea4c c10d7538 fe67aa7e d67b54bf 80e9487c d72f261d 6c4e3f1e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="trace-validate" >}}
+    mkdir -p "$HOME/.local/bin"
+    export PATH="$HOME/.local/bin:$PATH"
+    VERSION="v{{< reuse "agw-docs/versions/n-patch.md" >}}"
+    BINARY_URL="https://github.com/agentgateway/agentgateway/releases/download/${VERSION}/agentgateway-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/')"
+    curl -sL "$BINARY_URL" -o "$HOME/.local/bin/agentgateway"
+    chmod +x "$HOME/.local/bin/agentgateway"
+
+    cat > /tmp/agctl-trace-config.yaml << 'EOF'
+    binds:
+    - port: 3000
+      listeners:
+      - protocol: HTTP
+        routes:
+        - name: httpbin
+          backends:
+          - host: 127.0.0.1:8000
+    EOF
+    agentgateway -f /tmp/agctl-trace-config.yaml --validate-only
+    {{< /doc-test >}}

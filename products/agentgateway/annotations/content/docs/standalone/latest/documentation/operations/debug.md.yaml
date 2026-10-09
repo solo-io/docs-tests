@@ -1,0 +1,83 @@
+format: 1
+source: content/docs/standalone/latest/documentation/operations/debug.md
+blocks:
+- b5ab9440e3308957 sh
+- 61bd66b83dd76f4a sh
+- 4bfdb6647e4ecda5 sh
+- 6fba51dec3651002 sh
+- 7a45495817c42cb4 sh
+- 31190f3bab416bd2
+- 73afd44dc4f855d6 yaml
+- bda7f0737b554603
+- 221d567c252e5f06 sh
+- 37b4edbfd377ea19
+- ef5676dadde38b9c sh
+- b9611bf38fc2a498
+- 32d82031d9ff726f sh
+- 85482d3b548132cf sh
+- 65f10efb748aeeb5 yaml
+- f6931a7b2e59dbc5 sh
+- 7eb20b23c2144586
+- cf1c0ed2493cba2a sh
+- 27badc983df1780b txt
+- 4f1d8525e43c6583 yaml
+- 17616f93f266385a sh
+hidden:
+- after:
+    line: bb80f7c90a96623e
+    occurrence: 0
+    words: 663ea1bf ed4561f6 b9776d7d d3ef7de5 75857a45 ae448ac8 4740ae63 a9190076 b9776d7d d3ef7de5 663ea1bf ca978112 4ea5ee68 99262a02 28391d3b 6e862940 b9776d7d 8c6976e5 d80c9bf9 ca978112 4ea5ee68 fa51fd49 b9776d7d f905b195 e6eaea18 8e7fc023 bb0347a4 9f584196 373cb2c6 ea325d76 b9d90628 823412d1 b8d31e85 10c22bcf 187897ce dea7111a aa9e9b5c 24c458cf b9776d7d d3ef7de5 b8d31e85 ca978112 4ea5ee68 fa42bed0 a0af9f86 caf9f906 8fb6d5f3 d3ef7de5 e9b51442
+    block_before:
+      block: 13
+      fingerprint: 85482d3b548132cf
+      lang: sh
+      lines: 85482d3b
+      preview: 'go tool pprof -http=: heap.pprof'
+  content: |-
+    {{< doc-test paths="admin-address" >}}
+    # Install agentgateway binary for tests
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 7eb20b23c2144586
+    lang: ''
+    lines: 7eb20b23
+    preview: INFO app  serving UI at http://localhost:9090/ui
+  content: |-
+    {{< doc-test paths="admin-address" >}}
+    pkill -f "agentgateway -f" 2>/dev/null || true
+    sleep 1
+    cat > /tmp/agw-admin-custom.yaml <<'EOF'
+    config:
+      adminAddr: localhost:9090
+    EOF
+    agentgateway -f /tmp/agw-admin-custom.yaml &
+    AGW_CUSTOM_PID=$!
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 27badc983df1780b
+    lang: txt
+    lines: 27badc98
+    preview: '200'
+  content: |-
+    {{< doc-test paths="admin-address" >}}
+    YAMLTest -f - <<'EOF'
+    - name: UI is served on the custom admin address
+      http:
+        url: "http://localhost:9090"
+        path: "/ui/"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+      retries: 3
+    EOF
+    # /config_dump is trailing-slash sensitive, so assert it with curl rather than YAMLTest.
+    ADMIN_DUMP_CODE="$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9090/config_dump)"
+    test "$ADMIN_DUMP_CODE" = "200"
+    kill $AGW_CUSTOM_PID 2>/dev/null || true
+    {{< /doc-test >}}

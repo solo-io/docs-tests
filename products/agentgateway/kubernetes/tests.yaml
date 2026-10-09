@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency and observability. Every other subject area still declares its
+# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency, observability and operations. Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -94,6 +94,10 @@ skip:
 - page: documentation/observability/metrics/dataplane.md
 - page: documentation/observability/metrics/overview.md
 - page: documentation/observability/traces/attribute-reference.md
+- page: documentation/operations/_index.md
+- page: documentation/operations/agctl.md
+- page: documentation/operations/inspect-config.md
+- page: documentation/operations/trace-requests.md
 scenarios:
   access-logs:
     type:
@@ -1266,3 +1270,14 @@ scenarios:
     - httpbin
     source: agw-docs/pages/observability/traces/setup.md
     path: tracing
+  # --- operations (documentation/operations/) ---
+  uninstall:
+    needs:
+    - install-standard
+    source: agw-docs/pages/operations/uninstall.md
+    path: uninstall
+  upgrade:
+    needs:
+    - install-standard
+    source: agw-docs/pages/operations/upgrade.md
+    path: upgrade

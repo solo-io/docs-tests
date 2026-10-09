@@ -1,0 +1,100 @@
+format: 1
+source: assets/agw-docs/pages/operations/upgrade.md
+blocks:
+- 5f25c00d94a63d8d sh
+- cd1b2de06abe6003 sh
+- f245710e07353d02 sh
+- a471c8530f8fb2a3 sh
+- 947a3d175aaf11cc sh
+- 9e46ccb7fc2e2152 sh
+- 0398704acc975bb5 sh
+- 4530f089ffd76e4a sh
+- f40e083a40cd31c6
+- d6b994d4cd0c2d58 sh
+tags:
+- paths: upgrade
+  block: 0
+  fingerprint: 5f25c00d94a63d8d
+  lang: sh
+  lines: 5f25c00d
+  preview: export NEW_VERSION={{< reuse "agw-docs/versions/n-patch.md" >}}
+  form:
+    attr: paths="upgrade"
+    only: true
+    lead: ' '
+- paths: upgrade
+  block: 2
+  fingerprint: f245710e07353d02
+  lang: sh
+  lines: f245710e
+  preview: helm upgrade -i --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} --ver
+  form:
+    attr: paths="upgrade"
+    only: true
+    lead: ' '
+- paths: upgrade
+  block: 6
+  fingerprint: 0398704acc975bb5
+  lang: sh
+  lines: 79b26d34 f82702aa 88364ae2
+  preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "/ag
+  form:
+    attr: paths="upgrade"
+    only: true
+    lead: ' '
+- paths: upgrade
+  block: 7
+  fingerprint: 4530f089ffd76e4a
+  lang: sh
+  lines: 4530f089
+  preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get pod -l app.kuberne
+  form:
+    attr: paths="upgrade"
+    only: true
+    lead: ' '
+- paths: upgrade
+  block: 9
+  fingerprint: d6b994d4cd0c2d58
+  lang: sh
+  lines: d6b994d4
+  preview: kubectl get pods -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="upgrade"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: f245710e07353d02
+    lang: sh
+    lines: f245710e
+    preview: helm upgrade -i --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} --ver
+  content: |-
+    {{< doc-test paths="upgrade" >}}
+    helm get values {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o yaml > values.yaml
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 0398704acc975bb5
+    lang: sh
+    lines: 79b26d34 f82702aa 88364ae2
+    preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "/ag
+  content: |-
+    {{< doc-test paths="upgrade" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for control plane pod to be ready after upgrade
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

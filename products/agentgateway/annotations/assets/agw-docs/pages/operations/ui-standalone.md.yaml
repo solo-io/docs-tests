@@ -1,0 +1,108 @@
+format: 1
+source: assets/agw-docs/pages/operations/ui-standalone.md
+blocks:
+- f6931a7b2e59dbc5 sh
+- bda225860092a297
+- 65f10efb748aeeb5 yaml
+- f6931a7b2e59dbc5 sh
+- 7eb20b23c2144586
+- dc995fe6865c0ee3 bash
+- 3e8185cfdda35599 yaml
+- f6931a7b2e59dbc5 sh
+hidden:
+- after:
+    line: 5d686b1c1c8b102a
+    occurrence: 0
+    words: b9776d7d d3ef7de5 fa51fd49 80ed840f 75857a45 b9776d7d 4b5e57f6 d3ef7de5 7955c819 fa42bed0 a0af9f86 7955c819 23476f4c 77bc06c5 ba78973d d3fa2adc 32e83e92 31e06f7d 93114378 a5c935d1 f4bf9f7f 2348f998 fd1a3b33 7175517a d3153c03 8e7fc023 bb0347a4 5a638a12 663ea1bf 56e57ada f4bf9f7f ca978112 10e08a41 b9776d7d d3ef7de5 fa51fd49 b9776d7d 288965a1 c796d37c 10c22bcf 56e57ada 5a41ac42
+    block_before: null
+  content: |-
+    {{< doc-test paths="ui-standalone-default,ui-standalone-custom-port" >}}
+    # Install agentgateway binary for tests
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: bda225860092a297
+    lang: ''
+    lines: bda22586
+    preview: INFO app  serving UI at http://localhost:15000/ui
+  content: |-
+    {{< doc-test paths="ui-standalone-default" >}}
+    pkill -f "agentgateway -f" 2>/dev/null || true
+    sleep 1
+    cat > /tmp/agw-ui-default.yaml <<'EOF'
+    config:
+      adminAddr: localhost:15000
+    EOF
+    agentgateway -f /tmp/agw-ui-default.yaml &
+    AGW_DEFAULT_PID=$!
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    line: 5970a397bfbad100
+    occurrence: 1
+    words: 5ca4f385
+    block_before:
+      block: 1
+      fingerprint: bda225860092a297
+      lang: ''
+      lines: bda22586
+      preview: INFO app  serving UI at http://localhost:15000/ui
+  content: |-
+    {{< doc-test paths="ui-standalone-default" >}}
+    YAMLTest -f - <<'EOF'
+    - name: UI returns HTTP 200 on default port
+      http:
+        url: "http://localhost:15000/ui/"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+      retries: 3
+    EOF
+    kill $AGW_DEFAULT_PID 2>/dev/null || true
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 7eb20b23c2144586
+    lang: ''
+    lines: 7eb20b23
+    preview: INFO app  serving UI at http://localhost:9090/ui
+  content: |-
+    {{< doc-test paths="ui-standalone-custom-port" >}}
+    pkill -f "agentgateway -f" 2>/dev/null || true
+    sleep 1
+    cat > /tmp/agw-ui-custom.yaml <<'EOF'
+    config:
+      adminAddr: localhost:9090
+    EOF
+    agentgateway -f /tmp/agw-ui-custom.yaml &
+    AGW_CUSTOM_PID=$!
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    line: c0fdfd72a5db515a
+    occurrence: 0
+    words: 4e074085 2348f998 b9776d7d d3ef7de5 b1d6b91b b9776d7d 11507a0e d80c9bf9 58296753 1eb79602 50d858e0 d0cda655 663ea1bf e0603c49 49960de5 c4876de4 d3ef7de5 e0603c49 49960de5 c4876de4 d3ef7de5
+    block_before:
+      block: 4
+      fingerprint: 7eb20b23c2144586
+      lang: ''
+      lines: 7eb20b23
+      preview: INFO app  serving UI at http://localhost:9090/ui
+  content: |-
+    {{< doc-test paths="ui-standalone-custom-port" >}}
+    YAMLTest -f - <<'EOF'
+    - name: UI returns HTTP 200 on custom port
+      http:
+        url: "http://localhost:9090/ui/"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+      retries: 3
+    EOF
+    kill $AGW_CUSTOM_PID 2>/dev/null || true
+    {{< /doc-test >}}
