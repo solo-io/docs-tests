@@ -1,7 +1,8 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# Covers traffic-management, llm (documentation/llm/), security, mcp (documentation/mcp/), resiliency, observability, operations, about, migrate, agent and reference. Every other subject area still declares its
-# scenarios in the consuming repo's page front matter; both forms are read.
+# Covers every subject area except quickstart, install and setup, which hold
+# the install steps most scenarios depend on and move last. Those still declare
+# their scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
 # path, because over the 7 weeks after agentgateway/website#920 opened,
@@ -126,6 +127,27 @@ skip:
 - page: reference/helm/agentgateway-crds.md
 - page: reference/helm/agentgateway.md
 - dir: reference/agctl/
+- page: integrations/_index.md
+- page: integrations/ci-cd/_index.md
+- page: integrations/istio/_index.md
+- page: integrations/llm/_index.md
+- page: integrations/llm/clients/_index.md
+- page: integrations/llm/clients/microsoft-intune.md
+- page: integrations/llm/observability/_index.md
+- page: integrations/llm/observability/arize.md
+- page: integrations/llm/observability/axiom.md
+- page: integrations/llm/observability/datadog.md
+- page: integrations/llm/providers/_index.md
+- page: integrations/llm/providers/custom.md
+- page: integrations/llm/routing/_index.md
+- page: integrations/mcp/_index.md
+- page: integrations/mcp/clients/claude-code.md
+- page: integrations/mcp/clients/claude-desktop.md
+- page: integrations/mcp/clients/cursor.md
+- page: integrations/mcp/clients/devin.md
+- page: integrations/mcp/clients/vscode.md
+- page: integrations/mcp/servers.md
+- page: integrations/web-uis/_index.md
 scenarios:
   access-logs:
     type:
@@ -1318,3 +1340,66 @@ scenarios:
     - install-standard
     source: agw-docs/pages/agentgateway/agent/a2a.md
     path: a2a
+  # --- integrations (integrations/) ---
+  claude-code-k8s:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/claude-code.md
+    path: claude-code-k8s
+  crewai-k8s:
+    needs:
+    - helm-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/integrations/web-uis-k8s/crewai.md
+    path: crewai-k8s
+  mcp-clients-k8s:
+    needs:
+    - helm-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/mcp/static.md
+      path: setup-mcp-server
+    source: agw-docs/pages/agentgateway/integrations/mcp-clients-k8s.md
+    path: mcp-clients-k8s
+  ollama-provider-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/llm/providers/ollama.md
+    path: ollama-provider-setup
+  openai-compatible-validate:
+    needs:
+    - install-standard
+    source: agw-docs/pages/agentgateway/llm/providers/openai-compatible.md
+    path: openai-compatible-validate
+  openai-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/llm/providers/openai.md
+    path: openai-setup
+  setup-httpbun-llm:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/llm/providers/httpbun.md
+    path: setup-httpbun-llm
+  vllm-provider-setup:
+    needs:
+    - helm-standard
+    - gateway
+    page: integrations/llm/providers/vllm.md
+    path: vllm-provider-setup

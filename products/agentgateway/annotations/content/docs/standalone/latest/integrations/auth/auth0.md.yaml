@@ -1,0 +1,434 @@
+format: 1
+source: content/docs/standalone/latest/integrations/auth/auth0.md
+blocks:
+- 24f3bc87df48bc14 sh
+- ed144d79d71353b1 yaml
+- f6931a7b2e59dbc5 sh
+- e6057ad7800bac6c
+- 0e40004e257a600d sh
+- f7f4688b850e0c7d
+- 0466edb25f20cac8 sh
+- 6a6ad6dc1973ff20 json
+- b34632941b95ebb7 sh
+- 886669516f4dc2c0 json
+- 5dabc90b05a54677 sh
+- 3316c5b53f0ee95c sh
+- '8355789273570043'
+- 0616b24d846bf4fd yaml
+- f6931a7b2e59dbc5 sh
+- b7f40330442adf24 sh
+- 687442e059f5a66e sh
+- d26eae87829adde5
+tags:
+- paths: auth0-mcp-authn
+  block: 0
+  fingerprint: 24f3bc87df48bc14
+  lang: sh
+  lines: e213dd54 b975cebe f1565708 6d85e524 ffcc47d9
+  preview: export AUTH0_TENANT_URL='https://your-tenant.us.auth0.com'
+  form:
+    attr: paths="auth0-mcp-authn"
+    only: true
+    lead: ' '
+- paths: auth0-mcp-authn
+  block: 4
+  fingerprint: 0e40004e257a600d
+  lang: sh
+  lines: 2bb85e35 3067bf8a cd2f84e7 9662726e
+  preview: curl -i -X POST http://localhost:3000/mcp \
+  form:
+    attr: paths="auth0-mcp-authn"
+    only: true
+    lead: ' '
+- paths: auth0-mcp-authn
+  block: 6
+  fingerprint: 0466edb25f20cac8
+  lang: sh
+  lines: 0466edb2
+  preview: curl -s http://localhost:3000/.well-known/oauth-protected-resource/mcp
+  form:
+    attr: paths="auth0-mcp-authn"
+    only: true
+    lead: ' '
+- paths: auth0-mcp-authn
+  block: 8
+  fingerprint: b34632941b95ebb7
+  lang: sh
+  lines: b3463294
+  preview: curl -s http://localhost:3000/.well-known/oauth-authorization-server
+  form:
+    attr: paths="auth0-mcp-authn"
+    only: true
+    lead: ' '
+- paths: auth0-mcp-authn
+  block: 10
+  fingerprint: 5dabc90b05a54677
+  lang: sh
+  lines: 20f4a2bd a8d73eaf b5ac7036 453575cc f05c2f20 44e8488d
+  preview: export TOKEN="$(curl -s -X POST "${AUTH0_TENANT_URL}/oauth/token" \
+  form:
+    attr: paths="auth0-mcp-authn"
+    only: true
+    lead: ' '
+- paths: auth0-mcp-authn
+  block: 11
+  fingerprint: 3316c5b53f0ee95c
+  lang: sh
+  lines: 2bb85e35 847c7ea1 3067bf8a cd2f84e7 9662726e
+  preview: curl -i -X POST http://localhost:3000/mcp \
+  form:
+    attr: paths="auth0-mcp-authn"
+    only: true
+    lead: ' '
+- paths: auth0-mcp-authn
+  block: 15
+  fingerprint: b7f40330442adf24
+  lang: sh
+  lines: afe51bab 0c6cfc1c
+  preview: export AUTH0_UNAUTHORIZED_CLIENT_ID='<second-m2m-client-id>'
+  form:
+    attr: paths="auth0-mcp-authn"
+    only: true
+    lead: ' '
+- paths: auth0-mcp-authn
+  block: 16
+  fingerprint: 687442e059f5a66e
+  lang: sh
+  lines: 17380456 a8d73eaf 2e4618b9 b5dc2914 f05c2f20 44e8488d c74cb7f2 b02d3601 3067bf8a cd2f84e7 9662726e
+  preview: export NO_PERM_TOKEN="$(curl -s -X POST "${AUTH0_TENANT_URL}/oauth/token" \
+  form:
+    attr: paths="auth0-mcp-authn"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 170ea01b2cf7936d
+    occurrence: 0
+    words: 4e074085 d05aa2a1 c0cafcf0 8e7fc023 bb0347a4 193c45b5 a0561fd6 663ea1bf ea325d76 d9082bdc e9da86d3 3e194352 16e18c23 46b42b42 60383486 eade4766 ad065b29 6201111b fdeb3389 663ea1bf fa8847b0 ea325d76 14c2529e 6201111b fd54e5a8 58296753 2ad8a704 ca978112 ad95d5fa e9da86d3 fa51fd49 b9abdfa5
+    block_before: null
+  content: |-
+    {{< doc-test paths="auth0-mcp-authn" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * Step 2: the config on this page loads and runs, including the ${...}
+    #     environment variable references, which agentgateway expands at load time.
+    #   * Step 3: an unauthenticated MCP initialize returns 401 with the documented
+    #     WWW-Authenticate resource_metadata pointer; the protected resource metadata
+    #     is served; and the authorization server metadata carries the ?audience=
+    #     query parameter that the auth0 provider appends, which is the RFC 8707
+    #     workaround described in "Why the Auth0 provider is needed".
+    #   * Step 4: a token is accepted and the MCP server responds 200. Agentgateway
+    #     fetches the signing keys from the JWKS URL it derives for the auth0
+    #     provider ({issuer}/.well-known/jwks.json) and validates the token against
+    #     them, so both the derivation and the audience matching are covered.
+    #   * Step 5: the authorization rule admits a token carrying the read:tools
+    #     permission and denies an otherwise-valid token without it (403).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That Auth0 itself behaves this way. External dependency not stood up: the
+    #     test points the issuer at a local mock authorization server that serves the
+    #     same discovery and JWKS endpoints Auth0 does, so it exercises
+    #     agentgateway's provider behavior rather than Auth0's.
+    #   * The Auth0 Dashboard steps in Step 1. UI-only: creating the API, the
+    #     applications, and the permissions has no scriptable equivalent here.
+    #   * The authorization code flow with PKCE that real MCP clients use, and the
+    #     "Connect an MCP client" section. UI-only: it requires a browser to
+    #     complete the Auth0 login and consent redirect.
+    {{< /doc-test >}}
+- after:
+    line: 170ea01b2cf7936d
+    occurrence: 0
+    words: 4e074085 d05aa2a1 c0cafcf0 8e7fc023 bb0347a4 193c45b5 a0561fd6 663ea1bf ea325d76 d9082bdc e9da86d3 3e194352 16e18c23 46b42b42 60383486 eade4766 ad065b29 6201111b fdeb3389 663ea1bf fa8847b0 ea325d76 14c2529e 6201111b fd54e5a8 58296753 2ad8a704 ca978112 ad95d5fa e9da86d3 fa51fd49 b9abdfa5
+    block_before: null
+  content: |-
+    {{< doc-test paths="auth0-mcp-authn" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: e83272663ddeb374
+    occurrence: 0
+    words: 56e57ada 92b9ce21 07a0b096 15eaa752 2ad8a704 c1ba6e9a ca978112 b7d64a92 3b9c358f a1d98908 b9776d7d 0967115f 7af0b3e4 bb8c8605 dcd32479 58296753 b9776d7d d8d04223 8e7fc023 bb0347a4 fa8847b0 c6c1c9a9 935f6831 ca978112 3b325109 fa51fd49 6cbf83e0 56e57ada dc4a6edf 0695b563 ba528516 3b325109 254bb97b bcc649cf d1ffaf02 7383711c 59dbf36d 0695b563 ca978112 f526795c b7d64a92
+    block_before:
+      block: 0
+      fingerprint: 24f3bc87df48bc14
+      lang: sh
+      lines: e213dd54 b975cebe f1565708 6d85e524 ffcc47d9
+      preview: export AUTH0_TENANT_URL='https://your-tenant.us.auth0.com'
+  content: |-
+    {{< doc-test paths="auth0-mcp-authn" >}}
+    # Point the guide's variables at a local mock authorization server instead of a
+    # real Auth0 tenant. It serves the same discovery and JWKS endpoints, so
+    # agentgateway's auth0 provider behavior is exercised unchanged.
+    export AUTH0_TENANT_URL="http://localhost:9099"
+    export AUTH0_ISSUER="${AUTH0_TENANT_URL}/"
+    export AUTH0_AUDIENCE="https://api.example.com"
+    export AUTH0_CLIENT_ID="mcp-test-client"
+    export AUTH0_CLIENT_SECRET="mcp-test-secret"
+    export MOCK_IDP_PORT=9099
+    export MOCK_IDP_ISSUER="${AUTH0_ISSUER}"
+    export MOCK_IDP_CLAIMS='{"permissions":["read:tools"]}'
+    {{< /doc-test >}}
+- after:
+    line: e83272663ddeb374
+    occurrence: 0
+    words: 56e57ada 92b9ce21 07a0b096 15eaa752 2ad8a704 c1ba6e9a ca978112 b7d64a92 3b9c358f a1d98908 b9776d7d 0967115f 7af0b3e4 bb8c8605 dcd32479 58296753 b9776d7d d8d04223 8e7fc023 bb0347a4 fa8847b0 c6c1c9a9 935f6831 ca978112 3b325109 fa51fd49 6cbf83e0 56e57ada dc4a6edf 0695b563 ba528516 3b325109 254bb97b bcc649cf d1ffaf02 7383711c 59dbf36d 0695b563 ca978112 f526795c b7d64a92
+    block_before:
+      block: 0
+      fingerprint: 24f3bc87df48bc14
+      lang: sh
+      lines: e213dd54 b975cebe f1565708 6d85e524 ffcc47d9
+      preview: export AUTH0_TENANT_URL='https://your-tenant.us.auth0.com'
+  content: |-
+    {{< doc-test paths="auth0-mcp-authn" >}}
+    {{< reuse "agw-docs/snippets/doc-test-mock-oidc.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 87bb7f062a4ea967
+    occurrence: 0
+    words: 78236fd5 ec91fdd9 a511aeee cb3083e2 fa51fd49 6ee0eb49 56e57ada a88fe6ec b9776d7d 78236fd5 28e5ebab 75857a45 b9776d7d 535c6f8e 663ea1bf e7d3799e 48a53f07 75857a45 92b6359c 7dd530c4 a5c935d1 f4bf9f7f ca978112 25bf8e1a 3b9c358f 7175517a ea325d76 3bed2cb3 00154761 6ee0eb49 78236fd5 47a54ed4 663ea1bf ce603774 b9776d7d 08f0be88 28e5ebab
+    block_before:
+      block: 1
+      fingerprint: ed144d79d71353b1
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b df374e41 3035507a 233e460f a68fe535 ca335149 6329244e c8f3f59a c873f373 b0299c0e 7f7e87d9 837dc1fd 396fdb7c 93a4b62b 49d0992e 92db8240 6a855af1 2e4ca762 c2e44ca7 087d168d ef164a49
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |2-
+       {{< doc-test paths="auth0-mcp-authn" >}}
+       cat <<'EOF' > config.yaml
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - mcp:
+             targets:
+             - name: everything
+               stdio:
+                 cmd: npx
+                 args: ["@modelcontextprotocol/server-everything"]
+         policies:
+           mcpAuthentication:
+             mode: strict
+             issuer: ${AUTH0_ISSUER}
+             audiences:
+             - ${AUTH0_AUDIENCE}
+             provider:
+               auth0: {}
+             resourceMetadata:
+               resource: http://localhost:3000/mcp
+               scopesSupported:
+               - read:tools
+               bearerMethodsSupported:
+               - header
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: e6057ad7800bac6c
+    lang: ''
+    lines: 0d045ed2 9da5da00 b7e175f4
+    preview: info  state_manager  loaded config from File("config.yaml")
+  content: |2-
+       {{< doc-test paths="auth0-mcp-authn" >}}
+       agentgateway -f config.yaml &
+       AGW_PID=$!
+       trap 'kill $AGW_PID $MOCK_IDP_PID 2>/dev/null || true' EXIT
+       for i in $(seq 1 30); do
+         if curl -s -o /dev/null http://localhost:3000/.well-known/oauth-protected-resource/mcp; then
+           break
+         fi
+         sleep 1
+       done
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 886669516f4dc2c0
+    lang: json
+    lines: ab5df625 6ad7bdbe 04c8d74a
+    preview: '...'
+  content: |-
+    {{< doc-test paths="auth0-mcp-authn" >}}
+    YAMLTest -f - <<'EOF'
+    - name: Unauthenticated MCP initialize is rejected with a resource_metadata pointer
+      http:
+        url: "http://localhost:3000"
+        path: /mcp
+        method: POST
+        headers:
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        headers:
+          - name: www-authenticate
+            comparator: contains
+            value: 'resource_metadata="http://localhost:3000/.well-known/oauth-protected-resource/mcp"'
+    - name: Protected resource metadata is served for the MCP route
+      http:
+        url: "http://localhost:3000"
+        path: /.well-known/oauth-protected-resource/mcp
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.resource"
+            comparator: contains
+            value: "http://localhost:3000/mcp"
+          - path: "$.scopes_supported[0]"
+            comparator: contains
+            value: "read:tools"
+    - name: The auth0 provider appends the audience query parameter to the authorization endpoint
+      http:
+        url: "http://localhost:3000"
+        path: /.well-known/oauth-authorization-server
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.authorization_endpoint"
+            comparator: contains
+            value: "?audience=https://api.example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: dea0c6914467464a
+    occurrence: 0
+    words: b9776d7d 948fe603 631aada4 3b212781 fa51fd49 ca978112 d7ae368c 10c22bcf 1eb79602 83ca68be aa33996d 10182ab8 8f4d9088 a3b142af b9776d7d cbb82ebe 5694d08a 3b212781 0695b563 ca74bea0 77bc06c5 b9776d7d 4ea5ee68 9096e4f7 9c6725dc b9776d7d 45447b7a 8e7fc023 bb0347a4 5cfc694a 58296753 3e64cc41 4e074085 a12dd3a7
+    block_before:
+      block: 12
+      fingerprint: '8355789273570043'
+      lang: ''
+      lines: 92413e97 f50cfe46 d8becf7d 90066fec fe32f243
+      preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="auth0-mcp-authn" >}}
+    YAMLTest -f - <<'EOF'
+    - name: An Auth0-issued token is accepted and the MCP server responds
+      http:
+        url: "http://localhost:3000"
+        path: /mcp
+        method: POST
+        headers:
+          authorization: "Bearer ${TOKEN}"
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="auth0-mcp-authn" >}}
+       # Rewrite config.yaml with the authorization policy from the block above, then
+       # restart the gateway the same way a reader would.
+       cat <<'EOF' > config.yaml
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - mcp:
+             targets:
+             - name: everything
+               stdio:
+                 cmd: npx
+                 args: ["@modelcontextprotocol/server-everything"]
+         policies:
+           mcpAuthentication:
+             mode: strict
+             issuer: ${AUTH0_ISSUER}
+             audiences:
+             - ${AUTH0_AUDIENCE}
+             provider:
+               auth0: {}
+             resourceMetadata:
+               resource: http://localhost:3000/mcp
+               scopesSupported:
+               - read:tools
+               bearerMethodsSupported:
+               - header
+           authorization:
+             rules:
+             - '"read:tools" in jwt.permissions'
+       EOF
+       kill $AGW_PID 2>/dev/null || true
+       sleep 2
+       agentgateway -f config.yaml &
+       AGW_PID=$!
+       trap 'kill $AGW_PID $MOCK_IDP_PID 2>/dev/null || true' EXIT
+       for i in $(seq 1 30); do
+         if curl -s -o /dev/null http://localhost:3000/.well-known/oauth-protected-resource/mcp; then
+           break
+         fi
+         sleep 1
+       done
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: b7f40330442adf24
+    lang: sh
+    lines: afe51bab 0c6cfc1c
+    preview: export AUTH0_UNAUTHORIZED_CLIENT_ID='<second-m2m-client-id>'
+  content: |2-
+       {{< doc-test paths="auth0-mcp-authn" >}}
+       # The mock authorization server omits the configured claims for any client ID
+       # that ends in -norole, which stands in for an application without the grant.
+       export AUTH0_UNAUTHORIZED_CLIENT_ID="mcp-test-client-norole"
+       export AUTH0_UNAUTHORIZED_CLIENT_SECRET="mcp-test-secret"
+       {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: d26eae87829adde5
+    lang: ''
+    lines: d26eae87
+    preview: '403'
+  content: |-
+    {{< doc-test paths="auth0-mcp-authn" >}}
+    YAMLTest -f - <<'EOF'
+    - name: A token carrying the read:tools permission is still allowed
+      http:
+        url: "http://localhost:3000"
+        path: /mcp
+        method: POST
+        headers:
+          authorization: "Bearer ${TOKEN}"
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: A valid token without the read:tools permission is denied by the authorization rule
+      http:
+        url: "http://localhost:3000"
+        path: /mcp
+        method: POST
+        headers:
+          authorization: "Bearer ${NO_PERM_TOKEN}"
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}

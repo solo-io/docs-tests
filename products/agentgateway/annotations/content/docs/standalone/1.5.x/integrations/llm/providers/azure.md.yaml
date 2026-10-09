@@ -1,0 +1,385 @@
+format: 1
+source: content/docs/standalone/1.5.x/integrations/llm/providers/azure.md
+blocks:
+- b2a47d3a12fed327 yaml
+- 5c8cacfbe89cb825 yaml
+- 1973578cd0ad630a yaml
+- 7910c80a31a93e21 yaml
+- a0b1ace26557d97e yaml
+- 6d100124d1fece87 yaml
+- 314f1a1b982c2947 yaml
+- 29fdf95b7c93bb92 yaml
+- 4b5498a323b6074b txt
+- 150c2177aa9ea6b7 yaml
+- 6eaa10af7025e8ea yaml
+- 205f7a4605c0fc9b yaml
+- d4077c467b2b78b2 sh
+hidden:
+- after:
+    line: d95ad99ac24497c2
+    occurrence: 0
+    words: 90d08e58 9fbf261b 79f43c3b 32e83e92 f4bf9f7f ea325d76 487b9104 5c4c1964 58296753 56e57ada
+    block_before: null
+  content: |-
+    {{< doc-test paths="azure" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Configuration", all three tabs: the Foundry implicit-auth, Foundry API-key
+    #     (`auth.key.location.header`), and Azure OpenAI configs are accepted by
+    #     agentgateway (--validate-only), covering `params.azureResourceName`,
+    #     `params.azureResourceType`, and `params.azureProjectName`.
+    #   * "Advanced configuration", all six tabs: the routing-based configs for
+    #     implicit auth, client secret (Foundry and Azure OpenAI), system-assigned and
+    #     user-assigned managed identity, and workload identity are all accepted,
+    #     covering every `policies.backendAuth.azure.explicitConfig` variant the page
+    #     documents.
+    #   * "Use Claude models on Azure AI Foundry": the routing-based Claude config is
+    #     accepted. This example was missing its `gateways` and `routes` keys until
+    #     this test was added, so it could not have been run as written.
+    #   * With the Foundry implicit-auth config loaded, agentgateway serves the
+    #     wildcard model and resolves it to the `azure` provider.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Any authentication method at runtime - external dependency; each needs a
+    #     real Azure tenant, resource, and identity (Entra ID, service principal,
+    #     managed identity, or workload identity), none of which the test can stand
+    #     up. Only that agentgateway accepts each config shape is asserted.
+    #   * The verification curl at the end of the Claude Foundry section - external
+    #     dependency, as above.
+    #   * `params.azureApiVersion` - display-only table row; no example on this page
+    #     sets it.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    export AZURE_API_KEY="${AZURE_API_KEY:-test}"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: b2a47d3a12fed327
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 5192013c 009395dd 2e04d362 10ce3d78 9008fb4e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-foundry-implicit.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: "*"
+        provider: azure
+        params:
+          azureResourceName: "your-resource-name"
+          azureResourceType: foundry
+          azureProjectName: "your-project-name"
+    EOF
+    agentgateway -f config-foundry-implicit.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 5c8cacfbe89cb825
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 96c38897 5192013c 146e11c6 71338152 e42a8f5e aa85f165 30ff4d98 8e34e431 009395dd 2e04d362 10ce3d78 9008fb4e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-foundry-apikey.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: "gpt-4.1"
+        provider: azure
+        auth:
+          key:
+            value: "$AZURE_API_KEY"
+            location:
+              header:
+                name: api-key
+        params:
+          azureResourceName: "your-resource-name"
+          azureResourceType: foundry
+          azureProjectName: "your-project-name"
+    EOF
+    agentgateway -f config-foundry-apikey.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 1973578cd0ad630a
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 96c38897 5192013c 009395dd 2e04d362 a909e7a8
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-azure-openai.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: "gpt-4.1"
+        provider: azure
+        params:
+          azureResourceName: "your-resource-name"
+          azureResourceType: openAI
+    EOF
+    agentgateway -f config-azure-openai.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 7910c80a31a93e21
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 28fedf40 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 1d0d0f2e a8d4bb10 13379516
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-adv-foundry-implicit.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - matches:
+      - path:
+          pathPrefix: /azure
+      backends:
+      - ai:
+          name: azure
+          provider:
+            azure:
+              resourceName: "your-resource-name"
+              projectName: "your-project-name"
+              resourceType: foundry
+              model: gpt-4.1
+    EOF
+    agentgateway -f config-adv-foundry-implicit.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: a0b1ace26557d97e
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 28fedf40 c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 4f5e86ac 22f5fa44 e93f45a3 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 1d0d0f2e a8d4bb10 13379516
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-adv-foundry-client-secret.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - matches:
+      - path:
+          pathPrefix: /azure
+      policies:
+        backendAuth:
+          azure:
+            explicitConfig:
+              clientSecret:
+                tenant_id: "<your-tenant-id>"
+                client_id: "<your-client-id>"
+                client_secret: "<your-client-secret>"
+      backends:
+      - ai:
+          name: azure
+          provider:
+            azure:
+              resourceName: "your-resource-name"
+              projectName: "your-project-name"
+              resourceType: foundry
+              model: gpt-4.1
+    EOF
+    agentgateway -f config-adv-foundry-client-secret.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 6d100124d1fece87
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 4f5e86ac 22f5fa44 e93f45a3
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-adv-client-secret.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - ai:
+          name: azure
+          provider:
+            azure:
+              resourceName: "your-resource-name"
+              resourceType: openAI
+              model: gpt-4.1
+      policies:
+        backendAuth:
+          azure:
+            explicitConfig:
+              clientSecret:
+                tenant_id: "<your-tenant-id>"
+                client_id: "<your-client-id>"
+                client_secret: "<your-client-secret>"
+    EOF
+    agentgateway -f config-adv-client-secret.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 314f1a1b982c2947
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b ac4d1e30
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-adv-system-managed-identity.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - ai:
+          name: azure
+          provider:
+            azure:
+              resourceName: "your-resource-name"
+              resourceType: openAI
+              model: gpt-4.1
+      policies:
+        backendAuth:
+          azure:
+            explicitConfig:
+              managedIdentity: {}
+    EOF
+    agentgateway -f config-adv-system-managed-identity.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 29fdf95b7c93bb92
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 582f9f5f c39d492f 831e2131 5adcff7a 682f9a67 e9b4453a
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-adv-user-managed-identity.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - ai:
+          name: azure
+          provider:
+            azure:
+              resourceName: "your-resource-name"
+              resourceType: openAI
+              model: gpt-4.1
+      policies:
+        backendAuth:
+          azure:
+            explicitConfig:
+              managedIdentity:
+                userAssignedIdentity:
+                  clientId: "<your-managed-identity-client-id>"
+                  # OR use objectId or resourceId instead
+                  # objectId: "your-managed-identity-object-id"
+                  # resourceId: "/subscriptions/.../resourceGroups/.../providers/Microsoft.ManagedIdentity/userAssignedIdentities/..."
+    EOF
+    agentgateway -f config-adv-user-managed-identity.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 6eaa10af7025e8ea
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 435024e5 48924e65
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-adv-workload-identity.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - ai:
+          name: azure
+          provider:
+            azure:
+              resourceName: "your-resource-name"
+              resourceType: openAI
+              model: gpt-4.1
+      policies:
+        backendAuth:
+          azure:
+            explicitConfig:
+              workloadIdentity: {}
+        backendTLS: {}
+    EOF
+    agentgateway -f config-adv-workload-identity.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 205f7a4605c0fc9b
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 193598f2 eaaad965 aeca2b3d 871f11e1 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d 267b78eb 8ae971a3 a8d4bb10 8b2f24b2 c8f3f59a 81b74571 71338152 71bbd638
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure" >}}
+    cat <<'EOF' > config-claude-foundry.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - name: azure
+      matches:
+      - path:
+          pathPrefix: /azure-anthropic #prefix example
+      backends:
+      - ai:
+          name: azure
+          provider:
+            azure:
+              resourceName: your-foundry-resource
+              projectName: your-project-name
+              resourceType: foundry
+              model: claude-sonnet-4-6
+        policies:
+          backendAuth:
+            key:
+              value: your-api-key
+    EOF
+    agentgateway -f config-claude-foundry.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: d4077c467b2b78b2
+    lang: sh
+    lines: 7cbc85e0 67c5a3ac b0cead6d 236c401b e66f4a20 fc075a9d
+    preview: curl -X POST http://localhost:4000/azure-anthropic \
+  content: |-
+    {{< doc-test paths="azure" >}}
+    # Confirm the Foundry implicit-auth config serves the wildcard model and resolves
+    # it to the azure provider.
+    agentgateway -f config-foundry-implicit.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    SERVED=$(curl -sf --max-time 10 http://localhost:4000/v1/models | jq -r '[.data[].id] | index("*") // "missing"')
+    if [ "$SERVED" = "missing" ]; then
+      echo "FAIL: the wildcard model from the example config is not served"
+      exit 1
+    fi
+    PROVIDER=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | .provider | keys[0]
+      ] | first')
+    if [ "$PROVIDER" != "azure" ]; then
+      echo "FAIL: expected provider azure but agentgateway resolved $PROVIDER"
+      exit 1
+    fi
+    echo "✓ The wildcard model is served and resolves to the azure provider"
+    {{< /doc-test >}}

@@ -1,0 +1,25 @@
+format: 1
+source: content/docs/standalone/latest/integrations/llm/providers/ollama.md
+blocks: []
+hidden:
+- after:
+    line: a9b5da5eb01e77ff
+    occurrence: 0
+    words: 25bf8e1a 1e19bab2 cab26448 76e3c7bf ceb1e251 acba2551 5fb6a47e e0603c49 6201111b ac0b52a2 254bb97b c4d0cf24 f370351d bdf49c3c 7175517a f370351d b7e651cb 935f6831 4d040d3f 76e3c7bf b6bf7bc8 fa51fd49 b1b886ce 3e194352 7175517a b9014eaa b9d90628 90d08e58 f370351d b7e651cb 6201111b f370351d bdf49c3c cab26448 d6a7cd2a d9298a10 1581e27d 5c4c1964
+    block_before: null
+  content: |-
+    {{< doc-test paths="ollama-standalone-validate" >}}
+    # Install agentgateway binary for testing
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # Write and validate the ollama config from the guide
+    cat > /tmp/test-ollama-standalone.yaml << 'EOF'
+    llm:
+      models:
+      - name: "*"
+        provider: ollama
+        params:
+          model: llama3.2
+    EOF
+    agentgateway -f /tmp/test-ollama-standalone.yaml --validate-only
+    {{< /doc-test >}}

@@ -1,0 +1,37 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/devin.md
+blocks:
+- d0e104128e90c298 yaml
+- f1de9e489ba88cb1
+tags:
+- paths: devin-validate
+  block: 0
+  fingerprint: d0e104128e90c298
+  lang: yaml
+  lines: 35ff6026 a7f80a73 3af99526 2b6bc07a e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+  preview: cat > /tmp/test-devin.yaml << 'EOF'
+  form:
+    attr: paths="devin-validate"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 4d5dfc48c995cbfa
+    occurrence: 0
+    words: d4735e3a 1e142e62 5792d298 68693d02 3e194352 28ad58ac 68693d02
+    block_before: null
+  content: |-
+    {{< doc-test paths="devin-validate" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: d0e104128e90c298
+    lang: yaml
+    lines: 35ff6026 a7f80a73 3af99526 2b6bc07a e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+    preview: cat > /tmp/test-devin.yaml << 'EOF'
+  content: |-
+    {{< doc-test paths="devin-validate" >}}
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    agentgateway -f /tmp/test-devin.yaml --validate-only
+    {{< /doc-test >}}

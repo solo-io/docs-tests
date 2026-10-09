@@ -1,0 +1,28 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/github-copilot.md
+blocks:
+- c33c984d3ef578b4 yaml
+- 7a48bcd78e9cfc62 json
+tags:
+- paths: copilot-validate
+  block: 0
+  fingerprint: c33c984d3ef578b4
+  lang: yaml
+  lines: e33d5f89 a7f80a73 3af99526 2b6bc07a e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+  preview: cat > /tmp/test-copilot.yaml << 'EOF'
+  form:
+    attr: paths="copilot-validate"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: c33c984d3ef578b4
+    lang: yaml
+    lines: e33d5f89 a7f80a73 3af99526 2b6bc07a e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+    preview: cat > /tmp/test-copilot.yaml << 'EOF'
+  content: |-
+    {{< doc-test paths="copilot-validate" >}}
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    agentgateway -f /tmp/test-copilot.yaml --validate-only
+    {{< /doc-test >}}

@@ -1,0 +1,147 @@
+format: 1
+source: content/docs/standalone/1.5.x/integrations/mcp/servers/stdio.md
+blocks:
+- 2c420ce37ec1b118 yaml
+- 4f16505db12973ac
+- f6931a7b2e59dbc5 sh
+tags:
+- paths: mcp-stdio
+  block: 0
+  fingerprint: 2c420ce37ec1b118
+  lang: yaml
+  lines: 2c420ce3
+  preview: curl -L https://agentgateway.dev/examples/mcp-basic/config.yaml -o config.yaml
+  form:
+    attr: paths="mcp-stdio"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 329e6e12fdb40da9
+    occurrence: 0
+    words: ea325d76 10182ab8 10e08a41 77f6a166 600d397e 10182ab8 8e3dc1af 9c6725dc b9776d7d 56e57ada a24e10fd d5da31ae 0708da13 fe6d3468 c96c6d5b e0ee8bb5 0708da13 d5da31ae
+    block_before: null
+  content: |-
+    {{< doc-test paths="mcp-stdio" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Configure the agentgateway" step 1: the documented download URL resolves and
+    #     returns a config that agentgateway accepts (--validate-only).
+    #   * "Verify access to tools" steps 2-3, through the MCP API rather than the UI
+    #     playground: an MCP session initializes, tools/list includes the `echo` tool
+    #     that the page tells you to select, and calling `echo` with the page's example
+    #     message returns that message echoed back. These are the UI steps' scriptable
+    #     equivalents, so the walkthrough's end state is verified even though the
+    #     clicks are not.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The agentgateway UI itself (opening the UI, the Tool Playground, the
+    #     "Apply CORS" button, the Result card screenshots) - UI-only steps with no
+    #     command-line equivalent. The test drives the same MCP endpoint the playground
+    #     drives.
+    #   * The github-yaml rendering of the config in step 2 - display-only; it
+    #     embeds the same file the test downloads and validates.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # Open an MCP session and return its session ID. MCP responses are server-sent
+    # events, so `data:` lines are unwrapped before parsing.
+    mcp_session() {
+      curl -sS -D - -o /dev/null --max-time 30 -X POST http://localhost:3000/mcp \
+        -H 'Content-Type: application/json' \
+        -H 'Accept: application/json, text/event-stream' \
+        -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"doctest","version":"1.0"}},"id":1}' \
+        | grep -i '^mcp-session-id:' | tr -d '\r' | awk '{print $2}'
+    }
+
+    mcp_call() {
+      curl -sS --max-time 30 -X POST http://localhost:3000/mcp \
+        -H 'Content-Type: application/json' \
+        -H 'Accept: application/json, text/event-stream' \
+        -H "Mcp-Session-Id: $1" \
+        -d "$2" | sed -n 's/^data: //p'
+    }
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 2c420ce37ec1b118
+    lang: yaml
+    lines: 2c420ce3
+    preview: curl -L https://agentgateway.dev/examples/mcp-basic/config.yaml -o config.yaml
+  content: |2-
+       {{< doc-test paths="mcp-stdio" >}}
+       agentgateway -f config.yaml --validate-only
+       {{< /doc-test >}}
+- after:
+    line: 3b153e054f1e73cd
+    occurrence: 0
+    words: 227907a1 a9c0ad21 b29814cf 30d6e9d5
+    block_before:
+      block: 2
+      fingerprint: f6931a7b2e59dbc5
+      lang: sh
+      lines: f6931a7b
+      preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="mcp-stdio" >}}
+    # Run the gateway in the background so the MCP assertions below can drive it. The
+    # visible "Run the agentgateway" block is untagged because it runs in the foreground.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    # The stdio target launches the MCP server through npx, which downloads the package
+    # on first use, so allow time for the target to become ready.
+    for i in $(seq 1 30); do
+      curl -sf -o /dev/null --max-time 5 http://localhost:15021/healthz/ready && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    line: 3b153e054f1e73cd
+    occurrence: 0
+    words: 227907a1 a9c0ad21 b29814cf 30d6e9d5
+    block_before:
+      block: 2
+      fingerprint: f6931a7b2e59dbc5
+      lang: sh
+      lines: f6931a7b
+      preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="mcp-stdio" >}}
+    # The API equivalent of the "Verify access to tools" playground steps: open a
+    # session, confirm the `echo` tool the page tells you to select is listed, then call
+    # it with the page's example message and check the echoed result.
+    SESSION=""
+    for i in $(seq 1 20); do
+      SESSION=$(mcp_session)
+      [ -n "$SESSION" ] && break
+      sleep 3
+    done
+    if [ -z "$SESSION" ]; then
+      echo "FAIL: could not open an MCP session against the configured target"
+      exit 1
+    fi
+    echo "✓ MCP session initialized"
+
+    mcp_call "$SESSION" '{"jsonrpc":"2.0","method":"notifications/initialized"}' >/dev/null
+
+    TOOLS=$(mcp_call "$SESSION" '{"jsonrpc":"2.0","method":"tools/list","id":2}')
+    if [ "$(jq -r '[.result.tools[].name] | index("echo") // "missing"' <<<"$TOOLS")" = "missing" ]; then
+      echo "FAIL: tools/list did not include the echo tool"
+      jq -c '[.result.tools[].name]' <<<"$TOOLS"
+      exit 1
+    fi
+    echo "✓ tools/list includes the echo tool"
+
+    RESULT=$(mcp_call "$SESSION" '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"echo","arguments":{"message":"This is my first agentgateway setup."}},"id":3}')
+    TEXT=$(jq -r '.result.content[0].text // ""' <<<"$RESULT")
+    case "$TEXT" in
+      *"This is my first agentgateway setup."*)
+        echo "✓ Calling the echo tool returned the message: $TEXT" ;;
+      *)
+        echo "FAIL: the echo tool did not echo the message back"
+        echo "$RESULT"
+        exit 1 ;;
+    esac
+    {{< /doc-test >}}

@@ -1,0 +1,168 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients-k8s/claude-code.md
+blocks:
+- ce94b69f01d94adc bash
+- 8dcec5be268df143 bash
+- e537927e860dd821 bash
+- ca7023f4d6a518c8 bash
+- 67e9cba55466173a bash
+- e4adbaa091247412 bash
+- 5c1a19c7bc2b0b0e bash
+- fd7ffe8599f2a2c3 bash
+- e6605f4a0d89b872 bash
+- 2ca0b6165ef5810f
+- c857d09db23e6822 bash
+- 33374bd14cdca0f4 bash
+- 1e9a63a40c545c89 bash
+- de21e8889a48e379 bash
+- e4adbaa091247412 bash
+- fd7ffe8599f2a2c3 bash
+tags:
+- paths: claude-code-k8s
+  block: 0
+  fingerprint: ce94b69f01d94adc
+  lang: bash
+  lines: ce94b69f
+  preview: export ANTHROPIC_API_KEY="sk-ant-your-key-here"
+  form:
+    attr: paths="claude-code-k8s"
+    only: true
+    lead: ' '
+- paths: claude-code-k8s
+  block: 1
+  fingerprint: 8dcec5be268df143
+  lang: bash
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 de7e3df3 8af957d1 1426decf 2f7c298d 3c2d7421 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="claude-code-k8s"
+    only: true
+    lead: ' '
+- paths: claude-code-k8s
+  block: 2
+  fingerprint: e537927e860dd821
+  lang: bash
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 eae4f7ec 8af957d1 36184fa5 ad3afdb1 93a4b62b 283ebccb c8f3f59a ad3afdb1 d67b54bf 63a61578 8f2a6c40 146e11c6 9ebc4789 de7e3df3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="claude-code-k8s"
+    only: true
+    lead: ' '
+- paths: claude-code-k8s
+  block: 4
+  fingerprint: 67e9cba55466173a
+  lang: bash
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 c49801b9 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 94409d12 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="claude-code-k8s"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 3
+      fingerprint: ca7023f4d6a518c8
+      lang: bash
+      lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 eae4f7ec 8af957d1 36184fa5 ad3afdb1 93a4b62b 12456441 cd171a49 c8f3f59a ad3afdb1 d67b54bf 63a61578 8f2a6c40 146e11c6 9ebc4789 de7e3df3 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="claude-code-k8s" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for anthropic backend to be accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: anthropic
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 67e9cba55466173a
+    lang: bash
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 c49801b9 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 94409d12 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="claude-code-k8s" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for claude HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: claude
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 67e9cba55466173a
+    lang: bash
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 c49801b9 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 94409d12 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="claude-code-k8s" >}}
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null -w "%{http_code}" -X POST "http://${INGRESS_GW_ADDRESS}:80/v1/messages" -H "Content-Type: application/json" -d '{"model":"claude-haiku-4-5-20251001","max_tokens":10,"messages":[{"role":"user","content":"hi"}]}' && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 67e9cba55466173a
+    lang: bash
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 c49801b9 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 94409d12 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="claude-code-k8s" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify Anthropic messages endpoint is routed through gateway
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /v1/messages
+        method: POST
+        headers:
+          Content-Type: application/json
+        body: '{"model":"claude-haiku-4-5-20251001","max_tokens":10,"messages":[{"role":"user","content":"hi"}]}'
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 025bcc90bc7aeb49
+    occurrence: 0
+    words: 5ef5ef03 ec72420d 031af55b eb752636 7c9bbe5e f46f5990 6201111b 3b9c358f 3566cf23 3b212781 9c6725dc 56e57ada
+    block_before:
+      block: 10
+      fingerprint: c857d09db23e6822
+      lang: bash
+      lines: c857d09d
+      preview: claude
+  content: |-
+    {{< doc-test paths="claude-code-k8s" >}}
+    kubectl delete agentgatewaybackend anthropic -n agentgateway-system --ignore-not-found
+    kubectl delete httproute claude -n agentgateway-system --ignore-not-found
+    kubectl delete secret anthropic-secret -n agentgateway-system --ignore-not-found
+    {{< /doc-test >}}

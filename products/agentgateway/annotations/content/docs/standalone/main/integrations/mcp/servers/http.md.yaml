@@ -1,0 +1,141 @@
+format: 1
+source: content/docs/standalone/main/integrations/mcp/servers/http.md
+blocks:
+- 4567ba7832f2e887 mermaid
+- 1e6f646c122deeed yaml
+- 58dcf48bd9961aa3 yaml
+- f16800a60f37564f sh
+- ccf7e76fc437cac2 yaml
+- f6931a7b2e59dbc5 sh
+hidden:
+- after:
+    line: 73f99d27edc02125
+    occurrence: 0
+    words: 15eaa752 bb0347a4 27ce1d1b ea325d76 470ebe82 1f58b914 9c6725dc 56e57ada 58296753 b9499193 e642b129 b9776d7d a9f4b3d2 153b2a38 e0603c49 27badc98 0695b563 9390298f e4843053 1e0584a2 58296753 b9776d7d 37a8eec1 58bdfeb6 e642b129 b9776d7d 0967115f 1f58b914 153b2a38 ea325d76 e4843053 1e0584a2 8e7fc023 150a56ee b9776d7d 3f3af1ec 663ea1bf ca978112 10e08a41
+    block_before:
+      block: 1
+      fingerprint: 1e6f646c122deeed
+      lang: yaml
+      lines: a7f80a73 82726b6f 2b6bc07a 005966fa 3035507a f1be08d9 82726b6f ef5d668c
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="mcp-stateless" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * statefulMode: stateless is accepted and the MCP endpoint serves an initialize request (HTTP 200)
+    #   * In stateless mode, the initialize response does NOT include an Mcp-Session-Id header
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The visible example uses a streamable HTTP upstream (host: http://localhost:3005/mcp/);
+    #     the hidden test config uses a self-contained stdio target so no external MCP server is
+    #     needed. statefulMode governs the downstream (client-facing) session, independent of the
+    #     upstream transport, so the stateless behavior under test is the same.
+    #   * The default stateful contrast (Mcp-Session-Id present) is covered by other pages that
+    #     use the default configuration.
+    {{< /doc-test >}}
+- after:
+    line: 73f99d27edc02125
+    occurrence: 0
+    words: 15eaa752 bb0347a4 27ce1d1b ea325d76 470ebe82 1f58b914 9c6725dc 56e57ada 58296753 b9499193 e642b129 b9776d7d a9f4b3d2 153b2a38 e0603c49 27badc98 0695b563 9390298f e4843053 1e0584a2 58296753 b9776d7d 37a8eec1 58bdfeb6 e642b129 b9776d7d 0967115f 1f58b914 153b2a38 ea325d76 e4843053 1e0584a2 8e7fc023 150a56ee b9776d7d 3f3af1ec 663ea1bf ca978112 10e08a41
+    block_before:
+      block: 1
+      fingerprint: 1e6f646c122deeed
+      lang: yaml
+      lines: a7f80a73 82726b6f 2b6bc07a 005966fa 3035507a f1be08d9 82726b6f ef5d668c
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="mcp-stateless" >}}
+    # Install agentgateway binary
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 73f99d27edc02125
+    occurrence: 0
+    words: 15eaa752 bb0347a4 27ce1d1b ea325d76 470ebe82 1f58b914 9c6725dc 56e57ada 58296753 b9499193 e642b129 b9776d7d a9f4b3d2 153b2a38 e0603c49 27badc98 0695b563 9390298f e4843053 1e0584a2 58296753 b9776d7d 37a8eec1 58bdfeb6 e642b129 b9776d7d 0967115f 1f58b914 153b2a38 ea325d76 e4843053 1e0584a2 8e7fc023 150a56ee b9776d7d 3f3af1ec 663ea1bf ca978112 10e08a41
+    block_before:
+      block: 1
+      fingerprint: 1e6f646c122deeed
+      lang: yaml
+      lines: a7f80a73 82726b6f 2b6bc07a 005966fa 3035507a f1be08d9 82726b6f ef5d668c
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="mcp-stateless" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      statefulMode: stateless
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 73f99d27edc02125
+    occurrence: 0
+    words: 15eaa752 bb0347a4 27ce1d1b ea325d76 470ebe82 1f58b914 9c6725dc 56e57ada 58296753 b9499193 e642b129 b9776d7d a9f4b3d2 153b2a38 e0603c49 27badc98 0695b563 9390298f e4843053 1e0584a2 58296753 b9776d7d 37a8eec1 58bdfeb6 e642b129 b9776d7d 0967115f 1f58b914 153b2a38 ea325d76 e4843053 1e0584a2 8e7fc023 150a56ee b9776d7d 3f3af1ec 663ea1bf ca978112 10e08a41
+    block_before:
+      block: 1
+      fingerprint: 1e6f646c122deeed
+      lang: yaml
+      lines: a7f80a73 82726b6f 2b6bc07a 005966fa 3035507a f1be08d9 82726b6f ef5d668c
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="mcp-stateless" >}}
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    line: 73f99d27edc02125
+    occurrence: 0
+    words: 15eaa752 bb0347a4 27ce1d1b ea325d76 470ebe82 1f58b914 9c6725dc 56e57ada 58296753 b9499193 e642b129 b9776d7d a9f4b3d2 153b2a38 e0603c49 27badc98 0695b563 9390298f e4843053 1e0584a2 58296753 b9776d7d 37a8eec1 58bdfeb6 e642b129 b9776d7d 0967115f 1f58b914 153b2a38 ea325d76 e4843053 1e0584a2 8e7fc023 150a56ee b9776d7d 3f3af1ec 663ea1bf ca978112 10e08a41
+    block_before:
+      block: 1
+      fingerprint: 1e6f646c122deeed
+      lang: yaml
+      lines: a7f80a73 82726b6f 2b6bc07a 005966fa 3035507a f1be08d9 82726b6f ef5d668c
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="mcp-stateless" >}}
+    YAMLTest -f - <<'EOF'
+    - name: MCP endpoint accepts initialize request in stateless mode
+      http:
+        url: "http://localhost:3000"
+        path: /mcp
+        method: POST
+        headers:
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 73f99d27edc02125
+    occurrence: 0
+    words: 15eaa752 bb0347a4 27ce1d1b ea325d76 470ebe82 1f58b914 9c6725dc 56e57ada 58296753 b9499193 e642b129 b9776d7d a9f4b3d2 153b2a38 e0603c49 27badc98 0695b563 9390298f e4843053 1e0584a2 58296753 b9776d7d 37a8eec1 58bdfeb6 e642b129 b9776d7d 0967115f 1f58b914 153b2a38 ea325d76 e4843053 1e0584a2 8e7fc023 150a56ee b9776d7d 3f3af1ec 663ea1bf ca978112 10e08a41
+    block_before:
+      block: 1
+      fingerprint: 1e6f646c122deeed
+      lang: yaml
+      lines: a7f80a73 82726b6f 2b6bc07a 005966fa 3035507a f1be08d9 82726b6f ef5d668c
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="mcp-stateless" >}}
+    # Assert that stateless mode does not return an Mcp-Session-Id header
+    if curl -sS -D - -o /dev/null -X POST http://localhost:3000/mcp/ \
+      -H 'Content-Type: application/json' \
+      -H 'Accept: application/json, text/event-stream' \
+      -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}' \
+      | grep -qi 'mcp-session-id'; then
+      echo "FAIL: stateless mode returned an Mcp-Session-Id header"
+      exit 1
+    fi
+    echo "PASS: no Mcp-Session-Id header in stateless mode"
+    {{< /doc-test >}}

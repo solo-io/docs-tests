@@ -1,0 +1,79 @@
+format: 1
+source: content/docs/standalone/latest/integrations/llm/guardrails/jev.md
+blocks:
+- 99fe003a4bae3ad2 mermaid
+- 68c60c86ff26e55b sh
+- fcb049f46a0aacbf sh
+- 4f16505db12973ac sh
+- f6931a7b2e59dbc5 sh
+- 2a430212d7ea7a0b sh
+- deb33014f0035640 sh
+- 3c3980adb3bda1ed ts
+- a675c26fd3e0e7af ts
+- 999bd6ecd6df30fd sh
+- 4854604cee34d07c
+- 0d0ce4aa6d1088e8 sh
+- 91c769df7242ae74 console
+- 065c00ea49da206f sh
+- 544d70ff9fc30427
+- 77d7ad582a822698 console
+tags:
+- paths: jev
+  block: 2
+  fingerprint: fcb049f46a0aacbf
+  lang: sh
+  lines: fcb049f4
+  preview: curl -L https://agentgateway.dev/examples/llm-guardrail-jev/config.yaml -o confi
+  form:
+    attr: paths="jev"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 68c60c86ff26e55b
+    lang: sh
+    lines: fd812593 8549c19b
+    preview: export OPENAI_API_KEY="<your-openai-key>"
+  content: |-
+    {{< doc-test paths="jev" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Configure agentgateway": the upstream example that the page embeds is
+    #     downloaded and accepted by agentgateway (--validate-only), so
+    #     the Jev model without a `formats` list or `passthrough` setting,
+    #     `provider.custom.providerOverride`, the `guardrails.request`/`response`
+    #     webhook targets, and the `config.modelCatalog` rate entries are all real
+    #     fields with the documented nesting. The test validates the same file the
+    #     github-yaml shortcode renders, so the page cannot drift from the example.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Run the guardrail webhook server" - external dependency; the server needs
+    #     Bun and a real TYPESAFE_API_KEY, and each run bills a live Jev evaluation.
+    #   * "Verify the guardrail" - external dependency; both curl requests need a
+    #     real TYPESAFE_API_KEY and OPENAI_API_KEY and bill a live completion.
+    #   * "Review Jev usage and cost" - requires traffic this test does not send;
+    #     the cost rows only appear after a real evaluation call is recorded.
+    #   * The github-yaml rendering of the config in step 2 - display-only; it
+    #     embeds the same file the test downloads and validates.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # The example config reads both keys from the environment. --validate-only still
+    # resolves env vars, so placeholders are enough here.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    export TYPESAFE_API_KEY="${TYPESAFE_API_KEY:-test}"
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="jev" >}}
+    # The visible step downloaded the upstream example, so this validates the file
+    # that the page displays, not a transcription of it.
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}

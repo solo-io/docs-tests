@@ -1,0 +1,149 @@
+format: 1
+source: content/docs/standalone/main/integrations/llm/providers/bedrock.md
+blocks:
+- 7014ce54655ad187 yaml
+- ede7fa55b69cab42 yaml
+- 682f16a9e2dbc603 python
+- 206af87cd38ed81c python
+- 8332184c1fa2779e yaml
+- aeac243dbb0d8a1e bash
+- b7a997a3e4a887b0 json
+- 23bd0a313499cc2e sh
+- 83c3a4638fa53be9 sh
+hidden:
+- after:
+    line: 62b57e9baf60637d
+    occurrence: 0
+    words: 2d7f45d7 005969f0 3673014e c51e455b 75857a45 b9776d7d c96c6d5b 6c35493a 8e7fc023 2ad8a704 7f26104f b9776d7d e910c860 c0d2856b 937014f6 8da91408 c9a8dc33 3c482346 a1d98908 16091175 177a7ea3 6201111b 106885df 8a46fd6f 6c35493a ca978112 5b2dc5f8 1f58b914 e5ff8d2b 7383711c b9776d7d 12886f9d 8e7fc023 2d7f45d7 7f26104f 663ea1bf 3316348d b9776d7d 2d7f45d7 12886f9d 5a41ac42 a3b142af 15f07230 10c22bcf 187897ce dea7111a aa9e9b5c 3c469e9d 0a4e4c29 bfe5d697 fa42bed0 a0af9f86 caf9f906 487b9104 58ee0007 52c8ff56
+    block_before: null
+  content: |-
+    {{< doc-test paths="bedrock" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Configuration": the example config is accepted by agentgateway
+    #     (--validate-only), so `provider: bedrock` is recognized and
+    #     `params.awsRegion` is correct.
+    #   * "Passthrough": the `passthrough: detect` config is accepted, including the
+    #     `name: us.anthropic*` prefix match.
+    #   * "Bedrock Mantle": the `params.bedrockEndpointPreference` config is
+    #     accepted, which pins both the field name and the lowercase spelling of the
+    #     value. Standalone rejects the capitalized Kubernetes spelling, so this
+    #     block is what keeps the two modes from being copied into each other.
+    #   * With the base config loaded, agentgateway lists at least one model on
+    #     `/v1/models` and resolves the wildcard to the `bedrock` provider in the
+    #     configured AWS region. The list is not checked for a literal `*`, because
+    #     the default `llm.discovery: catalog` expands the wildcard into the catalog's
+    #     Bedrock model IDs.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Authentication" - external dependency; AWS credentials are resolved per
+    #     request from the ambient environment, which the test cannot provide.
+    #   * The Converse and Invoke boto3 examples - display-only Python snippets that
+    #     need real AWS credentials and a Bedrock model grant.
+    #   * "Token counting", "Extended thinking and reasoning", and "Structured
+    #     outputs" - external dependency; each bills a live Bedrock completion. Their
+    #     example responses and the `reasoning_effort` budget table are display-only.
+    #   * That format translation to Bedrock's Converse API is correct - a different
+    #     layer; verifying the translation needs a live Bedrock upstream.
+    #   * Which endpoint a given model actually resolves to under
+    #     `bedrockEndpointPreference` - external dependency; the resolution reads
+    #     `runtime`/`mantle` tags from an imported catalog, and populating that
+    #     catalog calls the AWS model-card pages.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 7014ce54655ad187
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd 9b4ed50d
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="bedrock" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: bedrock
+        params:
+          awsRegion: us-west-2
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: ede7fa55b69cab42
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 81a0c220 2e2b598b 009395dd 9b4ed50d 6150d164
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="bedrock" >}}
+    cat <<'EOF' > config-passthrough.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: us.anthropic*
+        provider: bedrock
+        params:
+          awsRegion: us-west-2
+        passthrough: detect
+    EOF
+    agentgateway -f config-passthrough.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 8332184c1fa2779e
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd 9b4ed50d 672a2624
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="bedrock" >}}
+    cat <<'EOF' > config-mantle.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: bedrock
+        params:
+          awsRegion: us-west-2
+          bedrockEndpointPreference: runtimePreferred
+    EOF
+    agentgateway -f config-mantle.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 83c3a4638fa53be9
+    lang: sh
+    lines: 6bb9ea5a 0100c022 236c401b 6d89063e d5240f8b eafd7fe9 3796b24f 028b56a6 578b7fdc 75d5a96b f04768bf dc3419e7 e52a1813 d257de3e 4fe655e1 d10b36aa d10b36aa e52a1813 4b3b16d3 021fb596 09d1b3dd fa2251f0 d10b36aa cfae0d42 c83aa0a4
+    preview: curl "localhost:4000/v1/chat/completions" -H content-type:application/json -d '{
+  content: |-
+    {{< doc-test paths="bedrock" >}}
+    # Confirm the base config serves models and that `params.awsRegion` reaches the
+    # resolved provider config. The default `llm.discovery: catalog` expands `*` into
+    # catalog model IDs, so check for a non-empty list rather than a literal `*`.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    SERVED=$(curl -sf --max-time 10 http://localhost:4000/v1/models | jq -r '.data | length')
+    if [ "${SERVED:-0}" -eq 0 ]; then
+      echo "FAIL: /v1/models lists no models for the example config"
+      exit 1
+    fi
+    RESOLVED=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | "\(.provider | keys[0])|\(.provider.bedrock.region)"
+      ] | first')
+    if [ "$RESOLVED" != "bedrock|us-west-2" ]; then
+      echo "FAIL: expected bedrock|us-west-2 but agentgateway resolved $RESOLVED"
+      exit 1
+    fi
+    echo "✓ Models are served and the wildcard resolves to bedrock in us-west-2"
+    {{< /doc-test >}}

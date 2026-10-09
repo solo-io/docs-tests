@@ -1,0 +1,96 @@
+format: 1
+source: content/docs/standalone/main/integrations/llm/providers/vertex.md
+blocks:
+- c79acfc14d13ea59 yaml
+hidden:
+- after:
+    line: 09f77533defd4a89
+    occurrence: 0
+    words: 90d08e58 bbdefa29 56681010 e1b683e2 32e83e92 f4bf9f7f ea325d76 487b9104 5c4c1964 58296753 56e57ada
+    block_before: null
+  content: |-
+    {{< doc-test paths="vertex" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Configuration": the example config is accepted by agentgateway
+    #     (--validate-only), so `provider: vertex` is recognized and
+    #     `params.model` / `params.vertexProject` / `params.vertexRegion` are correct.
+    #   * The settings table rows for `name`, `params.model`, `params.vertexProject`,
+    #     and `params.vertexRegion`: with the config loaded, agentgateway serves the
+    #     client-facing model name `gemini-2.5-flash` and resolves the upstream to the
+    #     configured model, project ID, and region. This makes the distinction between
+    #     `name` (matched in requests) and `params.model` (sent upstream) observable
+    #     rather than only asserted in prose.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Authentication" - external dependency; Application Default Credentials
+    #     require a real Google Cloud identity, which the test cannot stand up. The
+    #     config loads without credentials because ADC is resolved per request.
+    #   * The `auth.gcp` table row - display-only; the example config omits it and
+    #     relies on the ADC default.
+    #   * That a completion reaches Vertex AI - external dependency, as above.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: c79acfc14d13ea59
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 6399dee0 17183da5 009395dd 1e4f0b93 d3c339c9 6f791261
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="vertex" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: gemini-2.5-flash
+        provider: vertex
+        params:
+          model: google/gemini-2.5-flash-lite-preview-06-17
+          vertexProject: my-project-id
+          vertexRegion: us-west2
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: a719573c5b92c64f
+    occurrence: 0
+    words: 2b980624 bbdefa29 56681010 b9d90628 b7d64a92 f480ffb2 1fe28920 37a8eec1 631aada4 576d1184 a7e2d26e 37a8eec1
+    block_before:
+      block: 0
+      fingerprint: c79acfc14d13ea59
+      lang: yaml
+      lines: a7f80a73 3af99526 e01ccf75 6399dee0 17183da5 009395dd 1e4f0b93 d3c339c9 6f791261
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="vertex" >}}
+    # Confirm the client-facing `name` is served and that `params.model`,
+    # `params.vertexProject`, and `params.vertexRegion` reach the resolved provider
+    # config as documented in the settings table.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    SERVED=$(curl -sf --max-time 10 http://localhost:4000/v1/models | jq -r '[.data[].id] | index("gemini-2.5-flash") // "missing"')
+    if [ "$SERVED" = "missing" ]; then
+      echo "FAIL: the model name gemini-2.5-flash from the example config is not served"
+      exit 1
+    fi
+    RESOLVED=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | .provider.vertex
+        | "\(.model)|\(.projectId)|\(.region)"
+      ] | first')
+    EXPECTED="google/gemini-2.5-flash-lite-preview-06-17|my-project-id|us-west2"
+    if [ "$RESOLVED" != "$EXPECTED" ]; then
+      echo "FAIL: expected vertex params $EXPECTED but agentgateway resolved $RESOLVED"
+      exit 1
+    fi
+    echo "✓ Vertex model, project, and region resolve to the documented values"
+    {{< /doc-test >}}

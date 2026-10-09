@@ -1,0 +1,99 @@
+format: 1
+source: content/docs/standalone/main/integrations/cloud-providers/aws.md
+blocks:
+- 6fbcc17177dd1dd0 yaml
+- ad7b63b133c0e53d json
+- efc66e43cb3c6171 json
+hidden:
+- after:
+    line: e3c1279ea5a80327
+    occurrence: 0
+    words: acba2551 56e57ada b8d31e85 cbc62794 d940b564 7175517a cbc62794 6e884711 6201111b ed4561f6 cbc62794 2d7f45d7 fa42bed0 a0af9f86 7955c819 487b9104 1e19bab2 2d7f45d7 0695b563 b9776d7d d457e3a9 4b168d88 8e7fc023 7d150728 ea53396c 64ea62de b9776d7d a42d5197 9390298f 14c2529e 2c70e12b f1537d8d 6b847a0e 4d040d3f b7d64a92 3b9c358f
+    block_before: null
+  content: |-
+    {{< doc-test paths="aws" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Authenticate with an IAM role": the example config is accepted by
+    #     agentgateway (--validate-only), so `auth.aws: {}` is a recognized shape
+    #     alongside `provider: bedrock` and `params.awsRegion`.
+    #   * With that config loaded, agentgateway serves LLM traffic on port 4000 and
+    #     resolves the model to the Bedrock provider in the configured region. This
+    #     is what makes the port numbers in the ECS task definition and the Cloud
+    #     Run-style examples on this page checkable rather than asserted.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That SigV4 signing with a task role reaches Bedrock - external dependency;
+    #     the test has no AWS account, no task role, and a live call bills a
+    #     completion.
+    #   * "Run on Amazon ECS" - external dependency; the task definition needs an
+    #     ECS cluster, an EFS file system, and IAM roles that the test cannot stand
+    #     up. The container image, port, and command in it match the configuration
+    #     that this test does run.
+    #   * "IAM permissions" - a different layer; the policy document is evaluated by
+    #     AWS, not by agentgateway.
+    #   * "AWS services" - display-only table of links.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 6fbcc17177dd1dd0
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd eced998e 146e11c6 d1db16e5
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="aws" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: bedrock
+        params:
+          awsRegion: us-east-1
+        auth:
+          aws: {}
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: d49c3635285c0518
+    occurrence: 0
+    words: f0f731e8 7d150728 b9d90628 ea325d76 2e1cfa82 2958d416 f480ffb2 b9776d7d 631aada4 8e7fc023 b9776d7d ba528516 ea53396c b0268fa7 a5c935d1 f4bf9f7f ea325d76 d940b564 0ebb429f 4b168d88 ea325d76 7cba8243 5e8c03a9 1900eab6 7175517a 86725c17 ba528516 7af0b3e4
+    block_before:
+      block: 0
+      fingerprint: 6fbcc17177dd1dd0
+      lang: yaml
+      lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd eced998e 146e11c6 d1db16e5
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="aws" >}}
+    # Confirm that agentgateway serves LLM traffic on port 4000, which the ECS task
+    # definition on this page publishes, and that params.awsRegion reaches the
+    # resolved Bedrock provider as the settings table describes.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    # The default `llm.discovery: catalog` expands `*` into catalog model IDs, so
+    # check for a non-empty list rather than a literal `*`.
+    SERVED=$(curl -sf --max-time 10 http://localhost:4000/v1/models | jq -r '.data | length')
+    if [ "${SERVED:-0}" -eq 0 ]; then
+      echo "FAIL: /v1/models lists no models for the example config on port 4000"
+      exit 1
+    fi
+    RESOLVED=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint.provider.bedrock.region
+      ] | first')
+    if [ "$RESOLVED" != "us-east-1" ]; then
+      echo "FAIL: expected Bedrock region us-east-1 but agentgateway resolved $RESOLVED"
+      exit 1
+    fi
+    echo "✓ Port 4000 serves the model and the Bedrock region resolves to the documented value"
+    {{< /doc-test >}}

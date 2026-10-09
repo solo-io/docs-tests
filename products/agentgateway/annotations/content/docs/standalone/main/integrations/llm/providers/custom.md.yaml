@@ -1,0 +1,29 @@
+format: 1
+source: content/docs/standalone/main/integrations/llm/providers/custom.md
+blocks:
+- 93ddff19a14275db yaml
+tags:
+- paths: openai-compat-validate
+  block: 0
+  fingerprint: 93ddff19a14275db
+  lang: yaml
+  lines: bf666dc2 a7f80a73 3af99526 e01ccf75 e4f1a385 93a4b62b b6fb1fd3 c7c93cfb 6a9caafe 7f004fb9 1ed46b38 160ed902 b630600e 0e4f3f37 7bb11d04 36333e5c 67e7f8cc b0d63098 6e337059 2b3ff35a cf976c7a 009395dd 668ea28e 50af7046 1a9b3139 abc56510
+  preview: cat > /tmp/test-perplexity.yaml << 'EOF'
+  form:
+    attr: paths="openai-compat-validate"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 47319c577160fc26
+    occurrence: 0
+    words: ea325d76 14c2529e 2c70e12b 10c22bcf 4d040d3f 7be403e3 5c4c1964 c8a69f69 bb0347a4 ba78973d 0021e046 663ea1bf ca978112 25bf8e1a b6bf7bc8 a5c935d1 f4bf9f7f ec8207a3 7175517a 599af8b0 da0daaba
+    block_before: null
+  content: |-
+    {{< doc-test paths="openai-compat-validate" >}}
+    # Install agentgateway binary for testing
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # Set placeholder API keys for validation (--validate-only still resolves env vars)
+    export PERPLEXITY_API_KEY="${PERPLEXITY_API_KEY:-test}"
+    {{< /doc-test >}}

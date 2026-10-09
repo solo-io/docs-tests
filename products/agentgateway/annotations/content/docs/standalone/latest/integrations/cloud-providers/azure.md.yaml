@@ -1,0 +1,134 @@
+format: 1
+source: content/docs/standalone/latest/integrations/cloud-providers/azure.md
+blocks:
+- 873a3bfa9ff3117c yaml
+- d6c20da3a1939594 yaml
+- b3d52fa389c6fdcd bash
+- 053778d93567a1e5 bash
+hidden:
+- after:
+    line: fd35abfee38c5dd4
+    occurrence: 0
+    words: acba2551 56e57ada b8d31e85 79f43c3b a42d5197 d56f6359 7175517a b075b18d 6201111b ed4561f6 79f43c3b 7d3194f7 fa42bed0 a0af9f86 7955c819 487b9104 1e19bab2 79f43c3b 0695b563 b9776d7d 7fdfda5f 689f6a62 8e7fc023 79f43c3b ea53396c 27cdad0b 663ea1bf b9776d7d 7f6c7360 9390298f 14c2529e 2c70e12b f1537d8d 6b847a0e 4d040d3f b7d64a92 3b9c358f
+    block_before: null
+  content: |-
+    {{< doc-test paths="azure-cloud" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Authenticate with a managed identity", both tabs: the auto-detect config
+    #     (`auth.azure.implicit`) and the user-assigned identity config
+    #     (`auth.azure.explicitConfig.managedIdentity.userAssignedIdentity.clientId`)
+    #     are both accepted by agentgateway (--validate-only), alongside
+    #     `params.azureResourceName` and `params.azureResourceType`.
+    #   * With the auto-detect config loaded, agentgateway serves LLM traffic on
+    #     port 4000 and resolves the model to the Azure provider with the documented
+    #     resource name and type. This is what makes the --target-port value in the
+    #     Container Apps command on this page checkable rather than asserted.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That either identity reaches Azure OpenAI - external dependency; the test
+    #     has no Azure tenant, resource, or identity, and a live call bills a
+    #     completion. Only that agentgateway accepts each config shape is asserted.
+    #   * "Run on Azure Container Apps" - external dependency; the az commands need
+    #     a subscription, a resource group, and a Container Apps environment that
+    #     the test cannot stand up. The image and port in them match the
+    #     configuration that this test does run.
+    #   * "Role assignments" - a different layer; the roles are evaluated by Azure,
+    #     not by agentgateway.
+    #   * "Azure services" - display-only table of links.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 1
+      fingerprint: d6c20da3a1939594
+      lang: yaml
+      lines: a7f80a73 3af99526 e01ccf75 e4f1a385 5192013c 009395dd d887603d 183383d7 a909e7a8 146e11c6 10f3150d aade440b 582f9f5f c39d492f b3982874
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure-cloud" >}}
+    # Auto-detect tab
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: azure
+        params:
+          model: gpt-4o
+          azureResourceName: my-resource
+          azureResourceType: openAI
+        auth:
+          azure:
+            implicit: {}
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    # User-assigned identity tab
+    cat <<'EOF' > /tmp/azure-user-assigned.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: azure
+        params:
+          model: gpt-4o
+          azureResourceName: my-resource
+          azureResourceType: openAI
+        auth:
+          azure:
+            explicitConfig:
+              managedIdentity:
+                userAssignedIdentity:
+                  clientId: 00000000-0000-0000-0000-000000000000
+    EOF
+    agentgateway -f /tmp/azure-user-assigned.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: ea51eb5a1590626a
+    occurrence: 0
+    words: 0f7f5c37 7f3a98bc a5614527 b9d90628 a3b142af 3a8f7b6c 663ea1bf cfacfd3e b9776d7d 5b7e6bf2 75857a45 b9776d7d ba528516 7175517a c2638155 663ea1bf 82a3537f ca978112 948fe603 2bb80d53 ca978112 7fdfda5f 689f6a62 7175517a 7f6c7360 689f6a62
+    block_before:
+      block: 1
+      fingerprint: d6c20da3a1939594
+      lang: yaml
+      lines: a7f80a73 3af99526 e01ccf75 e4f1a385 5192013c 009395dd d887603d 183383d7 a909e7a8 146e11c6 10f3150d aade440b 582f9f5f c39d492f b3982874
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="azure-cloud" >}}
+    # Confirm that agentgateway serves LLM traffic on port 4000, which the Container
+    # Apps command on this page sets with --target-port, and that the Azure params
+    # reach the resolved provider as the settings table describes.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    # The default `llm.discovery: catalog` expands `*` into catalog model IDs, so
+    # check for a non-empty list rather than a literal `*`.
+    SERVED=$(curl -sf --max-time 10 http://localhost:4000/v1/models | jq -r '.data | length')
+    if [ "${SERVED:-0}" -eq 0 ]; then
+      echo "FAIL: /v1/models lists no models for the example config on port 4000"
+      exit 1
+    fi
+    RESOLVED=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | .provider.azure
+        | "\(.model)|\(.resourceName)|\(.resourceType)"
+      ] | first')
+    EXPECTED="gpt-4o|my-resource|openAI"
+    if [ "$RESOLVED" != "$EXPECTED" ]; then
+      echo "FAIL: expected azure params $EXPECTED but agentgateway resolved $RESOLVED"
+      exit 1
+    fi
+    echo "✓ Port 4000 serves the model and the Azure params resolve to the documented values"
+    {{< /doc-test >}}

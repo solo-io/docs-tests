@@ -1,0 +1,58 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/mcp-clients-k8s.md
+blocks:
+- 3e2c6b01c1a1dd49 bash
+- 538133e53ae02322 bash
+- 1fdb679db9a5719c bash
+- 3d19a48593e22be7 json
+hidden:
+- after:
+    line: e1804c16d29e6e11
+    occurrence: 0
+    words: b9776d7d a0af9f86 10182ab8 10182ab8 411d709d b9776d7d 37a8eec1 e5381597 a0af9f86 e7a2e8b2 28391d3b 10182ab8 75857a45 b9776d7d 2053dbbf 10182ab8 83ca68be fa42bed0 a0af9f86 caf9f906 10182ab8 bb452b24 935f6831 bb0347a4 20158224 ca978112 9d6f965a a0af9f86 58296753 4d040d3f e5381597 2549c096 5d6d9986
+    block_before:
+      block: 1
+      fingerprint: 538133e53ae02322
+      lang: bash
+      lines: 538133e5
+      preview: kubectl port-forward -n {{< reuse "agw-docs/snippets/namespace.md" >}} svc/agent
+  content: |-
+    {{< doc-test paths="mcp-clients-k8s" >}}
+    for i in $(seq 1 60); do
+      RESP=$(curl -s --max-time 5 -X POST "http://${INGRESS_GW_ADDRESS}:80/mcp/mcp" \
+        -H "Accept: application/json, text/event-stream" \
+        -H "Content-Type: application/json" \
+        -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}')
+      if echo "$RESP" | grep -q "protocolVersion"; then break; fi
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    line: e1804c16d29e6e11
+    occurrence: 0
+    words: b9776d7d a0af9f86 10182ab8 10182ab8 411d709d b9776d7d 37a8eec1 e5381597 a0af9f86 e7a2e8b2 28391d3b 10182ab8 75857a45 b9776d7d 2053dbbf 10182ab8 83ca68be fa42bed0 a0af9f86 caf9f906 10182ab8 bb452b24 935f6831 bb0347a4 20158224 ca978112 9d6f965a a0af9f86 58296753 4d040d3f e5381597 2549c096 5d6d9986
+    block_before:
+      block: 1
+      fingerprint: 538133e53ae02322
+      lang: bash
+      lines: 538133e5
+      preview: kubectl port-forward -n {{< reuse "agw-docs/snippets/namespace.md" >}} svc/agent
+  content: |-
+    {{< doc-test paths="mcp-clients-k8s" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify MCP initialize through gateway
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /mcp/mcp
+        method: POST
+        headers:
+          Content-Type: application/json
+          Accept: application/json, text/event-stream
+        body: '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}'
+      source:
+        type: local
+      retries: 1
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,468 @@
+format: 1
+source: content/docs/standalone/latest/integrations/auth/okta.md
+blocks:
+- 804265947a921885 sh
+- 5b5b7c204d176ad4 yaml
+- f6931a7b2e59dbc5 sh
+- e6057ad7800bac6c
+- 0e40004e257a600d sh
+- f7f4688b850e0c7d
+- 0466edb25f20cac8 sh
+- 2b7551b0261bb23b json
+- b34632941b95ebb7 sh
+- 9b8944abc57e76fa json
+- 9768e6671ef685db sh
+- 86ad6f1fde0f394c json
+- c6b6614fea5ae480 sh
+- 3316c5b53f0ee95c sh
+- '8355789273570043'
+- 0bb0876a5549051c yaml
+- f6931a7b2e59dbc5 sh
+- ca96ca58f71bbd6e sh
+- 0231359024d33b0d sh
+- d26eae87829adde5
+tags:
+- paths: okta-mcp-authn
+  block: 0
+  fingerprint: 804265947a921885
+  lang: sh
+  lines: d93481e7 9cd66e2a 6e1d310e 7b78e792 99ef7126
+  preview: export OKTA_ORG_URL='https://your-org.okta.com'
+  form:
+    attr: paths="okta-mcp-authn"
+    only: true
+    lead: ' '
+- paths: okta-mcp-authn
+  block: 4
+  fingerprint: 0e40004e257a600d
+  lang: sh
+  lines: 2bb85e35 3067bf8a cd2f84e7 9662726e
+  preview: curl -i -X POST http://localhost:3000/mcp \
+  form:
+    attr: paths="okta-mcp-authn"
+    only: true
+    lead: ' '
+- paths: okta-mcp-authn
+  block: 6
+  fingerprint: 0466edb25f20cac8
+  lang: sh
+  lines: 0466edb2
+  preview: curl -s http://localhost:3000/.well-known/oauth-protected-resource/mcp
+  form:
+    attr: paths="okta-mcp-authn"
+    only: true
+    lead: ' '
+- paths: okta-mcp-authn
+  block: 8
+  fingerprint: b34632941b95ebb7
+  lang: sh
+  lines: b3463294
+  preview: curl -s http://localhost:3000/.well-known/oauth-authorization-server
+  form:
+    attr: paths="okta-mcp-authn"
+    only: true
+    lead: ' '
+- paths: okta-mcp-authn
+  block: 10
+  fingerprint: 9768e6671ef685db
+  lang: sh
+  lines: 62b7248f 3067bf8a 68a4ed3f
+  preview: curl -s -X POST http://localhost:3000/.well-known/oauth-authorization-server/cli
+  form:
+    attr: paths="okta-mcp-authn"
+    only: true
+    lead: ' '
+- paths: okta-mcp-authn
+  block: 12
+  fingerprint: c6b6614fea5ae480
+  lang: sh
+  lines: d69c3b62 8c4d6ee3 a8d73eaf 140118a4 ae0e123c 337ede91 1ba10544 44e8488d
+  preview: export TOKEN="$(curl -s -X POST "${OKTA_ISSUER}/v1/token" \
+  form:
+    attr: paths="okta-mcp-authn"
+    only: true
+    lead: ' '
+- paths: okta-mcp-authn
+  block: 13
+  fingerprint: 3316c5b53f0ee95c
+  lang: sh
+  lines: 2bb85e35 847c7ea1 3067bf8a cd2f84e7 9662726e
+  preview: curl -i -X POST http://localhost:3000/mcp \
+  form:
+    attr: paths="okta-mcp-authn"
+    only: true
+    lead: ' '
+- paths: okta-mcp-authn
+  block: 17
+  fingerprint: ca96ca58f71bbd6e
+  lang: sh
+  lines: 840876cd f4917747
+  preview: export OKTA_UNAUTHORIZED_CLIENT_ID='<second-api-services-client-id>'
+  form:
+    attr: paths="okta-mcp-authn"
+    only: true
+    lead: ' '
+- paths: okta-mcp-authn
+  block: 18
+  fingerprint: 0231359024d33b0d
+  lang: sh
+  lines: 445ec14d 8c4d6ee3 a8d73eaf 10f80842 f2d80fba 337ede91 1ba10544 44e8488d c74cb7f2 a68f2c60 3067bf8a cd2f84e7 9662726e
+  preview: export NO_GROUP_TOKEN="$(curl -s -X POST "${OKTA_ISSUER}/v1/token" \
+  form:
+    attr: paths="okta-mcp-authn"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 6175d28c49eb2d78
+    occurrence: 0
+    words: 4e074085 d05aa2a1 c0cafcf0 8e7fc023 bb0347a4 193c45b5 a0561fd6 663ea1bf ea325d76 65819e19 e87cb45c 3e194352 a57dd3cd 7c8718bd 6201111b fdeb3389 663ea1bf fa8847b0 ea325d76 cbb82ebe b3eacd33 6201111b a172cedc 7955c819 58296753 b9776d7d 65819e19 8c6976e5 93d8874c ca978112 ad95d5fa 88fa0d75 e87cb45c fa51fd49 b9abdfa5
+    block_before: null
+  content: |-
+    {{< doc-test paths="okta-mcp-authn" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * Step 2: the config on this page loads and runs, including the ${...}
+    #     environment variable references, which agentgateway expands at load time,
+    #     and the explicit jwks.url that the okta provider requires.
+    #   * Step 3: an unauthenticated MCP initialize returns 401 with the documented
+    #     WWW-Authenticate resource_metadata pointer; the protected resource metadata
+    #     is served; the authorization server metadata carries the ?audience= query
+    #     parameter that the okta provider appends; the registration_endpoint is
+    #     rewritten to the gateway; and registration through that endpoint reaches
+    #     the org-relative /oauth2/v1/clients path.
+    #   * Step 4: a token is accepted and the MCP server responds 200, so the keys
+    #     really are fetched from the {issuer}/v1/keys URL this page tells you to set.
+    #   * Step 5: the authorization rule admits a token carrying the AI-Users group
+    #     and denies an otherwise-valid token without it (403).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That Okta itself behaves this way. External dependency not stood up: the
+    #     test points the issuer at a local mock authorization server that serves the
+    #     same discovery, keys, and registration endpoints Okta does, so it exercises
+    #     agentgateway's provider behavior rather than Okta's.
+    #   * The Okta Admin Console steps in Step 1. UI-only: creating the
+    #     authorization server, scopes, and app integrations has no scriptable
+    #     equivalent here.
+    #   * The authorization code flow with PKCE that real MCP clients use, and the
+    #     "Connect an MCP client" section. UI-only: it requires a browser to
+    #     complete the Okta login and consent redirect.
+    {{< /doc-test >}}
+- after:
+    line: 6175d28c49eb2d78
+    occurrence: 0
+    words: 4e074085 d05aa2a1 c0cafcf0 8e7fc023 bb0347a4 193c45b5 a0561fd6 663ea1bf ea325d76 65819e19 e87cb45c 3e194352 a57dd3cd 7c8718bd 6201111b fdeb3389 663ea1bf fa8847b0 ea325d76 cbb82ebe b3eacd33 6201111b a172cedc 7955c819 58296753 b9776d7d 65819e19 8c6976e5 93d8874c ca978112 ad95d5fa 88fa0d75 e87cb45c fa51fd49 b9abdfa5
+    block_before: null
+  content: |-
+    {{< doc-test paths="okta-mcp-authn" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: f7a6fd7a53801a69
+    occurrence: 0
+    words: 663ea1bf 3f267c2a b9776d7d 535c6f8e 6201111b b9776d7d 78236fd5 28e5ebab 10c22bcf 4d040d3f cbb82ebe b3eacd33 2348f998 ea103d6c 45447b7a 43cc23fa b1d6b91b 6859c67a d91ec1b4 a94db13c 6201111b 20f65c28 b9776d7d 535c6f8e 6201111b 559df7bb bfe5d697
+    block_before:
+      block: 0
+      fingerprint: 804265947a921885
+      lang: sh
+      lines: d93481e7 9cd66e2a 6e1d310e 7b78e792 99ef7126
+      preview: export OKTA_ORG_URL='https://your-org.okta.com'
+  content: |-
+    {{< doc-test paths="okta-mcp-authn" >}}
+    # Point the guide's variables at a local mock authorization server instead of a
+    # real Okta org. It serves the same discovery, keys, and registration endpoints,
+    # so agentgateway's okta provider behavior is exercised unchanged.
+    export OKTA_ORG_URL="http://localhost:9098"
+    export OKTA_ISSUER="${OKTA_ORG_URL}/oauth2/default"
+    export OKTA_AUDIENCE="api://agentgateway"
+    export OKTA_CLIENT_ID="mcp-test-client"
+    export OKTA_CLIENT_SECRET="mcp-test-secret"
+    export MOCK_IDP_PORT=9098
+    export MOCK_IDP_ISSUER="${OKTA_ISSUER}"
+    export MOCK_IDP_CLAIMS='{"groups":["AI-Users"]}'
+    {{< /doc-test >}}
+- after:
+    line: f7a6fd7a53801a69
+    occurrence: 0
+    words: 663ea1bf 3f267c2a b9776d7d 535c6f8e 6201111b b9776d7d 78236fd5 28e5ebab 10c22bcf 4d040d3f cbb82ebe b3eacd33 2348f998 ea103d6c 45447b7a 43cc23fa b1d6b91b 6859c67a d91ec1b4 a94db13c 6201111b 20f65c28 b9776d7d 535c6f8e 6201111b 559df7bb bfe5d697
+    block_before:
+      block: 0
+      fingerprint: 804265947a921885
+      lang: sh
+      lines: d93481e7 9cd66e2a 6e1d310e 7b78e792 99ef7126
+      preview: export OKTA_ORG_URL='https://your-org.okta.com'
+  content: |-
+    {{< doc-test paths="okta-mcp-authn" >}}
+    {{< reuse "agw-docs/snippets/doc-test-mock-oidc.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: e8d7f65ff4d48053
+    occurrence: 0
+    words: 36736864 b9776d7d 9b2bbce6 5de95319 45447b7a 8e7fc023 56e57ada 0e9a0002 663ea1bf 10182ab8 8f4d9088 77bc06c5 bb0347a4 14a60637 58296753 3e64cc41 4e074085 a12dd3a7
+    block_before:
+      block: 1
+      fingerprint: 5b5b7c204d176ad4
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b df374e41 3035507a 233e460f a68fe535 ca335149 6329244e c8f3f59a c873f373 b0299c0e 93789e13 837dc1fd c4993513 93a4b62b fc431178 44ec9b74 d9208fd1 92db8240 6a855af1 2e4ca762 7eda89d6 087d168d ef164a49
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |2-
+       {{< doc-test paths="okta-mcp-authn" >}}
+       cat <<'EOF' > config.yaml
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - mcp:
+             targets:
+             - name: everything
+               stdio:
+                 cmd: npx
+                 args: ["@modelcontextprotocol/server-everything"]
+         policies:
+           mcpAuthentication:
+             mode: strict
+             issuer: ${OKTA_ISSUER}
+             audiences:
+             - ${OKTA_AUDIENCE}
+             provider:
+               okta: {}
+             jwks:
+               url: ${OKTA_ISSUER}/v1/keys
+             resourceMetadata:
+               resource: http://localhost:3000/mcp
+               scopesSupported:
+               - agentgateway
+               bearerMethodsSupported:
+               - header
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: e6057ad7800bac6c
+    lang: ''
+    lines: 0d045ed2 9da5da00 b7e175f4
+    preview: info  state_manager  loaded config from File("config.yaml")
+  content: |2-
+       {{< doc-test paths="okta-mcp-authn" >}}
+       agentgateway -f config.yaml &
+       AGW_PID=$!
+       trap 'kill $AGW_PID $MOCK_IDP_PID 2>/dev/null || true' EXIT
+       for i in $(seq 1 30); do
+         if curl -s -o /dev/null http://localhost:3000/.well-known/oauth-protected-resource/mcp; then
+           break
+         fi
+         sleep 1
+       done
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 86ad6f1fde0f394c
+    lang: json
+    lines: ab5df625 38962a04
+    preview: '...'
+  content: |-
+    {{< doc-test paths="okta-mcp-authn" >}}
+    YAMLTest -f - <<'EOF'
+    - name: Unauthenticated MCP initialize is rejected with a resource_metadata pointer
+      http:
+        url: "http://localhost:3000"
+        path: /mcp
+        method: POST
+        headers:
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        headers:
+          - name: www-authenticate
+            comparator: contains
+            value: 'resource_metadata="http://localhost:3000/.well-known/oauth-protected-resource/mcp"'
+    - name: Protected resource metadata is served for the MCP route
+      http:
+        url: "http://localhost:3000"
+        path: /.well-known/oauth-protected-resource/mcp
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.scopes_supported[0]"
+            comparator: contains
+            value: "agentgateway"
+    - name: The okta provider appends the audience and rewrites the registration endpoint
+      http:
+        url: "http://localhost:3000"
+        path: /.well-known/oauth-authorization-server
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.authorization_endpoint"
+            comparator: contains
+            value: "?audience=api://agentgateway"
+          - path: "$.registration_endpoint"
+            comparator: contains
+            value: "http://localhost:3000/.well-known/oauth-authorization-server/client-registration"
+    - name: Dynamic Client Registration through the gateway reaches the org-relative Okta path
+      http:
+        url: "http://localhost:3000"
+        path: /.well-known/oauth-authorization-server/client-registration
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"client_name":"yamltest-client","redirect_uris":["http://localhost:6274/oauth/callback"],"grant_types":["authorization_code"],"response_types":["code"],"token_endpoint_auth_method":"none"}
+      source:
+        type: local
+      expect:
+        statusCode: 201
+        bodyJsonPath:
+          - path: "$.client_name"
+            comparator: contains
+            value: "yamltest-client"
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: dea0c6914467464a
+    occurrence: 0
+    words: b9776d7d 948fe603 631aada4 3b212781 fa51fd49 ca978112 d7ae368c 10c22bcf 1eb79602 83ca68be aa33996d 10182ab8 8f4d9088 a3b142af b9776d7d cbb82ebe 5694d08a 3b212781 0695b563 ca74bea0 77bc06c5 b9776d7d 4ea5ee68 9096e4f7 9c6725dc b9776d7d 45447b7a 8e7fc023 bb0347a4 5cfc694a 58296753 3e64cc41 4e074085 a12dd3a7
+    block_before:
+      block: 14
+      fingerprint: '8355789273570043'
+      lang: ''
+      lines: 92413e97 f50cfe46 d8becf7d 90066fec fe32f243
+      preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="okta-mcp-authn" >}}
+    YAMLTest -f - <<'EOF'
+    - name: An Okta-issued token is accepted and the MCP server responds
+      http:
+        url: "http://localhost:3000"
+        path: /mcp
+        method: POST
+        headers:
+          authorization: "Bearer ${TOKEN}"
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="okta-mcp-authn" >}}
+       # Rewrite config.yaml with the authorization policy from the block above, then
+       # restart the gateway the same way a reader would.
+       cat <<'EOF' > config.yaml
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - mcp:
+             targets:
+             - name: everything
+               stdio:
+                 cmd: npx
+                 args: ["@modelcontextprotocol/server-everything"]
+         policies:
+           mcpAuthentication:
+             mode: strict
+             issuer: ${OKTA_ISSUER}
+             audiences:
+             - ${OKTA_AUDIENCE}
+             provider:
+               okta: {}
+             jwks:
+               url: ${OKTA_ISSUER}/v1/keys
+             resourceMetadata:
+               resource: http://localhost:3000/mcp
+               scopesSupported:
+               - agentgateway
+               bearerMethodsSupported:
+               - header
+           authorization:
+             rules:
+             - '"AI-Users" in jwt.groups'
+       EOF
+       kill $AGW_PID 2>/dev/null || true
+       sleep 2
+       agentgateway -f config.yaml &
+       AGW_PID=$!
+       trap 'kill $AGW_PID $MOCK_IDP_PID 2>/dev/null || true' EXIT
+       for i in $(seq 1 30); do
+         if curl -s -o /dev/null http://localhost:3000/.well-known/oauth-protected-resource/mcp; then
+           break
+         fi
+         sleep 1
+       done
+       {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: ca96ca58f71bbd6e
+    lang: sh
+    lines: 840876cd f4917747
+    preview: export OKTA_UNAUTHORIZED_CLIENT_ID='<second-api-services-client-id>'
+  content: |2-
+       {{< doc-test paths="okta-mcp-authn" >}}
+       # The mock authorization server omits the configured claims for any client ID
+       # that ends in -norole, which stands in for an unassigned application.
+       export OKTA_UNAUTHORIZED_CLIENT_ID="mcp-test-client-norole"
+       export OKTA_UNAUTHORIZED_CLIENT_SECRET="mcp-test-secret"
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: d26eae87829adde5
+    lang: ''
+    lines: d26eae87
+    preview: '403'
+  content: |-
+    {{< doc-test paths="okta-mcp-authn" >}}
+    YAMLTest -f - <<'EOF'
+    - name: A token carrying the AI-Users group is still allowed
+      http:
+        url: "http://localhost:3000"
+        path: /mcp
+        method: POST
+        headers:
+          authorization: "Bearer ${TOKEN}"
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: A valid token without the AI-Users group is denied by the authorization rule
+      http:
+        url: "http://localhost:3000"
+        path: /mcp
+        method: POST
+        headers:
+          authorization: "Bearer ${NO_GROUP_TOKEN}"
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}

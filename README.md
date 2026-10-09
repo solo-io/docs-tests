@@ -79,18 +79,16 @@ of the day's close matches and moved pages; a failed refresh also posts to
 `#doctopus-builds`. Posting needs a `DOCS_TESTS_SLACK_BOT_TOKEN` secret on this
 repo; until it is set, the step skips with a warning.
 
-For the sections moved so far (traffic-management, llm under
-`documentation/llm/`, security, mcp under `documentation/mcp/`, resiliency,
-observability under `documentation/observability/`, operations, about, migrate,
-agent, and reference), scenario definitions live in the `tests.yaml` manifests,
-so their annotations were exported with `--front-matter none`. A manifest key
-must be unique, but a scenario name need not be: set `name:` when two pages in
-one mode declare the same name. Pages that deliberately have no test are listed
-under the manifest's `skip:` key, the manifest form of front matter
-`test: skip`; the runner and `list_untested_docs.py` count them as covered. A `skip:`
-entry can also be `dir: <folder>/`, which covers every page under that folder.
-Use it for generated pages, such as the agctl CLI reference, where new pages
-appear without anyone editing the manifest.
+For every section except quickstart, install and setup, scenario definitions
+live in the `tests.yaml` manifests, so their annotations were exported with
+`--front-matter none`. A manifest key must be unique, but a scenario name need
+not be: set `name:` when two pages in one mode declare the same name. Pages that
+deliberately have no test are listed under the manifest's `skip:` key, the
+manifest form of front matter `test: skip`; the runner and
+`list_untested_docs.py` count them as covered. A `skip:` entry can also be
+`dir: <folder>/`, which covers every page under that folder. Use it for generated
+pages, such as the agctl CLI reference, where new pages appear without anyone
+editing the manifest.
 
 ---
 

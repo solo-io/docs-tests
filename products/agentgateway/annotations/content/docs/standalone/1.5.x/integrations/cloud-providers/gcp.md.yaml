@@ -1,0 +1,106 @@
+format: 1
+source: content/docs/standalone/1.5.x/integrations/cloud-providers/gcp.md
+blocks:
+- f8f4d55b4b01152c yaml
+- 319bf9fbeb0fd766 bash
+- ad8e624fa51a8a3b bash
+- 117d26f689d59ed3 bash
+hidden:
+- after:
+    line: 6b9facded8832bf4
+    occurrence: 0
+    words: acba2551 56e57ada b8d31e85 56681010 acba2551 7175517a 3a411453 6201111b ed4561f6 e1b683e2 32e83e92 fa42bed0 a0af9f86 7955c819 487b9104 1e19bab2 e1b683e2 0695b563 b9776d7d 9df6b026 9af21132 8e7fc023 bbdefa29 56681010 ea53396c 27cdad0b 663ea1bf b9776d7d 7f6c7360 9390298f 14c2529e 2c70e12b f1537d8d 6b847a0e 4d040d3f b7d64a92 3b9c358f
+    block_before: null
+  content: |-
+    {{< doc-test paths="gcp" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Authenticate with a service account": the example config is accepted by
+    #     agentgateway (--validate-only), so `auth.gcp.type: accessToken` is a
+    #     recognized shape alongside `provider: vertex` and the `params.model` /
+    #     `params.vertexProject` / `params.vertexRegion` fields.
+    #   * With that config loaded, agentgateway serves the client-facing model name
+    #     on port 4000 and resolves the upstream to the configured model, project,
+    #     and region. This is what makes the `--port 4000` flag in the Cloud Run
+    #     command on this page checkable rather than asserted.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That Application Default Credentials reach Vertex AI - external
+    #     dependency; the test has no Google Cloud identity, and a live call bills a
+    #     completion. The config loads without credentials because ADC is resolved
+    #     per request.
+    #   * "Run on Cloud Run" - external dependency; the gcloud commands need a
+    #     project, a service account, and a Secret Manager secret that the test
+    #     cannot stand up. The image, port, and args in them match the configuration
+    #     that this test does run.
+    #   * "IAM roles" - a different layer; the roles are evaluated by Google Cloud,
+    #     not by agentgateway.
+    #   * "Google Cloud services" - display-only table of links.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: f8f4d55b4b01152c
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 6399dee0 17183da5 009395dd f26ba424 d3c339c9 76fd1b75 146e11c6 9b580383 f7b31405
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gcp" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: gemini-2.5-flash
+        provider: vertex
+        params:
+          model: google/gemini-2.5-flash
+          vertexProject: my-project-id
+          vertexRegion: us-central1
+        auth:
+          gcp:
+            type: accessToken
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 43cb005d84639261
+    occurrence: 0
+    words: a411cbb2 b9776d7d 3c469e9d 663ea1bf e7d3799e 9c6725dc 576d1184 a3b142af 2166d474 10c22bcf e1b683e2 32e83e92 a3b142af 1ce3fe50 15eaa752 b9776d7d 1581e27d fa51fd49 ca978112 56681010 acba2551 9df6b026 7175517a ae448ac8 b6bf7bc8 8e7fc023 0f340989 ea325d76 689f6a62 3c469e9d
+    block_before:
+      block: 0
+      fingerprint: f8f4d55b4b01152c
+      lang: yaml
+      lines: a7f80a73 3af99526 e01ccf75 6399dee0 17183da5 009395dd f26ba424 d3c339c9 76fd1b75 146e11c6 9b580383 f7b31405
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gcp" >}}
+    # Confirm that agentgateway serves LLM traffic on port 4000, which the Cloud Run
+    # command on this page sets with --port, and that the Vertex params reach the
+    # resolved provider as the settings table describes.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    SERVED=$(curl -sf --max-time 10 http://localhost:4000/v1/models | jq -r '[.data[].id] | index("gemini-2.5-flash") // "missing"')
+    if [ "$SERVED" = "missing" ]; then
+      echo "FAIL: the model name gemini-2.5-flash from the example config is not served on port 4000"
+      exit 1
+    fi
+    RESOLVED=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | .provider.vertex
+        | "\(.model)|\(.projectId)|\(.region)"
+      ] | first')
+    EXPECTED="google/gemini-2.5-flash|my-project-id|us-central1"
+    if [ "$RESOLVED" != "$EXPECTED" ]; then
+      echo "FAIL: expected vertex params $EXPECTED but agentgateway resolved $RESOLVED"
+      exit 1
+    fi
+    echo "✓ Port 4000 serves the model and the Vertex params resolve to the documented values"
+    {{< /doc-test >}}

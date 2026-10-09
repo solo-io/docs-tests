@@ -1,0 +1,180 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/web-uis-k8s/crewai.md
+blocks:
+- c5eed315a039d251 bash
+- fcbffbb0e16e48fc bash
+- f64ee25a12a74cd9 yaml
+- 32955e08bb9e2429 yaml
+- 551f475dddeec008 yaml
+- e30ff69950b9ca80 bash
+- 288df519994b2876 bash
+- 03f71b6445b64f54 bash
+- 8848aa991de246dd bash
+- 95ef1c1a11b1f64e bash
+- a12fc60c85115ac1 console
+- 03ad950a3217b6ba bash
+- 34006b36b1ad2c57 console
+- 4a8acc6abadac79e bash
+- 68e2314a4e9508a1 bash
+tags:
+- paths: crewai-k8s
+  block: 1
+  fingerprint: fcbffbb0e16e48fc
+  lang: bash
+  lines: fcbffbb0
+  preview: export OPENAI_API_KEY="sk-your-key-here"
+  form:
+    attr: paths="crewai-k8s"
+    only: true
+    lead: ' '
+- paths: crewai-k8s
+  block: 2
+  fingerprint: f64ee25a12a74cd9
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f 8af957d1 1426decf 2f7c298d 73825423 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="crewai-k8s"
+    only: true
+    lead: ' '
+- paths: crewai-k8s
+  block: 3
+  fingerprint: 32955e08bb9e2429
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 e1ee879f 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 c8f3f59a 146e11c6 9ebc4789 4df4f75f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="crewai-k8s"
+    only: true
+    lead: ' '
+- paths: crewai-k8s
+  block: 4
+  fingerprint: 551f475dddeec008
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e1ee879f 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e b4c9bb75 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="crewai-k8s"
+    only: true
+    lead: ' '
+- paths: crewai-k8s
+  block: 13
+  fingerprint: 4a8acc6abadac79e
+  lang: bash
+  lines: 0c2fb3ca e1e53018
+  preview: kubectl delete httproute crewai -n {{< reuse "agw-docs/snippets/namespace.md" >}
+  form:
+    attr: paths="crewai-k8s"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 08a2a1e24353cfda
+    occurrence: 0
+    words: fa8847b0 b9776d7d 2bb80d53 10e08a41 6201111b 8a84e406 8e7fc023 1241936d 7d3194f7 075f4ab8 9c6725dc 56e57ada 1eb79602 83ca68be f480ffb2 ca978112 462b641b 57090017 10e08a41 6201111b 8a84e406 b8d31e85 b9776d7d 7d3194f7 a0af9f86 a1d98908 2ad8a704 6497e4b3 d0b4ba23 ea325d76 7d3194f7 10e08a41 7175517a 8a84e406 8e7fc023 bb0347a4 f23be8ee ea53396c 193c45b5 75857a45 b9776d7d 7d3194f7 5c4c1964 8fb6d5f3 fa42bed0 a0af9f86 7955c819 487b9104 1e19bab2 7d3194f7
+    block_before:
+      block: 0
+      fingerprint: c5eed315a039d251
+      lang: bash
+      lines: b9e12be5 1275faf5
+      preview: uv venv --python 3.12
+  content: |-
+    {{< doc-test paths="crewai-k8s" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The OpenAI Secret, backend, and HTTPRoute apply and reach Accepted=True.
+    #   * A chat completion request to the client path /openai/chat/completions is
+    #     routed to OpenAI (proven by a 401, since the Secret holds a placeholder key).
+    #     This is the exact path CrewAI sends: {base_url}/chat/completions.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The CrewAI install and crew run - External dependency: needs a Python 3.12
+    #     environment and a real OpenAI key, neither of which CI provides.
+    #   * A 200 chat completion end to end - External dependency: requires a real
+    #     OpenAI key; the test uses a placeholder, so OpenAI returns 401.
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 32955e08bb9e2429
+    lang: yaml
+    lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 e1ee879f 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 c8f3f59a 146e11c6 9ebc4789 4df4f75f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="crewai-k8s" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for crewai backend to be accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: crewai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 551f475dddeec008
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e1ee879f 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e b4c9bb75 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="crewai-k8s" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for crewai HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: crewai
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 551f475dddeec008
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e1ee879f 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e b4c9bb75 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="crewai-k8s" >}}
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null -w "%{http_code}" -X POST "http://${INGRESS_GW_ADDRESS}:80/openai/chat/completions" -H "Content-Type: application/json" -d '{"model":"gpt-4o","messages":[{"role":"user","content":"hi"}]}' && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 551f475dddeec008
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e1ee879f 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e b4c9bb75 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="crewai-k8s" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify OpenAI chat completions is routed through the gateway
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /openai/chat/completions
+        method: POST
+        headers:
+          Content-Type: application/json
+        body: '{"model":"gpt-4o","messages":[{"role":"user","content":"hi"}]}'
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,94 @@
+format: 1
+source: content/docs/standalone/main/integrations/llm/providers/gemini.md
+blocks:
+- 93201f64c00d94a6 yaml
+hidden:
+- after:
+    line: 4a3fbf678c201b8e
+    occurrence: 0
+    words: 90d08e58 bbdefa29 5d724362 f4bf9f7f ea325d76 487b9104 5c4c1964 58296753 56e57ada
+    block_before: null
+  content: |-
+    {{< doc-test paths="gemini" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Configuration": the example config is accepted by agentgateway
+    #     (--validate-only), so `provider: gemini` is a recognized provider and the
+    #     `name` / `params.apiKey` fields are correct.
+    #   * With the config loaded, agentgateway serves the wildcard model from the
+    #     example and resolves it to the `gemini` provider, which is what the `name`
+    #     and `provider` rows of the settings table describe.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Example request" and any example responses - external dependency; the
+    #     request needs a real Gemini API key and bills a live completion, so the test
+    #     uses a placeholder key.
+    #   * `params.model` - display-only table row; the example config omits it, so
+    #     there is nothing on this page to run.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # The example config reads the API key from the environment. --validate-only
+    # and the config dump still resolve env vars, so a placeholder is enough here.
+    export GEMINI_API_KEY="${GEMINI_API_KEY:-test}"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 93201f64c00d94a6
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 848625eb 009395dd 8263d052
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gemini" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: gemini
+        params:
+          apiKey: "$GEMINI_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 560a7b9d28b990f7
+    occurrence: 0
+    words: 5110c478 b9776d7d 5d724362 14c2529e 2c70e12b 10c22bcf b9d90628 bb0347a4 9f584196 52367a66 ba528516 7af0b3e4 a24e10fd b9776d7d 323f1deb 93b8edb0
+    block_before:
+      block: 0
+      fingerprint: 93201f64c00d94a6
+      lang: yaml
+      lines: a7f80a73 3af99526 e01ccf75 e4f1a385 848625eb 009395dd 8263d052
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gemini" >}}
+    # Confirm the config serves the model named in the example and resolves it to
+    # this provider. First-class providers use built-in upstream defaults, so the
+    # config dump reports the provider discriminant rather than a host override.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    # The default `llm.discovery: catalog` expands `*` into catalog model IDs, so
+    # check for a non-empty list rather than a literal `*`.
+    SERVED=$(curl -sf --max-time 10 http://localhost:4000/v1/models | jq -r '.data | length')
+    if [ "${SERVED:-0}" -eq 0 ]; then
+      echo "FAIL: /v1/models lists no models for the example config"
+      exit 1
+    fi
+    PROVIDER=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | .provider | keys[0]
+      ] | first')
+    if [ "$PROVIDER" != "gemini" ]; then
+      echo "FAIL: expected provider gemini but agentgateway resolved $PROVIDER"
+      exit 1
+    fi
+    echo "✓ The wildcard model is served and resolves to the gemini provider"
+    {{< /doc-test >}}

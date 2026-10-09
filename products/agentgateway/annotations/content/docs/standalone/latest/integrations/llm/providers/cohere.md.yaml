@@ -1,0 +1,88 @@
+format: 1
+source: content/docs/standalone/latest/integrations/llm/providers/cohere.md
+blocks:
+- c8795656a94bdf10 yaml
+- 740bad77551018f9 bash
+hidden:
+- after:
+    line: d13477207f7f9302
+    occurrence: 0
+    words: 90d08e58 72e8088a f4bf9f7f ea325d76 487b9104 5c4c1964 58296753 56e57ada
+    block_before: null
+  content: |-
+    {{< doc-test paths="cohere" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Configuration": the example config is accepted by agentgateway
+    #     (--validate-only), so `provider: cohere` is a recognized provider and the
+    #     `name` / `params.apiKey` fields are correct.
+    #   * The `params.baseUrl` row of the settings table: with the config loaded,
+    #     agentgateway resolves this provider's upstream to the documented default
+    #     (https://api.cohere.ai), so the table cannot drift from the product without
+    #     this test failing.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Example request" - external dependency; sending the curl request needs a
+    #     real Cohere API key and bills a live completion, so the test uses a
+    #     placeholder key and asserts on resolved config instead.
+    #   * `params.model` - display-only table row; the example config omits it, so
+    #     there is nothing on this page to run.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # The example config reads the API key from the environment. --validate-only and
+    # the config dump still resolve env vars, so a placeholder is enough here.
+    export COHERE_API_KEY="${COHERE_API_KEY:-test}"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: c8795656a94bdf10
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 9e4715dd 009395dd 7d8c20d5
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="cohere" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: cohere
+        params:
+          apiKey: "$COHERE_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 740bad77551018f9
+    lang: bash
+    lines: 633e696d 67c5a3ac b0cead6d f8c898c9 64925938 fc075a9d
+    preview: curl -X POST http://localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="cohere" >}}
+    # Confirm the default `params.baseUrl` documented in the settings table is what
+    # agentgateway actually resolves. The admin config dump reports the upstream host
+    # and path prefix separately, so they are recombined before comparing. Cohere's
+    # default base URL is the only one with no path, and agentgateway normalizes that
+    # empty path to `/` in the dump, so a lone `/` prefix is dropped before comparing.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    EXPECTED="https://api.cohere.ai"
+    RESOLVED=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | "https://" + (.hostOverride | sub(":443$"; "")) + ((.pathPrefix // "") | sub("^/$"; ""))
+      ] | first')
+    if [ "$RESOLVED" != "$EXPECTED" ]; then
+      echo "FAIL: settings table documents a default baseUrl of $EXPECTED but agentgateway resolved $RESOLVED"
+      exit 1
+    fi
+    echo "✓ Provider default baseUrl resolves to $EXPECTED"
+    {{< /doc-test >}}
