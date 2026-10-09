@@ -1,0 +1,318 @@
+format: 1
+source: content/docs/standalone/1.5.x/documentation/llm/cost-controls/budget-limits/per-key.md
+blocks:
+- 982b20f29d0d22fc sh
+- 6a2d16dd3e066e88 yaml
+- f6931a7b2e59dbc5 sh
+- 7bfb9bf0763a6f2f sh
+- 27badc983df1780b
+- 21e3a99ac15f55dc sh
+- ba8bf99de0fcafd6 json
+- 80c8e6319e418690 sh
+- f307a6d16b0dc058
+- db78c11e05c8f08c sh
+- 3a6a882b627d8815 json
+- 6236037da4221cd3
+- aa0948ce9cb4a91f sh
+- 7b2b39a265e612f2 json
+- b572c975077dbcf9 sh
+- 4d1f961569b25f68
+- 6f40656ce16a45f2
+- 0644f35ee068fc43 yaml
+- 5e8adae3b063a621 yaml
+- 0cc81097b9672fd9
+- a1dcf6774f0013a2
+- fd2911ed89227887 sh
+tags:
+- paths: apikey-budgets
+  block: 0
+  fingerprint: 982b20f29d0d22fc
+  lang: sh
+  lines: 027c197f 021fb596 46a63d3b e3679252 4c2699ef 5f1976f9 d10b36aa d10b36aa d10b36aa d10b36aa abc56510
+  preview: cat <<'EOF' > catalog.json
+  form:
+    attr: paths="apikey-budgets"
+    only: true
+    lead: ' '
+- paths: apikey-budgets
+  block: 1
+  fingerprint: 6a2d16dd3e066e88
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 2180b199 19bcae4b c2440413 a4974671 06872e95 3af99526 c8f3f59a e5522222 b0299c0e 1fe7fd13 74ed6bcb 8c8c4228 e25ba274 23b597a2 2939245c bf75dafc 7d14aac7 dc36242a 74d317cd 4f29ddd3 1fe164f7 3f1bb532 5aea7895 cd900df0 8c8c4228 c8998653 bf75dafc 40741e9c dc36242a 1891bc00 7f51eb89 1fe164f7 3f1bb532 1591cfcc e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="apikey-budgets"
+    only: true
+    lead: ' '
+- paths: apikey-budgets
+  block: 3
+  fingerprint: 7bfb9bf0763a6f2f
+  lang: sh
+  lines: 838d5e8c dab5c917 67c5a3ac b0cead6d d1df8c5f b3f5e176 e66f4a20 fc075a9d
+  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4000/v1/chat/completio
+  form:
+    attr: paths="apikey-budgets"
+    only: true
+    lead: ' '
+- paths: apikey-budgets
+  block: 5
+  fingerprint: 21e3a99ac15f55dc
+  lang: sh
+  lines: dc872770 dab5c917 67c5a3ac b0cead6d ebbdd826 b3f5e176 e66f4a20 fc075a9d
+  preview: curl -s http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="apikey-budgets"
+    only: true
+    lead: ' '
+- paths: apikey-budgets
+  block: 7
+  fingerprint: 80c8e6319e418690
+  lang: sh
+  lines: 40e174a2 80dcf755 dab5c917 67c5a3ac b0cead6d d1df8c5f b3f5e176 e66f4a20 fc075a9d a4c3ed04
+  preview: for i in 1 2 3; do
+  form:
+    attr: paths="apikey-budgets"
+    only: true
+    lead: ' '
+- paths: apikey-budgets
+  block: 9
+  fingerprint: db78c11e05c8f08c
+  lang: sh
+  lines: dc872770 dab5c917 67c5a3ac b0cead6d d1df8c5f b3f5e176 e66f4a20 fc075a9d
+  preview: curl -s http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="apikey-budgets"
+    only: true
+    lead: ' '
+- paths: apikey-budgets
+  block: 12
+  fingerprint: aa0948ce9cb4a91f
+  lang: sh
+  lines: aa0948ce
+  preview: curl -s "http://localhost:15000/api/budgets/status?apiKeyName=team-a" | jq .
+  form:
+    attr: paths="apikey-budgets"
+    only: true
+    lead: ' '
+- paths: apikey-budgets
+  block: 14
+  fingerprint: b572c975077dbcf9
+  lang: sh
+  lines: 1fb4d896 80dcf755 9a3ec7ea 67c5a3ac b0cead6d d1df8c5f b3f5e176 e66f4a20 fc075a9d a4c3ed04
+  preview: for i in 1 2 3 4; do
+  form:
+    attr: paths="apikey-budgets"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 13bf0f96d587d261
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 dddece3d
+    block_before: null
+  content: |-
+    {{< doc-test paths="apikey-budgets" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Step 2": the documented per-key budget config is accepted by
+    #     agentgateway (--validate-only), so config.database, config.modelCatalog,
+    #     budgets, and allowedModels are all spelled correctly.
+    #   * "Step 4": allowedModels rejects a model outside the allowed patterns
+    #     with a 403 and the model_not_allowed code, and the rejected request is
+    #     not charged.
+    #   * "Step 5": a USD Block budget rejects with 429 and the budget_exceeded
+    #     code once the key's realized cost passes the limit.
+    #   * "Step 6": the admin API reports a USD figure above the limit, which is
+    #     the overshoot the guide describes - the request that crossed the limit
+    #     completed and was charged.
+    #   * "Step 7": a Tokens Audit budget reports itself as exceeded and still
+    #     returns 200.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Budget state surviving a restart. That needs a second gateway start
+    #     against the same database, which the generated script has no clean way
+    #     to sequence around the trap that stops the first one.
+    #
+    # COST AND TOKEN ARITHMETIC (why the assertions below are shaped the way they are):
+    #   The mock LLM reports the request's max_tokens value as completion_tokens
+    #   and 1 as prompt_tokens. With the catalog rates this guide writes in Step 1
+    #   ($10 per 1M input, $30 per 1M output), every request costs exactly
+    #   1/1e6*10 + 100/1e6*30 = $0.00301 and uses exactly 101 tokens. Step 4 spends
+    #   one request, so the second request of the Step 5 loop crosses the $0.008
+    #   limit and the run ends at $0.00903.
+    #   A hidden assertion that repeated a visible request would charge the key
+    #   twice and desynchronize the figures the page prints. So each hidden block
+    #   asserts only what is stable once the preceding visible block has run: a
+    #   rejected request charges nothing, and an exceeded budget stays exceeded.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="apikey-budgets" >}}
+    # Per-key budgets: validate the documented config, then run it against the mock LLM.
+    {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+    agentgateway -f config-mock.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID $MOCK_LLM_PID 2>/dev/null' EXIT
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    line: 0a9e41bc2b2d8567
+    occurrence: 0
+    words: ca978112 20cd938a 1f58b914 6497e4b3 b080c643 ca978112 5c4c1964 a1d98908 56e57ada 961eb436 254bb97b 97488fba 2ad8a704 663ea1bf b9776d7d 2c70e12b 043a7187 0af96a8e
+    block_before:
+      block: 6
+      fingerprint: ba8bf99de0fcafd6
+      lang: json
+      lines: ba8bf99d
+      preview: '{"error":{"message":"Model is not allowed for this API key","type":"invalid_requ'
+  content: |-
+    {{< doc-test paths="apikey-budgets" >}}
+    # A rejected model request charges nothing, so repeating it here does not move
+    # the count that the following steps depend on.
+    sleep 2
+    YAMLTest -f - <<'EOF'
+    - name: a model outside allowedModels is rejected
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          Authorization: "Bearer sk-team-a-abc123def456"
+        body: |
+          {
+            "model": "claude-sonnet-5",
+            "max_tokens": 100,
+            "messages": [{"role": "user", "content": "Hello!"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyJsonPath:
+          - path: "$.error.code"
+            comparator: equals
+            value: model_not_allowed
+
+    - name: the rejected request did not charge the budget
+      http:
+        url: "http://localhost:15000"
+        path: "/api/budgets/status?apiKeyName=team-a"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          # Step 4 sent one successful request, which cost $0.00301. The rejected
+          # model request cost nothing, so the charge is still $0.00301.
+          - path: "$.budgets[?(@.name=='daily-spend')].usage.used"
+            comparator: equals
+            value: "0.00301"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 6236037da4221cd3
+    lang: ''
+    lines: 6236037d
+    preview: warn budget API key budget exceeded api_key="team-a" budget="daily-spend" used=0
+  content: |-
+    {{< doc-test paths="apikey-budgets" >}}
+    # A rejected request charges nothing, so the charge stays at $0.00903 and this
+    # block can assert both the rejection and the resulting state.
+    sleep 2
+    YAMLTest -f - <<'EOF'
+    - name: a request past the limit is rejected with budget_exceeded
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          Authorization: "Bearer sk-team-a-abc123def456"
+        body: |
+          {
+            "model": "gpt-5",
+            "max_tokens": 100,
+            "messages": [{"role": "user", "content": "Hello!"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 429
+        bodyJsonPath:
+          - path: "$.error.code"
+            comparator: equals
+            value: budget_exceeded
+
+    - name: the request that crossed the limit completed and was charged
+      http:
+        url: "http://localhost:15000"
+        path: "/api/budgets/status?apiKeyName=team-a"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          # $0.00903 is above the $0.008 limit, which is the overshoot the guide
+          # describes: the request that crossed the limit completed and was charged.
+          - path: "$.budgets[?(@.name=='daily-spend')].usage.used"
+            comparator: equals
+            value: "0.00903"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 6f40656ce16a45f2
+    lang: ''
+    lines: 6f40656c
+    preview: warn budget API key budget exceeded api_key="team-b" budget="daily-tokens" used=
+  content: |-
+    {{< doc-test paths="apikey-budgets" >}}
+    sleep 2
+    YAMLTest -f - <<'EOF'
+    - name: an Audit budget reports itself as exceeded
+      http:
+        url: "http://localhost:15000"
+        path: "/api/budgets/status?apiKeyName=team-b"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.budgets[?(@.name=='daily-tokens')].usage.exceeded"
+            comparator: equals
+            value: true
+
+    - name: an Audit budget still returns 200 after the limit is passed
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          Authorization: "Bearer sk-team-b-xyz789uvw012"
+        body: |
+          {
+            "model": "gpt-5",
+            "max_tokens": 100,
+            "messages": [{"role": "user", "content": "Hello!"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

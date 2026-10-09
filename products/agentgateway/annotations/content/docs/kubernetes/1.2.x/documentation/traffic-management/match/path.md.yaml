@@ -1,0 +1,306 @@
+format: 1
+source: content/docs/kubernetes/1.2.x/documentation/traffic-management/match/path.md
+blocks:
+- 7882845d827e5677 yaml
+- c82344123aca58f8 sh
+- d76edfa27d11be1a sh
+- dbbe23b1b79a1e16
+- 3c9fadf69544cc4f sh
+- e66166493acad90f sh
+- 9c330250109a949b
+- 8a281d14590a8e1b yaml
+- fdfa9b4ba66c3cdf sh
+- 2c442769abc94bca sh
+- ca1aad2b124f2e91
+- 3c9fadf69544cc4f sh
+- e66166493acad90f sh
+- 9c330250109a949b
+- bbec9035acd84172 yaml
+- b31270b8e28d402e sh
+- 13d7ea104d1198e2 sh
+- b4f31172edc0e9c9
+- 290e5bc6321f43af sh
+- b09fa98a72faba43 sh
+- 9c330250109a949b
+- 2ae0326cb95653a7 sh
+tags:
+- paths: path-match-exact
+  block: 0
+  fingerprint: 7882845d827e5677
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa c49a234e 3de9d845 b733d726 aeca2b3d 6d88f925 8fb20bbe 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="path-match-exact"
+    only: true
+    lead: ' '
+- paths: path-match-prefix
+  block: 7
+  fingerprint: 8a281d14590a8e1b
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa c49a234e 3de9d845 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="path-match-prefix"
+    only: true
+    lead: ' '
+- paths: path-match-regex
+  block: 14
+  fingerprint: bbec9035acd84172
+  lang: yaml
+  lines: 16c71da1 979905a0 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa b7e1214c 3de9d845 b733d726 aeca2b3d ff36735c f89ea562 aeca2b3d ff36735c 291af6aa aeca2b3d ff36735c 64864515 94ae491e 80e9487c 0f10c5bc bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="path-match-regex"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: 9c330250109a949b
+    lang: ''
+    lines: 20fa3eb6 512742e0 5560b76b 421dc0bc 6df41b03 fe66b4d1
+    preview: < HTTP/1.1 404 Not Found
+  blank_before:
+  - '   '
+  content: |-
+    {{< doc-test paths="path-match-exact" >}}
+    for i in $(seq 1 100); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/get" -H "host: match.example" && break
+      sleep 2
+    done
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin-match HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-match
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for httpbin-match HTTPRoute refs to be resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-match
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: exact path match - /status/200 returns 200
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: exact path match - /headers returns 404
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 9c330250109a949b
+    lang: ''
+    lines: 20fa3eb6 512742e0 5560b76b 421dc0bc 6df41b03 fe66b4d1
+    preview: < HTTP/1.1 404 Not Found
+  blank_before:
+  - '   '
+  content: |-
+    {{< doc-test paths="path-match-prefix" >}}
+    for i in $(seq 1 100); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/get" -H "host: match.example" && break
+      sleep 2
+    done
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin-match HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-match
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for httpbin-match HTTPRoute refs to be resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-match
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: prefix path match - /anything/team1 returns 200
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /anything/team1
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: prefix path match - /headers returns 404
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: 9c330250109a949b
+    lang: ''
+    lines: 20fa3eb6 512742e0 5560b76b 421dc0bc 6df41b03 fe66b4d1
+    preview: < HTTP/1.1 404 Not Found
+  blank_before:
+  - ''
+  - ''
+  content: |-
+    {{< doc-test paths="path-match-regex" >}}
+    for i in $(seq 1 100); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/get" -H "host: match.example" && break
+      sleep 2
+    done
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin-match HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-match
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for httpbin-match HTTPRoute refs to be resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-match
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: regex path match - /anything/this-is-my-path-1 returns 200
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /anything/this-is-my-path-1
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: regex path match - /anything/stores/us/entities returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /anything/stores/us/entities
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: regex path match - /anything/dogs/3.0-game returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /anything/dogs/3.0-game
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: regex path match - /anything returns 404
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /anything
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    - name: regex path match - /anything/stores/us/south/entities returns 404
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /anything/stores/us/south/entities
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    - name: regex path match - /anything/birds/1.1-game returns 404
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /anything/birds/1.1-game
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}

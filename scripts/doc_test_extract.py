@@ -7,7 +7,7 @@ import re
 import textwrap
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 try:
     import yaml as _yaml  # type: ignore[import-not-found]
@@ -152,6 +152,9 @@ class Extractor:
         self.upstream_root = upstream_root.resolve() if upstream_root else None
         self.upstream_version_for = dict(upstream_version_for or {})
         self._upstream_extractors: Dict[str, "Extractor"] = {}
+        # Upstream pages inlined by {{< rebase >}}. Kept apart from
+        # recursion_edges, whose paths the manifest makes relative to repo_root.
+        self.rebased_files: Set[Path] = set()
         # Root of a `docs-tests` checkout, used to resolve `{{< doc-test file="..." >}}`
         # external content. Defaults to a sibling directory of repo_root, matching how
         # this repo and docs-tests are cloned side by side on disk. This is independent
@@ -202,37 +205,6 @@ class Extractor:
                     self.external_asserts_by_file.setdefault(source_file, []).append(
                         (selector, list(assert_files))
                     )
-
-        # A step's `tag_snippet:` tags a reused snippet's blocks IN MEMORY, for
-        # content whose owners do not want test markup in it. Each untagged
-        # runnable fence in the named snippet gets the step's own path selector,
-        # except fences matching an `exclude:` pattern (a placeholder such as
-        # `export KEY=<your-key>`, which bash reads as a redirect from a file),
-        # and the `verify:` file is appended as a hidden {{< doc-test >}} block at
-        # the snippet's end, so it runs after the snippet's last step rather than
-        # its first (which is where an `assert:` anchors). Keyed by the
-        # assets-relative snippet path, the form `{{< reuse >}}` names it by.
-        # Shared with the extractors created for rebase expansion, because a
-        # rebased page reaches the snippet through one of those.
-        self.snippet_tags: Dict[str, Dict[str, Any]] = {}
-        for source in self.sources:
-            spec = source.get("tag_snippet")
-            if not spec:
-                continue
-            key = str(spec["file"]).lstrip("/")
-            selectors = list(source.get("paths", []))
-            if len(selectors) != 1:
-                raise ValueError(f"tag_snippet {key}: the step needs exactly one path, got {selectors}")
-            entry = {
-                "tag": selectors[0],
-                "exclude": [re.compile(p, re.MULTILINE) for p in spec.get("exclude") or []],
-                "verify": spec.get("verify"),
-                "applied": 0,
-            }
-            existing = self.snippet_tags.get(key)
-            if existing and (existing["tag"], existing["verify"]) != (entry["tag"], entry["verify"]):
-                raise ValueError(f"tag_snippet {key}: declared twice with different tag or verify")
-            self.snippet_tags.setdefault(key, entry)
 
         self.file_cache: Dict[Path, FileResult] = {}
         self.visited: Set[Path] = set()
@@ -313,60 +285,7 @@ class Extractor:
         if candidate is None:
             return ""
         self.recursion_edges.append((source_file.as_posix(), candidate.as_posix(), "reuse"))
-        text = self._read_file(candidate)
-        spec = self.snippet_tags.get(trimmed)
-        if spec is not None:
-            text = self._apply_snippet_tags(trimmed, text, spec)
-        return self._expand_text(candidate, text, depth + 1).rstrip("\n")
-
-    def _apply_snippet_tags(self, key: str, text: str, spec: Dict[str, Any]) -> str:
-        """Tag a snippet's untagged runnable fences in memory; see `snippet_tags`."""
-        lines = text.split("\n")
-        out: List[str] = []
-        tagged = 0
-        i = 0
-        while i < len(lines):
-            m = re.match(r"^(\s*)(`{3,})(.*)$", lines[i])
-            if not m:
-                out.append(lines[i])
-                i += 1
-                continue
-            indent, fence, info = m.group(1), m.group(2), m.group(3).strip()
-            close = re.compile(rf"^\s*`{{{len(fence)},}}\s*$")
-            j = i + 1
-            while j < len(lines) and not close.match(lines[j]):
-                j += 1
-            body = "\n".join(lines[i + 1:j])
-            lang = re.split(r"[,{\s]", info, maxsplit=1)[0].strip().lower() if info else ""
-            opener = lines[i]
-            if (
-                lang in SHELL_LANGS
-                and not re.search(r"paths\s*=", info)
-                and not any(p.search(textwrap.dedent(body)) for p in spec["exclude"])
-            ):
-                attr = f'paths="{spec["tag"]}"'
-                rest = info[len(lang):].strip()
-                rest = "{" + attr + " " + rest[1:] if rest.startswith("{") else ("{" + attr + "}" + (" " + rest if rest else ""))
-                opener = f"{indent}{fence}{lang} {rest}"
-                tagged += 1
-            out.extend([opener] + lines[i + 1:j + 1])
-            i = j + 1
-        if tagged == 0:
-            # Loud on purpose: the snippet was restructured, renamed upstream of
-            # this repo, or already tagged, and the step would otherwise select
-            # nothing and the test would pass having installed nothing.
-            raise ValueError(f"tag_snippet {key}: no untagged runnable block left to tag")
-        result = "\n".join(out)
-        if spec.get("verify"):
-            verify_path = (self.docs_tests_root / spec["verify"]).resolve()
-            if not verify_path.is_file():
-                raise FileNotFoundError(f"tag_snippet {key}: verify file not found: {verify_path}")
-            verify = verify_path.read_text(encoding="utf-8").strip("\n")
-            result = result.rstrip("\n") + (
-                f'\n\n{{{{< doc-test paths="{spec["tag"]}" >}}}}\n{verify}\n{{{{< /doc-test >}}}}\n'
-            )
-        spec["applied"] += 1
-        return result
+        return self._expand_text(candidate, self._read_file(candidate), depth + 1).rstrip("\n")
 
     def _resolve_include(self, source_file: Path, include_path: str, depth: int) -> str:
         if depth > self.max_depth:
@@ -467,6 +386,7 @@ class Extractor:
                 f"it would silently test nothing."
             )
 
+        self.rebased_files.add(upstream_file.resolve())
         text = upstream_file.read_text(encoding="utf-8")
         body = text.split("---", 2)[2] if text.startswith("---") and text.count("---") >= 2 else text
 
@@ -484,7 +404,6 @@ class Extractor:
                 docs_tests_root=self.docs_tests_root,
                 asset_roots=[self.repo_root, self.upstream_root],
             )
-            extractor.snippet_tags = self.snippet_tags
             self._upstream_extractors[key] = extractor
         return extractor._expand_text(upstream_file, body, depth + 1)
 
@@ -820,13 +739,19 @@ class Extractor:
                     self.recursion_edges.append((file_path.as_posix(), linked.as_posix(), "link"))
                     queue.append((linked, depth + 1))
 
+    def read_files(self) -> Set[Path]:
+        """Every file this scenario's blocks could come from, in either repo.
+
+        Walked pages, reused snippets, includes, and rebased upstream pages with
+        whatever they reuse. Used to skip a scenario whose markup did not attach.
+        """
+        files = set(self.visited) | set(self.rebased_files)
+        files |= {Path(dst) for _, dst, kind in self.recursion_edges if kind != "link"}
+        for extractor in self._upstream_extractors.values():
+            files |= extractor.read_files()
+        return {p.resolve() for p in files}
+
     def select_blocks(self) -> List[CodeBlock]:
-        unused = sorted(k for k, s in self.snippet_tags.items() if not s["applied"])
-        if unused:
-            raise ValueError(
-                f"tag_snippet names {', '.join(unused)}, but no page in this test reuses it. "
-                f"The step would select nothing from it."
-            )
         selected: List[CodeBlock] = []
         # Preserve source order (helm -> gateway -> sample-app -> feature) so that
         # e.g. the Gateway is created before the HTTPRoute that references it.

@@ -20,15 +20,23 @@
 # consuming site's own assets/ still SHADOW the upstream copies: that is the
 # only place the enterprise install differs from open source (the get-started
 # snippet adds the license key), so the install prerequisite below tests
-# enterprise content even though its page is a shell. The consuming site adds
-# no test markup to its content; see tag_snippet below.
+# enterprise content even though its page is a shell.
+#
+# The consuming site keeps test markup out of its content, so its install
+# snippet carries no paths= tags of its own. They come from
+# ../annotations/assets/agw-docs/snippets/agentgateway/get-started.md.yaml, a
+# test annotation attached to the site's checkout at test time: the snippet's
+# runnable blocks are tagged `standard`, its license-key placeholder is left
+# untagged so it never overwrites the CI secret, and install-standard-verify.sh
+# runs after the last block. The upstream pages it rebases get theirs from
+# products/agentgateway/annotations.
 #
 # Scenario names and paths are copied from the upstream manifest, so a
 # scenario here and its open source twin select the same blocks. One deliberate
 # difference: every scenario here needs install-standard, even where its twin
 # needs install-experimental. The enterprise install snippet documents one
-# channel (released build, standard Gateway API CRDs), which tag_snippet tags
-# `standard`; it has no experimental path, so a scenario that asked for one
+# channel (released build, standard Gateway API CRDs), tagged `standard`; it
+# has no experimental path, so a scenario that asked for one
 # would extract no install steps at all and fail for the wrong reason.
 version: 1
 mode: kubernetes
@@ -43,18 +51,6 @@ prerequisites:
   install-standard:
     page: documentation/quickstart/install.md
     path: standard
-    # The consuming site keeps test markup out of its content, so its install
-    # snippet carries no paths= tags. tag_snippet tags the snippet's runnable
-    # blocks with this step's path in memory, skips the license placeholder
-    # (`export AGENTGATEWAY_LICENSE_KEY=<...>`: bash reads `<...>` as a file
-    # redirect, and the real key comes from the CI secret), and runs `verify`
-    # after the snippet's last block. It fails if the snippet stops being reused
-    # or has nothing left to tag.
-    tag_snippet:
-      file: agw-docs/snippets/agentgateway/get-started.md
-      exclude:
-      - '^export AGENTGATEWAY_LICENSE_KEY=<'
-      verify: products/agentgateway-enterprise/kubernetes/install/install-standard-verify.sh
 scenarios:
   add-request-header:
     needs:

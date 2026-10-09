@@ -1,0 +1,59 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/transformations/path-method.md
+blocks:
+- 20a60a70809d1577 yaml
+- 755af4cd7e005a79 sh
+- 8edb05ef832ea136 sh
+- 918b0ffa362fc0d0 console
+- 5bf819725a28b50b sh
+- ad953b533ec9ed21 sh
+- 6297237aee12d7c6 console
+- 0fcf10238e57dfed sh
+tags:
+- paths: path-method
+  block: 0
+  fingerprint: 20a60a70809d1577
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 14ddcd05 207d5e5e 4c75c33f d9368757 d7d4054b dfb7a037 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="path-method"
+    only: true
+    lead: ' '
+- paths: path-method
+  block: 7
+  fingerprint: 0fcf10238e57dfed
+  lang: sh
+  lines: 0fcf1023
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} transformation -n htt
+  form:
+    attr: paths="path-method"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 20a60a70809d1577
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 14ddcd05 207d5e5e 4c75c33f d9368757 d7d4054b dfb7a037 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify path and method are rewritten when foo=bar header is present
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/get"
+           method: GET
+           headers:
+             host: www.example.com
+             foo: bar
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.url"
+               comparator: contains
+               value: "/post"
+       EOF
+       {{< /doc-test >}}

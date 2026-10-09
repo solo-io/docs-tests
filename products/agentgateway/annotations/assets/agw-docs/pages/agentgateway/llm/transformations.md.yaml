@@ -1,0 +1,423 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/transformations.md
+blocks:
+- 4dae433d1498d38d yaml
+- e50d241822a1e4e9 sh
+- 29f58a6adedef50c sh
+- 0565418b12b66c0b sh
+- d21070cf413a58d0 console
+- 1d6fbb815545c91c json
+- 8a073e9af7783562 yaml
+- 7e55dfb2b0ee46fc sh
+- 5343b5ccc6e8e61d sh
+- 5540082965280b10 sh
+- eb46205f3c88d2fb console
+- 070b71ccfa29a4da yaml
+- 72c83ad647a90e72 sh
+- f9270cb8081191f5 sh
+- 052b52769d1edfa5 console
+- c26d3691926bded6 console
+- d9c5d1315293fe17 yaml
+- 2029c97bd4b40699 shell
+- fcdc4db11ed497be shell
+tags:
+- paths: llm-transformations
+  block: 0
+  fingerprint: 4dae433d1498d38d
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 9d7ef592 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 f372f1cb d0342a0d 995ee605 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-transformations"
+    only: true
+    lead: ' '
+- paths: llm-final-transformations
+  block: 6
+  fingerprint: 8a073e9af7783562
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 bfd902d8 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 ca2c944a d0342a0d 995ee605 a98f0afc f2d7bc4c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-final-transformations"
+    only: true
+    lead: ' '
+- paths: llm-model-headers
+  block: 11
+  fingerprint: 070b71ccfa29a4da
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6e27f0c2 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 8905bcef 99c83b01 207d5e5e 60066f13 87cac65e 10e8f3d5 a6cf2799 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-model-headers"
+    only: true
+    lead: ' '
+- paths: llm-transformations,llm-model-headers
+  block: 17
+  fingerprint: 2029c97bd4b40699
+  lang: shell
+  lines: ac033fc6 44ab0f28
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} cap-max-tokens -n {{<
+  form:
+    attr: paths="llm-transformations,llm-model-headers"
+    only: true
+    lead: ' '
+- paths: llm-final-transformations
+  block: 18
+  fingerprint: fcdc4db11ed497be
+  lang: shell
+  lines: fcdc4db1
+  preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} cap-converted-tokens '
+  form:
+    attr: paths="llm-final-transformations"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 5db98f3af59b442c
+    occurrence: 0
+    words: 90d08e58 487b9104 1f58b914 b38027ef
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-transformations" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: openai
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      parentRefs:
+        - name: agentgateway-proxy
+          namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+      rules:
+        - backendRefs:
+            - name: openai
+              namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+              group: {{< reuse "agw-docs/snippets/group.md" >}}
+              kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 5db98f3af59b442c
+    occurrence: 0
+    words: 90d08e58 487b9104 1f58b914 b38027ef
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-transformations" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for openai HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: openai
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 4dae433d1498d38d
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 9d7ef592 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 f372f1cb d0342a0d 995ee605 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-transformations" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for cap-max-tokens policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: cap-max-tokens
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 3
+      fingerprint: 0565418b12b66c0b
+      lang: sh
+      lines: bdf955d6 fc68f389 b0cead6d 2665f611 db9f1d9e 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 c83aa0a4
+      preview: curl "localhost:8080/v1/chat/completions" \
+  content: |2-
+       {{< doc-test paths="llm-transformations" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify request succeeds with max_completion_tokens transformation applied
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-4", "max_completion_tokens": 5000, "messages": [{"role": "user", "content": "Tell me a short story"}]}
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 3257020d775e9aa3
+    occurrence: 0
+    words: ca978112 b38027ef 923fe539 4137b01e 34a04005 c5225b8e b9776d7d 82a3537f 8e7fc023 b9776d7d 948fe603 7afbb334 ca978112 91ba61f3 923fe539 4137b01e 34a04005 8325a365 b9776d7d 82a3537f 8e7fc023 b9776d7d 5c4c1964 a768e100
+    block_before:
+      block: 5
+      fingerprint: 1d6fbb815545c91c
+      lang: json
+      lines: 021fb596 17eb0670 db9f1d9e 6edb3c3c d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="llm-final-transformations" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: openai
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      parentRefs:
+        - name: agentgateway-proxy
+          namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+      rules:
+        - backendRefs:
+            - name: openai
+              namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+              group: {{< reuse "agw-docs/snippets/group.md" >}}
+              kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 3257020d775e9aa3
+    occurrence: 0
+    words: ca978112 b38027ef 923fe539 4137b01e 34a04005 c5225b8e b9776d7d 82a3537f 8e7fc023 b9776d7d 948fe603 7afbb334 ca978112 91ba61f3 923fe539 4137b01e 34a04005 8325a365 b9776d7d 82a3537f 8e7fc023 b9776d7d 5c4c1964 a768e100
+    block_before:
+      block: 5
+      fingerprint: 1d6fbb815545c91c
+      lang: json
+      lines: 021fb596 17eb0670 db9f1d9e 6edb3c3c d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="llm-final-transformations" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for openai HTTPRoute to be accepted before the post-conversion policy
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: openai
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 8a073e9af7783562
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 bfd902d8 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 ca2c944a d0342a0d 995ee605 a98f0afc f2d7bc4c abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-final-transformations" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for cap-converted-tokens policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: cap-converted-tokens
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 9
+      fingerprint: 5540082965280b10
+      lang: sh
+      lines: bdf955d6 fc68f389 b0cead6d 2665f611 da227561 d962d43b 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 c83aa0a4
+      preview: curl "localhost:8080/v1/chat/completions" \
+  content: |2-
+       {{< doc-test paths="llm-final-transformations" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify request succeeds with post-conversion transformation applied
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-4", "max_tokens": 5000, "reasoning_effort": "high", "messages": [{"role": "user", "content": "Tell me a short story"}]}
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: d0211936fe6cbcf7
+    occurrence: 0
+    words: 935f6831 bb0347a4 be8dff00 9372c470 dea7111a b8d31e85 b304adc3 e22bc966 3270f7fe eb6f099b 8ddb9dbe 9251036c 94f106e0 5f161c91 1eb79602 823412d1 663ea1bf b58c9cb6 e22bc966 f905b195 7175517a f1cf2fd5 b9776d7d 9372c470 82a3537f 75857a45 b9776d7d f3a564c9 e910c860 ea7792a2 3b325109 fa42bed0 a0af9f86 52367a66 e910c860 99262a02 77bc06c5 fa51fd49 147fe040 75857a45 b9776d7d 487b9104 2ea88c7a dac1d7cf d1ffaf02 7383711c a7e2d26e eb6f099b b9776d7d d7439bee a9f4b3d2 230d8358
+    block_before:
+      block: 10
+      fingerprint: eb46205f3c88d2fb
+      lang: console
+      lines: 021fb596 70c0738d 6cca2998 938511a8 bb032520 d4fceb35 e52a1813 3360bbc7 021fb596 3b4971d4 30570f23 74594023 e52a1813 ced13177 b1bb78f6 d10b36aa 39d4b54e ab5df625 d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="llm-model-headers" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: openai
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      parentRefs:
+        - name: agentgateway-proxy
+          namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+      rules:
+        - backendRefs:
+            - name: openai
+              namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+              group: {{< reuse "agw-docs/snippets/group.md" >}}
+              kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: d0211936fe6cbcf7
+    occurrence: 0
+    words: 935f6831 bb0347a4 be8dff00 9372c470 dea7111a b8d31e85 b304adc3 e22bc966 3270f7fe eb6f099b 8ddb9dbe 9251036c 94f106e0 5f161c91 1eb79602 823412d1 663ea1bf b58c9cb6 e22bc966 f905b195 7175517a f1cf2fd5 b9776d7d 9372c470 82a3537f 75857a45 b9776d7d f3a564c9 e910c860 ea7792a2 3b325109 fa42bed0 a0af9f86 52367a66 e910c860 99262a02 77bc06c5 fa51fd49 147fe040 75857a45 b9776d7d 487b9104 2ea88c7a dac1d7cf d1ffaf02 7383711c a7e2d26e eb6f099b b9776d7d d7439bee a9f4b3d2 230d8358
+    block_before:
+      block: 10
+      fingerprint: eb46205f3c88d2fb
+      lang: console
+      lines: 021fb596 70c0738d 6cca2998 938511a8 bb032520 d4fceb35 e52a1813 3360bbc7 021fb596 3b4971d4 30570f23 74594023 e52a1813 ced13177 b1bb78f6 d10b36aa 39d4b54e ab5df625 d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="llm-model-headers" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for openai HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: openai
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 070b71ccfa29a4da
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6e27f0c2 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 8905bcef 99c83b01 207d5e5e 60066f13 87cac65e 10e8f3d5 a6cf2799 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-model-headers" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for llm-model-headers policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: llm-model-headers
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 13
+      fingerprint: f9270cb8081191f5
+      lang: sh
+      lines: 18e60893 67c5a3ac 3b98a2a4
+      preview: curl -vi "http://localhost:8080/v1/chat/completions" \
+  content: |2-
+       {{< doc-test paths="llm-model-headers" >}}
+       # accept-encoding: identity prevents the upstream from compressing the
+       # response body. Without this header, axios (used by YAMLTest) requests
+       # gzip/br encoding by default, and the compressed body cannot be parsed
+       # by the json(response.body) CEL expression, so x-actual-model is never set.
+       YAMLTest -f - <<'EOF'
+       - name: verify model headers are injected
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             content-type: application/json
+             accept-encoding: identity
+           body: |
+             {"model": "gpt-4", "messages": [{"role": "user", "content": "Hi"}]}
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           headers:
+             - name: x-requested-model
+               comparator: contains
+               value: gpt-4
+             - name: x-actual-model
+               comparator: contains
+               value: gpt
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 559df0c1dd804193
+    occurrence: 1
+    words: 5ca4f385
+    block_before:
+      block: 18
+      fingerprint: fcdc4db11ed497be
+      lang: shell
+      lines: fcdc4db1
+      preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} cap-converted-tokens '
+  content: |-
+    {{< doc-test paths="llm-transformations,llm-model-headers,llm-final-transformations" >}}
+    kubectl delete httproute openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
+    {{< /doc-test >}}

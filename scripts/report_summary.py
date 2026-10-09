@@ -88,24 +88,29 @@ def generate_summary(report: dict) -> str:
     total_documents: int = report.get("total_documents", 0)
     total_by_version: dict = report.get("total_documents_by_version", {})
 
-    if not tests:
+    needs_update = _needs_update(report)
+    if not tests and not needs_update:
         lines.append("## Doc Test Results")
         lines.append("")
         lines.append("No test results found.")
         return "\n".join(lines)
 
     doc_groups = _group_by_document(tests)
-    skipped = len([d for d in tested_documents if d not in doc_groups])
+    nu_only = [d for d in needs_update if d not in doc_groups]
+    skipped = len([d for d in tested_documents if d not in doc_groups and d not in needs_update])
     actual_passed = sum(1 for g in doc_groups.values() if g["status"] == "passed")
     failed = len(doc_groups) - actual_passed
     passed = actual_passed + skipped
-    total = len(doc_groups) + skipped
+    total = len(doc_groups) + skipped + len(nu_only)
+    nu_text = f" | {len(nu_only)} need update" if nu_only else ""
 
     # Header
-    if failed == 0:
-        lines.append(f"## \u2705 Doc Test Results \u2014 {passed} passed | {total} total")
+    if failed:
+        lines.append(f"## \u274c Doc Test Results \u2014 {passed} passed | {failed} failed{nu_text} | {total} total")
+    elif nu_only:
+        lines.append(f"## \u26a0\ufe0f Doc Test Results \u2014 {passed} passed{nu_text} | {total} total")
     else:
-        lines.append(f"## \u274c Doc Test Results \u2014 {passed} passed | {failed} failed | {total} total")
+        lines.append(f"## \u2705 Doc Test Results \u2014 {passed} passed | {total} total")
     lines.append("")
 
     # Coverage section
@@ -125,6 +130,10 @@ def generate_summary(report: dict) -> str:
         checks_str = _format_checks_count(check_count)
 
         lines.append(f"| {icon} | `{test_label}` | `{_escape_md_table(doc)}` | {checks_str} |")
+
+    for doc, names in needs_update.items():
+        label = _escape_md_table(", ".join(names))
+        lines.append(f"| \u26a0\ufe0f | `{label}` | `{_escape_md_table(doc)}` | skipped: test markup needs update |")
 
     for key, result in tests.items():
         if result.get("status") != "passed" and result.get("error"):
@@ -181,6 +190,19 @@ def _truncate_tail(text: str, limit: int = _SLACK_TEXT_LIMIT // 2, prefix: str =
     if len(text) <= limit:
         return text
     return prefix + text[-(limit - len(prefix)):]
+
+
+def _needs_update(report: dict) -> dict:
+    """document -> scenario names skipped because their test markup needs update.
+
+    These are warnings, not passes: without this they would fall into the
+    tested-but-no-result bucket, which counts as passed.
+    """
+    out: dict = {}
+    for key in report.get("skipped_needs_update") or {}:
+        doc, _, name = key.partition("::")
+        out.setdefault(doc, []).append(name)
+    return out
 
 
 def _group_by_document(tests: dict) -> dict:
@@ -265,8 +287,10 @@ def generate_slack_blocks(report: dict, run_url: str | None = None) -> tuple[dic
     total_documents: int = report.get("total_documents", 0)
     total_by_version: dict = report.get("total_documents_by_version", {})
 
+    needs_update = _needs_update(report)
+
     # --- empty results ---
-    if not tests:
+    if not tests and not needs_update:
         fallback = "Doc Test Results — no test results found."
         blocks: list[dict] = [
             {"type": "header", "text": {"type": "plain_text", "text": "Doc Test Results"}},
@@ -277,17 +301,21 @@ def generate_slack_blocks(report: dict, run_url: str | None = None) -> tuple[dic
         return {"text": fallback, "blocks": blocks}, None
 
     doc_groups = _group_by_document(tests)
-    skipped = len([d for d in tested_documents if d not in doc_groups])
+    nu_only = [d for d in needs_update if d not in doc_groups]
+    skipped = len([d for d in tested_documents if d not in doc_groups and d not in needs_update])
     actual_passed = sum(1 for g in doc_groups.values() if g["status"] == "passed")
     failed = len(doc_groups) - actual_passed
     passed = actual_passed + skipped
-    total = len(doc_groups) + skipped
+    total = len(doc_groups) + skipped + len(nu_only)
+    nu_text = f" | {len(nu_only)} need update" if nu_only else ""
 
     # --- header ---
-    if failed == 0:
-        header_text = f"\u2705 Doc Test Results \u2014 {passed} passed | {total} total"
+    if failed:
+        header_text = f"\u274c Doc Test Results \u2014 {passed} passed | {failed} failed{nu_text} | {total} total"
+    elif nu_only:
+        header_text = f"\u26a0\ufe0f Doc Test Results \u2014 {passed} passed{nu_text} | {total} total"
     else:
-        header_text = f"\u274c Doc Test Results \u2014 {passed} passed | {failed} failed | {total} total"
+        header_text = f"\u2705 Doc Test Results \u2014 {passed} passed | {total} total"
 
     # Header block text is limited to 150 chars and plain_text only
     blocks = [
@@ -319,7 +347,13 @@ def generate_slack_blocks(report: dict, run_url: str | None = None) -> tuple[dic
         if result.get("status") != "passed" and result.get("error"):
             failed_tests.append((key, result))
 
-    # Main body: failed docs only (or all-passed note)
+    # Skipped because a tested block changed too much for its test to follow it.
+    failed_lines += [
+        f"\u26a0\ufe0f  `{', '.join(names)}` \u2014 skipped, test markup needs update  (_`{doc}`_)"
+        for doc, names in needs_update.items()
+    ]
+
+    # Main body: failed and needs-update docs only (or all-passed note)
     if failed_lines:
         main_body = _truncate("\n".join(failed_lines))
     else:

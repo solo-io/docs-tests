@@ -1,0 +1,54 @@
+format: 1
+source: content/docs/standalone/latest/documentation/configuration/traffic-management/extproc.md
+blocks:
+- 8879ebfc65f35b2c mermaid
+- 1727b44cefbc8c51 yaml
+- a109c6d2680097d3 yaml
+- eef4bc0efce58071 yaml
+- bf94548ae11c78b0 yaml
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="extproc" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: bf94548ae11c78b0
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c c2fbd82e 826a2471 d72f261d 3d1f16d9 f8326ac7
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="extproc" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * A dynamic backend accepts a `target` CEL expression alongside an extProc policy.
+    #   * Omitting `target` still validates, which is the pre-1.5 behavior the page describes.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That the expression resolves at request time -- that needs a running external
+    #     processor that returns dynamic metadata, which this guide does not stand up.
+    cat <<'EOF' > config-dynamic-target.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        extProc:
+          host: "extproc.com:9000"
+      backends:
+      - dynamic:
+          target: 'extproc.workerIp + ":" + string(extproc.workerPort)'
+    EOF
+    agentgateway -f config-dynamic-target.yaml --validate-only
+    cat <<'EOF' > config-dynamic-notarget.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - dynamic: {}
+    EOF
+    agentgateway -f config-dynamic-notarget.yaml --validate-only
+    {{< /doc-test >}}

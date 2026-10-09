@@ -1,0 +1,72 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/transformations/query.md
+blocks:
+- 77f290f6e49b3a23 yaml
+- 56462ef9c88f74a3 sh
+- 4c49faebda506d70 sh
+- a5a29249a3d81522 console
+- 5bf819725a28b50b sh
+- ad953b533ec9ed21 sh
+- f72f97bde26806df console
+- 0fcf10238e57dfed sh
+tags:
+- paths: query
+  block: 0
+  fingerprint: 77f290f6e49b3a23
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 14ddcd05 207d5e5e d0f7c334 c7b7c6d6 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="query"
+    only: true
+    lead: ' '
+- paths: query
+  block: 7
+  fingerprint: 0fcf10238e57dfed
+  lang: sh
+  lines: 0fcf1023
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} transformation -n htt
+  form:
+    attr: paths="query"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 77f290f6e49b3a23
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 14ddcd05 207d5e5e d0f7c334 c7b7c6d6 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify x-beta-features header is set to enabled when beta=true is present
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/get?beta=true"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.headers[\"X-Beta-Features\"][0]"
+               comparator: equals
+               value: enabled
+       - name: verify x-beta-features header is set to disabled when beta=true is absent
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/get"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.headers[\"X-Beta-Features\"][0]"
+               comparator: equals
+               value: disabled
+       EOF
+       {{< /doc-test >}}

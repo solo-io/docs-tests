@@ -398,11 +398,16 @@ def build_test_cases_from_manifests(
         # rather than this guessing from the tree.
         content_root = str(data.get("content_root") or "content/docs").strip("/")
         prerequisites = data.get("prerequisites") or {}
-        for name, entry in (data.get("scenarios") or {}).items():
+        for key, entry in (data.get("scenarios") or {}).items():
+            if not isinstance(entry, dict):
+                raise RuntimeError(f"{mpath}: scenario '{key}' is not a mapping.")
+            # Scenario names are not unique within a mode (llm-model-headers is
+            # declared on a traffic-management page and on an llm page), but a
+            # manifest is a mapping. The key only has to be unique; `name:` is
+            # the scenario's real name, which test selection and results use.
+            name = str(entry.get("name") or key)
             if filter_test_name and filter_test_name != name and not filter_test_name.startswith(f"{name}::"):
                 continue
-            if not isinstance(entry, dict):
-                raise RuntimeError(f"{mpath}: scenario '{name}' is not a mapping.")
 
             refs: List[Dict[str, Any]] = []
             for need in entry.get("needs") or []:
@@ -412,7 +417,7 @@ def build_test_cases_from_manifests(
                     )
                 refs.append(prerequisites[need])
             refs.extend(entry.get("before") or [])
-            own = {k: v for k, v in entry.items() if k in ("source", "page", "path", "assert", "tag_snippet")}
+            own = {k: v for k, v in entry.items() if k in ("source", "page", "path", "assert")}
             if own:
                 refs.append(own)
             if not refs:
@@ -433,14 +438,14 @@ def build_test_cases_from_manifests(
                     resolved = _resolve_manifest_ref(
                         ref, mode, version, reverse_index, mpath, name, content_root
                     )
-                    if resolved is None:
+                    # Absent from this root (added after a release, or disabled
+                    # by renaming to .txt): the scenario does not apply here.
+                    if resolved is None or not (repo_root / resolved).is_file():
                         incomplete = True
                         break
                     src: Dict[str, Any] = {"file": resolved, "path": ref.get("path")}
                     if ref.get("assert"):
                         src["assert"] = list(ref["assert"])
-                    if ref.get("tag_snippet"):
-                        src["tag_snippet"] = dict(ref["tag_snippet"])
                     sources.append(src)
                 if incomplete or not sources:
                     continue
@@ -465,6 +470,19 @@ def build_test_cases_from_manifests(
                             type=test_type,
                         )
                     )
+
+        # `skip:` names pages that deliberately have no test (a section index,
+        # a concept page), the manifest form of front matter `test: skip`. They
+        # count as covered, so coverage measures pages someone decided about.
+        for ref in data.get("skip") or []:
+            if not isinstance(ref, dict):
+                raise RuntimeError(f"{mpath}: each `skip:` entry needs `page:` or `source:`.")
+            for version in TESTED_VERSIONS:
+                if not (repo_root / content_root / mode / version).is_dir():
+                    continue
+                resolved = _resolve_manifest_ref(ref, mode, version, reverse_index, mpath, "skip", content_root)
+                if resolved and (repo_root / resolved).is_file():
+                    tested_documents.append(resolved)
 
     return test_cases, claimed, sorted(set(tested_documents))
 
@@ -515,7 +533,8 @@ def generate_script_and_manifest(
     docs_tests_root: Optional[Path] = None,
     upstream_root: Optional[Path] = None,
     upstream_version_for: Optional[Dict[str, str]] = None,
-) -> None:
+) -> Set[Path]:
+    """Write the scenario's script and manifest; return every file it read."""
     if yaml is None:
         raise RuntimeError("PyYAML is required. Install it with: pip install pyyaml")
 
@@ -537,6 +556,59 @@ def generate_script_and_manifest(
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     script_path.write_text(script, encoding="utf-8")
     manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    return extractor.read_files()
+
+
+@dataclass
+class UnattachedMarkup:
+    page: Path            # absolute
+    selectors: Set[str]
+    kind: str
+    reason: str
+
+
+def load_annotation_reports(paths: List[str]) -> List[UnattachedMarkup]:
+    """Read `annotations.py attach --report` files: the markup that did not attach.
+
+    Such markup can make a scenario test less than it claims.
+    """
+    unattached: List[UnattachedMarkup] = []
+    for path in paths:
+        report = json.loads(Path(path).read_text(encoding="utf-8"))
+        repo = Path(report["repo"])
+        for row in report.get("changed", []):
+            if row["state"] == "needs-update" and row["kind"] in ("tag", "hidden"):
+                unattached.append(UnattachedMarkup(
+                    (repo / row["page"]).resolve(),
+                    {x.strip() for x in row["label"].split(",") if x.strip()},
+                    row["kind"], row.get("reason", ""),
+                ))
+    return unattached
+
+
+def unattached_for(test_case: "TestCase", read: Set[Path], unattached: List[UnattachedMarkup]) -> List[UnattachedMarkup]:
+    """Markup the scenario would have selected, on a page it read, that did not attach."""
+    selectors = {x.strip() for src in test_case.sources for x in str(src.get("path") or "").split(",") if x.strip()}
+    return [u for u in unattached if u.page in read and u.selectors & selectors]
+
+
+def write_job_summary(skipped: Dict[str, Dict[str, Any]]) -> None:
+    """List skipped scenarios in the GitHub job summary, if there is one.
+
+    The changed tested blocks themselves are listed once by
+    `annotations.py attach --summary`; this runs once per scenario in a shard.
+    """
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary or not skipped:
+        return
+    lines = [
+        "| Skipped scenario (needs update) | What did not attach |", "| --- | --- |",
+    ]
+    for key, info in sorted(skipped.items()):
+        what = "; ".join(f"{m['kind']} `{m['paths']}` on {m['page']}" for m in info["markup"])
+        lines.append(f"| `{key}` | {what} |")
+    with open(summary, "a", encoding="utf-8") as fh:
+        fh.write("\n".join(lines) + "\n\n")
 
 
 def run_command(command: List[str], cwd: Path) -> Tuple[int, str]:
@@ -952,6 +1024,7 @@ def write_report(
     test_results: Dict[str, Dict],
     total_documents: int = 0,
     total_by_version: Optional[Dict[str, int]] = None,
+    skipped: Optional[Dict[str, Dict[str, Any]]] = None,
 ) -> None:
     if yaml is None:
         raise RuntimeError("PyYAML is required. Install it with: pip install pyyaml")
@@ -962,6 +1035,10 @@ def write_report(
         "total_documents_by_version": total_by_version or {},
         "tests": test_results,
     }
+    # Kept out of `tests`: everything that reads `tests` counts any status
+    # other than passed as a failure, and a skip here is a warning.
+    if skipped:
+        report["skipped_needs_update"] = skipped
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(yaml.safe_dump(report, sort_keys=False), encoding="utf-8")
 
@@ -1040,6 +1117,15 @@ def main() -> int:
         default=None,
         metavar="PATH",
         help="With --keep-cluster, write the kept cluster name(s) to PATH (one per line) so CI can port-forward and later delete them.",
+    )
+    parser.add_argument(
+        "--annotation-report",
+        action="append",
+        default=[],
+        metavar="PATH",
+        help="Report from `annotations.py attach --report` (repeatable, one per attached checkout). "
+             "A scenario that would select markup which did not attach is skipped with a warning, "
+             "not run with steps missing.",
     )
     args = parser.parse_args()
 
@@ -1179,6 +1265,9 @@ def main() -> int:
         write_report(report_path, tested_documents, {}, total_documents, total_by_version)
         return 0
 
+    unattached = load_annotation_reports(args.annotation_report)
+    skipped: Dict[str, Dict[str, Any]] = {}
+    runnable: List[TestCase] = []
     for test_case in test_cases:
         logger.debug("Generating script for %s::%s", test_case.document.relative_to(repo_root).as_posix(), test_case.name)
         inferred_version = infer_version_from_sources(test_case.sources, args.version)
@@ -1195,7 +1284,6 @@ def main() -> int:
                     "file": src["file"],
                     "paths": [src["path"]],
                     **({"assert": src["assert"]} if src.get("assert") else {}),
-                    **({"tag_snippet": src["tag_snippet"]} if src.get("tag_snippet") else {}),
                 }
                 for src in test_case.sources
             ],
@@ -1204,14 +1292,26 @@ def main() -> int:
                 "manifest": test_case.manifest_path.relative_to(repo_root).as_posix(),
             },
         }
-        generate_script_and_manifest(
+        read = generate_script_and_manifest(
             repo_root, definition, test_case.script_path, test_case.manifest_path,
             docs_tests_root=docs_tests_root, upstream_root=upstream_root,
             upstream_version_for=upstream_version_for,
         )
+        missing = unattached_for(test_case, read, unattached)
+        if missing:
+            key = f"{test_case.document.relative_to(repo_root).as_posix()}::{test_case.name}"
+            skipped[key] = {"markup": [
+                {"page": m.page.as_posix(), "kind": m.kind, "paths": ",".join(sorted(m.selectors)), "reason": m.reason}
+                for m in missing
+            ]}
+            logger.warning("SKIPPED: %s: %d piece(s) of its test markup did not attach (needs update)", key, len(missing))
+            continue
+        runnable.append(test_case)
+    test_cases = runnable
+    write_job_summary(skipped)
 
     if args.generate_only:
-        write_report(report_path, tested_documents, {}, total_documents, total_by_version)
+        write_report(report_path, tested_documents, {}, total_documents, total_by_version, skipped)
         logger.info("Generated %d scripts from metadata", len(test_cases))
         logger.info("Wrote report scaffold: %s", report_path.relative_to(repo_root))
         return 0
@@ -1245,12 +1345,13 @@ def main() -> int:
         kept_path.write_text("\n".join(kept_clusters) + "\n", encoding="utf-8")
         logger.info("Wrote kept cluster name(s) to %s", kept_path)
 
-    write_report(report_path, tested_documents, test_results, total_documents, total_by_version)
+    write_report(report_path, tested_documents, test_results, total_documents, total_by_version, skipped)
     logger.info("================= Test Results =================")
     logger.info("Wrote report: %s", report_path.relative_to(repo_root))
     passed_count = sum(1 for r in test_results.values() if r['status'] == 'passed')
     failed_count = sum(1 for r in test_results.values() if r['status'] != 'passed')
-    logger.info("Test results: %d total, %d passed, %d failed", len(test_cases), passed_count, failed_count)
+    logger.info("Test results: %d total, %d passed, %d failed, %d skipped (needs update)",
+                len(test_cases) + len(skipped), passed_count, failed_count, len(skipped))
     if failed_count > 0:
         logger.info("Failed test results:")
         logger.debug("%s", yaml.safe_dump(test_results, sort_keys=False))

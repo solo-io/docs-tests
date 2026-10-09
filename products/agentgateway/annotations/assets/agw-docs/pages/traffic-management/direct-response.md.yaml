@@ -1,0 +1,81 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/direct-response.md
+blocks:
+- 557b8e896919b74c yaml
+- 2710ebdf01a40aa4 yaml
+- ca7566f4565b4c29 sh
+- 78a0089577bd0ff0 sh
+- ffb7b6ffd6f27e15
+- f1580f8ed8e4070b sh
+tags:
+- paths: direct-response
+  block: 0
+  fingerprint: 557b8e896919b74c
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 bd3b490e 8af957d1 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="direct-response"
+    only: true
+    lead: ' '
+- paths: direct-response
+  block: 1
+  fingerprint: 2710ebdf01a40aa4
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 bd3b490e 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 bd3b490e e4f6a86d 169e5e52 b70d0f66 1a49c391 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="direct-response"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 2710ebdf01a40aa4
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 bd3b490e 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 bd3b490e e4f6a86d 169e5e52 b70d0f66 1a49c391 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before:
+  - ''
+  - '   '
+  content: |-
+    {{< doc-test paths="direct-response" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for direct-response HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: direct-response
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 2710ebdf01a40aa4
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 bd3b490e 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 bd3b490e e4f6a86d 169e5e52 b70d0f66 1a49c391 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="direct-response" >}}
+    YAMLTest -f - <<'EOF'
+    - name: direct-response - /status/404 returns 200 with custom body
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/status/404"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains:
+        - "Status: Healthy"
+    EOF
+    {{< /doc-test >}}

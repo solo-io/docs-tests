@@ -1,0 +1,52 @@
+format: 1
+source: content/docs/kubernetes/1.2.x/documentation/llm/streaming.md
+blocks:
+- c210c4e2396901b5 json
+- 5ff669184760e579 yaml
+- d23430ee2ea957dc sh
+- f11edf63e7278a25 sh
+- c01622f46540af28 console
+tags:
+- paths: streaming-openai
+  block: 2
+  fingerprint: d23430ee2ea957dc
+  lang: sh
+  lines: 69f18966 9c421564 a90f7a89 4b3b16d3 021fb596 23c01049 61170050 e52a1813 021fb596 09d1b3dd a6b91359 d10b36aa cfae0d42 fc075a9d
+  preview: 'curl "http://${INGRESS_GW_ADDRESS}/openai" -H content-type:application/json  -d '
+  form:
+    attr: paths="streaming-openai"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 4f7c722b12ed9595
+    occurrence: 0
+    words: 935f6831 bb0347a4 473287f8 0c24734d b9776d7d ed7002b4 903998a1 bb0347a4 2998b323 b9776d7d eebbf645 a9f4b3d2 b9776d7d a4c3ed04 ab530a13 b4a4d446 8e7fc023 b9776d7d b304adc3 19ed40bf fa51fd49 eebbf645
+    block_before:
+      block: 4
+      fingerprint: c01622f46540af28
+      lang: console
+      lines: 7843e4cd b20efd48 bc040162 f81e1134 ab5df625 14d33e8e ddda061d
+      preview: 'data: {"id":"chatcmpl-BKq9o...","object":"chat.completion.chunk","created":17443'
+  content: |-
+    {{< doc-test paths="streaming-openai" >}}
+    # Verify streaming response contains SSE chunks and terminates with [DONE]
+    STREAM_RESPONSE=$(curl -s "http://${INGRESS_GW_ADDRESS}/openai" -H content-type:application/json -d '{
+      "stream": true,
+      "model": "gpt-3.5-turbo",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Say hello in one word"
+        }
+      ]
+    }')
+
+    # Verify the response contains streaming chunk markers
+    echo "$STREAM_RESPONSE" | grep -q "chat.completion.chunk" || { echo "FAIL: Response does not contain streaming chunks"; exit 1; }
+    echo "PASS: Response contains streaming chunks"
+
+    # Verify the stream terminates with [DONE]
+    echo "$STREAM_RESPONSE" | grep -q '\[DONE\]' || { echo "FAIL: Response does not end with [DONE]"; exit 1; }
+    echo "PASS: Stream terminates with [DONE]"
+    {{< /doc-test >}}

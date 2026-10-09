@@ -14,6 +14,7 @@ except ModuleNotFoundError:
 def merge(input_dir: Path, output_path: Path) -> None:
     tested_documents: set[str] = set()
     tests: dict = {}
+    skipped_needs_update: dict = {}
     total_documents: int = 0
     total_by_version: dict = {}
 
@@ -25,6 +26,7 @@ def merge(input_dir: Path, output_path: Path) -> None:
             tested_documents.add(doc)
         for key, result in report.get("tests", {}).items():
             tests[key] = result
+        skipped_needs_update.update(report.get("skipped_needs_update") or {})
         # Take the max total_documents seen across shards (all shards scan the same glob)
         shard_total = report.get("total_documents", 0)
         if shard_total > total_documents:
@@ -39,6 +41,8 @@ def merge(input_dir: Path, output_path: Path) -> None:
         "total_documents_by_version": total_by_version,
         "tests": tests,
     }
+    if skipped_needs_update:
+        merged["skipped_needs_update"] = skipped_needs_update
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:
         yaml.safe_dump(merged, f, sort_keys=False)

@@ -1,0 +1,149 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/route-delegation/label.md
+blocks:
+- 01a8399cc5c3fe88 yaml
+- 176b8e69ec55727c yaml
+- d71b4d1b28f066bb yaml
+- 77c2dd6568e592f6 sh
+- 9eeff5ddfff42a8b sh
+- fed1873e2e009f09
+- bf03fc2ef8fe92c4 sh
+- 68000b4516e885a2 sh
+- fed1873e2e009f09
+- 9599484769357995 yaml
+- 04be866805122867 sh
+- fae7f0220450c2e4 sh
+- 66a18411b61bd8db
+- 4b5f150232f995c7 sh
+- 2f162597cd3e3ddc sh
+tags:
+- paths: label
+  block: 0
+  fingerprint: 01a8399cc5c3fe88
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 8af957d1 36184fa5 d3d416e7 2d157081 301e1bfa b3d5ff50 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 94ae491e b5a028c9 56bf9360 3e4bb68b 53143665 b733d726 aeca2b3d bf068a96 b83a8e91 94ae491e b5a028c9 56bf9360 0e5a7c75 52418815 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="label"
+    only: true
+    lead: ' '
+- paths: label
+  block: 1
+  fingerprint: 176b8e69ec55727c
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 fa1e8330 02e1d732 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="label"
+    only: true
+    lead: ' '
+- paths: label
+  block: 2
+  fingerprint: d71b4d1b28f066bb
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 fa1e8330 b97f6d86 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="label"
+    only: true
+    lead: ' '
+- paths: label
+  block: 14
+  fingerprint: 2f162597cd3e3ddc
+  lang: sh
+  lines: 5b5f9e39 8eb39b11 694e0289 5e9ff8be
+  preview: kubectl delete httproute parent -n {{< reuse "agw-docs/snippets/namespace.md" >}
+  form:
+    attr: paths="label"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: d71b4d1b28f066bb
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 fa1e8330 b97f6d86 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="label" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: d71b4d1b28f066bb
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 fa1e8330 b97f6d86 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="label" >}}
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo" -H "host: delegation.example" && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 4
+      fingerprint: 9eeff5ddfff42a8b
+      lang: sh
+      lines: 9eeff5dd
+      preview: 'curl -i localhost:8080/anything/team1/foo -H "host: delegation.example"'
+  content: |2-
+       {{< doc-test paths="label" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /team1/foo returns 200 via labeled child-team1
+         retries: 1
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 7
+      fingerprint: 68000b4516e885a2
+      lang: sh
+      lines: 68000b45
+      preview: 'curl -i localhost:8080/anything/team2/bar -H "host: delegation.example"'
+  content: |2-
+       {{< doc-test paths="label" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /team2/bar returns 200 via labeled child-team2
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team2/bar"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

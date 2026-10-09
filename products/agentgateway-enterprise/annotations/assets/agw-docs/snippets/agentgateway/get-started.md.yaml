@@ -1,0 +1,54 @@
+format: 1
+source: assets/agw-docs/snippets/agentgateway/get-started.md
+previews: false
+blocks:
+- 75777f23d8066e19 sh
+- da5826935326170b sh
+- a65267d59291c85c sh
+- bbed7eb59f74e1ce sh
+- d6b994d4cd0c2d58 sh
+- d42f43db1db143f4 console
+tags:
+- paths: standard
+  block: 1
+  fingerprint: da5826935326170b
+  lang: sh
+  lines: da582693
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: standard
+  block: 2
+  fingerprint: a65267d59291c85c
+  lang: sh
+  lines: af1b7b6c 2a24ff0e 3a26b6d2 f55e216c
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: standard
+  block: 3
+  fingerprint: bbed7eb59f74e1ce
+  lang: sh
+  lines: ad8da71a fde80217 736e1ed1 39b68b19
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: standard
+  block: 4
+  fingerprint: d6b994d4cd0c2d58
+  lang: sh
+  lines: d6b994d4
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 4
+    fingerprint: d6b994d4cd0c2d58
+    lang: sh
+    lines: d6b994d4
+  content: '{{< doc-test paths="standard" file="products/agentgateway-enterprise/kubernetes/install/install-standard-verify.sh" >}}{{< /doc-test >}}'

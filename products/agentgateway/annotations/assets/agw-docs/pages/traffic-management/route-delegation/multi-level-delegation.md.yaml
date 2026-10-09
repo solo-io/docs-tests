@@ -1,0 +1,211 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/route-delegation/multi-level-delegation.md
+blocks:
+- da9ff9932cc64c93 yaml
+- 1fc7324922c7dbbb yaml
+- e183f46b560b97e4 yaml
+- 41e3fd4caa720cb6 yaml
+- 77c2dd6568e592f6 sh
+- 9eeff5ddfff42a8b sh
+- fed1873e2e009f09
+- a248f53b9a121e23 sh
+- 6d471cf3f0bd63cf sh
+- 66a18411b61bd8db
+- 0cad5f3b5bb6974d sh
+- 1198ec185ad24158 sh
+- fed1873e2e009f09
+- 568bdfaf3436065b sh
+- e037683e3096cbcc sh
+- fed1873e2e009f09
+- d497c748a0fde331 sh
+tags:
+- paths: multi-level
+  block: 0
+  fingerprint: da9ff9932cc64c93
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 8af957d1 36184fa5 301e1bfa b3d5ff50 d3d416e7 2d157081 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 94ae491e b5a028c9 56bf9360 587e8306 53143665 b733d726 aeca2b3d bf068a96 b83a8e91 94ae491e b5a028c9 56bf9360 38c60fa9 52418815 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="multi-level"
+    only: true
+    lead: ' '
+- paths: multi-level
+  block: 1
+  fingerprint: 1fc7324922c7dbbb
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="multi-level"
+    only: true
+    lead: ' '
+- paths: multi-level
+  block: 2
+  fingerprint: e183f46b560b97e4
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 02ca063a 94ae491e b5a028c9 56bf9360 1966d5cb 52418815 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="multi-level"
+    only: true
+    lead: ' '
+- paths: multi-level
+  block: 3
+  fingerprint: 41e3fd4caa720cb6
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1966d5cb 52418815 36184fa5 3de9d845 b733d726 aeca2b3d ff36735c 61948b3c 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="multi-level"
+    only: true
+    lead: ' '
+- paths: multi-level
+  block: 16
+  fingerprint: d497c748a0fde331
+  lang: sh
+  lines: 5b5f9e39 8eb39b11 694e0289 5c6f1078 5e9ff8be
+  preview: kubectl delete httproute parent -n {{< reuse "agw-docs/snippets/namespace.md" >}
+  form:
+    attr: paths="multi-level"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 41e3fd4caa720cb6
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1966d5cb 52418815 36184fa5 3de9d845 b733d726 aeca2b3d ff36735c 61948b3c 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="multi-level" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 41e3fd4caa720cb6
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1966d5cb 52418815 36184fa5 3de9d845 b733d726 aeca2b3d ff36735c 61948b3c 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="multi-level" >}}
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo" -H "host: delegation.example" && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 5
+      fingerprint: 9eeff5ddfff42a8b
+      lang: sh
+      lines: 9eeff5dd
+      preview: 'curl -i localhost:8080/anything/team1/foo -H "host: delegation.example"'
+  content: |2-
+       {{< doc-test paths="multi-level" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /anything/team1/foo returns 200 via child-team1
+         retries: 1
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 8
+      fingerprint: 6d471cf3f0bd63cf
+      lang: sh
+      lines: 6d471cf3
+      preview: 'curl -i localhost:8080/anything/team1/bar -H "host: delegation.example"'
+  content: |2-
+       {{< doc-test paths="multi-level" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /anything/team1/bar returns 404 (no matching child path)
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/bar"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 11
+      fingerprint: 1198ec185ad24158
+      lang: sh
+      lines: 1198ec18
+      preview: 'curl -i localhost:8080/anything/team2/grandchild/bar -H "host: delegation.exampl'
+  content: |2-
+       {{< doc-test paths="multi-level" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /anything/team2/grandchild/bar returns 200 via grandchild
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team2/grandchild/bar"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 3
+    words: 32d3feda
+    block_before:
+      block: 14
+      fingerprint: e037683e3096cbcc
+      lang: sh
+      lines: e037683e
+      preview: 'curl -i localhost:8080/anything/team2/grandchild/foo -H "host: delegation.exampl'
+  content: |2-
+       {{< doc-test paths="multi-level" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /anything/team2/grandchild/foo returns 200 (regex match)
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team2/grandchild/foo"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

@@ -1,0 +1,151 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/shared-connection-settings.md
+blocks:
+- 803f3a07ed5c5a65 yaml
+- 61033294fe03da00 yaml
+- b2dac0d7f21da7ec yaml
+- 790de0408f126aaf shell
+tags:
+- paths: shared-connection-settings
+  block: 0
+  fingerprint: 803f3a07ed5c5a65
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 19701444 8af957d1 36184fa5 ad3afdb1 b54c262c f22ccaa8 f0e58cae b6fb1fd3 1d0a9ff4 c7c93cfb 57671210 0220387f b52bed6c c6ba4159 c8f3f59a 146e11c6 9ebc4789 561d8171 c17326e5 b6fb1fd3 1d0a9ff4 c7c93cfb 57671210 0220387f 9780baf6 c6ba4159 2aaddcce b6fb1fd3 1d0a9ff4 c7c93cfb 57671210 0220387f 6c99674a c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="shared-connection-settings"'
+    at: 4
+- paths: shared-connection-settings
+  block: 1
+  fingerprint: 61033294fe03da00
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 30e62c18 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 1d0a9ff4 9780baf6 c6ba4159 c8f3f59a ad3afdb1 d67b54bf a834d906 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="shared-connection-settings"'
+    at: 4
+- paths: shared-connection-settings
+  block: 2
+  fingerprint: b2dac0d7f21da7ec
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 22f8f851 8af957d1 36184fa5 588a5d84 453bdfd0 99d7dba1 19701444 86725532 453bdfd0 99d7dba1 30e62c18 bb85cefe 146e11c6 9ebc4789 bbdf327c 3195c5f5 2afa4b67 38921003 70c97555 b6e1c19c 99d7dba1 32a20b45 3a48088f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="shared-connection-settings"'
+    at: 4
+hidden:
+- after:
+    line: 2f6fe2fc178c5947
+    occurrence: 0
+    words: 4e074085 f9dc689e 8044aae1 0cf67fc7 06f5aa74 deb538b5 3f8a7e66 1e19bab2 fa42bed0 a0af9f86 caf9f906 487b9104 81c82f62 e9e8a3a2 93f6e11d 6b5a3ded 1eb79602 83ca68be 8459419d b8d31e85 8e7fc023 8fb6d5f3
+    block_before: null
+  content: |-
+    {{< doc-test paths="shared-connection-settings" >}}
+    # The guide references two provider secrets and a forward-proxy backend that a
+    # reader would already have from setting up their own providers and, optionally,
+    # a tunnel. Create minimal stand-ins so the resources in this test resolve.
+    kubectl apply -f- <<EOF
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: on-prem-instance-secret
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    type: Opaque
+    stringData:
+      Authorization: test-on-prem-token
+    ---
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: cloud-instance-1-secret
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    type: Opaque
+    stringData:
+      Authorization: test-cloud-instance-1-token
+    ---
+    apiVersion: {{< reuse "agw-docs/snippets/api-version.md" >}}
+    kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+    metadata:
+      name: forward-proxy
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      static:
+        host: forward-proxy.internal
+        port: 3128
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 803f3a07ed5c5a65
+    lang: yaml
+    lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 19701444 8af957d1 36184fa5 ad3afdb1 b54c262c f22ccaa8 f0e58cae b6fb1fd3 1d0a9ff4 c7c93cfb 57671210 0220387f b52bed6c c6ba4159 c8f3f59a 146e11c6 9ebc4789 561d8171 c17326e5 b6fb1fd3 1d0a9ff4 c7c93cfb 57671210 0220387f 9780baf6 c6ba4159 2aaddcce b6fb1fd3 1d0a9ff4 c7c93cfb 57671210 0220387f 6c99674a c6ba4159 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="shared-connection-settings" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for llm-providers backend to be accepted
+         wait:
+           target:
+             kind: AgentgatewayBackend
+             metadata:
+               namespace: agentgateway-system
+               name: llm-providers
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 61033294fe03da00
+    lang: yaml
+    lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 30e62c18 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 1d0a9ff4 9780baf6 c6ba4159 c8f3f59a ad3afdb1 d67b54bf a834d906 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="shared-connection-settings" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for cloud-instance-1-metrics backend to be accepted
+         wait:
+           target:
+             kind: AgentgatewayBackend
+             metadata:
+               namespace: agentgateway-system
+               name: cloud-instance-1-metrics
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: b2dac0d7f21da7ec
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 22f8f851 8af957d1 36184fa5 588a5d84 453bdfd0 99d7dba1 19701444 86725532 453bdfd0 99d7dba1 30e62c18 bb85cefe 146e11c6 9ebc4789 bbdf327c 3195c5f5 2afa4b67 38921003 70c97555 b6e1c19c 99d7dba1 32a20b45 3a48088f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="shared-connection-settings" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for cloud-instance-1-connection policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: cloud-instance-1-connection
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}

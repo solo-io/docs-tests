@@ -1,0 +1,206 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/load-balancing.md
+blocks:
+- cdc995dcaf58e68f
+- f73574935bec5912 yaml
+- 56df6011be518e31 yaml
+- 7fd8e79128878b74 yaml
+- b89def9c73b92d7e yaml
+- b54e795b16cbeb9e yaml
+- cb281629f972c28d yaml
+- 61a6dc93a003fbed bash
+- ad03f6e6b7c36a14 bash
+- c2479a1884c9a4f3 yaml
+- 237d18d936b01437 yaml
+- 9cf05dc33e6a212a shell
+tags:
+- paths: load-balancing
+  block: 5
+  fingerprint: b54e795b16cbeb9e
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 ddbc0588 8af957d1 36184fa5 ad3afdb1 b54c262c f22ccaa8 60070879 da4aa5f1 d887603d c8f3f59a 146e11c6 9ebc4789 4df4f75f 6d4ae15b 12456441 728c9913 c8f3f59a 146e11c6 9ebc4789 de7e3df3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="load-balancing"'
+    at: 4
+- paths: load-balancing
+  block: 6
+  fingerprint: cb281629f972c28d
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 27778331 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 293d75db 94ae491e cf71b507 8af957d1 22aec9ce 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="load-balancing"'
+    at: 4
+hidden:
+- after:
+    line: 707d0e3903012b08
+    occurrence: 0
+    words: d4735e3a 6ee0eb49 75a288c0 14c2529e a0561fd6 663ea1bf bec16879 487b9104 5c4c1964 fa42bed0 a0af9f86 caf9f906 487b9104 37ff21fe 8e7fc023 bb0347a4 8656aa55 663ea1bf a3b142af
+    block_before:
+      block: 4
+      fingerprint: b89def9c73b92d7e
+      lang: yaml
+      lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 afb94012 8af957d1 36184fa5 ad3afdb1 93a4b62b b6fb1fd3 3d6306fd 70c97555 4dd3620d bca8e5f7 c7c93cfb 57671210 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="load-balancing" >}}
+    export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/namespace.md" >}} agentgateway-proxy -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    kubectl apply -f- <<EOF
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: openai-secret
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    type: Opaque
+    stringData:
+      Authorization: $OPENAI_API_KEY
+    ---
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: anthropic-secret
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    type: Opaque
+    stringData:
+      Authorization: ${ANTHROPIC_API_KEY:-$OPENAI_API_KEY}
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: b54e795b16cbeb9e
+    lang: yaml
+    lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 ddbc0588 8af957d1 36184fa5 ad3afdb1 b54c262c f22ccaa8 60070879 da4aa5f1 d887603d c8f3f59a 146e11c6 9ebc4789 4df4f75f 6d4ae15b 12456441 728c9913 c8f3f59a 146e11c6 9ebc4789 de7e3df3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="load-balancing" >}}
+    # The documented example load balances across OpenAI and Anthropic. The test
+    # replaces it with two providers that both point at the httpbun mock LLM, so it
+    # needs no provider API key at all and bills nothing. The shape under test is the
+    # same as the documented one - two providers in a single priority group - which is
+    # what the P2C behavior on this page depends on.
+    {{< reuse "agw-docs/snippets/deploy-mock-llm.md" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: {{< reuse "agw-docs/snippets/api-version.md" >}}
+    kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+    metadata:
+      name: loadbalanced-backend
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      ai:
+        groups:
+          - providers:
+              - name: openai-gpt4
+                openai:
+                  model: gpt-4o
+                host: httpbun.default.svc.cluster.local
+                port: 3090
+                path: /llm/chat/completions
+                policies:
+                  auth:
+                    secretRef:
+                      name: openai-secret
+              - name: openai-gpt35
+                openai:
+                  model: {{< reuse "agw-docs/snippets/openai-model.md" >}}
+                host: httpbun.default.svc.cluster.local
+                port: 3090
+                path: /llm/chat/completions
+                policies:
+                  auth:
+                    secretRef:
+                      name: openai-secret
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: cb281629f972c28d
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 27778331 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 293d75db 94ae491e cf71b507 8af957d1 22aec9ce 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="load-balancing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for loadbalanced-backend to be accepted
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: agentgateway-system
+            name: loadbalanced-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+
+    - name: wait for loadbalanced-route HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: loadbalanced-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 9800fe00187fc7f6
+    occurrence: 0
+    words: bb0347a4 f9e01239 aa9e9b5c e30b3910 75857a45 ff777205 1e19bab2 0695b563 b9776d7d 51f9316c b1eb2ec8 83ccca18 3544ab38 b9776d7d 8f4375ec 5c4c1964 10c22bcf bec16879 1f58b914 dd20955d b8d31e85 97b05602 62484e22 6201111b 4a189871 177a7ea3
+    block_before:
+      block: 8
+      fingerprint: ad03f6e6b7c36a14
+      lang: bash
+      lines: 1bf09436 00a1e31d cbc8a491 c283eea0 a4c3ed04
+      preview: for i in {1..10}; do
+  content: |-
+    {{< doc-test paths="load-balancing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify load balanced request succeeds
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/chat"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {
+            "messages": [{"role": "user", "content": "Say hello in one word"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.usage.total_tokens"
+            comparator: greaterThan
+            value: 0
+
+    - name: verify second load balanced request succeeds
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/chat"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {
+            "messages": [{"role": "user", "content": "Say hello in one word"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.usage.total_tokens"
+            comparator: greaterThan
+            value: 0
+    EOF
+    {{< /doc-test >}}

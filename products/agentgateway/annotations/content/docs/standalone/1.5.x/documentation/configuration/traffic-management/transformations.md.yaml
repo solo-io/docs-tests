@@ -1,0 +1,275 @@
+format: 1
+source: content/docs/standalone/1.5.x/documentation/configuration/traffic-management/transformations.md
+blocks:
+- 2e26eac177df49da yaml
+- 62dc0ea6738385ef yaml
+- b26dc602bdfa6bd0 yaml
+- 5017577a23eb072b yaml
+- 68b459025adf598a yaml
+- 6a27bce2ceced46e yaml
+- d518459028403b76 yaml
+- c91498c8c6cd3e3b yaml
+- d07cbd9f8765d50d yaml
+hidden:
+- after:
+    line: 714405c4ca3422b9
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 9e5cb570
+    block_before: null
+  content: |-
+    {{< doc-test paths="transformations" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export OPEN_AI_APIKEY="${OPEN_AI_APIKEY:-dummy}"
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 2
+      fingerprint: b26dc602bdfa6bd0
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 aca655e6 e050b084 c8f3f59a 81b74571 1dd29fa1 19c2fa74 ead663af 9d7e2b17 fd12af70 9d7e2b17 f372f1cb 14ddcd05 274fdf3f b7876711 cfaae975 99c83b01 274fdf3f bc0d16f9 0a282488 d9ec864d 24adbcf9
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="transformations" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The route-level header transformation example config is accepted by
+    #     agentgateway in all three configuration forms: routing-based (gateways),
+    #     simplified LLM (llm.policies), and simplified MCP (mcp.policies).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Runtime header rewriting and the AI backend call — requires a live OpenAI
+    #     backend and a real API key the page omits.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - ai:
+         name: openai
+         provider:
+           openAI:
+             # Optional; overrides the model in requests
+             model: gpt-3.5-turbo
+      policies:
+        backendAuth:
+          key: "$OPEN_AI_APIKEY"
+        cors:
+          allowOrigins:
+            - "*"
+          allowHeaders:
+            - "*"
+        transformations:
+          request:
+            add:
+              x-request-path: request.path
+              x-client-ip: source.address
+          response:
+            add:
+              x-response-code: 'string(response.code)'
+            remove:
+            - server
+            - x-content-type-options
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    cat <<'EOF' > config-llm.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        transformations:
+          request:
+            add:
+              x-request-path: request.path
+              x-client-ip: source.address
+          response:
+            add:
+              x-response-code: 'string(response.code)'
+            remove:
+            - server
+            - x-content-type-options
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPEN_AI_APIKEY"
+    EOF
+    agentgateway -f config-llm.yaml --validate-only
+
+    cat <<'EOF' > config-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        transformations:
+          request:
+            add:
+              x-request-path: request.path
+              x-client-ip: source.address
+          response:
+            add:
+              x-response-code: 'string(response.code)'
+            remove:
+            - server
+            - x-content-type-options
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-mcp.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 5
+      fingerprint: 6a27bce2ceced46e
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a f372f1cb 14ddcd05 274fdf3f 0b672c67 d67b54bf 76aea28c 81b74571 1dd29fa1 d72f261d 4c6bd846 6666820d 93a4b62b 6ea70ff2 e050b084
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="transformations" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The listener-level header transformation example config is accepted by
+    #     agentgateway in all three configuration forms: routing-based (gateways),
+    #     simplified LLM (llm.policies), and simplified MCP (mcp.policies).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Runtime header injection and the AI backend call — requires a live OpenAI
+    #     backend and a real API key the page omits.
+    cat <<'EOF' > config2.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+        transformations:
+          request:
+            add:
+              x-gateway: '"agentgateway"'
+    routes:
+    - policies:
+        backendAuth:
+          key: "$OPEN_AI_APIKEY"
+      backends:
+      - ai:
+         name: openai
+         provider:
+           openAI:
+             model: gpt-3.5-turbo
+    EOF
+    agentgateway -f config2.yaml --validate-only
+
+    cat <<'EOF' > config2-llm.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        transformations:
+          request:
+            add:
+              x-gateway: '"agentgateway"'
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPEN_AI_APIKEY"
+    EOF
+    agentgateway -f config2-llm.yaml --validate-only
+
+    cat <<'EOF' > config2-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        transformations:
+          request:
+            add:
+              x-gateway: '"agentgateway"'
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config2-mcp.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 8
+      fingerprint: d07cbd9f8765d50d
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c f372f1cb 14ddcd05 94ecc337 4fadb469 99c83b01 94ecc337 df1d76e0 d72f261d c64a4012
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="transformations" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The body transformation example config is accepted by agentgateway in all
+    #     three configuration forms: routing-based (gateways), simplified LLM
+    #     (llm.policies), and simplified MCP (mcp.policies).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Runtime body rewriting — requires a backend the page omits to forward to
+    #     and inspect.
+    cat <<'EOF' > config3.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        transformations:
+          request:
+            body: |
+              "Hello " + default(request.headers["x-user-name"], "guest")
+          response:
+            body: |
+              "Response code: " + string(response.code)
+      backends:
+      - host: localhost:8080
+    EOF
+    agentgateway -f config3.yaml --validate-only
+
+    cat <<'EOF' > config3-llm.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        transformations:
+          request:
+            body: |
+              "Hello " + default(request.headers["x-user-name"], "guest")
+          response:
+            body: |
+              "Response code: " + string(response.code)
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPEN_AI_APIKEY"
+    EOF
+    agentgateway -f config3-llm.yaml --validate-only
+
+    cat <<'EOF' > config3-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        transformations:
+          request:
+            body: |
+              "Hello " + default(request.headers["x-user-name"], "guest")
+          response:
+            body: |
+              "Response code: " + string(response.code)
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config3-mcp.yaml --validate-only
+    {{< /doc-test >}}

@@ -1,0 +1,79 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/dfp.md
+blocks:
+- 20ed4623bd6d8b3c yaml
+- 28d9f418bbdb4a79 yaml
+- 1335fb49defc9356 sh
+- d13ade6c62874937 sh
+- 8a9df626af35e14d sh
+- 14ee7cd4a5af9d79 console
+- 653849d56efe2f8e sh
+tags:
+- paths: dfp
+  block: 0
+  fingerprint: 20ed4623bd6d8b3c
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 37cd1f2f 0f10c5bc 36184fa5 a13d7c79 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dfp"
+    only: true
+    lead: ' '
+- paths: dfp
+  block: 1
+  fingerprint: 28d9f418bbdb4a79
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 0f10c5bc b8a9e3f3 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 1dfe1459 22aec9ce 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dfp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 28d9f418bbdb4a79
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 0f10c5bc b8a9e3f3 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 1dfe1459 22aec9ce 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dfp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for dfp-httproute HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: dfp-httproute
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 28d9f418bbdb4a79
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 0f10c5bc b8a9e3f3 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 1dfe1459 22aec9ce 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dfp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: dfp - request with host httpbin.httpbin.svc.cluster.local returns 200
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        method: GET
+        headers:
+          host: httpbin.httpbin.svc.cluster.local:8000
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

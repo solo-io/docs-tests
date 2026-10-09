@@ -1,0 +1,85 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/redirect/host.md
+blocks:
+- 747942d3c7457a70 yaml
+- 50202297da38e448 sh
+- 3a5cf6e5518a814b sh
+- 4b6ed9a7be677ca3
+- c126bc5c59ef1731 sh
+tags:
+- paths: host-redirect
+  block: 0
+  fingerprint: 747942d3c7457a70
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f05018d1 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 5e204d2e 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 ae6b70e3 96b1dd04 4b419f75 96b3e94b 7ee1ecd3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="host-redirect"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 4b6ed9a7be677ca3
+    lang: ''
+    lines: e7f783c5 9e72ae31 7dc9d89c eda06f87 a03544dc 3ca1ea63 5f7c6523 8cdb8317 15357256
+    preview: '* Mark bundle as not supporting multiuse'
+  content: |-
+    {{< doc-test paths="host-redirect" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin-redirect HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-redirect
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 4b6ed9a7be677ca3
+    lang: ''
+    lines: e7f783c5 9e72ae31 7dc9d89c eda06f87 a03544dc 3ca1ea63 5f7c6523 8cdb8317 15357256
+    preview: '* Mark bundle as not supporting multiuse'
+  content: |-
+    {{< doc-test paths="host-redirect" >}}
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: host.redirect.example" && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 4b6ed9a7be677ca3
+    lang: ''
+    lines: e7f783c5 9e72ae31 7dc9d89c eda06f87 a03544dc 3ca1ea63 5f7c6523 8cdb8317 15357256
+    preview: '* Mark bundle as not supporting multiuse'
+  content: |-
+    {{< doc-test paths="host-redirect" >}}
+    YAMLTest -f - <<'EOF'
+    - name: host redirect - host.redirect.example returns 302 with location www.example.com
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "host.redirect.example"
+      source:
+        type: local
+      expect:
+        statusCode: 302
+        headers:
+          - name: location
+            comparator: contains
+            value: www.example.com
+    EOF
+    {{< /doc-test >}}

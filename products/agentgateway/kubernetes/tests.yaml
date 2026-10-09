@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# PILOT: traffic-management only. Every other subject area still declares its
+# Covers traffic-management and llm (documentation/llm/). Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -34,6 +34,38 @@ prerequisites:
   install-standard:
     page: documentation/quickstart/install.md
     path: standard
+  helm-standard:
+    page: documentation/install/helm.md
+    path: standard
+# Pages with deliberately no test: section indexes and concept pages. The
+# manifest form of front matter `test: skip`; they count as covered.
+skip:
+- page: documentation/traffic-management/_index.md
+- page: documentation/traffic-management/buffer.md
+- page: documentation/traffic-management/header-control/_index.md
+- page: documentation/traffic-management/load-balancing.md
+- page: documentation/traffic-management/match/_index.md
+- page: documentation/traffic-management/redirect/_index.md
+- page: documentation/traffic-management/rewrite/_index.md
+- page: documentation/traffic-management/route-delegation/_index.md
+- page: documentation/traffic-management/route-delegation/inheritance/_index.md
+- page: documentation/traffic-management/route-delegation/overview.md
+- page: documentation/traffic-management/transformations/_index.md
+- page: documentation/traffic-management/transformations/templating-language.md
+- page: documentation/llm/_index.md
+- page: documentation/llm/about.md
+- page: documentation/llm/api-types/_index.md
+- page: documentation/llm/cost-controls/_index.md
+- page: documentation/llm/cost-controls/attribution.md
+- page: documentation/llm/cost-controls/dashboard.md
+- page: documentation/llm/guardrails/_index.md
+- page: documentation/llm/guardrails/webhook/_index.md
+- page: documentation/llm/inference/benchmarking.md
+- page: documentation/llm/inference/inference-routing.md
+- page: documentation/llm/inference/multiple-inference-pools.md
+- page: documentation/llm/models/_index.md
+- page: documentation/llm/models/about.md
+- page: documentation/llm/providers.md
 scenarios:
   access-logs:
     type:
@@ -535,3 +567,190 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/transformations/validate.md
     path: validate-skip
+  # --- llm (documentation/llm/) ---
+  budget-limits-apikey-auth:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/budget-limits.md
+    path: budget-limits
+  content-routing-model:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/llm/content-routing.md
+    path: content-routing
+  costs:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    page: documentation/llm/cost-controls/costs.md
+    path: costs
+  failover:
+    needs:
+    - helm-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    source: agw-docs/pages/agentgateway/llm/failover.md
+    path: failover
+  gemini-inbound:
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/llm/api-types/gemini.md
+    path: gemini-inbound
+  llm-final-transformations:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/transformations.md
+    path: llm-final-transformations
+  llm/llm-model-headers:
+    name: llm-model-headers
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/transformations.md
+    path: llm-model-headers
+  llm-observability:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/observability.md
+    path: llm-observability
+  llm-token-rate-limit:
+    type:
+    - schema
+    - functional
+    needs:
+    - helm-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    source: agw-docs/pages/agentgateway/llm/rate-limit.md
+    path: llm-token-rate-limit
+  llm/llm-transformations:
+    name: llm-transformations
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/transformations.md
+    path: llm-transformations
+  load-balancing-multi-provider:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/llm/load-balancing.md
+    path: load-balancing
+  realtime:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/realtime.md
+    path: realtime
+  serve-model:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    page: documentation/llm/models/serve.md
+    path: serve-model
+  shared-connection-settings:
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/llm/shared-connection-settings.md
+    path: shared-connection-settings
+  streaming-openai:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/streaming.md
+    path: streaming-openai
+  virtual-keys-auth:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    - source: agw-docs/pages/agentgateway/llm/virtual-keys.md
+      path: virtual-keys
+    source: agw-docs/pages/agentgateway/llm/virtual-keys.md
+    path: virtual-keys-httpbun-test
+  virtual-keys-ratelimit:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    - page: documentation/security/rate-limit-global.md
+      path: deploy-rate-limit-server
+    - source: agw-docs/pages/agentgateway/llm/virtual-keys.md
+      path: virtual-keys
+    - source: agw-docs/pages/agentgateway/llm/virtual-keys.md
+      path: virtual-keys-with-ratelimit
+    source: agw-docs/pages/agentgateway/llm/virtual-keys.md
+    path: virtual-keys-ratelimit-test
+  virtual-models:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    - page: documentation/llm/models/serve.md
+      path: serve-model
+    page: documentation/llm/models/virtual.md
+    path: virtual-models

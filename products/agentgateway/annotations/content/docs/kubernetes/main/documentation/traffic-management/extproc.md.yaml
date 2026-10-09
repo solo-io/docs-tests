@@ -1,0 +1,90 @@
+format: 1
+source: content/docs/kubernetes/main/documentation/traffic-management/extproc.md
+blocks:
+- dc811ca86be26fc8 mermaid
+- c02b53b8a0b60a7a yaml
+- 3528339778708c57 json
+- f6a253ed1cca5781 sh
+- 17ed57767695b949 yaml
+- a840b3a15d688848 sh
+- 2e1e63e32b0f13d7 sh
+- efc56b0c8d93456c console
+- 70eadb4e38081e8e yaml
+- 7d8911a91db00149 yaml
+- 16f61f4b0ab7ac53 sh
+tags:
+- paths: extproc
+  block: 1
+  fingerprint: c02b53b8a0b60a7a
+  lang: yaml
+  lines: 5f85f445 58584366 ab78925c 8c8c4228 8019ef49 36184fa5 8432e015 839a5cac df3364f7 97bcd5e0 a58565b2 8c8c4228 fa1e8330 df3364f7 36184fa5 04968f51 9fb8a5ce 8e2d53f2 ebc1efa5 ff42c2c6 0ff65a1a 395694ff cb3f91d5 f1540154 0d6480f0 8c8c4228 8019ef49 fa1e8330 4525ee56 36184fa5 0ff65a1a d8212fc2 10973fbe 9693ecf1 7d42f305 8432e015 df3364f7 abc56510
+  preview: kubectl apply -n {{< reuse "agw-docs/snippets/namespace.md" >}} -f- <<EOF
+  form:
+    attr: paths="extproc"
+    only: true
+    lead: ' '
+- paths: extproc
+  block: 4
+  fingerprint: 17ed57767695b949
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 e2a97dd3 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d c2fbd82e 70c97555 8019ef49 8af957d1 b8eebd11 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extproc"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 3528339778708c57
+    lang: json
+    lines: 021fb596 2f880440 f25a792d e40f0ef9 e52a1813 021fb596 50ce2b0c d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="extproc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for ext-proc-grpc deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: ext-proc-grpc
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 17ed57767695b949
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 e2a97dd3 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d c2fbd82e 70c97555 8019ef49 8af957d1 b8eebd11 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before:
+  - '   '
+  content: |-
+    {{< doc-test paths="extproc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: extproc - /headers returns 200 with extproc header injected
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+        method: GET
+        headers:
+          host: www.example.com
+          instructions: '{"addHeaders":{"extproc":"true"}}'
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.headers.Extproc[0]"
+            comparator: equals
+            value: "true"
+    EOF
+    {{< /doc-test >}}

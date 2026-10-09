@@ -1,0 +1,122 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/redirect/path.md
+blocks:
+- 8e84b4329eec91e3 yaml
+- 214e0740e9f0335e sh
+- 627cef0b1bcf525e sh
+- 838c22ddbb4a14f1
+- 8f1a0e877e05ac95 sh
+- c7b2bbd5f9fd914d sh
+- d90c422691ad21b9
+- ac2af2ff05ffd055 yaml
+- 214e0740e9f0335e sh
+- 627cef0b1bcf525e sh
+- 838c22ddbb4a14f1
+- 8f1a0e877e05ac95 sh
+- c7b2bbd5f9fd914d sh
+- 838c22ddbb4a14f1
+- c126bc5c59ef1731 sh
+tags:
+- paths: path-redirect-prefix
+  block: 0
+  fingerprint: 8e84b4329eec91e3
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f05018d1 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa bc2a5469 3de9d845 b733d726 aeca2b3d bf068a96 2836fc17 ae6b70e3 96b1dd04 4b419f75 57af3940 9337d19e 9627d89f 7ee1ecd3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="path-redirect-prefix"
+    only: true
+    lead: ' '
+- paths: path-redirect-full
+  block: 7
+  fingerprint: ac2af2ff05ffd055
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f05018d1 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa bc2a5469 3de9d845 b733d726 aeca2b3d bf068a96 2836fc17 ae6b70e3 96b1dd04 4b419f75 57af3940 ffc433f2 ceb9f46c 7ee1ecd3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="path-redirect-full"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: d90c422691ad21b9
+    lang: ''
+    lines: e7f783c5 9e72ae31 7dc9d89c fc4df460 eb51e936 3ca1ea63 5f7c6523 8cdb8317 15357256
+    preview: '* Mark bundle as not supporting multiuse'
+  content: |-
+    {{< doc-test paths="path-redirect-prefix" >}}
+    YAMLTest -f - <<'EOF'
+    - name: path redirect prefix - /get returns 302 with location /status/200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /get
+        method: GET
+        headers:
+          host: "path.redirect.example:80"
+      source:
+        type: local
+      expect:
+        statusCode: 302
+        headers:
+          - name: location
+            comparator: contains
+            value: /status/200
+    - name: path redirect prefix - /get/headers returns 302 with location /status/200/headers
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /get/headers
+        method: GET
+        headers:
+          host: "path.redirect.example:80"
+      source:
+        type: local
+      expect:
+        statusCode: 302
+        headers:
+          - name: location
+            comparator: contains
+            value: /status/200/headers
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 838c22ddbb4a14f1
+    lang: ''
+    lines: e7f783c5 9e72ae31 7dc9d89c 925af417 5f46eb22 3ca1ea63 5f7c6523 8cdb8317 15357256
+    preview: '* Mark bundle as not supporting multiuse'
+  content: |-
+    {{< doc-test paths="path-redirect-full" >}}
+    YAMLTest -f - <<'EOF'
+    - name: path redirect full - /get returns 302 with location /status/200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /get
+        method: GET
+        headers:
+          host: "path.redirect.example:80"
+      source:
+        type: local
+      expect:
+        statusCode: 302
+        headers:
+          - name: location
+            comparator: contains
+            value: /status/200
+    - name: path redirect full - /get/headers returns 302 with same location /status/200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /get/headers
+        method: GET
+        headers:
+          host: "path.redirect.example:80"
+      source:
+        type: local
+      expect:
+        statusCode: 302
+        headers:
+          - name: location
+            comparator: contains
+            value: /status/200
+    EOF
+    {{< /doc-test >}}

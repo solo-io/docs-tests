@@ -22,7 +22,7 @@ import logging
 import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 try:
     import yaml  # type: ignore[import-not-found]
@@ -35,7 +35,16 @@ except ModuleNotFoundError:
     jsonschema = None
 
 from doc_test_extract import Extractor
-from doc_test_run import DEFAULT_OPTIONS, build_test_cases, build_test_cases_from_file, parse_front_matter, write_report
+from doc_test_run import (
+    DEFAULT_OPTIONS,
+    build_test_cases,
+    build_test_cases_from_file,
+    load_annotation_reports,
+    parse_front_matter,
+    unattached_for,
+    write_job_summary,
+    write_report,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -132,8 +141,12 @@ def check_scenario(
     sources: List[Dict[str, str]],
     schemas: Dict[str, dict],
     docs_tests_root: Optional[Path],
+    read: Optional[Set[Path]] = None,
 ) -> List[str]:
     """Run the 'schema' check across every source step of one test scenario.
+
+    `read`, if given, collects every file the scenario's steps read, so the
+    caller can tell whether markup that did not attach belongs to it.
 
     Most steps are prerequisite pages (install, gateway setup) with no CRD
     manifest to check -- that's expected, not an error. The scenario only fails
@@ -153,6 +166,8 @@ def check_scenario(
         }
         extractor = Extractor(repo_root=repo_root, definition=definition, docs_tests_root=docs_tests_root)
         extractor.walk()
+        if read is not None:
+            read |= extractor.read_files()
         blocks = [b for b in extractor.select_blocks() if not b.hidden and b.language in ("yaml", "yml", "sh", "bash", "shell")]
 
         for block in blocks:
@@ -200,6 +215,15 @@ def main() -> int:
         help="Write a YAML report in the same shape doc_test_run.py writes, so it merges into the "
         "same aggregation/Slack pipeline (e.g. out/tests/generated/schema-results.yaml).",
     )
+    parser.add_argument(
+        "--annotation-report",
+        action="append",
+        default=[],
+        metavar="PATH",
+        help="Report from `annotations.py attach --report` (repeatable). A scenario that would "
+             "select markup which did not attach is skipped with a warning; otherwise it would "
+             "check fewer manifests than it claims, or fail for finding none.",
+    )
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -237,12 +261,23 @@ def main() -> int:
             write_report(Path(args.report_file), [], {})
         return 0
 
+    unattached = load_annotation_reports(args.annotation_report)
     exit_code = 0
     test_results: Dict[str, Dict] = {}
+    skipped: Dict[str, Dict[str, Any]] = {}
     for tc in schema_cases:
         doc_rel = tc.document.relative_to(repo_root).as_posix()
         key = f"{doc_rel}::{tc.name}"
-        errors = check_scenario(repo_root, tc.document, tc.sources, schemas, docs_tests_root)
+        read: Set[Path] = set()
+        errors = check_scenario(repo_root, tc.document, tc.sources, schemas, docs_tests_root, read)
+        missing = unattached_for(tc, read, unattached)
+        if missing:
+            skipped[key] = {"markup": [
+                {"page": m.page.as_posix(), "kind": m.kind, "paths": ",".join(sorted(m.selectors)), "reason": m.reason}
+                for m in missing
+            ]}
+            logger.warning("SKIPPED: %s: %d piece(s) of its test markup did not attach (needs update)", key, len(missing))
+            continue
         if errors:
             exit_code = 1
             logger.error("FAILED: %s", key)
@@ -253,9 +288,10 @@ def main() -> int:
             logger.info("PASSED: %s", key)
             test_results[key] = {"status": "passed", "checks": [], "type": "schema"}
 
+    write_job_summary(skipped)
     if args.report_file:
         tested_documents = sorted({tc.document.relative_to(repo_root).as_posix() for tc in schema_cases})
-        write_report(Path(args.report_file), tested_documents, test_results)
+        write_report(Path(args.report_file), tested_documents, test_results, skipped=skipped)
 
     return exit_code
 

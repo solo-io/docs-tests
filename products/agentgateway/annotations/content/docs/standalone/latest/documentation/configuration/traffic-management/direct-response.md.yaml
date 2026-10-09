@@ -1,0 +1,102 @@
+format: 1
+source: content/docs/standalone/latest/documentation/configuration/traffic-management/direct-response.md
+blocks:
+- 0ab23c5bf41833d8 yaml
+- d0bb73f1bdf1494b yaml
+hidden:
+- after:
+    line: 5821a39698ecc203
+    occurrence: 0
+    words: 9251036c 149d479f 663ea1bf ca978112 1f58b914 0695b563 ca978112 6cdfd271 a9f4b3d2 a24e10fd d5da31ae d15690f0 a9f4b3d2 d15690f0 a9f4b3d2 d5da31ae 1216b2a8 8b7523ec 663ea1bf d6a7cd2a 10e08a41
+    block_before: null
+  content: |-
+    {{< doc-test paths="direct-response" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The direct response example config loads and serves: the gateway returns
+    #     the configured 404 status directly, without a backend.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The conditional-execution variant — requires config/traffic the page omits
+    #     (the `conditional` field is documented on a separate page).
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 1
+      fingerprint: d0bb73f1bdf1494b
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 169e5e52 50a83233 9b818abd
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="direct-response" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        directResponse:
+          body: "Not found!"
+          status: 404
+    EOF
+
+    cat <<'EOF' > config-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        directResponse:
+          body: "Not found!"
+          status: 404
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-mcp.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 1
+      fingerprint: d0bb73f1bdf1494b
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 169e5e52 50a83233 9b818abd
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="direct-response" >}}
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 1
+      fingerprint: d0bb73f1bdf1494b
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 169e5e52 50a83233 9b818abd
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="direct-response" >}}
+    YAMLTest -f - <<'EOF'
+    - name: Direct response returns configured 404
+      http:
+        url: "http://localhost:3000"
+        path: /
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}

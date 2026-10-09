@@ -1,0 +1,56 @@
+format: 1
+source: content/docs/kubernetes/main/documentation/traffic-management/match/method.md
+blocks:
+- 90ff449567591d03 yaml
+- 8022426d89681f9c sh
+- 07aa3ad2a5076fe2 sh
+- 4bc71b288f114caa
+- 4e8ddd45f023fb85 sh
+- a0a489b8c818f70b sh
+- 9c330250109a949b
+- 2ae0326cb95653a7 sh
+tags:
+- paths: method-match
+  block: 0
+  fingerprint: 90ff449567591d03
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa c49a234e 3de9d845 b733d726 4f7ab38a 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="method-match"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: 9c330250109a949b
+    lang: ''
+    lines: 20fa3eb6 512742e0 5560b76b 421dc0bc 6df41b03 fe66b4d1
+    preview: < HTTP/1.1 404 Not Found
+  content: |-
+    {{< doc-test paths="method-match" >}}
+    YAMLTest -f - <<'EOF'
+    - name: method match - GET request returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /get
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: method match - POST request returns 404
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /post
+        method: POST
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}

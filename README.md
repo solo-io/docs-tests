@@ -39,6 +39,57 @@ go install sigs.k8s.io/cloud-provider-kind@latest
 
 ---
 
+## Test annotations
+
+Content repos are moving to carry no test markup at all. The markup (`paths=`
+tags on code blocks, hidden `{{< doc-test >}}` checks, and front matter `test:`)
+moves into this repo as test annotations under `products/<product>/annotations/`,
+one YAML file per page, and `scripts/annotations.py` attaches it to a copy of the
+pages before a run.
+
+An annotation finds its code block by fingerprint, a hash of the block's text, so
+pages can move and prose can change freely. Each piece of markup ends a run in one
+of three states:
+
+| State | What happened |
+|---|---|
+| exact | The block's text is unchanged. |
+| close | The block between the same unchanged neighbors was edited slightly, and it is the only nearly identical candidate: line similarity at least 0.6, and at least 0.1 ahead of the next candidate. |
+| needs update | The block was rewritten or removed. The markup stays in the annotation file and is reported, never attached somewhere else. |
+
+Hidden checks move only with the block or sentence they follow. A check that
+follows a sentence is looked for between the same two code blocks, even when the
+block before it was close-matched.
+
+| Command | Use |
+|---|---|
+| `make annotate PAGE=<page>` then `make save PAGE=<page>` | Add or change the tests on one page. `annotate` writes the page with its markup to `out/annotate/`; edit the markup there; `save` writes only the markup back, and refuses if the copy changes the page itself. |
+| `annotations.py attach` | Attach annotations to a checkout, in place or into `--out`. Removes any inline markup first. |
+| `annotations.py refresh` | After content changes: re-attach, record the new fingerprints, and follow moved pages (git rename detection, then a search by fingerprint). Never drops markup; refuses to write if any would disappear. |
+| `annotations.py export` / `strip` | Migration only: copy inline markup into annotation files, then remove it from the pages. |
+| `annotations.py roundtrip` | Strip and re-attach every page in memory; every page must come back byte-identical. Runs daily in CI against agentgateway/website. |
+| `annotation_replay.py` | Replays a repo's git history, whose inline markup is the answer key, to measure close matching. Re-run it when matching changes; `close WRONG` must not rise. |
+| `doc_test_run.py --annotation-report <attach report>` | Skips, with a warning, any scenario that would select markup which did not attach, instead of running it with a step missing. Skipped scenarios go under `skipped_needs_update` in the results, not under `tests`. |
+
+`.github/workflows/refresh-annotations.yml` runs `refresh` daily at 05:00 UTC
+against agentgateway/website `main` and commits the result to this repo's
+`main`. Every scheduled run posts to `#doctopus-tests` in the same layout as the
+doc test results, listing every piece of markup that needs update, with a thread
+of the day's close matches and moved pages; a failed refresh also posts to
+`#doctopus-builds`. Posting needs a `DOCS_TESTS_SLACK_BOT_TOKEN` secret on this
+repo; until it is set, the step skips with a warning.
+
+For the sections moved so far (traffic-management, and llm under
+`documentation/llm/`), scenario definitions live in the `tests.yaml`
+manifests, so their annotations were exported with `--front-matter none`. A
+manifest key must be unique, but a scenario name need not be: set `name:` when
+two pages in one mode declare the same name. Pages
+that deliberately have no test are listed under the manifest's `skip:` key, the
+manifest form of front matter `test: skip`; the runner and
+`list_untested_docs.py` count them as covered.
+
+---
+
 ## Referencing external test content in this repo
 
 The hidden `{{< doc-test >}}` shortcode (used for setup/assertions that must run

@@ -1,0 +1,29 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/transformations/rewrite.md
+blocks:
+- de178fba999fe2a9 yaml
+- 27c4ebb74492141d sh
+- a3523cdbc9e7c5ad sh
+- 08327a27203448cb console
+- 0fcf10238e57dfed sh
+tags:
+- paths: rewrite
+  block: 0
+  fingerprint: de178fba999fe2a9
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 14ddcd05 207d5e5e aca2be15 6a97b2e8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite"
+    only: true
+    lead: ' '
+- paths: rewrite
+  block: 4
+  fingerprint: 0fcf10238e57dfed
+  lang: sh
+  lines: 0fcf1023
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} transformation -n htt
+  form:
+    attr: paths="rewrite"
+    only: true
+    lead: ' '

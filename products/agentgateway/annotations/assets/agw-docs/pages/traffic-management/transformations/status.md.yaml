@@ -1,0 +1,32 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/transformations/status.md
+blocks:
+- 8b20c794e7accb77 yaml
+- 8ba6c90408e04b0e sh
+- 0c98a5dd64297be4 sh
+- f0a290f1e410e519 console
+- f7dfe1f0e679c2b2 sh
+- 42a6f534cf943d87 sh
+- 309daeb6f2982c7d console
+- 41cac7d86ee89928 sh
+tags:
+- paths: change-response-status
+  block: 0
+  fingerprint: 8b20c794e7accb77
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 99c83b01 207d5e5e 78aa8473 3776b36a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="change-response-status"
+    only: true
+    lead: ' '
+- paths: change-response-status
+  block: 7
+  fingerprint: 41cac7d86ee89928
+  lang: sh
+  lines: 41cac7d8
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} transformation -n htt
+  form:
+    attr: paths="change-response-status"
+    only: true
+    lead: ' '

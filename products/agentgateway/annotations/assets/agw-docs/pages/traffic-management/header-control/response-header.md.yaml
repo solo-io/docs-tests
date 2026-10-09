@@ -1,0 +1,119 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/header-control/response-header.md
+blocks:
+- 3510238c88fc4935 yaml
+- c98b23ddcb4cc9e0 sh
+- 990ed4f22f3e1a15 sh
+- ca2f860f0478470d yaml
+- 277919f74f676448 sh
+- ee32aa6eafdca458 yaml
+- c98b23ddcb4cc9e0 sh
+- 990ed4f22f3e1a15 sh
+- 3e5c76565b84e7d2 yaml
+- 277919f74f676448 sh
+- f8d585ba5c7f2c44 sh
+- 3c87a7c8c15d70f3 sh
+- 8dec2a58129726f3 yaml
+- 9e849b4c26a653ef yaml
+- 4680ccb189cf08b2 sh
+- 990ed4f22f3e1a15 sh
+- b2cd2dd21af49fe8 yaml
+- 277919f74f676448 sh
+tags:
+- paths: add-response-header
+  block: 0
+  fingerprint: 3510238c88fc4935
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 274fdf3f 3f48a57d 0ca4c44a 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="add-response-header"
+    only: true
+    lead: ' '
+- paths: set-response-header
+  block: 5
+  fingerprint: ee32aa6eafdca458
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 207d5e5e 3f48a57d 6cf8deb4 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="set-response-header"
+    only: true
+    lead: ' '
+- paths: remove-response-header
+  block: 13
+  fingerprint: 9e849b4c26a653ef
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 0a282488 d31d0ec6 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-response-header"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 17
+    fingerprint: 277919f74f676448
+    lang: sh
+    lines: 277919f7
+    preview: kubectl delete httproute httpbin-headers -n httpbin
+  content: |-
+    {{< doc-test paths="add-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify add-response-header returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}"
+        path: /response-headers
+        method: GET
+        headers:
+          host: headers.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 277919f74f676448
+    lang: sh
+    lines: 277919f7
+    preview: kubectl delete httproute httpbin-headers -n httpbin
+  content: |-
+    {{< doc-test paths="set-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify set-response-header returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}"
+        path: /response-headers
+        method: GET
+        headers:
+          host: headers.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 277919f74f676448
+    lang: sh
+    lines: 277919f7
+    preview: kubectl delete httproute httpbin-headers -n httpbin
+  content: |-
+    {{< doc-test paths="remove-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify remove-response-header returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}"
+        path: /response-headers
+        method: GET
+        headers:
+          host: headers.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

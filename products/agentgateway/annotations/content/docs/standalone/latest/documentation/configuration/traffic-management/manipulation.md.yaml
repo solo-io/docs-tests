@@ -1,0 +1,68 @@
+format: 1
+source: content/docs/standalone/latest/documentation/configuration/traffic-management/manipulation.md
+blocks:
+- 0cb05e570ded0d52 yaml
+- 5883bfeafa5931d2 yaml
+hidden:
+- after:
+    line: 714405c4ca3422b9
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 9e5cb570
+    block_before: null
+  content: |-
+    {{< doc-test paths="manipulation" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 1
+      fingerprint: 5883bfeafa5931d2
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 8fb7eebc 274fdf3f fda97037 0a282488 c5327974 d72f261d c64a4012
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="manipulation" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The requestHeaderModifier example config is accepted by agentgateway in
+    #     both the routing-based (gateways) and simplified MCP (mcp.policies) forms.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That headers are actually added/removed at runtime — requires a backend
+    #     the page omits to forward to and inspect.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        requestHeaderModifier:
+          add:
+            x-req-added: value
+          remove:
+          - x-remove-me
+      backends:
+      - host: localhost:8080
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    cat <<'EOF' > config-mcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      policies:
+        requestHeaderModifier:
+          add:
+            x-req-added: value
+          remove:
+          - x-remove-me
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-mcp.yaml --validate-only
+    {{< /doc-test >}}

@@ -55,7 +55,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install Python dependencies
-        run: pip install pyyaml
+        run: pip install pyyaml jsonschema
 
       - name: Run unit tests
         env:
@@ -69,3 +69,9 @@ jobs:
           # difference to rule out when CI and a local run disagree.
           PYTHONDONTWRITEBYTECODE: '1'
         run: python3 -m unittest discover -s scripts -p 'test_*.py' --verbose
+
+      # Test annotations depend on reading every markup shape the consumer
+      # writes. Removing all markup and attaching it again must give back every
+      # page byte for byte; a new shape breaks this job, not a refresh.
+      - name: Annotation round trip on agentgateway/website
+        run: python3 scripts/annotations.py roundtrip --repo consumer

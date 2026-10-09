@@ -1,0 +1,146 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/redirect/https.md
+blocks:
+- 70824bf2b072df46 yaml
+- cd2b9b924331b7a6 yaml
+- a468ea3c93d5a4f5 yaml
+- 4254d9bbd891a634 sh
+- 942a91bb93288801 sh
+- b7ca27eca0f8d66f console
+- 1c2cee4fd62c1a19 sh
+- 3c43fec4b94c5550 sh
+- d7d38bd89e09428f sh
+- 609af59be38f5a9f console
+- d50a3ea60e2a8cc8 sh
+- 9c0792a663fc47c9 sh
+- fa6416c7cf4be2d8 yaml
+tags:
+- paths: https-redirect
+  block: 0
+  fingerprint: 70824bf2b072df46
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 89b06424 8af957d1 36184fa5 2fae86d3 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d 52b5b541 c6ba4159 53aa10f9 3195c5f5 f7446fcf bc611839 52b5b541 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="https-redirect"
+    only: true
+    lead: ' '
+- paths: https-redirect
+  block: 1
+  fingerprint: cd2b9b924331b7a6
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1a8f47ee 0f10c5bc fa1e8330 b12a93d4 36184fa5 d3d416e7 2d157081 8af957d1 e4741808 301e1bfa 55d0b075 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 ae6b70e3 96b1dd04 4b419f75 efc6b016 1ee19891 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="https-redirect"
+    only: true
+    lead: ' '
+- paths: https-redirect
+  block: 2
+  fingerprint: a468ea3c93d5a4f5
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 b12a93d4 36184fa5 d3d416e7 2d157081 8af957d1 dbf68719 301e1bfa 55d0b075 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="https-redirect"
+    only: true
+    lead: ' '
+- paths: https-redirect
+  block: 10
+  fingerprint: d50a3ea60e2a8cc8
+  lang: sh
+  lines: d50a3ea6
+  preview: kubectl delete httproute,secret -A -l gateway=https --ignore-not-found
+  form:
+    attr: paths="https-redirect"
+    only: true
+    lead: ' '
+- paths: https-redirect
+  block: 11
+  fingerprint: 9c0792a663fc47c9
+  lang: sh
+  lines: 9c0792a6
+  preview: rm -rf example_certs
+  form:
+    attr: paths="https-redirect"
+    only: true
+    lead: ' '
+- paths: https-redirect
+  block: 12
+  fingerprint: fa6416c7cf4be2d8
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 89b06424 8af957d1 36184fa5 2fae86d3 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="https-redirect"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 9
+    fingerprint: 609af59be38f5a9f
+    lang: console
+    lines: b7d0c99e edbf342c 24d920e3 a7e7ba83 2a7b465c f1901ba0 5a4b1a12 756e5458 f32c91a7 fac876a5 e6f992f5 d2e863c2 184f0709 ffaf83a5 81a467da e48cb674 c8518524 50fc9288 317b9438 62b67e1f 5b07bb0e 6364ab47 92413e97 ab5df625
+    preview: '* ALPN: curl offers h2,http/1.1'
+  blank_before:
+  - ''
+  - ''
+  content: |-
+    {{< doc-test paths="https-redirect" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin-https-redirect HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-https-redirect
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 609af59be38f5a9f
+    lang: console
+    lines: b7d0c99e edbf342c 24d920e3 a7e7ba83 2a7b465c f1901ba0 5a4b1a12 756e5458 f32c91a7 fac876a5 e6f992f5 d2e863c2 184f0709 ffaf83a5 81a467da e48cb674 c8518524 50fc9288 317b9438 62b67e1f 5b07bb0e 6364ab47 92413e97 ab5df625
+    preview: '* ALPN: curl offers h2,http/1.1'
+  content: |-
+    {{< doc-test paths="https-redirect" >}}
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/status/200" -H "host: redirect.example" && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 609af59be38f5a9f
+    lang: console
+    lines: b7d0c99e edbf342c 24d920e3 a7e7ba83 2a7b465c f1901ba0 5a4b1a12 756e5458 f32c91a7 fac876a5 e6f992f5 d2e863c2 184f0709 ffaf83a5 81a467da e48cb674 c8518524 50fc9288 317b9438 62b67e1f 5b07bb0e 6364ab47 92413e97 ab5df625
+    preview: '* ALPN: curl offers h2,http/1.1'
+  content: |-
+    {{< doc-test paths="https-redirect" >}}
+    YAMLTest -f - <<'EOF'
+    - name: https redirect - HTTP request returns 301 with https location
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200
+        method: GET
+        headers:
+          host: redirect.example
+      source:
+        type: local
+      expect:
+        statusCode: 301
+        headers:
+          - name: location
+            comparator: contains
+            value: https://redirect.example
+    EOF
+    {{< /doc-test >}}

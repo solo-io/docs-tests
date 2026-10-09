@@ -93,6 +93,9 @@ from doc_test_run import parse_front_matter, version_path_tokens  # noqa: E402
 # that a human running this by hand is standing in the repo they mean.
 REPO_ROOT = pathlib.Path(os.environ.get("DOCS_REPO_ROOT") or os.getcwd())
 
+# The docs-tests checkout this script sits in, for its scenario manifests.
+DOCS_TESTS_ROOT = pathlib.Path(__file__).resolve().parent.parent
+
 # Matches `{{< reuse "agw-docs/..." >}}` and the `{{% ... %}}` form, plus
 # `reuse-append`. Copied from `doc_test_extract.py`'s pattern so the two agree
 # on what counts as an inclusion; see the note in the module docstring.
@@ -209,7 +212,8 @@ def build_reverse_index(root: pathlib.Path) -> dict[str, set[str]]:
     return index
 
 
-def build_test_dependency_index(root: pathlib.Path) -> dict[str, set[str]]:
+def build_test_dependency_index(root: pathlib.Path,
+                                docs_tests_root: pathlib.Path | None = DOCS_TESTS_ROOT) -> dict[str, set[str]]:
     """``step source file -> {pages whose tests run it}``.
 
     Kept apart from the inclusion index because the two relations do NOT
@@ -250,6 +254,19 @@ def build_test_dependency_index(root: pathlib.Path) -> dict[str, set[str]]:
         src = md.relative_to(root).as_posix()
         for target in test_dependency_targets(src, root):
             index.setdefault(target, set()).add(src)
+    # The same relation, declared in docs-tests manifests instead of front
+    # matter: a scenario's `needs:` and `before:` steps are on other pages. A
+    # page whose scenarios moved to a manifest has no front matter left to
+    # read, and without this a change to the install guide would stop selecting
+    # its tests.
+    if docs_tests_root is not None:
+        from doc_test_run import build_test_cases_from_manifests  # noqa: E402
+        cases, _, _ = build_test_cases_from_manifests(root, docs_tests_root, root / "out")
+        for case in cases:
+            page = case.document.relative_to(root).as_posix()
+            for source in case.sources:
+                if source["file"] != page:
+                    index.setdefault(source["file"], set()).add(page)
     return index
 
 

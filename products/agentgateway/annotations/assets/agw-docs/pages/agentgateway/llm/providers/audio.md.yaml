@@ -1,0 +1,44 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/providers/audio.md
+blocks:
+- 678cc67f602b026f yaml
+- 7e8a07f6747e4def sh
+- 83a77f9fc4e959dd sh
+- a92d22db515bed9b yaml
+- c48f902d4ae64c55 yaml
+- 4c74e7b2ae10f823 sh
+- dc68a5d6b64158a8 sh
+- 5bbc58dd3cbf8ecd sh
+- 05e547b72388d3f9 sh
+- 85cf9a043a7cabef shell
+tags:
+- paths: audio-deploy
+  block: 0
+  fingerprint: 678cc67f602b026f
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 3829dd65 8af957d1 36184fa5 97bcd5e0 8432e015 839a5cac 13d5fdae a58565b2 8c8c4228 fa1e8330 13d5fdae 36184fa5 04968f51 0b1f7426 8b3b1eec 7c9dace4 0e7a9694 41bb2e12 f8b60760 b97f4216 93eda13e 3d6a6457 93eda13e 85178fc7 93eda13e b3f81ee2 93eda13e 9ebf6495 0ff65a1a 11edf656 9278ed91 cab2be2b 2629ac0e 7b9b21c8 77f1ea54 7b9b21c8 cb3f91d5 f1540154 0d6480f0 8c8c4228 53650024 8af957d1 36184fa5 8432e015 13d5fdae 0ff65a1a 0baaa92b ad63f385 9693ecf1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="audio-deploy"
+    only: true
+    lead: ' '
+- paths: audio-backend
+  block: 3
+  fingerprint: a92d22db515bed9b
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 d5590a43 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 bdd64589 d80847cc da480536 c8f3f59a ad3afdb1 d67b54bf d7be2a84 48b657b4 5f6d076e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="audio-backend"
+    only: true
+    lead: ' '
+- paths: audio-route
+  block: 4
+  fingerprint: c48f902d4ae64c55
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 bc73a347 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 f06990a9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 853b4491 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="audio-route"
+    only: true
+    lead: ' '

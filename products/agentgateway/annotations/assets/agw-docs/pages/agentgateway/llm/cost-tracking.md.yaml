@@ -1,0 +1,42 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/cost-tracking.md
+blocks:
+- 422e8dc115fd8601 sh
+- dc0f7bd0b8607245
+- 0dab2042a5dd9c55
+- 4a0b96aaba9d8e2a
+- c5081832d24b7ffe promql
+- 17c0f2aab5939dd3 promql
+- adc75735c2053aba yaml
+tags:
+- paths: cost-tracking
+  block: 0
+  fingerprint: 422e8dc115fd8601
+  lang: sh
+  lines: 92683420 fbb97a21
+  preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
+  form:
+    bare: ',paths="cost-tracking"'
+    at: 2
+hidden:
+- after:
+    line: f6c18d97d3dca4d2
+    occurrence: 0
+    words: b9776d7d 76ac9438 a1b7c6f1 c093955c 11239872 c51e455b 8082d8aa 6201111b 83d4baac c093955c b9776d7d 12886f9d 28391d3b ec72420d
+    block_before:
+      block: 1
+      fingerprint: dc0f7bd0b8607245
+      lang: ''
+      lines: 430a5fe5 772554a5 e9779c28
+      preview: agentgateway_gen_ai_client_token_usage_bucket{gen_ai_operation_name="chat",gen_a
+  content: |-
+    {{< doc-test paths="cost-tracking" >}}
+    # Verify metrics endpoint is accessible and contains token usage metrics
+    curl -s http://localhost:15020/metrics | grep -q "agentgateway_gen_ai_client_token_usage"
+    if [ $? -eq 0 ]; then
+      echo "✓ Token usage metrics found"
+    else
+      echo "✗ Token usage metrics not found"
+      exit 1
+    fi
+    {{< /doc-test >}}

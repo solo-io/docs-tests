@@ -1,0 +1,217 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/providers/openai.md
+blocks:
+- 4e548af92d68424c sh
+- f64ee25a12a74cd9 yaml
+- 109e08cf10a0ffd0 yaml
+- bdf35e2bb162b2b0 yaml
+- a83812e62d6a3547 yaml
+- ec4b2cc553e04c83 sh
+- bebcec8c24a94b21 sh
+- 485496af0586741a sh
+- 0f46103c4228b8ad sh
+- 6903cd835be33925 json
+- 7a0b4cc002d3054f sh
+tags:
+- paths: openai-setup
+  block: 1
+  fingerprint: f64ee25a12a74cd9
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f 8af957d1 1426decf 2f7c298d 73825423 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="openai-setup"
+    only: true
+    lead: ' '
+- paths: openai-setup
+  block: 2
+  fingerprint: 109e08cf10a0ffd0
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 c9064c18 341b9ea6 f210d63b 73cfcae7 6ef042c9 c8f3f59a 146e11c6 9ebc4789 4df4f75f ad3afdb1 d67b54bf 958c810b 98b45d4c ae8095cb 5f6d076e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="openai-setup"
+    only: true
+    lead: ' '
+- paths: openai-setup
+  block: 4
+  fingerprint: a83812e62d6a3547
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="openai-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 4
+      fingerprint: a83812e62d6a3547
+      lang: yaml
+      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="openai-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for openai backend to be ready
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: agentgateway-system
+            name: openai
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    # THE STATUS ALONE STOPPED MEANING "ACCEPTED".
+    #
+    # A backend whose translation partly failed now reports Accepted=True with
+    # reason PartiallyValid, and serves whatever did translate. So the check above
+    # passes on a backend that silently dropped its auth policy: the Secret is
+    # missing, the credential is empty, and every request to the provider fails
+    # authentication at the provider. The reason is the only field that tells the
+    # two apart.
+    - name: the openai backend translated in full, not partly
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: agentgateway-system
+            name: openai
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 4
+      fingerprint: a83812e62d6a3547
+      lang: yaml
+      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="openai-setup" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Set up access to OpenAI": the Secret, the AgentgatewayBackend with the
+    #     `openai` provider and its `policies.auth.secretRef`, and the HTTPRoute are
+    #     all accepted, and the backend reports Accepted=True with reason Accepted
+    #     rather than PartiallyValid.
+    #   * "Step 4": a request along the documented route reaches the provider and
+    #     comes back as an OpenAI-shaped chat completion with token usage.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * A live completion from OpenAI itself. This setup is the shared prerequisite
+    #     for most of the LLM guides, so the backend created above is patched to point
+    #     at the httpbun mock LLM. That keeps every guide that chains this path free of
+    #     a provider API key and bills nothing, while still exercising the whole
+    #     gateway side of the request: the route, the auth policy, the provider wiring,
+    #     and the response parsing that produces the token usage.
+    #     To reproduce the guide against the real provider, skip this block and export
+    #     a real OPENAI_API_KEY.
+    {{< reuse "agw-docs/snippets/deploy-mock-llm.md" >}}
+    kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge --patch-file /dev/stdin <<EOF
+    spec:
+      ai:
+        provider:
+          host: httpbun.default.svc.cluster.local
+          port: 3090
+          path: /llm/chat/completions
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the openai backend to settle after the mock LLM patch
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: agentgateway-system
+            name: openai
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    # Checked after the patch as well as before it, because the patch rewrites the
+    # provider block and a backend that translated cleanly a moment ago can come
+    # back PartiallyValid. See the note on the same check above.
+    - name: the patched openai backend translated in full, not partly
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: agentgateway-system
+            name: openai
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 8
+      fingerprint: 0f46103c4228b8ad
+      lang: sh
+      lines: 0b3a8529 2665f611 4b3b16d3 021fb596 23c01049 29fe507d e52a1813 021fb596 09d1b3dd 807c5f86 d10b36aa cfae0d42 c83aa0a4
+      preview: curl "localhost:8080/openai" -H content-type:application/json  -d '{
+  content: |-
+    {{< doc-test paths="openai-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: send request to OpenAI and verify response with token usage
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {
+            "model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Say hello in one word"
+              }
+            ]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.usage.total_tokens"
+            comparator: greaterThan
+            value: 0
+          - path: "$.usage.prompt_tokens"
+            comparator: greaterThan
+            value: 0
+          - path: "$.usage.completion_tokens"
+            comparator: greaterThan
+            value: 0
+    EOF
+    {{< /doc-test >}}

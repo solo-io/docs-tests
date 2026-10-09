@@ -239,7 +239,26 @@ class TestDependencyEdgeTests(unittest.TestCase):
         self.addCleanup(self._tmp.cleanup)
 
     def indexes(self):
-        return rc.build_reverse_index(self.root), rc.build_test_dependency_index(self.root)
+        # No manifests: these fixtures are about front matter alone.
+        return rc.build_reverse_index(self.root), rc.build_test_dependency_index(self.root, docs_tests_root=None)
+
+    def test_a_manifest_setup_step_is_an_edge_too(self):
+        """A page whose scenarios moved to a manifest has no front matter left to read."""
+        install = "content/docs/kubernetes/main/documentation/quickstart/install.md"
+        feature = "content/docs/kubernetes/main/documentation/traffic-management/feature.md"
+        self.page(install, "```sh {paths=\"standard\"}\nhelm install\n```\n")
+        self.page(feature, "```sh {paths=\"feature\"}\nkubectl apply\n```\n")
+        docs_tests = pathlib.Path(self._tmp.name) / "docs-tests"
+        write(docs_tests, "products/p/kubernetes/tests.yaml",
+              "version: 1\nmode: kubernetes\nprerequisites:\n  install:\n"
+              "    page: documentation/quickstart/install.md\n    path: standard\n"
+              "scenarios:\n  feature:\n    needs: [install]\n"
+              "    page: documentation/traffic-management/feature.md\n    path: feature\n")
+        index = rc.build_reverse_index(self.root)
+        self.assertEqual(rc.consumers([install], index, test_index=rc.build_test_dependency_index(self.root, docs_tests_root=None)),
+                         [install])
+        test_index = rc.build_test_dependency_index(self.root, docs_tests_root=docs_tests)
+        self.assertEqual(sorted(rc.consumers([install], index, test_index=test_index)), sorted([install, feature]))
 
     def page(self, rel, body="", test_block=""):
         fm = f"---\ntitle: x\n{test_block}---\n\n"

@@ -1,0 +1,208 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/route-delegation/header-query.md
+blocks:
+- a9527c6c59591043 yaml
+- d2359283d80a905b yaml
+- 9cf501cf48d7286c yaml
+- 2fbd7dcddd5211ac sh
+- 7e05fc38422947da sh
+- 66a18411b61bd8db
+- cfd10eb2ff479b73 sh
+- 121da548524ee725 sh
+- fed1873e2e009f09
+- 64a15067621da1e8 sh
+- a2d52e8b41721c99 sh
+- fed1873e2e009f09
+- 00c50266d1324281 sh
+- 2705c91a095e2a3f sh
+- 66a18411b61bd8db
+- 2f162597cd3e3ddc sh
+tags:
+- paths: header-query
+  block: 0
+  fingerprint: a9527c6c59591043
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 8af957d1 36184fa5 301e1bfa b3d5ff50 d3d416e7 2d157081 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 38dc0152 6c185c69 d425395d c4a459dc b32488bc 6c185c69 9edab9e2 c4a459dc 94ae491e b5a028c9 56bf9360 587e8306 53143665 b733d726 aeca2b3d bf068a96 b83a8e91 38dc0152 6c185c69 bb0a67cb cb3b110e b32488bc 6c185c69 c31c43c0 cb3b110e 94ae491e b5a028c9 56bf9360 38c60fa9 52418815 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-query"
+    only: true
+    lead: ' '
+- paths: header-query
+  block: 1
+  fingerprint: d2359283d80a905b
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 38dc0152 6c185c69 d425395d c4a459dc 6c185c69 48bae7d5 3b1a9ad9 b32488bc 6c185c69 9edab9e2 c4a459dc 6c185c69 cd237a6e 3b1a9ad9 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-query"
+    only: true
+    lead: ' '
+- paths: header-query
+  block: 2
+  fingerprint: 9cf501cf48d7286c
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-query"
+    only: true
+    lead: ' '
+- paths: header-query
+  block: 15
+  fingerprint: 2f162597cd3e3ddc
+  lang: sh
+  lines: 5b5f9e39 8eb39b11 694e0289 5e9ff8be
+  preview: kubectl delete httproute parent -n {{< reuse "agw-docs/snippets/namespace.md" >}
+  form:
+    attr: paths="header-query"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 9cf501cf48d7286c
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="header-query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 9cf501cf48d7286c
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="header-query" >}}
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null \
+           "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo?query1=val1&queryX=valX" \
+           -H "host: delegation.example" \
+           -H "header1: val1" \
+           -H "headerX: valX" && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 4
+      fingerprint: 7e05fc38422947da
+      lang: sh
+      lines: 5a822c26 0012426e
+      preview: curl -i "localhost:8080/anything/team1/foo?query1=val1" \
+  content: |2-
+       {{< doc-test paths="header-query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /team1/foo with only parent headers/query returns 404
+         retries: 1
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo?query1=val1"
+           method: GET
+           headers:
+             host: delegation.example
+             header1: val1
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 7
+      fingerprint: 121da548524ee725
+      lang: sh
+      lines: 532a7012 085f1b65
+      preview: curl -i "localhost:8080/anything/team1/foo?query1=val1&queryX=valX" \
+  content: |2-
+       {{< doc-test paths="header-query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /team1/foo with full superset of headers/query returns 200
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo?query1=val1&queryX=valX"
+           method: GET
+           headers:
+             host: delegation.example
+             header1: val1
+             headerX: valX
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 10
+      fingerprint: a2d52e8b41721c99
+      lang: sh
+      lines: 3f648485 aea38256
+      preview: curl -i "localhost:8080/anything/team2/bar?query2=val2" \
+  content: |2-
+       {{< doc-test paths="header-query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /team2/bar with parent matchers returns 200 (child matches on path only)
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team2/bar?query2=val2"
+           method: GET
+           headers:
+             host: delegation.example
+             header2: val2
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 3
+    words: 32d3feda
+    block_before:
+      block: 13
+      fingerprint: 2705c91a095e2a3f
+      lang: sh
+      lines: 1d22c81a 12165024
+      preview: curl -i localhost:8080/anything/team2/bar \
+  content: |2-
+       {{< doc-test paths="header-query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: /team2/bar without parent matchers returns 404 (no delegation)
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team2/bar"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       EOF
+       {{< /doc-test >}}

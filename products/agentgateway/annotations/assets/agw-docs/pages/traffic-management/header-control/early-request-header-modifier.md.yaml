@@ -1,0 +1,61 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/header-control/early-request-header-modifier.md
+blocks:
+- d30c53c5f5d8729d yaml
+- 4345ddd3fe53fac1 sh
+- 02000168fef151ed sh
+- 9f40236a54446d6c json
+- e7867679b3cb7efa yaml
+- 1eee0a8aa84ee449 sh
+- 02000168fef151ed sh
+- 8cac880c17810084 json
+- 6ff8645793562615 sh
+tags:
+- paths: remove-reserved-header
+  block: 0
+  fingerprint: d30c53c5f5d8729d
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7237d9e7 0f10c5bc 36184fa5 301e1bfa e001930b d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c 0f10c5bc bca8e5f7 9278ed91 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-reserved-header"
+    only: true
+    lead: ' '
+- paths: remove-reserved-header
+  block: 4
+  fingerprint: e7867679b3cb7efa
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 0a6df10b 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4741808 e4f6a86d 5a52fee2 8905bcef 14ddcd05 0a282488 9cfbba79 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-reserved-header"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 7
+    fingerprint: 8cac880c17810084
+    lang: json
+    lines: 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a 717aa0c0 39d4b54e 0653176f f538f08a cfae0d42 d10b36aa d10b36aa
+    preview: '{'
+  blank_before:
+  - ''
+  - ''
+  - ''
+  content: |-
+    {{< doc-test paths="remove-reserved-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify request after reserved header removal returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}"
+        path: /headers
+        method: GET
+        headers:
+          host: transformation.example
+          x-user-id: reserved-user
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

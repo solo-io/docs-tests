@@ -1,0 +1,58 @@
+format: 1
+source: content/docs/kubernetes/latest/documentation/traffic-management/match/host.md
+blocks:
+- 34e7318cc8334b2e yaml
+- ee0eaded838f40a7 sh
+- b5e7a17b5f71640b sh
+- d35490668582c088
+- 4f327e612a4bbf71 sh
+- 117520e4e07060bf sh
+- d35490668582c088
+- 32ed805e3efa5796 sh
+tags:
+- paths: host-match
+  block: 0
+  fingerprint: 34e7318cc8334b2e
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 71925d63 541acc73 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="host-match"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: d35490668582c088
+    lang: ''
+    lines: 5b07bb0e 6364ab47 92413e97 32cf5997 a152bc23 b8fcb227 c441a9d6 8cdb8317 15357256
+    preview: '* Request completely sent off'
+  blank_before:
+  - '   '
+  content: |-
+    {{< doc-test paths="host-match" >}}
+    YAMLTest -f - <<'EOF'
+    - name: host match - host1.example returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200
+        method: GET
+        headers:
+          host: host1.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: host match - host2.example returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200
+        method: GET
+        headers:
+          host: host2.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

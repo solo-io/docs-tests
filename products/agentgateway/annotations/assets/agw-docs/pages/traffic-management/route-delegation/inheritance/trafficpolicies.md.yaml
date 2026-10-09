@@ -1,0 +1,389 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/route-delegation/inheritance/trafficpolicies.md
+blocks:
+- 112351b4e2088124 yaml
+- 1fc7324922c7dbbb yaml
+- 065c85c90c58d349 yaml
+- 99bf3cdf89836142 yaml
+- c0804f0b08a013ce sh
+- 5695f1b10aed4e38
+- 5830595c763e7e7b sh
+- 993400c099d82627 sh
+- 1a1093ba9305377a json
+- 77c2dd6568e592f6 sh
+- 9eeff5ddfff42a8b sh
+- fb4732cc6b0f9ab9
+- 457ac3347ceefae9 sh
+- 39ffa2dc967d2df9 yaml
+- 305a9f90ec7b8d7c yaml
+- 77c2dd6568e592f6 sh
+- 9eeff5ddfff42a8b sh
+- 319d78eaf619cd08
+- a42bf17264820024 sh
+- dc1181114adce208 sh
+- 319d78eaf619cd08
+- 2e5f0a2c4ed81ae6 sh
+- 026bc47d40354983 sh
+- 319d78eaf619cd08
+- 00b7ceaaabfbbde2 sh
+- f345ab753760ab42 sh
+- fed1873e2e009f09
+- fd3f8ec38e0383d5 sh
+tags:
+- paths: trafficpolicies
+  block: 0
+  fingerprint: 112351b4e2088124
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 8af957d1 36184fa5 d3d416e7 2d157081 301e1bfa 8c2fb89f 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 94ae491e b5a028c9 56bf9360 587e8306 53143665 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="trafficpolicies"
+    only: true
+    lead: ' '
+- paths: trafficpolicies
+  block: 1
+  fingerprint: 1fc7324922c7dbbb
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="trafficpolicies"
+    only: true
+    lead: ' '
+- paths: trafficpolicies
+  block: 2
+  fingerprint: 065c85c90c58d349
+  lang: yaml
+  lines: 16c71da1 263e4531 53dbf16f 8c8c4228 12518744 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 2ffc2bb4 e4f6a86d 8905bcef 14ddcd05 207d5e5e d512b6e9 e8b83260 a50da420 f971795d 0818043e 78544aa5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="trafficpolicies"
+    only: true
+    lead: ' '
+- paths: trafficpolicies
+  block: 3
+  fingerprint: 99bf3cdf89836142
+  lang: yaml
+  lines: 16c71da1 263e4531 53dbf16f 8c8c4228 a4523099 53143665 36184fa5 588a5d84 b5a028c9 56bf9360 587e8306 e4f6a86d 8905bcef 14ddcd05 207d5e5e 8139c674 240ea139 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="trafficpolicies"
+    only: true
+    lead: ' '
+- paths: trafficpolicies
+  block: 12
+  fingerprint: 457ac3347ceefae9
+  lang: sh
+  lines: 21907c90 5b3178c6
+  preview: kubectl delete agentgatewaypolicy parent-policy -n {{< reuse "agw-docs/snippets/
+  form:
+    attr: paths="trafficpolicies"
+    only: true
+    lead: ' '
+- paths: trafficpolicies
+  block: 13
+  fingerprint: 39ffa2dc967d2df9
+  lang: yaml
+  lines: 16c71da1 263e4531 53dbf16f 8c8c4228 1abf8d82 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 2ffc2bb4 e4f6a86d d48a6346 b62a6b33 1188488c 0a06a173 f5c9aa13 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="trafficpolicies"
+    only: true
+    lead: ' '
+- paths: trafficpolicies
+  block: 14
+  fingerprint: 305a9f90ec7b8d7c
+  lang: yaml
+  lines: 16c71da1 263e4531 53dbf16f 8c8c4228 9deff88c 53143665 36184fa5 588a5d84 b5a028c9 56bf9360 587e8306 e4f6a86d d48a6346 b62a6b33 1188488c 0a06a173 d7273085 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="trafficpolicies"
+    only: true
+    lead: ' '
+- paths: trafficpolicies
+  block: 27
+  fingerprint: fd3f8ec38e0383d5
+  lang: sh
+  lines: b2e1d753 ef53afce 128fd41a 2c026101 5b5f9e39 8eb39b11 5e9ff8be
+  preview: kubectl delete agentgatewaypolicy parent-authz -n {{< reuse "agw-docs/snippets/n
+  form:
+    attr: paths="trafficpolicies"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 1fc7324922c7dbbb
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 1fc7324922c7dbbb
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo" -H "host: delegation.example" && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 5695f1b10aed4e38
+    lang: ''
+    lines: ea934d07 fd45199b b14cedaa 606db03a
+    preview: NAME            ACCEPTED   ATTACHED   AGE
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for parent-policy to be attached
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: parent-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       - name: wait for child-policy to be attached
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: team1
+               name: child-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 7
+      fingerprint: 993400c099d82627
+      lang: sh
+      lines: 993400c0
+      preview: 'curl -s localhost:8080/anything/team1/foo -H "host: delegation.example"'
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: child transformation wins over parent transformation
+         retries: 1
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.headers.X-Child-Policy[0]"
+               comparator: contains
+               value: "This is the child-team1 policy."
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 10
+      fingerprint: 9eeff5ddfff42a8b
+      lang: sh
+      lines: 9eeff5dd
+      preview: 'curl -i localhost:8080/anything/team1/foo -H "host: delegation.example"'
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: second request hits inherited parent rate limit
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 429
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 305a9f90ec7b8d7c
+    lang: yaml
+    lines: 16c71da1 263e4531 53dbf16f 8c8c4228 9deff88c 53143665 36184fa5 588a5d84 b5a028c9 56bf9360 587e8306 e4f6a86d d48a6346 b62a6b33 1188488c 0a06a173 d7273085 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for parent-authz to be attached
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: parent-authz
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       - name: wait for child-authz to be attached
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: team1
+               name: child-authz
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 16
+      fingerprint: 9eeff5ddfff42a8b
+      lang: sh
+      lines: 9eeff5dd
+      preview: 'curl -i localhost:8080/anything/team1/foo -H "host: delegation.example"'
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: no headers - 403 (both Require rules unmet)
+         retries: 1
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 403
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 3
+    words: 32d3feda
+    block_before:
+      block: 19
+      fingerprint: dc1181114adce208
+      lang: sh
+      lines: 21cf0482 898601bc a6c08ea2
+      preview: curl -i localhost:8080/anything/team1/foo \
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: only x-parent-required - 403 (child Require unmet)
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo"
+           method: GET
+           headers:
+             host: delegation.example
+             x-parent-required: "true"
+         source:
+           type: local
+         expect:
+           statusCode: 403
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 4
+    words: 32d3feda
+    block_before:
+      block: 22
+      fingerprint: 026bc47d40354983
+      lang: sh
+      lines: 21cf0482 898601bc 054d65ab
+      preview: curl -i localhost:8080/anything/team1/foo \
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: only x-child-required - 403 (parent Require unmet)
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo"
+           method: GET
+           headers:
+             host: delegation.example
+             x-child-required: "true"
+         source:
+           type: local
+         expect:
+           statusCode: 403
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 5
+    words: 32d3feda
+    block_before:
+      block: 25
+      fingerprint: f345ab753760ab42
+      lang: sh
+      lines: 21cf0482 898601bc 74b81948 054d65ab
+      preview: curl -i localhost:8080/anything/team1/foo \
+  content: |2-
+       {{< doc-test paths="trafficpolicies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: both required headers - 200 (both Require rules met)
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/foo"
+           method: GET
+           headers:
+             host: delegation.example
+             x-parent-required: "true"
+             x-child-required: "true"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

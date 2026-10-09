@@ -1,0 +1,56 @@
+format: 1
+source: content/docs/kubernetes/1.5.x/documentation/traffic-management/match/query.md
+blocks:
+- f8a2b3b562a8bd58 yaml
+- c82344123aca58f8 sh
+- d76edfa27d11be1a sh
+- 9c330250109a949b
+- 210db2c49bf17f12 sh
+- 64c514c1dc0f4b89 sh
+- d35490668582c088
+- 2ae0326cb95653a7 sh
+tags:
+- paths: query-match
+  block: 0
+  fingerprint: f8a2b3b562a8bd58
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa c49a234e 3de9d845 b733d726 c1a0be84 6c185c69 648aaa11 1abb110d 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="query-match"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: d35490668582c088
+    lang: ''
+    lines: 5b07bb0e 6364ab47 92413e97 32cf5997 a152bc23 b8fcb227 c441a9d6 8cdb8317 15357256
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="query-match" >}}
+    YAMLTest -f - <<'EOF'
+    - name: query match - no query param returns 404
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    - name: query match - user=me query param returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200?user=me
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

@@ -22,8 +22,9 @@ name: Detect and assign stale doc-tests
 # verified fix.
 
 on:
-  schedule:
-    - cron: '15 7 * * *'   # daily 07:15 UTC — unique off-peak minute
+  # Schedule off: it opened unassigned issues nobody acted on, and test
+  # annotations (refresh-annotations.yml) replace it. Delete this workflow once
+  # the refresh runs.
   workflow_dispatch:
     inputs:
       since:

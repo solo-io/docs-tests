@@ -1,0 +1,92 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/transformations/access-logs.md
+blocks:
+- 5453ed897a7306df yaml
+- 5bf819725a28b50b sh
+- ad953b533ec9ed21 sh
+- 143b820bd65069e0 sh
+- f293752f14e7f58d console
+- a4eadb37704f6ba2 yaml
+- 1082665a245ba001 sh
+- 082c89e2b179cc62 sh
+- 143b820bd65069e0 sh
+- c6adbfcd095b7123 console
+- 5bf819725a28b50b sh
+- ad953b533ec9ed21 sh
+- 143b820bd65069e0 sh
+- c6adbfcd095b7123 console
+- a119209130740dae sh
+tags:
+- paths: access-logs
+  block: 0
+  fingerprint: 5453ed897a7306df
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f f497f0e2 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 73c054bf 274fdf3f b85ba752 9ab5f3a8 02e3b213 bbda7ece 57ffb450 84dbb83d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-logs"
+    only: true
+    lead: ' '
+- paths: access-logs-filter
+  block: 5
+  fingerprint: a4eadb37704f6ba2
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f f497f0e2 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 3517f17e 73c054bf 274fdf3f b85ba752 9ab5f3a8 f595771c 3b2806ae abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-logs-filter"
+    only: true
+    lead: ' '
+- paths: access-logs,access-logs-filter
+  block: 14
+  fingerprint: a119209130740dae
+  lang: sh
+  lines: a1192091
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n agentg
+  form:
+    attr: paths="access-logs,access-logs-filter"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 5453ed897a7306df
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f f497f0e2 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 73c054bf 274fdf3f b85ba752 9ab5f3a8 02e3b213 bbda7ece 57ffb450 84dbb83d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="access-logs" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify request through gateway returns 200
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/get"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: a4eadb37704f6ba2
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f f497f0e2 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 3517f17e 73c054bf 274fdf3f b85ba752 9ab5f3a8 f595771c 3b2806ae abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="access-logs-filter" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify 400 response triggers access log entry
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/status/400"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         expect:
+           statusCode: 400
+       EOF
+       {{< /doc-test >}}

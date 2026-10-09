@@ -1,0 +1,209 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/content-routing.md
+blocks:
+- 3a174710e73c4926 yaml
+- deca635dab03c582 yaml
+- 356a85d68415fbd1 yaml
+- 6e346c4de80616c2 bash
+- 494a14f4d10a478c
+- 91ee8c78a1ce4dd5 bash
+- 494a14f4d10a478c
+- 32452cde53a0e3ce bash
+- ce8041ab459c3167
+- 009269641ab98168 bash
+- ce8041ab459c3167
+- 82e4ec8778a6e03e yaml
+- f8cfdc790c39a714 yaml
+- 1fdeddeea4d9a826 yaml
+- 844260fca62f1a77 bash
+- a0642529ddc92656 bash
+- 104be2df75b74496 shell
+tags:
+- paths: content-routing
+  block: 0
+  fingerprint: 3a174710e73c4926
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 09a9d6e1 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 d887603d c8f3f59a 146e11c6 9ebc4789 4df4f75f cb3f91d5 fbc30693 99d7dba1 8c8c4228 7aeda5af 8af957d1 36184fa5 ad3afdb1 93a4b62b 12456441 728c9913 c8f3f59a 146e11c6 9ebc4789 de7e3df3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="content-routing"'
+    at: 4
+- paths: content-routing
+  block: 1
+  fingerprint: deca635dab03c582
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 ded368c1 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 d22910b0 b733d726 aeca2b3d bf068a96 7237aab6 38dc0152 0e4410d9 80092079 e75196b3 94ae491e ac0d0fce 8af957d1 22aec9ce 99d7dba1 4b3cd91f b733d726 aeca2b3d bf068a96 7237aab6 38dc0152 0e4410d9 80092079 4c247b46 94ae491e a36f8a7f 8af957d1 22aec9ce 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="content-routing"'
+    at: 4
+- paths: content-routing
+  block: 2
+  fingerprint: 356a85d68415fbd1
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 fe65dcce 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 5a52fee2 8905bcef 14ddcd05 207d5e5e 1157a915 41cb9aae abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="content-routing"'
+    at: 4
+hidden:
+- after:
+    line: 6a7a604299e66cc8
+    occurrence: 0
+    words: d4735e3a 6ee0eb49 75a288c0 14c2529e a0561fd6 663ea1bf bec16879 487b9104 5c4c1964 fa42bed0 a0af9f86 caf9f906 487b9104 37ff21fe 8e7fc023 bb0347a4 8656aa55 663ea1bf 8a84e406 663ea1bf
+    block_before: null
+  content: |-
+    {{< doc-test paths="content-routing" >}}
+    export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/namespace.md" >}} agentgateway-proxy -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    kubectl apply -f- <<EOF
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: openai-secret
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    type: Opaque
+    stringData:
+      Authorization: $OPENAI_API_KEY
+    ---
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: anthropic-secret
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    type: Opaque
+    stringData:
+      Authorization: ${ANTHROPIC_API_KEY:-$OPENAI_API_KEY}
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 356a85d68415fbd1
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 fe65dcce 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 5a52fee2 8905bcef 14ddcd05 207d5e5e 1157a915 41cb9aae abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="content-routing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for openai-backend to be accepted
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: agentgateway-system
+            name: openai-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+
+    - name: wait for anthropic-backend to be accepted
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: agentgateway-system
+            name: anthropic-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+
+    - name: wait for content-routing HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: content-routing
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 10
+      fingerprint: ce8041ab459c3167
+      lang: ''
+      lines: ce8041ab
+      preview: claude-3-5-sonnet-20241022
+  content: |-
+    {{< doc-test paths="content-routing" >}}
+    # Content routing: point the OpenAI backend at the httpbun mock LLM so the routing
+    # assertion below needs no provider API key. httpbun echoes the requested model, so
+    # the assertion still proves that a `gpt-*` model reached the OpenAI backend rather
+    # than the Anthropic one. The Anthropic backend is left as documented: no assertion
+    # on this page sends an Anthropic model, so nothing needs a live Anthropic key.
+    {{< reuse "agw-docs/snippets/deploy-mock-llm.md" >}}
+    kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai-backend -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge --patch-file /dev/stdin <<EOF
+    spec:
+      ai:
+        provider:
+          host: httpbun.default.svc.cluster.local
+          port: 3090
+          path: /llm/chat/completions
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for openai-backend to settle after the mock LLM patch
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: agentgateway-system
+            name: openai-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 10
+      fingerprint: ce8041ab459c3167
+      lang: ''
+      lines: ce8041ab
+      preview: claude-3-5-sonnet-20241022
+  content: |-
+    {{< doc-test paths="content-routing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify GPT model routes to OpenAI backend
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {
+            "model": "gpt-4o",
+            "messages": [{"role": "user", "content": "Say hello in one word"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.model"
+            comparator: contains
+            value: "gpt"
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,88 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/content-safety.md
+blocks:
+- bb017bef7ed02b67 mermaid
+- 908b5e1b17b9742b yaml
+- a71e77322866ed14 yaml
+- c42e1c7ca4110db0 sh
+- 2ff44aa6da6fb69f sh
+- bc67b074543a4ef9 json
+- f79a05648ac5dba2 sh
+- 472fafb368af20d8 yaml
+- 4717ebba1fcc1879 sh
+- bc004690067bc5c4 sh
+- 67707fc188efa15c
+- 22753044ca84b56e sh
+- 651f183b9a248cc2 yaml
+- 08c2e2d030855ba4 yaml
+- 7005ee361bf8a0bd yaml
+tags:
+- paths: content-safety-regex
+  block: 1
+  fingerprint: 908b5e1b17b9742b
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 63d88e7e 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 99c83b01 51da151f 8096ca96 6eb574a8 59ccf9fd 8693faa9 f51fdba0 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    bare: ',paths="content-safety-regex"'
+    at: 4
+hidden:
+- after:
+    block: 5
+    fingerprint: bc67b074543a4ef9
+    lang: json
+    lines: 021fb596 3360bbc7 021fb596 3b4971d4 11f6b628 d10b36aa d10b36aa cfae0d42 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="content-safety-regex" >}}
+    kubectl apply -f - <<EOF
+    apiVersion: agentgateway.dev/v1alpha1
+    kind: AgentgatewayPolicy
+    metadata:
+      name: content-safety-regex-httpbun
+      namespace: agentgateway-system
+    spec:
+      targetRefs:
+      - group: gateway.networking.k8s.io
+        kind: HTTPRoute
+        name: httpbun-llm
+      backend:
+        ai:
+          promptGuard:
+            response:
+            - regex:
+                builtins:
+                - CreditCard
+                - Ssn
+                - Email
+                action: Mask
+    EOF
+
+    YAMLTest -f - <<'EOF'
+    - name: verify credit card is masked in response
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {
+            "model": "gpt-4",
+            "messages": [
+              {
+                "role": "user",
+                "content": "What type of number is 5105105105105100?"
+              }
+            ],
+            "httpbun": {"content": "The number 5105105105105100 is a Mastercard test card number."}
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.choices[0].message.content"
+            comparator: contains
+            value: "<CREDIT_CARD>"
+    EOF
+    {{< /doc-test >}}

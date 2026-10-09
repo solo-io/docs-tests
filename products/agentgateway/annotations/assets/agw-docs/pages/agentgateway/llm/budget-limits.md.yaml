@@ -1,0 +1,58 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/budget-limits.md
+blocks:
+- ce6376e26d5d214c mermaid
+- a41922cbadc505c1 yaml
+- 900bd9796bd03540 yaml
+- 480580275e608d3e yaml
+- a52eabf234f93904 sh
+- 26f794c30ba236c3 promql
+- 11513ff632cffa45 yaml
+- 0ebfa8d3355ccdc6
+- ecbe22883e83c49e yaml
+- da8f9717cdd2c3f1 yaml
+- 7c561ffed937dfd3 sh
+hidden:
+- after:
+    block: 3
+    fingerprint: 480580275e608d3e
+    lang: yaml
+    lines: fbc30693 7f57603a 8c8c4228 d58df14e 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d a50da420 f971795d 7a59af6d 826eda98
+    preview: 'apiVersion: {{< reuse "agw-docs/snippets/api-version.md" >}}'
+  content: |-
+    {{< doc-test paths="budget-limits" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: {{< reuse "agw-docs/snippets/api-version.md" >}}
+    kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+    metadata:
+      name: local-token-budget
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: Gateway
+          name: agentgateway-proxy
+      traffic:
+        rateLimit:
+          local:
+            - tokens: 10000
+              unit: Hours
+    EOF
+
+    YAMLTest -f - <<'EOF'
+    - name: local-token-budget policy is accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+            name: local-token-budget
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}

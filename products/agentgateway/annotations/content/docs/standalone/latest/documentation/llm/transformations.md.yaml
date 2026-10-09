@@ -1,0 +1,304 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/transformations.md
+blocks:
+- 89e6dfc8ce7fd3c5 yaml
+- f6931a7b2e59dbc5 sh
+- bdde5c4c80873e9d sh
+- 48421fb3610c21f5 console
+- 42e2d83747e2b805 yaml
+- 2c146002156af857 sh
+- c34a7aba4b563960 sh
+- e4073cf30b6352d1 json
+- 43778ee23b2b8a3b yaml
+- f6931a7b2e59dbc5 sh
+- 7531dd0c7b29e747 sh
+- 8c97185769380697 console
+- 25bf28fd379bc61b yaml
+- a1e7b2e33d70221b yaml
+- 0ce0b859f4744eaf yaml
+tags:
+- paths: transformations
+  block: 0
+  fingerprint: 89e6dfc8ce7fd3c5
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 8905bcef 58612d6e abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="transformations"
+    only: true
+    lead: ' '
+- paths: transformations
+  block: 2
+  fingerprint: bdde5c4c80873e9d
+  lang: sh
+  lines: 900b7020 9285509c b11c46be a90f7a89 da227561 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 8e7bae9b
+  preview: curl -s 'http://localhost:4000/v1/chat/completions' \
+  form:
+    attr: paths="transformations"
+    only: true
+    lead: ' '
+- paths: transformations
+  block: 4
+  fingerprint: 42e2d83747e2b805
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 8905bcef 0376e88a abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="transformations"
+    only: true
+    lead: ' '
+- paths: transformations
+  block: 5
+  fingerprint: 2c146002156af857
+  lang: sh
+  lines: dc872770 67c5a3ac 8d4d4393 b0cead6d a90f7a89 c9b6115e 8e7bae9b
+  preview: curl -s http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="transformations"
+    only: true
+    lead: ' '
+- paths: transformations
+  block: 6
+  fingerprint: c34a7aba4b563960
+  lang: sh
+  lines: dc872770 67c5a3ac 997d05cd b0cead6d a90f7a89 c9b6115e 8e7bae9b
+  preview: curl -s http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="transformations"
+    only: true
+    lead: ' '
+- paths: transformations
+  block: 8
+  fingerprint: 43778ee23b2b8a3b
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 7a48fd6c 8ed43893 6ed18bff abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="transformations"
+    only: true
+    lead: ' '
+- paths: transformations
+  block: 10
+  fingerprint: 7531dd0c7b29e747
+  lang: sh
+  lines: 900b7020 9285509c b11c46be a90f7a89 da227561 d962d43b 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 8e7bae9b
+  preview: curl -s 'http://localhost:4000/v1/chat/completions' \
+  form:
+    attr: paths="transformations"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 13bf0f96d587d261
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 dddece3d
+    block_before: null
+  content: |-
+    {{< doc-test paths="transformations" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * All three example configs are accepted by agentgateway (--validate-only), so
+    #     the `transformation` and `finalTransformation` fields and their CEL
+    #     expressions are correct.
+    #   * "Configure LLM request transformations": a client request that asks for 5000
+    #     max_tokens reaches the provider capped at 10.
+    #   * "Conditionally set fields based on headers": the same request reaches the
+    #     provider with 100 max_tokens as an admin user and 10 as a regular user.
+    #   * "Transform requests after provider conversion": a request that asks for 5000
+    #     max_tokens reaches the provider with max_completion_tokens capped at 10,
+    #     which only holds if the transformation ran AFTER the conversion renamed the
+    #     field. A pre-conversion transformation on max_completion_tokens would not
+    #     produce this result.
+    #
+    # HOW THE ASSERTIONS WORK:
+    #   The tests run against a local mock LLM instead of OpenAI, so no provider API
+    #   key is needed and no live completion is billed. The mock reports the
+    #   max_tokens value it received as usage.completion_tokens, so asserting on
+    #   completion_tokens asserts what agentgateway actually sent upstream - which is
+    #   what these transformations are documented to change.
+    # Install agentgateway binary
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="transformations" >}}
+       # Cap max_tokens: validate the documented config, then run it against the mock LLM.
+       {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+       agentgateway -f config-mock.yaml &
+       AGW_PID=$!
+       trap 'kill $AGW_PID $MOCK_LLM_PID 2>/dev/null' EXIT
+       sleep 3
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: bdde5c4c80873e9d
+    lang: sh
+    lines: 900b7020 9285509c b11c46be a90f7a89 da227561 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 8e7bae9b
+    preview: curl -s 'http://localhost:4000/v1/chat/completions' \
+  content: |2-
+       {{< doc-test paths="transformations" >}}
+       YAMLTest -f - <<'EOF'
+       - name: request with max_tokens transformation returns capped completion
+         http:
+           url: "http://localhost:4000"
+           path: /v1/chat/completions
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {
+               "model": "gpt-3.5-turbo",
+               "max_tokens": 5000,
+               "messages": [{"role": "user", "content": "Tell me a short story"}]
+             }
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.completion_tokens"
+               comparator: equals
+               value: 10
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 3b91af679498a90a
+    occurrence: 0
+    words: 4b7e172a ca978112 60be9861 28391d3b 487b9104 1f58b914 c0d2856b aeb24056 663ea1bf e910c860 18bc3007 bec16879 2c70e12b fa51fd49 b9776d7d c0d2856b 663ea1bf 6ee0eb49 bec16879 cd42404d fa51fd49 ca978112 e910c860 b8bc0e4f e255d11c a718e3e9 b9776d7d 0682c5f2 1f58b914 a3b142af ef5f6cb1 663ea1bf a0561fd6 3a7470e0 e0603c49 378f37b1 6201111b 2bd861e3 663ea1bf a0561fd6 b9776d7d 0682c5f2 487b9104 1f58b914 230d8358
+    block_before:
+      block: 4
+      fingerprint: 42e2d83747e2b805
+      lang: yaml
+      lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 8905bcef 0376e88a abc56510
+      preview: cat <<'EOF' > config.yaml
+  content: |-
+    {{< doc-test paths="transformations" >}}
+    # Header-conditional max_tokens: restart the gateway on the second config, again
+    # pointed at the mock LLM. This block must stay textually different from the
+    # restart block in the previous section: the extractor silently drops a block whose
+    # content is byte-identical to one it already selected, which would leave the
+    # assertions below running against the previous section's config.
+    kill $AGW_PID 2>/dev/null
+    sleep 1
+    {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+    agentgateway -f config-mock.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID $MOCK_LLM_PID 2>/dev/null' EXIT
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: c34a7aba4b563960
+    lang: sh
+    lines: dc872770 67c5a3ac 997d05cd b0cead6d a90f7a89 c9b6115e 8e7bae9b
+    preview: curl -s http://localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="transformations" >}}
+    YAMLTest -f - <<'EOF'
+    - name: admin user gets higher token limit
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          x-user-id: admin
+        body: |
+          {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": "Tell me a story"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.usage.completion_tokens"
+            comparator: equals
+            value: 100
+
+    - name: regular user gets lower token limit
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          x-user-id: alice
+        body: |
+          {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": "Tell me a story"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.usage.completion_tokens"
+            comparator: equals
+            value: 10
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="transformations" >}}
+       # Post-conversion transformations: restart the gateway on the third config of this
+       # guide, again pointed at the mock LLM. The comment differs from the two restart
+       # blocks in the preceding sections on purpose: the extractor drops a block whose
+       # content is byte-identical to one it already selected, which would leave the
+       # assertion below running against the header-conditional config.
+       kill $AGW_PID 2>/dev/null
+       sleep 1
+       {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+       agentgateway -f config-mock.yaml &
+       AGW_PID=$!
+       trap 'kill $AGW_PID $MOCK_LLM_PID 2>/dev/null' EXIT
+       sleep 3
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 7531dd0c7b29e747
+    lang: sh
+    lines: 900b7020 9285509c b11c46be a90f7a89 da227561 d962d43b 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 8e7bae9b
+    preview: curl -s 'http://localhost:4000/v1/chat/completions' \
+  content: |2-
+       {{< doc-test paths="transformations" >}}
+       YAMLTest -f - <<'EOF'
+       - name: post-conversion transformation caps the converted field
+         http:
+           url: "http://localhost:4000"
+           path: /v1/chat/completions
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {
+               "model": "gpt-3.5-turbo",
+               "max_tokens": 5000,
+               "reasoning_effort": "high",
+               "messages": [{"role": "user", "content": "Tell me a short story"}]
+             }
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.completion_tokens"
+               comparator: equals
+               value: 10
+       EOF
+       {{< /doc-test >}}

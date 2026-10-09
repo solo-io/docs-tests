@@ -1,0 +1,275 @@
+format: 1
+source: content/docs/kubernetes/1.4.x/documentation/llm/models/virtual.md
+blocks:
+- c400d0bd38e55679 sh
+- d13ade6c62874937 sh
+- 452e2e34d9956db4 sh
+- eab086cbb30d1faa yaml
+- d168164f0584add5 sh
+- df96cb6391a2f3f8 json
+- 19e93ca243800ba7 yaml
+- 61e6f497628e1b15 sh
+- 052864eca6cd3717
+- 626a42464eb8c67e yaml
+- 0c809ec19d70b0a6 sh
+- 473f0ad5080acd36 json
+- 7e46a97397994ba0 sh
+- c8f5c436fe60931b json
+- 65c927085dd8873b yaml
+- efcc98bd449af77f yaml
+- e2449cacb9d262b8 sh
+- 3299df3b49418cd2
+- 0a75a3fb6611868f sh
+- e35adb6afcb1fee5 json
+- 2d02180318781628 sh
+tags:
+- paths: virtual-models
+  block: 3
+  fingerprint: eab086cbb30d1faa
+  lang: yaml
+  lines: 16c71da1 263e4531 eef5a849 8c8c4228 1e1e161e 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 717c0fcf 0323852a d81dacad c8f3f59a f372f1cb 5565245d 7fd82f9b cb3f91d5 263e4531 eef5a849 8c8c4228 c1a04342 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 717c0fcf 0323852a d81dacad c8f3f59a f372f1cb 5565245d dd4a1764 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="virtual-models"
+    only: true
+    lead: ' '
+- paths: virtual-models
+  block: 6
+  fingerprint: 19e93ca243800ba7
+  lang: yaml
+  lines: 16c71da1 263e4531 eef5a849 8c8c4228 a9c1e5f4 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 67030992 e681e1e6 3035507a 8afe7a26 1e1e161e e0822f08 8afe7a26 c1a04342 1e00823c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="virtual-models"
+    only: true
+    lead: ' '
+- paths: virtual-models
+  block: 9
+  fingerprint: 626a42464eb8c67e
+  lang: yaml
+  lines: 16c71da1 263e4531 eef5a849 8c8c4228 02d6ad8e 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 67030992 9be63f3d 3035507a f450591a 29afa36c c1a04342 8afe7a26 1e1e161e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="virtual-models"
+    only: true
+    lead: ' '
+- paths: virtual-models
+  block: 14
+  fingerprint: 65c927085dd8873b
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 9ac7eeb4 8af957d1 36184fa5 8432e015 d9be9270 0ff65a1a 3196e9a3 5eb45298 cb3f91d5 263e4531 eef5a849 8c8c4228 1bb872d9 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 717c0fcf 0323852a 60906697 c8f3f59a d1a43947 0001b31c da505865 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="virtual-models"
+    only: true
+    lead: ' '
+- paths: virtual-models
+  block: 15
+  fingerprint: efcc98bd449af77f
+  lang: yaml
+  lines: 16c71da1 263e4531 eef5a849 8c8c4228 65a28003 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 67030992 715e7c70 3035507a 8afe7a26 1bb872d9 eea6799a 8afe7a26 1e1e161e 785c16ad abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="virtual-models"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 5
+    fingerprint: df96cb6391a2f3f8
+    lang: json
+    lines: df96cb63
+    preview: '{"error":{"message":"Model not found","type":"invalid_request_error","code":"mod'
+  content: |2-
+       {{< doc-test paths="virtual-models" >}}
+       YAMLTest -f - <<'EOF'
+       - name: internal models cannot be requested directly
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {"model": "internal-fast", "messages": []}
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 404
+           bodyJsonPath:
+             - path: "$.error.code"
+               comparator: equals
+               value: "model_not_found"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 052864eca6cd3717
+    lang: ''
+    lines: a8e11c05 9a67a025
+    preview: 46 "model":"resolved-internal-fast"
+  content: |2-
+       {{< doc-test paths="virtual-models" >}}
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null -X POST "http://${INGRESS_GW_ADDRESS}/v1/chat/completions" \
+           -H "Content-Type: application/json" \
+           -d '{"model":"balanced","messages":[],"httpbun":{"content":"warmup"}}' && break
+         sleep 2
+       done
+
+       YAMLTest -f - <<'EOF'
+       - name: weighted virtual model resolves to one of its targets
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {"model": "balanced", "messages": [], "httpbun": {"content": "hi"}}
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: contains
+               value: "resolved-internal-"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 473f0ad5080acd36
+    lang: json
+    lines: 473f0ad5
+    preview: '{"model":"resolved-internal-premium","usage":{"prompt_tokens":0,"completion_toke'
+  content: |2-
+       {{< doc-test paths="virtual-models" >}}
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null -X POST "http://${INGRESS_GW_ADDRESS}/v1/chat/completions" \
+           -H "Content-Type: application/json" -H "x-model-tier: premium" \
+           -d '{"model":"smart","messages":[],"httpbun":{"content":"warmup"}}' && break
+         sleep 2
+       done
+
+       YAMLTest -f - <<'EOF'
+       - name: conditional routing selects the premium target on a matching header
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             Content-Type: application/json
+             x-model-tier: premium
+           body: |
+             {"model": "smart", "messages": [], "httpbun": {"content": "hi"}}
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: equals
+               value: "resolved-internal-premium"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: c8f5c436fe60931b
+    lang: json
+    lines: c8f5c436
+    preview: '{"model":"resolved-internal-fast","usage":{"prompt_tokens":0,"completion_tokens"'
+  content: |2-
+       {{< doc-test paths="virtual-models" >}}
+       YAMLTest -f - <<'EOF'
+       - name: conditional routing falls back when no condition matches
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {"model": "smart", "messages": [], "httpbun": {"content": "hi"}}
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: equals
+               value: "resolved-internal-fast"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 3299df3b49418cd2
+    lang: ''
+    lines: 3da162c5 c8f5c436 c8f5c436
+    preview: 'upstream call failed: Connect: Connection refused (os error 111)'
+  content: |2-
+       {{< doc-test paths="virtual-models" >}}
+       # Wait until the virtual model is served at all. The priority 0 target is
+       # unreachable, so this request is expected to fail; only the fact that the
+       # gateway answers matters here.
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null -X POST "http://${INGRESS_GW_ADDRESS}/v1/chat/completions" \
+           -H "Content-Type: application/json" \
+           -d '{"model":"resilient","messages":[],"httpbun":{"content":"warmup"}}' && break
+         sleep 2
+       done
+
+       # This request evicts the unreachable priority 0 target. It fails by design,
+       # so it is not asserted.
+       curl -s -o /dev/null -X POST "http://${INGRESS_GW_ADDRESS}/v1/chat/completions" \
+         -H "Content-Type: application/json" \
+         -d '{"model":"resilient","messages":[],"httpbun":{"content":"trigger"}}'
+
+       sleep 2
+
+       YAMLTest -f - <<'EOF'
+       - name: failover routes to the next priority group after eviction
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {"model": "resilient", "messages": [], "httpbun": {"content": "hi"}}
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: equals
+               value: "resolved-internal-fast"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: e35adb6afcb1fee5
+    lang: json
+    lines: 021fb596 d90ae9ee 6c993a4e 73fc0dc9 caf8053e 39d4b54e 7738d670 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="virtual-models" >}}
+    # Assert on the raw /v1/models body instead of YAMLTest bodyJsonPath: YAMLTest's
+    # "$.data[*].id" only evaluates the first array element, and the serve-model
+    # prerequisite also registers gpt-4/gpt-5-mini, so a JSONPath `contains` cannot
+    # reach the virtual model IDs. Grep the response so we can verify every virtual
+    # model is listed and that the Internal targets stay hidden.
+    for i in $(seq 1 30); do
+      models=$(curl -s "http://${INGRESS_GW_ADDRESS}/v1/models")
+      if echo "$models" | grep -q '"balanced"' && echo "$models" | grep -q '"resilient"' && echo "$models" | grep -q '"smart"'; then break; fi
+      sleep 2
+    done
+    echo "$models"
+    echo "$models" | grep -q '"balanced"'
+    echo "$models" | grep -q '"resilient"'
+    echo "$models" | grep -q '"smart"'
+    if echo "$models" | grep -qE '"(internal-fast|internal-premium|primary-down|unreachable-llm)"'; then
+      echo "ERROR: an Internal model target appeared in /v1/models"; exit 1
+    fi
+    {{< /doc-test >}}

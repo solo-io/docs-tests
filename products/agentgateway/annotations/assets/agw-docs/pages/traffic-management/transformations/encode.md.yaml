@@ -1,0 +1,45 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/transformations/encode.md
+blocks:
+- b831d6351853cd3f yaml
+- 8c075395264fa7f0 sh
+- 171efc2600f521f9 sh
+- 0b2305878c37cd8e console
+- de2c814b44aea673 sh
+- e606e38b0d8c19b2
+- e7b769f370ab924f yaml
+- 7b562108c981e051 sh
+- 6e10cf5f6e6b8801 sh
+- e080c275548ba883 console
+- 0fcf10238e57dfed sh
+tags:
+- paths: encode
+  block: 0
+  fingerprint: b831d6351853cd3f
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 99c83b01 207d5e5e 374e1eff 3defa9e0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="encode"
+    only: true
+    lead: ' '
+- paths: decode
+  block: 6
+  fingerprint: e7b769f370ab924f
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 99c83b01 207d5e5e e3ce769c 18de2565 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="decode"
+    only: true
+    lead: ' '
+- paths: encode,decode
+  block: 10
+  fingerprint: 0fcf10238e57dfed
+  lang: sh
+  lines: 0fcf1023
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} transformation -n htt
+  form:
+    attr: paths="encode,decode"
+    only: true
+    lead: ' '

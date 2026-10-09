@@ -1,0 +1,153 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/providers/httpbun.md
+blocks:
+- c854dd5570631a64 bash
+- 7b5298df638825ff bash
+- 02dcda122700fd68 bash
+- ec23f9fb0c4890ee
+- 1b7ef05f4c6f3a5d bash
+- e140d5e7b4a54b55 bash
+- 11f8edfdc9d0d3fe bash
+- 3553c138221b046f bash
+- d13ade6c62874937 bash
+- 6732520ad9296df2 bash
+- 89913f5602adbd32 bash
+- fa91abf5ccb3a7c7 json
+- c138ef4f1e83210d bash
+- 946bc2aa8dbf0d48 bash
+- 0d76627bfe03ee5c
+- 7140735d5c062e90 bash
+- 4b31fabbcc65d20e bash
+- 4d5df77ea7e75c06
+- a3e659eedce65dc0 bash
+tags:
+- paths: setup-httpbun-llm
+  block: 1
+  fingerprint: 7b5298df638825ff
+  lang: bash
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 e6078d19 0ccc8edc fa1e8330 720461e4 36184fa5 97bcd5e0 8432e015 839a5cac 720461e4 a58565b2 8c8c4228 fa1e8330 720461e4 36184fa5 04968f51 c5553ae5 3e45e970 8db70061 10100541 24f20d01 0ff65a1a af96a420 cb3f91d5 f1540154 0d6480f0 8c8c4228 e6078d19 0ccc8edc fa1e8330 720461e4 36184fa5 8432e015 720461e4 0ff65a1a 83feb025 99dc43b5 1e5bdedf 08a3b86e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-httpbun-llm"
+    only: true
+    lead: ' '
+- paths: setup-httpbun-llm
+  block: 4
+  fingerprint: 1b7ef05f4c6f3a5d
+  lang: bash
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 4491c5df 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 62402ad4 febc4ded 99dc43b5 8f9e2c62 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-httpbun-llm"
+    only: true
+    lead: ' '
+- paths: setup-httpbun-llm
+  block: 5
+  fingerprint: e140d5e7b4a54b55
+  lang: bash
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 4491c5df 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 7237aab6 94ae491e f1b06778 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-httpbun-llm"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 7b5298df638825ff
+    lang: bash
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 e6078d19 0ccc8edc fa1e8330 720461e4 36184fa5 97bcd5e0 8432e015 839a5cac 720461e4 a58565b2 8c8c4228 fa1e8330 720461e4 36184fa5 04968f51 c5553ae5 3e45e970 8db70061 10100541 24f20d01 0ff65a1a af96a420 cb3f91d5 f1540154 0d6480f0 8c8c4228 e6078d19 0ccc8edc fa1e8330 720461e4 36184fa5 8432e015 720461e4 0ff65a1a 83feb025 99dc43b5 1e5bdedf 08a3b86e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="setup-httpbun-llm" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbun deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: httpbun
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: e140d5e7b4a54b55
+    lang: bash
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 4491c5df 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 7237aab6 94ae491e f1b06778 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="setup-httpbun-llm" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for httpbun-llm HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: httpbun-llm
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: wait for httpbun-llm HTTPRoute refs to be resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: httpbun-llm
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: fb627f06ecd320b3
+    occurrence: 0
+    words: 3e64cc41 4b227777 a12dd3a7 b9776d7d b38d9d16
+    block_before:
+      block: 6
+      fingerprint: 11f8edfdc9d0d3fe
+      lang: bash
+      lines: 11f8edfd
+      preview: kubectl describe httproute httpbun-llm -n {{< reuse "agw-docs/snippets/namespace
+  content: |-
+    {{< doc-test paths="setup-httpbun-llm" >}}
+    # Get the gateway address
+    export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-proxy -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+
+    # Test httpbun LLM endpoint
+    YAMLTest -f - <<'EOF'
+    - name: Verify httpbun LLM responds with mock completion
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+        method: POST
+        headers:
+          Content-Type: application/json
+        body: |
+          {
+            "model": "gpt-4",
+            "messages": [{"role": "user", "content": "Hello!"}],
+            "httpbun": {"content": "Test response"}
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

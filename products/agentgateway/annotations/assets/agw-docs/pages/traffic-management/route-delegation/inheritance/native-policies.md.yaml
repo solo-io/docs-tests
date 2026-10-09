@@ -1,0 +1,144 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/route-delegation/inheritance/native-policies.md
+blocks:
+- 49b7b2145c6b9f5f yaml
+- 5c720dc084078ab0 yaml
+- 8f3bc5413b43d50a yaml
+- 78d09a590c438284 sh
+- b42b70399ae23385 sh
+- fb337b43cd8271be
+- dc379ac1c0b90f29 sh
+- 7f70fdae32df8a6e sh
+- 697eefdf998555a8
+- 2f162597cd3e3ddc sh
+tags:
+- paths: native-policies
+  block: 0
+  fingerprint: 49b7b2145c6b9f5f
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 8af957d1 36184fa5 d3d416e7 2d157081 301e1bfa 8c2fb89f 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 94ae491e b5a028c9 56bf9360 587e8306 53143665 dbf95901 8830be5e b733d726 aeca2b3d bf068a96 b83a8e91 94ae491e b5a028c9 56bf9360 38c60fa9 52418815 dbf95901 8830be5e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="native-policies"
+    only: true
+    lead: ' '
+- paths: native-policies
+  block: 1
+  fingerprint: 5c720dc084078ab0
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 d7424408 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e ded9b524 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="native-policies"
+    only: true
+    lead: ' '
+- paths: native-policies
+  block: 2
+  fingerprint: 8f3bc5413b43d50a
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 e693cb05 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e ded9b524 94ae491e 80e9487c bca8e5f7 dbf95901 d4853325 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="native-policies"
+    only: true
+    lead: ' '
+- paths: native-policies
+  block: 9
+  fingerprint: 2f162597cd3e3ddc
+  lang: sh
+  lines: 5b5f9e39 8eb39b11 694e0289 5e9ff8be
+  preview: kubectl delete httproute parent -n {{< reuse "agw-docs/snippets/namespace.md" >}
+  form:
+    attr: paths="native-policies"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 8f3bc5413b43d50a
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 e693cb05 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e ded9b524 94ae491e 80e9487c bca8e5f7 dbf95901 d4853325 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="native-policies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 8f3bc5413b43d50a
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 e693cb05 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e ded9b524 94ae491e 80e9487c bca8e5f7 dbf95901 d4853325 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="native-policies" >}}
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/anything/team1/delay/0" -H "host: delegation.example" && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 4
+      fingerprint: b42b70399ae23385
+      lang: sh
+      lines: 4dc30c77 12165024
+      preview: time curl -i --max-time 8 localhost:8080/anything/team1/delay/3 \
+  content: |2-
+       {{< doc-test paths="native-policies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: child-team1 inherits parent 1s timeout - returns 504 on /delay/3
+         retries: 1
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team1/delay/3"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 504
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 7
+      fingerprint: 7f70fdae32df8a6e
+      lang: sh
+      lines: 8e768888 12165024
+      preview: time curl -i --max-time 8 localhost:8080/anything/team2/delay/3 \
+  content: |2-
+       {{< doc-test paths="native-policies" >}}
+       YAMLTest -f - <<'EOF'
+       - name: child-team2 5s override beats parent 1s - returns 200 on /delay/3
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/team2/delay/3"
+           method: GET
+           headers:
+             host: delegation.example
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

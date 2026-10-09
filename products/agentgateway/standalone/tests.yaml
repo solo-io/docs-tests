@@ -1,6 +1,6 @@
 # Doc-test scenario definitions for agentgateway, standalone mode.
 #
-# PILOT: traffic-management only. Every other subject area still declares its
+# Covers traffic-management and llm (documentation/llm/). Every other subject area still declares its
 # scenarios in the consuming repo's page front matter; both forms are read.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
@@ -22,6 +22,28 @@
 version: 1
 mode: standalone
 prerequisites: {}
+# Pages with deliberately no test; see kubernetes/tests.yaml.
+skip:
+- page: documentation/configuration/traffic-management/_index.md
+- page: documentation/llm/_index.md
+- page: documentation/llm/about.md
+- page: documentation/llm/api-types/_index.md
+- page: documentation/llm/api-types/completions.md
+- page: documentation/llm/api-types/embeddings.md
+- page: documentation/llm/api-types/messages.md
+- page: documentation/llm/api-types/models.md
+- page: documentation/llm/api-types/passthrough.md
+- page: documentation/llm/api-types/rerank.md
+- page: documentation/llm/api-types/responses.md
+- page: documentation/llm/api-types/token-count.md
+- page: documentation/llm/cost-controls/_index.md
+- page: documentation/llm/cost-controls/budget-limits/_index.md
+- page: documentation/llm/cost-controls/budget-limits/rate-limit.md
+- page: documentation/llm/inference/_index.md
+- page: documentation/llm/inference/benchmarking.md
+- page: documentation/llm/playground.md
+- page: documentation/llm/prompt-guards/_index.md
+- page: documentation/llm/providers.md
 scenarios:
   buffer:
     page: documentation/configuration/traffic-management/buffer.md
@@ -50,3 +72,35 @@ scenarios:
   transformations:
     page: documentation/configuration/traffic-management/transformations.md
     path: transformations
+  # --- llm (documentation/llm/) ---
+  apikey-budgets:
+    page: documentation/llm/cost-controls/budget-limits/per-key.md
+    path: apikey-budgets
+  attribution:
+    source: agw-docs/standalone/attribution.md
+    path: attribution
+  cost-dashboard:
+    page: documentation/llm/cost-controls/dashboard.md
+    path: cost-dashboard
+  costs:
+    source: agw-docs/standalone/cost-catalog.md
+    path: costs
+  gemini-inbound-standalone:
+    page: documentation/llm/api-types/gemini.md
+    path: gemini-inbound-standalone
+  realtime-standalone:
+    page: documentation/llm/api-types/realtime.md
+    path: realtime-standalone
+  regex:
+    page: documentation/llm/prompt-guards/regex.md
+    path: regex
+  llm/transformations:
+    name: transformations
+    page: documentation/llm/transformations.md
+    path: transformations
+  virtual-keys:
+    source: agw-docs/standalone/virtual-keys.md
+    path: virtual-keys
+  virtual-models:
+    page: documentation/llm/virtual-models.md
+    path: virtual-models

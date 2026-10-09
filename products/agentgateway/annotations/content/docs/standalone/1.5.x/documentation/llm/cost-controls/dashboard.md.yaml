@@ -1,0 +1,88 @@
+format: 1
+source: content/docs/standalone/1.5.x/documentation/llm/cost-controls/dashboard.md
+blocks:
+- 7f58328bfc7ede4d yaml
+- f6931a7b2e59dbc5 sh
+- bda225860092a297
+- 880512fe05a48c10 sh
+hidden:
+- after:
+    line: e3185a1189f37cb2
+    occurrence: 0
+    words: b9776d7d 66cd9688 3566cf23 75857a45 b9776d7d 3549b002 b1d6b91b 25b9d6e4 56e57ada 66312e5e 0cd86668 37a8eec1 947f1875 5e8c03a9 6201111b a478b456 aa9e9b5c 1f58b914 836ff184 fa42bed0 a0af9f86 caf9f906 58ee0007 3374a1ad 3549b002 10c22bcf a18b869b b7d64a92 41ffd8b7 031af55b b38d9d16 473287f8 e904c9cc 631aada4 6201111b df0ad6e4 52367a66
+    block_before:
+      block: 3
+      fingerprint: 880512fe05a48c10
+      lang: sh
+      lines: dc872770 67c5a3ac 8204f87e
+      preview: curl -s http://localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="cost-dashboard" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+
+    # A catalog so modelCatalog loads and validates.
+    mkdir -p costs
+    cat > costs/catalog.json <<'JSON'
+    { "providers": { "openai": { "models": {
+      "gpt-4o-mini": { "rates": { "input": "0.15", "output": "0.6", "cacheRead": "0.075" } }
+    } } } }
+    JSON
+
+    # Config with database + modelCatalog (mode=rwc so SQLite creates the file).
+    cat > config.yaml <<'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    config:
+      adminAddr: localhost:15000
+      database:
+        url: "sqlite://./data.db?mode=rwc"
+      modelCatalog:
+      - file: ./costs/catalog.json
+    llm:
+      port: 4000
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 4
+    {{< /doc-test >}}
+- after:
+    line: e3185a1189f37cb2
+    occurrence: 0
+    words: b9776d7d 66cd9688 3566cf23 75857a45 b9776d7d 3549b002 b1d6b91b 25b9d6e4 56e57ada 66312e5e 0cd86668 37a8eec1 947f1875 5e8c03a9 6201111b a478b456 aa9e9b5c 1f58b914 836ff184 fa42bed0 a0af9f86 caf9f906 58ee0007 3374a1ad 3549b002 10c22bcf a18b869b b7d64a92 41ffd8b7 031af55b b38d9d16 473287f8 e904c9cc 631aada4 6201111b df0ad6e4 52367a66
+    block_before:
+      block: 3
+      fingerprint: 880512fe05a48c10
+      lang: sh
+      lines: dc872770 67c5a3ac 8204f87e
+      preview: curl -s http://localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="cost-dashboard" >}}
+    YAMLTest -f - <<'EOF'
+    - name: Costs dashboard page serves
+      http:
+        url: "http://localhost:15000/ui/llm/costs"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+      retries: 3
+    - name: Analytics dashboard page serves
+      http:
+        url: "http://localhost:15000/ui/llm/analytics"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+      retries: 3
+    EOF
+    {{< /doc-test >}}

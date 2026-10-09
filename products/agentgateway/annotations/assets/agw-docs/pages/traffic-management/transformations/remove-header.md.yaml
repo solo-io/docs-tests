@@ -1,0 +1,55 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/transformations/remove-header.md
+blocks:
+- e5c802174f29a4a6 sh
+- 08f23c4bfc1586f9 sh
+- 27c44657ffd0e92a console
+- 3a9791e311776bb3 yaml
+- fbefe39d1fc5888b sh
+- 204ccae829fc2f25 sh
+- bc9f524512280533 console
+- 0fcf10238e57dfed sh
+tags:
+- paths: remove-header
+  block: 3
+  fingerprint: 3a9791e311776bb3
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 14ddcd05 0a282488 bc7a69f0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-header"
+    only: true
+    lead: ' '
+- paths: remove-header
+  block: 7
+  fingerprint: 0fcf10238e57dfed
+  lang: sh
+  lines: 0fcf1023
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} transformation -n htt
+  form:
+    attr: paths="remove-header"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 3a9791e311776bb3
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 14ddcd05 0a282488 bc7a69f0 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="remove-header" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify x-debug-trace header is stripped from request
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/get"
+           method: GET
+           headers:
+             host: www.example.com
+             x-debug-trace: "true"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

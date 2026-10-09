@@ -1,0 +1,149 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/api-types/gemini.md
+blocks:
+- ec042e10ea791b67 yaml
+- 921ec015af9d7a6a yaml
+- 3c25691d2a8be7dd shell
+- 4d9ae23b936fd18c shell
+- 9de40d7682a97d43 shell
+- a3ff429f2696db6e json
+hidden:
+- after:
+    line: 0d6e23b030924bc8
+    occurrence: 0
+    words: b9776d7d bef32d2c 5d724362 14c2529e 8edcc26c 9372c470 fdbaf896 fa51fd49 b9776d7d 9b2abfc2 e904c9cc 8e7fc023 b9776d7d 5d724362 6201111b e1b683e2 32e83e92 5421aedd 27ce1d1b
+    block_before: null
+  content: |-
+    {{< doc-test paths="gemini-inbound-standalone" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Route type configuration": both example configs are accepted by
+    #     agentgateway (--validate-only), so `generateContent` and
+    #     `geminiCountTokens` are recognized route types in the `policies.ai.routes`
+    #     map, and `provider: gemini` accepts the simplified form.
+    #   * With the simplified config loaded, agentgateway serves the wildcard model
+    #     and resolves it to the `gemini` provider.
+    #   * "Streaming": a `:streamGenerateContent` request without `alt=sse` is
+    #     rejected with the documented status (400) and the documented
+    #     INVALID_ARGUMENT body. This check needs no provider, because agentgateway
+    #     answers it before any upstream call.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The example requests in "Using the API" and their responses - external
+    #     dependency; each needs a real Gemini API key and bills a live call, so the
+    #     test uses a placeholder key.
+    #   * The `tunedModels/` form of the model path - the page mentions it, but
+    #     exercising it needs a real tuned model on a real project.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # The example configs read the API key from the environment. --validate-only and
+    # the alt=sse rejection both resolve before any upstream call, so a placeholder
+    # is enough here.
+    export GEMINI_API_KEY="${GEMINI_API_KEY:-test}"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: ec042e10ea791b67
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 848625eb 009395dd 8263d052
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gemini-inbound-standalone" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: "*"
+        provider: gemini
+        params:
+          apiKey: "$GEMINI_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 5a6698a1a8efc0b0
+    occurrence: 0
+    words: b9776d7d 48a53f07 ba78973d eadc688c f4bf9f7f a0af9f86 905022ca a1d98908 ca978112 30adc606 70bdae49 a5408438 b9776d7d 5d724362 5b7e6bf2 a1b7c6f1 85738f8f 5ca4f385 e7a2e8b2 b9776d7d 948fe603 c626da0c
+    block_before:
+      block: 1
+      fingerprint: 921ec015af9d7a6a
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 06267a46 d67b54bf d897654b 4c6bd846 2f00b828 93a4b62b c053df6d c8f3f59a ad3afdb1 d67b54bf 10f6f49f f7ebeccc f1b6deba 81b74571 69118c8e
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gemini-inbound-standalone" >}}
+    cat <<'EOF' > config-explicit.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 4000
+    routes:
+    - backends:
+      - ai:
+          name: gemini
+          provider:
+            gemini: {}
+      policies:
+        ai:
+          routes:
+            ":generateContent": "generateContent"
+            ":streamGenerateContent": "generateContent"
+            ":countTokens": "geminiCountTokens"
+        backendAuth:
+          key: "$GEMINI_API_KEY"
+    EOF
+    agentgateway -f config-explicit.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: a3ff429f2696db6e
+    lang: json
+    lines: 021fb596 68729831 d29505f6 4cac7446 24a8d674 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="gemini-inbound-standalone" >}}
+    # Confirm the config serves the wildcard model and resolves it to the gemini
+    # provider, then confirm the documented alt=sse rejection. The rejection is
+    # generated locally, so it holds without a real API key.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    # The default `llm.discovery: catalog` expands `*` into catalog model IDs, so
+    # check for a non-empty list rather than a literal `*`.
+    SERVED=$(curl -sf --max-time 10 http://localhost:4000/v1/models | jq -r '.data | length')
+    if [ "${SERVED:-0}" -eq 0 ]; then
+      echo "FAIL: /v1/models lists no models for the example config"
+      exit 1
+    fi
+    PROVIDER=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | .provider | keys[0]
+      ] | first')
+    if [ "$PROVIDER" != "gemini" ]; then
+      echo "FAIL: expected provider gemini but agentgateway resolved $PROVIDER"
+      exit 1
+    fi
+
+    STATUS=$(curl -s --max-time 10 -o /tmp/agw-stream-noalt.json -w '%{http_code}' \
+      -X POST 'http://localhost:4000/v1beta/models/gemini-2.5-flash:streamGenerateContent' \
+      -H 'Content-Type: application/json' \
+      -d '{"contents":[{"role":"user","parts":[{"text":"Count to five"}]}]}')
+    if [ "$STATUS" != "400" ]; then
+      echo "FAIL: expected 400 for streamGenerateContent without alt=sse, got $STATUS"
+      cat /tmp/agw-stream-noalt.json
+      exit 1
+    fi
+    if ! jq -e '.error.status == "INVALID_ARGUMENT" and (.error.message | contains("requires alt=sse"))' \
+         /tmp/agw-stream-noalt.json >/dev/null; then
+      echo "FAIL: the alt=sse rejection body does not match the documented error"
+      cat /tmp/agw-stream-noalt.json
+      exit 1
+    fi
+    echo "✓ The wildcard model resolves to the gemini provider and alt=sse is enforced"
+    {{< /doc-test >}}

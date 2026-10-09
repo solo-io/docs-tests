@@ -1,0 +1,47 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/observability.md
+blocks:
+- a52eabf234f93904 sh
+- c7c14c3e23f9b51d promql
+- 942f9941b680a4e1 sh
+- e8318bd19802959f
+- 0ffe5e56454d83fd yaml
+- 4b306eca4d99f393
+tags:
+- paths: llm-observability
+  block: 2
+  fingerprint: 942f9941b680a4e1
+  lang: sh
+  lines: 942f9941
+  preview: kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/names
+  form:
+    attr: paths="llm-observability"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 1a1589403a213921
+    occurrence: 0
+    words: 10c22bcf 187897ce dea7111a aa9e9b5c b9776d7d 3784070f 04214ab4 10c22bcf 4c7047d4 32e83e92 177a7ea3 3e194352 29fa1be5 46b42b42 7846086a 90d1a1eb 7e271b05 74e190c4 58296753 b9776d7d 15646ccf 46b42b42
+    block_before:
+      block: 0
+      fingerprint: a52eabf234f93904
+      lang: sh
+      lines: a52eabf2
+      preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
+  content: |-
+    {{< doc-test paths="llm-observability" >}}
+    PROXY_POD=$(kubectl get pods -n agentgateway-system -o name | grep agentgateway-proxy | head -1)
+    PROXY_POD_IP=$(kubectl get ${PROXY_POD} -n agentgateway-system -o jsonpath='{.status.podIP}')
+    kubectl run metrics-check -n agentgateway-system --rm -i --restart=Never --image=curlimages/curl -- -s "http://${PROXY_POD_IP}:15020/metrics" 2>/dev/null | grep "agentgateway_gen_ai_client_token_usage"
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: e8318bd19802959f
+    lang: ''
+    lines: ebdd1fdd 62ffaad6 d80822e2 f3f90409 1388c66d
+    preview: "2025-12-12T21:56:02.809082Z\tinfo\trequest gateway=agentgateway-system/agentgatewa"
+  content: |-
+    {{< doc-test paths="llm-observability" >}}
+    kubectl logs deployment/agentgateway-proxy -n agentgateway-system | grep "gen_ai.usage.input_tokens"
+    {{< /doc-test >}}

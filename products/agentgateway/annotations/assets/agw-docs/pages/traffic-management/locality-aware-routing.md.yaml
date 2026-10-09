@@ -1,0 +1,416 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/locality-aware-routing.md
+blocks:
+- 23e1629973fa738d sh
+- f13bcf656c36a736 sh
+- 344869ba8be3d547 sh
+- e430fe606ff60e60 sh
+- ceb2f64a390ff083 yaml
+- fd63aeae6b709cca yaml
+- a212705b5b6f87c3 yaml
+- 83dbaba423fb4eba sh
+- b3f343b172b22904 sh
+- d13ade6c62874937 sh
+- c4559960343ef873 sh
+- 2add3fcbf7dc23ef
+- 8b73e1f7c4a054c7 yaml
+- 9098668c969225d2 sh
+- 5def4dd426769fda
+- 7a5299fdea49e855 sh
+- 10fc2a87fa605679
+- 19974dcaa20ec3e4 sh
+- 6ff3689c6b13e932
+- 83dbaba423fb4eba sh
+- 26f3b99d6b93ae09 yaml
+- df2861cee21bf0d1 sh
+- be5b04f28dcf63f1
+- 11258a295545c45c sh
+tags:
+- paths: locality-aware-routing
+  block: 0
+  fingerprint: 23e1629973fa738d
+  lang: sh
+  lines: 23e16299
+  preview: kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.27/mani
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 2
+- paths: locality-aware-routing
+  block: 4
+  fingerprint: ceb2f64a390ff083
+  lang: yaml
+  lines: 16c71da1 f1540154 e7b550ce 8c8c4228 0abe1f7e cb3f91d5 8c67597e cd44d8cd 8c8c4228 34f8ace0 ebeadacf 36184fa5 549957da c10d7538 82601aaa 069de162 da480536 5f37c61e c3201545 a9279f6d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 4
+- paths: locality-aware-routing
+  block: 5
+  fingerprint: fd63aeae6b709cca
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 7f4e9b9a ebeadacf 36184fa5 97bcd5e0 8432e015 839a5cac c99dc254 a58565b2 8c8c4228 fa1e8330 9cf1ca41 c99dc254 36184fa5 04968f51 8dec8b21 07f8bfa5 08f89249 0ff65a1a 82601aaa 10775083 cb3f91d5 58584366 ab78925c 8c8c4228 bf3c2a68 ebeadacf 36184fa5 97bcd5e0 8432e015 839a5cac 09e7c8f6 a58565b2 8c8c4228 fa1e8330 06855c03 09e7c8f6 36184fa5 04968f51 8dec8b21 07f8bfa5 08f89249 0ff65a1a 82601aaa 10775083 cb3f91d5 58584366 ab78925c 8c8c4228 c1a0750b ebeadacf 36184fa5 97bcd5e0 8432e015 839a5cac 646d2bac a58565b2 8c8c4228 fa1e8330 6c6ee73b 646d2bac 36184fa5 04968f51 8dec8b21 07f8bfa5 08f89249 0ff65a1a 82601aaa 10775083 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 4
+- paths: locality-aware-routing
+  block: 6
+  fingerprint: a212705b5b6f87c3
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 6aeee0d9 ebeadacf 36184fa5 8432e015 0a31634e 0ff65a1a 82601aaa da480536 5374623b 9693ecf1 cb3f91d5 8c67597e 56bf9360 8c8c4228 1844aaec ebeadacf 36184fa5 d3d416e7 351066a3 301e1bfa 7d809337 3de9d845 a3b86ab6 5bc3372e da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 4
+- paths: locality-aware-routing
+  block: 7
+  fingerprint: 83dbaba423fb4eba
+  lang: sh
+  lines: 27ca57fe f00f1a21 cbcd9df9 16c71da1 e6494e6f 908b5bb6 8c8c4228 84b15b5f ebeadacf fa1e8330 0a31634e 36184fa5 b867811e bfb124d9 0ff65a1a a0ca7ae9 cb3f91d5 e6494e6f 908b5bb6 8c8c4228 114a0ac4 ebeadacf fa1e8330 0a31634e 36184fa5 9717452b b28bf12a 0ff65a1a a0ca7ae9 cb3f91d5 e6494e6f 908b5bb6 8c8c4228 4688bdda ebeadacf fa1e8330 0a31634e 36184fa5 5848e6d1 9ccaeb74 0ff65a1a a0ca7ae9 abc56510
+  preview: ZONE_A_IP=$(kubectl get pod -n agentgateway-locality -l app=backend-zone-a -o js
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 2
+- paths: locality-aware-routing
+  block: 8
+  fingerprint: b3f343b172b22904
+  lang: sh
+  lines: f6278fa2 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get gateway gateway -n agentgateway-locality
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 2
+- paths: locality-aware-routing
+  block: 12
+  fingerprint: 8b73e1f7c4a054c7
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 6aeee0d9 ebeadacf 36184fa5 8432e015 0a31634e 0ff65a1a 82601aaa da480536 5374623b 9693ecf1 0b2853cd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 4
+- paths: locality-aware-routing
+  block: 15
+  fingerprint: 7a5299fdea49e855
+  lang: sh
+  lines: e71fb13e fbb97a21 85c51545 1a110d80 092c79e8 efc9cd4f
+  preview: kubectl delete workloadentry we-zone-a -n agentgateway-locality
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 2
+- paths: locality-aware-routing
+  block: 17
+  fingerprint: 19974dcaa20ec3e4
+  lang: sh
+  lines: 994ef013 fbb97a21 85c51545 1a110d80 092c79e8 efc9cd4f
+  preview: kubectl delete workloadentry we-zone-b -n agentgateway-locality
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 2
+- paths: locality-aware-routing
+  block: 19
+  fingerprint: 83dbaba423fb4eba
+  lang: sh
+  lines: 27ca57fe f00f1a21 cbcd9df9 16c71da1 e6494e6f 908b5bb6 8c8c4228 84b15b5f ebeadacf fa1e8330 0a31634e 36184fa5 b867811e bfb124d9 0ff65a1a a0ca7ae9 cb3f91d5 e6494e6f 908b5bb6 8c8c4228 114a0ac4 ebeadacf fa1e8330 0a31634e 36184fa5 9717452b b28bf12a 0ff65a1a a0ca7ae9 cb3f91d5 e6494e6f 908b5bb6 8c8c4228 4688bdda ebeadacf fa1e8330 0a31634e 36184fa5 5848e6d1 9ccaeb74 0ff65a1a a0ca7ae9 abc56510
+  preview: ZONE_A_IP=$(kubectl get pod -n agentgateway-locality -l app=backend-zone-a -o js
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 2
+- paths: locality-aware-routing
+  block: 20
+  fingerprint: 26f3b99d6b93ae09
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 6aeee0d9 ebeadacf 36184fa5 8432e015 0a31634e 0ff65a1a 82601aaa da480536 5374623b 9693ecf1 edf57b7d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="locality-aware-routing"'
+    at: 4
+hidden:
+- after:
+    block: 3
+    fingerprint: e430fe606ff60e60
+    lang: sh
+    lines: e430fe60
+    preview: kubectl rollout restart deployment/agentgateway -n {{< reuse "agw-docs/snippets/
+  content: |-
+    {{< doc-test paths="locality-aware-routing" >}}
+    NODE_NAME=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
+    kubectl label node "$NODE_NAME" topology.kubernetes.io/region=region topology.kubernetes.io/zone=zone --overwrite
+    kubectl rollout restart deployment/agentgateway -n agentgateway-system
+    kubectl rollout status deployment/agentgateway -n agentgateway-system --timeout=180s
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: ceb2f64a390ff083
+    lang: yaml
+    lines: 16c71da1 f1540154 e7b550ce 8c8c4228 0abe1f7e cb3f91d5 8c67597e cd44d8cd 8c8c4228 34f8ace0 ebeadacf 36184fa5 549957da c10d7538 82601aaa 069de162 da480536 5f37c61e c3201545 a9279f6d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="locality-aware-routing" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for locality Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: agentgateway-locality
+               name: gateway
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: fd63aeae6b709cca
+    lang: yaml
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 7f4e9b9a ebeadacf 36184fa5 97bcd5e0 8432e015 839a5cac c99dc254 a58565b2 8c8c4228 fa1e8330 9cf1ca41 c99dc254 36184fa5 04968f51 8dec8b21 07f8bfa5 08f89249 0ff65a1a 82601aaa 10775083 cb3f91d5 58584366 ab78925c 8c8c4228 bf3c2a68 ebeadacf 36184fa5 97bcd5e0 8432e015 839a5cac 09e7c8f6 a58565b2 8c8c4228 fa1e8330 06855c03 09e7c8f6 36184fa5 04968f51 8dec8b21 07f8bfa5 08f89249 0ff65a1a 82601aaa 10775083 cb3f91d5 58584366 ab78925c 8c8c4228 c1a0750b ebeadacf 36184fa5 97bcd5e0 8432e015 839a5cac 646d2bac a58565b2 8c8c4228 fa1e8330 6c6ee73b 646d2bac 36184fa5 04968f51 8dec8b21 07f8bfa5 08f89249 0ff65a1a 82601aaa 10775083 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="locality-aware-routing" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for backend-zone-a deployment
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: agentgateway-locality
+               name: backend-zone-a
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 5
+       - name: wait for backend-zone-b deployment
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: agentgateway-locality
+               name: backend-zone-b
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 5
+       - name: wait for backend-region-b deployment
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: agentgateway-locality
+               name: backend-region-b
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: a212705b5b6f87c3
+    lang: yaml
+    lines: 16c71da1 f1540154 0d6480f0 8c8c4228 6aeee0d9 ebeadacf 36184fa5 8432e015 0a31634e 0ff65a1a 82601aaa da480536 5374623b 9693ecf1 cb3f91d5 8c67597e 56bf9360 8c8c4228 1844aaec ebeadacf 36184fa5 d3d416e7 351066a3 301e1bfa 7d809337 3de9d845 a3b86ab6 5bc3372e da480536 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="locality-aware-routing" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for locality-route to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-locality
+               name: locality-route
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 9
+      fingerprint: d13ade6c62874937
+      lang: sh
+      lines: d13ade6c
+      preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
+  content: |2-
+       {{< doc-test paths="locality-aware-routing" >}}
+       # Warm up the new locality.test hostname so the proxy populates xDS for it.
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}/hostname" -H "host: locality.test" && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 5def4dd426769fda
+    lang: ''
+    lines: 5def4dd4
+    preview: 20 backend-zone-a-868fdff56f-w9jsn
+  content: |2-
+       {{< doc-test paths="locality-aware-routing" >}}
+       # Wait for PreferSameZone to take effect in the proxy's xDS endpoint weights.
+       for i in $(seq 1 60); do
+         body=$(curl -s --max-time 5 -H "host: locality.test" "http://${INGRESS_GW_ADDRESS}/hostname" || echo "")
+         case "$body" in
+           backend-zone-a-*) break ;;
+         esac
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 5def4dd426769fda
+    lang: ''
+    lines: 5def4dd4
+    preview: 20 backend-zone-a-868fdff56f-w9jsn
+  content: |2-
+       {{< doc-test paths="locality-aware-routing" >}}
+       # Assert all requests go to backend-zone-a after PreferSameZone is enabled.
+       EXPECTED=20
+       EXPECTED_PREFIX=backend-zone-a
+       for attempt in $(seq 1 12); do
+         COUNT=0
+         for i in $(seq 1 ${EXPECTED}); do
+           body=$(curl -s --max-time 5 -H "host: locality.test" "http://${INGRESS_GW_ADDRESS}/hostname" || echo "")
+           case "$body" in
+             ${EXPECTED_PREFIX}-*) COUNT=$((COUNT+1)) ;;
+           esac
+         done
+         if [ "$COUNT" -eq "$EXPECTED" ]; then
+           echo "PASS: ${COUNT}/${EXPECTED} requests routed to ${EXPECTED_PREFIX}"
+           break
+         fi
+         echo "Attempt ${attempt}: ${COUNT}/${EXPECTED} to ${EXPECTED_PREFIX}, retrying..."
+         sleep 5
+       done
+       if [ "$COUNT" -ne "$EXPECTED" ]; then
+         echo "FAIL: expected ${EXPECTED}/${EXPECTED} requests to ${EXPECTED_PREFIX}, got ${COUNT}"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 10fc2a87fa605679
+    lang: ''
+    lines: 10fc2a87
+    preview: 20 backend-zone-b-6bddfdcd85-ht8qn
+  content: |2-
+       {{< doc-test paths="locality-aware-routing" >}}
+       # Assert traffic shifts to backend-zone-b after we-zone-a is deleted.
+       EXPECTED=20
+       EXPECTED_PREFIX=backend-zone-b
+       for attempt in $(seq 1 12); do
+         COUNT=0
+         for i in $(seq 1 ${EXPECTED}); do
+           body=$(curl -s --max-time 5 -H "host: locality.test" "http://${INGRESS_GW_ADDRESS}/hostname" || echo "")
+           case "$body" in
+             ${EXPECTED_PREFIX}-*) COUNT=$((COUNT+1)) ;;
+           esac
+         done
+         if [ "$COUNT" -eq "$EXPECTED" ]; then
+           echo "PASS: ${COUNT}/${EXPECTED} requests routed to ${EXPECTED_PREFIX}"
+           break
+         fi
+         echo "Attempt ${attempt}: ${COUNT}/${EXPECTED} to ${EXPECTED_PREFIX}, retrying..."
+         sleep 5
+       done
+       if [ "$COUNT" -ne "$EXPECTED" ]; then
+         echo "FAIL: expected ${EXPECTED}/${EXPECTED} requests to ${EXPECTED_PREFIX}, got ${COUNT}"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 6ff3689c6b13e932
+    lang: ''
+    lines: 6ff3689c
+    preview: 20 backend-region-b-5d46cfc8b5-xmfnc
+  content: |2-
+       {{< doc-test paths="locality-aware-routing" >}}
+       # Assert traffic shifts to backend-region-b after we-zone-b is also deleted.
+       EXPECTED=20
+       EXPECTED_PREFIX=backend-region-b
+       for attempt in $(seq 1 12); do
+         COUNT=0
+         for i in $(seq 1 ${EXPECTED}); do
+           body=$(curl -s --max-time 5 -H "host: locality.test" "http://${INGRESS_GW_ADDRESS}/hostname" || echo "")
+           case "$body" in
+             ${EXPECTED_PREFIX}-*) COUNT=$((COUNT+1)) ;;
+           esac
+         done
+         if [ "$COUNT" -eq "$EXPECTED" ]; then
+           echo "PASS: ${COUNT}/${EXPECTED} requests routed to ${EXPECTED_PREFIX}"
+           break
+         fi
+         echo "Attempt ${attempt}: ${COUNT}/${EXPECTED} to ${EXPECTED_PREFIX}, retrying..."
+         sleep 5
+       done
+       if [ "$COUNT" -ne "$EXPECTED" ]; then
+         echo "FAIL: expected ${EXPECTED}/${EXPECTED} requests to ${EXPECTED_PREFIX}, got ${COUNT}"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    line: e259607489f38210
+    occurrence: 0
+    words: 58296753 ca978112 03d2a4f9 164cf1ca 7ab37787 b9776d7d bfd35cea 0695b563 9c240841 a46c629d b8d31e85 b9776d7d 0967115f 545ea538 f4bf9f7f b9776d7d 4ea5ee68 663ea1bf aa9e9b5c 2430e09e e30b3910
+    block_before:
+      block: 22
+      fingerprint: be5b04f28dcf63f1
+      lang: ''
+      lines: be5b04f2
+      preview: 10 503
+  content: |2-
+       {{< doc-test paths="locality-aware-routing" >}}
+       # Assert all requests return 503 under internalTrafficPolicy: Local.
+       EXPECTED=10
+       for attempt in $(seq 1 12); do
+         COUNT=0
+         for i in $(seq 1 ${EXPECTED}); do
+           code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 -H "host: locality.test" "http://${INGRESS_GW_ADDRESS}/hostname" || echo "0")
+           if [ "$code" = "503" ]; then
+             COUNT=$((COUNT+1))
+           fi
+         done
+         if [ "$COUNT" -eq "$EXPECTED" ]; then
+           echo "PASS: ${COUNT}/${EXPECTED} requests returned 503"
+           break
+         fi
+         echo "Attempt ${attempt}: ${COUNT}/${EXPECTED} returned 503, retrying..."
+         sleep 5
+       done
+       if [ "$COUNT" -ne "$EXPECTED" ]; then
+         echo "FAIL: expected ${EXPECTED}/${EXPECTED} requests to return 503, got ${COUNT}"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: 11258a295545c45c
+    lang: sh
+    lines: 11258a29
+    preview: kubectl delete namespace agentgateway-locality
+  content: |-
+    {{< doc-test paths="locality-aware-routing" >}}
+    kubectl delete namespace agentgateway-locality --ignore-not-found --wait=false
+    {{< /doc-test >}}

@@ -1,0 +1,129 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/header-control/request-header.md
+blocks:
+- fd5af7cdd2320d1f yaml
+- 1d11dfb37b9c7f45 sh
+- a4da8d44e8d58ea2 sh
+- c9bb2f9f5819fa0d yaml
+- 9391403fb3d13811 sh
+- 18473dc90ef73c64 sh
+- fb5dd52bef1bb332 yaml
+- 277919f74f676448 sh
+- f34bacc4ca9f9d14 yaml
+- 1d11dfb37b9c7f45 sh
+- a4da8d44e8d58ea2 sh
+- 1f1304bad7b9e995 yaml
+- 9391403fb3d13811 sh
+- 18473dc90ef73c64 sh
+- 3d0ab6a13e352427 yaml
+- 277919f74f676448 sh
+- 8fca1a1e395d9292 sh
+- cd98ed12332053ef sh
+- 81fd43742f10e36c yaml
+- c20ec22b159c7124 yaml
+- 1d11dfb37b9c7f45 sh
+- a4da8d44e8d58ea2 sh
+- a80eed0fc0bd3873 sh
+- 277919f74f676448 sh
+tags:
+- paths: add-request-header
+  block: 0
+  fingerprint: fd5af7cdd2320d1f
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 274fdf3f b3470e51 0ca4c44a 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="add-request-header"
+    only: true
+    lead: ' '
+- paths: set-request-header
+  block: 8
+  fingerprint: f34bacc4ca9f9d14
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 207d5e5e b3470e51 0ca4c44a 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="set-request-header"
+    only: true
+    lead: ' '
+- paths: remove-request-header
+  block: 19
+  fingerprint: c20ec22b159c7124
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 0a282488 7de9ac69 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-request-header"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 23
+    fingerprint: 277919f74f676448
+    lang: sh
+    lines: 277919f7
+    preview: kubectl delete httproute httpbin-headers -n httpbin
+  content: |-
+    {{< doc-test paths="add-request-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify add-request-header returns 200 with my-header
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}"
+        path: /headers
+        method: GET
+        headers:
+          host: headers.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains:
+        - '"My-Header"'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: 277919f74f676448
+    lang: sh
+    lines: 277919f7
+    preview: kubectl delete httproute httpbin-headers -n httpbin
+  content: |-
+    {{< doc-test paths="set-request-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify set-request-header returns 200 with my-header
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}"
+        path: /headers
+        method: GET
+        headers:
+          host: headers.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains:
+        - '"My-Header"'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: 277919f74f676448
+    lang: sh
+    lines: 277919f7
+    preview: kubectl delete httproute httpbin-headers -n httpbin
+  content: |-
+    {{< doc-test paths="remove-request-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify remove-request-header returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}"
+        path: /headers
+        method: GET
+        headers:
+          host: headers.example
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,281 @@
+format: 1
+source: content/docs/kubernetes/1.4.x/documentation/llm/models/serve.md
+blocks:
+- 2f0fa38de26b4783 sh
+- 408a06244b235e2d sh
+- 12f49506459e395e yaml
+- 7d92cdded1f70633 sh
+- 2b48bb938cfd5a8c json
+- c400d0bd38e55679 sh
+- d13ade6c62874937 sh
+- 452e2e34d9956db4 sh
+- da9f7a92ca714ff0 yaml
+- 91c9ee79e0a66931 sh
+- 3286ef74e04ce1e6 json
+- d7dcd05bec8496b2 sh
+- df96cb6391a2f3f8 json
+- 1ea0de40a180fd47 yaml
+- 605c354e8473c96f sh
+- 54b6ebb43f8cd1ee json
+- f64ee25a12a74cd9 yaml
+- ff88b8ac26908832 yaml
+- 0a75a3fb6611868f sh
+- cc34213c023eec3f json
+- df96cb6391a2f3f8 json
+- 8c723388e128f533 sh
+- 6a6e4741464b41a3 sh
+- 0a75a3fb6611868f sh
+- df1e178cf660cb6d sh
+tags:
+- paths: serve-model
+  block: 0
+  fingerprint: 2f0fa38de26b4783
+  lang: sh
+  lines: 3efb3966 918988a2 96064311 506557ee 4e1c1bab cce6a81c
+  preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
+  form:
+    attr: paths="serve-model"
+    only: true
+    lead: ' '
+- paths: serve-model
+  block: 2
+  fingerprint: 12f49506459e395e
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 8af957d1 36184fa5 ddf06799 c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d d94df5c7 b5a028c9 56bf9360 e9a46ca1 eef5a849 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="serve-model"
+    only: true
+    lead: ' '
+- paths: serve-model
+  block: 8
+  fingerprint: da9f7a92ca714ff0
+  lang: yaml
+  lines: 16c71da1 263e4531 eef5a849 8c8c4228 c34c687c 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 0323852a d81dacad abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="serve-model"
+    only: true
+    lead: ' '
+- paths: serve-model
+  block: 13
+  fingerprint: 1ea0de40a180fd47
+  lang: yaml
+  lines: 16c71da1 263e4531 eef5a849 8c8c4228 23f02a5e 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 f0ce727c 75267c09 0323852a d81dacad c8f3f59a f372f1cb 5565245d 5dbf4c01 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="serve-model"
+    only: true
+    lead: ' '
+- paths: serve-model
+  block: 16
+  fingerprint: f64ee25a12a74cd9
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f 8af957d1 1426decf 2f7c298d 73825423 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="serve-model"
+    only: true
+    lead: ' '
+- paths: serve-model
+  block: 17
+  fingerprint: ff88b8ac26908832
+  lang: yaml
+  lines: 16c71da1 263e4531 eef5a849 8c8c4228 b0dba0c2 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 0323852a c8f3f59a 146e11c6 9ebc4789 4df4f75f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="serve-model"
+    only: true
+    lead: ' '
+- paths: serve-model-cleanup
+  block: 24
+  fingerprint: df1e178cf660cb6d
+  lang: sh
+  lines: 4dfacb31 bee798d4
+  preview: kubectl delete agentgatewaymodel gpt-4 openai-models gpt-5-mini -n {{< reuse "ag
+  form:
+    attr: paths="serve-model-cleanup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: b1434af5c3b0a373
+    occurrence: 0
+    words: 1eb79602 5d347fd9 f480ffb2 b9776d7d 2a3b62b5 875b9380 44575cf5 a511aeee b9776d7d d9c0d341 ea62dcb6 21a355f1 5b056afb 14c2529e fa51fd49 254bb97b cfd96dd9 58296753 ca978112 d29eae13 cc57fc19
+    block_before:
+      block: 0
+      fingerprint: 2f0fa38de26b4783
+      lang: sh
+      lines: 3efb3966 918988a2 96064311 506557ee 4e1c1bab cce6a81c
+      preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
+  content: |2-
+       {{< doc-test paths="serve-model" >}}
+       kubectl rollout status deploy/agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 2b48bb938cfd5a8c
+    lang: json
+    lines: 2b48bb93
+    preview: '[{"group":"gateway.networking.k8s.io","kind":"HTTPRoute"},{"group":"agentgateway'
+  content: |2-
+       {{< doc-test paths="serve-model" >}}
+       # NOTE: status.listeners[].supportedKinds does not currently advertise
+       # AgentgatewayModel even when the API is enabled and the kind is in
+       # allowedRoutes, so we do not gate on it here. The model-serving checks below
+       # (with their own warmup loops) verify the listener actually serves models.
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 3286ef74e04ce1e6
+    lang: json
+    lines: 3286ef74
+    preview: '{"model":"gpt-4","usage":{"prompt_tokens":3,"completion_tokens":4,"total_tokens"'
+  content: |2-
+       {{< doc-test paths="serve-model" >}}
+       # An AgentgatewayModel does not report status, so poll the data plane until the
+       # model is served instead of waiting on a resource condition.
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null -X POST "http://${INGRESS_GW_ADDRESS}/v1/chat/completions" \
+           -H "Content-Type: application/json" \
+           -d '{"model":"gpt-4","messages":[],"httpbun":{"content":"warmup"}}' && break
+         sleep 2
+       done
+
+       YAMLTest -f - <<'EOF'
+       - name: exact model gpt-4 is served
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {
+               "model": "gpt-4",
+               "messages": [{"role": "user", "content": "Hello!"}],
+               "httpbun": {"content": "Hello from the mock LLM"}
+             }
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: equals
+               value: "gpt-4"
+             - path: "$.choices[0].message.content"
+               comparator: contains
+               value: "Hello from the mock LLM"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: df96cb6391a2f3f8
+    lang: json
+    lines: df96cb63
+    preview: '{"error":{"message":"Model not found","type":"invalid_request_error","code":"mod'
+  content: |2-
+       {{< doc-test paths="serve-model" >}}
+       YAMLTest -f - <<'EOF'
+       - name: unknown model returns an OpenAI-compatible error
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {"model": "does-not-exist", "messages": []}
+         source:
+           type: local
+         expect:
+           statusCode: 404
+           bodyJsonPath:
+             - path: "$.error.code"
+               comparator: equals
+               value: "model_not_found"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 54b6ebb43f8cd1ee
+    lang: json
+    lines: 54b6ebb4
+    preview: '{"model":"gpt-5-mini","usage":{"prompt_tokens":3,"completion_tokens":4,"total_to'
+  content: |2-
+       {{< doc-test paths="serve-model" >}}
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null -X POST "http://${INGRESS_GW_ADDRESS}/v1/chat/completions" \
+           -H "Content-Type: application/json" \
+           -d '{"model":"openai/gpt-5-mini","messages":[],"httpbun":{"content":"warmup"}}' && break
+         sleep 2
+       done
+
+       YAMLTest -f - <<'EOF'
+       - name: wildcard match strips the prefix before the provider sees the model
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/v1/chat/completions"
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {
+               "model": "openai/gpt-5-mini",
+               "messages": [{"role": "user", "content": "Hello!"}],
+               "httpbun": {"content": "Hello from the mock LLM"}
+             }
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: equals
+               value: "gpt-5-mini"
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 4f1cfade51f3aa63
+    occurrence: 0
+    words: 6b86b273 fa8847b0 ca978112 2bb80d53 8e7fc023 3b97260d b9776d7d 5c4c1964 14c2529e 2c70e12b a7e2d26e 37a8eec1 56e57ada 3566cf23 b9776d7d cbb82ebe 2c70e12b
+    block_before:
+      block: 15
+      fingerprint: 54b6ebb43f8cd1ee
+      lang: json
+      lines: 54b6ebb4
+      preview: '{"model":"gpt-5-mini","usage":{"prompt_tokens":3,"completion_tokens":4,"total_to'
+  content: |2-
+       {{< doc-test paths="serve-model" >}}
+       # The mock LLM ignores credentials; use a placeholder so the Secret is well formed.
+       export OPENAI_API_KEY=sk-placeholder
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: cc34213c023eec3f
+    lang: json
+    lines: 021fb596 d90ae9ee 1f67b5ca 81d0a442 bda7e1f5 39d4b54e 7738d670 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="serve-model" >}}
+    # YAMLTest evaluates "$.data[*].id" to the first array element only, so a
+    # `contains` check can verify the first listed model (gpt-4) but cannot assert
+    # membership for later entries such as the "openai/*" wildcard. The wildcard is
+    # already validated by the "wildcard match" serving check above, and appears in
+    # the /v1/models response shown in the example output.
+    YAMLTest -f - <<'EOF'
+    - name: model discovery endpoint lists public models
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}/v1/models"
+        method: GET
+      source:
+        type: local
+      retries: 3
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.data[*].id"
+            comparator: contains
+            value: "gpt-4"
+    EOF
+    {{< /doc-test >}}

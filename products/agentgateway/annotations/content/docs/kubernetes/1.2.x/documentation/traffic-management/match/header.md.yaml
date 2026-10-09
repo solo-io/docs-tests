@@ -1,0 +1,114 @@
+format: 1
+source: content/docs/kubernetes/1.2.x/documentation/traffic-management/match/header.md
+blocks:
+- 3a7707a02d6b6b09 yaml
+- b282197593ea3c94 sh
+- c18dcc5a6d1d0f89 sh
+- 9c330250109a949b
+- ccc3126f542dff48 sh
+- f7da1291864cb1f7 sh
+- d35490668582c088
+- 23ce92874e08f6b7 yaml
+- 17a16c0dbeffd5df sh
+- fba673a7e5ad342c sh
+- d35490668582c088
+- 0094487a02eeee41 sh
+- bca534c824399461 sh
+- 9c330250109a949b
+- 32ed805e3efa5796 sh
+tags:
+- paths: header-match-exact
+  block: 0
+  fingerprint: 3a7707a02d6b6b09
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa c49a234e 3de9d845 b733d726 d0672ddc 85b6786c b36e4bda 6d88f925 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-match-exact"
+    only: true
+    lead: ' '
+- paths: header-match-regex
+  block: 7
+  fingerprint: 23ce92874e08f6b7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa c49a234e 3de9d845 b733d726 d0672ddc db06fb04 d23ac847 ff36735c 85b6786c 575a50d7 ff36735c 0be206f8 4b5817e7 ff36735c 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-match-regex"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 13
+    fingerprint: 9c330250109a949b
+    lang: ''
+    lines: 20fa3eb6 512742e0 5560b76b 421dc0bc 6df41b03 fe66b4d1
+    preview: < HTTP/1.1 404 Not Found
+  blank_before: []
+  content: |-
+    {{< doc-test paths="header-match-exact" >}}
+    YAMLTest -f - <<'EOF'
+    - name: exact header match - no version header returns 404
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200
+        method: GET
+        headers:
+          host: match.example
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    - name: exact header match - version v2 header returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200
+        method: GET
+        headers:
+          host: match.example
+          version: v2
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 9c330250109a949b
+    lang: ''
+    lines: 20fa3eb6 512742e0 5560b76b 421dc0bc 6df41b03 fe66b4d1
+    preview: < HTTP/1.1 404 Not Found
+  content: |-
+    {{< doc-test paths="header-match-regex" >}}
+    YAMLTest -f - <<'EOF'
+    - name: regex header match - valid headers returns 200
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200
+        method: GET
+        headers:
+          host: match.example
+          Authorization: "Bearer 123"
+          pet: dogs
+          version: "3.0"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: regex header match - invalid version returns 404
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /status/200
+        method: GET
+        headers:
+          host: match.example
+          Authorization: "Bearer 123"
+          pet: dogs
+          version: "30"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}

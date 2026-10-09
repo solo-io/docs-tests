@@ -60,6 +60,9 @@ for p, t in pages.items():
     if len(parts) < 5 or parts[3] not in LIVE: continue
     if parts[2] != MODE: continue          # scenario names repeat across modes
     if AREA not in p: continue
+    # Only pages the runner discovers declare scenarios. A `.txt` page is one
+    # disabled by renaming; its front matter never ran, and must not start to.
+    if not p.endswith(".md"): continue
     if not t.startswith("---"): continue
     try: fm = yaml.safe_load(t.split("---",2)[1]) or {}
     except Exception: continue
@@ -86,6 +89,11 @@ def step_ref(vroot, decl_page, s):
     """One step -> either a named prerequisite, or an inline {source|page, path}."""
     f, sel = s.get("file"), s.get("path")
     rel = f.replace("${versionRoot}/", "") if f else decl_page.split(f"{vroot}/")[-1]
+    # Some pages name a step by its literal path in this root rather than with
+    # ${versionRoot}; normalize, or latest and main look different and the
+    # manifest gets a root-specific path that resolves nowhere.
+    if rel.startswith(f"{vroot}/"):
+        rel = rel[len(vroot) + 1:]
     key = (rel, sel)
     if key in PREREQ_NAMES:
         used_prereqs[PREREQ_NAMES[key]] = {"page": rel, "path": sel}

@@ -1,0 +1,203 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/providers/ollama.md
+blocks:
+- e241e2640d64798f sh
+- ef40372ec692e7dd sh
+- 308a1c9db4e9fb5f sh
+- add63e667dd95284 sh
+- 54e171065f1587c9 sh
+- aa0d1f4729bf79dd yaml
+- 4cbb249579bd15ae yaml
+- 9e7edcf0e684c64b yaml
+- 98ec07baaa3b06a6 sh
+- 5bbc58dd3cbf8ecd sh
+- 81a69e95cae6f653 sh
+- 52b1b954e3475e51 json
+- add63e667dd95284 sh
+- 7994819b728c905e sh
+- 9fdce65faed91f10 sh
+- e241e2640d64798f sh
+- ef40372ec692e7dd sh
+tags:
+- paths: ollama-provider-setup
+  block: 6
+  fingerprint: 4cbb249579bd15ae
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 7c59be09 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 18e6ab7b 678a265b e577f236 c81e6d42 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="ollama-provider-setup"
+    only: true
+    lead: ' '
+- paths: ollama-provider-setup
+  block: 7
+  fingerprint: 9e7edcf0e684c64b
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c59be09 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 79f29282 8af957d1 22aec9ce 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="ollama-provider-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 7
+    fingerprint: 9e7edcf0e684c64b
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c59be09 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 79f29282 8af957d1 22aec9ce 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="ollama-provider-setup" >}}
+    kubectl apply -f- <<'EOF'
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: httpbun-ollama
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+      labels:
+        app: httpbun-ollama
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: httpbun-ollama
+      template:
+        metadata:
+          labels:
+            app: httpbun-ollama
+        spec:
+          containers:
+          - name: httpbun
+            image: sharat87/httpbun
+            env:
+            - name: HTTPBUN_BIND
+              value: "0.0.0.0:3090"
+            ports:
+            - containerPort: 3090
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: httpbun-ollama
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      selector:
+        app: httpbun-ollama
+      ports:
+      - protocol: TCP
+        port: 3090
+        targetPort: 3090
+    EOF
+
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbun-ollama deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: httpbun-ollama
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 180
+          intervalSeconds: 5
+    EOF
+
+    HTTPBUN_OLLAMA_POD_IP=$(kubectl get pod -n {{< reuse "agw-docs/snippets/namespace.md" >}} -l app=httpbun-ollama -o jsonpath='{.items[0].status.podIP}')
+    kubectl apply -f- <<EOF
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: ollama
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      type: ClusterIP
+      clusterIP: None
+      ports:
+      - port: 11434
+        targetPort: 11434
+        protocol: TCP
+    ---
+    apiVersion: discovery.k8s.io/v1
+    kind: EndpointSlice
+    metadata:
+      name: ollama
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+      labels:
+        kubernetes.io/service-name: ollama
+    addressType: IPv4
+    endpoints:
+    - addresses:
+      - ${HTTPBUN_OLLAMA_POD_IP}
+    ports:
+    - port: 3090
+      protocol: TCP
+    EOF
+    kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} ollama -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type merge -p '{"spec":{"ai":{"provider":{"openai":{"model":"llama3.2"},"port":3090,"path":"/llm/chat/completions"}}}}'
+
+    YAMLTest -f - <<'EOF'
+    - name: wait for ollama HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: ollama
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    - name: wait for ollama HTTPRoute refs to be resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: agentgateway-system
+            name: ollama
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+
+    export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-proxy -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+
+    YAMLTest -f - <<'EOF'
+    - name: verify ollama route serves chat-completions responses
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/ollama"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {
+            "model": "llama3.2",
+            "messages": [
+              {
+                "role": "user",
+                "content": "Respond with the word hello."
+              }
+            ],
+            "httpbun": {
+              "content": "ollama provider route is working"
+            }
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.choices[0].message.content"
+            comparator: contains
+            value: "ollama provider route is working"
+    EOF
+    {{< /doc-test >}}

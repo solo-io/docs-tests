@@ -1,0 +1,293 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/failover.md
+blocks:
+- aaaa4824f9628707 mermaid
+- da1f57fff9bda5e1 yaml
+- 21148cc0903a1596 yaml
+- 1858e870a53a4066 yaml
+- 4fe85cb88a43f21b yaml
+- 54035ab77cf65eee yaml
+- 66a2de7f48ca8656 yaml
+- ce9a3be267b56155 bash
+- 04e3bfce27f42d9f bash
+- bad278dc80360af2 text
+- 7b5298df638825ff bash
+- c3f454884325459b yaml
+- 9882022f5cb261c6 yaml
+- 287736017e5fcedf yaml
+- c400d0bd38e55679 bash
+- da3903f5ca253265 bash
+- 3ba5d13a604e09d5 bash
+- 54880d379cb8407b text
+- d2ec031485b41b77 bash
+- 5125262399077746 text
+- 3feae0d714c98ada yaml
+- daf6bac376a962b3 text
+- 23d318de2557e0cc shell
+- d3462818c31783f3 shell
+tags:
+- paths: failover
+  block: 10
+  fingerprint: 7b5298df638825ff
+  lang: bash
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 e6078d19 0ccc8edc fa1e8330 720461e4 36184fa5 97bcd5e0 8432e015 839a5cac 720461e4 a58565b2 8c8c4228 fa1e8330 720461e4 36184fa5 04968f51 c5553ae5 3e45e970 8db70061 10100541 24f20d01 0ff65a1a af96a420 cb3f91d5 f1540154 0d6480f0 8c8c4228 e6078d19 0ccc8edc fa1e8330 720461e4 36184fa5 8432e015 720461e4 0ff65a1a 83feb025 99dc43b5 1e5bdedf 08a3b86e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="failover"
+    only: true
+    lead: ' '
+- paths: failover
+  block: 11
+  fingerprint: c3f454884325459b
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 732b211a 8af957d1 36184fa5 ad3afdb1 b54c262c f22ccaa8 f6c60832 da4aa5f1 62402ad4 febc4ded 99dc43b5 156caea7 f22ccaa8 16f2a166 da4aa5f1 6d88d930 febc4ded 99dc43b5 8f9e2c62 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="failover"
+    only: true
+    lead: ' '
+- paths: failover
+  block: 12
+  fingerprint: 9882022f5cb261c6
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 732b211a 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 d7d1fcb9 94ae491e e6c2494b 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="failover"
+    only: true
+    lead: ' '
+- paths: failover
+  block: 13
+  fingerprint: 287736017e5fcedf
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 d29ab308 8af957d1 36184fa5 588a5d84 453bdfd0 99d7dba1 732b211a bb85cefe d1a43947 fcfdd945 0001b31c 1f9504eb da505865 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="failover"
+    only: true
+    lead: ' '
+- paths: failover
+  block: 20
+  fingerprint: 3feae0d714c98ada
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 75186767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 732b211a e4f6a86d 7f8a9998 5a64a4ea 67c4b1f3 da134923 3a2d8669 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="failover"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 10
+    fingerprint: 7b5298df638825ff
+    lang: bash
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 e6078d19 0ccc8edc fa1e8330 720461e4 36184fa5 97bcd5e0 8432e015 839a5cac 720461e4 a58565b2 8c8c4228 fa1e8330 720461e4 36184fa5 04968f51 c5553ae5 3e45e970 8db70061 10100541 24f20d01 0ff65a1a af96a420 cb3f91d5 f1540154 0d6480f0 8c8c4228 e6078d19 0ccc8edc fa1e8330 720461e4 36184fa5 8432e015 720461e4 0ff65a1a 83feb025 99dc43b5 1e5bdedf 08a3b86e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="failover" >}}
+       kubectl rollout status deployment/httpbun -n default --timeout=180s
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: c3f454884325459b
+    lang: yaml
+    lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 732b211a 8af957d1 36184fa5 ad3afdb1 b54c262c f22ccaa8 f6c60832 da4aa5f1 62402ad4 febc4ded 99dc43b5 156caea7 f22ccaa8 16f2a166 da4aa5f1 6d88d930 febc4ded 99dc43b5 8f9e2c62 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="failover" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for failover-demo backend to be accepted
+         wait:
+           target:
+             kind: AgentgatewayBackend
+             metadata:
+               namespace: agentgateway-system
+               name: failover-demo
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 9882022f5cb261c6
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 732b211a 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 d7d1fcb9 94ae491e e6c2494b 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="failover" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for failover-demo HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: failover-demo
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       - name: wait for failover-demo HTTPRoute refs to be resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: failover-demo
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 287736017e5fcedf
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 d29ab308 8af957d1 36184fa5 588a5d84 453bdfd0 99d7dba1 732b211a bb85cefe d1a43947 fcfdd945 0001b31c 1f9504eb da505865 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="failover" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for failover-demo-health policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: failover-demo-health
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 3
+    words: 32d3feda
+    block_before:
+      block: 15
+      fingerprint: da3903f5ca253265
+      lang: bash
+      lines: eb953dbd 452e2e34
+      preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
+  content: |2-
+       {{< doc-test paths="failover" >}}
+       # Resolve the gateway address the same way the LoadBalancer tab does.
+       export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-proxy -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+
+       # The first request must reach the failing primary group and return a 500.
+       # This is the eviction trigger, so it has to happen before the assertion below.
+       FIRST_CODE=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}/failover-demo" \
+         -H 'content-type: application/json' \
+         -d '{"messages": [{"role": "user", "content": "Say hello."}]}')
+       if [ "$FIRST_CODE" != "500" ]; then
+         echo "expected HTTP 500 from the primary group on the first request, got ${FIRST_CODE}"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 3
+    words: 32d3feda
+    block_before:
+      block: 15
+      fingerprint: da3903f5ca253265
+      lang: bash
+      lines: eb953dbd 452e2e34
+      preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
+  content: |2-
+       {{< doc-test paths="failover" >}}
+       # After the primary group is evicted, requests must fail over to healthy-fallback,
+       # which is the only provider configured with the gpt-4o-mini model.
+       YAMLTest -f - <<'EOF'
+       - name: verify failover reaches the fallback group
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/failover-demo"
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {
+               "messages": [{"role": "user", "content": "Say hello."}]
+             }
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: equals
+               value: "gpt-4o-mini"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: daf6bac376a962b3
+    lang: text
+    lines: 2e0f860f f66c550b 0bb84ec1
+    preview: 'request 1: HTTP 200, model gpt-4o-mini'
+  content: |-
+    {{< doc-test paths="failover" >}}
+    # Restart the proxy so that the primary group starts healthy again. Without this
+    # reset the primary is still evicted from the previous step, and a 200 would prove
+    # nothing about the retry policy.
+    kubectl rollout restart deployment/agentgateway-proxy -n agentgateway-system
+    kubectl rollout status deployment/agentgateway-proxy -n agentgateway-system --timeout=180s
+    sleep 10
+    export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-proxy -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+
+    # With the retry policy in place, the very first request must succeed on the
+    # fallback group instead of returning the primary group's 500.
+    YAMLTest -f - <<'EOF'
+    - name: verify the retry policy hides the primary group failure
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}/failover-demo"
+        method: POST
+        headers:
+          Content-Type: application/json
+        body: |
+          {
+            "messages": [{"role": "user", "content": "Say hello."}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.model"
+            comparator: equals
+            value: "gpt-4o-mini"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: d3462818c31783f3
+    lang: shell
+    lines: 9a8f3029 3ed401ac 7af3a8ce 75f538d3 3dc44e20 cd4cab93
+    preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} failover-demo-health '
+  content: |-
+    {{< doc-test paths="failover" >}}
+    # Remove only what this scenario created. The httpbun deployment is left in place,
+    # because the setup-httpbun-llm prerequisite created it and other scenarios use it.
+    kubectl delete AgentgatewayPolicy failover-demo-health -n agentgateway-system --ignore-not-found
+    kubectl delete AgentgatewayPolicy failover-demo-retry -n agentgateway-system --ignore-not-found
+    kubectl delete httproute failover-demo -n agentgateway-system --ignore-not-found
+    kubectl delete AgentgatewayBackend failover-demo -n agentgateway-system --ignore-not-found
+    {{< /doc-test >}}

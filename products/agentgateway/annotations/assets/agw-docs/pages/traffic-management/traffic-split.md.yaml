@@ -1,0 +1,102 @@
+format: 1
+source: assets/agw-docs/pages/traffic-management/traffic-split.md
+blocks:
+- 84f5ae09c856ce73 sh
+- b551886219df2aae sh
+- 2178fd33f131147a
+- d208a005aa111b1b sh
+- 635cc55e4fd7d569
+- 3dd0580a90672ba6 yaml
+- 192bcba986371713 sh
+- 1628a6b6ffb9a440 sh
+- e91f515cf5f8e8c5 sh
+- 35d1d9667ff60206
+- 30a1bd3cff924eca yaml
+- 704a9a1150da7a40 yaml
+- b161937d5a04e934 bash
+- 769b53aa6a75b541 bash
+- 7371b863d42de5dd
+- 5773cb1c5d5301e5 sh
+- c0b3c0eb47a09e70 sh
+tags:
+- paths: traffic-split-llm
+  block: 10
+  fingerprint: 30a1bd3cff924eca
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 011e879b 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 6d88d930 c8f3f59a 146e11c6 9ebc4789 4df4f75f cb3f91d5 fbc30693 99d7dba1 8c8c4228 429da099 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 d887603d c8f3f59a 146e11c6 9ebc4789 4df4f75f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="traffic-split-llm"'
+    at: 4
+- paths: traffic-split-llm
+  block: 11
+  fingerprint: 704a9a1150da7a40
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 caac68cf 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 307ceefd 94ae491e a45f7c0b 8af957d1 22aec9ce 99d7dba1 e0822f08 c6e4fcd0 8af957d1 22aec9ce 99d7dba1 1e00823c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="traffic-split-llm"'
+    at: 4
+hidden:
+- after:
+    block: 14
+    fingerprint: 7371b863d42de5dd
+    lang: ''
+    lines: 27bebe76 27bebe76 494a14f4 27bebe76 27bebe76 27bebe76 27bebe76 494a14f4 27bebe76 27bebe76
+    preview: gpt-4o-mini-2024-07-18
+  content: |-
+    {{< doc-test paths="traffic-split-llm" >}}
+    # Traffic split: point both model backends at the httpbun mock LLM so the split
+    # assertion below needs no provider API key. httpbun echoes the model that the
+    # backend pinned, so the response still carries the model name that this page's
+    # output is about.
+    {{< reuse "agw-docs/snippets/deploy-mock-llm.md" >}}
+    kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai-mini-backend -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge --patch-file /dev/stdin <<EOF
+    spec:
+      ai:
+        provider:
+          host: httpbun.default.svc.cluster.local
+          port: 3090
+          path: /llm/chat/completions
+    EOF
+    kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai-premium-backend -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge --patch-file /dev/stdin <<EOF
+    spec:
+      ai:
+        provider:
+          host: httpbun.default.svc.cluster.local
+          port: 3090
+          path: /llm/chat/completions
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 7371b863d42de5dd
+    lang: ''
+    lines: 27bebe76 27bebe76 494a14f4 27bebe76 27bebe76 27bebe76 27bebe76 494a14f4 27bebe76 27bebe76
+    preview: gpt-4o-mini-2024-07-18
+  content: |-
+    {{< doc-test paths="traffic-split-llm" >}}
+    # Test that traffic is being split between models
+    # Send multiple requests and verify we get valid responses with model names
+    YAMLTest -f - <<'EOF'
+    - name: verify traffic split returns valid responses
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/test"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {
+            "messages": [{"role": "user", "content": "Say hello"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.model"
+            comparator: exists
+          - path: "$.choices[0].message.content"
+            comparator: exists
+    EOF
+    {{< /doc-test >}}
