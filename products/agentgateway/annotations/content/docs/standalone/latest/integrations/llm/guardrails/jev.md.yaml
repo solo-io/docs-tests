@@ -3,10 +3,10 @@ source: content/docs/standalone/latest/integrations/llm/guardrails/jev.md
 blocks:
 - 99fe003a4bae3ad2 mermaid
 - 68c60c86ff26e55b sh
-- fcb049f46a0aacbf sh
+- 949fa4e55e357f60 sh
 - 4f16505db12973ac sh
 - f6931a7b2e59dbc5 sh
-- 2a430212d7ea7a0b sh
+- db049ac95969c49f sh
 - deb33014f0035640 sh
 - 3c3980adb3bda1ed ts
 - a675c26fd3e0e7af ts
@@ -17,17 +17,6 @@ blocks:
 - 065c00ea49da206f sh
 - 544d70ff9fc30427
 - 77d7ad582a822698 console
-tags:
-- paths: jev
-  block: 2
-  fingerprint: fcb049f46a0aacbf
-  lang: sh
-  lines: fcb049f4
-  preview: curl -L https://agentgateway.dev/examples/llm-guardrail-jev/config.yaml -o confi
-  form:
-    attr: paths="jev"
-    only: true
-    lead: ' '
 hidden:
 - after:
     block: 1
@@ -77,3 +66,14 @@ hidden:
     # that the page displays, not a transcription of it.
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
+tags:
+- paths: jev
+  fingerprint: fcb049f46a0aacbf
+  lang: sh
+  lines: fcb049f4
+  preview: curl -L https://agentgateway.dev/examples/llm-guardrail-jev/config.yaml -o confi
+  form:
+    attr: paths="jev"
+    only: true
+    lead: ' '
+  status: needs-update
