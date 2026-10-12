@@ -34,9 +34,9 @@ go install sigs.k8s.io/cloud-provider-kind@latest
 
 ## How it works
 
-1. A doc page declares a `test:` block in its YAML front matter, listing one or more named test scenarios.
-2. Each scenario lists source files and path selectors — the pieces of shell/YAML to include.
-3. `doc_test_run.py` reads this metadata, chains the sources together, and produces a standalone bash script.
+1. A product's `tests.yaml` manifest (`products/<product>/<mode>/tests.yaml`) defines the test scenarios. Each one names its prerequisites and the path selectors to include from a page. A page's front matter `test:` block is still read for pages the manifest does not cover.
+2. `annotations.py attach` puts the test markup (`paths=` tags and hidden `{{< doc-test >}}` blocks) from `products/<product>/annotations/` onto a copy of the content repo's pages. The pages themselves carry no markup.
+3. `doc_test_run.py` reads the scenarios, chains the selected blocks together, and produces a standalone bash script.
 4. The script is run inside a fresh `kind` cluster (with `cloud-provider-kind` for load balancer support).
 
 ---
@@ -589,14 +589,17 @@ The `version` context (used to resolve `{{< version include-if="..." >}}` blocks
 
 ## Checklist for adding a test to a new page
 
+All markup goes in this repo. Never add `paths=`, `{{< doc-test >}}`, or front matter `test:` to a page in the content repo.
+
 1. **Trace prerequisites** — follow "Before you begin" links back to `helm.md`.
-2. **Verify path labels** on all prerequisite code blocks; add `paths="..."` where missing.
-3. **Add wait blocks** after each `kubectl apply` that creates something tests depend on.
-4. **Export `INGRESS_GW_ADDRESS`** — it flows from `gateway.md` via `setVars`.
-5. **Add the feature assertion** as a `{{< doc-test >}}` shortcode block on the feature page, either inline or via `file="..."` pointing into this repo's `products/` tree.
-6. **Write the `test:` front matter** on the feature page, listing sources in dependency order (install → setup → prereqs → feature).
-7. **Regenerate** with `--generate-only` and inspect the script for unresolved shortcodes or missing commands.
-8. **Run locally** with `bash out/tests/generated/<script>.sh` against an existing cluster to verify before committing.
+2. **Open the page's annotation** with `make annotate PRODUCT=<product> PAGE=<page>`. For a thin wrapper page, annotate the reused assets file, not the wrapper.
+3. **Verify path labels** on the code blocks you need; add `paths="..."` where missing, in the `out/annotate/` copy.
+4. **Add wait blocks** after each `kubectl apply` that creates something tests depend on.
+5. **Export `INGRESS_GW_ADDRESS`** — it flows from `gateway.md` via `setVars`.
+6. **Add the feature assertion** as a `{{< doc-test >}}` block in the `out/annotate/` copy, then run `make save` with the same arguments.
+7. **Add the scenario** to `products/<product>/<mode>/tests.yaml`, with its prerequisites under `needs:` and the page under `source:` (or `page:`).
+8. **Regenerate** from the content repo with `make test-generate`, which attaches your annotations first. Confirm everything attached, and inspect the script for unresolved shortcodes or missing commands.
+9. **Run locally** with `make test-run DOC_TESTS_ARGS='--file <page> --test <scenario>'` from the content repo. If the change goes with a content PR, push it here on a branch with the same name as the content PR's branch, so the content PR's run uses it.
 
 ---
 
