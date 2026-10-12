@@ -12,11 +12,13 @@ This repo currently holds two things:
   canonical copy — `agentgateway-oss-website`'s CI and Makefile check this repo out and
   invoke these scripts directly (`docs-tests/scripts/doc_test_run.py --repo-root .`, etc.);
   it no longer keeps its own copies.
-- `products/` — the actual test content, one directory per product and version,
-  mirroring the doc's own path, e.g.
-  `products/agentgateway/main/traffic-management/transformations/rewrite.sh`. Kept as
-  a directory layout on `main` rather than a branch per product × version, and as
-  committed, reviewable, diffable files rather than CI-generated artifacts.
+- `products/` — the actual test content, one directory per product. For agentgateway,
+  `products/agentgateway/annotations/` holds the test annotations, which mirror each doc
+  page's own path (for example,
+  `annotations/assets/agw-docs/pages/traffic-management/rewrite/host.md.yaml`) and are
+  applied to the docs content at test time. Kept as a directory layout on `main` rather
+  than a branch per product × version, and as committed, reviewable, diffable files
+  rather than CI-generated artifacts.
 
 ## Dependencies
 
@@ -94,6 +96,12 @@ editing the manifest.
 
 ## Referencing external test content in this repo
 
+> [!NOTE]
+> No current docs page uses the `file="..."` attribute or the `assert:` list described
+> in this section. Test content now lives in the annotation files under
+> `products/<product>/annotations/`. The extractor still supports both mechanisms, so
+> the paths in these examples are placeholders, not real files.
+
 The hidden `{{< doc-test >}}` shortcode (used for setup/assertions that must run
 during tests but never appear in rendered HTML) accepts an optional `file="..."`
 attribute. When present, the extractor reads the block's content from that path
@@ -101,10 +109,10 @@ resolved against a `docs-tests` checkout, instead of requiring an inline body be
 the opening and closing shortcode tags:
 
 ```md
-{{< doc-test paths="rewrite" file="products/agentgateway/main/traffic-management/transformations/rewrite.sh" >}}{{< /doc-test >}}
+{{< doc-test paths="rewrite" file="products/<product>/<path>/rewrite.sh" >}}{{< /doc-test >}}
 ```
 
-The referenced file (`products/agentgateway/main/traffic-management/transformations/rewrite.sh`
+The referenced file (`products/<product>/<path>/rewrite.sh`
 in this example) holds exactly the content that used to sit inline between the shortcode
 tags — nothing else changes about how the block is selected or emitted; it flows through
 the same `paths=` selection and script assembly as an inline block.
@@ -143,9 +151,9 @@ test:
     - file: ${versionRoot}/traffic-management/rewrite/host.md
       path: host-rewrite
       assert:
-      - products/agentgateway/main/traffic-management/rewrite/host-rewrite-wait.sh
-      - products/agentgateway/main/traffic-management/rewrite/host-rewrite-warmup.sh
-      - products/agentgateway/main/traffic-management/rewrite/host-rewrite-assert.sh
+      - products/<product>/<path>/host-rewrite-wait.sh
+      - products/<product>/<path>/host-rewrite-warmup.sh
+      - products/<product>/<path>/host-rewrite-assert.sh
 ```
 
 Each entry in `assert:` is a `docs-tests`-relative path, run in list order. This
@@ -594,55 +602,50 @@ The `version` context (used to resolve `{{< version include-if="..." >}}` blocks
 
 ## Keeping tests in sync with doc changes
 
-Content in this repo is only ever correct as of when it was written against a doc's
-example. When that example changes, the file here can silently go stale — nothing forces
-an author editing `agentgateway-oss-website` to also update the corresponding file here.
+Content changes every day, and the tests here were written against the content as it
+was. Two things keep them lined up:
 
-The `sync-stale-tests` workflow (`.github/workflows/sync-stale-tests.yml`) catches this
-automatically:
+- **The daily refresh** (`.github/workflows/refresh-annotations.yml`, see
+  [Test annotations](#test-annotations)) follows edited and moved blocks, so most
+  content edits need no test change at all. It only moves markup; it never decides
+  whether the content or the test is correct.
+- **A docs-tests branch with the same name as the content PR's branch.** When a content
+  change needs a test change, push the test change to a branch here with the same name
+  as the content PR's branch. The content repo's doc-tests workflow checks out that
+  branch instead of `main`, so the PR's own run tests the new content with the new test.
+  The job summary says when it did. Merge the content PR first, then the docs-tests PR.
 
-1. **Daily**, it diffs `assets/agw-docs/pages/**/*.md` in `agentgateway-oss-website`
-   against its state ~26 hours earlier (`scripts/detect_stale_tests.py`).
-2. For every `paths="X"` value that carries both a visible fenced block (the config a
-   reader copies) and a hidden `{{< doc-test paths="X" file="..." >}}` reference, it
-   checks whether that visible block's text changed.
-3. For each one that did, it opens a GitHub issue here with the old/new content inline,
-   and assigns it to GitHub Copilot's coding agent, which proposes a PR updating the
-   test file.
+### Telling what is broken
 
-This is a heuristic, not a guarantee. It only catches drift that shows up as a change to
-the block a reader actually copies — a behavior change with no corresponding config
-change (a newly-documented status code against unchanged YAML, say) isn't detectable this
-way and still needs a human to notice, same as before this existed. Over-flagging is the
-intended failure mode: a raw-text change that turns out to be cosmetic (a renamed
-`{{< reuse >}}` snippet that resolves to the same value, for instance) still gets flagged,
-and Copilot or a reviewer just closes it as a no-op.
+A run can report two different problems, and they mean different things.
 
-**This workflow does not verify its own output.** There is no CI in this repo that can
-run `doc_test_run.py` against a real page — that only happens from
-`agentgateway-oss-website`, which checks this repo out as `DOCS_TESTS_ROOT`. Every PR
-Copilot opens against this repo needs a human to actually run the test (or wait for
-`agentgateway-oss-website`'s own scheduled doc-tests run) before merging.
+**1. The test could not find its block (needs update).** The content changed enough
+that an annotation no longer attaches.
 
-**Setup required, not yet done:** assigning an issue to Copilot needs a PAT — the default
-`GITHUB_TOKEN` can't add the Copilot bot as an assignee, since Copilot billing attributes
-to the PAT's user. Add one as the `COPILOT_ASSIGN_TOKEN` repo secret (scoped to issues:
-read/write) before this workflow's assignment step will do anything; until then it still
-creates the issue, just unassigned, and logs a workflow warning saying so.
+- Small edits are followed automatically (the `close` state), and the test still runs.
+- Bigger edits leave the markup unattached. Any scenario that uses it is skipped with a
+  warning, not run with a step missing. The PR's job summary lists it, the daily
+  refresh marks it as needs update and counts it in its Slack post, and the page loses
+  its Verified badge (`test_status: partial`) until the annotation is updated. Nothing
+  updates it automatically.
+- This usually means someone edited the content on purpose and the test has to catch
+  up. It does not by itself mean anything is wrong with the content.
+- **Watch for:** a broken content edit that is also big enough to land here. Its test
+  is skipped rather than run, so nothing fails; only the skip warning shows it.
 
-**Both mechanisms are detected.** `detect_stale_tests.py` finds the docs-tests file(s)
-for a changed `paths=` value two ways: the inline `{{< doc-test paths="X" file="..." >}}`
-shortcode in the same assets page (the original mechanism), or a step's `assert:` list in
-a *different* file's front matter — the versioned `content/docs/...` page that
-`{{< reuse >}}`s the changed assets page (see [Referencing external test content from
-front matter instead](#referencing-external-test-content-from-front-matter-instead)).
-For the latter, it resolves the changed assets page back to every versioned content page
-that reuses it (`find_reusing_content_pages`), then reads each one's matching `assert:`
-entry (`assert_files_for_selector`) the same way `doc_test_run.py` itself would. A
-selector with no reference found via either path has no known assertion content, so it's
-silently skipped — same fail-closed behavior either mechanism has always had. A finding's
-`docs_tests_files` is a list (not a single file) since an `assert:` scenario commonly
-names more than one, e.g. `wait`/`warmup`/`assert`.
+**2. The test found its block and failed.** The markup attached, the scenario ran, and
+an assertion or command failed. Any of these can be the cause:
+
+| Cause | Where the fix goes |
+|---|---|
+| The content is wrong, for example a typo in a command or a renamed field | The content repo |
+| The test is wrong, for example a stale assertion or a missing wait | This repo |
+| The product's behavior changed (the daily run installs the latest dev build) | The content repo if the change is intended, the product repo if it is a bug |
+| The environment was flaky, for example a slow load balancer or a rate-limited registry | Usually a re-run; a wait or retry here if it repeats |
+
+Nothing tells these apart automatically. Compare what changed since the last passing
+run: commits to the page in the content repo, commits to its annotation or `tests.yaml`
+entry here, and the product version. Whichever one moved is usually the cause.
 
 ---
 
@@ -656,6 +659,7 @@ Doc pages with passing tests display a "Verified" badge below the page title.
 2. **`doc_test_inject_status.py`** reads the results and adds a `test_status` field to each tested document's front matter:
    - `test_status: passed` — all tests for the page passed
    - `test_status: failed` — one or more tests failed (no badge displayed)
+   - `test_status: partial` — no tests failed, but a scenario was skipped because its test annotations did not attach (no badge displayed)
 3. **Hugo templates** check for `test_status: passed` and render a green "Verified" badge.
 
 ### Makefile targets (in the consuming repo)

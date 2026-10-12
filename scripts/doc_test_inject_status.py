@@ -32,22 +32,30 @@ def load_test_results(results_path: Path) -> Dict:
     return yaml.safe_load(results_path.read_text(encoding="utf-8")) or {}
 
 
-def compute_document_status(doc_path: str, tests: Dict) -> Optional[str]:
+def compute_document_status(doc_path: str, tests: Dict, skipped: Optional[Dict] = None) -> Optional[str]:
     """
     Compute the overall test status for a document.
     
     Returns:
-        "passed" if all tests for this document passed
         "failed" if any test failed
+        "partial" if none failed but a scenario was skipped because its test
+            annotations did not attach (`skipped_needs_update` in the results)
+        "passed" if all tests for this document passed and none were skipped
         None if no tests exist for this document
-    """
-    doc_tests = {k: v for k, v in tests.items() if k.startswith(f"{doc_path}::")}
     
-    if not doc_tests:
+    Only "passed" shows the Verified badge, so a page with an untested example
+    loses the badge until its annotations are fixed.
+    """
+    prefix = f"{doc_path}::"
+    doc_tests = {k: v for k, v in tests.items() if k.startswith(prefix)}
+    has_skipped = any(k.startswith(prefix) for k in (skipped or {}))
+    
+    if not doc_tests and not has_skipped:
         return None
     
-    all_passed = all(t.get("status") == "passed" for t in doc_tests.values())
-    return "passed" if all_passed else "failed"
+    if any(t.get("status") != "passed" for t in doc_tests.values()):
+        return "failed"
+    return "partial" if has_skipped else "passed"
 
 
 def parse_front_matter(content: str) -> tuple[Optional[str], Optional[Dict], str]:
@@ -117,6 +125,7 @@ def process_documents(
     """
     tested_docs = results.get("tested_documents", [])
     tests = results.get("tests", {})
+    skipped = results.get("skipped_needs_update") or {}
     
     status_map: Dict[str, str] = {}
     
@@ -128,7 +137,7 @@ def process_documents(
                 print(f"Warning: Document not found: {doc_path}")
             continue
         
-        status = compute_document_status(doc_path, tests)
+        status = compute_document_status(doc_path, tests, skipped)
         
         if status is None:
             if verbose:
@@ -138,7 +147,7 @@ def process_documents(
         status_map[doc_path] = status
         
         if verbose:
-            icon = "✓" if status == "passed" else "✗"
+            icon = {"passed": "✓", "partial": "~"}.get(status, "✗")
             print(f"{icon} {doc_path}: {status}")
         
         if dry_run:
