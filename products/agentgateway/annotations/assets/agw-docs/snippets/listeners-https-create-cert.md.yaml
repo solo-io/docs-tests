@@ -1,0 +1,59 @@
+format: 1
+source: assets/agw-docs/snippets/listeners-https-create-cert.md
+blocks:
+- 364f4c60ae2e6d8f sh
+- d058fe87aa4daf3d sh
+- d4b0fcee86300f76 sh
+- ff7eef5f0f38b10e sh
+- 019d37f337360303 sh
+tags:
+- paths: https-redirect,https-listener
+  block: 0
+  fingerprint: 364f4c60ae2e6d8f
+  lang: sh
+  lines: 364f4c60
+  preview: mkdir example_certs
+  form:
+    attr: paths="https-redirect,https-listener"
+    only: true
+    lead: ' '
+- paths: https-redirect,https-listener
+  block: 1
+  fingerprint: d058fe87aa4daf3d
+  lang: sh
+  lines: 5f9b086b 51ed665d 46baa686 e025e621 e89c1db5 446ba58f 00cea884
+  preview: '# root cert'
+  form:
+    attr: paths="https-redirect,https-listener"
+    only: true
+    lead: ' '
+- paths: https-redirect,https-listener
+  block: 2
+  fingerprint: d4b0fcee86300f76
+  lang: sh
+  lines: a22e047b ec8675ee 91fd91f7 fb111352 4413c7e9 3ae939d2 936175d9 d43df850 d64f2f49 3f9613a1 31fe2619 60a9b85b b318e09b 8c70d593 8c2e6043 abc56510
+  preview: cat <<'EOF' > example_certs/gateway.cnf
+  form:
+    attr: paths="https-redirect,https-listener"
+    only: true
+    lead: ' '
+- paths: https-redirect,https-listener
+  block: 3
+  fingerprint: ff7eef5f0f38b10e
+  lang: sh
+  lines: 9b7ba93f cfc18677 0b0bd3da e5b521a4 a92bf41b
+  preview: openssl req -new -nodes -keyout example_certs/gateway.key -out example_certs/gat
+  form:
+    attr: paths="https-redirect,https-listener"
+    only: true
+    lead: ' '
+- paths: https-redirect,https-listener
+  block: 4
+  fingerprint: 019d37f337360303
+  lang: sh
+  lines: e5b0e4f9 d4aa484c 68382244 31355e5d
+  preview: kubectl create secret tls -n {{< reuse "agw-docs/snippets/namespace.md" >}} http
+  form:
+    attr: paths="https-redirect,https-listener"
+    only: true
+    lead: ' '

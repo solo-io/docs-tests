@@ -1,0 +1,320 @@
+format: 1
+source: content/docs/standalone/main/documentation/configuration/gateways.md
+blocks:
+- 51a87840244a5081 mermaid
+- 54af248b997a4f0d yaml
+- dbe163467428d3f6 yaml
+- f59a7482764be204 yaml
+- 2d7e648182ec8782 yaml
+- 48d80a5387783f2f yaml
+- ea3de44c73c783b6 yaml
+- 8be374298c176659 yaml
+- e9b1d1e0e8516e87 yaml
+- 4e143ae9175946be yaml
+- 9c46641b65f5cd81 yaml
+- 544e0202c1cd47a7 yaml
+- 05991aa55ecbe989 shell
+hidden:
+- after:
+    line: 1022f924662a3be5
+    occurrence: 0
+    words: a74e5033 7ab37787 b9776d7d 94a15200 c0d2856b b9776d7d 94a15200 c0d2856b 94e8566d 93f6e11d cdc29937 2ad8a704 fa51fd49 f5e65825 10c22bcf 106a5842 ff5d991a ea325d76 afafb16a b7d64a92 aa9e9b5c 3bc801a3 75857a45 94a15200 e1bfe73a
+    block_before: null
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 1022f924662a3be5
+    occurrence: 0
+    words: a74e5033 7ab37787 b9776d7d 94a15200 c0d2856b b9776d7d 94a15200 c0d2856b 94e8566d 93f6e11d cdc29937 2ad8a704 fa51fd49 f5e65825 10c22bcf 106a5842 ff5d991a ea325d76 afafb16a b7d64a92 aa9e9b5c 3bc801a3 75857a45 94a15200 e1bfe73a
+    block_before: null
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    # Create self-signed certs referenced by the examples
+    mkdir -p certs
+    openssl req -x509 -newkey rsa:2048 -keyout certs/key.pem -out certs/cert.pem -days 365 -nodes -subj "/CN=localhost" 2>/dev/null
+    openssl req -x509 -newkey rsa:2048 -keyout certs/key-a.pem -out certs/cert-a.pem -days 365 -nodes -subj "/CN=a.example.com" 2>/dev/null
+    openssl req -x509 -newkey rsa:2048 -keyout certs/key-wildcard.pem -out certs/cert-wildcard.pem -days 365 -nodes -subj "/CN=wildcard.example.com" 2>/dev/null
+    {{< /doc-test >}}
+- after:
+    line: 6769f2c1f5dbee45
+    occurrence: 0
+    words: b9776d7d 8a84e406 58296753 1eb79602 50d858e0 961eb436 254bb97b 6ee0eb49 ca978112 a74e5033 c0d2856b 15eaa752 bb0347a4 c266ada2 8e7fc023 c0d2856b b9776d7d 8a84e406 27cdad0b 663ea1bf b9776d7d 4ea5ee68 a157d36a 37a8eec1 3bd49af7 4d040d3f 986a1b71 4ea5ee68 37a8eec1 308f4070 a7a39b72 e85ec53b f9b0078b
+    block_before:
+      block: 1
+      fingerprint: 54af248b997a4f0d
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 41e65779
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * A minimal gateway with an implicitly attached route is accepted by agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That traffic reaches localhost:8000 at runtime — the backend does not exist
+    #     in the test environment.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: localhost:8000
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: f59a7482764be204
+    lang: yaml
+    lines: a7f80a73 943d11d8 14cdb3d1 c095a45d debecbe5 dfb1a8e0 d67b54bf 12c2b3c1 27e66c9b eaaad965 aeca2b3d b66c6592 d72f261d 4c1e7539 dacde7b7 20a05a1a eaaad965 aeca2b3d 828e7381 d72f261d 44d4994c
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * Routes attached to two separately named gateways are accepted by agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That each route serves traffic on its own port at runtime — the backends do
+    #     not exist in the test environment.
+    cat <<'EOF' > config2.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      public:
+        port: 8080
+      internal:
+        port: 8081
+    routes:
+    - name: public-api
+      gateways: [public]
+      matches:
+      - path:
+          pathPrefix: /api
+      backends:
+      - host: api.example.com:443
+    - name: internal-admin
+      gateways: [internal]
+      matches:
+      - path:
+          pathPrefix: /admin
+      backends:
+      - host: admin.internal:8000
+    EOF
+    agentgateway -f config2.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 2d7e648182ec8782
+    lang: yaml
+    lines: a7f80a73 943d11d8 1c31dda0 c095a45d 08cf2045 f51d9754 3195c5f5 38545af6 8a9c45e6 d67b54bf 68bb32c5 f911cd14 d72f261d 4c1e7539
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * A single route attached to both an HTTP and an HTTPS gateway is accepted by
+    #     agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That both ports serve the route at runtime — requires client requests and a
+    #     backend the page does not exercise.
+    cat <<'EOF' > config3.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      http:
+        port: 8080
+      https:
+        port: 8443
+        tls:
+          cert: ./certs/cert.pem
+          key: ./certs/key.pem
+    routes:
+    - name: api
+      gateways: [http, https]
+      backends:
+      - host: api.example.com:443
+    EOF
+    agentgateway -f config3.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 47384abf726e7d6e
+    occurrence: 0
+    words: 5ef5ef03 0353e1fb d767748a ca978112 4ea5ee68 c3bc45ac b9776d7d 4ea5ee68 043a7187 f08dd851 d80c9bf9 6201111b f8d397a3 a1d98908 151e58a8 9a43b6da 2f907a6d 954d1bb8 6201111b 96d62e2a 075f4ab8 935f6831 bb0347a4 be8dff00 ff777205 e0603c49 6201111b 3e194352 ecd38f26 3fc4ccfe a74e5033 f4bf9f7f baaf5362 58296753 24c458cf b9776d7d 0967115f e22bc966 b8d31e85 3f8a7e66 a74e5033 a515d32e
+    block_before:
+      block: 5
+      fingerprint: 48d80a5387783f2f
+      lang: yaml
+      lines: a7f80a73 943d11d8 b6c89748 f51d9754 c10d7538 00a50c0d 2b0aa68a 3195c5f5 41a75fb5 3c766ff3 138085db 6cc7b868 3195c5f5 841efb9e 13cda86b d67b54bf f6910d89 427bc89b d72f261d d50b0a99 4a00a2ec 6ab131aa d72f261d 2c2c965f
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * A gateway with two named SNI listeners, and routes attached to one listener
+    #     and to the whole gateway, is accepted by agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That SNI selects the right certificate and listener at runtime — requires TLS
+    #     client connections the page does not exercise.
+    cat <<'EOF' > config4.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      web:
+        port: 8443
+        listeners:
+        - name: discrete
+          hostname: a.example.com
+          tls:
+            cert: ./certs/cert-a.pem
+            key: ./certs/key-a.pem
+        - name: wildcard
+          hostname: "*.example.com"
+          tls:
+            cert: ./certs/cert-wildcard.pem
+            key: ./certs/key-wildcard.pem
+    routes:
+    - name: a-only
+      gateways: [web/discrete]
+      backends:
+      - host: a-backend.example.com:443
+    - name: everything-else
+      gateways: [web]
+      backends:
+      - host: shared-backend.example.com:443
+    EOF
+    agentgateway -f config4.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: c5de7910db5a4b21
+    occurrence: 0
+    words: 10c22bcf 187897ce dea7111a a4262e1c bec16879 2ea88c7a 031af55b b7e651cb bf632b0c 6201111b f534b141 aa9e9b5c 0353e1fb fa42bed0 a0af9f86 caf9f906 b7d64a92 0353e1fb
+    block_before:
+      block: 6
+      fingerprint: ea3de44c73c783b6
+      lang: yaml
+      lines: a7f80a73 943d11d8 c126c71d 102f028c 9693ecf1 b9cd7e51 a1c0f175 d72f261d 41e65779
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * A TCP gateway with an attached tcpRoute is accepted by agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That TCP traffic is forwarded at runtime — the backend does not exist in the
+    #     test environment.
+    cat <<'EOF' > config5.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      tcp:
+        port: 9000
+        protocol: TCP
+    tcpRoutes:
+    - gateways: [tcp]
+      backends:
+      - host: localhost:8000
+    EOF
+    agentgateway -f config5.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: b8700195979170ce
+    occurrence: 0
+    words: 4dc69fae b9776d7d d3ef7de5 b8d31e85 ca978112 4ea5ee68 54b2db0f 2ad8a704 663ea1bf 12ed8d14 6ed03371 9f584196 ed4561f6 8e7fc023 f8d397a3 680dce63 2ad8a704 0695b563 b9d90628 093ae961 4dcdefd0 fa42bed0 a0af9f86 caf9f906 b7d64a92 5d2d3ceb 4dcdefd0 6db7d803 bb0347a4 f3b96e66 2ad8a704 31207a20 28391d3b 49960de5 b9776d7d 4ea5ee68 0e9a0002 b9776d7d d3ef7de5 6201111b ea103d6c 14c2529e f905b195 b9776d7d 8c6976e5 c796d37c 043a7187 a95af649 a46c629d a5c935d1 f4bf9f7f 7f23f477 ba78973d 254bb97b 8fe88bf0 b8d31e85 2ad8a704
+    block_before:
+      block: 7
+      fingerprint: 8be374298c176659
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 82726b6f 3035507a 233e460f a68fe535 ca335149 7c9dace4 570e4596 a5089471
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * An LLM model, MCP target, and the UI attached to one gateway are accepted by
+    #     agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That each section serves its paths at runtime — requires a provider API key,
+    #     an MCP server process, and a browser session the page does not exercise.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-dummy}"
+    cat <<'EOF' > config6.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    mcp:
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args:
+          - '@modelcontextprotocol/server-everything'
+    ui: {}
+    EOF
+    agentgateway -f config6.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: e9b1d1e0e8516e87
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a e97b17da 102f028c 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 6cda733c c160b6a8
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * Splitting the UI and LLM across two gateways is accepted by agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That each port serves the expected section at runtime — requires a provider
+    #     API key and a browser session the page does not exercise.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-dummy}"
+    cat <<'EOF' > config7.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+      ui-gateway:
+        port: 9000
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    ui:
+      gateways: [ui-gateway]
+    EOF
+    agentgateway -f config7.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: f5e0aa37c6b09ab1
+    occurrence: 0
+    words: 663ea1bf 5f161c91 ca978112 823412d1 187897ce 21f5b5fa a9190076 2ad8a704 663ea1bf ca978112 c4c05d40 7175517a 663ea1bf ca978112 8a84e406 99262a02 10c22bcf 187897ce dea7111a aa9e9b5c 602a5e69 c54a061d fa42bed0 a0af9f86 caf9f906 b7d64a92 5b3a02e5 602a5e69
+    block_before:
+      block: 9
+      fingerprint: 4e143ae9175946be
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a dc13f2a2 ead663af fee1e381 afd95d43 be536e21 25d8505d d67b54bf d897654b 41e65779
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="gateways" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * A CORS policy attached to a gateway is accepted by agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That CORS headers are applied at runtime — requires a preflight request the
+    #     page does not exercise.
+    cat <<'EOF' > config8.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+        cors:
+          allowOrigins:
+          - "https://app.example.com"
+          allowMethods:
+          - GET
+          - POST
+    routes:
+    - backends:
+      - host: localhost:8000
+    EOF
+    agentgateway -f config8.yaml --validate-only
+    {{< /doc-test >}}

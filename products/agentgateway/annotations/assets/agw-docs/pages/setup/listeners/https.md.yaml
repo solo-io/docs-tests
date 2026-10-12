@@ -1,0 +1,150 @@
+format: 1
+source: assets/agw-docs/pages/setup/listeners/https.md
+blocks:
+- c62bc8223c4077ed yaml
+- f899dc50ac2779c2 yaml
+- 13d49ac33c285da0 yaml
+- 48f7133fb5ea07c9 sh
+- be2a36fc8f0f5d51 yaml
+- ddf3656173fba2c7 yaml
+- 6468fc1c98d59ef2 sh
+- cf24a81e674bb43b yaml
+- 6b27c049901fd5b2 sh
+- 9981856a377c6b7a yaml
+- d390e556804b5348 sh
+- 9981856a377c6b7a yaml
+- 6b27c049901fd5b2 sh
+- 8591879c45b8c04b yaml
+- baf43f69c586449b sh
+- 573dbe647c54b6cd sh
+- 160f9ddaad6f9e5d sh
+- b4d68eb3648cfc7e sh
+- e191f9c38ad94493
+- 30534bc92ed66446 sh
+- 81f5ee6221e1d0c9 sh
+tags:
+- paths: https-listener
+  block: 0
+  fingerprint: c62bc8223c4077ed
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c8857053 8af957d1 fa1e8330 793ff745 36184fa5 2fae86d3 c10d7538 2407cef5 f51d9754 c8857053 3195c5f5 f7446fcf bc611839 52b5b541 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="https-listener"
+    only: true
+    lead: ' '
+- paths: https-listener
+  block: 4
+  fingerprint: be2a36fc8f0f5d51
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 793ff745 36184fa5 301e1bfa 19dbea18 d3d416e7 52b5b541 8af957d1 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="https-listener"
+    only: true
+    lead: ' '
+- paths: https-listener
+  block: 19
+  fingerprint: 30534bc92ed66446
+  lang: sh
+  lines: b6e80e08 9c0792a6
+  preview: kubectl delete -A gateways,httproutes,secret -l example=httpbin-https
+  form:
+    attr: paths="https-listener"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 5
+      fingerprint: ddf3656173fba2c7
+      lang: yaml
+      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 793ff745 36184fa5 301e1bfa 19dbea18 d3d416e7 b7105e1d 8af957d1 a8f2cfa5 350955ef 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="https-listener" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for https deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: https
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+
+    - name: wait for https service LB address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: agentgateway-system
+            name: https
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+
+    - name: wait for httpbin-https HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-https
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+
+    export INGRESS_GW_ADDRESS_HTTPS=$(kubectl get svc -n agentgateway-system https -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 5
+      fingerprint: ddf3656173fba2c7
+      lang: yaml
+      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 793ff745 36184fa5 301e1bfa 19dbea18 d3d416e7 b7105e1d 8af957d1 a8f2cfa5 350955ef 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="https-listener" >}}
+    for i in $(seq 1 90); do
+      code=$(curl -sk --max-time 30 --resolve "https.example.com:8443:${INGRESS_GW_ADDRESS_HTTPS}" -o /dev/null -w "%{http_code}" https://https.example.com:8443/status/200 || true)
+      [ "$code" = "200" ] && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 5
+      fingerprint: ddf3656173fba2c7
+      lang: yaml
+      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 793ff745 36184fa5 301e1bfa 19dbea18 d3d416e7 b7105e1d 8af957d1 a8f2cfa5 350955ef 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="https-listener" >}}
+    HTTP_CODE=$(curl -sk --max-time 30 --resolve "https.example.com:8443:${INGRESS_GW_ADDRESS_HTTPS}" -o /dev/null -w "%{http_code}" https://https.example.com:8443/status/200)
+    echo "HTTPS listener returned status code: ${HTTP_CODE}"
+    test "${HTTP_CODE}" = "200"
+    {{< /doc-test >}}

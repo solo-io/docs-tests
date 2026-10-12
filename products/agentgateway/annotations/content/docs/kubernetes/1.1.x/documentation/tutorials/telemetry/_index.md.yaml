@@ -1,0 +1,251 @@
+format: 1
+source: content/docs/kubernetes/1.1.x/documentation/tutorials/telemetry/_index.md
+blocks:
+- 976cb42b74e7f6b9 bash
+- 8dd3d5425906c10c bash
+- 2b4414a8ee2d636f bash
+- f93283cc2586c6db bash
+- 1aa1dc5ab48b1326 bash
+- 310e839a2103b563 bash
+- be47d8541f6347bd bash
+- db06f588c76291a6 bash
+- eb953dbd3dc7864d bash
+- 7f279583160fc56a bash
+- 9aad3cc12d7257ee bash
+- 5edc00f764ed2194 yaml
+- c61f4d73b7beb662 bash
+tags:
+- paths: telemetry
+  block: 1
+  fingerprint: 8dd3d5425906c10c
+  lang: bash
+  lines: 72af53b4 94bda56b 840d25a6 f40bdd3c 3a26b6d2 a420f893 b3bead00 5a4766f2 f55e216c
+  preview: '# Gateway API CRDs'
+  form:
+    attr: paths="telemetry"
+    only: true
+    lead: ' '
+- paths: telemetry
+  block: 2
+  fingerprint: 2b4414a8ee2d636f
+  lang: bash
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 8af957d1 36184fa5 ddf06799 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="telemetry"
+    only: true
+    lead: ' '
+- paths: telemetry
+  block: 4
+  fingerprint: 1aa1dc5ab48b1326
+  lang: bash
+  lines: 917fd6e0 8605fef7 58584366 ab78925c 8c8c4228 471600cc 36184fa5 97bcd5e0 8432e015 839a5cac 79c8895e a58565b2 8c8c4228 fa1e8330 79c8895e 36184fa5 04968f51 3dc3be49 73af045a 0ff65a1a a7179506 70ec9243 a4b2309d 575db5c9 cb3f91d5 f1540154 0d6480f0 8c8c4228 471600cc 36184fa5 8432e015 79c8895e 0ff65a1a c0109e33 4a34609f 70ec9243 a7bdebc1 871a00c5 575db5c9 abc56510
+  preview: kubectl create namespace telemetry
+  form:
+    attr: paths="telemetry"
+    only: true
+    lead: ' '
+- paths: telemetry
+  block: 6
+  fingerprint: be47d8541f6347bd
+  lang: bash
+  lines: 16c71da1 263e4531 53dbf16f 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 471600cc b0c4deaf 5a41b93f e9ef40ee 3e371bf8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="telemetry"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: f93283cc2586c6db
+    lang: bash
+    lines: f93283cc
+    preview: kubectl get deployment agentgateway-proxy -n {{< reuse "agw-docs/snippets/namesp
+  content: |-
+    {{< doc-test paths="telemetry" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for agentgateway-proxy deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+
+    - name: wait for agentgateway-proxy service LB address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+      setVars:
+        INGRESS_GW_ADDRESS:
+          value: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: f93283cc2586c6db
+    lang: bash
+    lines: f93283cc
+    preview: kubectl get deployment agentgateway-proxy -n {{< reuse "agw-docs/snippets/namesp
+  content: |-
+    {{< doc-test paths="telemetry" >}}
+    export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 310e839a2103b563
+    lang: bash
+    lines: 310e839a
+    preview: kubectl get pods -n telemetry -w
+  content: |-
+    {{< doc-test paths="telemetry" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for jaeger deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: telemetry
+            name: jaeger
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 0feb4329055d432c
+    occurrence: 0
+    words: 3e64cc41 e7f6c011 6ee0eb49 75a288c0 ea325d76 487b9104 10e08a41
+    block_before:
+      block: 6
+      fingerprint: be47d8541f6347bd
+      lang: bash
+      lines: 16c71da1 263e4531 53dbf16f 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 471600cc b0c4deaf 5a41b93f e9ef40ee 3e371bf8 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="telemetry" >}}
+    export OPENAI_API_KEY=${OPENAI_API_KEY:-placeholder}
+
+    kubectl apply -f- <<EOF
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: openai-secret
+      namespace: agentgateway-system
+    type: Opaque
+    stringData:
+      Authorization: $OPENAI_API_KEY
+    ---
+    apiVersion: agentgateway.dev/v1alpha1
+    kind: AgentgatewayBackend
+    metadata:
+      name: openai
+      namespace: agentgateway-system
+    spec:
+      ai:
+        provider:
+          openai:
+            model: gpt-4.1-nano
+      policies:
+        auth:
+          secretRef:
+            name: openai-secret
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: openai
+      namespace: agentgateway-system
+    spec:
+      parentRefs:
+        - name: agentgateway-proxy
+          namespace: agentgateway-system
+      rules:
+        - backendRefs:
+          - name: openai
+            namespace: agentgateway-system
+            group: agentgateway.dev
+            kind: AgentgatewayBackend
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 0feb4329055d432c
+    occurrence: 0
+    words: 3e64cc41 e7f6c011 6ee0eb49 75a288c0 ea325d76 487b9104 10e08a41
+    block_before:
+      block: 6
+      fingerprint: be47d8541f6347bd
+      lang: bash
+      lines: 16c71da1 263e4531 53dbf16f 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 471600cc b0c4deaf 5a41b93f e9ef40ee 3e371bf8 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="telemetry" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for openai backend to be accepted
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: agentgateway-system
+            name: openai
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    line: 0feb4329055d432c
+    occurrence: 0
+    words: 3e64cc41 e7f6c011 6ee0eb49 75a288c0 ea325d76 487b9104 10e08a41
+    block_before:
+      block: 6
+      fingerprint: be47d8541f6347bd
+      lang: bash
+      lines: 16c71da1 263e4531 53dbf16f 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 471600cc b0c4deaf 5a41b93f e9ef40ee 3e371bf8 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="telemetry" >}}
+    YAMLTest -f - <<'EOF'
+    - name: send request to OpenAI through agentgateway with tracing
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {
+            "model": "gpt-4.1-nano",
+            "messages": [{"role": "user", "content": "Say hello in one word"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

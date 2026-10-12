@@ -1,0 +1,30 @@
+format: 1
+source: assets/agw-docs/snippets/agw-get-gateway-url-k8s.md
+blocks:
+- 4adde065965bc1d3 sh
+- 5bbc58dd3cbf8ecd sh
+tags:
+- paths: llm-clients-k8s-gateway-url
+  block: 0
+  fingerprint: 4adde065965bc1d3
+  lang: sh
+  lines: 7f5ae30f 5a7cc868 cdb8a07c
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  form:
+    attr: paths="llm-clients-k8s-gateway-url"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 4adde065965bc1d3
+    lang: sh
+    lines: 7f5ae30f 5a7cc868 cdb8a07c
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  content: |-
+    {{< doc-test paths="llm-clients-k8s-gateway-url" >}}
+    if [ -z "${INGRESS_GW_ADDRESS}" ]; then
+      echo "INGRESS_GW_ADDRESS is empty"
+      exit 1
+    fi
+    {{< /doc-test >}}

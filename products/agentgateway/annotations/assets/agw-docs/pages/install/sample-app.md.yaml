@@ -1,0 +1,149 @@
+format: 1
+source: assets/agw-docs/pages/install/sample-app.md
+blocks:
+- 047eb10404534e4c mermaid
+- bad086bca062d6cd sh
+- 0e2cb4c4905b9f20 sh
+- e7b63b3a94228b74 sh
+- c400d0bd38e55679 sh
+- 22bb86b792105305 sh
+- c78b13ed61d78356 txt
+- d7e28555a92ec7e5 json
+- d13ade6c62874937 sh
+- 1a1d7641506a4ebb sh
+- c78b13ed61d78356 txt
+- 29e93d779ef139f9 json
+- ee396370e587ec81 sh
+- cb36d864ced2132b sh
+- 622db83f30d1103b sh
+tags:
+- paths: install-httpbin
+  block: 1
+  fingerprint: bad086bca062d6cd
+  lang: sh
+  lines: bad086bc
+  preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  form:
+    attr: paths="install-httpbin"
+    only: true
+    lead: ' '
+- paths: install-httpbin
+  block: 3
+  fingerprint: e7b63b3a94228b74
+  lang: sh
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="install-httpbin"
+    only: true
+    lead: ' '
+- paths: install-httpbin
+  block: 4
+  fingerprint: c400d0bd38e55679
+  lang: sh
+  lines: 4c0b5170 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  form:
+    attr: paths="install-httpbin"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: bad086bca062d6cd
+    lang: sh
+    lines: bad086bc
+    preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  content: |2-
+       {{< doc-test paths="install-httpbin" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for httpbin deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: httpbin
+               name: httpbin
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 400
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: e7b63b3a94228b74
+    lang: sh
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="install-httpbin" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for httpbin HTTPRoute refs to be resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: e7b63b3a94228b74
+    lang: sh
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="install-httpbin" >}}
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: www.example.com" && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: e7b63b3a94228b74
+    lang: sh
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 2d157081 8af957d1 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="install-httpbin" >}}
+    YAMLTest -f - <<'EOF'
+    - name: verify httpbin returns 200 for www.example.com
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

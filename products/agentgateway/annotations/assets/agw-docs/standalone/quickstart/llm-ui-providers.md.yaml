@@ -1,0 +1,131 @@
+format: 1
+source: assets/agw-docs/standalone/quickstart/llm-ui-providers.md
+blocks:
+- 4e548af92d68424c sh
+- 112e00592ed741b7 sh
+- 1ca015309bc7f62c sh
+- aaebd4416b53acaf sh
+- 91e63e8dece57c35 sh
+- 0de9aeeab085e34b sh
+- d41239621d9c9be7 sh
+- b396273101b1db5f sh
+- 40f2480e1706d07e sh
+- 777191e0bca81b9c sh
+- c8c0c1e86150419f sh
+- dcb7c80478491593 sh
+- 90f0f7d6044cc9d0 sh
+- 8fbf52d01f7f2de7 sh
+- 97d4a71269133109 sh
+- 0c92baffc815ef7c sh
+- d20bc7d2e993e1e1 sh
+- 1d5a01ad24f1dc84 sh
+- d3ab50dcd6f626a8 sh
+- 12dab95645ec0841 sh
+- 078e5f6108a7e412 sh
+- 7e4331fe9df2b4ba sh
+- 56e57ada05a8887e sh
+- 42b6e6b3ff1600c3
+- 88f2b2f035327bef sh
+- 40dc653bb52b6955 sh
+- 70a746c91cbcd128 sh
+- 8abc18a473fe8899 sh
+- 05542fd6b4881708 sh
+- 6332b659dd6374be sh
+- 3c853120c50b5cc4 sh
+- c27e5288ee612c2e sh
+- 59c99c1cfcec0c87 sh
+- 2700ffacb6b4bf68 sh
+- 757984d75b420f2c sh
+- e92846c340d32ed9 sh
+- 436d9d7c8a5d6784 sh
+- 951731cd6a69c9f4 sh
+- 82db9cc88b789e06 sh
+- 6284bd4eefcab4fa sh
+- 218e66025e25cf80 sh
+- 255aea1545223204 sh
+- a2b46c0cebd406c2 sh
+- 27084e5b4a291fb9 sh
+- 25b7c83316049204 sh
+- 5d5290c4df14481d sh
+tags:
+- paths: llm
+  block: 24
+  fingerprint: 88f2b2f035327bef
+  lang: sh
+  lines: b8c497bf 3067bf8a b0cead6d a90f7a89 4b3b16d3 021fb596 09d1b3dd 5376f471 d10b36aa cfae0d42 fc075a9d
+  preview: curl http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="llm"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 23
+    fingerprint: 42b6e6b3ff1600c3
+    lang: ''
+    lines: 42b6e6b3
+    preview: info  app  serving UI at http://localhost:4000/ui
+  content: |-
+    {{< doc-test paths="llm" >}}
+    # Hidden test: the UI steps below (Enable LLM -> Add model) are not scriptable, so this
+    # block reproduces the equivalent config they produce, to keep the resulting setup tested.
+    # The model points at the local mock LLM so that the request in Step 5 is a real,
+    # asserted round trip through the gateway without needing a provider API key.
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    cat > config.yaml << 'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: gpt-3.5-turbo
+        provider: openAI
+        params:
+          model: gpt-3.5-turbo
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+    agentgateway -f config-mock.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID $MOCK_LLM_PID 2>/dev/null' EXIT
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 45
+      fingerprint: 5d5290c4df14481d
+      lang: sh
+      lines: b8c497bf 3067bf8a b0cead6d b39b4c6b 4b3b16d3 021fb596 09d1b3dd 30f65155 d10b36aa cfae0d42 fc075a9d
+      preview: curl http://localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="llm" >}}
+    YAMLTest -f - <<'EOF'
+    - name: chat completion request returns an OpenAI-shaped response with token usage
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": "Reply with exactly: OpenAI through agentgateway works"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.model"
+            comparator: equals
+            value: "gpt-3.5-turbo"
+          - path: "$.choices[0].message.role"
+            comparator: equals
+            value: "assistant"
+          - path: "$.usage.total_tokens"
+            comparator: greaterThan
+            value: 0
+    EOF
+    {{< /doc-test >}}

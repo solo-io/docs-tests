@@ -1,0 +1,77 @@
+format: 1
+source: assets/agw-docs/snippets/agentgateway/grafana-dashboards.md
+blocks:
+- b0ea73708e1cafd3 sh
+- 17456ebe6225b6d3 sh
+- 566d6997802af500 sh
+- 9561bcd6298cf33b sh
+tags:
+- paths: otel-stack
+  block: 0
+  fingerprint: b0ea73708e1cafd3
+  lang: sh
+  lines: b0ea7370
+  preview: curl -L "https://raw.githubusercontent.com/agentgateway/agentgateway/main/contro
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 1
+  fingerprint: 17456ebe6225b6d3
+  lang: sh
+  lines: db83cc53 7db841e1 0374e578
+  preview: kubectl -n telemetry create cm agentgateway-dashboard \
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 17456ebe6225b6d3
+    lang: sh
+    lines: db83cc53 7db841e1 0374e578
+    preview: kubectl -n telemetry create cm agentgateway-dashboard \
+  content: |2-
+       {{< doc-test paths="otel-stack" >}}
+       # Give the Grafana sidecar time to detect the labeled configmap and import the dashboard
+       # into Grafana before the next assertion queries for it.
+       sleep 45
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 17456ebe6225b6d3
+    lang: sh
+    lines: db83cc53 7db841e1 0374e578
+    preview: kubectl -n telemetry create cm agentgateway-dashboard \
+  content: |2-
+       {{< doc-test paths="otel-stack" >}}
+       YAMLTest -f - <<'EOF'
+       # Confirm that Grafana loaded the imported Agentgateway dashboard. This validates the import
+       # steps above (configmap -> Grafana sidecar). It does NOT verify that individual panels render
+       # or return data. The Authorization header is "admin:prom-operator" (the default Grafana
+       # credentials documented in this guide) base64-encoded for HTTP basic auth.
+       - name: Agentgateway dashboard is loaded in Grafana
+         retries: 30
+         http:
+           url: "http://localhost:3000/api/dashboards/uid/agentgateway"
+           method: GET
+           headers:
+             authorization: "Basic YWRtaW46cHJvbS1vcGVyYXRvcg=="
+         source:
+           type: pod
+           usePortForward: true
+           selector:
+             kind: Deployment
+             metadata:
+               namespace: telemetry
+               name: kube-prometheus-stack-grafana
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.dashboard.title"
+               comparator: contains
+               value: Agentgateway
+       EOF
+       {{< /doc-test >}}

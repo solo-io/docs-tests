@@ -65,7 +65,7 @@ block before it was close-matched.
 |---|---|
 | `make annotate PAGE=<page>` then `make save PAGE=<page>` | Add or change the tests on one page. `annotate` writes the page with its markup to `out/annotate/`; edit the markup there; `save` writes only the markup back, and refuses if the copy changes the page itself. |
 | `annotations.py attach` | Attach annotations to a checkout, in place or into `--out`. Removes any inline markup first. |
-| `annotations.py refresh` | After content changes: re-attach, record the new fingerprints, and follow moved pages (git rename detection, then a search by fingerprint). Never drops markup; refuses to write if any would disappear. |
+| `annotations.py refresh` | After content changes: re-attach, record the new fingerprints, and follow moved pages (git rename detection, then a search by fingerprint). Never drops markup; refuses to write if any would disappear. While a content repo still carries inline markup, a page's own inline markup wins: refresh adopts it, and creates annotation files for pages that gain it, so annotations follow writers' edits. It reports inline front matter `test:` edits, which need a matching `tests.yaml` change. |
 | `annotations.py export` / `strip` | Migration only: copy inline markup into annotation files, then remove it from the pages. |
 | `annotations.py roundtrip` | Strip and re-attach every page in memory; every page must come back byte-identical. Runs daily in CI against agentgateway/website. |
 | `annotation_replay.py` | Replays a repo's git history, whose inline markup is the answer key, to measure close matching. Re-run it when matching changes; `close WRONG` must not rise. |
@@ -79,8 +79,8 @@ of the day's close matches and moved pages; a failed refresh also posts to
 `#doctopus-builds`. Posting needs a `DOCS_TESTS_SLACK_BOT_TOKEN` secret on this
 repo; until it is set, the step skips with a warning.
 
-For every section except quickstart, install and setup, scenario definitions
-live in the `tests.yaml` manifests, so their annotations were exported with
+For agentgateway/website, every section has moved: scenario definitions live in
+the `tests.yaml` manifests, so their annotations were exported with
 `--front-matter none`. A manifest key must be unique, but a scenario name need
 not be: set `name:` when two pages in one mode declare the same name. Pages that
 deliberately have no test are listed under the manifest's `skip:` key, the

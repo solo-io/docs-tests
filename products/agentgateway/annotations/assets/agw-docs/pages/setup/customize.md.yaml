@@ -1,0 +1,77 @@
+format: 1
+source: assets/agw-docs/pages/setup/customize.md
+blocks:
+- 96ac1c3b3851d4c6 yaml
+- 56ce611eba0a5435 yaml
+- 6c69c2f7c591fe39 sh
+- 1aa625b24acd7c63
+- 8239b77284d31293 yaml
+- 4c9460410c2afd39 yaml
+- 56ce611eba0a5435 yaml
+- d6b994d4cd0c2d58 sh
+- 8e49e6dd39b9b9c4
+- dd3c4e153a345188 yaml
+- 56ce611eba0a5435 yaml
+- 3a7224d68f853bba sh
+- 15b642e87690f157 sh
+- 4e171ea30fabea4a sh
+- 1cda2c6839f1a2cb sh
+- f184868a59c43e3a txt
+- d3accbdfb6665c24 sh
+tags:
+- paths: customize
+  block: 5
+  fingerprint: 4c9460410c2afd39
+  lang: yaml
+  lines: 6b3c98d2 fbc30693 cdc933a1 8c8c4228 20c44513 8af957d1 36184fa5 18bfcf8e 36184fa5 776530bb abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="customize"
+    only: true
+    lead: ' '
+- paths: customize
+  block: 6
+  fingerprint: 56ce611eba0a5435
+  lang: yaml
+  lines: 6b3c98d2 8c67597e cd44d8cd 8c8c4228 20c44513 8af957d1 36184fa5 2fae86d3 27a69ac8 3f04fdd7 20c44513 b6e1c19c cdc933a1 c10d7538 82601aaa f3990698 069de162 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="customize"
+    only: true
+    lead: ' '
+- paths: customize
+  block: 16
+  fingerprint: d3accbdfb6665c24
+  lang: sh
+  lines: a9c4ee83 be4ed9c3
+  preview: kubectl delete Gateway agentgateway-config -n {{< reuse "agw-docs/snippets/names
+  form:
+    attr: paths="customize"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: 56ce611eba0a5435
+    lang: yaml
+    lines: 6b3c98d2 8c67597e cd44d8cd 8c8c4228 20c44513 8af957d1 36184fa5 2fae86d3 27a69ac8 3f04fdd7 20c44513 b6e1c19c cdc933a1 c10d7538 82601aaa f3990698 069de162 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply --server-side -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="customize" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for agentgateway-config deployment to scale to 3 replicas
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-config
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: equals
+          value: 3
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

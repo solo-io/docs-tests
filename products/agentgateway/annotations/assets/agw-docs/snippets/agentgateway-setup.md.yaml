@@ -1,0 +1,70 @@
+format: 1
+source: assets/agw-docs/snippets/agentgateway-setup.md
+blocks:
+- 2b4414a8ee2d636f sh
+- c7a9901831c3ce6e sh
+- 707c2760804330ce
+- 39670a343bf9df16 sh
+- f6f6ce30bde7ed6c txt
+- f2c2d5cd64270e15 sh
+- d13ade6c62874937 sh
+tags:
+- paths: all
+  block: 0
+  fingerprint: 2b4414a8ee2d636f
+  lang: sh
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 8af957d1 36184fa5 ddf06799 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="all"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 6
+      fingerprint: d13ade6c62874937
+      lang: sh
+      lines: d13ade6c
+      preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
+  content: |-
+    {{< doc-test paths="all" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for agentgateway-proxy deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+
+    - name: wait for agentgateway-proxy service LB address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+      setVars:
+        INGRESS_GW_ADDRESS:
+          value: true
+    EOF
+
+    export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    {{< /doc-test >}}

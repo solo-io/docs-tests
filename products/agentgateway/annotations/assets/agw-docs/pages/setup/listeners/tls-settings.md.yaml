@@ -1,0 +1,41 @@
+format: 1
+source: assets/agw-docs/pages/setup/listeners/tls-settings.md
+blocks:
+- bb3b0243cb3b4804 yaml
+tags:
+- paths: tls-settings
+  block: 0
+  fingerprint: bb3b0243cb3b4804
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 c217d8cb 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 3195c5f5 8e783352 b4fc5db5 7259e8c0 e82cd354 27384e91 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="tls-settings"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: bb3b0243cb3b4804
+    lang: yaml
+    lines: abbd1bdc fbc30693 7f57603a 8c8c4228 c217d8cb 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 3195c5f5 8e783352 b4fc5db5 7259e8c0 e82cd354 27384e91 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="tls-settings" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for tls-settings policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: agentgateway-system
+            name: tls-settings
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}

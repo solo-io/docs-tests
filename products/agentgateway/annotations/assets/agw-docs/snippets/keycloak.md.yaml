@@ -1,0 +1,164 @@
+format: 1
+source: assets/agw-docs/snippets/keycloak.md
+blocks:
+- 727dcb87aa30a423 shell
+- 68d9e503c93a821a yaml
+- a85f8c0a99e42d0c shell
+- 0d0cbc0fb5db3fbd shell
+- 8c16836675e898cd shell
+- a00a470aa86632b4 shell
+- 8e16bae0de137d69 sh
+- 41752bd285361fba shell
+- 267a4ec57a9c074d sh
+- f6ac73bf966f05fc shell
+tags:
+- paths: setup-keycloak
+  block: 0
+  fingerprint: 727dcb87aa30a423
+  lang: shell
+  lines: 727dcb87
+  preview: kubectl create namespace keycloak
+  form:
+    attr: paths="setup-keycloak"
+    only: true
+    lead: ' '
+- paths: setup-keycloak
+  block: 1
+  fingerprint: 68d9e503c93a821a
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 28101486 5e1d80db fa1e8330 6ecd9479 36184fa5 0ff65a1a 82601aaa c095a45d b1d5c800 8432e015 6ecd9479 e6d673c3 cb3f91d5 58584366 ab78925c 8c8c4228 28101486 5e1d80db fa1e8330 6ecd9479 36184fa5 97bcd5e0 8432e015 839a5cac 6ecd9479 a58565b2 8c8c4228 fa1e8330 6ecd9479 36184fa5 04968f51 a5b107cc c636bdd4 c81fb08b 8db70061 37ad689e b9af6d3e 4c4631fd b9af6d3e 0ff65a1a 82601aaa cf276107 82f2bc7e 69d7f213 65bc5439 c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-keycloak"
+    only: true
+    lead: ' '
+- paths: setup-keycloak
+  block: 2
+  fingerprint: a85f8c0a99e42d0c
+  lang: shell
+  lines: a85f8c0a
+  preview: kubectl -n keycloak rollout status deploy/keycloak
+  form:
+    attr: paths="setup-keycloak"
+    only: true
+    lead: ' '
+- paths: setup-keycloak
+  block: 3
+  fingerprint: 0d0cbc0fb5db3fbd
+  lang: shell
+  lines: a2888476 d595778e 8ebb163c 09c09818 41752bd2
+  preview: export ENDPOINT_KEYCLOAK=$(kubectl -n keycloak get service keycloak -o jsonpath=
+  form:
+    attr: paths="setup-keycloak"
+    only: true
+    lead: ' '
+- paths: setup-keycloak
+  block: 4
+  fingerprint: 8c16836675e898cd
+  lang: shell
+  lines: 544a5735 75b175d0 ddebd83c 9cc10352 89e2ea86 f32c3487 11638fb5
+  preview: export KEYCLOAK_TOKEN=$(curl --fail --silent --show-error \
+  form:
+    attr: paths="setup-keycloak"
+    only: true
+    lead: ' '
+- paths: setup-keycloak
+  block: 5
+  fingerprint: a00a470aa86632b4
+  lang: shell
+  lines: 75bec5aa 213d448b 2be10c6c d812eeaf 007181c8 67c5a3ac e0d106bd 628e181e 4d354cfe e575fae7 021fb596 6944812f 4d354cfe 85176081 a476cab6 4b05c1bc 26427009 d10b36aa e52a1813 021fb596 b94c0562 4d354cfe 081d6b0e a476cab6 65ffdce6 9cf11664 26427009 d10b36aa d10b36aa cfae0d42 eef38051 4d80a053 74bc50ef 007181c8 1abd1101 cc5d6dd1 028cc381 203f3807 007181c8 a5e687f5 38a86fee d812eeaf 007181c8 67c5a3ac a2ab9b8f 14b1b9f6 450cd87b 007181c8 dffd3836 3e02deba ec95d833 d812eeaf 007181c8 67c5a3ac a8e477ed dcf2a5b6 daca6b5f d812eeaf 007181c8 67c5a3ac d02f1f3a dcf2a5b6 a64f79c4 651fb95e f3a87b3d 007181c8 59ee05e9 4f091c18 203f3807 007181c8 851a78c2 a4c3ed04 c51d9926 e658751d 007181c8 738f7f8a 9350fbc6 9b444787 64ff05aa d8fe06d7 7cba2a3f 007181c8 e33b47f4 a4c3ed04
+  preview: '# Use the exact public MCP server URL that clients connect to'
+  form:
+    attr: paths="setup-keycloak"
+    only: true
+    lead: ' '
+- paths: setup-keycloak
+  block: 7
+  fingerprint: 41752bd285361fba
+  lang: shell
+  lines: 41752bd2
+  preview: echo $KEYCLOAK_URL
+  form:
+    attr: paths="setup-keycloak"
+    only: true
+    lead: ' '
+- paths: setup-keycloak
+  block: 8
+  fingerprint: 267a4ec57a9c074d
+  lang: sh
+  lines: 267a4ec5
+  preview: export KEYCLOAK_ISSUER=$KEYCLOAK_URL/realms/master
+  form:
+    attr: paths="setup-keycloak"
+    only: true
+    lead: ' '
+- paths: setup-keycloak
+  block: 9
+  fingerprint: f6ac73bf966f05fc
+  lang: shell
+  lines: f6ac73bf
+  preview: export KEYCLOAK_JWKS_PATH=/realms/master/protocol/openid-connect/certs
+  form:
+    attr: paths="setup-keycloak"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: a85f8c0a99e42d0c
+    lang: shell
+    lines: a85f8c0a
+    preview: kubectl -n keycloak rollout status deploy/keycloak
+  content: |-
+    {{< doc-test paths="setup-keycloak" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for keycloak deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: keycloak
+            name: keycloak
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: wait for keycloak service LB address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: keycloak
+            name: keycloak
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: a00a470aa86632b4
+    lang: shell
+    lines: 75bec5aa 213d448b 2be10c6c d812eeaf 007181c8 67c5a3ac e0d106bd 628e181e 4d354cfe e575fae7 021fb596 6944812f 4d354cfe 85176081 a476cab6 4b05c1bc 26427009 d10b36aa e52a1813 021fb596 b94c0562 4d354cfe 081d6b0e a476cab6 65ffdce6 9cf11664 26427009 d10b36aa d10b36aa cfae0d42 eef38051 4d80a053 74bc50ef 007181c8 1abd1101 cc5d6dd1 028cc381 203f3807 007181c8 a5e687f5 38a86fee d812eeaf 007181c8 67c5a3ac a2ab9b8f 14b1b9f6 450cd87b 007181c8 dffd3836 3e02deba ec95d833 d812eeaf 007181c8 67c5a3ac a8e477ed dcf2a5b6 daca6b5f d812eeaf 007181c8 67c5a3ac d02f1f3a dcf2a5b6 a64f79c4 651fb95e f3a87b3d 007181c8 59ee05e9 4f091c18 203f3807 007181c8 851a78c2 a4c3ed04 c51d9926 e658751d 007181c8 738f7f8a 9350fbc6 9b444787 64ff05aa d8fe06d7 7cba2a3f 007181c8 e33b47f4 a4c3ed04
+    preview: '# Use the exact public MCP server URL that clients connect to'
+  content: |-
+    {{< doc-test paths="setup-keycloak" >}}
+    curl --fail --silent --show-error \
+      -H "Authorization: Bearer ${KEYCLOAK_TOKEN}" \
+      "$KEYCLOAK_URL/admin/realms/master/client-scopes/$KEYCLOAK_SCOPE_ID/protocol-mappers/models" \
+      | jq -e --arg audience "$MCP_RESOURCE" '
+        any(.[]; .protocolMapper == "oidc-audience-mapper" and .config["included.custom.audience"] == $audience) and
+        any(.[]; .protocolMapper == "oidc-group-membership-mapper" and .config["claim.name"] == "groups")
+      ' >/dev/null
+
+    curl --fail --silent --show-error \
+      -H "Authorization: Bearer ${KEYCLOAK_TOKEN}" \
+      "$KEYCLOAK_URL/admin/realms/master/groups/$KEYCLOAK_GROUP_ID/members" \
+      | jq -e '[.[].username] | sort == ["user1", "user2"]' >/dev/null
+    {{< /doc-test >}}

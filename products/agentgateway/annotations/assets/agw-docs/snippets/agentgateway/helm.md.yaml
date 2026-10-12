@@ -1,0 +1,119 @@
+format: 1
+source: assets/agw-docs/snippets/agentgateway/helm.md
+blocks:
+- 77efed37f1bcab2a sh
+- 9b1cdee012e2b8d6 sh
+- b692d08807a1dcd1 console
+- 853f47d7eaa9ab28 sh
+- 001acd65270ef3d3 sh
+- 893737fa8674acf1 sh
+- 378ca37784343ec6 sh
+- bc2f2db7b1a8af30 sh
+- e6445babaa6d9663 sh
+- 7750ac8e7b452703 sh
+- 0441e261cad1f31e txt
+- d6b994d4cd0c2d58 sh
+- fcc70ffaa665ce03 txt
+- 43fc6add7dea1772 sh
+- d9db5f791e0543d1 txt
+tags:
+- paths: standard
+  block: 0
+  fingerprint: 77efed37f1bcab2a
+  lang: sh
+  lines: e1ceb1f0 ad7b189b
+  preview: export GWAPI_VERSION={{< reuse "agw-docs/versions/k8s-gw-version.md" >}}
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: experimental
+  block: 1
+  fingerprint: 9b1cdee012e2b8d6
+  lang: sh
+  lines: a35444e2 41c33e85
+  preview: export GWAPI_VERSION={{< reuse "agw-docs/versions/k8s-gw-version-exp.md" >}}
+  form:
+    attr: paths="experimental"
+    only: true
+    lead: ' '
+- paths: standard
+  block: 4
+  fingerprint: 001acd65270ef3d3
+  lang: sh
+  lines: f40bdd3c 3a26b6d2 435aece9
+  preview: helm upgrade -i --create-namespace \
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: experimental
+  block: 5
+  fingerprint: 893737fa8674acf1
+  lang: sh
+  lines: f40bdd3c 3a26b6d2 fa7ce4dd
+  preview: helm upgrade -i --create-namespace \
+  form:
+    attr: paths="experimental"
+    only: true
+    lead: ' '
+- paths: standard
+  block: 7
+  fingerprint: bc2f2db7b1a8af30
+  lang: sh
+  lines: 3efb3966 ff7451a3 42bd4f49
+  preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: experimental
+  block: 9
+  fingerprint: 7750ac8e7b452703
+  lang: sh
+  lines: 3efb3966 918988a2 506557ee 152d5eee
+  preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
+  form:
+    attr: paths="experimental"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 14
+    fingerprint: d9db5f791e0543d1
+    lang: txt
+    lines: cc1dc160 b30541b3
+    preview: NAME             CONTROLLER                       ACCEPTED   AGE
+  content: |-
+    {{< doc-test paths="standard,experimental" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for agentgateway deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+
+    - name: verify agentgateway GatewayClass exists
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: agentgateway
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

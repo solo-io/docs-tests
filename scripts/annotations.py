@@ -850,6 +850,41 @@ def refresh_one(text: str, ann: dict, source: str, preview: bool) -> Tuple[dict,
     return new, placements
 
 
+def from_inline(text: str, ann: Optional[dict], source: str, preview: bool) -> Optional[dict]:
+    """The annotation a page's own inline markup describes, or None if it has none.
+
+    While a content repo still carries inline markup, writers keep editing it
+    there, and attach throws it away for the annotation. Refresh adopts it, so
+    the annotation follows the writer instead of drifting. Front matter `test:`
+    is adopted only where the annotation already holds it; elsewhere a
+    `tests.yaml` manifest owns the scenarios.
+    """
+    page = parse(text, preview=preview)
+    if not (page.tags or page.hidden):
+        return None
+    new = to_annotation(source, page, preview=preview)
+    if not (ann and ann.get("front_matter")):
+        new.pop("front_matter", None)
+    return new
+
+
+def _markup(ann: dict):
+    strip = lambda e: {k: v for k, v in e.items() if k not in ("status", "preview")}
+    return ([strip(t) for t in ann.get("tags", [])], [strip(h) for h in ann.get("hidden", [])])
+
+
+def front_matter_test_changed(repo: Path, since: str, source: str) -> bool:
+    """Whether a page's inline front matter `test:` changed since a commit."""
+    try:
+        old = git(repo, "show", f"{since}:{source}")
+    except subprocess.CalledProcessError:
+        old = ""
+    now = read(repo / source)
+    grab = lambda t: _strip_front_matter_test(split_front_matter(t)[0])[1]
+    a, b = grab(old), grab(now)
+    return (a or {}).get("content") != (b or {}).get("content")
+
+
 def cmd_refresh(args) -> int:
     repo, adir = Path(args.repo), Path(args.annotations)
     state_file = adir / "refresh-state.yaml"
@@ -868,6 +903,7 @@ def cmd_refresh(args) -> int:
     writes: Dict[Path, Tuple[Optional[Path], dict]] = {}
     results: Dict[str, List[Placement]] = {}
     moves: List[Tuple[str, str]] = []
+    synced: List[dict] = []
     for path, ann in loaded:
         src = ann["source"]
         new_src = src
@@ -885,12 +921,35 @@ def cmd_refresh(args) -> int:
         elif changed is not None and src not in changed and not any(
                 e.get("status") for e in ann.get("tags", []) + ann.get("hidden", [])):
             continue
-        new, placements = refresh_one(read(repo / new_src), ann, new_src, preview)
+        text = read(repo / new_src)
+        new, placements = refresh_one(text, ann, new_src, preview)
+        inline = from_inline(text, ann, new_src, preview and ann.get("previews", True))
+        if inline and _markup(inline) != _markup(new):
+            new = inline
+            placements = attach(parse(text).text, new)[1]
+            synced.append({"page": new_src, "before": count_markup(ann), "after": count_markup(new)})
         results[new_src] = placements
         writes[path] = (annotation_path(adir, new_src) if new_src != src else None, new)
 
-    after = before - sum(count_markup(a) for p, a in loaded if p in writes) + sum(count_markup(n) for _, n in writes.values())
-    if after != before:
+    # Pages that gained inline markup and have no annotation yet.
+    for src in sorted(changed or ()):
+        if src in taken or not (repo / src).is_file():
+            continue
+        inline = from_inline(read(repo / src), None, src, preview)
+        if inline:
+            taken.add(src)
+            results[src] = attach(parse(read(repo / src)).text, inline)[1]
+            writes[annotation_path(adir, src)] = (None, inline)
+            synced.append({"page": src, "before": 0, "after": count_markup(inline)})
+
+    # Inline front matter `test:` edits cannot be adopted here: the scenarios
+    # live in tests.yaml. Report them so someone updates the manifest.
+    fm_changed = sorted(s for s in (changed or ()) if (repo / s).is_file() and front_matter_test_changed(repo, since, s))
+
+    old_counts = {p: count_markup(a) for p, a in loaded}
+    after = before - sum(old_counts.get(p, 0) for p in writes) + sum(count_markup(n) for _, n in writes.values())
+    expected = before + sum(s["after"] - s["before"] for s in synced)
+    if after != expected:
         print(f"refusing to write: markup count would go from {before} to {after}", file=sys.stderr)
         return 1
     if not args.dry_run:
@@ -907,13 +966,18 @@ def cmd_refresh(args) -> int:
         report = json.loads(Path(args.report).read_text())
         report.update({"commit": head, "pages_refreshed": len(writes), **stats,
                        "moved": [{"from": a, "to": b} for a, b in moves],
-                       "close": [r for r in report["changed"] if r["state"] == CLOSE]})
+                       "close": [r for r in report["changed"] if r["state"] == CLOSE],
+                       "synced": synced, "front_matter_changed": fm_changed})
         Path(args.report).write_text(json.dumps(report, indent=1))
     print(f"refresh to {head[:12]}: {len(writes)} pages re-attached, {len(moves)} moved; "
           f"{total[EXACT]} exact, {total[CLOSE]} close, {total[NEEDS_UPDATE]} needs update")
     print(f"needs update in total: {len(stats['needs_update'])}")
     for a, b in moves:
         print(f"moved: {a} -> {b}")
+    for s in synced:
+        print(f"synced from inline markup: {s['page']} ({s['before']} -> {s['after']} pieces of markup)")
+    for s in fm_changed:
+        print(f"front matter test: changed on the page, update tests.yaml: {s}")
     for src, ps in sorted(results.items()):
         for p in ps:
             if p.state != EXACT:
@@ -1005,6 +1069,11 @@ def slack_payloads(report: Optional[dict], run_url: Optional[str]) -> Tuple[dict
     else:
         body = "\u2705 Nothing needs update."
     blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": _truncate(body)}})
+    fm_changed = report.get("front_matter_changed") or []
+    if fm_changed:
+        body = "*Front matter `test:` changed on the page; update `tests.yaml` to match*\n" + "\n".join(
+            f"\u270f\ufe0f  _`{p}`_" for p in fm_changed)
+        blocks.append({"type": "section", "text": {"type": "mrkdwn", "text": _truncate(body)}})
     if run_url:
         blocks.append(_run_url_block(run_url))
     main_payload = {"text": header, "blocks": blocks}
@@ -1013,6 +1082,8 @@ def slack_payloads(report: Optional[dict], run_url: Optional[str]) -> Tuple[dict
               + (f", similarity {r['score']:.2f}" if r.get("score") else "") + f"  (_`{r['page']}`_)"
               for r in report["close"]]
     review += [f"\U0001f4c4  moved: `{m['from']}` \u2192 `{m['to']}`" for m in report["moved"]]
+    review += [f"\u270d\ufe0f  synced from the page's inline markup: {s['before']} \u2192 {s['after']} pieces  (_`{s['page']}`_)"
+               for s in report.get("synced") or []]
     if not review:
         return main_payload, None
     thread = [{"type": "section", "text": {"type": "mrkdwn", "text": f"*Committed without review today ({len(review)})*"}}]

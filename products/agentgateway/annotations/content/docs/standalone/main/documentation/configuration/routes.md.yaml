@@ -1,0 +1,122 @@
+format: 1
+source: content/docs/standalone/main/documentation/configuration/routes.md
+blocks:
+- 5b4bdd47c210544d yaml
+- e7802348ff7d75d3 yaml
+- c1657b02f215cfef yaml
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="routes" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "HTTP routes": the example config is accepted by agentgateway
+    #     (--validate-only), covering the `gateways`, `protocol: HTTP`, `name`,
+    #     `gateways: [...]`, `hostnames`, `matches.path.pathPrefix`, and
+    #     `backends[].host` / `weight` fields the route table documents.
+    #   * "TCP routes": the `tcpRoutes` example is accepted, covering `protocol: TCP`
+    #     and the simpler TCP route structure.
+    #   * "Example configuration with policies": the route-with-CORS example is
+    #     accepted, covering `policies.cors` on a route and an inline `backends[].mcp`
+    #     backend with a `stdio` target.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That traffic is actually matched and forwarded - requires config/traffic the
+    #     page omits; every example points at a placeholder backend
+    #     (`http.example.com:8080`, `postgres.example.com:5432`) that the test cannot
+    #     stand up, so only config acceptance is asserted.
+    #   * The `matches` header, method, and query options, and the "attaches to the
+    #     gateway named `default`" fallback - display-only table rows with no example
+    #     config on this page. Matching is covered by the Request matching guide.
+    #   * The CORS policy's runtime behavior - covered by the CORS guide's own test;
+    #     here the block only proves the policy is accepted on a route.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 5b4bdd47c210544d
+    lang: yaml
+    lines: a7f80a73 943d11d8 7b7d5821 c095a45d 069de162 d67b54bf 8923c6f5 48064336 301e1bfa c4280beb eaaad965 aeca2b3d 9bfd6f12 d72f261d f29bfd3a 368b1051
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="routes" >}}
+    cat <<'EOF' > config-http.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      http-proxy:
+        port: 8080
+        protocol: HTTP
+    routes:
+    - name: http-backend
+      gateways: [http-proxy]
+      hostnames:
+      - "example.com"
+      matches:
+      - path:
+          pathPrefix: /
+      backends:
+      - host: http.example.com:8080
+        weight: 1
+    EOF
+    agentgateway -f config-http.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: e7802348ff7d75d3
+    lang: yaml
+    lines: a7f80a73 943d11d8 2f556177 c94ad23d 9693ecf1 b9cd7e51 4e7efa69 112fa1b2 d72f261d 0cead947 368b1051
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="routes" >}}
+    cat <<'EOF' > config-tcp.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      postgres-proxy:
+        port: 5432
+        protocol: TCP
+    tcpRoutes:
+    - name: postgres-backend
+      gateways: [postgres-proxy]
+      backends:
+      - host: postgres.example.com:5432
+        weight: 1
+    EOF
+    agentgateway -f config-tcp.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: c1657b02f215cfef
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 19c2fa74 ead663af 9d7e2b17 fd12af70 ff9fe88b d31d0ec6 3f789485 0f27179b 726c2761 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="routes" >}}
+    cat <<'EOF' > config-policies.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        cors:
+          allowOrigins:
+          - "*"
+          allowHeaders:
+          - mcp-protocol-version
+          - content-type
+          - cache-control
+          exposeHeaders:
+          - "Mcp-Session-Id"
+      backends:
+      - mcp:
+          targets:
+          - name: everything
+            stdio:
+              cmd: npx
+              args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-policies.yaml --validate-only
+    {{< /doc-test >}}

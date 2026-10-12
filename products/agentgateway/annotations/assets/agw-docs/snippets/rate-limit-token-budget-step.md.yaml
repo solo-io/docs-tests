@@ -1,0 +1,54 @@
+format: 1
+source: assets/agw-docs/snippets/rate-limit-token-budget-step.md
+blocks:
+- 8ca0eeee55d8f347 yaml
+- fea343397a72dd5d yaml
+tags:
+- paths: virtual-keys-with-ratelimit
+  block: 0
+  fingerprint: 8ca0eeee55d8f347
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eae31075 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 1fba0f57 839a5cac 4e07a5a3 a50da420 c14c1813 253adb5a 70c97555 0d6480f0 02bf0210 e6444300 dfb1a8e0 b7b5f484 8902dc3d 87d549a0 58d46717 1891bc00 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="virtual-keys-with-ratelimit"'
+    at: 4
+- paths: virtual-keys-with-ratelimit
+  block: 1
+  fingerprint: fea343397a72dd5d
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eae31075 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 9ebc4789 61f1a045 a50da420 c14c1813 253adb5a 70c97555 0d6480f0 02bf0210 e6444300 dfb1a8e0 b7b5f484 8902dc3d 87d549a0 58d46717 1891bc00 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="virtual-keys-with-ratelimit"'
+    at: 4
+hidden:
+- after:
+    line: 5970a397bfbad100
+    occurrence: 2
+    words: 5ca4f385
+    block_before:
+      block: 1
+      fingerprint: fea343397a72dd5d
+      lang: yaml
+      lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eae31075 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 9ebc4789 61f1a045 a50da420 c14c1813 253adb5a 70c97555 0d6480f0 02bf0210 e6444300 dfb1a8e0 b7b5f484 8902dc3d 87d549a0 58d46717 1891bc00 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="virtual-keys-with-ratelimit" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for api-key-auth policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: agentgateway-system
+            name: api-key-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}

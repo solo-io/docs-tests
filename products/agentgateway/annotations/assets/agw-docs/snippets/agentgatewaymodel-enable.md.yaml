@@ -1,0 +1,27 @@
+format: 1
+source: assets/agw-docs/snippets/agentgatewaymodel-enable.md
+blocks:
+- f04dd17ae5a4f100 sh
+- 408a06244b235e2d sh
+tags:
+- paths: serve-model
+  block: 0
+  fingerprint: f04dd17ae5a4f100
+  lang: sh
+  lines: 3efb3966 4bee4e60 96064311 506557ee 4e1c1bab cce6a81c
+  preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
+  form:
+    attr: paths="serve-model"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: f04dd17ae5a4f100
+    lang: sh
+    lines: 3efb3966 4bee4e60 96064311 506557ee 4e1c1bab cce6a81c
+    preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
+  content: |2-
+       {{< doc-test paths="serve-model" >}}
+       kubectl rollout status deploy/agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       {{< /doc-test >}}

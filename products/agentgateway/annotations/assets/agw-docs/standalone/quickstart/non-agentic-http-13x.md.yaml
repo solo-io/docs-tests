@@ -1,0 +1,167 @@
+format: 1
+source: assets/agw-docs/standalone/quickstart/non-agentic-http-13x.md
+blocks:
+- 3c1c30661cdf6ff4 mermaid
+- b632e027187df7a9 sh
+- 91f4bc8e2ad0cc2f sh
+- d309a8a5b5660a01 sh
+- df08733832717c16 sh
+- ad97df3a89de32c2 json
+- 3617dfe7e83adb9d yaml
+- f6931a7b2e59dbc5 sh
+- 56e57ada05a8887e sh
+- 25ab4deb252fd52c sh
+- 2b9310b6dc04add9 txt
+- b9126a315d6b2c4e json
+- ca4568c002699cc7 sh
+- e1c48068ab386ccf sh
+tags:
+- paths: httpbin,httpbin-linux
+  block: 2
+  fingerprint: 91f4bc8e2ad0cc2f
+  lang: sh
+  lines: 91f4bc8e
+  preview: docker run --rm -d -p 8000:80 --name httpbin kennethreitz/httpbin
+  form:
+    attr: paths="httpbin,httpbin-linux"
+    only: true
+    lead: ' '
+- paths: httpbin-macos
+  block: 3
+  fingerprint: d309a8a5b5660a01
+  lang: sh
+  lines: d309a8a5
+  preview: docker run --rm -d -p 8000:80 --name httpbin kennethreitz/httpbin --platform lin
+  form:
+    attr: paths="httpbin-macos"
+    only: true
+    lead: ' '
+- paths: httpbin
+  block: 4
+  fingerprint: df08733832717c16
+  lang: sh
+  lines: df087338
+  preview: curl -s http://localhost:8000/headers | head -20 || true
+  form:
+    attr: paths="httpbin"
+    only: true
+    lead: ' '
+- paths: httpbin
+  block: 6
+  fingerprint: 3617dfe7e83adb9d
+  lang: yaml
+  lines: 4524b119 a7f80a73 05ca4235 796eea4c c10d7538 fe67aa7e d67b54bf d897654b 6c4e3f1e abc56510
+  preview: cat > config.yaml << 'EOF'
+  form:
+    attr: paths="httpbin"
+    only: true
+    lead: ' '
+- paths: httpbin
+  block: 9
+  fingerprint: 25ab4deb252fd52c
+  lang: sh
+  lines: 25ab4deb
+  preview: curl -i http://localhost:3000/headers
+  form:
+    attr: paths="httpbin"
+    only: true
+    lead: ' '
+- paths: httpbin
+  block: 12
+  fingerprint: ca4568c002699cc7
+  lang: sh
+  lines: a9a49a5c af5e6041
+  preview: curl -s http://localhost:3000/get
+  form:
+    attr: paths="httpbin"
+    only: true
+    lead: ' '
+- paths: httpbin
+  block: 13
+  fingerprint: e1c48068ab386ccf
+  lang: sh
+  lines: e1c48068
+  preview: docker stop httpbin
+  form:
+    attr: paths="httpbin"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 8f8aed77d629042b
+    occurrence: 0
+    words: 6db7d803 bb0347a4 e6f07d43
+    block_before:
+      block: 0
+      fingerprint: 3c1c30661cdf6ff4
+      lang: mermaid
+      lines: 35bb4631 3439d041 12a0fa38
+      preview: flowchart LR
+  content: |-
+    {{< doc-test paths="httpbin" >}}
+    # Install agentgateway binary
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="httpbin" >}}
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    line: 9053c587fb0865a5
+    occurrence: 0
+    words: 227907a1 a9c0ad21 b29814cf 7b3cdf53
+    block_before:
+      block: 8
+      fingerprint: 56e57ada05a8887e
+      lang: sh
+      lines: 56e57ada
+      preview: agentgateway
+  content: |-
+    {{< doc-test paths="httpbin" >}}
+    # Hidden test: the UI steps above (Enable Traffic -> Add bind/listener/route) are not
+    # scriptable, so this block reproduces the equivalent config they produce, to keep the
+    # resulting setup tested.
+    cat > config.yaml << 'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    binds:
+    - port: 3000
+      listeners:
+      - protocol: HTTP
+        routes:
+        - backends:
+          - host: 127.0.0.1:8000
+    EOF
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 25ab4deb252fd52c
+    lang: sh
+    lines: 25ab4deb
+    preview: curl -i http://localhost:3000/headers
+  content: |-
+    {{< doc-test paths="httpbin" >}}
+    YAMLTest -f - <<'EOF'
+    - name: request through agentgateway to httpbin returns 200
+      http:
+        url: "http://localhost:3000"
+        path: /headers
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,56 @@
+format: 1
+source: assets/agw-docs/standalone/quickstart/llm.md
+blocks:
+- 4e548af92d68424c sh
+- 883a1357645b4615 yaml
+- f6931a7b2e59dbc5 sh
+- 255e98ce2423a9b7
+- 039aba14636a7107 sh
+- ad5ea928079e0db4 json
+tags:
+- paths: llm
+  block: 1
+  fingerprint: 883a1357645b4615
+  lang: yaml
+  lines: 4524b119 a7f80a73 3af99526 e01ccf75 6c9b6cdf 6472803d 009395dd e050b084 4208ae28 abc56510
+  preview: cat > config.yaml << 'EOF'
+  form:
+    attr: paths="llm"
+    only: true
+    lead: ' '
+- paths: llm
+  block: 4
+  fingerprint: 039aba14636a7107
+  lang: sh
+  lines: dc872770 67c5a3ac b0cead6d a90f7a89 4524fe64 8e7bae9b
+  preview: curl -s http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="llm"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 409a3d1b114b095f
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 5b565a33 ed4f0b24 e0325e64
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm" >}}
+    # For CI/tests: install the agentgateway binary to local bin without sudo.
+    # Uses the nightly 'latest-dev' image for main and the latest release otherwise,
+    # so the version dir rotates without hardcoding a release tag that may not exist yet.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="llm" >}}
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+    {{< /doc-test >}}

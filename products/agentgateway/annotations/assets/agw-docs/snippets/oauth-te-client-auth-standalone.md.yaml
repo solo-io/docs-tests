@@ -1,0 +1,121 @@
+format: 1
+source: assets/agw-docs/snippets/oauth-te-client-auth-standalone.md
+blocks:
+- 65c43fa6a694cfea yaml
+- e394931ee84578b6 yaml
+- 86ebafa5a73c5e20 yaml
+hidden:
+- after:
+    line: 9b613d16db6bbc5f
+    occurrence: 0
+    words: a6a6a776 cb5e6115 03d66dd0 1e0584a2 8e7fc023 56e57ada a76d07aa 75857a45 03d66dd0 d0a36305 15eaa752 03d66dd0 fa51fd49 6ee0eb49
+    block_before:
+      block: 2
+      fingerprint: 86ebafa5a73c5e20
+      lang: yaml
+      lines: 6787571b 063d3398 3f97174d a757ec34 87737510 90594d7e 93690cd8 1b76b167
+      preview: 'clientAuth:'
+  content: |-
+    {{< doc-test paths="client-auth" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * All three clientAuth methods from the tabs above are accepted as complete standalone configs,
+    #     and privateKeyJwt is accepted with a real EC signing key.
+    #   * privateKeyJwt requires assertionAudience.
+    #   * The method names really are camelCase here: the PascalCase spelling that the Kubernetes CRDs
+    #     use is rejected, which is what the first bullet below claims.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That an authorization server accepts the assertion -- external dependency: needs a real IdP
+    #     with the matching public key registered for the client. The docker-compose walkthroughs
+    #     earlier on this page cover a live exchange with clientSecretBasic instead.
+    #   * The certificate and certificateHeader fields -- external dependency: the failure mode the
+    #     page describes (a mismatch is logged and does not stop loading) is only observable at a token
+    #     endpoint that validates the assertion.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export CLIENT_ID="${CLIENT_ID:-my-gateway}"
+    export CLIENT_SECRET="${CLIENT_SECRET:-not-a-real-secret}"
+    openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out client-assertion-key.pem
+    {{< /doc-test >}}
+- after:
+    line: 9b613d16db6bbc5f
+    occurrence: 0
+    words: a6a6a776 cb5e6115 03d66dd0 1e0584a2 8e7fc023 56e57ada a76d07aa 75857a45 03d66dd0 d0a36305 15eaa752 03d66dd0 fa51fd49 6ee0eb49
+    block_before:
+      block: 2
+      fingerprint: 86ebafa5a73c5e20
+      lang: yaml
+      lines: 6787571b 063d3398 3f97174d a757ec34 87737510 90594d7e 93690cd8 1b76b167
+      preview: 'clientAuth:'
+  content: |-
+    {{< doc-test paths="client-auth" >}}
+    # The tabs above show the clientAuth block only, so wrap each one in the config it belongs to.
+    client_auth_case() {
+      local name="$1" expect="$2"
+      { cat <<'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: backend.example.com:443
+        policies:
+          backendAuth:
+            oauthTokenExchange:
+              host: idp.example.com:443
+              path: /oauth2/v1/token
+              audiences:
+              - api://my-backend
+              clientAuth:
+    EOF
+        sed 's/^/            /'
+      } > "config-client-auth-$name.yaml"
+      if agentgateway -f "config-client-auth-$name.yaml" --validate-only > "client-auth-$name.log" 2>&1; then
+        [ "$expect" = ok ] || { echo "FAIL: $name was accepted but should be rejected"; exit 1; }
+        echo "ok       $name"
+      else
+        [ "$expect" = fail ] || { echo "FAIL: $name was rejected"; cat "client-auth-$name.log"; exit 1; }
+        echo "rejected $name (as expected)"
+      fi
+    }
+
+    client_auth_case secret-basic ok <<'EOF'
+    method: clientSecretBasic
+    clientId: $CLIENT_ID
+    clientSecret: $CLIENT_SECRET
+    EOF
+
+    client_auth_case secret-post ok <<'EOF'
+    method: clientSecretPost
+    clientId: $CLIENT_ID
+    clientSecret: $CLIENT_SECRET
+    EOF
+
+    client_auth_case private-key-jwt ok <<'EOF'
+    method: privateKeyJwt
+    clientId: $CLIENT_ID
+    signingKey:
+      file: client-assertion-key.pem
+    alg: ES256
+    kid: my-client-key
+    assertionAudience: https://idp.example.com/oauth2/v1/token
+    EOF
+
+    # assertionAudience is required.
+    client_auth_case private-key-jwt-no-audience fail <<'EOF'
+    method: privateKeyJwt
+    clientId: $CLIENT_ID
+    signingKey:
+      file: client-assertion-key.pem
+    EOF
+
+    # The Kubernetes spelling must not be accepted here.
+    client_auth_case pascal-method fail <<'EOF'
+    method: PrivateKeyJwt
+    clientId: $CLIENT_ID
+    signingKey:
+      file: client-assertion-key.pem
+    assertionAudience: https://idp.example.com/oauth2/v1/token
+    EOF
+
+    echo "clientAuth methods verified"
+    {{< /doc-test >}}

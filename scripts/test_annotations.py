@@ -7,6 +7,7 @@ and a refresh never loses any.
 """
 import contextlib
 import io
+import json
 import pathlib
 import subprocess
 import sys
@@ -392,6 +393,49 @@ class RefreshCommandTests(unittest.TestCase):
         self.commit()
         self.assertEqual(self.refresh(), 0)
         self.assertEqual(self.files(), [self.page + ".yaml"])
+
+    def test_inline_markup_on_the_page_wins(self):
+        """A writer still editing inline markup: refresh adopts it rather than drifting."""
+        marked = PAGE.replace("```sh\nkubectl delete", '```sh {paths="route"}\nkubectl delete')
+        self.write(self.page, marked)
+        self.commit()
+        self.assertEqual(self.refresh(), 0)
+        ann = A.load_annotation(self.adir / (self.page + ".yaml"))
+        self.assertEqual(len(ann["tags"]), len(A.parse(PAGE).tags) + 1)
+        out, placements, _ = A.attach(A.parse(marked).text, ann)
+        self.assertEqual(out, marked)
+        self.assertEqual(set(states(placements)), {A.EXACT})
+
+    def test_unchanged_inline_markup_is_not_reported(self):
+        self.write(self.page, PAGE)
+        self.commit()
+        report = pathlib.Path(tempfile.mkdtemp()) / "r.json"
+        self.assertEqual(cli("refresh", "--repo", str(self.repo), "--annotations", str(self.adir),
+                             "--report", str(report)), 0)
+        self.assertEqual(json.loads(report.read_text())["synced"], [])
+
+    def test_new_page_with_inline_markup_gets_an_annotation(self):
+        new = "content/docs/new.md"
+        self.write(new, "Intro.\n\n```sh {paths=\"n\"}\necho hi\n```\n")
+        self.commit()
+        report = pathlib.Path(tempfile.mkdtemp()) / "r.json"
+        self.assertEqual(cli("refresh", "--repo", str(self.repo), "--annotations", str(self.adir),
+                             "--report", str(report)), 0)
+        self.assertIn(new + ".yaml", self.files())
+        self.assertEqual(json.loads(report.read_text())["synced"], [{"page": new, "before": 0, "after": 1}])
+
+    def test_inline_front_matter_edit_is_reported(self):
+        self.write("content/docs/fm.md", "---\ntitle: f\ntest:\n  a:\n  - path: a\n---\nBody.\n")
+        self.commit()
+        self.refresh()
+        self.write("content/docs/fm.md", "---\ntitle: f\ntest:\n  a:\n  - path: b\n---\nBody.\n")
+        self.commit()
+        report = pathlib.Path(tempfile.mkdtemp()) / "r.json"
+        self.assertEqual(cli("refresh", "--repo", str(self.repo), "--annotations", str(self.adir),
+                             "--report", str(report)), 0)
+        self.assertEqual(json.loads(report.read_text())["front_matter_changed"], ["content/docs/fm.md"])
+        main, _ = A.slack_payloads(json.loads(report.read_text()), None)
+        self.assertIn("content/docs/fm.md", json.dumps(main))
 
     def test_attach_command_round_trips(self):
         out = pathlib.Path(tempfile.mkdtemp())

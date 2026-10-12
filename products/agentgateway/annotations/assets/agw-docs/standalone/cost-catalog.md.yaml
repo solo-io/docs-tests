@@ -1,0 +1,65 @@
+format: 1
+source: assets/agw-docs/standalone/cost-catalog.md
+blocks:
+- 1f44a680513db239 yaml
+- f6931a7b2e59dbc5 sh
+- 7dd0f600c75dc21b sh
+- 3531b01c461021ba sh
+- 712a64b3249dce23 yaml
+- f6bec5f6eff46ace sh
+- abdb7f103485f212 yaml
+- 659c6b9fe8973b58 console
+hidden:
+- after:
+    line: 13bf0f96d587d261
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 dddece3d
+    block_before: null
+  content: |-
+    {{< doc-test paths="costs" >}}
+    # Install agentgateway binary
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 559df0c1dd804193
+    occurrence: 6
+    words: 5ca4f385
+    block_before:
+      block: 7
+      fingerprint: 659c6b9fe8973b58
+      lang: console
+      lines: ce1234ed 483fa46d
+      preview: '... protocol=llm gen_ai.provider.name=openai gen_ai.request.model=gpt-4o-mini'
+  content: |-
+    {{< doc-test paths="costs" >}}
+    # Verify that agentgateway loads a catalog from a file source.
+    cat > /tmp/costs-catalog.json <<'EOF'
+    {
+      "providers": {
+        "openai": {
+          "models": {
+            "gpt-4o-mini": {
+              "rates": { "input": "0.15", "output": "0.6", "cacheRead": "0.075" }
+            }
+          }
+        }
+      }
+    }
+    EOF
+    cat > /tmp/costs-config.yaml <<'EOF'
+    config:
+      modelCatalog:
+      - file: /tmp/costs-catalog.json
+    llm:
+      models:
+      - name: gpt-4o-mini
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f /tmp/costs-config.yaml > /tmp/costs-agw.log 2>&1 &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+    grep -qE "model catalog (re)?loaded" /tmp/costs-agw.log
+    {{< /doc-test >}}

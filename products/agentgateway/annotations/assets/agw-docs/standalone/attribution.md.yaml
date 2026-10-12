@@ -1,0 +1,188 @@
+format: 1
+source: assets/agw-docs/standalone/attribution.md
+blocks:
+- abd293fcb4c94cfa yaml
+- 651cb95266a8c02e yaml
+- 3dcef2f3d6f9f006 yaml
+- e9e1b827cf57adf8 yaml
+- 38e988631f51e65e console
+- 38e988631f51e65e console
+- 358a9f7cef2c5172
+- ab9f26754e6d681b sql
+hidden:
+- after:
+    line: 521dd023e808ef47
+    occurrence: 0
+    words: 4e074085 6ee0eb49 75a288c0 fc93cb07 b9d90628 fa42bed0 a0af9f86 caf9f906 b7d64a92 5d2d3ceb 035e8f1e a1d98908 8e7fc023 fc93cb07 89445ea0 ba78973d ddd9818a 663ea1bf 3ee591fc 18bc3007
+    block_before: null
+  content: |-
+    {{< doc-test paths="attribution" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Every example configuration on the page is accepted by agentgateway
+    #     (--validate-only), including the assumeRole session name and tag fields,
+    #     the merge and replace forms of the Bedrock requestMetadata transformation,
+    #     and the Vertex AI labels transformation.
+    #   * The replace form is quoted so that YAML reads it as a CEL expression
+    #     string rather than as a flow mapping.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That the values reach AWS or Google billing data - external dependency.
+    #     Session tags, cost allocation tags, model invocation logs, Cost Explorer,
+    #     and the GCP billing export all need a live cloud account with billing
+    #     export configured, and the tags take up to 24 hours to become activatable.
+    #   * That the CEL expressions evaluate as intended - --validate-only does not
+    #     type-check expression bodies, and evaluation needs a live provider call.
+    #   * The "Verify" steps - console and billing-export procedures with no
+    #     command-line equivalent.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 521dd023e808ef47
+    occurrence: 0
+    words: 4e074085 6ee0eb49 75a288c0 fc93cb07 b9d90628 fa42bed0 a0af9f86 caf9f906 b7d64a92 5d2d3ceb 035e8f1e a1d98908 8e7fc023 fc93cb07 89445ea0 ba78973d ddd9818a 663ea1bf 3ee591fc 18bc3007
+    block_before: null
+  content: |-
+    {{< doc-test paths="attribution" >}}
+    # Create the JWKS file that the examples reference.
+    mkdir -p manifests/jwt
+    cat <<'EOF' > manifests/jwt/pub-key
+    {"keys": [{"kty": "RSA", "kid": "test", "use": "sig", "alg": "RS256", "n": "teXe4sfDoHQR5YUos3nsY_Ax6J2xrgXnIfUziaTWJ4nljejLVyg8m0g6SK9zrSaCvLm9GxAhpaJ_48RalwqDt4spBPQ8uvr-54jHrECboAbTxhy2T-oXP80Duz0xauSDVlyA_xenoCA24MFJ1rgHppy1F1eYTD-CQ-IxhXLNm5mE3rJufP_pdnMy0q6acXSfPtEzMJY3BYNV5umqimkOgH9PqQWd1RAgYdE7z5fvdCb4T4K667rRRT75PqRB4GJgSY-zQrC4CEVCw_ql7bfdouFcxXwsyh7AfImIEamA1LMODvMXVZWkZ8V0w_VEK6NHqr-BGOBVAUfRqYAEPxfaIw", "e": "AQAB"}]}
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: abd293fcb4c94cfa
+    lang: yaml
+    lines: a7f80a73 3af99526 c8f3f59a e34dc3a0 153f9913 4248ed80 44ec9b74 d5cf208a e01ccf75 e4f1a385 2e2b598b 009395dd eced998e 146e11c6 cb39231d b8eda852 75959b2d a0294bd8 7abc3518 682ac7e3 c1126a58 7abc3518 965f6f1e e6464443 fa0b3e8e ec68d69f
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="attribution" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      policies:
+        jwtAuth:
+          issuer: agentgateway.dev
+          audiences: [test.agentgateway.dev]
+          jwks:
+            file: ./manifests/jwt/pub-key
+      models:
+      - name: "*"
+        provider: bedrock
+        params:
+          awsRegion: us-east-1
+        auth:
+          aws:
+            assumeRole:
+              roleArn: arn:aws:iam::123456789012:role/bedrock-invoke
+              sessionName:
+                expression: jwt.sub
+              tags:
+              - key: user
+                expression: jwt.sub
+              - key: team
+                expression: request.headers["x-team"]
+              - key: environment
+                value: prod
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 3dcef2f3d6f9f006
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd eced998e 7a48fd6c fabeb929
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="attribution" >}}
+    # Merge posture
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: bedrock
+        params:
+          awsRegion: us-east-1
+        finalTransformation:
+          requestMetadata: >-
+            coalesce(
+              llmRequest.requestMetadata.merge({"user": jwt.sub, "team": request.headers["x-team"]}),
+              {"user": jwt.sub, "team": request.headers["x-team"]}
+            )
+    EOF
+    agentgateway -f config.yaml --validate-only
+    # Replace posture. Unquoted, YAML parses the value as a flow mapping and the
+    # config is rejected, so the quoting in the guide is load-bearing.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: bedrock
+        params:
+          awsRegion: us-east-1
+        finalTransformation:
+          requestMetadata: '{"user": jwt.sub, "team": request.headers["x-team"]}'
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 4a5a08c9b3c6d916
+    occurrence: 0
+    words: 663ea1bf 7ab37787 61de55ba d772ebb4 99262a02 28391d3b de003e6b c9a8dc33 a3b142af ca978112 b3a2bd47 b8bc0e4f a5c935d1 f4bf9f7f d772ebb4 e9da86d3 3b71252c 217d3eaf d294fcce
+    block_before:
+      block: 3
+      fingerprint: e9e1b827cf57adf8
+      lang: yaml
+      lines: a7f80a73 3af99526 c8f3f59a e34dc3a0 153f9913 4248ed80 44ec9b74 d5cf208a e01ccf75 e4f1a385 17183da5 009395dd b176846d 1ced07c7 7a48fd6c aab7b1bf 8a9c4053 c5711516 cceb855d ba5ec51d
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="attribution" >}}
+    # Merge posture
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      policies:
+        jwtAuth:
+          issuer: agentgateway.dev
+          audiences: [test.agentgateway.dev]
+          jwks:
+            file: ./manifests/jwt/pub-key
+      models:
+      - name: "*"
+        provider: vertex
+        params:
+          vertexProject: my-project
+          vertexRegion: us-east5
+        finalTransformation:
+          labels: >-
+            coalesce(
+              llmRequest.labels.merge({"tenant": jwt.sub, "cost_center": "platform"}),
+              {"tenant": jwt.sub, "cost_center": "platform"}
+            )
+    EOF
+    agentgateway -f config.yaml --validate-only
+    # Replace posture
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: vertex
+        params:
+          vertexProject: my-project
+          vertexRegion: us-east5
+        finalTransformation:
+          labels: '{"tenant": jwt.sub, "cost_center": "platform"}'
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}

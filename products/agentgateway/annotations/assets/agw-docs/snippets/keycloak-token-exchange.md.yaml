@@ -1,0 +1,37 @@
+format: 1
+source: assets/agw-docs/snippets/keycloak-token-exchange.md
+blocks:
+- 587ffe5d08dccfbb sh
+- 645d550d9ef8b9f0 yaml
+- a08b2c305ca03558 sh
+tags:
+- paths: te-standard,te-jwt-bearer,te-mcp
+  block: 0
+  fingerprint: 587ffe5d08dccfbb
+  lang: sh
+  lines: bc755a31 c6044104 559f694b fa7395d2 fbc8308c a4c3ed04 26cfd81b 4dfb329e 775a0934
+  preview: BASE=https://agentgateway.dev/examples/traffic-token-exchange/jwt-authz-grant/jw
+  form:
+    attr: paths="te-standard,te-jwt-bearer,te-mcp"
+    only: true
+    lead: ' '
+- paths: te-standard,te-jwt-bearer,te-mcp
+  block: 1
+  fingerprint: 645d550d9ef8b9f0
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 28101486 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac 6ecd9479 a58565b2 8c8c4228 fa1e8330 6ecd9479 36184fa5 04968f51 a5b107cc c636bdd4 a8c42164 8db70061 37ad689e 1793f584 4c4631fd 1793f584 1a0cef8e 8ecb7d53 8f5c7d8b 8affd970 ec9be729 8affd970 0ff65a1a a46d7c6d fcd8c64a 5b30a123 d7e88210 4fb8b4ed c5d7714b 5b30a123 889016e3 bf7fda2c cb3f91d5 f1540154 0d6480f0 8c8c4228 28101486 0f10c5bc 36184fa5 8432e015 6ecd9479 0ff65a1a 82601aaa c095a45d b1d5c800 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-standard,te-jwt-bearer,te-mcp"
+    only: true
+    lead: ' '
+- paths: te-standard,te-jwt-bearer,te-mcp
+  block: 2
+  fingerprint: a08b2c305ca03558
+  lang: sh
+  lines: a08b2c30
+  preview: kubectl rollout status deployment/keycloak -n httpbin --timeout=180s
+  form:
+    attr: paths="te-standard,te-jwt-bearer,te-mcp"
+    only: true
+    lead: ' '

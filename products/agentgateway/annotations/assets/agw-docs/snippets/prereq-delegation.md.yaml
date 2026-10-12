@@ -1,0 +1,81 @@
+format: 1
+source: assets/agw-docs/snippets/prereq-delegation.md
+blocks:
+- f2c2d5cd64270e15 sh
+- d13ade6c62874937 sh
+- 499ec36c45084035 sh
+- 40efb234d7cc1f8b yaml
+- 44a98dd2152d7f11 sh
+- ab3fb5312252a472 sh
+- f8499c65d2679019
+tags:
+- paths: route-delegation-prereq
+  block: 2
+  fingerprint: 499ec36c45084035
+  lang: sh
+  lines: 0d2b41f9 40ce3f6f
+  preview: kubectl create namespace team1
+  form:
+    attr: paths="route-delegation-prereq"
+    only: true
+    lead: ' '
+- paths: route-delegation-prereq
+  block: 3
+  fingerprint: 40efb234d7cc1f8b
+  lang: yaml
+  lines: 16c71da1 979905a0 e47a48f5 8c8c4228 0497e562 53143665 36184fa5 0e20b496 b5a028c9 56bf9360 8af957d1 55708cb7 b5a028c9 56bf9360 cb3f91d5 979905a0 e47a48f5 8c8c4228 0497e562 52418815 36184fa5 0e20b496 b5a028c9 56bf9360 8af957d1 55708cb7 b5a028c9 56bf9360 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="route-delegation-prereq"
+    only: true
+    lead: ' '
+- paths: route-delegation-prereq
+  block: 4
+  fingerprint: 44a98dd2152d7f11
+  lang: sh
+  lines: 50373c28 808ed59b f3189692 4015475e 50373c28 808ed59b 9f035f2b 4015475e
+  preview: curl -sL https://raw.githubusercontent.com/kgateway-dev/kgateway/main/examples/h
+  form:
+    attr: paths="route-delegation-prereq"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 4
+    fingerprint: 44a98dd2152d7f11
+    lang: sh
+    lines: 50373c28 808ed59b f3189692 4015475e 50373c28 808ed59b 9f035f2b 4015475e
+    preview: curl -sL https://raw.githubusercontent.com/kgateway-dev/kgateway/main/examples/h
+  content: |2-
+       {{< doc-test paths="route-delegation-prereq" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for team1 httpbin deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: team1
+               name: httpbin
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 400
+             intervalSeconds: 5
+       - name: wait for team2 httpbin deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: team2
+               name: httpbin
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 400
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}

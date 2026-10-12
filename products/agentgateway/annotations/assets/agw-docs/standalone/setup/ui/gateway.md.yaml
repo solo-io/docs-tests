@@ -1,0 +1,100 @@
+format: 1
+source: assets/agw-docs/standalone/setup/ui/gateway.md
+blocks:
+- 123be625ebea2a31 yaml
+- f6931a7b2e59dbc5 sh
+- 1939f6167749f3c3 txt
+- 64b308950e41e517 sh
+- 27badc983df1780b txt
+- 6e6cf8f621d95d81 sh
+- 6b3c238ebcf1f3c0 txt
+- 123be625ebea2a31 yaml
+- 9582816bf2b9b282 sh
+- b331680db50b92d5 sh
+- c31586c98512c002 sh
+- 1939f6167749f3c3 txt
+- 64b308950e41e517 sh
+- 27badc983df1780b txt
+- bd776a8f225f34f2 sh
+- 90e1bbed65c20293 txt
+- 0bd1a4c83a4aefac yaml
+- 47cace05f5d44304 sh
+- 6e6cf8f621d95d81 sh
+- 7182dd431b5c8833 txt
+- f3a61ad19bbc3026 sh
+- 64b308950e41e517 sh
+- 27badc983df1780b txt
+hidden:
+- after:
+    line: 856ddc317e0e7aa2
+    occurrence: 0
+    words: d4735e3a abfc412c b9776d7d d3ef7de5 fa42bed0 a0af9f86 caf9f906 8fb6d5f3 d3ef7de5 f35e5424 a1d98908 8e7fc023 bb0347a4 cd1bb301 b48111c1 56e57ada 0e9a0002 2ad8a704 e0f4f767
+    block_before: null
+  content: |-
+    {{< doc-test paths="ui-standalone-gateway" >}}
+    # Install agentgateway binary for tests
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 22
+      fingerprint: 27badc983df1780b
+      lang: txt
+      lines: 27badc98
+      preview: '200'
+  content: |-
+    {{< doc-test paths="ui-standalone-gateway" >}}
+    pkill -f "agentgateway -f" 2>/dev/null || true
+    sleep 1
+    cat > /tmp/agw-ui-gateway.yaml <<'EOF'
+    config:
+      adminAddr: localhost:15000
+    gateways:
+      default:
+        port: 4000
+      ui-gateway:
+        port: 4001
+    ui:
+      gateways: [ui-gateway]
+    routes:
+    - matches:
+      - path:
+          pathPrefix: /
+      backends:
+      - host: httpbin.org:80
+    EOF
+    agentgateway -f /tmp/agw-ui-gateway.yaml &
+    AGW_UI_GW_PID=$!
+    sleep 3
+    YAMLTest -f - <<'EOF'
+    - name: UI is served on the UI gateway port
+      http:
+        url: "http://localhost:4001"
+        path: "/ui/"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+      retries: 3
+    - name: admin interface endpoints are not served on the UI gateway
+      http:
+        url: "http://localhost:4001"
+        path: "/config_dump"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 404
+      retries: 3
+    EOF
+    # The 404 above must mean "not routed here", not "endpoint does not exist".
+    # Assert with curl rather than YAMLTest, because /config_dump is trailing-slash
+    # sensitive and returns 404 as /config_dump/ even on the admin address.
+    ADMIN_DUMP_CODE="$(curl -s -o /dev/null -w '%{http_code}' http://localhost:15000/config_dump)"
+    test "$ADMIN_DUMP_CODE" = "200"
+    kill $AGW_UI_GW_PID 2>/dev/null || true
+    {{< /doc-test >}}

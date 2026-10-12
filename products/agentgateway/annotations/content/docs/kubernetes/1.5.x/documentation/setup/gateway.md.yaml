@@ -1,0 +1,44 @@
+format: 1
+source: content/docs/kubernetes/1.5.x/documentation/setup/gateway.md
+blocks:
+- 83e74365f3ddf8e2 yaml
+- 474a97c025df5f01 yaml
+hidden:
+- after:
+    line: 990d19ea3ec631e8
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 c1083909
+    block_before: null
+  content: |-
+    {{< doc-test paths="all" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for agentgateway-proxy deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+
+    - name: wait for agentgateway-proxy service LB address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

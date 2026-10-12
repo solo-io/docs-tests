@@ -1,8 +1,8 @@
 # Doc-test scenario definitions for agentgateway, kubernetes mode.
 #
-# Covers every subject area except quickstart, install and setup, which hold
-# the install steps most scenarios depend on and move last. Those still declare
-# their scenarios in the consuming repo's page front matter; both forms are read.
+# Covers every subject area. Pages carry no test markup: scenarios live here,
+# and code-block markup lives in ../annotations/. Front matter `test:` is still
+# read if present, for repos that have not moved yet.
 #
 # Scenarios are keyed by the assets/ file a page reuses, not by the page's own
 # path, because over the 7 weeks after agentgateway/website#920 opened,
@@ -148,6 +148,21 @@ skip:
 - page: integrations/mcp/clients/vscode.md
 - page: integrations/mcp/servers.md
 - page: integrations/web-uis/_index.md
+- page: documentation/quickstart/_index.md
+- page: documentation/setup/_index.md
+- page: documentation/setup/customize/_index.md
+- page: documentation/setup/customize/options.md
+- page: documentation/setup/listeners/_index.md
+- page: documentation/setup/listeners/overview.md
+- page: documentation/install/_index.md
+- page: documentation/install/advanced.md
+- page: documentation/install/argocd.md
+- page: documentation/install/flux.md
+- page: documentation/install/tls.md
+- page: _index.md
+- page: documentation/_index.md
+- page: not-in-version.md
+- dir: release-notes/
 scenarios:
   access-logs:
     type:
@@ -1403,3 +1418,77 @@ scenarios:
     - gateway
     page: integrations/llm/providers/vllm.md
     path: vllm-provider-setup
+  # --- quickstart (documentation/quickstart/) ---
+  httpbin:
+    needs:
+    - install-standard
+    source: agw-docs/pages/agentgateway/quickstart/non-agentic-http.md
+    path: install-httpbin
+  install:
+    needs:
+    - install-standard
+  mcp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    source: agw-docs/pages/agentgateway/quickstart/mcp.md
+    path: setup-mcp-server
+  openai:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    source: agw-docs/pages/agentgateway/quickstart/llm.md
+    path: openai-setup
+  # --- setup (documentation/setup/) ---
+  customize:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/setup/customize.md
+    path: customize
+  http-listener:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    source: agw-docs/pages/setup/listeners/http.md
+    path: http-listener
+  https-listener:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    source: agw-docs/pages/setup/listeners/https.md
+    path: https-listener
+  setup-gateway:
+    needs:
+    - install-standard
+    - gateway
+  tls-settings:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/setup/listeners/tls-settings.md
+    path: tls-settings
+  # --- install (documentation/install/) ---
+  helm-install:
+    needs:
+    - helm-standard
+  helm-install-experimental:
+    needs:
+    - helm-experimental
+  install-httpbin:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin

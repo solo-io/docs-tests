@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Merge multiple test-results.yaml files into a single unified report."""
 
+import re
 import sys
 from pathlib import Path
 
@@ -11,6 +12,16 @@ except ModuleNotFoundError:
     sys.exit(1)
 
 
+def _attempt(results_file: Path) -> int:
+    """The run attempt in an artifact folder named like `test-result-7-a2`, else 0.
+
+    Re-running a failed shard uploads its results again. Merging in attempt
+    order lets the re-run's results replace the failed attempt's.
+    """
+    m = re.search(r"-a(\d+)$", results_file.parent.name)
+    return int(m.group(1)) if m else 0
+
+
 def merge(input_dir: Path, output_path: Path) -> None:
     tested_documents: set[str] = set()
     tests: dict = {}
@@ -18,7 +29,7 @@ def merge(input_dir: Path, output_path: Path) -> None:
     total_documents: int = 0
     total_by_version: dict = {}
 
-    result_files = sorted(input_dir.rglob("test-results.yaml"))
+    result_files = sorted(input_dir.rglob("test-results.yaml"), key=lambda p: (_attempt(p), str(p)))
     for results_file in result_files:
         with open(results_file) as f:
             report = yaml.safe_load(f) or {}

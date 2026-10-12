@@ -1,0 +1,251 @@
+format: 1
+source: content/docs/standalone/1.5.x/documentation/configuration/backends.md
+blocks:
+- cab06ba78e593df8 yaml
+- 11840721d118d348 yaml
+- 9b387b197ecea9e6 yaml
+- bf552809399c4792 yaml
+- 95ba2e1e2cc0ef87 yaml
+- d32b7df8d80d9147 yaml
+- d632d25d75f3ea29 yaml
+- 52d6b5ce75e78223 yaml
+hidden:
+- after:
+    line: 714405c4ca3422b9
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 9e5cb570
+    block_before: null
+  content: |-
+    {{< doc-test paths="backends" >}}
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-dummy}"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: cab06ba78e593df8
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf d897654b fdc9b081 368b1051 ba8ca461 d4203374
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="backends" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The static host backend example config is accepted by agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That traffic is actually routed/weighted to the hosts at runtime — requires
+    #     reachable backends the page omits.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+        protocol: HTTP
+    routes:
+    - backends:
+      - host: example.com:8080
+        weight: 1
+      - host: 127.0.0.1:80
+        weight: 9
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 2
+      fingerprint: 9b387b197ecea9e6
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b df374e41 3035507a be8a7964 a68fe535 ca335149 6329244e b5671429 82726b6f 4c4623af
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="backends" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The MCP backend example (stdio + remote MCP targets) is accepted by
+    #     agentgateway in both the routing-based (gateways) and simplified MCP (mcp) forms.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That the MCP targets actually start/connect at runtime — requires the npx
+    #     command and remote server the page does not stand up.
+    cat <<'EOF' > config2.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - mcp:
+          targets:
+          - name: stdio-server
+            stdio:
+              cmd: npx
+              args: ["@modelcontextprotocol/server-everything"]
+          - name: http-server
+            mcp:
+              host: https://example.com/mcp
+    EOF
+    agentgateway -f config2.yaml --validate-only
+
+    cat <<'EOF' > config2-simplified.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      targets:
+      - name: stdio-server
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+      - name: http-server
+        mcp:
+          host: https://example.com/mcp
+    EOF
+    agentgateway -f config2-simplified.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 4
+      fingerprint: 95ba2e1e2cc0ef87
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b df374e41 005966fa 3035507a 10aa9dee 2a783db0 a48bb383 4f369ea9 286a1775
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="backends" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The stateless session-routing MCP backend example is accepted by agentgateway
+    #     in both the routing-based (gateways) and simplified MCP (mcp) forms.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That stateless wrapping actually occurs at runtime — requires the OpenAPI
+    #     upstream and live MCP traffic the page omits.
+    cat <<'EOF' > config3.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - mcp:
+          statefulMode: stateless
+          targets:
+          - name: openapi-server
+            openapi:
+              host: petstore3.swagger.io:443
+              schema:
+                url: https://petstore3.swagger.io/api/v3/openapi.json
+    EOF
+    agentgateway -f config3.yaml --validate-only
+
+    cat <<'EOF' > config3-simplified.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      statefulMode: stateless
+      targets:
+      - name: openapi-server
+        openapi:
+          host: petstore3.swagger.io:443
+          schema:
+            url: https://petstore3.swagger.io/api/v3/openapi.json
+    EOF
+    agentgateway -f config3-simplified.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 6
+      fingerprint: d632d25d75f3ea29
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 e050b084 c8f3f59a 81b74571 7217bcc4
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="backends" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The OpenAI LLM provider example is accepted by agentgateway in both the
+    #     routing-based (ai backend) and simplified LLM (llm.models) forms.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That requests are actually proxied to OpenAI at runtime — requires a real
+    #     OPENAI_API_KEY and live LLM traffic the page omits.
+    cat <<'EOF' > config4.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - ai:
+          name: openai
+          provider:
+            openAI:
+              model: gpt-3.5-turbo
+      policies:
+        backendAuth:
+          key: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config4.yaml --validate-only
+
+    cat <<'EOF' > config4-simplified.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: openai
+        provider: openAI
+        params:
+          model: gpt-3.5-turbo
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config4-simplified.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    line: af692d6b99c215ca
+    occurrence: 0
+    words: cfd1055c ec91fdd9 378f37b1 663ea1bf 6ee0eb49 6db7d803 b9776d7d 1f58b914 fa51fd49 7afbb334 1581e27d a5c935d1 f4bf9f7f b9776d7d 60eac09a 1e0584a2 8e7fc023 4a8a03b3 b9776d7d 04f8996d 663ea1bf b9776d7d 5f877bc7 d92c6a81
+    block_before:
+      block: 6
+      fingerprint: d632d25d75f3ea29
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 e050b084 c8f3f59a 81b74571 7217bcc4
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="backends" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The AWS AgentCore backend config from the traffic-aws-agentcore example,
+    #     embedded on this page, is accepted by agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That requests are actually signed and proxied to AgentCore at runtime —
+    #     requires AWS credentials and a real agent runtime the page omits.
+    curl -L https://agentgateway.dev/examples/traffic-aws-agentcore/config.yaml -o config5.yaml
+    agentgateway -f config5.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 52d6b5ce75e78223
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b c64a4012 c8f3f59a f3d512fe 62f47435
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="backends" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * `sessionAffinity.source` is accepted on a routing-based backend, which is the
+    #     only place it attaches. It is not a route policy: agentgateway rejects
+    #     `routes[].policies.sessionAffinity` as an unknown field.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That two requests with the same header reach the same endpoint -- the page
+    #     configures a single endpoint, and proving the mapping needs several backend
+    #     replicas and a way to identify which one answered.
+    cat <<'EOF' > config-affinity.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: localhost:8080
+        policies:
+          sessionAffinity:
+            source: request.headers["x-session-id"]
+    EOF
+    agentgateway -f config-affinity.yaml --validate-only
+    {{< /doc-test >}}

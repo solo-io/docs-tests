@@ -1,0 +1,37 @@
+format: 1
+source: assets/agw-docs/snippets/create-ca-server-certs.md
+blocks:
+- 758cbc39908cf7a3 sh
+- 08fbe5b4587144a1 sh
+- 970091fa9011381b sh
+tags:
+- paths: all,backendtls-secret-ca
+  block: 0
+  fingerprint: 758cbc39908cf7a3
+  lang: sh
+  lines: 758cbc39
+  preview: mkdir -p example_certs && cd example_certs
+  form:
+    attr: paths="all,backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: all,backendtls-secret-ca
+  block: 1
+  fingerprint: 08fbe5b4587144a1
+  lang: sh
+  lines: f2b75097 826f64e0 fa85157e 35d13870 10ddfb05
+  preview: '# Create CA private key'
+  form:
+    attr: paths="all,backendtls-secret-ca"
+    only: true
+    lead: ' '
+- paths: all,backendtls-secret-ca
+  block: 2
+  fingerprint: 970091fa9011381b
+  lang: sh
+  lines: f1b2aa31 232a2f56 8ffb77aa 567b5017 b0eaee76 a8d785ad db25a23f 1cf7f729 0029a5d3 b2b840e5 426cec86 d437baff f91f14a3
+  preview: '# Create server private key'
+  form:
+    attr: paths="all,backendtls-secret-ca"
+    only: true
+    lead: ' '

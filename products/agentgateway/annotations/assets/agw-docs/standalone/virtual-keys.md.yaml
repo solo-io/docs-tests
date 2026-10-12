@@ -1,0 +1,182 @@
+format: 1
+source: assets/agw-docs/standalone/virtual-keys.md
+blocks:
+- c6bbb01bd94bb2a1 mermaid
+- eb76d20a9f17d005 yaml
+- f6931a7b2e59dbc5 sh
+- 3615a15dc1a7eb4e sh
+- fb18796f7a483c68 json
+- e81571ce6b225c3d sh
+- 63282280f2ffab49
+- 5d346155abe80a85 yaml
+- f6931a7b2e59dbc5 sh
+- 9b31b129944290a3 sh
+- c8bf6590a7a1114c json
+- 9b31b129944290a3 sh
+- 50cfe07822c7f084
+- 8165021210892712 yaml
+- 28dba5588c16a2bc sh
+- 50cfe07822c7f084
+- abeff66b0df82767 yaml
+- f6931a7b2e59dbc5 sh
+- 9b31b129944290a3 sh
+- c8bf6590a7a1114c json
+- 9b31b129944290a3 sh
+- 50cfe07822c7f084
+- 28dba5588c16a2bc sh
+- c8bf6590a7a1114c json
+- d32cc87f2ae202bb yaml
+- 8a509ce1c0710906 sh
+- 3f8d8936784b4e5a
+- 71e4378b3d4fbca6 yaml
+- d0a7c83d872e8c89 sh
+- 324752716ebb81f5 promql
+- 31e22408e600dcea sh
+- 1550ba3c9a2f95a6 json
+- 2684eb04444375a6 promql
+- 5de1c69a43386e2e sh
+- 49396d85aa7de61b json
+tags:
+- paths: virtual-keys
+  block: 1
+  fingerprint: eb76d20a9f17d005
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 c8f3f59a e5522222 b0299c0e 1fe7fd13 b0f0e951 8c8c4228 cb473c79 b3b0300a 8c8c4228 e22a2214 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="virtual-keys"
+    only: true
+    lead: ' '
+- paths: virtual-keys
+  block: 3
+  fingerprint: 3615a15dc1a7eb4e
+  lang: sh
+  lines: dc872770 8e0bf91e 67c5a3ac b0cead6d a90f7a89 e66f4a20 8e7bae9b
+  preview: curl -s http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="virtual-keys"
+    only: true
+    lead: ' '
+- paths: virtual-keys
+  block: 5
+  fingerprint: e81571ce6b225c3d
+  lang: sh
+  lines: 7e9c3b57 856301a1 67c5a3ac b0cead6d a90f7a89 e66f4a20 fc075a9d
+  preview: curl -s -o /dev/null -w "%{http_code}" http://localhost:4000/v1/chat/completions
+  form:
+    attr: paths="virtual-keys"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    line: 13bf0f96d587d261
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 dddece3d
+    block_before:
+      block: 0
+      fingerprint: c6bbb01bd94bb2a1
+      lang: mermaid
+      lines: a3d27ba5 4bbf5d67 d61b7eca fae4a3dd 424a9e5f 28fbc616 aa8529ce 894dfb4d 66624adc 662ffd44 2a230cbd 44bd7ae6 361e48d0
+      preview: flowchart TD
+  content: |-
+    {{< doc-test paths="virtual-keys" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Step 1": the virtual keys config is accepted by agentgateway
+    #     (--validate-only), so the apiKey policy fields are correct.
+    #   * "Step 3": a request with either virtual key is authenticated and proxied
+    #     to the provider (200), and a request with an unknown key is rejected (401),
+    #     which is the behavior the strict apiKey mode describes.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The provider's response content. The test runs against a local mock LLM
+    #     rather than OpenAI, so no provider API key is needed and no live completion
+    #     is billed. Only the gateway behavior on this page is asserted.
+    #   * "Configure token budgets" and "Monitor per-key spending" - those sections
+    #     need a provider that returns realistic token counts and a Prometheus
+    #     instance, so they are left to manual verification.
+    # Install agentgateway binary
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="virtual-keys" >}}
+    # Virtual keys: validate the documented config, then run it against the mock LLM.
+    {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+    agentgateway -f config-mock.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID $MOCK_LLM_PID 2>/dev/null' EXIT
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 63282280f2ffab49
+    lang: ''
+    lines: '63282280'
+    preview: HTTP/1.1 401 Unauthorized
+  content: |-
+    {{< doc-test paths="virtual-keys" >}}
+    YAMLTest -f - <<'EOF'
+    - name: request with valid API key succeeds
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          Authorization: "Bearer sk-alice-abc123def456"
+        body: |
+          {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": "Hello!"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+
+    - name: request with invalid API key is rejected
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          Authorization: "Bearer invalid-key"
+        body: |
+          {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": "Hello!"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 401
+
+    - name: request with Bob's key also succeeds independently
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          Authorization: "Bearer sk-bob-xyz789uvw012"
+        body: |
+          {
+            "model": "gpt-3.5-turbo",
+            "messages": [{"role": "user", "content": "Hello!"}]
+          }
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

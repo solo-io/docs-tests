@@ -1,0 +1,72 @@
+format: 1
+source: assets/agw-docs/snippets/agentgateway/get-started.md
+blocks:
+- 5a789c12e4779eca sh
+- bf6bc388ff86ec68 sh
+- 727fed8a5a024905 sh
+- 6237376d8ddea2c6 sh
+- c23c85aa70e0d8cc sh
+- 629e09daffbcba9d sh
+- d6b994d4cd0c2d58 sh
+- 76670aadb13708d5 console
+tags:
+- paths: standard
+  block: 0
+  fingerprint: 5a789c12e4779eca
+  lang: sh
+  lines: e1ceb1f0 6d2046e3
+  preview: export GWAPI_VERSION={{< reuse "agw-docs/versions/k8s-gw-version.md" >}}
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: experimental
+  block: 1
+  fingerprint: bf6bc388ff86ec68
+  lang: sh
+  lines: a35444e2 09295fb0
+  preview: export GWAPI_VERSION={{< reuse "agw-docs/versions/k8s-gw-version-exp.md" >}}
+  form:
+    attr: paths="experimental"
+    only: true
+    lead: ' '
+- paths: standard
+  block: 2
+  fingerprint: 727fed8a5a024905
+  lang: sh
+  lines: 04390e6c c6646fbc 736e1ed1 844f31fe
+  preview: 'helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} {{< '
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: experimental
+  block: 3
+  fingerprint: 6237376d8ddea2c6
+  lang: sh
+  lines: 04390e6c c6646fbc 918988a2 844f31fe
+  preview: 'helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} {{< '
+  form:
+    attr: paths="experimental"
+    only: true
+    lead: ' '
+- paths: standard
+  block: 4
+  fingerprint: c23c85aa70e0d8cc
+  lang: sh
+  lines: d4e095ed 3a26b6d2 736e1ed1 506557ee cce6a81c
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} {{< reuse
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: experimental
+  block: 5
+  fingerprint: 629e09daffbcba9d
+  lang: sh
+  lines: d4e095ed 3a26b6d2 918988a2 506557ee 19ffa340 cce6a81c
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} {{< reuse
+  form:
+    attr: paths="experimental"
+    only: true
+    lead: ' '

@@ -296,6 +296,18 @@ class DocsTestsRootTests(unittest.TestCase):
 class ReportTests(unittest.TestCase):
     """A skip survives merging shards and shows as a warning, not a pass."""
 
+    def test_rerun_shard_replaces_the_failed_attempt(self):
+        """A re-run shard uploads again; its result wins, compared as numbers (a12 after a9)."""
+        import merge_test_results
+        d = pathlib.Path(tempfile.mkdtemp())
+        for name, status in (("test-result-7-a12", "passed"), ("test-result-7-a9", "failed")):
+            (d / name).mkdir()
+            (d / name / "test-results.yaml").write_text(yaml.safe_dump({
+                "tested_documents": ["a.md"], "tests": {"a.md::x": {"status": status}}}))
+        quiet(merge_test_results.merge, d, d / "merged.yaml")
+        merged = yaml.safe_load((d / "merged.yaml").read_text())
+        self.assertEqual(merged["tests"]["a.md::x"]["status"], "passed")
+
     def test_merge_keeps_skips_and_summary_warns(self):
         import merge_test_results
         import report_summary
