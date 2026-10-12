@@ -27,3 +27,29 @@ tags:
     attr: paths="rewrite"
     only: true
     lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: de178fba999fe2a9
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 14ddcd05 207d5e5e aca2be15 6a97b2e8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="rewrite" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify numeric path segment is rewritten to /id
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/anything/users/12345"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.url"
+               comparator: contains
+               value: "/anything/users/id"
+       EOF
+       {{< /doc-test >}}

@@ -856,14 +856,15 @@ def from_inline(text: str, ann: Optional[dict], source: str, preview: bool) -> O
     While a content repo still carries inline markup, writers keep editing it
     there, and attach throws it away for the annotation. Refresh adopts it, so
     the annotation follows the writer instead of drifting. Front matter `test:`
-    is adopted only where the annotation already holds it; elsewhere a
-    `tests.yaml` manifest owns the scenarios.
+    is adopted for a page with no annotation yet, and where the annotation
+    already holds it; on other pages a `tests.yaml` manifest owns the
+    scenarios, and refresh reports the edit instead.
     """
     page = parse(text, preview=preview)
     if not (page.tags or page.hidden):
         return None
     new = to_annotation(source, page, preview=preview)
-    if not (ann and ann.get("front_matter")):
+    if ann is not None and not ann.get("front_matter"):
         new.pop("front_matter", None)
     return new
 

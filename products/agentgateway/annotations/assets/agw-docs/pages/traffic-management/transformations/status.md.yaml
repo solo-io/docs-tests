@@ -30,3 +30,35 @@ tags:
     attr: paths="change-response-status"
     only: true
     lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 8b20c794e7accb77
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 8905bcef 99c83b01 207d5e5e 78aa8473 3776b36a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="change-response-status" >}}
+       YAMLTest -f - <<'EOF'
+       - name: verify response status is 401 when foo=bar query parameter is present
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/response-headers?foo=bar"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         expect:
+           statusCode: 401
+       - name: verify response status is 403 when foo=bar query parameter is absent
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/response-headers?foo=baz"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         expect:
+           statusCode: 403
+       EOF
+       {{< /doc-test >}}

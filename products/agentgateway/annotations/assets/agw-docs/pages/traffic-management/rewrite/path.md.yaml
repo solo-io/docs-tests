@@ -47,3 +47,134 @@ tags:
     attr: paths="path-rewrite-full"
     only: true
     lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: 6a80b2f47f1780a7
+    lang: console
+    lines: ab5df625 71b2577f 8bdda3b8 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="path-rewrite-prefix" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 6a80b2f47f1780a7
+    lang: console
+    lines: ab5df625 71b2577f 8bdda3b8 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="path-rewrite-prefix" >}}
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: rewrite.example" && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 6a80b2f47f1780a7
+    lang: console
+    lines: ab5df625 71b2577f 8bdda3b8 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="path-rewrite-prefix" >}}
+    YAMLTest -f - <<'EOF'
+    - name: path rewrite prefix - /headers rewrites to /anything
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "rewrite.example"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.url"
+            comparator: contains
+            value: "/anything"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: ac78307c9fe26cee
+    lang: console
+    lines: ab5df625 71b2577f 50f4ebe0 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="path-rewrite-full" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: ac78307c9fe26cee
+    lang: console
+    lines: ab5df625 71b2577f 50f4ebe0 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="path-rewrite-full" >}}
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/headers" -H "host: rewrite.example" && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: ac78307c9fe26cee
+    lang: console
+    lines: ab5df625 71b2577f 50f4ebe0 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="path-rewrite-full" >}}
+    YAMLTest -f - <<'EOF'
+    - name: path rewrite full - /headers rewrites to /anything
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "rewrite.example"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.url"
+            comparator: contains
+            value: "/anything"
+    EOF
+    {{< /doc-test >}}

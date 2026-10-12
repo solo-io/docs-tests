@@ -224,8 +224,6 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/transformations/status.md
     path: change-response-status
-    assert:
-    - products/agentgateway/main/traffic-management/transformations/status.sh
   change-response-status-schema:
     type: schema
     source: agw-docs/pages/traffic-management/transformations/status.md
@@ -238,8 +236,6 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/transformations/encode.md
     path: decode
-    assert:
-    - products/agentgateway/main/traffic-management/transformations/decode.sh
   decode-schema:
     type: schema
     source: agw-docs/pages/traffic-management/transformations/encode.md
@@ -272,8 +268,6 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/transformations/encode.md
     path: encode
-    assert:
-    - products/agentgateway/main/traffic-management/transformations/encode.sh
   encode-schema:
     type: schema
     source: agw-docs/pages/traffic-management/transformations/encode.md
@@ -358,10 +352,6 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/rewrite/host.md
     path: host-rewrite
-    assert:
-    - products/agentgateway/main/traffic-management/rewrite/host-rewrite-wait.sh
-    - products/agentgateway/main/traffic-management/rewrite/host-rewrite-warmup.sh
-    - products/agentgateway/main/traffic-management/rewrite/host-rewrite-assert.sh
   https-redirect:
     needs:
     - install-experimental
@@ -515,10 +505,6 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/rewrite/path.md
     path: path-rewrite-full
-    assert:
-    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-full-wait.sh
-    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-full-warmup.sh
-    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-full-assert.sh
   path-rewrite-prefix:
     type: functional
     needs:
@@ -527,10 +513,6 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/rewrite/path.md
     path: path-rewrite-prefix
-    assert:
-    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-prefix-wait.sh
-    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-prefix-warmup.sh
-    - products/agentgateway/main/traffic-management/rewrite/path-rewrite-prefix-assert.sh
   query:
     type:
     - schema
@@ -590,8 +572,6 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/transformations/rewrite.md
     path: rewrite
-    assert:
-    - products/agentgateway/main/traffic-management/transformations/rewrite.sh
   rewrite-schema:
     type: schema
     source: agw-docs/pages/traffic-management/transformations/rewrite.md
