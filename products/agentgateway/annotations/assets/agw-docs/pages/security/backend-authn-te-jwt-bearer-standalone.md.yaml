@@ -8,7 +8,7 @@ blocks:
 - 6ffccf1b6be32c3e sh
 - d9062b46479b5b96 sh
 - d6b2bf36d53487ff json
-- 27d18564266748bc yaml
+- 48f7e92bf8b2246e yaml
 - 518a14f446c27c09 sh
 hidden:
 - after:
@@ -17,9 +17,9 @@ hidden:
     words: b9776d7d 55959cb5 50d858e0 9472f22c ea325d76 6c6b013c 8a84e406 6201111b ca978112 ec864fe9 3c469e9d b6bf7bc8 a1d98908 8e7fc023 bb0347a4 9f584196 14a60637 b9776d7d fa79d474 15ca7cc3 1f58b914 b9776d7d 4ea5ee68 c626da0c 10c22bcf 41ffd8b7 aa9e9b5c b9776d7d 50d858e0 711a6108 3e194352 3aeb0024 56e57ada 56e57ada dc9c5edb 0d6e4079 c590b3c9 05f60b27 55959cb5
     block_before:
       block: 7
-      fingerprint: 27d18564266748bc
+      fingerprint: 48f7e92bf8b2246e
       lang: yaml
-      lines: 81b74571 0b661b52 e15101f0 701a625f ea80b7c9 6787571b 3f97174d ed65e9d3 bec91672 61d9749c bd28d03e 5e3afc83 3484140d
+      lines: 81b74571 0b661b52 e15101f0 701a625f c8f3f59a 48924e65 ea80b7c9 6787571b 3f97174d ed65e9d3 bec91672 61d9749c bd28d03e 5e3afc83 3484140d
       preview: 'backendAuth:'
   content: |-
     {{< doc-test paths="te-jwt-bearer-standalone" >}}
@@ -45,9 +45,9 @@ hidden:
     words: b9776d7d 55959cb5 50d858e0 9472f22c ea325d76 6c6b013c 8a84e406 6201111b ca978112 ec864fe9 3c469e9d b6bf7bc8 a1d98908 8e7fc023 bb0347a4 9f584196 14a60637 b9776d7d fa79d474 15ca7cc3 1f58b914 b9776d7d 4ea5ee68 c626da0c 10c22bcf 41ffd8b7 aa9e9b5c b9776d7d 50d858e0 711a6108 3e194352 3aeb0024 56e57ada 56e57ada dc9c5edb 0d6e4079 c590b3c9 05f60b27 55959cb5
     block_before:
       block: 7
-      fingerprint: 27d18564266748bc
+      fingerprint: 48f7e92bf8b2246e
       lang: yaml
-      lines: 81b74571 0b661b52 e15101f0 701a625f ea80b7c9 6787571b 3f97174d ed65e9d3 bec91672 61d9749c bd28d03e 5e3afc83 3484140d
+      lines: 81b74571 0b661b52 e15101f0 701a625f c8f3f59a 48924e65 ea80b7c9 6787571b 3f97174d ed65e9d3 bec91672 61d9749c bd28d03e 5e3afc83 3484140d
       preview: 'backendAuth:'
   content: |-
     {{< doc-test paths="te-jwt-bearer-standalone" >}}
@@ -81,6 +81,8 @@ hidden:
     oauthTokenExchange:
       host: login.microsoftonline.com:443
       path: /TENANT_ID/oauth2/v2.0/token
+      policies:
+        backendTLS: {}
       grantType: jwtBearer
       clientAuth:
         clientId: $CLIENT_ID
@@ -97,6 +99,8 @@ hidden:
     oauthTokenExchange:
       host: login.microsoftonline.com:443
       path: /TENANT_ID/oauth2/v2.0/token
+      policies:
+        backendTLS: {}
       grantType: JwtBearer
       clientAuth:
         clientId: $CLIENT_ID
