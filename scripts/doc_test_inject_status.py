@@ -6,7 +6,11 @@ This script reads the test results file and updates the front matter of each
 tested document with a `test_status` field indicating whether all tests passed.
 
 Usage:
-    python3 scripts/inject_test_status.py [--results-file PATH] [--dry-run]
+    python3 scripts/inject_test_status.py [--results-file PATH] [--only PATH ...] [--dry-run]
+
+`--only` limits injection to the named documents (repeatable). Use it to roll
+the Verified badge out one page at a time: every other tested document is left
+untouched, whatever its result.
 """
 
 import argparse
@@ -115,10 +119,15 @@ def process_documents(
     repo_root: Path,
     results: Dict,
     dry_run: bool = False,
-    verbose: bool = True
+    verbose: bool = True,
+    only: Optional[List[str]] = None,
 ) -> Dict[str, str]:
     """
     Process all tested documents and update their front matter.
+
+    If `only` is given, documents not in it are skipped entirely, and each
+    entry of `only` that has no results is reported, so a typo in a path can't
+    silently produce no badge.
     
     Returns:
         Dict mapping document paths to their test status
@@ -128,6 +137,12 @@ def process_documents(
     skipped = results.get("skipped_needs_update") or {}
     
     status_map: Dict[str, str] = {}
+
+    if only is not None:
+        wanted = set(only)
+        for missing in sorted(wanted - set(tested_docs)):
+            print(f"Warning: --only {missing}: no test results for this document")
+        tested_docs = [d for d in tested_docs if d in wanted]
     
     for doc_path in tested_docs:
         full_path = repo_root / doc_path
@@ -177,6 +192,12 @@ def main() -> int:
         help="Path to test results YAML file"
     )
     parser.add_argument(
+        "--only",
+        action="append",
+        metavar="PATH",
+        help="Inject only into this document, relative to --repo-root (repeatable)"
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Show what would be done without making changes"
@@ -208,7 +229,8 @@ def main() -> int:
         repo_root,
         results,
         dry_run=args.dry_run,
-        verbose=not args.quiet
+        verbose=not args.quiet,
+        only=args.only,
     )
     
     passed = sum(1 for s in status_map.values() if s == "passed")
