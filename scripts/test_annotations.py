@@ -394,45 +394,22 @@ class RefreshCommandTests(unittest.TestCase):
         self.assertEqual(self.refresh(), 0)
         self.assertEqual(self.files(), [self.page + ".yaml"])
 
-    def test_inline_markup_on_the_page_wins(self):
-        """A writer still editing inline markup: refresh adopts it rather than drifting."""
+    def test_inline_markup_on_the_page_is_ignored(self):
+        """The annotation is the source of truth: refresh never adopts a page's own markup."""
+        before = A.load_annotation(self.adir / (self.page + ".yaml"))
         marked = PAGE.replace("```sh\nkubectl delete", '```sh {paths="route"}\nkubectl delete')
         self.write(self.page, marked)
         self.commit()
         self.assertEqual(self.refresh(), 0)
         ann = A.load_annotation(self.adir / (self.page + ".yaml"))
-        self.assertEqual(len(ann["tags"]), len(A.parse(PAGE).tags) + 1)
-        out, placements, _ = A.attach(A.parse(marked).text, ann)
-        self.assertEqual(out, marked)
-        self.assertEqual(set(states(placements)), {A.EXACT})
+        self.assertEqual(len(ann["tags"]), len(before["tags"]))
 
-    def test_unchanged_inline_markup_is_not_reported(self):
-        self.write(self.page, PAGE)
-        self.commit()
-        report = pathlib.Path(tempfile.mkdtemp()) / "r.json"
-        self.assertEqual(cli("refresh", "--repo", str(self.repo), "--annotations", str(self.adir),
-                             "--report", str(report)), 0)
-        self.assertEqual(json.loads(report.read_text())["synced"], [])
-
-    def test_new_page_with_inline_markup_gets_an_annotation(self):
+    def test_new_page_with_inline_markup_gets_no_annotation(self):
         new = "content/docs/new.md"
         self.write(new, "Intro.\n\n```sh {paths=\"n\"}\necho hi\n```\n")
         self.commit()
-        report = pathlib.Path(tempfile.mkdtemp()) / "r.json"
-        self.assertEqual(cli("refresh", "--repo", str(self.repo), "--annotations", str(self.adir),
-                             "--report", str(report)), 0)
-        self.assertIn(new + ".yaml", self.files())
-        self.assertEqual(json.loads(report.read_text())["synced"], [{"page": new, "before": 0, "after": 1}])
-
-    def test_new_page_keeps_its_front_matter_scenarios(self):
-        """No manifest knows a brand-new page yet, so its own `test:` must survive attach."""
-        new = "content/docs/new.md"
-        text = "---\ntitle: n\ntest:\n  n:\n  - path: n\n---\nIntro.\n\n```sh {paths=\"n\"}\necho hi\n```\n"
-        self.write(new, text)
-        self.commit()
         self.assertEqual(self.refresh(), 0)
-        out, _, _ = A.attach(A.parse(text).text, A.load_annotation(self.adir / (new + ".yaml")))
-        self.assertEqual(out, text)
+        self.assertNotIn(new + ".yaml", self.files())
 
     def test_inline_front_matter_edit_is_reported(self):
         self.write("content/docs/fm.md", "---\ntitle: f\ntest:\n  a:\n  - path: a\n---\nBody.\n")
