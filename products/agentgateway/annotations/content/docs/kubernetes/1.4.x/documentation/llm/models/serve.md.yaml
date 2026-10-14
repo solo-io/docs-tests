@@ -258,11 +258,10 @@ hidden:
     preview: '{'
   content: |-
     {{< doc-test paths="serve-model" >}}
-    # YAMLTest evaluates "$.data[*].id" to the first array element only, so a
-    # `contains` check can verify the first listed model (gpt-4) but cannot assert
-    # membership for later entries such as the "openai/*" wildcard. The wildcard is
-    # already validated by the "wildcard match" serving check above, and appears in
-    # the /v1/models response shown in the example output.
+    # Filter expressions rather than $.data[*].id, because a wildcard path
+    # resolves to a single match (the first array element) and the model order
+    # is not guaranteed. The "openai/*" wildcard is not asserted here; the
+    # "wildcard match" serving check above covers it.
     YAMLTest -f - <<'EOF'
     - name: model discovery endpoint lists public models
       http:
@@ -274,8 +273,11 @@ hidden:
       expect:
         statusCode: 200
         bodyJsonPath:
-          - path: "$.data[*].id"
-            comparator: contains
-            value: "gpt-4"
+          - path: "$.data[?(@.id=='gpt-4')].id"
+            comparator: equals
+            value: gpt-4
+          - path: "$.data[?(@.id=='gpt-5-mini')].id"
+            comparator: equals
+            value: gpt-5-mini
     EOF
     {{< /doc-test >}}
