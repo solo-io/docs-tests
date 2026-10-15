@@ -7,7 +7,11 @@
 
 set -e
 
-REPO="agentgateway/website"
+# The site whose doc-test workflow to read. agentgateway/website is the default
+# so its existing build command keeps working; kgateway.dev sets
+# DOC_TESTS_SITE_REPO=kgateway-dev/kgateway.dev.
+REPO="${DOC_TESTS_SITE_REPO:-agentgateway/website}"
+WORKFLOW="${DOC_TESTS_WORKFLOW:-doc-tests.yaml}"
 ARTIFACT_NAME="doc-test-results"
 RESULTS_DIR="out/tests/generated"
 RESULTS_FILE="$RESULTS_DIR/test-results.yaml"
@@ -34,7 +38,7 @@ fi
 echo "Fetching artifact list from GitHub API..."
 
 RUN_INFO=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-    "https://api.github.com/repos/$REPO/actions/workflows/doc-tests.yaml/runs?branch=main&status=completed&per_page=$MAX_RUNS" || echo "")
+    "https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW/runs?branch=main&status=completed&per_page=$MAX_RUNS" || echo "")
 
 # Most recent completed runs on main, newest first
 RUN_IDS=$(echo "$RUN_INFO" | python3 -c "

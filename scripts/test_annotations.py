@@ -493,6 +493,13 @@ class SlackTests(unittest.TestCase):
         self.assertIn("failed", self.texts(main)[0])
         self.assertIsNone(thread)
 
+    def test_product_in_header(self):
+        # Each product posts to the same channel, so the header must say which.
+        main, _ = A.slack_payloads(self.REPORT, None, "kgateway")
+        self.assertIn("Annotation Refresh (kgateway)", self.texts(main)[0])
+        main, _ = A.slack_payloads(None, None, "kgateway")
+        self.assertIn("Annotation Refresh (kgateway)", self.texts(main)[0])
+
 
 if __name__ == "__main__":
     unittest.main()

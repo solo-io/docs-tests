@@ -1,0 +1,44 @@
+# Doc-test scenario definitions for kgateway (kgateway-dev/kgateway.dev), envoy mode.
+#
+# PILOT: one traffic-management guide, direct responses. Widen one guide at a
+# time once this scenario is stable.
+#
+# Same shape as ../../agentgateway/kubernetes/tests.yaml. What differs:
+#
+#   mode:    the folder name, `envoy`, because kgateway.dev lays its docs out as
+#            content/docs/envoy/<version>/. The default content_root,
+#            content/docs, already matches.
+#   source:  kgateway.dev keeps shared page bodies in assets/kgw-docs/, so a
+#            source here starts `kgw-docs/`, where agentgateway's start `agw-docs/`.
+#   ports:   kgateway's sample Gateway listens on 8080, not 80, so every request
+#            in the annotations goes to ${INGRESS_GW_ADDRESS}:8080.
+#
+# The version snippets that set the helm --version flag are keyed by release
+# (2.4.x, 2.5.x). The extractor maps the latest and main trees to those through
+# params.versions[].linkVersion in kgateway.dev's hugo.yaml.
+version: 1
+mode: envoy
+prerequisites:
+  # Quick start: Gateway API standard CRDs, then the kgateway CRD and control
+  # plane charts. Markup is on the snippet the page reuses,
+  # annotations/assets/kgw-docs/snippets/envoy/get-started.md.yaml.
+  install-standard:
+    page: quickstart.md
+    path: standard
+  install-experimental:
+    page: quickstart.md
+    path: experimental
+  # httpbin, the `http` Gateway, the httpbin HTTPRoute, and INGRESS_GW_ADDRESS
+  # from the Cloud Provider LoadBalancer tab. The page carries its own body, so
+  # its markup is per version tree under annotations/content/docs/envoy/.
+  httpbin:
+    page: install/sample-app.md
+    path: install-httpbin
+scenarios:
+  direct-response:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/direct-response.md
+    path: direct-response

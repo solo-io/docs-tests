@@ -75,3 +75,37 @@ jobs:
       # page byte for byte; a new shape breaks this job, not a refresh.
       - name: Annotation round trip on agentgateway/website
         run: python3 scripts/annotations.py roundtrip --repo consumer
+
+      # kgateway-dev/kgateway.dev is the second consumer. It lays content out
+      # differently (content/docs/envoy/, assets/kgw-docs/), which is how a
+      # version lookup that only knew agentgateway's layout gave every kgateway
+      # script the 2.2.x install commands. Generating its scripts here, with no
+      # cluster, catches that class of fault in the PR that causes it.
+      - name: Checkout kgateway-dev/kgateway.dev
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: kgateway-dev/kgateway.dev
+          path: consumer-kgateway
+
+      - name: Annotation round trip on kgateway-dev/kgateway.dev
+        run: python3 scripts/annotations.py roundtrip --repo consumer-kgateway
+
+      - name: Generate kgateway doc test scripts
+        run: |
+          set -euo pipefail
+          python3 scripts/annotations.py attach --repo consumer-kgateway \
+            --annotations products/kgateway/annotations \
+            --report out/kgateway-attach-report.json
+          python3 scripts/doc_test_run.py --repo-root consumer-kgateway --docs-tests-root . \
+            --annotation-report out/kgateway-attach-report.json --generate-only
+          # Each tree must install its own release. If the version lookup falls
+          # back to the runner's default again, latest and main come out the same.
+          cd consumer-kgateway/out/tests/generated
+          count=$(ls content-docs-envoy-*.sh 2>/dev/null | wc -l)
+          echo "Generated $count kgateway script(s)."
+          [ "$count" -gt 0 ] || { echo "::error::No kgateway doc test scripts were generated."; exit 1; }
+          latest=$(grep -ho -- '--version v[^ ]*' content-docs-envoy-latest-*.sh | sort -u)
+          main=$(grep -ho -- '--version v[^ ]*' content-docs-envoy-main-*.sh | sort -u)
+          echo "latest: $latest"; echo "main: $main"
+          [ -n "$latest" ] && [ "$latest" != "$main" ] \
+            || { echo "::error::latest and main install the same kgateway version ($latest)."; exit 1; }

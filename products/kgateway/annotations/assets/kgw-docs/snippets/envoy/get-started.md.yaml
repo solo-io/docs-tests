@@ -1,0 +1,76 @@
+format: 1
+source: assets/kgw-docs/snippets/envoy/get-started.md
+blocks:
+- 189bf76bb4d0140a sh
+- 09cea3396998dcf6 sh
+- 0ad5928a4c4b81ed sh
+- 01fa37a6cb733e9b sh
+- 20d80a7e59d7e936 sh
+- 3c90fabd8b9972b2 console
+tags:
+- paths: standard
+  block: 0
+  fingerprint: 189bf76bb4d0140a
+  lang: sh
+  lines: 189bf76b
+  preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: experimental
+  block: 1
+  fingerprint: 09cea3396998dcf6
+  lang: sh
+  lines: 09cea339
+  preview: kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
+  form:
+    attr: paths="experimental"
+    only: true
+    lead: ' '
+- paths: standard,experimental
+  block: 2
+  fingerprint: 0ad5928a4c4b81ed
+  lang: sh
+  lines: 7a1efed8 6853cb0f 3281be0d 844f31fe
+  preview: helm upgrade -i kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway
+  form:
+    attr: paths="standard,experimental"
+    only: true
+    lead: ' '
+- paths: standard,experimental
+  block: 3
+  fingerprint: 01fa37a6cb733e9b
+  lang: sh
+  lines: ad94a5bd 74cfa645 3281be0d 844f31fe
+  preview: helm upgrade -i kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
+  form:
+    attr: paths="standard,experimental"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 01fa37a6cb733e9b
+    lang: sh
+    lines: ad94a5bd 74cfa645 3281be0d 844f31fe
+    preview: helm upgrade -i kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
+  content: |-
+    {{< doc-test paths="standard,experimental" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the kgateway control plane to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

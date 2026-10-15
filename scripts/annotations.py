@@ -993,17 +993,23 @@ def set_stats(adir: Path, results: Dict[str, List[Placement]]) -> dict:
             "needs_update": needs}
 
 
-def slack_payloads(report: Optional[dict], run_url: Optional[str]) -> Tuple[dict, Optional[dict]]:
+def slack_payloads(report: Optional[dict], run_url: Optional[str],
+                   product: Optional[str] = None) -> Tuple[dict, Optional[dict]]:
     """Slack Block Kit payloads for a refresh, laid out like the doc test results post.
 
     Main message: counts, the set by section, and every piece of markup that
     needs update. Thread: the day's close matches and moved pages, which were
     committed without review, so a person can check them.
+
+    `product` names the annotation set in the header. Each product refreshes in
+    its own job and posts its own message to the same channel, so without it two
+    posts a day look identical.
     """
+    title = f"Annotation Refresh ({product})" if product else "Annotation Refresh"
     from report_summary import _SLACK_MAX_BLOCKS, _run_url_block, _truncate  # noqa: E402
 
     if not report:
-        header = "\u274c Annotation Refresh \u2014 failed; tests keep running on the last annotations"
+        header = f"\u274c {title} \u2014 failed; tests keep running on the last annotations"
         blocks = [{"type": "header", "text": {"type": "plain_text", "text": header[:150]}}]
         if run_url:
             blocks.append(_run_url_block(run_url))
@@ -1012,10 +1018,10 @@ def slack_payloads(report: Optional[dict], run_url: Optional[str]) -> Tuple[dict
     needs = report["needs_update"]
     total = report["markup_total"]
     if needs:
-        header = (f"\u26a0\ufe0f Annotation Refresh \u2014 {total - len(needs)} attached | "
+        header = (f"\u26a0\ufe0f {title} \u2014 {total - len(needs)} attached | "
                   f"{len(needs)} need update | {total} total")
     else:
-        header = f"\u2705 Annotation Refresh \u2014 {total} attached | {total} total"
+        header = f"\u2705 {title} \u2014 {total} attached | {total} total"
     blocks = [{"type": "header", "text": {"type": "plain_text", "text": header[:150]}}]
     lines = [f"*Annotations \u2014 {total} pieces of markup on {report['pages']} pages*"]
     for name, sec in report["sections"].items():
@@ -1053,7 +1059,7 @@ def slack_payloads(report: Optional[dict], run_url: Optional[str]) -> Tuple[dict
 
 def cmd_slack(args) -> int:
     report = json.loads(read(Path(args.report))) if args.report and Path(args.report).is_file() and not args.failed else None
-    main_payload, thread = slack_payloads(report, args.run_url)
+    main_payload, thread = slack_payloads(report, args.run_url, args.product)
     print(json.dumps({"main": main_payload, "thread": thread}))
     return 0
 
@@ -1186,6 +1192,7 @@ def main(argv=None) -> int:
     p.add_argument("--report", help="the refresh --report file")
     p.add_argument("--run-url")
     p.add_argument("--failed", action="store_true", help="the refresh failed; post the failure message")
+    p.add_argument("--product", help="name of the annotation set, shown in the header")
     p.set_defaults(fn=cmd_slack)
 
     p = sub.add_parser("annotate")

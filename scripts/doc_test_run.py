@@ -70,6 +70,11 @@ def infer_version_from_sources(sources: List[Dict[str, Any]], fallback: str) -> 
 
     The segment after the product directory (kubernetes/standalone) is the
     link version used inside {{< version include-if="..." >}} blocks.
+
+    Other modes fall back to the content/docs/<mode>/<version>/ layout: kgateway
+    puts its docs under content/docs/envoy/, which the named-mode pattern
+    misses. Before that fallback every kgateway page got the --version default
+    (2.2.x), so latest and main both rendered the 2.2.x install commands.
     """
     pattern = re.compile(r"(?:kubernetes|standalone)/([^/]+)/")
     for src in sources:
@@ -77,6 +82,10 @@ def infer_version_from_sources(sources: List[Dict[str, Any]], fallback: str) -> 
         m = pattern.search(file_path)
         if m:
             return m.group(1)
+    for src in sources:
+        segment = _version_segment(src.get("file", ""))
+        if segment:
+            return segment
     return fallback
 
 

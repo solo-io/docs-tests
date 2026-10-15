@@ -1,0 +1,184 @@
+format: 1
+source: content/docs/envoy/main/install/sample-app.md
+blocks:
+- 047eb10404534e4c mermaid
+- 2bcdc1655f0a80cf shell
+- c0d84e233f3f990d txt
+- a73d1b910ea267cc sh
+- fd10a92dd1d56c27 txt
+- 6d3547628678cfdf yaml
+- 35725c3f076be331 sh
+- 2edbb639cba842ca txt
+- f42e9099bd1ef95c sh
+- 412eddc4816f0a98 txt
+- cded3c1f14380834 yaml
+- 1c2af4e50f343b88 sh
+- 32262ae2a204e73b yaml
+- b0c9654ef12d0464 sh
+- 203d0729f7bae309 sh
+- db4b465f4c7b1aaf txt
+- 2fba8559fa74c8b6 json
+- 4528998df78248b7 sh
+- 1a1d7641506a4ebb sh
+- db4b465f4c7b1aaf txt
+- 2fba8559fa74c8b6 json
+- cd5b8b47e383d41e sh
+- cb36d864ced2132b sh
+- 9b8b92ebc0a9d25f sh
+tags:
+- paths: install-httpbin
+  block: 1
+  fingerprint: 2bcdc1655f0a80cf
+  lang: shell
+  lines: 2bcdc165
+  preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  form:
+    attr: paths="install-httpbin"
+    only: true
+    lead: ' '
+- paths: install-httpbin
+  block: 5
+  fingerprint: 6d3547628678cfdf
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 9278ed91 0bebd850 36184fa5 39325db0 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="install-httpbin"
+    only: true
+    lead: ' '
+- paths: install-httpbin
+  block: 10
+  fingerprint: cded3c1f14380834
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="install-httpbin"
+    only: true
+    lead: ' '
+- paths: install-httpbin
+  block: 13
+  fingerprint: b0c9654ef12d0464
+  lang: sh
+  lines: f69d5a69 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="install-httpbin"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 2bcdc1655f0a80cf
+    lang: shell
+    lines: 2bcdc165
+    preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  content: |-
+    {{< doc-test paths="install-httpbin" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 6d3547628678cfdf
+    lang: yaml
+    lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 9278ed91 0bebd850 36184fa5 39325db0 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="install-httpbin" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the http Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: cded3c1f14380834
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="install-httpbin" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for httpbin HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for httpbin HTTPRoute refs to be resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: b0c9654ef12d0464
+    lang: sh
+    lines: f69d5a69 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  content: |-
+    {{< doc-test paths="install-httpbin" >}}
+    for i in $(seq 1 60); do
+      curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" && break
+      sleep 2
+    done
+    YAMLTest -f - <<'EOF'
+    - name: verify httpbin returns 200 for www.example.com
+      retries: 1
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

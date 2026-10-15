@@ -663,7 +663,7 @@ Doc pages with passing tests display a "Verified" badge below the page title.
    - `test_status: passed` — all tests for the page passed
    - `test_status: failed` — one or more tests failed (no badge displayed)
    - `test_status: partial` — no tests failed, but a scenario was skipped because its test annotations did not attach (no badge displayed)
-3. **Hugo templates** check for `test_status: passed` and render a green "Verified" badge.
+3. **[docs-theme-extras](https://github.com/solo-io/docs-theme-extras)** renders a green "Verified" badge under the title of any page with `test_status: passed`. The badge is built into the module's docs page layout from v0.3.18-beta.2 on, so a consuming site needs no layout file or CSS for it, only the inject step. See [Doc-test badge](https://solo-io.github.io/docs-theme-extras/configuration/doc-test-badge/) for details, including what to delete from a site that had its own copy of the badge.
 
 ### Makefile targets (in the consuming repo)
 

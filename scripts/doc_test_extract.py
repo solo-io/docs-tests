@@ -148,6 +148,11 @@ class Extractor:
         asset_roots: Optional[List[Path]] = None,
     ):
         self.repo_root = repo_root
+        # Shared page bodies, one folder per site: assets/agw-docs/pages for
+        # agentgateway, assets/kgw-docs/pages for kgateway. Link targets are
+        # looked up in each, so a route like /traffic-management/foo/ resolves
+        # whichever site this is.
+        self.page_roots = sorted((repo_root / "assets").glob("*/pages"))
         # Where `{{< reuse >}}` targets are looked up, in order. Normally just this
         # repo. When expanding content rebased from upstream it is [consumer,
         # upstream], because the consuming site's own assets SHADOW the upstream
@@ -479,9 +484,9 @@ class Extractor:
             self.repo_root / "assets" / stripped / "_index.md",
             self.repo_root / "content" / "docs" / stripped / "_index.md",
             self.repo_root / "content" / "docs" / f"{stripped}.md",
-            self.repo_root / "assets" / "agw-docs" / "pages" / f"{stripped}.md",
-            self.repo_root / "assets" / "agw-docs" / "pages" / stripped / "_index.md",
         ]
+        for pages in self.page_roots:
+            direct_candidates += [pages / f"{stripped}.md", pages / stripped / "_index.md"]
         for candidate in direct_candidates:
             if candidate.is_file():
                 return candidate.resolve()
@@ -522,13 +527,14 @@ class Extractor:
             elif rel.endswith(".md"):
                 rel = rel[: -len(".md")]
             return "/" + rel.strip("/") + "/"
-        if (self.repo_root / "assets" / "agw-docs" / "pages") in p.parents:
-            rel = p.relative_to(self.repo_root / "assets" / "agw-docs" / "pages").as_posix()
-            if rel.endswith("/_index.md"):
-                rel = rel[: -len("/_index.md")]
-            elif rel.endswith(".md"):
-                rel = rel[: -len(".md")]
-            return "/" + rel.strip("/") + "/"
+        for pages in self.page_roots:
+            if pages.resolve() in p.parents:
+                rel = p.relative_to(pages.resolve()).as_posix()
+                if rel.endswith("/_index.md"):
+                    rel = rel[: -len("/_index.md")]
+                elif rel.endswith(".md"):
+                    rel = rel[: -len(".md")]
+                return "/" + rel.strip("/") + "/"
         return None
 
     def _extract_code_blocks(self, source_file: Path, text: str) -> List[CodeBlock]:

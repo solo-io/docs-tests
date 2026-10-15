@@ -1,0 +1,94 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/direct-response.md
+blocks:
+- bb6569c312e33088 yaml
+- 28539b10d45e3d85 yaml
+- 7214d7110f1c68b5 sh
+- 4514869c2f2b0847 sh
+- 1d5cd6fab39a0865
+- 4e0e60a59d80218f sh
+- 81c1da543a3e2192 sh
+- a80ce1145850b22e
+- bd2614fb0602b368 sh
+tags:
+- paths: direct-response
+  block: 0
+  fingerprint: bb6569c312e33088
+  lang: yaml
+  lines: 16c71da1 d664f32c 9d986fbe 8c8c4228 bd3b490e 0f10c5bc 36184fa5 f8f4d0a1 5312aba3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="direct-response"
+    only: true
+    lead: ' '
+- paths: direct-response
+  block: 1
+  fingerprint: 28539b10d45e3d85
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b3043701 0f10c5bc 36184fa5 301e1bfa b568005d d3d416e7 82601aaa 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 b733d726 aeca2b3d 6d88f925 89ff11bc ae6b70e3 90922aeb 248578da bd3b490e 69f54740 9d986fbe abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="direct-response"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 28539b10d45e3d85
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b3043701 0f10c5bc 36184fa5 301e1bfa b568005d d3d416e7 82601aaa 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 b733d726 aeca2b3d 6d88f925 89ff11bc ae6b70e3 90922aeb 248578da bd3b490e 69f54740 9d986fbe abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="direct-response" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the direct-response HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-direct-response
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 28539b10d45e3d85
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b3043701 0f10c5bc 36184fa5 301e1bfa b568005d d3d416e7 82601aaa 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 b733d726 aeca2b3d 6d88f925 89ff11bc ae6b70e3 90922aeb 248578da bd3b490e 69f54740 9d986fbe abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="direct-response" >}}
+    YAMLTest -f - <<'EOF'
+    - name: direct-response - /status/200 is forwarded to httpbin
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "direct-response.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: direct-response - /direct-response returns 510 with the configured body
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/direct-response"
+        method: GET
+        headers:
+          host: "direct-response.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 510
+        bodyContains:
+        - "Disallow: /direct-response"
+    EOF
+    {{< /doc-test >}}
