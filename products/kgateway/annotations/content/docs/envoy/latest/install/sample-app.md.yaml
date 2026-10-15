@@ -115,6 +115,21 @@ hidden:
         polling:
           timeoutSeconds: 300
           intervalSeconds: 5
+    # Programmed can be True before cloud-provider-kind gives the Service an
+    # address, and the next steps read that address into INGRESS_GW_ADDRESS.
+    - name: wait for the http gateway service to get a load balancer address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
     EOF
     {{< /doc-test >}}
 - after:
