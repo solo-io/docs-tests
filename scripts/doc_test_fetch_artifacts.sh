@@ -40,20 +40,25 @@ echo "Fetching artifact list from GitHub API..."
 RUN_INFO=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
     "https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW/runs?branch=main&status=completed&per_page=$MAX_RUNS" || echo "")
 
-# Most recent completed runs on main, newest first
-RUN_IDS=$(echo "$RUN_INFO" | python3 -c "
-import sys, json
+# Most recent completed scheduled or manual runs from this repo's main, newest
+# first. `branch=main` alone is not enough: a pull_request run from a fork's
+# `main` branch also has head_branch "main", and it runs the fork's pages, so
+# its results must never reach the production badge.
+RUN_IDS=$(echo "$RUN_INFO" | REPO="$REPO" python3 -c "
+import os, sys, json
 try:
     data = json.load(sys.stdin)
 except Exception:
     sys.exit(0)
 for run in data.get('workflow_runs', []):
-    if run.get('head_branch') == 'main':
+    if (run.get('head_branch') == 'main'
+            and run.get('event') in ('schedule', 'workflow_dispatch')
+            and (run.get('head_repository') or {}).get('full_name') == os.environ['REPO']):
         print(run['id'])
 " 2>/dev/null || echo "")
 
 if [ -z "$RUN_IDS" ]; then
-    echo "Warning: No completed workflow runs found"
+    echo "Warning: No completed scheduled or manual workflow runs found on main"
     exit 0
 fi
 
