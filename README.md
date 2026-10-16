@@ -699,6 +699,52 @@ A few things the diagram implies:
 - **A build reads results only when it runs.** A new passing test run does not change pages that are already published. The badge updates on the next site build.
 - **The badge never fails the build.** If `GITHUB_TOKEN` is missing, or no run or artifact is found, the build goes ahead without badges and prints a warning.
 
+### Pull requests
+
+The following diagram shows what runs for a pull request in the site repo and for one in this repo. It uses the same kgateway example.
+
+```mermaid
+flowchart LR
+    subgraph sitepr["PR in the site repo"]
+        direction TB
+        edit["Change a tested page<br/>or the Doc tests workflow"]
+        prtest["Doc tests workflow runs on the PR<br/>with docs-tests main"]
+        check["Pass or fail check on the PR<br/>results in the job summary"]
+        edit --> prtest --> check
+    end
+
+    subgraph preview["Preview build, Cloudflare Pages"]
+        direction TB
+        pfetch["doc_test_fetch_artifacts.sh<br/>skips PR runs"]
+        pbadge["Badges show the results of the<br/>latest scheduled or manual run on main"]
+        pfetch --> pbadge
+    end
+
+    sitepr -->|"push to the PR branch"| preview
+
+    subgraph dtpr["PR in docs-tests"]
+        direction TB
+        dedit["Change annotations, tests.yaml,<br/>or scripts"]
+        unit["Tests workflow<br/>Python unit tests only"]
+        dedit --> unit
+    end
+
+    subgraph manual["Optional, in the site repo"]
+        direction TB
+        dispatch["Start Doc tests by hand on main<br/>with docs_tests_ref set to the PR branch"]
+        counts["Results saved as doc-test-results-trial,<br/>so they never reach the badge"]
+        dispatch --> counts
+    end
+
+    dtpr -->|"to try the change on real pages"| manual
+```
+
+A few things the diagram implies:
+
+- **The test run on a site PR never sets the badge.** It only adds a pass or fail check to the PR. The preview for the PR still shows the badges from `main`.
+- **Doc tests run on a site PR only when it touches a tested page.** The workflow's `paths:` filter lists those pages. Widen the filter when a new scenario is added here.
+- **A docs-tests PR does not run any doc tests.** To try an annotation change on real pages, start the site's Doc tests workflow by hand with `docs_tests_ref` set to the PR branch. That run uploads its results as `doc-test-results-trial` instead of `doc-test-results`, so they never reach the badge.
+
 ### How it works
 
 1. **Test results** are written to `out/tests/generated/test-results.yaml` after tests run.
