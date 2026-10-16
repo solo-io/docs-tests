@@ -6,6 +6,7 @@ blocks:
 - bdde5c4c80873e9d sh
 - 48421fb3610c21f5 console
 - 42e2d83747e2b805 yaml
+- f6931a7b2e59dbc5 sh
 - 2c146002156af857 sh
 - c34a7aba4b563960 sh
 - e4073cf30b6352d1 json
@@ -13,6 +14,8 @@ blocks:
 - f6931a7b2e59dbc5 sh
 - 7531dd0c7b29e747 sh
 - 8c97185769380697 console
+- e2c514a4d1bf1ba0 yaml
+- f6931a7b2e59dbc5 sh
 - 25bf28fd379bc61b yaml
 - a1e7b2e33d70221b yaml
 - 0ce0b859f4744eaf yaml
@@ -48,7 +51,7 @@ tags:
     only: true
     lead: ' '
 - paths: transformations
-  block: 5
+  block: 6
   fingerprint: 2c146002156af857
   lang: sh
   lines: dc872770 67c5a3ac 8d4d4393 b0cead6d a90f7a89 c9b6115e 8e7bae9b
@@ -58,7 +61,7 @@ tags:
     only: true
     lead: ' '
 - paths: transformations
-  block: 6
+  block: 7
   fingerprint: c34a7aba4b563960
   lang: sh
   lines: dc872770 67c5a3ac 997d05cd b0cead6d a90f7a89 c9b6115e 8e7bae9b
@@ -68,7 +71,7 @@ tags:
     only: true
     lead: ' '
 - paths: transformations
-  block: 8
+  block: 9
   fingerprint: 43778ee23b2b8a3b
   lang: yaml
   lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 7a48fd6c 8ed43893 6ed18bff abc56510
@@ -78,7 +81,7 @@ tags:
     only: true
     lead: ' '
 - paths: transformations
-  block: 10
+  block: 11
   fingerprint: 7531dd0c7b29e747
   lang: sh
   lines: 900b7020 9285509c b11c46be a90f7a89 da227561 d962d43b 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 8e7bae9b
@@ -195,7 +198,7 @@ hidden:
     sleep 3
     {{< /doc-test >}}
 - after:
-    block: 6
+    block: 7
     fingerprint: c34a7aba4b563960
     lang: sh
     lines: dc872770 67c5a3ac 997d05cd b0cead6d a90f7a89 c9b6115e 8e7bae9b
@@ -249,7 +252,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 9
+    block: 10
     fingerprint: f6931a7b2e59dbc5
     lang: sh
     lines: f6931a7b
@@ -270,7 +273,7 @@ hidden:
        sleep 3
        {{< /doc-test >}}
 - after:
-    block: 10
+    block: 11
     fingerprint: 7531dd0c7b29e747
     lang: sh
     lines: 900b7020 9285509c b11c46be a90f7a89 da227561 d962d43b 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 8e7bae9b
