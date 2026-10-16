@@ -101,6 +101,7 @@ tags:
     lead: ' '
 hidden:
 - after:
+    section: 'Step 1: Set up routing to an A2A server'
     line: 5970a397bfbad100
     occurrence: 1
     words: 5ca4f385
@@ -115,6 +116,7 @@ hidden:
     kubectl wait deployment/a2a-agent --for=condition=Available --timeout=120s
     {{< /doc-test >}}
 - after:
+    section: 'Step 2: Verify the connection'
     line: 600fe1bb59e46b50
     occurrence: 1
     words: 32d3feda

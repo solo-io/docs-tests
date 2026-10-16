@@ -178,6 +178,7 @@ tags:
     lead: ' '
 hidden:
 - after:
+    section: Before you begin
     line: 5ff50c6bf77e9229
     occurrence: 0
     words: b9776d7d b7595e2a a3b142af ca978112 25bf8e1a 07a07ff2 5e8c03a9 a1d98908 8e7fc023 bb0347a4 9f584196 eebbf645 b9776d7d 83ca68be 361e48d0 663ea1bf 361e48d0 663ea1bf a3b142af ea325d76 afafb16a 07a07ff2 5e8c03a9 99262a02 42e93b9b 663ea1bf 3e64cc41 d4735e3a 87780fa5 6201111b 7ab37787 e0603c49 49960de5 c4fe6b6d 0695b563 4d040d3f 07a07ff2 28e5ebab d41d9e05
@@ -207,6 +208,7 @@ hidden:
     #     2026.8.0. External dependency: it requires an enterprise license.
     {{< /doc-test >}}
 - after:
+    section: Before you begin
     line: 5ff50c6bf77e9229
     occurrence: 0
     words: b9776d7d b7595e2a a3b142af ca978112 25bf8e1a 07a07ff2 5e8c03a9 a1d98908 8e7fc023 bb0347a4 9f584196 eebbf645 b9776d7d 83ca68be 361e48d0 663ea1bf 361e48d0 663ea1bf a3b142af ea325d76 afafb16a 07a07ff2 5e8c03a9 99262a02 42e93b9b 663ea1bf 3e64cc41 d4735e3a 87780fa5 6201111b 7ab37787 e0603c49 49960de5 c4fe6b6d 0695b563 4d040d3f 07a07ff2 28e5ebab d41d9e05
@@ -216,6 +218,7 @@ hidden:
     {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
     {{< /doc-test >}}
 - after:
+    section: Before you begin
     line: 5ff50c6bf77e9229
     occurrence: 0
     words: b9776d7d b7595e2a a3b142af ca978112 25bf8e1a 07a07ff2 5e8c03a9 a1d98908 8e7fc023 bb0347a4 9f584196 eebbf645 b9776d7d 83ca68be 361e48d0 663ea1bf 361e48d0 663ea1bf a3b142af ea325d76 afafb16a 07a07ff2 5e8c03a9 99262a02 42e93b9b 663ea1bf 3e64cc41 d4735e3a 87780fa5 6201111b 7ab37787 e0603c49 49960de5 c4fe6b6d 0695b563 4d040d3f 07a07ff2 28e5ebab d41d9e05
@@ -226,6 +229,7 @@ hidden:
     docker compose down -v >/dev/null 2>&1 || true
     {{< /doc-test >}}
 - after:
+    section: 'Step 1: Run authentik'
     line: c4195d5ebb9fe9d3
     occurrence: 0
     words: b808e156 631aada4 ba78973d 992a9345 a1d98908 8e7fc023 b9776d7d 83ca68be fa51fd49 09d00b20 24cacf50 eda15ce4 89445ea0 6201111b 824d80d7 c9a8dc33 58296753 ca978112 2bb80d53 6ee4a469 10c22bcf ee087417 d9298a10 7383711c 25bf8e1a cf80cd8a
@@ -292,6 +296,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
+    section: 'Step 2: Create an OAuth provider and application'
     line: 3dad78eb4f82243c
     occurrence: 0
     words: 935f6831 b9776d7d 948fe603 a5614527 98c276ad f4bf9f7f 74234e98 b9776d7d 5c4c1964 b63b99f6 254bb97b 406effb1 6977edb8 b9776d7d 1f58b914 1216b2a8 b9776d7d c84d384f 454349e4 65904271 dfc3376b 663ea1bf aa9e9b5c b9776d7d 98c41dcd ca00fccf 8e7fc023 07a07ff2 68752bf6
@@ -313,6 +318,7 @@ hidden:
        fi
        {{< /doc-test >}}
 - after:
+    section: 'Step 4: Configure and start agentgateway'
     line: 36a0d3ffbacd46eb
     occurrence: 0
     words: 07a07ff2 961eb436 254bb97b a1860308 7a35a799 05cdf255 3e194352 9ab38fef 7a35a799 9bb7e5cf 5de95319 44089be1 6201111b daf76895 d9082bdc 6201111b 65819e19 2ad8a704 9150c74c 9390298f adf0e099 a8b77192 6390361d 407b9ca1 1eb79602 fa51fd49 2be23c58 4f0da948 4137b01e 46599c5b 6ee0eb49 663ea1bf b9776d7d 948fe603 a5614527 8e7fc023 07a07ff2 1115728d 58296753 b9776d7d 4275d71e dd1b3c31
@@ -374,6 +380,7 @@ hidden:
        done
        {{< /doc-test >}}
 - after:
+    section: 'Step 5: Verify that unauthenticated requests are rejected'
     line: a85794be0978dfca
     occurrence: 0
     words: b9776d7d 4ea5ee68 677fe21b 0695b563 b9776d7d 948fe603 bb0347a4 20158224 58296753 6107122c d1ffaf02 7383711c 7f9c40c9 ca978112 11507a0e 7692c3ad 58296753 07a07ff2 1eb79602 fa51fd49 749ab2c0 7f7265e2 10182ab8 8f4d9088 8e7fc023 509c4039 b8d31e85 8080cb21 42ea40f6 eebbf645 b9776d7d 3b212781
@@ -401,6 +408,7 @@ hidden:
        echo "registration returned the pre-registered client ID"
        {{< /doc-test >}}
 - after:
+    section: 'Step 6: Call the MCP server with a token'
     line: 744f9c2a07df525a
     occurrence: 0
     words: b9776d7d e0c185d4 3492ad65 fa51fd49 ca978112 d7ae368c 10c22bcf 1eb79602 83ca68be aa33996d 10182ab8 8f4d9088 a3b142af b9776d7d cbb82ebe 5694d08a 3b212781 0695b563 ca74bea0 77bc06c5 b9776d7d 4ea5ee68 9096e4f7 9c6725dc b9776d7d 45447b7a 8e7fc023 bb0347a4 5cfc694a 58296753 3e64cc41 ef2d127d a12dd3a7
@@ -537,6 +545,7 @@ hidden:
        done
        {{< /doc-test >}}
 - after:
+    section: 'Step 7: Restrict access by group'
     line: 2c79a264a58b759a
     occurrence: 0
     words: b9776d7d 3c469e9d fa51fd49 ec654fac a1d98908 b9d90628 df448a78 cdc29937 b9776d7d cbb82ebe 7369949b ed64d1d1 b9776d7d 1f58b914 0695b563 d26eae87

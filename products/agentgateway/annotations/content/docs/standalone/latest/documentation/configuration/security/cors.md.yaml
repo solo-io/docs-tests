@@ -7,6 +7,7 @@ blocks:
 - 4835c2877cc07428 yaml
 hidden:
 - after:
+    section: (top of page)
     line: 714405c4ca3422b9
     occurrence: 0
     words: d9c0d341 ea62dcb6 21a355f1 9e5cb570
@@ -54,6 +55,7 @@ hidden:
     export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
+    section: About CORS
     line: 600fe1bb59e46b50
     occurrence: 0
     words: 32d3feda
@@ -143,6 +145,7 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
+    section: About CORS
     line: 600fe1bb59e46b50
     occurrence: 0
     words: 32d3feda
@@ -160,6 +163,7 @@ hidden:
     sleep 3
     {{< /doc-test >}}
 - after:
+    section: About CORS
     line: 600fe1bb59e46b50
     occurrence: 0
     words: 32d3feda
@@ -208,6 +212,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
+    section: About CORS
     line: 600fe1bb59e46b50
     occurrence: 0
     words: 32d3feda
@@ -233,6 +238,7 @@ hidden:
     echo "✓ Preflight from a disallowed origin returned no access-control-allow-origin header"
     {{< /doc-test >}}
 - after:
+    section: About CORS
     line: 600fe1bb59e46b50
     occurrence: 0
     words: 32d3feda
@@ -298,6 +304,7 @@ hidden:
     wait $AGW_PID $BACKEND_PID 2>/dev/null || true
     {{< /doc-test >}}
 - after:
+    section: About CORS
     line: 600fe1bb59e46b50
     occurrence: 0
     words: 32d3feda

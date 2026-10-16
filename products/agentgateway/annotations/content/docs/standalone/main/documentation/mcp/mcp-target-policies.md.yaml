@@ -4,6 +4,7 @@ blocks:
 - 352b0f5a8c947161 yaml
 hidden:
 - after:
+    section: (top of page)
     line: 281cc1a3e25d1411
     occurrence: 0
     words: 97a5e41b 5b3a02e5 b1d6b91b b9776d7d 10182ab8 34a04005 0081779c 663ea1bf 0fcd568a 08bf2418 10c22bcf da15caae 10182ab8 8e3dc1af f1063760 ca978112 946e7707 10e08a41
@@ -51,6 +52,7 @@ hidden:
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: "{{< doc-test paths=\"mcp-target-policies\" >}}\ncat <<'EOF' > config.yaml\n# yaml-language-server: $schema=https://agentgateway.dev/schema/config\nmcp:\n  port: 3000\n  targets:\n  - name: service-a\n    mcp:\n      host: https://service-a.example.com/mcp\n    policies:\n      backendAuth:\n        key: \"$SERVICE_A_API_KEY\"\n      backendTLS:\n        hostname: service-a.example.com\n  \n  - name: service-b\n    mcp:\n      host: https://service-b.example.com/mcp\n    policies:\n      backendAuth:\n        key: \"$SERVICE_B_API_KEY\"\n      backendTLS:\n        hostname: service-b.example.com\nEOF\nagentgateway -f config.yaml --validate-only\n{{< /doc-test >}}"
 - after:
+    section: Learn more
     line: 33197d53570d4bce
     occurrence: 0
     words: b7d64a92 52367a66 fa42bed0 a0af9f86 52367a66 b7d64a92 df0ad6e4

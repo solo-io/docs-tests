@@ -6,6 +6,7 @@ blocks:
 - 86ebafa5a73c5e20 yaml
 hidden:
 - after:
+    section: Sign the client assertion with a private key
     line: 9b613d16db6bbc5f
     occurrence: 0
     words: a6a6a776 cb5e6115 03d66dd0 1e0584a2 8e7fc023 56e57ada a76d07aa 75857a45 03d66dd0 d0a36305 15eaa752 03d66dd0 fa51fd49 6ee0eb49
@@ -36,6 +37,7 @@ hidden:
     openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -out client-assertion-key.pem
     {{< /doc-test >}}
 - after:
+    section: Sign the client assertion with a private key
     line: 9b613d16db6bbc5f
     occurrence: 0
     words: a6a6a776 cb5e6115 03d66dd0 1e0584a2 8e7fc023 56e57ada a76d07aa 75857a45 03d66dd0 d0a36305 15eaa752 03d66dd0 fa51fd49 6ee0eb49

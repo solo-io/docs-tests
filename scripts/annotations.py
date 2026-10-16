@@ -26,6 +26,7 @@ Commands (see `--help` on each):
            the annotation files with today's fingerprints
   annotate write one page with its markup attached, to edit by hand
   save     write a hand-edited page's markup back to its annotation file
+  externalize  move a page's long hidden checks into script files
   roundtrip  export, strip and re-attach a whole repo in memory and confirm
            every page comes back byte-identical
 """
@@ -63,6 +64,13 @@ PATHS_ATTR = re.compile(r'paths\s*=\s*"[^"]*"')
 PATHS_VALUE = re.compile(r'paths\s*=\s*"([^"]*)"')
 ATTR_TOKEN = re.compile(r'[\w-]+\s*=\s*"[^"]*"|[^\s,]+')
 WORD = re.compile(r"[A-Za-z0-9_.-]+")
+HEADING = re.compile(r"^#{1,6}\s+(.+?)\s*(?:\{#[^}]*\})?\s*$")
+# A hidden check kept in its own script file: the opener and closer it is
+# wrapped in when it is put back onto a page.
+CANON_OPEN = re.compile(r'^\{\{< doc-test paths="([^"]*)" >\}\}$')
+CANON_CLOSE = "{{< /doc-test >}}"
+# The `section` of a sentence above a page's first heading.
+TOP_OF_PAGE = "(top of page)"
 
 EXACT, CLOSE, NEEDS_UPDATE = "exact", "close", "needs-update"
 
@@ -217,6 +225,7 @@ class Prose:
     occ: int
     prev_block: int   # index of the last code block before this line, -1 if none
     words: List[str]
+    section: str = "" # text of the heading this line sits under, "" before the first
 
 
 @dataclass
@@ -275,6 +284,7 @@ def parse(text: str, preview: bool = True) -> Page:
     tags: List[dict] = []
     hidden: List[dict] = []
     line_occ: Dict[str, int] = {}
+    section = ""
 
     def anchor():
         for k in range(len(kinds) - 1, -1, -1):
@@ -284,7 +294,8 @@ def parse(text: str, preview: bool = True) -> Page:
                 return {"block": kind[1], "fingerprint": b.fp, "lang": b.lang, "lines": b.lines}, k
             if kind[0] == "line":
                 p = kind[1]
-                return {"line": p.h, "occurrence": p.occ, "block_before": p.prev_block, "words": p.words}, k
+                return {"line": p.h, "occurrence": p.occ, "block_before": p.prev_block, "words": p.words,
+                        "section": p.section}, k
             if kind[0] == "fm":
                 break
         return {"start": True}, len(fm_lines) - 1
@@ -328,7 +339,10 @@ def parse(text: str, preview: bool = True) -> Page:
                 lh = _hash(l.strip())
                 occ = line_occ.get(lh, 0)
                 line_occ[lh] = occ + 1
-                p = Prose(len(out), lh, occ, len(blocks) - 1, word_hashes(l))
+                hm = HEADING.match(l)
+                if hm:
+                    section = hm.group(1)
+                p = Prose(len(out), lh, occ, len(blocks) - 1, word_hashes(l), section)
                 prose.append(p)
                 out.append(l)
                 kinds.append(("line", p))
@@ -342,6 +356,19 @@ def _join(hs: List[str]) -> str:
 
 def _split(s) -> List[str]:
     return s.split() if isinstance(s, str) else list(s or [])
+
+
+def section_ref(heading: str, preview: bool = True) -> str:
+    """How an annotation names a heading: its text, or a hash on a private page."""
+    if not heading:
+        return TOP_OF_PAGE
+    return heading if preview else "h:" + _hash(heading)
+
+
+def in_section(p: Prose, ref: str) -> bool:
+    if not p.section:
+        return ref == TOP_OF_PAGE
+    return ref in (p.section, "h:" + _hash(p.section))
 
 
 def to_annotation(source: str, page: Page, preview: bool = True) -> dict:
@@ -365,8 +392,9 @@ def to_annotation(source: str, page: Page, preview: bool = True) -> dict:
         elif "block" in a:
             after = block_ref(a["block"])
         else:
-            after = {"line": a["line"], "occurrence": a["occurrence"], "words": _join(a["words"]),
-                     "block_before": block_ref(a["block_before"]) if a["block_before"] >= 0 else None}
+            after = {"section": section_ref(a["section"], preview)}
+            after.update({"line": a["line"], "occurrence": a["occurrence"], "words": _join(a["words"]),
+                          "block_before": block_ref(a["block_before"]) if a["block_before"] >= 0 else None})
         entry = {"after": after}
         if h["blank_before"] != [""]:
             entry["blank_before"] = h["blank_before"]
@@ -409,10 +437,98 @@ def dump_annotation(ann: dict) -> str:
 
 
 def load_annotation(path: Path) -> dict:
+    """Read an annotation file, inlining the hidden checks kept in script files.
+
+    An entry with `script:` gets its `content` from that file (relative to the
+    annotation file), wrapped in the `{{< doc-test >}}` opener for its `paths`,
+    or in its verbatim `open`/`close` lines when it uses another form.
+    """
     ann = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(ann, dict) or ann.get("format") != FORMAT_VERSION:
         raise ValueError(f"{path}: not a format {FORMAT_VERSION} annotation file")
+    for h in ann.get("hidden", []):
+        if "script" in h:
+            body = (path.parent / h["script"]).read_text(encoding="utf-8")
+            body = body[:-1] if body.endswith("\n") else body
+            opener = h.get("open") or f'{{{{< doc-test paths="{h["paths"]}" >}}}}'
+            h["content"] = "\n".join([opener, body, h.get("close", CANON_CLOSE)])
     return ann
+
+
+def _split_check(content: str) -> Tuple[dict, str]:
+    """A hidden check's wrapper keys and its body, for writing it to a script file."""
+    lines = content.split("\n")
+    opener, closer, body = lines[0], lines[-1], "\n".join(lines[1:-1])
+    m = CANON_OPEN.match(opener)
+    if m and closer == CANON_CLOSE:
+        return {"paths": m.group(1)}, body
+    return {"open": opener, "close": closer}, body
+
+
+def _match_script(h: dict, old: List[dict], used: set) -> Optional[dict]:
+    """The old script-backed entry that a rewritten entry came from, if any.
+
+    Same content first; otherwise, among entries with the same opener, the one
+    body clearly most like this one (a check edited by hand through `save`).
+    """
+    for o in old:
+        if id(o) not in used and o["content"] == h["content"]:
+            return o
+    first = h["content"].split("\n")[0]
+    body = set(h["content"].split("\n"))
+    scored = sorted(((similarity(body, o["content"].split("\n")), k) for k, o in enumerate(old)
+                     if id(o) not in used and o["content"].split("\n")[0] == first), reverse=True)
+    if scored and scored[0][0] >= 0.5 and (len(scored) == 1 or scored[0][0] - scored[1][0] >= MIN_MARGIN):
+        return old[scored[0][1]]
+    return None
+
+
+def write_annotation(path: Path, ann: dict, old: Optional[dict] = None, old_path: Optional[Path] = None) -> None:
+    """Write an annotation file, keeping hidden checks that live in script files there.
+
+    `ann` holds every check's `content` (as `load_annotation` returns it, or as
+    `to_annotation` rebuilds it). A check that already names a `script`, or
+    that came from a script-backed check in `old`, is written to that file and
+    referenced; the rest stay inline. Script files no longer referenced are
+    removed, including the old ones when the page moved (`old_path`).
+    """
+    old_scripts = [h for h in (old or {}).get("hidden", []) if "script" in h]
+    used: set = set()
+    hidden = []
+    for h in ann.get("hidden", []):
+        script = h.get("script")
+        if not script:
+            o = _match_script(h, old_scripts, used)
+            if o:
+                used.add(id(o))
+                script = o["script"]
+        if not script:
+            hidden.append({k: v for k, v in h.items() if k not in ("script", "paths", "open", "close")})
+            continue
+        wrap, body = _split_check(h["content"])
+        dest = path.parent / script
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if not dest.exists() or dest.read_text(encoding="utf-8") != body + "\n":
+            dest.write_text(body + "\n", encoding="utf-8")
+        entry = {k: v for k, v in h.items() if k in ("after", "blank_before")}
+        entry.update(wrap)
+        entry["script"] = script
+        if "status" in h:
+            entry["status"] = h["status"]
+        hidden.append(entry)
+    out = dict(ann)
+    if hidden:
+        out["hidden"] = hidden
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(dump_annotation(out), encoding="utf-8")
+    keep = {(path.parent / h["script"]).resolve() for h in hidden if "script" in h}
+    base = (old_path or path).parent
+    for h in old_scripts:
+        f = (base / h["script"]).resolve()
+        if f not in keep and f.exists():
+            f.unlink()
+            if not any(f.parent.iterdir()):
+                f.parent.rmdir()
 
 
 def annotation_path(annotations_dir: Path, source: str) -> Path:
@@ -527,6 +643,27 @@ def _orphan_ref(ref: dict) -> dict:
     return {k: v for k, v in ref.items() if k != "block"}
 
 
+def find_sentence(cands: List[Prose], a: dict, strict: bool):
+    """The line a sentence anchor names, among `cands`: (prose, state, score, "") or None.
+
+    An unchanged line wins; otherwise the one nearly identical line. `strict`
+    (used for the wider search under a heading) also refuses a repeated line
+    whose occurrence does not say which copy is meant.
+    """
+    exact = [p for p in cands if p.h == a["line"]]
+    if exact:
+        pick = next((p for p in exact if p.occ == a.get("occurrence")), None)
+        if pick is None and (not strict or len(exact) == 1):
+            pick = exact[0]
+        return (pick, EXACT, None, "") if pick else None
+    scored = sorted(((similarity(_split(a["words"]), p.words), k) for k, p in enumerate(cands)), reverse=True)
+    best = scored[0][0] if scored else 0.0
+    second = scored[1][0] if len(scored) > 1 else 0.0
+    if scored and best >= MIN_SIMILARITY and best - second >= MIN_MARGIN:
+        return cands[scored[0][1]], CLOSE, best, ""
+    return None
+
+
 def attach(text: str, ann: dict) -> Tuple[str, List[Placement], dict]:
     """Put an annotation's markup onto a page.
 
@@ -599,31 +736,42 @@ def attach(text: str, ann: dict) -> Tuple[str, List[Placement], dict]:
             continue
         # A sentence anchor is looked for between the block before it and the
         # next one. That block may have been close-matched: the check still
-        # moves only with a block, never across the page on its own.
-        if a.get("block_before"):
-            wstate, window, _ = resolve(a["block_before"])
+        # moves only with a block, never across the page on its own. If the
+        # sentence is not in that window (a block was added or removed between
+        # them), it is looked for after that block under its heading instead,
+        # and reported as a close match so that a person sees the move.
+        bb = a.get("block_before")
+        if bb:
+            wstate, window, _ = resolve(bb)
         else:
             window, wstate = -1, EXACT
-        if wstate == NEEDS_UPDATE or window is None:
-            placements.append(Placement("hidden", label, NEEDS_UPDATE, "the code block before its sentence was rewritten or removed"))
-            unplaced["hidden"].append({**h, "after": {**a, "block_before": _orphan_ref(a["block_before"])}})
-            continue
-        cands = [p for p in page.prose if p.prev_block == window]
-        exact = [p for p in cands if p.h == a["line"]]
-        if exact:
-            pick = next((p for p in exact if p.occ == a.get("occurrence")), exact[0])
+        orphan = {**h, "after": {**a, "block_before": _orphan_ref(bb) if bb else None}}
+        hit = None
+        if wstate != NEEDS_UPDATE and window is not None:
+            hit = find_sentence([p for p in page.prose if p.prev_block == window], a, strict=False)
+            if hit and hit[1] == EXACT:
+                hit = (hit[0], wstate, None, "")
+        # Only when the block before is still on the page, and only after it: a
+        # check whose block was rewritten must not run after some other block.
+        if hit is None and a.get("section") and wstate != NEEDS_UPDATE and window is not None:
+            hit = find_sentence([p for p in page.prose if in_section(p, a["section"]) and p.prev_block >= window],
+                                a, strict=True)
+            if hit:
+                hit = (hit[0], CLOSE, hit[2], f"found under its heading ({a['section']}); the code blocks around it changed")
+        if hit:
+            pick, state, score, reason = hit
             after.setdefault(pick.idx, []).append(h)
-            placements.append(Placement("hidden", label, wstate, at=pick.idx))
+            placements.append(Placement("hidden", label, state, reason, score, pick.idx))
             continue
-        scored = sorted(((similarity(_split(a["words"]), p.words), k) for k, p in enumerate(cands)), reverse=True)
-        best = scored[0][0] if scored else 0.0
-        second = scored[1][0] if len(scored) > 1 else 0.0
-        if scored and best >= MIN_SIMILARITY and best - second >= MIN_MARGIN:
-            after.setdefault(cands[scored[0][1]].idx, []).append(h)
-            placements.append(Placement("hidden", label, CLOSE, "", best, cands[scored[0][1]].idx))
-            continue
-        placements.append(Placement("hidden", label, NEEDS_UPDATE, "the sentence it follows was rewritten", best))
-        unplaced["hidden"].append({**h, "after": {**a, "block_before": _orphan_ref(a["block_before"]) if a.get("block_before") else None}})
+        if wstate == NEEDS_UPDATE or window is None:
+            reason = "the code block before its sentence was rewritten or removed"
+        elif any(p.h == a["line"] for p in page.prose):
+            reason = "a code block was added or removed between its sentence and the block before it"
+        else:
+            reason = "the sentence it follows was rewritten"
+        best = max((similarity(_split(a["words"]), p.words) for p in page.prose if p.prev_block == window), default=0.0)
+        placements.append(Placement("hidden", label, NEEDS_UPDATE, reason, best or None))
+        unplaced["hidden"].append(orphan)
 
     out: List[str] = lines[:page.body_start]
     for h in after.get(page.body_start - 1, []):
@@ -880,6 +1028,7 @@ def cmd_refresh(args) -> int:
     writes: Dict[Path, Tuple[Optional[Path], dict]] = {}
     results: Dict[str, List[Placement]] = {}
     moves: List[Tuple[str, str]] = []
+    old_by_path = dict(loaded)
     for path, ann in loaded:
         src = ann["source"]
         new_src = src
@@ -916,8 +1065,7 @@ def cmd_refresh(args) -> int:
     if not args.dry_run:
         for path, (dest, new) in writes.items():
             target = dest or path
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(dump_annotation(new), encoding="utf-8")
+            write_annotation(target, new, old_by_path[path], path)
             if dest and dest != path:
                 path.unlink()
         state_file.write_text(dump_annotation({"commit": head}), encoding="utf-8")
@@ -1120,13 +1268,42 @@ def cmd_save(args) -> int:
     stale = [e for e in ann.get("tags", []) + ann.get("hidden", []) if e.get("status") == NEEDS_UPDATE]
     if count_markup(ann) == 0:
         if path.exists():
+            write_annotation(path, ann, old)
             path.unlink()
             print(f"removed {path}: the page has no markup left")
         return 0
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(dump_annotation(ann), encoding="utf-8")
+    write_annotation(path, ann, old)
     print(f"wrote {path}: {count_markup(ann)} pieces of markup"
           + (f", {len(stale)} still marked needs update (delete them from the file if the test is gone)" if stale else ""))
+    return 0
+
+
+def cmd_externalize(args) -> int:
+    """Move a page's long hidden checks out of its annotation file into script files.
+
+    Each goes to `<page>.scripts/<paths>.sh` beside the annotation file (with a
+    number when a page has more than one for the same paths). The file holds
+    the check's body only; the annotation keeps where it goes and its `paths`.
+    """
+    adir = Path(args.annotations)
+    path = annotation_path(adir, args.page)
+    ann = load_annotation(path)
+    folder = path.name[: -len(".md.yaml")] + ".scripts"
+    taken = {h["script"] for h in ann.get("hidden", []) if "script" in h}
+    moved = 0
+    for h in ann.get("hidden", []):
+        if "script" in h or h["content"].count("\n") - 1 < args.min_lines:
+            continue
+        wrap, _ = _split_check(h["content"])
+        stem = re.sub(r"[^\w.-]+", "-", wrap.get("paths") or "check").strip("-") or "check"
+        name, n = f"{folder}/{stem}.sh", 2
+        while name in taken:
+            name, n = f"{folder}/{stem}-{n}.sh", n + 1
+        taken.add(name)
+        h["script"] = name
+        moved += 1
+    write_annotation(path, ann, ann)
+    print(f"moved {moved} hidden checks of {path} into script files")
     return 0
 
 
@@ -1206,6 +1383,12 @@ def main(argv=None) -> int:
     p.add_argument("--page", required=True)
     p.add_argument("--edited", required=True, help="the marked-up copy from annotate")
     p.set_defaults(fn=cmd_save)
+
+    p = sub.add_parser("externalize", help=cmd_externalize.__doc__)
+    p.add_argument("--annotations", required=True)
+    p.add_argument("--page", required=True, help="the page whose annotation file to change")
+    p.add_argument("--min-lines", type=int, default=10, help="only checks with at least this many lines")
+    p.set_defaults(fn=cmd_externalize)
 
     p = sub.add_parser("roundtrip")
     common(p, annotations=False)
