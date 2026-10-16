@@ -263,6 +263,55 @@ class SentenceAnchorTests(unittest.TestCase):
         self.assertEqual(states(placements, "hidden")[1], A.NEEDS_UPDATE)
 
 
+
+HEADED = PAGE.replace("Send a request.", "## Test the route\n\nSend a request.")
+EXTRA = "```sh\necho extra step\n```\n\nThe request succeeds."
+
+
+class HeadingAnchorTests(unittest.TestCase):
+    """A block added before a check's sentence moves it out of its window; its heading finds it."""
+
+    def test_found_under_its_heading_when_a_block_is_added(self):
+        ann = annotation(HEADED)
+        self.assertEqual(ann["hidden"][1]["after"]["section"], "Test the route")
+        out, placements, _ = A.attach(strip(HEADED).replace("The request succeeds.", EXTRA), ann)
+        hidden = [p for p in placements if p.kind == "hidden"]
+        self.assertEqual(hidden[1].state, A.CLOSE)       # reported for review, never silent
+        self.assertIn("heading", hidden[1].reason)
+        self.assertIn("The request succeeds.\n\n{{< doc-test", out)
+
+    def test_without_a_section_the_reason_names_the_added_block(self):
+        ann = annotation(PAGE)
+        for h in ann["hidden"]:
+            h["after"].pop("section", None)     # an annotation written before sections existed
+        _, placements, _ = A.attach(strip(PAGE).replace("The request succeeds.", EXTRA), ann)
+        hidden = [p for p in placements if p.kind == "hidden"]
+        self.assertEqual(hidden[1].state, A.NEEDS_UPDATE)
+        self.assertIn("added or removed", hidden[1].reason)
+
+    def test_never_found_under_another_heading(self):
+        ann = annotation(HEADED)
+        # Out of its window (after the cleanup block) and under another heading.
+        edited = strip(HEADED).replace("The request succeeds.\n", "") + "\nThe request succeeds.\n"
+        _, placements, _ = A.attach(edited, ann)
+        self.assertEqual(states(placements, "hidden")[1], A.NEEDS_UPDATE)
+
+    def test_sentence_above_the_first_heading(self):
+        ann = annotation(PAGE)
+        self.assertEqual(ann["hidden"][1]["after"]["section"], A.TOP_OF_PAGE)
+        out, placements, _ = A.attach(strip(PAGE).replace("The request succeeds.", EXTRA), ann)
+        self.assertEqual(states(placements, "hidden")[1], A.CLOSE)
+        self.assertIn("The request succeeds.\n\n{{< doc-test", out)
+
+    def test_private_page_stores_a_hash_and_still_finds_it(self):
+        page = A.parse(HEADED, preview=False)
+        ann = yaml.safe_load(A.dump_annotation(A.to_annotation("p.md", page, preview=False)))
+        self.assertTrue(ann["hidden"][1]["after"]["section"].startswith("h:"))
+        self.assertNotIn("Test the route", A.dump_annotation(ann))
+        _, placements, _ = A.attach(strip(HEADED).replace("The request succeeds.", EXTRA), ann)
+        self.assertEqual(states(placements, "hidden")[1], A.CLOSE)
+
+
 class RefreshOneTests(unittest.TestCase):
     def test_records_new_fingerprints(self):
         ann = annotation(PAGE)
@@ -434,6 +483,75 @@ class RefreshCommandTests(unittest.TestCase):
         (repo / "content").mkdir()
         (repo / "content/p.md").write_text(PAGE)
         self.assertEqual(cli("roundtrip", "--repo", str(repo)), 0)
+
+
+
+class ScriptFileTests(unittest.TestCase):
+    """Hidden checks kept in script files attach the same and survive save, refresh, and moves."""
+
+    setUp = RefreshCommandTests.setUp
+    write, commit, refresh, files = (RefreshCommandTests.write, RefreshCommandTests.commit,
+                                     RefreshCommandTests.refresh, RefreshCommandTests.files)
+
+    def ann_path(self, page=None):
+        return self.adir / ((page or self.page) + ".yaml")
+
+    def externalize(self):
+        return cli("externalize", "--annotations", str(self.adir), "--page", self.page, "--min-lines", "1")
+
+    def attached(self):
+        out = pathlib.Path(tempfile.mkdtemp())
+        cli("attach", "--repo", str(self.repo), "--annotations", str(self.adir), "--out", str(out))
+        return (out / self.page).read_text()
+
+    def test_externalize_keeps_the_attached_page_identical(self):
+        before = self.attached()
+        self.assertEqual(self.externalize(), 0)
+        raw = yaml.safe_load(self.ann_path().read_text())
+        self.assertEqual([h.get("script") for h in raw["hidden"]],
+                         ["routes.scripts/route.sh", "routes.scripts/route-2.sh"])
+        self.assertTrue(all("content" not in h and h["paths"] == "route" for h in raw["hidden"]))
+        script = self.ann_path().parent / "routes.scripts/route.sh"
+        self.assertEqual(script.read_text(), "YAMLTest -f - <<'EOF'\n- name: route is accepted\nEOF\n")
+        self.assertEqual(self.attached(), before)
+
+    def test_editing_the_script_changes_the_check(self):
+        self.externalize()
+        script = self.ann_path().parent / "routes.scripts/route.sh"
+        script.write_text(script.read_text().replace("route is accepted", "route is programmed"))
+        self.assertIn("route is programmed", self.attached())
+
+    def test_save_keeps_script_files_and_writes_edits_to_them(self):
+        self.externalize()
+        old = A.load_annotation(self.ann_path())
+        stripped = (self.repo / self.page).read_text()
+        marked, _, _ = A.attach(stripped, old)
+        ann = A.save(stripped, marked.replace("- name: request succeeds", "- name: request returns 200"), self.page, old)
+        A.write_annotation(self.ann_path(), ann, old)
+        raw = yaml.safe_load(self.ann_path().read_text())
+        self.assertEqual([h.get("script") for h in raw["hidden"]],
+                         ["routes.scripts/route.sh", "routes.scripts/route-2.sh"])
+        self.assertIn("request returns 200", (self.ann_path().parent / "routes.scripts/route-2.sh").read_text())
+
+    def test_refresh_after_an_edit_keeps_script_files(self):
+        self.externalize()
+        self.write(self.page, (self.repo / self.page).read_text().replace("Create a route.", "Create the route."))
+        self.commit()
+        self.assertEqual(self.refresh(), 0)
+        raw = yaml.safe_load(self.ann_path().read_text())
+        self.assertTrue(all("script" in h for h in raw["hidden"]))
+
+    def test_moved_page_takes_its_scripts_along(self):
+        self.externalize()
+        new = "content/docs/routing/routes-moved.md"
+        (self.repo / new).parent.mkdir(parents=True)
+        git(self.repo, "mv", self.page, new)
+        self.commit()
+        self.assertEqual(self.refresh(), 0)
+        self.assertEqual(self.files(), [new + ".yaml"])
+        self.assertTrue((self.ann_path(new).parent / "routes.scripts/route.sh").exists())
+        self.assertFalse((self.ann_path().parent / "routes.scripts").exists())
+        self.assertEqual(len(A.load_annotation(self.ann_path(new))["hidden"]), 2)
 
 
 class AnnotateSaveTests(unittest.TestCase):

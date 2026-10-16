@@ -12,6 +12,7 @@ blocks:
 - d07cbd9f8765d50d yaml
 hidden:
 - after:
+    section: (top of page)
     line: 714405c4ca3422b9
     occurrence: 0
     words: d9c0d341 ea62dcb6 21a355f1 9e5cb570
@@ -22,6 +23,7 @@ hidden:
     export OPEN_AI_APIKEY="${OPEN_AI_APIKEY:-dummy}"
     {{< /doc-test >}}
 - after:
+    section: Route-level header transformation
     line: 600fe1bb59e46b50
     occurrence: 0
     words: 32d3feda
@@ -123,6 +125,7 @@ hidden:
     agentgateway -f config-mcp.yaml --validate-only
     {{< /doc-test >}}
 - after:
+    section: Listener-level header transformation
     line: 600fe1bb59e46b50
     occurrence: 1
     words: 32d3feda
@@ -197,6 +200,7 @@ hidden:
     agentgateway -f config2-mcp.yaml --validate-only
     {{< /doc-test >}}
 - after:
+    section: Body transformation
     line: 600fe1bb59e46b50
     occurrence: 2
     words: 32d3feda

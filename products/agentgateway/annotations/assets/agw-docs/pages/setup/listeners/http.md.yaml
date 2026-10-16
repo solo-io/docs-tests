@@ -45,6 +45,7 @@ tags:
     lead: ' '
 hidden:
 - after:
+    section: Set up an HTTP listener
     line: 600fe1bb59e46b50
     occurrence: 1
     words: 32d3feda
@@ -90,6 +91,7 @@ hidden:
     export INGRESS_GW_ADDRESS_HTTP=$(kubectl get svc -n agentgateway-system agentgateway-proxy-http -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
     {{< /doc-test >}}
 - after:
+    section: Set up an HTTP listener
     line: 600fe1bb59e46b50
     occurrence: 1
     words: 32d3feda
@@ -119,6 +121,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
+    section: Set up an HTTP listener
     line: 600fe1bb59e46b50
     occurrence: 1
     words: 32d3feda
@@ -136,6 +139,7 @@ hidden:
     done
     {{< /doc-test >}}
 - after:
+    section: Set up an HTTP listener
     line: 600fe1bb59e46b50
     occurrence: 1
     words: 32d3feda

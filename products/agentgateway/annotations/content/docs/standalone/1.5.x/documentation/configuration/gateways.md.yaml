@@ -15,6 +15,7 @@ blocks:
 - 05991aa55ecbe989 shell
 hidden:
 - after:
+    section: (top of page)
     line: 1022f924662a3be5
     occurrence: 0
     words: a74e5033 7ab37787 b9776d7d 94a15200 c0d2856b b9776d7d 94a15200 c0d2856b 94e8566d 93f6e11d cdc29937 2ad8a704 fa51fd49 f5e65825 10c22bcf 106a5842 ff5d991a ea325d76 afafb16a b7d64a92 aa9e9b5c 3bc801a3 75857a45 94a15200 e1bfe73a
@@ -24,6 +25,7 @@ hidden:
     {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
     {{< /doc-test >}}
 - after:
+    section: (top of page)
     line: 1022f924662a3be5
     occurrence: 0
     words: a74e5033 7ab37787 b9776d7d 94a15200 c0d2856b b9776d7d 94a15200 c0d2856b 94e8566d 93f6e11d cdc29937 2ad8a704 fa51fd49 f5e65825 10c22bcf 106a5842 ff5d991a ea325d76 afafb16a b7d64a92 aa9e9b5c 3bc801a3 75857a45 94a15200 e1bfe73a
@@ -37,6 +39,7 @@ hidden:
     openssl req -x509 -newkey rsa:2048 -keyout certs/key-wildcard.pem -out certs/cert-wildcard.pem -days 365 -nodes -subj "/CN=wildcard.example.com" 2>/dev/null
     {{< /doc-test >}}
 - after:
+    section: Define a gateway
     line: 6769f2c1f5dbee45
     occurrence: 0
     words: b9776d7d 8a84e406 58296753 1eb79602 50d858e0 961eb436 254bb97b 6ee0eb49 ca978112 a74e5033 c0d2856b 15eaa752 bb0347a4 c266ada2 8e7fc023 c0d2856b b9776d7d 8a84e406 27cdad0b 663ea1bf b9776d7d 4ea5ee68 a157d36a 37a8eec1 3bd49af7 4d040d3f 986a1b71 4ea5ee68 37a8eec1 308f4070 a7a39b72 e85ec53b f9b0078b
@@ -135,6 +138,7 @@ hidden:
     agentgateway -f config3.yaml --validate-only
     {{< /doc-test >}}
 - after:
+    section: Add listeners to a gateway
     line: 20c9795c9ef9f574
     occurrence: 0
     words: 5ef5ef03 0353e1fb d767748a ca978112 4ea5ee68 c3bc45ac b9776d7d 4ea5ee68 043a7187 f8d397a3 a1d98908 151e58a8 9a43b6da 2f907a6d 954d1bb8 6201111b 96d62e2a 075f4ab8 935f6831 bb0347a4 be8dff00 ff777205 e0603c49 6201111b 3e194352 ecd38f26 3fc4ccfe a74e5033 f4bf9f7f baaf5362 58296753 24c458cf b9776d7d 0967115f e22bc966 b8d31e85 3f8a7e66 a74e5033 a515d32e
@@ -181,6 +185,7 @@ hidden:
     agentgateway -f config4.yaml --validate-only
     {{< /doc-test >}}
 - after:
+    section: Set the gateway protocol
     line: c5de7910db5a4b21
     occurrence: 0
     words: 10c22bcf 187897ce dea7111a a4262e1c bec16879 2ea88c7a 031af55b b7e651cb bf632b0c 6201111b f534b141 aa9e9b5c 0353e1fb fa42bed0 a0af9f86 caf9f906 b7d64a92 0353e1fb
@@ -211,6 +216,7 @@ hidden:
     agentgateway -f config5.yaml --validate-only
     {{< /doc-test >}}
 - after:
+    section: Attach LLM, MCP, and the UI to a gateway
     line: b8700195979170ce
     occurrence: 0
     words: 4dc69fae b9776d7d d3ef7de5 b8d31e85 ca978112 4ea5ee68 54b2db0f 2ad8a704 663ea1bf 12ed8d14 6ed03371 9f584196 ed4561f6 8e7fc023 f8d397a3 680dce63 2ad8a704 0695b563 b9d90628 093ae961 4dcdefd0 fa42bed0 a0af9f86 caf9f906 b7d64a92 5d2d3ceb 4dcdefd0 6db7d803 bb0347a4 f3b96e66 2ad8a704 31207a20 28391d3b 49960de5 b9776d7d 4ea5ee68 0e9a0002 b9776d7d d3ef7de5 6201111b ea103d6c 14c2529e f905b195 b9776d7d 8c6976e5 c796d37c 043a7187 a95af649 a46c629d a5c935d1 f4bf9f7f 7f23f477 ba78973d 254bb97b 8fe88bf0 b8d31e85 2ad8a704
@@ -284,6 +290,7 @@ hidden:
     agentgateway -f config7.yaml --validate-only
     {{< /doc-test >}}
 - after:
+    section: Attach policies to a gateway
     line: f5e0aa37c6b09ab1
     occurrence: 0
     words: 663ea1bf 5f161c91 ca978112 823412d1 187897ce 21f5b5fa a9190076 2ad8a704 663ea1bf ca978112 c4c05d40 7175517a 663ea1bf ca978112 8a84e406 99262a02 10c22bcf 187897ce dea7111a aa9e9b5c 602a5e69 c54a061d fa42bed0 a0af9f86 caf9f906 b7d64a92 5b3a02e5 602a5e69
