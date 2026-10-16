@@ -656,6 +656,49 @@ entry here, and the product version. Whichever one moved is usually the cause.
 
 Doc pages with passing tests display a "Verified" badge below the page title.
 
+### End to end
+
+The following diagram shows how a test result in this repo becomes a badge on a published page. It uses kgateway's site repo (`kgateway-dev/kgateway.dev`) and Cloudflare Pages as the example. agentgateway follows the same steps with its own site repo and host.
+
+```mermaid
+flowchart LR
+    subgraph dt["docs-tests repo"]
+        direction TB
+        ann["products/PRODUCT/annotations/<br/>and tests.yaml"]
+        refresh["Refresh test annotations workflow<br/>daily 05:00 UTC"]
+        refresh --> ann
+    end
+
+    subgraph site["Site repo, GitHub Actions"]
+        direction TB
+        run["Doc tests workflow on main<br/>daily 06:30 UTC, or started by hand"]
+        attach["annotations.py attach<br/>adds test markup to a copy of the pages"]
+        kind["doc_test_run.py builds a script<br/>and runs it in a fresh kind cluster"]
+        artifact[("doc-test-results artifact<br/>test-results.yaml")]
+        run --> attach --> kind --> artifact
+    end
+
+    dt -->|"cloned at test time"| site
+
+    subgraph build["Site build, Cloudflare Pages"]
+        direction TB
+        make["make fetch-test-artifacts-build"]
+        fetch["doc_test_fetch_artifacts.sh<br/>finds the latest scheduled or manual run on main"]
+        inject["doc_test_inject_status.py<br/>sets test_status in each tested page's front matter"]
+        hugo["hugo --gc --minify"]
+        make --> fetch --> inject --> hugo
+    end
+
+    site -->|"download needs GITHUB_TOKEN"| build
+    build --> page["Published page<br/>docs-theme-extras shows the Verified badge<br/>when test_status is passed"]
+```
+
+A few things the diagram implies:
+
+- **Only runs on `main` count.** The fetch script ignores `pull_request` runs, so the badge appears only after a scheduled or manual run on `main` has finished.
+- **A build reads results only when it runs.** A new passing test run does not change pages that are already published. The badge updates on the next site build.
+- **The badge never fails the build.** If `GITHUB_TOKEN` is missing, or no run or artifact is found, the build goes ahead without badges and prints a warning.
+
 ### How it works
 
 1. **Test results** are written to `out/tests/generated/test-results.yaml` after tests run.
