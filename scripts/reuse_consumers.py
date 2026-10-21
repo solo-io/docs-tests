@@ -72,6 +72,7 @@ without first checking which way the resulting error leans.
 from __future__ import annotations
 
 import argparse
+import json
 import pathlib
 import os
 import re
@@ -362,6 +363,51 @@ def build_rebase_index(
     return index
 
 
+def _closure(start: list[str], index: dict[str, set[str]]) -> set[str]:
+    """Every file reachable from ``start`` by walking inclusion edges up."""
+    seen: set[str] = set()
+    queue = list(start)
+    while queue:
+        current = queue.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        queue.extend(index.get(current, ()))
+    return seen
+
+
+def rebase_shells(
+    changed: list[str],
+    index: dict[str, set[str]],
+    upstream_index: dict[str, set[str]],
+    rebase_index: dict[str, set[str]],
+) -> set[str]:
+    """Consumer rebase shells whose upstream page pulls in a changed consumer asset.
+
+    THE EDGE NEITHER INDEX HAS ON ITS OWN. A consumer that rebases upstream
+    pages can also shadow an upstream snippet: it keeps its own copy at the
+    same `assets/` path, and the union mount serves that copy to the upstream
+    page at build time. The enterprise install snippet is the case that found
+    this. Nothing in the consumer repo reuses it, so the consumer's index says
+    a change to it affects no page. The upstream quickstart reuses it, and the
+    consumer's quickstart shell rebases that page, so it really affects the
+    install step of every scenario. Without this edge the selector reported
+    zero tests for it, instead of all of them.
+
+    So: the consumer-side closure of the change, then every upstream file that
+    reuses something in it (by the same `assets/` path, which is what makes it
+    a shadow), then the consumer shells that rebase any upstream page in that.
+    The shells are returned for the caller to walk as if they changed, so they
+    pick up their test dependents the same way a direct edit would.
+    """
+    local = _closure(changed, index)
+    assets = [p for p in local if p.startswith(f"{ASSETS_DIR}/")]
+    shells: set[str] = set()
+    for upstream_page in _closure(assets, upstream_index):
+        shells.update(rebase_index.get(upstream_page, ()))
+    return shells
+
+
 def consumers(
     changed: list[str],
     index: dict[str, set[str]],
@@ -489,6 +535,16 @@ def main() -> int:
         help="read the changed paths from stdin, one per line, instead of argv",
     )
     parser.add_argument(
+        "--upstream-root",
+        help="upstream checkout that this repo's rebase shells pull from; "
+        "needed to follow a change to a snippet this repo shadows",
+    )
+    parser.add_argument(
+        "--upstream-versions",
+        help='JSON map of this repo\'s versions to upstream version roots, '
+        'e.g. \'{"latest":"latest"}\'; the same value doc_test_run.py takes',
+    )
+    parser.add_argument(
         "--quiet",
         action="store_true",
         help="do not report changed files that reach no page (stderr)",
@@ -509,8 +565,23 @@ def main() -> int:
     if not changed:
         return 0
 
+    if bool(args.upstream_root) != bool(args.upstream_versions):
+        parser.error("--upstream-root and --upstream-versions go together")
+
     index = build_reverse_index(root)
     test_index = build_test_dependency_index(root)
+    via_rebase: set[str] = set()
+    if args.upstream_root:
+        upstream_index = build_reverse_index(pathlib.Path(args.upstream_root).resolve())
+        rebase_index = build_rebase_index(root, json.loads(args.upstream_versions))
+        # Per file, so the warning below can tell which inputs reached a page
+        # only through a shell. Same per-file trade `unresolved` makes.
+        via_rebase = {
+            c for c in changed if rebase_shells([c], index, upstream_index, rebase_index)
+        }
+        shells = rebase_shells(changed, index, upstream_index, rebase_index)
+        # Walked as if they changed, so their test dependents come with them.
+        changed = changed + sorted(shells - set(changed))
     for page in consumers(changed, index, test_index=test_index):
         print(page)
 
@@ -521,6 +592,8 @@ def main() -> int:
     # is what makes the difference; the caller decides how loud to be.
     if not args.quiet:
         for path in unresolved_losing_tests(changed, index, root, test_index):
+            if path in via_rebase:
+                continue
             print(f"has doc tests but reaches no content page: {path}", file=sys.stderr)
     return 0
 
