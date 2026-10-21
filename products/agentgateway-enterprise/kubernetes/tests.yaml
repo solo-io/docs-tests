@@ -1,7 +1,11 @@
 # Doc-test scenario definitions for the enterprise agentgateway docs, kubernetes mode.
 #
-# PILOT: a subset of traffic-management. The consuming site publishes the
-# enterprise docs from its own repo; almost every page there is a rebase shell,
+# Covers traffic-management: every kubernetes traffic-management scenario in
+# ../../agentgateway/kubernetes/tests.yaml, minus the schema-only ones (the
+# consuming site's workflow runs functional and live tests only).
+#
+# The consuming site publishes the enterprise docs from its own repo; almost
+# every page there is a rebase shell,
 # a stub whose whole body is one {{< rebase file="agw-docs/kubernetes/..." >}}
 # line that the site expands from the open source agentgateway/website repo at
 # build time.
@@ -51,7 +55,42 @@ prerequisites:
   install-standard:
     page: documentation/quickstart/install.md
     path: standard
+# Pages with deliberately no test: section indexes and concept pages, the same
+# list as the upstream manifest's traffic-management skips.
+skip:
+- page: documentation/traffic-management/_index.md
+- page: documentation/traffic-management/buffer.md
+- page: documentation/traffic-management/header-control/_index.md
+- page: documentation/traffic-management/load-balancing.md
+- page: documentation/traffic-management/match/_index.md
+- page: documentation/traffic-management/redirect/_index.md
+- page: documentation/traffic-management/rewrite/_index.md
+- page: documentation/traffic-management/route-delegation/_index.md
+- page: documentation/traffic-management/route-delegation/inheritance/_index.md
+- page: documentation/traffic-management/route-delegation/overview.md
+- page: documentation/traffic-management/transformations/_index.md
+- page: documentation/traffic-management/transformations/templating-language.md
 scenarios:
+  access-logs:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/access-logs.md
+    path: access-logs
+  access-logs-filter:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/access-logs.md
+    path: access-logs-filter
   add-request-header:
     needs:
     - install-standard
@@ -59,13 +98,133 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/header-control/request-header.md
     path: add-request-header
-  set-response-header:
+  add-response-header:
     needs:
     - install-standard
     - gateway
     - httpbin
     page: documentation/traffic-management/header-control/response-header.md
-    path: set-response-header
+    path: add-response-header
+  basic:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/traffic-management/route-delegation/basic.md
+      path: route-delegation-prereq
+    page: documentation/traffic-management/route-delegation/basic.md
+    path: basic
+  buffering:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/traffic-management/buffering.md
+    path: buffering
+  change-response-status:
+    type: functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/status.md
+    path: change-response-status
+  decode:
+    type: functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/encode.md
+    path: decode
+  dfp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/dfp.md
+    path: dfp
+  direct-response:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/direct-response.md
+    path: direct-response
+  encode:
+    type: functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/encode.md
+    path: encode
+  extproc:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/extproc.md
+    path: extproc
+  filter-request-body:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/filter-request-body.md
+    path: filter-request-body
+  forward:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/forward.md
+    path: forward
+  grpc:
+    needs:
+    - install-standard
+    page: documentation/traffic-management/grpc.md
+    path: grpc
+  header-match-exact:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/header.md
+    path: header-match-exact
+  header-match-regex:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/header.md
+    path: header-match-regex
+  header-query:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/traffic-management/route-delegation/header-query.md
+      path: route-delegation-prereq
+    page: documentation/traffic-management/route-delegation/header-query.md
+    path: header-query
   host-match:
     needs:
     - install-standard
@@ -73,6 +232,128 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/match/host.md
     path: host-match
+  host-redirect:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/redirect/host.md
+    path: host-redirect
+  host-rewrite:
+    type: functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/rewrite/host.md
+    path: host-rewrite
+  https-redirect:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/redirect/https.md
+    path: https-redirect
+  inject-body-field-into-body:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/inject-response-body.md
+    path: inject-body-field-into-body
+  inject-header-into-body:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/inject-response-body.md
+    path: inject-header-into-body
+  inject-response-headers:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/inject-response-headers.md
+    path: inject-response-headers
+  label:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/traffic-management/route-delegation/label.md
+      path: route-delegation-prereq
+    page: documentation/traffic-management/route-delegation/label.md
+    path: label
+  llm-model-headers:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/traffic-management/transformations/llm-model-headers.md
+    path: llm-model-headers
+  llm-transformations:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/traffic-management/transformations/llm-model-headers.md
+    path: llm-transformations
+  locality-aware-routing:
+    needs:
+    - install-standard
+    page: documentation/traffic-management/locality-aware-routing.md
+    path: locality-aware-routing
+  method-match:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/method.md
+    path: method-match
+  multi-level:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/traffic-management/route-delegation/multi-level-delegation.md
+      path: route-delegation-prereq
+    page: documentation/traffic-management/route-delegation/multi-level-delegation.md
+    path: multi-level
+  native-policies:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/traffic-management/route-delegation/inheritance/native-policies.md
+      path: route-delegation-prereq
+    page: documentation/traffic-management/route-delegation/inheritance/native-policies.md
+    path: native-policies
+  path-match-exact:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/path.md
+    path: path-match-exact
   path-match-prefix:
     needs:
     - install-standard
@@ -80,10 +361,177 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/match/path.md
     path: path-match-prefix
-  direct-response:
+  path-match-regex:
     needs:
     - install-standard
     - gateway
     - httpbin
-    page: documentation/traffic-management/direct-response.md
-    path: direct-response
+    page: documentation/traffic-management/match/path.md
+    path: path-match-regex
+  path-method:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/path-method.md
+    path: path-method
+  path-redirect-full:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/redirect/path.md
+    path: path-redirect-full
+  path-redirect-prefix:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/redirect/path.md
+    path: path-redirect-prefix
+  path-rewrite-full:
+    type: functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/rewrite/path.md
+    path: path-rewrite-full
+  path-rewrite-prefix:
+    type: functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/rewrite/path.md
+    path: path-rewrite-prefix
+  query:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/query.md
+    path: query
+  query-match:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/match/query.md
+    path: query-match
+  remove-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/remove-header.md
+    path: remove-header
+  remove-request-header:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/header-control/request-header.md
+    path: remove-request-header
+  remove-reserved-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/header-control/early-request-header-modifier.md
+    path: remove-reserved-header
+  remove-response-header:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/header-control/response-header.md
+    path: remove-response-header
+  rewrite:
+    type: functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/rewrite.md
+    path: rewrite
+  set-request-header:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/header-control/request-header.md
+    path: set-request-header
+  set-response-header:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/header-control/response-header.md
+    path: set-response-header
+  tracing:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/tracing.md
+    path: tracing
+  traffic-split-llm-models:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/traffic-management/traffic-split.md
+    path: traffic-split-llm
+  trafficpolicies:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/traffic-management/route-delegation/inheritance/trafficpolicies.md
+      path: route-delegation-prereq
+    page: documentation/traffic-management/route-delegation/inheritance/trafficpolicies.md
+    path: trafficpolicies
+  validate-defaults:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/validate.md
+    path: validate-defaults
+  validate-skip:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/transformations/validate.md
+    path: validate-skip
