@@ -18,6 +18,16 @@ except ModuleNotFoundError:
 SHELL_LANGS = {"", "sh", "bash", "shell", "zsh", "yaml", "yml"}
 
 
+# The step a failed script was on, for telling a page step that broke apart
+# from a check that docs-tests added. Each step writes its origin to
+# $DOC_TEST_STEP_FILE before it runs, so the last line there is the step that
+# failed. `page` is a code block a reader sees; `check` is test markup (hidden
+# blocks and test includes). Unset outside the runner, so a script run by hand
+# writes nowhere.
+def step_marker(kind: str, rel: str, line: int) -> str:
+    return f"printf '%s\\n' '{kind} {rel}:{line}' > \"${{DOC_TEST_STEP_FILE:-/dev/null}}\""
+
+
 @dataclass
 class CodeBlock:
     file_path: Path
@@ -832,6 +842,7 @@ class Extractor:
                 lines.append(f"# Hidden source: {rel}:{block.start_line} paths={','.join(block.paths)}")
             else:
                 lines.append(f"# Source: {rel}:{block.start_line} paths={','.join(block.paths)}")
+            lines.append(step_marker("check" if block.hidden else "page", rel, block.start_line))
             lines.append(content)
             lines.append("")
 
@@ -849,6 +860,7 @@ class Extractor:
             lines.append(
                 f"# Test include: {rel_source}:{test_include.start_line} paths={','.join(test_include.paths)} file={rel_test}"
             )
+            lines.append(step_marker("check", rel_source, test_include.start_line))
             lines.append(f"bun test {rel_test}")
             lines.append("")
         return "\n".join(lines).rstrip() + "\n"

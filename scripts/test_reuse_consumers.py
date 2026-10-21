@@ -513,5 +513,55 @@ class RebaseResolutionTests(unittest.TestCase):
               "---\ntitle: P\n---\n\nJust prose.\n")
         self.assertEqual(rc.build_rebase_index(root, self.VMAP), {})
 
+
+class RebaseShadowTests(unittest.TestCase):
+    """A consumer snippet that shadows one an upstream page reuses.
+
+    The enterprise install snippet is the real case: nothing in the consumer
+    repo reuses it, so the consumer's own index selected zero tests for a
+    change to it, when it is the install step of every scenario.
+    """
+
+    SNIPPET = "assets/agw-docs/snippets/agentgateway/get-started.md"
+    UPSTREAM_PAGE = "content/docs/kubernetes/latest/documentation/quickstart/install.md"
+    SHELL = "content/en/p/kubernetes/latest/documentation/quickstart/install.md"
+
+    def setUp(self):
+        # upstream: content page -> asset page -> the shadowed snippet
+        self.upstream_index = {
+            self.SNIPPET: {"assets/agw-docs/pages/agentgateway/quickstart/install.md"},
+            "assets/agw-docs/pages/agentgateway/quickstart/install.md": {self.UPSTREAM_PAGE},
+        }
+        self.rebase_index = {self.UPSTREAM_PAGE: {self.SHELL}}
+
+    def test_a_shadowed_snippet_reaches_the_shell_that_rebases_its_page(self):
+        self.assertEqual(
+            rc.rebase_shells([self.SNIPPET], {}, self.upstream_index, self.rebase_index),
+            {self.SHELL},
+        )
+
+    def test_the_consumer_closure_is_walked_first(self):
+        """A consumer snippet reused only by the shadowed one still reaches the shell."""
+        inner = "assets/agw-docs/snippets/agentgateway/license.md"
+        index = {inner: {self.SNIPPET}}
+        self.assertEqual(
+            rc.rebase_shells([inner], index, self.upstream_index, self.rebase_index),
+            {self.SHELL},
+        )
+
+    def test_a_snippet_upstream_does_not_reuse_reaches_nothing(self):
+        self.assertEqual(
+            rc.rebase_shells(["assets/agw-docs/snippets/other.md"], {},
+                             self.upstream_index, self.rebase_index),
+            set(),
+        )
+
+    def test_the_shell_brings_its_test_dependents(self):
+        """Fed back through `consumers`, the shell selects the scenarios that need it."""
+        scenario_page = "content/en/p/kubernetes/latest/documentation/traffic.md"
+        shells = rc.rebase_shells([self.SNIPPET], {}, self.upstream_index, self.rebase_index)
+        found = rc.consumers([self.SNIPPET, *shells], {}, test_index={self.SHELL: {scenario_page}})
+        self.assertEqual(found, sorted({self.SHELL, scenario_page}))
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

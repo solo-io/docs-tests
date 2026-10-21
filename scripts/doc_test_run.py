@@ -628,7 +628,7 @@ def write_job_summary(skipped: Dict[str, Dict[str, Any]]) -> None:
         fh.write("\n".join(lines) + "\n\n")
 
 
-def run_command(command: List[str], cwd: Path) -> Tuple[int, str]:
+def run_command(command: List[str], cwd: Path, env: Optional[Dict[str, str]] = None) -> Tuple[int, str]:
     logger.debug("$ %s", " ".join(command))
 
     proc = subprocess.Popen(
@@ -637,6 +637,7 @@ def run_command(command: List[str], cwd: Path) -> Tuple[int, str]:
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        env={**os.environ, **env} if env else None,
     )
 
     output_lines: List[str] = []
@@ -909,6 +910,45 @@ def make_cluster_name(prefix: str, test_slug: str) -> str:
     return f"{name[:MAX_CLUSTER_NAME - 9]}-{digest}"
 
 
+# How much of a failed step to keep in the result: enough to show what ran and
+# how it failed, without copying the whole script output a second time.
+FAILED_STEP_COMMAND_LINES = 15
+FAILED_STEP_OUTPUT_LINES = 30
+
+
+def failed_step_from(marker: str, script: str, output: str) -> Optional[Dict[str, Any]]:
+    """The step a failed script stopped on, from the last marker it wrote.
+
+    `kind` is `page` for a code block a reader sees and `check` for test
+    markup docs-tests added (see `step_marker` in doc_test_extract.py). That
+    is what lets a pull request tell "your change broke a step" apart from
+    "a test no longer matches the page". Returns None when the script wrote no
+    marker, so it failed before its first step.
+    """
+    marker = marker.strip()
+    kind, _, where = marker.partition(" ")
+    file, _, line = where.rpartition(":")
+    if kind not in ("page", "check") or not file or not line.isdigit():
+        return None
+    command: List[str] = []
+    lines = script.splitlines()
+    for i, text in enumerate(lines):
+        if text.startswith("printf ") and f"'{marker}'" in text:
+            for body in lines[i + 1:]:
+                if body.startswith(("# Source:", "# Hidden source", "# Test include:")):
+                    break
+                command.append(body)
+    while command and not command[-1].strip():
+        command.pop()
+    return {
+        "kind": kind,
+        "file": file,
+        "line": int(line),
+        "command": "\n".join(command[:FAILED_STEP_COMMAND_LINES]),
+        "output_tail": "\n".join(output.strip().splitlines()[-FAILED_STEP_OUTPUT_LINES:]),
+    }
+
+
 def run_test_case(repo_root: Path, test_case: TestCase, cluster_prefix: str, context_base_dir: Optional[Path] = None, pause: bool = False, keep_cluster: bool = False) -> Dict:
     test_slug = sanitize_name(test_case.name)
     cluster_name = make_cluster_name(cluster_prefix, test_slug)
@@ -923,6 +963,7 @@ def run_test_case(repo_root: Path, test_case: TestCase, cluster_prefix: str, con
     checks: List[str] = []
     status = "failed"
     error: Optional[str] = None
+    failed_step: Optional[Dict[str, Any]] = None
     collected_context_dir: Optional[Path] = None
 
     logger.info('\n')
@@ -972,11 +1013,18 @@ def run_test_case(repo_root: Path, test_case: TestCase, cluster_prefix: str, con
 
     try:
         time.sleep(2)
-        test_code, output = run_command(["bash", test_case.script_path.as_posix()], repo_root)
+        step_file = test_case.script_path.with_suffix(".step")
+        step_file.unlink(missing_ok=True)
+        test_code, output = run_command(
+            ["bash", test_case.script_path.as_posix()], repo_root,
+            env={"DOC_TEST_STEP_FILE": str(step_file)},
+        )
         checks = [line.strip() for line in output.splitlines() if line.strip().startswith("✓ ")]
         status = "passed" if test_code == 0 else "failed"
         if test_code != 0:
             error = output.strip()
+            marker = step_file.read_text(encoding="utf-8") if step_file.exists() else ""
+            failed_step = failed_step_from(marker, script_content, output)
             # Collect cluster diagnostics before the cluster is deleted
             if context_base_dir is not None:
                 collected_context_dir = context_base_dir / context_slug
@@ -1030,6 +1078,8 @@ def run_test_case(repo_root: Path, test_case: TestCase, cluster_prefix: str, con
     }
     if error:
         result["error"] = error
+    if failed_step:
+        result["failed_step"] = failed_step
     if collected_context_dir is not None:
         result["context_dir"] = str(collected_context_dir.relative_to(repo_root))
     return result
