@@ -11,19 +11,26 @@ fails on main. Reporting those as failures makes a good PR look broken.
 
 So there are only two outcomes a contributor sees besides a pass:
 
-  failure   The failing step is a code block (`page`, not a docs-tests
-            `check`) on a page this PR affects. The message names the step.
+  failure   The failing step is the page's own on a page this PR affects:
+            a code block a reader sees (`page`), or a hidden block that runs
+            the page's commands in a form CI can (`setup`). The message names
+            the step.
   skipped   Anything else. Titled "Test update required" and worded so the
             contributor knows they need to do nothing. The docs team sees it
             in the nightly results, so nothing else is notified.
 
-The page/check split comes from `failed_step` in the results, which the runner
-records from the step markers in the generated script.
+A failed `assert` (a check docs-tests added) is never the contributor's. The
+split comes from `failed_step` in the results, which the runner records from
+the step markers in the generated script.
+
+On the pull request these become three checks, one per group, so the result
+reads at a glance: "Doc tests: needs your fix", "Doc tests: test update
+required", and "Doc tests: passed". See `group_checks`.
 
 KNOWN LIMIT
 
 A change can break a page's behavior while every command on it still
-succeeds, so only a docs-tests check fails. That is reported as "Test update
+succeeds, so only a docs-tests assertion fails. That is reported as "Test update
 required", not as the contributor's failure. The nightly run on main catches
 it after merge. Blaming every failed check on the PR instead would put the far
 more common stale-test case on the contributor, which is what this replaces.
@@ -41,6 +48,10 @@ try:
     import yaml
 except ImportError:  # pragma: no cover
     yaml = None
+
+# Step kinds whose failure is the page's. A `check` (results written before
+# setup and assert were told apart) is treated as an assert.
+PAGE_KINDS = ("page", "setup")
 
 FAILURE = "failure"
 SKIPPED = "skipped"
@@ -83,7 +94,7 @@ def verdict(key: str, result: dict | None, affected: set[str] | None, known: set
 
     step = result.get("failed_step") or {}
     on_affected_page = affected is None or step.get("file") in affected
-    if step.get("kind") == "page" and on_affected_page:
+    if step.get("kind") in PAGE_KINDS and on_affected_page:
         page = step["file"]
         # No line number: it counts lines in the page as rendered, after reuse
         # and rebase are expanded, which matches no file the contributor
@@ -118,6 +129,62 @@ def classify(expected: list[dict], results: dict, affected: set[str] | None, kno
     return out
 
 
+# Fixed names, so a rerun on the same commit replaces each check rather than
+# leaving an old group behind under a name with a different count in it.
+GROUP_NEEDS_FIX = "Doc tests: needs your fix"
+GROUP_UPDATE = "Doc tests: test update required"
+GROUP_PASSED = "Doc tests: passed"
+
+# GitHub's limit on a check's summary.
+SUMMARY_LIMIT = 65535
+
+
+def _plural(n: int) -> str:
+    return f"{n} scenario" + ("" if n == 1 else "s")
+
+
+def _cap(text: str) -> str:
+    if len(text) <= SUMMARY_LIMIT:
+        return text
+    note = "\n\n(Cut short. The workflow run's summary has the rest.)"
+    return text[: SUMMARY_LIMIT - len(note)] + note
+
+
+def group_checks(verdicts: list[dict]) -> list[dict]:
+    """The three checks posted on the PR, always all three.
+
+    An empty group is posted as passed, so the list never keeps a stale red
+    or skipped entry from an earlier run on the same commit.
+    """
+    by = {c: sorted((v for v in verdicts if v["conclusion"] == c), key=lambda v: v["name"])
+          for c in (FAILURE, SKIPPED, SUCCESS)}
+    broken, update, passed = by[FAILURE], by[SKIPPED], by[SUCCESS]
+
+    fix_summary = "\n\n".join(f"### `{v['name']}`\n\n{v['summary']}" for v in broken)
+    update_list = "\n".join(f"- `{v['name']}`" for v in update)
+    passed_list = "\n".join(f"- `{v['name']}`" for v in passed)
+    return [
+        {
+            "name": GROUP_NEEDS_FIX,
+            "conclusion": FAILURE if broken else SUCCESS,
+            "title": f"{_plural(len(broken))} broken by this change" if broken else "Nothing to fix",
+            "summary": _cap(fix_summary) if broken else "No step in a guide this PR changes broke.",
+        },
+        {
+            "name": GROUP_UPDATE,
+            "conclusion": SKIPPED if update else SUCCESS,
+            "title": f"{_plural(len(update))}: no action needed" if update else "None",
+            "summary": _cap(f"{UPDATE_REQUIRED_SUMMARY}\n\n{update_list}") if update else "No doc test needs an update.",
+        },
+        {
+            "name": GROUP_PASSED,
+            "conclusion": SUCCESS,
+            "title": f"{_plural(len(passed))} passed",
+            "summary": _cap(passed_list) if passed else "No scenario passed.",
+        },
+    ]
+
+
 def summary_markdown(verdicts: list[dict]) -> str:
     icon = {SUCCESS: "✅", FAILURE: "❌", SKIPPED: "⏭️"}
     counts = {c: sum(1 for v in verdicts if v["conclusion"] == c) for c in (SUCCESS, FAILURE, SKIPPED)}
@@ -143,6 +210,7 @@ def main() -> int:
     parser.add_argument("--affected-pages", help="content pages the PR reaches, one per line; omit for all")
     parser.add_argument("--known-failing", help="result keys (file::test) failing on main, one per line")
     parser.add_argument("--output", required=True, help="where to write the verdicts as JSON")
+    parser.add_argument("--groups", help="where to write the three group checks as JSON")
     parser.add_argument("--summary", help="append a Markdown table here (e.g. $GITHUB_STEP_SUMMARY)")
     args = parser.parse_args()
     if yaml is None:
@@ -156,6 +224,8 @@ def main() -> int:
         _read_lines(args.affected_pages), _read_lines(args.known_failing) or set(),
     )
     pathlib.Path(args.output).write_text(json.dumps(verdicts, indent=2), encoding="utf-8")
+    if args.groups:
+        pathlib.Path(args.groups).write_text(json.dumps(group_checks(verdicts), indent=2), encoding="utf-8")
     if args.summary:
         with open(args.summary, "a", encoding="utf-8") as fh:
             fh.write(summary_markdown(verdicts))

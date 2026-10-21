@@ -919,16 +919,15 @@ FAILED_STEP_OUTPUT_LINES = 30
 def failed_step_from(marker: str, script: str, output: str) -> Optional[Dict[str, Any]]:
     """The step a failed script stopped on, from the last marker it wrote.
 
-    `kind` is `page` for a code block a reader sees and `check` for test
-    markup docs-tests added (see `step_marker` in doc_test_extract.py). That
-    is what lets a pull request tell "your change broke a step" apart from
-    "a test no longer matches the page". Returns None when the script wrote no
+    `kind` is `page`, `setup`, or `assert` (see `step_marker` in
+    doc_test_extract.py). That is what lets a pull request tell "your change
+    broke a step" apart from "a test no longer matches the page". Returns None when the script wrote no
     marker, so it failed before its first step.
     """
     marker = marker.strip()
     kind, _, where = marker.partition(" ")
     file, _, line = where.rpartition(":")
-    if kind not in ("page", "check") or not file or not line.isdigit():
+    if kind not in ("page", "setup", "assert") or not file or not line.isdigit():
         return None
     command: List[str] = []
     lines = script.splitlines()
