@@ -370,9 +370,12 @@ class RealRepositoryTests(unittest.TestCase):
             self.index,
             test_index=self.test_index,
         )
-        self.assertIn(
-            "content/docs/kubernetes/main/documentation/quickstart/llm.md",
-            pages,
+        # main and latest moved to quickstart/llm-models.md, which no longer
+        # reuses the openai snippet, so only the older version trees still
+        # carry the two-hop chain. Match any of them rather than pinning one
+        # version that rotates out.
+        self.assertTrue(
+            any(p.endswith("/documentation/quickstart/llm.md") for p in pages),
             "the two-hop reuse through quickstart/llm.md is the case this fixes",
         )
         self.assertIn(
