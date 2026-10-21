@@ -1423,6 +1423,14 @@ scenarios:
     - install-standard
     source: agw-docs/pages/agentgateway/quickstart/llm.md
     path: openai-setup
+  quickstart-llm:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    source: agw-docs/pages/agentgateway/quickstart/llm-models.md
+    path: quickstart-llm
   # --- setup (documentation/setup/) ---
   customize:
     type:

@@ -370,8 +370,10 @@ class RealRepositoryTests(unittest.TestCase):
             self.index,
             test_index=self.test_index,
         )
+        # main and latest moved to their own quickstart asset (llm-models.md),
+        # so the two-hop chain is checked on a version that still has it.
         self.assertIn(
-            "content/docs/kubernetes/main/documentation/quickstart/llm.md",
+            "content/docs/kubernetes/1.5.x/documentation/quickstart/llm.md",
             pages,
             "the two-hop reuse through quickstart/llm.md is the case this fixes",
         )

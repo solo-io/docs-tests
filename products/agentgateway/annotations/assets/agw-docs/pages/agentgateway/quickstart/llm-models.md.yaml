@@ -1,0 +1,152 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/quickstart/llm-models.md
+blocks:
+- 4e548af92d68424c sh
+- f64ee25a12a74cd9 yaml
+- 8e50aa3716f855ab yaml
+- 53cce199336b49ad yaml
+- f2c2d5cd64270e15 sh
+- d13ade6c62874937 sh
+- 452e2e34d9956db4 sh
+- ad08f867fb6712ef sh
+- 1891d570cade6075 json
+- 60b897be22273803 sh
+- 3651bc4d42e56bec
+- 1198282e13b692c2 sh
+tags:
+- paths: quickstart-llm
+  block: 1
+  fingerprint: f64ee25a12a74cd9
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f 8af957d1 1426decf 2f7c298d 73825423 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="quickstart-llm"
+    only: true
+    lead: ' '
+- paths: quickstart-llm
+  block: 2
+  fingerprint: 8e50aa3716f855ab
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 8af957d1 36184fa5 ddf06799 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d d94df5c7 b5a028c9 56bf9360 e9a46ca1 eef5a849 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="quickstart-llm"
+    only: true
+    lead: ' '
+- paths: quickstart-llm
+  block: 3
+  fingerprint: 53cce199336b49ad
+  lang: yaml
+  lines: 16c71da1 263e4531 eef5a849 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 f0ce727c 75515aa4 0323852a c8f3f59a 146e11c6 9ebc4789 4df4f75f f372f1cb 5565245d 5dbf4c01 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="quickstart-llm"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 4e548af92d68424c
+    lang: sh
+    lines: 4e548af9
+    preview: export OPENAI_API_KEY='<your-api-key>'
+  content: |2-
+       {{< doc-test paths="quickstart-llm" >}}
+       # The test routes to the httpbun mock LLM, which ignores credentials.
+       export OPENAI_API_KEY="${OPENAI_API_KEY:-sk-placeholder}"
+       {{< /doc-test >}}
+- after:
+    section: 'Step 3: Expose the OpenAI models'
+    line: 4391d3a4f258eb91
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 efca5541
+    block_before:
+      block: 3
+      fingerprint: 53cce199336b49ad
+      lang: yaml
+      lines: 16c71da1 263e4531 eef5a849 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 f0ce727c 75515aa4 0323852a c8f3f59a 146e11c6 9ebc4789 4df4f75f f372f1cb 5565245d 5dbf4c01 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="quickstart-llm" >}}
+    # Route the model to the httpbun mock LLM instead of OpenAI, so the test needs no API
+    # key and bills nothing. httpbun echoes the model that it receives, which lets the test
+    # assert that the gateway stripped the `openai/` prefix.
+    {{< reuse "agw-docs/snippets/deploy-mock-llm.md" >}}
+    kubectl patch agentgatewaymodel openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge \
+      -p '{"spec":{"baseURL":"http://httpbun.default.svc.cluster.local:3090/llm"}}'
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 1891d570cade6075
+    lang: json
+    lines: 021fb596 03c40399 c024a74a 3360bbc7 021fb596 ced13177 3b4971d4 7d33edf2 05083fdf e52a1813 c464d6b5 d10b36aa 39d4b54e 6cca2998 f7ecb1d5 9a2a5e44 d7bef4b8 d10b36aa d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="quickstart-llm" >}}
+       # An AgentgatewayModel does not report status, so poll the data plane until the
+       # model is served instead of waiting on a resource condition.
+       for i in $(seq 1 60); do
+         curl -s --max-time 5 -o /dev/null -X POST "http://${INGRESS_GW_ADDRESS}/v1/chat/completions" \
+           -H "Content-Type: application/json" \
+           -d '{"model":"openai/gpt-5-mini","messages":[],"httpbun":{"content":"warmup"}}' && break
+         sleep 2
+       done
+
+       YAMLTest -f - <<'EOF'
+       - name: openai/* serves the request and strips the prefix before the provider sees it
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}"
+           path: /v1/chat/completions
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {
+               "model": "openai/gpt-5-mini",
+               "messages": [{"role": "user", "content": "Say hello in one sentence."}],
+               "httpbun": {"content": "Hello from the mock LLM"}
+             }
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: equals
+               value: "gpt-5-mini"
+             - path: "$.usage.total_tokens"
+               comparator: greaterThan
+               value: 0
+       - name: a model without the openai/ prefix is not exposed
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}"
+           path: /v1/chat/completions
+           method: POST
+           headers:
+             Content-Type: application/json
+           body: |
+             {"model": "gpt-5-mini", "messages": []}
+         source:
+           type: local
+         expect:
+           statusCode: 404
+           bodyJsonPath:
+             - path: "$.error.code"
+               comparator: equals
+               value: "model_not_found"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 3651bc4d42e56bec
+    lang: ''
+    lines: c8893463 abb375db 3ada7776 020751dc ab5df625
+    preview: openai/gpt-4.1
+  content: |2-
+       {{< doc-test paths="quickstart-llm" >}}
+       models=$(curl -s "http://${INGRESS_GW_ADDRESS}/v1/models")
+       echo "$models" | jq -r '.data[].id' | grep -qx 'openai/gpt-5-mini' \
+         || { echo "openai/* did not expand to openai/gpt-5-mini in /v1/models: $models"; exit 1; }
+       {{< /doc-test >}}
