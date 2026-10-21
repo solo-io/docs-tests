@@ -1,24 +1,30 @@
 format: 1
 source: assets/agw-docs/pages/agentgateway/llm/virtual-keys.md
 blocks:
-- e60f1a722347496c mermaid
-- f5c271383d295472 sh
-- e5c349c6830f9a34 yaml
-- d266c8000326bdbc yaml
+- a7403439769ec25c sh
+- 6cbe82d75df4d89b yaml
+- 56c1b315ac24bc8f yaml
 - f792dc6e19159562 yaml
 - 39fe9eb1ed7afe17 yaml
 - 8f97d174aa278e94 sh
 - 6e0de95499f509d0 yaml
 - 109e08cf10a0ffd0 yaml
-- 37c9c47dce5753b4 yaml
-- 37a77c942b97ccc6 sh
-- c768960f815ba025 sh
+- d23b4be5a0dc2579 yaml
+- 2a187b23ecfed78e sh
+- ca81abcf32f41523 sh
 - f579ae2f724fed87 json
-- a9fe98248e489364 sh
+- 9b8f0b691ccb876c sh
+- dcaadad1cfce4377
+- ab4e6f2d58df1604 sh
+- c67d3dfe42b96832 sh
+- 209765c28e8df5cd
+- 794f5c91442caad6 sh
+- 362216423b94ca51 sh
+- 52c933074984ccd8 sh
 - 1987e956ddd09337
-- c94ccac0514b8b07 sh
-- b3c4352b9be1c243 sh
-- b4da8b2ec5d0cf92 yaml
+- f2e37c2a52c958a6 sh
+- 89235bc51ffe287e sh
+- 5d3b5c01f7b84366 yaml
 - 807a682c7e42576c sh
 - 1b06c8d99878c182 sh
 - ab36cc1d57bdc721 json
@@ -29,35 +35,28 @@ blocks:
 - c2a4ef3b16ee211c promql
 - ebcd2ec6232def1f bash
 - c855adb3878b2f97 json
-- 5cd0f591bb4cc50f yaml
-- 08a229f034341220 yaml
-- c8d62c8f94635d4b yaml
-- 65bcc1923b5f7362 yaml
-- 8316696c0b666f98 yaml
-- 8d5b652422382ae6 yaml
-- 2091a30762284718 yaml
-- 7db68bf9d0a4558e sh
+- e7a2d745536c54cb sh
 tags:
 - paths: virtual-keys
-  block: 2
-  fingerprint: e5c349c6830f9a34
+  block: 1
+  fingerprint: 6cbe82d75df4d89b
   lang: yaml
-  lines: 16c71da1 f1540154 033792b5 8c8c4228 61f1a045 8af957d1 fa1e8330 4e07a5a3 ff72caa3 eaec4233 021fb596 f66ca2cc 88f913d6 289855d5 d10b36aa d10b36aa 7b640a10 021fb596 3255823e 88f913d6 0997c1df d10b36aa d10b36aa abc56510
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 61f1a045 8af957d1 fa1e8330 4e07a5a3 ff72caa3 eaec4233 021fb596 6693dbf3 88f913d6 289855d5 d10b36aa d10b36aa 7b640a10 021fb596 052c92df 88f913d6 0997c1df d10b36aa d10b36aa abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="virtual-keys"'
+    at: 4
+- paths: virtual-keys
+  block: 2
+  fingerprint: 56c1b315ac24bc8f
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 61f1a045 8af957d1 1426decf 2f7c298d eaec4233 021fb596 5e2e6d4d 88f913d6 289855d5 d10b36aa d10b36aa 7b640a10 021fb596 1923b37b 88f913d6 0997c1df d10b36aa d10b36aa abc56510
   preview: kubectl apply -f- <<EOF
   form:
     bare: ',paths="virtual-keys"'
     at: 4
 - paths: virtual-keys
   block: 3
-  fingerprint: d266c8000326bdbc
-  lang: yaml
-  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 61f1a045 8af957d1 1426decf 2f7c298d eaec4233 021fb596 cf3c979f 88f913d6 289855d5 d10b36aa d10b36aa 7b640a10 021fb596 339bb85b 88f913d6 0997c1df d10b36aa d10b36aa abc56510
-  preview: kubectl apply -f- <<EOF
-  form:
-    bare: ',paths="virtual-keys"'
-    at: 4
-- paths: virtual-keys
-  block: 4
   fingerprint: f792dc6e19159562
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eae31075 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 1fba0f57 839a5cac 4e07a5a3 abc56510
@@ -66,7 +65,7 @@ tags:
     bare: ',paths="virtual-keys"'
     at: 4
 - paths: virtual-keys
-  block: 5
+  block: 4
   fingerprint: 39fe9eb1ed7afe17
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eae31075 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 9ebc4789 61f1a045 abc56510
@@ -75,7 +74,7 @@ tags:
     bare: ',paths="virtual-keys"'
     at: 4
 - paths: virtual-keys
-  block: 8
+  block: 7
   fingerprint: 109e08cf10a0ffd0
   lang: yaml
   lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 c9064c18 341b9ea6 f210d63b 73cfcae7 6ef042c9 c8f3f59a 146e11c6 9ebc4789 4df4f75f ad3afdb1 d67b54bf 958c810b 98b45d4c ae8095cb 5f6d076e abc56510
@@ -84,7 +83,6 @@ tags:
     bare: ',paths="virtual-keys"'
     at: 4
 - paths: virtual-keys
-  block: 9
   fingerprint: 37c9c47dce5753b4
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
@@ -92,6 +90,7 @@ tags:
   form:
     bare: ',paths="virtual-keys"'
     at: 4
+  status: needs-update
 hidden:
 - after:
     section: Test the virtual keys
@@ -99,7 +98,6 @@ hidden:
     occurrence: 0
     words: b9776d7d 8d0288f4 b7595e2a a12dd3a7 14c2529e 2c70e12b b9d90628 fc6672ad 6201111b 29aa5166 3c469e9d 0af96a8e d08d5db8 0af96a8e d08d5db8 b9014eaa b9776d7d c549779d 55ea09e5 b3eacd33 75857a45 b9776d7d 6da06335 3e64cc41 c1bb937e
     block_before:
-      block: 9
       fingerprint: 37c9c47dce5753b4
       lang: yaml
       lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
@@ -175,13 +173,13 @@ hidden:
         statusCode: 401
     EOF
     {{< /doc-test >}}
+  status: needs-update
 - after:
     section: Test the virtual keys
     line: 89541a357a12558e
     occurrence: 0
     words: b9776d7d 8d0288f4 b7595e2a a12dd3a7 14c2529e 2c70e12b b9d90628 fc6672ad 6201111b 29aa5166 3c469e9d 0af96a8e d08d5db8 0af96a8e d08d5db8 b9014eaa b9776d7d c549779d 55ea09e5 b3eacd33 75857a45 b9776d7d 6da06335 3e64cc41 c1bb937e
     block_before:
-      block: 9
       fingerprint: 37c9c47dce5753b4
       lang: yaml
       lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
@@ -259,13 +257,13 @@ hidden:
         statusCode: 401
     EOF
     {{< /doc-test >}}
+  status: needs-update
 - after:
     section: Test the virtual keys
     line: 89541a357a12558e
     occurrence: 0
     words: b9776d7d 8d0288f4 b7595e2a a12dd3a7 14c2529e 2c70e12b b9d90628 fc6672ad 6201111b 29aa5166 3c469e9d 0af96a8e d08d5db8 0af96a8e d08d5db8 b9014eaa b9776d7d c549779d 55ea09e5 b3eacd33 75857a45 b9776d7d 6da06335 3e64cc41 c1bb937e
     block_before:
-      block: 9
       fingerprint: 37c9c47dce5753b4
       lang: yaml
       lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
@@ -319,3 +317,4 @@ hidden:
         statusCode: 200
     EOF
     {{< /doc-test >}}
+  status: needs-update
