@@ -31,11 +31,19 @@ class VerdictTests(unittest.TestCase):
         self.assertNotIn("line 70", v["summary"])
         self.assertIn("kubectl rollout restart", v["summary"])
 
-    def test_a_failed_docs_tests_check_is_a_test_update(self):
+    def test_a_failed_docs_tests_assertion_is_a_test_update(self):
         """The stale-test case: the page ran, only the added check disagreed."""
-        v = c.verdict(KEY, failed("check", PAGE), {PAGE}, set())
+        v = c.verdict(KEY, failed("assert", PAGE), {PAGE}, set())
         self.assertEqual(v["conclusion"], c.SKIPPED)
         self.assertEqual(v["title"], c.UPDATE_REQUIRED_TITLE)
+
+    def test_a_failed_setup_step_is_the_pages_failure(self):
+        """Locality: a hidden block running the page's own commands broke."""
+        v = c.verdict(KEY, failed("setup", PAGE), {PAGE}, set())
+        self.assertEqual(v["conclusion"], c.FAILURE)
+
+    def test_a_legacy_check_kind_counts_as_an_assertion(self):
+        self.assertEqual(c.verdict(KEY, failed("check", PAGE), {PAGE}, set())["conclusion"], c.SKIPPED)
 
     def test_a_page_step_on_a_page_the_pr_did_not_reach_is_a_test_update(self):
         v = c.verdict(KEY, failed("page", OTHER), {PAGE}, set())
@@ -72,8 +80,39 @@ class ClassifyTests(unittest.TestCase):
         self.assertTrue(fenced.startswith("````\n"))
 
     def test_the_summary_says_no_action_is_needed_for_test_updates(self):
-        verdicts = c.classify([{"file": PAGE, "test": "locality"}], {KEY: failed("check", PAGE)}, {PAGE}, set())
+        verdicts = c.classify([{"file": PAGE, "test": "locality"}], {KEY: failed("assert", PAGE)}, {PAGE}, set())
         self.assertIn("do not need to do anything", c.summary_markdown(verdicts))
+
+
+
+class GroupCheckTests(unittest.TestCase):
+    def verdicts(self):
+        return c.classify(
+            [{"file": PAGE, "test": "locality"}, {"file": PAGE, "test": "llm"}, {"file": OTHER, "test": "ok"}],
+            {KEY: failed("setup", PAGE), f"{PAGE}::llm": failed("assert", PAGE), f"{OTHER}::ok": {"status": "passed"}},
+            {PAGE}, set(),
+        )
+
+    def test_three_groups_always_posted_under_fixed_names(self):
+        names = [g["name"] for g in c.group_checks(self.verdicts())]
+        self.assertEqual(names, [c.GROUP_NEEDS_FIX, c.GROUP_UPDATE, c.GROUP_PASSED])
+        self.assertEqual([g["name"] for g in c.group_checks([])], names)
+
+    def test_each_group_gets_its_conclusion(self):
+        groups = {g["name"]: g for g in c.group_checks(self.verdicts())}
+        self.assertEqual(groups[c.GROUP_NEEDS_FIX]["conclusion"], c.FAILURE)
+        self.assertIn("locality", groups[c.GROUP_NEEDS_FIX]["summary"])
+        self.assertEqual(groups[c.GROUP_UPDATE]["conclusion"], c.SKIPPED)
+        self.assertIn("llm", groups[c.GROUP_UPDATE]["summary"])
+        self.assertIn("ok", groups[c.GROUP_PASSED]["summary"])
+
+    def test_an_empty_group_passes(self):
+        groups = {g["name"]: g for g in c.group_checks([])}
+        self.assertEqual(groups[c.GROUP_NEEDS_FIX]["conclusion"], c.SUCCESS)
+        self.assertEqual(groups[c.GROUP_UPDATE]["conclusion"], c.SUCCESS)
+
+    def test_a_long_summary_is_cut_to_githubs_limit(self):
+        self.assertLessEqual(len(c._cap("x" * 70000)), c.SUMMARY_LIMIT)
 
 
 if __name__ == "__main__":
