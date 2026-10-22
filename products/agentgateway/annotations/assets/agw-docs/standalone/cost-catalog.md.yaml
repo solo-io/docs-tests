@@ -9,6 +9,8 @@ blocks:
 - f6bec5f6eff46ace sh
 - abdb7f103485f212 yaml
 - 659c6b9fe8973b58 console
+- 9f106b0c5ac4c522 sh
+- a6a61494486a56e5 text
 hidden:
 - after:
     section: Before you begin
@@ -27,11 +29,11 @@ hidden:
     occurrence: 6
     words: 5ca4f385
     block_before:
-      block: 7
-      fingerprint: 659c6b9fe8973b58
-      lang: console
-      lines: ce1234ed 483fa46d
-      preview: '... protocol=llm gen_ai.provider.name=openai gen_ai.request.model=gpt-4o-mini'
+      block: 9
+      fingerprint: a6a61494486a56e5
+      lang: text
+      lines: ae5539e9 16318153
+      preview: PROVIDER  MODEL        REQUESTS  ERRORS  TOKENS  COST       AVG TTFT  TOK/S  CAC
   content: |-
     {{< doc-test paths="costs" >}}
     # Verify that agentgateway loads a catalog from a file source.

@@ -5,6 +5,15 @@ blocks:
 - f6931a7b2e59dbc5 sh
 - bda225860092a297
 - 880512fe05a48c10 sh
+- 83dbf0aee6f8627f sh
+- 27537badb47663e4 text
+- 12bf59f53cb837cb sh
+- 02d08c7b80acc17c text
+- 3cba41e17d4cdad8 sh
+- 628d7e2e9a12bb4f text
+- fcd14b8ecf6e2271 sh
+- 1159fe2df0363264 text
+- 99299ab911b05c08 sh
 hidden:
 - after:
     section: Persistence and scaling
@@ -12,11 +21,11 @@ hidden:
     occurrence: 0
     words: b9776d7d 66cd9688 3566cf23 75857a45 b9776d7d 3549b002 b1d6b91b 25b9d6e4 56e57ada 66312e5e 0cd86668 37a8eec1 947f1875 5e8c03a9 6201111b a478b456 aa9e9b5c 1f58b914 836ff184 fa42bed0 a0af9f86 caf9f906 58ee0007 3374a1ad 3549b002 10c22bcf a18b869b b7d64a92 41ffd8b7 031af55b b38d9d16 473287f8 e904c9cc 631aada4 6201111b df0ad6e4 52367a66
     block_before:
-      block: 3
-      fingerprint: 880512fe05a48c10
+      block: 12
+      fingerprint: 99299ab911b05c08
       lang: sh
-      lines: dc872770 67c5a3ac 8204f87e
-      preview: curl -s http://localhost:4000/v1/chat/completions \
+      lines: 99299ab9
+      preview: agctl standalone analytics --by provider,model --since 24h -o json > analytics.j
   content: |-
     {{< doc-test paths="cost-dashboard" >}}
     {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
@@ -60,11 +69,11 @@ hidden:
     occurrence: 0
     words: b9776d7d 66cd9688 3566cf23 75857a45 b9776d7d 3549b002 b1d6b91b 25b9d6e4 56e57ada 66312e5e 0cd86668 37a8eec1 947f1875 5e8c03a9 6201111b a478b456 aa9e9b5c 1f58b914 836ff184 fa42bed0 a0af9f86 caf9f906 58ee0007 3374a1ad 3549b002 10c22bcf a18b869b b7d64a92 41ffd8b7 031af55b b38d9d16 473287f8 e904c9cc 631aada4 6201111b df0ad6e4 52367a66
     block_before:
-      block: 3
-      fingerprint: 880512fe05a48c10
+      block: 12
+      fingerprint: 99299ab911b05c08
       lang: sh
-      lines: dc872770 67c5a3ac 8204f87e
-      preview: curl -s http://localhost:4000/v1/chat/completions \
+      lines: 99299ab9
+      preview: agctl standalone analytics --by provider,model --since 24h -o json > analytics.j
   content: |-
     {{< doc-test paths="cost-dashboard" >}}
     YAMLTest -f - <<'EOF'
