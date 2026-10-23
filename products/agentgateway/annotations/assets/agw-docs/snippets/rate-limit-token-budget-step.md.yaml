@@ -4,34 +4,26 @@ blocks:
 - 97743e415b414695 yaml
 tags:
 - paths: virtual-keys-with-ratelimit
-  fingerprint: 8ca0eeee55d8f347
+  block: 0
+  fingerprint: 97743e415b414695
   lang: yaml
-  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eae31075 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 1fba0f57 839a5cac 4e07a5a3 a50da420 c14c1813 253adb5a 70c97555 0d6480f0 02bf0210 e6444300 dfb1a8e0 b7b5f484 8902dc3d 87d549a0 58d46717 1891bc00 abc56510
-  preview: kubectl apply -f- <<EOF
+  lines: 07eaf8da 2d23b5fa 36184fa5 e4f6a86d a50da420 c14c1813 253adb5a 70c97555 0d6480f0 02bf0210 e6444300 dfb1a8e0 b7b5f484 8902dc3d 87d549a0 58d46717 1891bc00 abc56510
+  preview: kubectl patch {{< reuse "agw-docs/snippets/policy.md" >}} api-key-auth -n {{< re
   form:
     bare: ',paths="virtual-keys-with-ratelimit"'
     at: 4
-  status: needs-update
-- paths: virtual-keys-with-ratelimit
-  fingerprint: fea343397a72dd5d
-  lang: yaml
-  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eae31075 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 9ebc4789 61f1a045 a50da420 c14c1813 253adb5a 70c97555 0d6480f0 02bf0210 e6444300 dfb1a8e0 b7b5f484 8902dc3d 87d549a0 58d46717 1891bc00 abc56510
-  preview: kubectl apply -f- <<EOF
-  form:
-    bare: ',paths="virtual-keys-with-ratelimit"'
-    at: 4
-  status: needs-update
 hidden:
 - after:
     section: (top of page)
-    line: 5970a397bfbad100
-    occurrence: 2
-    words: 5ca4f385
+    line: 87699a55cba7b4d0
+    occurrence: 0
+    words: b9776d7d 283128ac a4895eb4 8da91408 b9776d7d c549779d 55ea09e5 6201111b 308f4070 b9776d7d b9d90628 9372c470 15a95672 6201111b 177a7ea3 cde0fb0d 8e7fc023 b9776d7d 823412d1 ea53396c 9150c74c
     block_before:
-      fingerprint: fea343397a72dd5d
+      block: 0
+      fingerprint: 97743e415b414695
       lang: yaml
-      lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eae31075 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 9ebc4789 61f1a045 a50da420 c14c1813 253adb5a 70c97555 0d6480f0 02bf0210 e6444300 dfb1a8e0 b7b5f484 8902dc3d 87d549a0 58d46717 1891bc00 abc56510
-      preview: kubectl apply -f- <<EOF
+      lines: 07eaf8da 2d23b5fa 36184fa5 e4f6a86d a50da420 c14c1813 253adb5a 70c97555 0d6480f0 02bf0210 e6444300 dfb1a8e0 b7b5f484 8902dc3d 87d549a0 58d46717 1891bc00 abc56510
+      preview: kubectl patch {{< reuse "agw-docs/snippets/policy.md" >}} api-key-auth -n {{< re
   content: |-
     {{< doc-test paths="virtual-keys-with-ratelimit" >}}
     YAMLTest -f - <<'EOF'
@@ -51,4 +43,3 @@ hidden:
           intervalSeconds: 2
     EOF
     {{< /doc-test >}}
-  status: needs-update

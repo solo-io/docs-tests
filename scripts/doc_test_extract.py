@@ -773,9 +773,24 @@ class Extractor:
 
         Walked pages, reused snippets, includes, and rebased upstream pages with
         whatever they reuse. Used to skip a scenario whose markup did not attach.
+
+        Pages reached only by following a link are left out: `select_blocks`
+        never takes blocks from them, so their markup cannot make this scenario
+        test less. Counting them skipped a standalone scenario because a
+        Kubernetes page it linked to had markup that needs update.
         """
-        files = set(self.visited) | set(self.rebased_files)
-        files |= {Path(dst) for _, dst, kind in self.recursion_edges if kind != "link"}
+        files = {self.main_file.resolve()} | {p.resolve() for p in self.path_selectors_by_file}
+        edges: Dict[Path, Set[Path]] = {}
+        for src, dst, kind in self.recursion_edges:
+            if kind != "link":
+                edges.setdefault(Path(src).resolve(), set()).add(Path(dst).resolve())
+        queue = list(files)
+        while queue:
+            for dst in edges.get(queue.pop(), ()):
+                if dst not in files:
+                    files.add(dst)
+                    queue.append(dst)
+        files |= set(self.rebased_files)
         for extractor in self._upstream_extractors.values():
             files |= extractor.read_files()
         return {p.resolve() for p in files}
