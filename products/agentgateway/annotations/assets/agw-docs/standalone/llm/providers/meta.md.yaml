@@ -2,43 +2,18 @@ format: 1
 source: assets/agw-docs/standalone/llm/providers/meta.md
 blocks:
 - d20bc7d2e993e1e1 sh
-- 97ffdbcfb0603744 sh
-- 05991aa55ecbe989 sh
-- b6934f81b99b2389 text
-- f6931a7b2e59dbc5 sh
 - 97c5a7c67e6bbf83 sh
-tags:
-- paths: meta-validate
-  block: 1
-  fingerprint: 97ffdbcfb0603744
-  lang: sh
-  lines: 82def27f a7f80a73 3af99526 e01ccf75 e4f1a385 80d96f6b 009395dd 3df054a1 19a7725d f746bdbf f4fddb6d 2245be71 abc56510
-  preview: cat > config.yaml <<'EOF'
-  form:
-    attr: paths="meta-validate"
-    only: true
-    lead: ' '
-- paths: meta-validate
-  block: 2
-  fingerprint: 05991aa55ecbe989
-  lang: sh
-  lines: 05991aa5
-  preview: agentgateway -f config.yaml --validate-only
-  form:
-    attr: paths="meta-validate"
-    only: true
-    lead: ' '
 hidden:
 - after:
-    block: 0
-    fingerprint: d20bc7d2e993e1e1
-    lang: sh
-    lines: d20bc7d2
-    preview: export META_API_KEY='<your-api-key>'
-  content: |2-
-       {{< doc-test paths="meta-validate" >}}
-       # Validate the configuration without calling the Meta API. A placeholder key
-       # is sufficient because --validate-only resolves environment variables.
-       {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
-       export META_API_KEY="test"
-       {{< /doc-test >}}
+    section: Configuration
+    line: 29ff3b221980b00b
+    occurrence: 0
+    words: a3b142af b9776d7d ea3bd73e d410850f 663ea1bf 8a84e406 ec72420d 663ea1bf b9776d7d ea3bd73e 9372c470 14c2529e b9776d7d d410850f 3dc548d7 b9776d7d 5c4c1964 28e5ebab 6201111b 37b322c5 1f58b914 c2792b43
+    block_before: null
+  content: |-
+    {{< doc-test paths="meta-validate" >}}
+    # Validate the configuration without calling the Meta API. A placeholder key
+    # is sufficient because --validate-only resolves environment variables.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export META_API_KEY="test"
+    {{< /doc-test >}}
