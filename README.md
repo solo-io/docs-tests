@@ -68,6 +68,7 @@ block before it was close-matched.
 | `make annotate PAGE=<page>` then `make save PAGE=<page>` | Add or change the tests on one page. `annotate` writes the page with its markup to `out/annotate/`; edit the markup there; `save` writes only the markup back, and refuses if the copy changes the page itself. |
 | `annotations.py attach` | Attach annotations to a checkout, in place or into `--out`. Removes any inline markup first. |
 | `annotations.py refresh` | After content changes: re-attach, record the new fingerprints, and follow moved pages (git rename detection, then a search by fingerprint). Never drops markup; refuses to write if any would disappear. Inline markup still on a page is ignored: annotations are the source of truth, so refresh never copies a page's markup into them or creates annotation files for pages that gain it. It reports inline front matter `test:` edits, which need a matching `tests.yaml` change. |
+| `annotations.py pending` | List the markup still marked needs update, with `--json` for a machine-readable copy. See [Fixing markup that needs update](#fixing-markup-that-needs-update). |
 | `annotations.py export` / `strip` | Migration only: copy inline markup into annotation files, then remove it from the pages. |
 | `annotations.py roundtrip` | Strip and re-attach every page in memory; every page must come back byte-identical. Runs daily in CI against agentgateway/website. |
 | `annotation_replay.py` | Replays a repo's git history, whose inline markup is the answer key, to measure close matching. Re-run it when matching changes; `close WRONG` must not rise. |
@@ -629,8 +630,10 @@ that an annotation no longer attaches.
 - Bigger edits leave the markup unattached. Any scenario that uses it is skipped with a
   warning, not run with a step missing. The PR's job summary lists it, the daily
   refresh marks it as needs update and counts it in its Slack post, and the page loses
-  its Verified badge (`test_status: partial`) until the annotation is updated. Nothing
-  updates it automatically.
+  its Verified badge (`test_status: partial`) until the annotation is updated. The
+  refresh never updates it; a daily fixer job drafts the update as a pull request
+  here, for a person to review (see
+  [Fixing markup that needs update](#fixing-markup-that-needs-update)).
 - This usually means someone edited the content on purpose and the test has to catch
   up. It does not by itself mean anything is wrong with the content.
 - **Watch for:** a broken content edit that is also big enough to land here. Its test
@@ -649,6 +652,72 @@ an assertion or command failed. Any of these can be the cause:
 Nothing tells these apart automatically. Compare what changed since the last passing
 run: commits to the page in the content repo, commits to its annotation or `tests.yaml`
 entry here, and the product version. Whichever one moved is usually the cause.
+
+### Fixing markup that needs update
+
+A person or the daily fixer job follows the same steps. The fixer is an agent that
+runs after the refresh, does this for one product, and opens a pull request here.
+Nothing it writes reaches `main` until someone reviews and merges that pull request.
+
+1. **List the work.**
+
+   ```sh
+   python3 scripts/annotations.py pending --annotations products/<product>/annotations
+   ```
+
+2. **Open the page** with `annotations.py annotate`, or `make annotate PAGE=<page>`. The
+   copy in `out/annotate/` carries the markup that still attaches. The pieces that do
+   not attach are in the annotation file, under `tags` or `hidden`, with
+   `status: needs-update`.
+
+3. **Find out what changed.** Read the page's history in the content repo, for example
+   `git log -p -- <page>`, to see what happened to the block or sentence the markup
+   followed.
+
+4. **Decide, for each piece:**
+
+   | What happened to the step | What to do |
+   |---|---|
+   | Still on the page, rewritten or moved | Put the tag on the new block, or the hidden check after the new block or sentence. Update the check's commands to the values the page now uses, such as resource names, keys, ports, and paths. The page is right; the test catches up. |
+   | Gone from the page | Remove the markup. Record it as removed, with the reason. |
+   | You cannot tell | Leave it. Record it as unresolved, with the reason. |
+
+5. **Save** with `annotations.py save` (or `make save`). `save` refuses a copy whose
+   prose or code differs from the page. It also keeps the old needs-update entries, so
+   delete the ones you replaced from the annotation file.
+
+6. **Confirm it attaches.**
+
+   ```sh
+   python3 scripts/annotations.py attach --repo <content repo> \
+     --annotations products/<product>/annotations --page <page> \
+     --out out/attached --report out/attach-report.json
+   ```
+
+   The page must report no needs update, apart from the pieces you recorded as
+   unresolved.
+
+Rules:
+
+- **Do not copy test markup from the page.** Some content pages still carry inline
+  markup from before the move. Annotations here are the only source of truth, and an
+  inline copy can undo a fix that was made here. Work from the annotation file and the
+  page's content.
+- **Change annotation files only.** A fix that needs a `tests.yaml` change, a new
+  scenario, or a content change is unresolved. Say what it needs in the reason.
+- **For a product whose pages are not public,** previews stay off, and a check never
+  repeats the page's prose. This repository is public.
+
+`scripts/annotation_fix_check.py` holds the fixer to these rules. It compares the
+annotation files to the commit the agent started from and re-attaches every page. It
+fails when any of the following is true:
+
+- Markup still does not attach, or has disappeared, and is not recorded.
+- Anything outside the product's annotations changed.
+- With `--private`, a check repeats page text.
+
+The fixer records its work in a JSON summary with `fixed`, `unresolved`, and `removed`
+lists. The comment at the top of the script describes the format.
 
 ---
 
