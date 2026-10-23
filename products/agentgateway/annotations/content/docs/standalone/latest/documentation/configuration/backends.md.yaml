@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/latest/documentation/configuration/backends.md
 blocks:
-- cab06ba78e593df8 yaml
+- 2873dd9b99e9bbab yaml
 - f409fef22dcb12b4 yaml
 - 11840721d118d348 yaml
 - 9b387b197ecea9e6 yaml
@@ -23,11 +23,16 @@ hidden:
     export OPENAI_API_KEY="${OPENAI_API_KEY:-dummy}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: cab06ba78e593df8
-    lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf d897654b fdc9b081 368b1051 ba8ca461 d4203374
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    section: Static Hosts
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 0
+      fingerprint: 2873dd9b99e9bbab
+      lang: yaml
+      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf a1e43691 d72f261d 46d98fd8 e0822f08 a4201e74 1e00823c
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="backends" >}}
     # WHAT THIS TEST VALIDATES:
@@ -42,18 +47,19 @@ hidden:
         port: 3000
         protocol: HTTP
     routes:
-    - backends:
-      - host: example.com:8080
-        weight: 1
-      - host: 127.0.0.1:80
-        weight: 9
+    - name: api-v2
+      backends:
+      - host: api-v2.example.com:8080
+        weight: 80
+      - host: api-v1.example.com:8080
+        weight: 20
     EOF
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
     section: MCP Servers
     line: 600fe1bb59e46b50
-    occurrence: 0
+    occurrence: 1
     words: 32d3feda
     block_before:
       block: 3
@@ -106,7 +112,7 @@ hidden:
 - after:
     section: Session routing
     line: 600fe1bb59e46b50
-    occurrence: 1
+    occurrence: 2
     words: 32d3feda
     block_before:
       block: 5
@@ -157,7 +163,7 @@ hidden:
 - after:
     section: LLM Providers
     line: 600fe1bb59e46b50
-    occurrence: 2
+    occurrence: 3
     words: 32d3feda
     block_before:
       block: 7

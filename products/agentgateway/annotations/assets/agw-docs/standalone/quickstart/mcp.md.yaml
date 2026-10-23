@@ -9,6 +9,14 @@ blocks:
 - f16800a60f37564f sh
 - 56e57ada05a8887e sh
 - 42b6e6b3ff1600c3
+- a5b94968180babe7 yaml
+- f6931a7b2e59dbc5 sh
+- 42b6e6b3ff1600c3
+- 973fe9a37cea21ec sh
+- 7f1330aec4b6c052 sh
+- 9e92dea22ed8f56c
+- 9905a6bec67d27c0 sh
+- 2bf81526fa39d23f
 tags:
 - paths: mcp
   block: 0
@@ -60,16 +68,20 @@ hidden:
     sleep 3
     {{< /doc-test >}}
 - after:
-    block: 7
-    fingerprint: 42b6e6b3ff1600c3
-    lang: ''
-    lines: 42b6e6b3
-    preview: info  app  serving UI at http://localhost:4000/ui
+    section: 'Step 2: Configure agentgateway'
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 10
+      fingerprint: 42b6e6b3ff1600c3
+      lang: ''
+      lines: 42b6e6b3
+      preview: info  app  serving UI at http://localhost:4000/ui
   content: |-
     {{< doc-test paths="mcp" >}}
-    # Hidden test: the UI steps below (Enable MCP -> Add server) are not scriptable, so this
-    # block reproduces the equivalent config they produce and starts the same backends, to keep
-    # the resulting setup tested.
+    # Hidden test: runs the Config file tab's setup. The UI tab produces the same MCP target,
+    # but its clicks are not scriptable.
     # Redirect background output to files so the started servers don't keep the test
     # runner's stdout pipe open (which would block the run from ever completing).
     PORT=3005 npx -y @modelcontextprotocol/server-everything streamableHttp >/tmp/mcp-server.log 2>&1 &
@@ -77,17 +89,72 @@ hidden:
     sleep 5
     cat > config.yaml << 'EOF'
     # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 4000
     mcp:
-      port: 3000
       targets:
       - name: server-everything
         mcp:
           host: http://localhost:3005/mcp
+    ui: {}
     EOF
+    agentgateway -f config.yaml --validate-only
     agentgateway -f config.yaml >/tmp/agentgateway.log 2>&1 &
     AGW_PID=$!
     # On exit, reap the whole process tree. npx spawns a node child for the server, and
     # killing npx alone orphans that child, which holds the pipe open and hangs the job.
     trap 'kill $AGW_PID 2>/dev/null || true; pkill -P $MCP_PID 2>/dev/null || true; kill $MCP_PID 2>/dev/null || true; pkill -f "server-everything" 2>/dev/null || true' EXIT
     sleep 3
+    YAMLTest -f - <<'EOF'
+    - name: MCP endpoint on the gateway accepts an initialize request
+      http:
+        url: "http://localhost:4000"
+        path: /mcp
+        method: POST
+        headers:
+          content-type: application/json
+          accept: "application/json, text/event-stream"
+        body: |
+          {"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+      retries: 10
+    - name: UI is served on the gateway port
+      http:
+        url: "http://localhost:4000"
+        path: /ui/
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+      retries: 3
+    EOF
+    # Run the Step 3 curl tab: initialize a session, list tools, and call echo.
+    export MCP_SESSION_ID=$(curl -s -D - http://localhost:4000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl","version":"1.0.0"}}}' \
+      | grep -i "mcp-session-id:" | sed 's/.*: //' | tr -d '\r')
+    [ -n "$MCP_SESSION_ID" ] || { echo "FAIL: the initialize response has no mcp-session-id header"; exit 1; }
+    curl -s http://localhost:4000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "mcp-session-id: $MCP_SESSION_ID" \
+      -d '{"jsonrpc":"2.0","method":"notifications/initialized"}'
+    TOOLS_OUT=$(curl -s http://localhost:4000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "mcp-session-id: $MCP_SESSION_ID" \
+      -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
+    echo "$TOOLS_OUT" | grep -q '"name":"echo"' || { echo "FAIL: tools/list does not include the echo tool: $TOOLS_OUT"; exit 1; }
+    ECHO_OUT=$(curl -s http://localhost:4000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "mcp-session-id: $MCP_SESSION_ID" \
+      -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"echo","arguments":{"message":"This is my first agentgateway setup"}}}')
+    echo "$ECHO_OUT" | grep -q 'Echo: This is my first agentgateway setup' || { echo "FAIL: tools/call echo did not return the message: $ECHO_OUT"; exit 1; }
     {{< /doc-test >}}

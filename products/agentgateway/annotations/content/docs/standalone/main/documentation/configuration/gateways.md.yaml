@@ -63,7 +63,8 @@ hidden:
       default:
         port: 3000
     routes:
-    - backends:
+    - name: local-backend
+      backends:
       - host: localhost:8000
     EOF
     agentgateway -f config.yaml --validate-only
@@ -210,7 +211,8 @@ hidden:
         port: 9000
         protocol: TCP
     tcpRoutes:
-    - gateways: [tcp]
+    - name: tcp-backend
+      gateways: [tcp]
       backends:
       - host: localhost:8000
     EOF
