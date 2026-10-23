@@ -21,9 +21,25 @@ SHELL_LANGS = {"", "sh", "bash", "shell", "zsh", "yaml", "yml"}
 # The step a failed script was on, for telling a page step that broke apart
 # from a check that docs-tests added. Each step writes its origin to
 # $DOC_TEST_STEP_FILE before it runs, so the last line there is the step that
-# failed. `page` is a code block a reader sees; `check` is test markup (hidden
-# blocks and test includes). Unset outside the runner, so a script run by hand
-# writes nowhere.
+# failed. Unset outside the runner, so a script run by hand writes nowhere.
+#
+#   page    a code block a reader sees
+#   setup   a hidden block that does what the page says, in a form CI can run
+#           (locality's node labelling and controller restart). Its failure is
+#           the page's: it carries the page's commands, and its bugs.
+#   assert  a check docs-tests added: a YAMLTest block, a front-matter assert,
+#           or a test include. Its failure can be a stale test.
+ASSERT_PREFIXES = ("YAMLTest", "yamltest")
+
+
+def step_kind(block: "CodeBlock") -> str:
+    if not block.hidden:
+        return "page"
+    if block.from_metadata or block.content.lstrip().startswith(ASSERT_PREFIXES):
+        return "assert"
+    return "setup"
+
+
 def step_marker(kind: str, rel: str, line: int) -> str:
     return f"printf '%s\\n' '{kind} {rel}:{line}' > \"${{DOC_TEST_STEP_FILE:-/dev/null}}\""
 
@@ -857,7 +873,7 @@ class Extractor:
                 lines.append(f"# Hidden source: {rel}:{block.start_line} paths={','.join(block.paths)}")
             else:
                 lines.append(f"# Source: {rel}:{block.start_line} paths={','.join(block.paths)}")
-            lines.append(step_marker("check" if block.hidden else "page", rel, block.start_line))
+            lines.append(step_marker(step_kind(block), rel, block.start_line))
             lines.append(content)
             lines.append("")
 
@@ -875,7 +891,7 @@ class Extractor:
             lines.append(
                 f"# Test include: {rel_source}:{test_include.start_line} paths={','.join(test_include.paths)} file={rel_test}"
             )
-            lines.append(step_marker("check", rel_source, test_include.start_line))
+            lines.append(step_marker("assert", rel_source, test_include.start_line))
             lines.append(f"bun test {rel_test}")
             lines.append("")
         return "\n".join(lines).rstrip() + "\n"

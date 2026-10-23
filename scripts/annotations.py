@@ -1278,6 +1278,37 @@ def cmd_save(args) -> int:
     return 0
 
 
+def pending(annotations_dir: Path) -> List[dict]:
+    """Every piece of markup still marked needs update, one row each."""
+    rows = []
+    for path in annotation_files(annotations_dir):
+        ann = load_annotation(path)
+        for kind in ("tags", "hidden"):
+            for e in ann.get(kind, []):
+                if e.get("status") != NEEDS_UPDATE:
+                    continue
+                if kind == "tags":
+                    label = e["paths"]
+                else:
+                    m = PATHS_VALUE.search(e["content"].split("\n", 1)[0])
+                    label = m.group(1) if m else ""
+                rows.append({"page": ann["source"], "kind": kind[:-1] if kind == "tags" else "hidden",
+                             "label": label, "annotation": path.relative_to(annotations_dir).as_posix()})
+    return rows
+
+
+def cmd_pending(args) -> int:
+    """List the markup still marked needs update, the work a person or the fixer picks up."""
+    rows = pending(Path(args.annotations))
+    if args.json:
+        Path(args.json).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.json).write_text(json.dumps(rows, indent=2) + "\n", encoding="utf-8")
+    for r in rows:
+        print(f"{r['page']}: {r['kind']} {r['label']}")
+    print(f"{len(rows)} piece(s) of markup need update on {len({r['page'] for r in rows})} page(s)")
+    return 0
+
+
 def cmd_externalize(args) -> int:
     """Move a page's long hidden checks out of its annotation file into script files.
 
@@ -1383,6 +1414,11 @@ def main(argv=None) -> int:
     p.add_argument("--page", required=True)
     p.add_argument("--edited", required=True, help="the marked-up copy from annotate")
     p.set_defaults(fn=cmd_save)
+
+    p = sub.add_parser("pending", help=cmd_pending.__doc__)
+    p.add_argument("--annotations", required=True)
+    p.add_argument("--json", help="also write the rows here as JSON")
+    p.set_defaults(fn=cmd_pending)
 
     p = sub.add_parser("externalize", help=cmd_externalize.__doc__)
     p.add_argument("--annotations", required=True)

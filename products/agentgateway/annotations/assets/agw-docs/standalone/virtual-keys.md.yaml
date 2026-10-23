@@ -109,7 +109,7 @@ hidden:
     # WHAT THIS TEST VALIDATES:
     #   * "Step 1": the virtual keys config is accepted by agentgateway
     #     (--validate-only), so the apiKey policy fields are correct.
-    #   * "Step 3": a request with either virtual key is authenticated and proxied
+    #   * "Step 2": a request with either virtual key is authenticated and proxied
     #     to the provider (200), and a request with an unknown key is rejected (401),
     #     which is the behavior the strict apiKey mode describes.
     #

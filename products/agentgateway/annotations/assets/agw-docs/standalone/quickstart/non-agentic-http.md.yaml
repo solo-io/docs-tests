@@ -103,8 +103,8 @@ hidden:
       preview: agentgateway
   content: |-
     {{< doc-test paths="httpbin" >}}
-    # Hidden test: the UI steps above (Add gateway/route) are not scriptable, so this block
-    # reproduces the equivalent config they produce, to keep the resulting setup tested.
+    # Hidden test: runs the Config file tab's setup. The UI tab produces the same gateway
+    # and route, but its clicks are not scriptable.
     cat > config.yaml << 'EOF'
     # yaml-language-server: $schema=https://agentgateway.dev/schema/config
     gateways:
