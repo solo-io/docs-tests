@@ -143,5 +143,70 @@ class ShadowedSnippetTests(unittest.TestCase):
         self.assertIn("helm install oss", text)
 
 
+class VersionedShadowTests(unittest.TestCase):
+    """Version blocks resolve with the version of the repo their file comes from.
+
+    The consumer's `latest` is fed from upstream `main`. A consumer snippet gates
+    on the consumer's labels ("latest"), an upstream page on upstream's ("main").
+    Resolving the consumer's snippet with "main" emptied the Gateway API version
+    in every enterprise install, so each install fetched `.../download/v/...`.
+    """
+
+    REL = "content/en/p/kubernetes/latest/documentation/install.md"
+    VMAP = {"latest": "main"}
+
+    def build(self, nested: bool):
+        consumer = pathlib.Path(tempfile.mkdtemp())
+        # CI checks upstream out inside the consumer's workspace, at ./upstream.
+        upstream = consumer / "upstream" if nested else pathlib.Path(tempfile.mkdtemp())
+        cp = consumer / self.REL
+        cp.parent.mkdir(parents=True, exist_ok=True)
+        cp.write_text('---\ntitle: I\n---\n\n{{< rebase file="agw-docs/kubernetes/documentation/install.md" >}}\n')
+        up = upstream / "content/docs/kubernetes/main/documentation/install.md"
+        up.parent.mkdir(parents=True, exist_ok=True)
+        up.write_text(
+            '---\ntitle: I\n---\n\n{{< reuse "agw-docs/snippets/install.md" >}}\n\n'
+            '```sh {paths="standard"}\n'
+            'echo {{< version include-if="main" >}}upstream-main{{< /version >}}'
+            '{{< version include-if="latest" >}}upstream-latest{{< /version >}}\n```\n'
+        )
+        snippet = consumer / "assets/agw-docs/snippets/install.md"
+        snippet.parent.mkdir(parents=True, exist_ok=True)
+        snippet.write_text(
+            '```sh {paths="standard"}\n'
+            'kubectl apply -f https://example.com/download/v{{< reuse "agw-docs/versions/gw.md" >}}/standard-install.yaml\n```\n'
+        )
+        gw = consumer / "assets/agw-docs/versions/gw.md"
+        gw.parent.mkdir(parents=True, exist_ok=True)
+        gw.write_text('{{< version include-if="2.3.x" >}}1.5.0{{< /version >}}'
+                      '{{< version include-if="latest" >}}1.6.1{{< /version >}}')
+        return consumer, upstream, cp
+
+    def extract(self, consumer, upstream, cp):
+        e = Extractor(
+            repo_root=consumer,
+            definition={"main_file": self.REL,
+                        "sources": [{"file": self.REL, "path": "standard"}],
+                        "context": {"product": "kubernetes", "version": "latest"}},
+            upstream_root=upstream, upstream_version_for=self.VMAP,
+        )
+        return "\n".join(b.content for b in e.process_file(cp).code_blocks)
+
+    def test_a_consumer_snippet_resolves_with_the_consumer_version(self):
+        text = self.extract(*self.build(nested=False))
+        self.assertIn("/download/v1.6.1/", text)
+
+    def test_an_upstream_page_resolves_with_the_upstream_version(self):
+        text = self.extract(*self.build(nested=False))
+        self.assertIn("upstream-main", text)
+        self.assertNotIn("upstream-latest", text)
+
+    def test_an_upstream_checkout_inside_the_consumer_is_still_upstream(self):
+        text = self.extract(*self.build(nested=True))
+        self.assertIn("/download/v1.6.1/", text)
+        self.assertIn("upstream-main", text)
+        self.assertNotIn("upstream-latest", text)
+
+
 if __name__ == "__main__":
     unittest.main()

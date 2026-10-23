@@ -172,6 +172,8 @@ class Extractor:
         upstream_root: Optional[Path] = None,
         upstream_version_for: Optional[Dict[str, str]] = None,
         asset_roots: Optional[List[Path]] = None,
+        consumer_root: Optional[Path] = None,
+        consumer_version: Optional[str] = None,
     ):
         self.repo_root = repo_root
         # Shared page bodies, one folder per site: assets/agw-docs/pages for
@@ -223,6 +225,22 @@ class Extractor:
         self._link_version_map = _load_link_version_map(repo_root, self.product)
         # Resolve the context version token to its canonical version string once.
         self._resolved_version = self._link_version_map.get(self.version, self.version) if self.version else self.version
+        self._version_ids = self._identifiers(self.version, self._link_version_map)
+        # When this extractor expands content rebased from upstream, the consuming
+        # site's own snippets still shadow the upstream copies (see asset_roots),
+        # and those snippets gate on the CONSUMER's version labels: a hub snippet
+        # says include-if="latest" for the hub's latest, whatever upstream
+        # directory feeds it. Hugo resolves them with the hub page's version, so
+        # version blocks in a file from consumer_root are resolved with
+        # consumer_version, and blocks in upstream files with this extractor's.
+        # Resolving a hub snippet with the upstream version ("main") emptied the
+        # Gateway API version in every enterprise install the day the hub's
+        # ossDir moved from "latest" to "main".
+        self.consumer_root = consumer_root.resolve() if consumer_root else None
+        self._consumer_version_ids = (
+            self._identifiers(consumer_version, _load_link_version_map(consumer_root, self.product))
+            if consumer_root and consumer_version else None
+        )
 
         self.sources = definition.get("sources", [])
         self.main_file = self._resolve_workspace_path(definition["main_file"])
@@ -281,38 +299,58 @@ class Extractor:
     def _parse_shortcode_params(self, params: str) -> Dict[str, str]:
         return {m.group(1): m.group(2) for m in re.finditer(r'([\w-]+)="([^"]*)"', params)}
 
-    def _evaluate_version_block(self, params: str) -> bool:
-        if not self.version:
+    @staticmethod
+    def _identifiers(version: Optional[str], link_version_map: Dict[str, str]) -> Set[str]:
+        """Every label that names `version` in an include-if/exclude-if list.
+
+        We accept both the canonical version string (e.g. "2.2.x") AND the stable
+        linkVersion token (e.g. "main"/"latest"). This lets include-if/exclude-if
+        target a directory by its release-stable name ("main") instead of the
+        version number, which rotates every release. Matching the canonical
+        string still works regardless of whether context.version was supplied as
+        a linkVersion token or directly as a version string. Mirrors the
+        linkVersion matching in the Hugo version.html shortcode. Empty when there
+        is no version, which keeps every version block.
+        """
+        if not version:
+            return set()
+        resolved = link_version_map.get(version, version)
+        identifiers = {version, resolved}
+        identifiers.update(link for link, ver in link_version_map.items() if ver == resolved)
+        return identifiers
+
+    def _identifiers_for(self, source_file: Optional[Path]) -> Set[str]:
+        """The version labels for blocks in `source_file`: the consumer's for its own files."""
+        if self._consumer_version_ids is None or source_file is None:
+            return self._version_ids
+        path = Path(source_file).resolve()
+        # The upstream checkout can sit inside the consumer's (CI checks it out
+        # to <consumer>/upstream), so "under the consumer" must exclude it.
+        if path.is_relative_to(self.consumer_root) and not path.is_relative_to(self.repo_root.resolve()):
+            return self._consumer_version_ids
+        return self._version_ids
+
+    def _evaluate_version_block(self, params: str, identifiers: Optional[Set[str]] = None) -> bool:
+        identifiers = self._version_ids if identifiers is None else identifiers
+        if not identifiers:
             return True
         kv = self._parse_shortcode_params(params)
         include_if = [x.strip() for x in kv.get("include-if", "").split(",") if x.strip()]
         exclude_if = [x.strip() for x in kv.get("exclude-if", "").split(",") if x.strip()]
-        # Identifiers that represent the current version. We accept both the
-        # canonical version string (e.g. "2.2.x") AND the stable linkVersion
-        # token (e.g. "main"/"latest"). This lets include-if/exclude-if target a
-        # directory by its release-stable name ("main") instead of the version
-        # number, which rotates every release. Matching the canonical string
-        # still works regardless of whether context.version was supplied as a
-        # linkVersion token or directly as a version string. Mirrors the
-        # linkVersion matching in the Hugo version.html shortcode.
-        identifiers = {self.version, self._resolved_version}
-        for link_ver, ver in self._link_version_map.items():
-            if ver == self._resolved_version:
-                identifiers.add(link_ver)
-        identifiers.discard(None)
         if include_if and not identifiers.intersection(include_if):
             return False
         if exclude_if and identifiers.intersection(exclude_if):
             return False
         return True
 
-    def _strip_version_blocks(self, text: str) -> str:
+    def _strip_version_blocks(self, text: str, source_file: Optional[Path] = None) -> str:
         pattern = re.compile(r"\{\{[<%]\s*version\s*([^%>]*)[ \t]*[>%]\}\}(.*?)\{\{[<%]\s*/version\s*[>%]\}\}", re.DOTALL)
+        identifiers = self._identifiers_for(source_file)
 
         def repl(match: re.Match) -> str:
             params = match.group(1) or ""
             body = match.group(2) or ""
-            return body if self._evaluate_version_block(params) else ""
+            return body if self._evaluate_version_block(params, identifiers) else ""
 
         return pattern.sub(repl, text)
 
@@ -354,7 +392,7 @@ class Extractor:
         if depth > self.max_depth:
             return text
 
-        text = self._strip_version_blocks(text)
+        text = self._strip_version_blocks(text, source_file)
 
         def replace_reuse(match: re.Match) -> str:
             shortcode = match.group(1)
@@ -434,7 +472,8 @@ class Extractor:
         text = upstream_file.read_text(encoding="utf-8")
         body = text.split("---", 2)[2] if text.startswith("---") and text.count("---") >= 2 else text
 
-        key = f"{mode}/{self.upstream_version_for[version]}"
+        # Per consumer version too: it resolves the consumer's own snippets.
+        key = f"{mode}/{self.upstream_version_for[version]}/{version}"
         extractor = self._upstream_extractors.get(key)
         if extractor is None:
             extractor = Extractor(
@@ -447,6 +486,8 @@ class Extractor:
                 },
                 docs_tests_root=self.docs_tests_root,
                 asset_roots=[self.repo_root, self.upstream_root],
+                consumer_root=self.repo_root,
+                consumer_version=version,
             )
             self._upstream_extractors[key] = extractor
         return extractor._expand_text(upstream_file, body, depth + 1)
