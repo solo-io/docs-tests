@@ -122,6 +122,14 @@ class SkipTests(unittest.TestCase):
         self.assertNotIn("skipped_needs_update", report)
         self.assertIn("content/docs/other.md", self.summary.read_text())   # still listed
 
+    def test_unattached_markup_on_a_linked_page_is_ignored(self):
+        """A page reached only by a link gives the scenario no blocks, so its markup cannot shorten it."""
+        self.rewrite("Apply alpha.", "Apply alpha. See [Other](/docs/other/).")
+        other = self.repo / "content/docs/other.md"
+        other.write_text(other.read_text().replace("an unrelated alpha", "something else entirely now"))
+        code, report = self.attach_and_run()
+        self.assertNotIn("skipped_needs_update", report)
+
     def test_close_match_runs_and_is_listed(self):
         self.rewrite("kubectl get pod alpha -o yaml", "kubectl get pod alpha -o yaml\nkubectl logs alpha")
         code, report = self.attach_and_run()

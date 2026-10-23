@@ -83,24 +83,25 @@ tags:
     bare: ',paths="virtual-keys"'
     at: 4
 - paths: virtual-keys
-  fingerprint: 37c9c47dce5753b4
+  block: 8
+  fingerprint: d23b4be5a0dc2579
   lang: yaml
-  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
   preview: kubectl apply -f- <<EOF
   form:
     bare: ',paths="virtual-keys"'
     at: 4
-  status: needs-update
 hidden:
 - after:
     section: Test the virtual keys
-    line: 89541a357a12558e
+    line: f50030b7248cb9f9
     occurrence: 0
-    words: b9776d7d 8d0288f4 b7595e2a a12dd3a7 14c2529e 2c70e12b b9d90628 fc6672ad 6201111b 29aa5166 3c469e9d 0af96a8e d08d5db8 0af96a8e d08d5db8 b9014eaa b9776d7d c549779d 55ea09e5 b3eacd33 75857a45 b9776d7d 6da06335 3e64cc41 c1bb937e
+    words: a12dd3a7 8e7fc023 ca978112 ec654fac 2c70e12b df448a78 6201111b ea325d76 b23a6a84 2c70e12b d3fb7168 ca978112 dcaadad1 a9f4b3d2 9390298f 3c469e9d 0af96a8e fa51fd49 20158224 cfd96dd9
     block_before:
-      fingerprint: 37c9c47dce5753b4
+      block: 8
+      fingerprint: d23b4be5a0dc2579
       lang: yaml
-      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
       preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="virtual-keys-openai-test" >}}
@@ -123,11 +124,11 @@ hidden:
 
     - name: verify request with Alice's virtual key succeeds
       http:
-        url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+        url: "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions"
         method: POST
         headers:
           content-type: application/json
-          Authorization: "Bearer sk-alice-abc123def456"
+          Authorization: "Bearer vk-alice-4f9c2a"
         body: |
           {
             "model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}",
@@ -140,11 +141,11 @@ hidden:
 
     - name: verify request with Bob's virtual key succeeds independently
       http:
-        url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+        url: "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions"
         method: POST
         headers:
           content-type: application/json
-          Authorization: "Bearer sk-bob-xyz789uvw012"
+          Authorization: "Bearer vk-bob-8d1e7b"
         body: |
           {
             "model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}",
@@ -157,7 +158,7 @@ hidden:
 
     - name: verify request without valid API key is rejected
       http:
-        url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+        url: "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions"
         method: POST
         headers:
           content-type: application/json
@@ -173,16 +174,16 @@ hidden:
         statusCode: 401
     EOF
     {{< /doc-test >}}
-  status: needs-update
 - after:
     section: Test the virtual keys
-    line: 89541a357a12558e
+    line: f50030b7248cb9f9
     occurrence: 0
-    words: b9776d7d 8d0288f4 b7595e2a a12dd3a7 14c2529e 2c70e12b b9d90628 fc6672ad 6201111b 29aa5166 3c469e9d 0af96a8e d08d5db8 0af96a8e d08d5db8 b9014eaa b9776d7d c549779d 55ea09e5 b3eacd33 75857a45 b9776d7d 6da06335 3e64cc41 c1bb937e
+    words: a12dd3a7 8e7fc023 ca978112 ec654fac 2c70e12b df448a78 6201111b ea325d76 b23a6a84 2c70e12b d3fb7168 ca978112 dcaadad1 a9f4b3d2 9390298f 3c469e9d 0af96a8e fa51fd49 20158224 cfd96dd9
     block_before:
-      fingerprint: 37c9c47dce5753b4
+      block: 8
+      fingerprint: d23b4be5a0dc2579
       lang: yaml
-      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 a3b86ab6 cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
       preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="virtual-keys-httpbun-test" >}}
@@ -209,7 +210,7 @@ hidden:
         method: POST
         headers:
           content-type: application/json
-          Authorization: "Bearer sk-alice-abc123def456"
+          Authorization: "Bearer vk-alice-4f9c2a"
         body: |
           {
             "model": "gpt-4",
@@ -227,7 +228,7 @@ hidden:
         method: POST
         headers:
           content-type: application/json
-          Authorization: "Bearer sk-bob-xyz789uvw012"
+          Authorization: "Bearer vk-bob-8d1e7b"
         body: |
           {
             "model": "gpt-4",
@@ -257,17 +258,17 @@ hidden:
         statusCode: 401
     EOF
     {{< /doc-test >}}
-  status: needs-update
 - after:
-    section: Test the virtual keys
-    line: 89541a357a12558e
+    section: Verify budget enforcement
+    line: 389521165bc04dd5
     occurrence: 0
-    words: b9776d7d 8d0288f4 b7595e2a a12dd3a7 14c2529e 2c70e12b b9d90628 fc6672ad 6201111b 29aa5166 3c469e9d 0af96a8e d08d5db8 0af96a8e d08d5db8 b9014eaa b9776d7d c549779d 55ea09e5 b3eacd33 75857a45 b9776d7d 6da06335 3e64cc41 c1bb937e
+    words: a12dd3a7 0af96a8e d08d5db8
     block_before:
-      fingerprint: 37c9c47dce5753b4
-      lang: yaml
-      lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
-      preview: kubectl apply -f- <<EOF
+      block: 18
+      fingerprint: 362216423b94ca51
+      lang: sh
+      lines: 5b3a77df a51cbc9b 67c5a3ac 4af62a9c
+      preview: curl -s -o /dev/null -w "%{http_code}\n" "$INGRESS_GW_ADDRESS/v1/chat/completion
   content: |-
     {{< doc-test paths="virtual-keys-ratelimit-test" >}}
     # Drain Alice's 100-token daily budget. httpbun returns ~20-30 tokens per response,
@@ -276,7 +277,7 @@ hidden:
       curl -s -o /dev/null \
         "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions" \
         -H "Content-Type: application/json" \
-        -H "Authorization: Bearer sk-alice-abc123def456" \
+        -H "Authorization: Bearer vk-alice-4f9c2a" \
         -d '{"model":"gpt-4","messages":[{"role":"user","content":"Say hello"}]}'
       sleep 0.3
     done
@@ -288,7 +289,7 @@ hidden:
         method: POST
         headers:
           Content-Type: application/json
-          Authorization: "Bearer sk-alice-abc123def456"
+          Authorization: "Bearer vk-alice-4f9c2a"
         body: |
           {
             "model": "gpt-4",
@@ -305,7 +306,7 @@ hidden:
         method: POST
         headers:
           Content-Type: application/json
-          Authorization: "Bearer sk-bob-xyz789uvw012"
+          Authorization: "Bearer vk-bob-8d1e7b"
         body: |
           {
             "model": "gpt-4",
@@ -317,4 +318,3 @@ hidden:
         statusCode: 200
     EOF
     {{< /doc-test >}}
-  status: needs-update

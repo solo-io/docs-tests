@@ -96,6 +96,35 @@ tags:
     lead: ' '
 hidden:
 - after:
+    section: Before you begin
+    line: 2365fce4463e0b52
+    occurrence: 0
+    words: bb0347a4 bb8c8605 be8dff00 ea325d76 7d3194f7 14c2529e 2c70e12b b9776d7d c590b3c9 3316348d 2ad8a704 75857a45 6ce439cb 5ca4f385 bff0f177 328c3816 0cbc8c90 f8564e68 22720057 9e9611a4 38acc455 10c22bcf df5d69e9 631aada4 6201111b 224610f1 1216b2a8 ca978112 3ace60b0 aa9e9b5c 5c4c1964 14c2529e 48a53f07 fa42bed0 a0af9f86 caf9f906 487b9104 37ff21fe 5ca4f385
+    block_before: null
+  content: |-
+    {{< doc-test paths="virtual-keys" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Step 1": the virtual keys config is accepted by agentgateway
+    #     (--validate-only), so the apiKey policy fields are correct.
+    #   * "Step 2": a request with either virtual key is authenticated and proxied
+    #     to the provider (200), and a request with an unknown key is rejected (401),
+    #     which is the behavior the strict apiKey mode describes.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The provider's response content. The test runs against a local mock LLM
+    #     rather than OpenAI, so no provider API key is needed and no live completion
+    #     is billed. Only the gateway behavior on this page is asserted.
+    #   * "Configure token budgets" and "Monitor per-key spending" - those sections
+    #     need a provider that returns realistic token counts and a Prometheus
+    #     instance, so they are left to manual verification.
+    # Install agentgateway binary
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    {{< /doc-test >}}
+- after:
     block: 1
     fingerprint: f6931a7b2e59dbc5
     lang: sh
@@ -126,7 +155,7 @@ hidden:
         method: POST
         headers:
           content-type: application/json
-          Authorization: "Bearer sk-alice-abc123def456"
+          Authorization: "Bearer vk-alice-4f9c2a"
         body: |
           {
             "model": "gpt-3.5-turbo",
@@ -162,7 +191,7 @@ hidden:
         method: POST
         headers:
           content-type: application/json
-          Authorization: "Bearer sk-bob-xyz789uvw012"
+          Authorization: "Bearer vk-bob-8d1e7b"
         body: |
           {
             "model": "gpt-3.5-turbo",
@@ -174,37 +203,3 @@ hidden:
         statusCode: 200
     EOF
     {{< /doc-test >}}
-- after:
-    section: Before you begin
-    line: 13bf0f96d587d261
-    occurrence: 0
-    words: d9c0d341 ea62dcb6 21a355f1 dddece3d
-    block_before:
-      fingerprint: c6bbb01bd94bb2a1
-      lang: mermaid
-      lines: a3d27ba5 4bbf5d67 d61b7eca fae4a3dd 424a9e5f 28fbc616 aa8529ce 894dfb4d 66624adc 662ffd44 2a230cbd 44bd7ae6 361e48d0
-      preview: flowchart TD
-  content: |-
-    {{< doc-test paths="virtual-keys" >}}
-    # ============================================================================
-    # Doc test coverage for this guide (these comments are not rendered on the page)
-    # ============================================================================
-    # WHAT THIS TEST VALIDATES:
-    #   * "Step 1": the virtual keys config is accepted by agentgateway
-    #     (--validate-only), so the apiKey policy fields are correct.
-    #   * "Step 2": a request with either virtual key is authenticated and proxied
-    #     to the provider (200), and a request with an unknown key is rejected (401),
-    #     which is the behavior the strict apiKey mode describes.
-    #
-    # WHAT THIS TEST DOES NOT VALIDATE (and why):
-    #   * The provider's response content. The test runs against a local mock LLM
-    #     rather than OpenAI, so no provider API key is needed and no live completion
-    #     is billed. Only the gateway behavior on this page is asserted.
-    #   * "Configure token budgets" and "Monitor per-key spending" - those sections
-    #     need a provider that returns realistic token counts and a Prometheus
-    #     instance, so they are left to manual verification.
-    # Install agentgateway binary
-    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
-    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
-    {{< /doc-test >}}
-  status: needs-update
