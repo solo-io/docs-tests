@@ -234,9 +234,10 @@ hidden:
     preview: '{'
   content: |-
     {{< doc-test paths="serve-model" >}}
-    # YAMLTest treats "$.data[*].id" as a single value, so assert the first model
-    # that this guide configures. The wildcard model is validated by the request
-    # check in the previous section.
+    # Filter expressions rather than $.data[*].id, because a wildcard path
+    # resolves to a single match (the first array element) and the model order
+    # is not guaranteed. The IDs that the "openai/*" wildcard expands to are not
+    # asserted here; the "wildcard match" serving check above covers them.
     YAMLTest -f - <<'EOF'
     - name: model discovery endpoint lists public models
       http:
@@ -248,8 +249,11 @@ hidden:
       expect:
         statusCode: 200
         bodyJsonPath:
-          - path: "$.data[*].id"
-            comparator: contains
-            value: "gpt-4"
+          - path: "$.data[?(@.id=='gpt-4')].id"
+            comparator: equals
+            value: gpt-4
+          - path: "$.data[?(@.id=='gpt-5-mini')].id"
+            comparator: equals
+            value: gpt-5-mini
     EOF
     {{< /doc-test >}}
