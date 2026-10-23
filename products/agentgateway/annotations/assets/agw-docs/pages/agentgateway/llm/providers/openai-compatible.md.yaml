@@ -322,15 +322,25 @@ tags:
     only: true
     lead: ' '
 - paths: openai-compatible-validate
-  fingerprint: 56e04f76c1c3cab5
+  block: 33
+  fingerprint: 71e71cce61e0f7b8
   lang: yaml
-  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 3d8272d3 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 3c04fd84 ddc98357 c6ba4159 c8f3f59a 146e11c6 9ebc4789 0967472d 3195c5f5 e93103cd abc56510
+  lines: 16c71da1 fbc30693 eef5a849 8c8c4228 3d8272d3 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 f0ce727c 56b95f79 8c34776c c8f3f59a 146e11c6 9ebc4789 2c33a225 abc56510
   preview: kubectl apply -f- <<EOF
   form:
     attr: paths="openai-compatible-validate"
     only: true
     lead: ' '
-  status: needs-update
+- paths: openai-compatible-validate
+  block: 37
+  fingerprint: f9996255ccbefd2e
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 3d8272d3 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 3c04fd84 ddc98357 c6ba4159 c8f3f59a 146e11c6 9ebc4789 2c33a225 3195c5f5 e93103cd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="openai-compatible-validate"
+    only: true
+    lead: ' '
 hidden:
 - after:
     section: Set up provider credentials
