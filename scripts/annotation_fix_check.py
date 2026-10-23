@@ -18,6 +18,11 @@ them does not hold.
    keeps `previews: false` and holds no `preview:` line, and no line the agent
    added to a hidden check repeats a sentence of the page's prose. docs-tests
    is public; test commands are expected there, page text is not.
+6. A hidden check's contents change only by small edits, such as a renamed
+   resource or a new key. A check rewritten beyond that, or one that is new on
+   the page, fails: re-anchoring is the agent's job, rewriting a test is a
+   person's. The agent leaves such a piece unresolved instead. Every check whose
+   contents changed is written to --changes-out, so a reviewer sees them.
 
 The agent's summary is JSON:
 
@@ -30,12 +35,13 @@ Run from a docs-tests checkout; --base is the commit the agent started from.
 from __future__ import annotations
 
 import argparse
+import difflib
 import json
 import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 import yaml
 
@@ -45,6 +51,14 @@ import annotations as A  # noqa: E402
 FENCE = re.compile(r"^\s*(`{3,}|~{3,})")
 # A prose line shorter than this is too generic to call copied ("Example output:").
 MIN_PROSE_WORDS = 6
+# How alike a hidden check must stay to its previous version: a character-level
+# difflib ratio over its non-blank lines, stripped. Measured on the first fixes:
+# edits that renamed keys and paths kept 0.97 to 0.99; a check the agent
+# rewrote from the page's stale inline copy, undoing a fix made here, fell to
+# 0.69. Matching against the page's inline markup does not separate these: the
+# good edits matched it exactly, and the bad rewrite only 0.81. By line instead
+# of by character, a one-word edit to a three-line check scores 0.67 and fails.
+MIN_EDIT_SIMILARITY = 0.85
 
 
 def git(root: Path, *args: str) -> str:
@@ -92,6 +106,29 @@ def hidden_lines(ann: dict) -> Set[str]:
     return {_norm(l) for h in ann.get("hidden", []) for l in h.get("content", "").splitlines()}
 
 
+def check_label(content: str) -> str:
+    m = A.PATHS_VALUE.search(content.split("\n", 1)[0])
+    return m.group(1) if m else ""
+
+
+def similarity(a: str, b: str) -> float:
+    text = lambda s: "\n".join(l.strip() for l in s.splitlines() if l.strip())
+    return difflib.SequenceMatcher(None, text(a), text(b), autojunk=False).ratio()
+
+
+def edited_checks(old: dict, ann: dict) -> List[Tuple[str, float]]:
+    """Hidden checks whose contents changed: (label, similarity to the closest old check with that label)."""
+    before = [h.get("content", "") for h in old.get("hidden", [])]
+    out = []
+    for h in ann.get("hidden", []):
+        content = h.get("content", "")
+        if content in before:
+            continue
+        same = [b for b in before if check_label(b) == check_label(content)]
+        out.append((check_label(content), max((similarity(content, b) for b in same), default=0.0)))
+    return out
+
+
 def labels(ann: dict) -> Set[str]:
     out = {t["paths"] for t in ann.get("tags", [])}
     for h in ann.get("hidden", []):
@@ -110,8 +147,9 @@ def listed(summary: dict, key: str, errors: List[str]) -> List[Tuple[str, str]]:
 
 
 def check(root: Path, repo: Path, adir_rel: str, base: str, pending: List[dict], summary: dict,
-          private: bool) -> List[str]:
+          private: bool, changes: Optional[List[dict]] = None) -> List[str]:
     errors: List[str] = []
+    changes = [] if changes is None else changes
     listed(summary, "fixed", errors)
     unresolved = set(listed(summary, "unresolved", errors))
     removed_rows = listed(summary, "removed", errors)
@@ -122,12 +160,14 @@ def check(root: Path, repo: Path, adir_rel: str, base: str, pending: List[dict],
     errors += [f"changed outside {adir_rel}: {f}" for f in outside]
 
     pending_pages = {r["page"] for r in pending}
+    touched: Set[str] = set()
     for rel in changed:
         if rel in outside or not rel.endswith(".md.yaml"):
             continue
         path = root / rel
         old = old_annotation(root, base, rel)
         if not path.exists():
+            touched.add(old.get("source", ""))
             gone = {(old.get("source", ""), label) for label in labels(old)}
             if not gone <= removed:
                 errors.append(f"{rel}: deleted, but not every piece is listed under `removed`")
@@ -138,6 +178,7 @@ def check(root: Path, repo: Path, adir_rel: str, base: str, pending: List[dict],
             errors.append(f"{rel}: does not load: {e}")
             continue
         page = ann["source"]
+        touched.add(page)
 
         before, after = A.count_markup(old) if old else 0, A.count_markup(ann)
         dropped = before - after
@@ -155,6 +196,12 @@ def check(root: Path, repo: Path, adir_rel: str, base: str, pending: List[dict],
             if p.state == A.NEEDS_UPDATE and (page, p.label) not in unresolved:
                 errors.append(f"{page}: {p.kind} {p.label} still does not attach and is not listed under `unresolved`")
 
+        for label, sim in edited_checks(old, ann):
+            changes.append({"page": page, "label": label, "similarity": round(sim, 2)})
+            if sim < MIN_EDIT_SIMILARITY:
+                what = "is new on the page" if sim == 0 else f"was rewritten ({sim:.0%} like its previous version)"
+                errors.append(f"{page}: hidden check {label} {what}; leave it unresolved for a person instead")
+
         if private:
             if ann.get("previews", True) is not False:
                 errors.append(f"{page}: previews must stay off (previews: false) for a private product")
@@ -163,11 +210,9 @@ def check(root: Path, repo: Path, adir_rel: str, base: str, pending: List[dict],
             copied = (hidden_lines(ann) - hidden_lines(old)) & prose_lines(text)
             errors += [f"{page}: a hidden check repeats a sentence of the page: {c[:60]!r}..." for c in sorted(copied)]
 
-    untouched = pending_pages - {A.load_annotation(root / r)["source"] for r in changed
-                                 if r.endswith(".md.yaml") and (root / r).exists()}
-    for page in sorted(untouched):
-        labels = {r["label"] for r in pending if r["page"] == page}
-        if not all((page, l) in unresolved for l in labels):
+    for page in sorted(pending_pages - touched):
+        wanted = {r["label"] for r in pending if r["page"] == page}
+        if not all((page, l) in unresolved for l in wanted):
             errors.append(f"{page}: had markup that needs update, was not changed, and is not listed under `unresolved`")
     return errors
 
@@ -181,14 +226,19 @@ def main(argv=None) -> int:
     ap.add_argument("--pending", required=True, help="`annotations.py pending --json` output from before the agent ran")
     ap.add_argument("--summary", required=True, help="the agent's JSON summary")
     ap.add_argument("--private", action="store_true", help="the product's pages are not public")
+    ap.add_argument("--changes-out", help="write the hidden checks whose contents changed here, as JSON")
     args = ap.parse_args(argv)
+    changes: List[dict] = []
 
     pending = json.loads(Path(args.pending).read_text(encoding="utf-8"))
     try:
         summary = json.loads(Path(args.summary).read_text(encoding="utf-8"))
-        errors = check(Path(args.root), Path(args.repo), args.annotations, args.base, pending, summary, args.private)
+        errors = check(Path(args.root), Path(args.repo), args.annotations, args.base, pending, summary, args.private,
+                       changes)
     except (OSError, ValueError) as e:
         errors = [f"summary: {e}"]
+    if args.changes_out:
+        Path(args.changes_out).write_text(json.dumps(changes, indent=2) + "\n", encoding="utf-8")
     for e in errors:
         print(f"::error::{e}")
     if errors:
