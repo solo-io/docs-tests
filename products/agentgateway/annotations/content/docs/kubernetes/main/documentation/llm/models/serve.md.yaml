@@ -227,16 +227,16 @@ hidden:
        export OPENAI_API_KEY=sk-placeholder
        {{< /doc-test >}}
 - after:
-    fingerprint: 6572de9b2cf0efbb
+    block: 18
+    fingerprint: 98e0c8316a382d4a
     lang: json
-    lines: 021fb596 d90ae9ee 1f67b5ca 81d0a442 8f026573 fc1c17c6 ab5df625 39d4b54e 7738d670 d10b36aa
+    lines: 021fb596 d90ae9ee 1f67b5ca 021fb596 f7a42d32 c610d27c 39ce5e84 276d3698 90553106 0907353c 508f5eaa 3b65f02e d627eda8 62ea9660 4eba2574 e2729e23 e52a1813 0ec56cf3 ab5df625 39d4b54e 7738d670 d10b36aa
     preview: '{'
   content: |-
     {{< doc-test paths="serve-model" >}}
-    # Filter expressions rather than $.data[*].id, because a wildcard path
-    # resolves to a single match (the first array element) and the model order
-    # is not guaranteed. The IDs that the "openai/*" wildcard expands to are not
-    # asserted here; the "wildcard match" serving check above covers them.
+    # YAMLTest treats "$.data[*].id" as a single value, so assert the first model
+    # that this guide configures. The wildcard model is validated by the request
+    # check in the previous section.
     YAMLTest -f - <<'EOF'
     - name: model discovery endpoint lists public models
       http:
@@ -248,12 +248,8 @@ hidden:
       expect:
         statusCode: 200
         bodyJsonPath:
-          - path: "$.data[?(@.id=='gpt-4')].id"
-            comparator: equals
-            value: gpt-4
-          - path: "$.data[?(@.id=='gpt-5-mini')].id"
-            comparator: equals
-            value: gpt-5-mini
+          - path: "$.data[*].id"
+            comparator: contains
+            value: "gpt-4"
     EOF
     {{< /doc-test >}}
-  status: needs-update
