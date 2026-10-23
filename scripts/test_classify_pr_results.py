@@ -60,6 +60,25 @@ class VerdictTests(unittest.TestCase):
         self.assertEqual(v["conclusion"], c.SKIPPED)
         self.assertEqual(c.verdict(KEY, None, {PAGE}, {KEY})["conclusion"], c.SKIPPED)
 
+    def test_a_known_failure_at_a_different_step_on_a_changed_page_is_the_prs(self):
+        """The nightly broke at install; the PR broke a step on the page it changed."""
+        nightly = {KEY: {"kind": "setup", "file": OTHER, "command": "kubectl apply -f install.yaml"}}
+        v = c.verdict(KEY, failed("page", PAGE), {PAGE}, {KEY}, nightly)
+        self.assertEqual(v["conclusion"], c.FAILURE)
+
+    def test_a_known_failure_at_the_same_step_is_not_the_prs(self):
+        ours = failed("page", PAGE, line=90)   # same step; the page moved it down
+        nightly = {KEY: {**ours["failed_step"], "line": 70}}
+        self.assertEqual(c.verdict(KEY, ours, {PAGE}, {KEY}, nightly)["conclusion"], c.SKIPPED)
+
+    def test_a_nightly_that_failed_before_any_step_does_not_shield_a_page_step(self):
+        v = c.verdict(KEY, failed("page", PAGE), {PAGE}, {KEY}, {KEY: None})
+        self.assertEqual(v["conclusion"], c.FAILURE)
+
+    def test_a_known_failure_at_a_different_step_on_an_untouched_page_is_not_the_prs(self):
+        nightly = {KEY: {"kind": "setup", "file": PAGE, "command": "helm install"}}
+        self.assertEqual(c.verdict(KEY, failed("page", OTHER), {PAGE}, {KEY}, nightly)["conclusion"], c.SKIPPED)
+
     def test_no_affected_set_means_every_page_counts(self):
         """A site-config or workflow change reaches every page."""
         v = c.verdict(KEY, failed("page", OTHER), None, set())

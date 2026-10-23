@@ -15,9 +15,17 @@ So there are only two outcomes a contributor sees besides a pass:
             a code block a reader sees (`page`), or a hidden block that runs
             the page's commands in a form CI can (`setup`). The message names
             the step.
-  skipped   Anything else, including a failure in a scenario that already
-            fails in the nightly run on main. Titled "Test update required"
-            and worded so the contributor knows they need to do nothing. The docs team sees it
+  skipped   Anything else, including a scenario that already fails in the
+            nightly run on main AT THE SAME STEP. Titled "Test update
+            required" and worded so the contributor knows they need to do
+            nothing.
+
+A scenario that fails on main still runs on the PR. If it passes, the PR fixed
+it, and it says so. If it fails at a different step from the nightly, on a page
+the PR affects, the PR broke that step, and it is the PR's like any other
+failure: "fails on main" says only that something else on that scenario was
+already broken. Without the nightly's steps (--known-failing alone), every
+failure of a known-failing scenario is "Test update required". The docs team sees it
             in the nightly results, so nothing else is notified.
 
 A failed `assert` (a check docs-tests added) is never the contributor's. The
@@ -78,22 +86,39 @@ def _fence(text: str) -> str:
     return f"{ticks}\n{text}\n{ticks}"
 
 
-def verdict(key: str, result: dict | None, affected: set[str] | None, known: set[str]) -> dict:
+def _step_id(step: dict | None) -> tuple | None:
+    """What makes two failures the same failure: the step, not its line, which moves as pages change."""
+    if not step:
+        return None
+    return (step.get("kind"), step.get("file"), (step.get("command") or "").strip())
+
+
+def verdict(key: str, result: dict | None, affected: set[str] | None, known: set[str],
+            known_steps: dict[str, dict | None] | None = None) -> dict:
     """One scenario's conclusion, title, and summary.
 
     ``affected`` is the content pages the PR reaches, from reuse_consumers.py.
     None means the PR changed something that reaches every page (the site
     config, the workflow), so every page counts as affected.
+
+    ``known`` is the scenarios failing in the nightly run on main;
+    ``known_steps`` maps each to the step it failed at there (None when it
+    failed before any step), when the nightly's results are available.
     """
     if key in known:
-        # Already failing in the nightly run on main, so a failure here is not
-        # this PR's. It still runs: a PR that fixes the page or its test shows
-        # the pass, which skipping it never could.
+        # A PR that fixes the page or its test shows the pass.
         if result is not None and result.get("status") == "passed":
             return {"conclusion": SUCCESS, "title": "Passed (fails on main)",
                     "summary": "Every step in this guide worked. It fails in the nightly run on main, "
                                "so this change fixes it."}
-        return {"conclusion": SKIPPED, "title": UPDATE_REQUIRED_TITLE, "summary": UPDATE_REQUIRED_SUMMARY}
+        # The same failure as on main is not this PR's. A failure somewhere
+        # else is judged like any other: on the day every nightly scenario
+        # broke at install, a PR that broke a page step was otherwise blamed
+        # for nothing.
+        ours = (result or {}).get("failed_step")
+        if known_steps is None or key not in known_steps or ours is None \
+                or _step_id(ours) == _step_id(known_steps[key]):
+            return {"conclusion": SKIPPED, "title": UPDATE_REQUIRED_TITLE, "summary": UPDATE_REQUIRED_SUMMARY}
     if result is None:
         # The job produced nothing to read: a runner fault, not the page.
         return {"conclusion": SKIPPED, "title": UPDATE_REQUIRED_TITLE, "summary": UPDATE_REQUIRED_SUMMARY}
@@ -123,7 +148,8 @@ def verdict(key: str, result: dict | None, affected: set[str] | None, known: set
     return {"conclusion": SKIPPED, "title": UPDATE_REQUIRED_TITLE, "summary": UPDATE_REQUIRED_SUMMARY}
 
 
-def classify(expected: list[dict], results: dict, affected: set[str] | None, known: set[str]) -> list[dict]:
+def classify(expected: list[dict], results: dict, affected: set[str] | None, known: set[str],
+             known_steps: dict[str, dict | None] | None = None) -> list[dict]:
     """``expected`` is every scenario the PR selected, run or not: {file, test}."""
     names = [e["test"] for e in expected]
     out = []
@@ -133,7 +159,7 @@ def classify(expected: list[dict], results: dict, affected: set[str] | None, kno
         if names.count(name) > 1:
             # The same scenario name on two pages; the check names must differ.
             name = f"{name} ({pathlib.PurePosixPath(entry['file']).stem})"
-        out.append({"key": key, "name": name, **verdict(key, results.get(key), affected, known)})
+        out.append({"key": key, "name": name, **verdict(key, results.get(key), affected, known, known_steps)})
     return out
 
 
@@ -217,6 +243,9 @@ def main() -> int:
     parser.add_argument("--expected", required=True, help="JSON list of {file, test} the PR selected")
     parser.add_argument("--affected-pages", help="content pages the PR reaches, one per line; omit for all")
     parser.add_argument("--known-failing", help="result keys (file::test) failing on main, one per line")
+    parser.add_argument("--known-results",
+                        help="merged test-results.yaml of the nightly run on main; its failures count as known, "
+                             "and a failure at a different step from the nightly's is judged like any other")
     parser.add_argument("--output", required=True, help="where to write the verdicts as JSON")
     parser.add_argument("--groups", help="where to write the three group checks as JSON")
     parser.add_argument("--summary", help="append a Markdown table here (e.g. $GITHUB_STEP_SUMMARY)")
@@ -227,9 +256,15 @@ def main() -> int:
     results_path = pathlib.Path(args.results)
     report = (yaml.safe_load(results_path.read_text(encoding="utf-8")) or {}) if results_path.exists() else {}
     expected = json.loads(pathlib.Path(args.expected).read_text(encoding="utf-8"))
+    known = _read_lines(args.known_failing) or set()
+    known_steps = None
+    if args.known_results and pathlib.Path(args.known_results).exists():
+        nightly = (yaml.safe_load(pathlib.Path(args.known_results).read_text(encoding="utf-8")) or {}).get("tests") or {}
+        known_steps = {k: v.get("failed_step") for k, v in nightly.items() if v.get("status") != "passed"}
+        known |= set(known_steps)
     verdicts = classify(
         expected, report.get("tests") or {},
-        _read_lines(args.affected_pages), _read_lines(args.known_failing) or set(),
+        _read_lines(args.affected_pages), known, known_steps,
     )
     pathlib.Path(args.output).write_text(json.dumps(verdicts, indent=2), encoding="utf-8")
     if args.groups:
