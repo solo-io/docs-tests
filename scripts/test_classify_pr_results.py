@@ -49,9 +49,16 @@ class VerdictTests(unittest.TestCase):
         v = c.verdict(KEY, failed("page", OTHER), {PAGE}, set())
         self.assertEqual(v["conclusion"], c.SKIPPED)
 
-    def test_a_scenario_failing_on_main_is_a_test_update_even_if_it_passed(self):
+    def test_a_scenario_failing_on_main_that_passes_here_shows_the_fix(self):
         v = c.verdict(KEY, {"status": "passed"}, {PAGE}, {KEY})
+        self.assertEqual(v["conclusion"], c.SUCCESS)
+        self.assertIn("fails on main", v["title"])
+
+    def test_a_scenario_failing_on_main_is_never_the_prs_failure(self):
+        """Even a broken page step on a page the PR changed: it was broken before the PR."""
+        v = c.verdict(KEY, failed("page", PAGE), {PAGE}, {KEY})
         self.assertEqual(v["conclusion"], c.SKIPPED)
+        self.assertEqual(c.verdict(KEY, None, {PAGE}, {KEY})["conclusion"], c.SKIPPED)
 
     def test_no_affected_set_means_every_page_counts(self):
         """A site-config or workflow change reaches every page."""

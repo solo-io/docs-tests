@@ -15,8 +15,9 @@ So there are only two outcomes a contributor sees besides a pass:
             a code block a reader sees (`page`), or a hidden block that runs
             the page's commands in a form CI can (`setup`). The message names
             the step.
-  skipped   Anything else. Titled "Test update required" and worded so the
-            contributor knows they need to do nothing. The docs team sees it
+  skipped   Anything else, including a failure in a scenario that already
+            fails in the nightly run on main. Titled "Test update required"
+            and worded so the contributor knows they need to do nothing. The docs team sees it
             in the nightly results, so nothing else is notified.
 
 A failed `assert` (a check docs-tests added) is never the contributor's. The
@@ -85,6 +86,13 @@ def verdict(key: str, result: dict | None, affected: set[str] | None, known: set
     config, the workflow), so every page counts as affected.
     """
     if key in known:
+        # Already failing in the nightly run on main, so a failure here is not
+        # this PR's. It still runs: a PR that fixes the page or its test shows
+        # the pass, which skipping it never could.
+        if result is not None and result.get("status") == "passed":
+            return {"conclusion": SUCCESS, "title": "Passed (fails on main)",
+                    "summary": "Every step in this guide worked. It fails in the nightly run on main, "
+                               "so this change fixes it."}
         return {"conclusion": SKIPPED, "title": UPDATE_REQUIRED_TITLE, "summary": UPDATE_REQUIRED_SUMMARY}
     if result is None:
         # The job produced nothing to read: a runner fault, not the page.
