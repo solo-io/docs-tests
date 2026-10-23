@@ -678,7 +678,7 @@ Nothing it writes reaches `main` until someone reviews and merges that pull requ
 
    | What happened to the step | What to do |
    |---|---|
-   | Still on the page, rewritten or moved | Put the tag on the new block, or the hidden check after the new block or sentence. Update the check's commands to the values the page now uses, such as resource names, keys, ports, and paths. The page is right; the test catches up. |
+   | Still on the page, rewritten or moved | Put the tag on the new block, or the hidden check after the new block or sentence. Keep the check's contents as they are, unless a value that the page uses changed, such as a resource name, key, port, or path. Then change only that value. |
    | Gone from the page | Remove the markup. Record it as removed, with the reason. |
    | You cannot tell | Leave it. Record it as unresolved, with the reason. |
 
@@ -703,6 +703,9 @@ Rules:
   markup from before the move. Annotations here are the only source of truth, and an
   inline copy can undo a fix that was made here. Work from the annotation file and the
   page's content.
+- **Re-anchor; do not rewrite.** A check that worked before the page changed is still
+  right, even when the page's inline copy of it differs. If the check needs more than
+  the page's new values, record it as unresolved, and a person rewrites it.
 - **Change annotation files only.** A fix that needs a `tests.yaml` change, a new
   scenario, or a content change is unresolved. Say what it needs in the reason.
 - **For a product whose pages are not public,** previews stay off, and a check never
@@ -714,6 +717,8 @@ fails when any of the following is true:
 
 - Markup still does not attach, or has disappeared, and is not recorded.
 - Anything outside the product's annotations changed.
+- A check's contents changed by more than small edits (less than 85% alike, by
+  character), or a check is new.
 - With `--private`, a check repeats page text.
 
 The fixer records its work in a JSON summary with `fixed`, `unresolved`, and `removed`

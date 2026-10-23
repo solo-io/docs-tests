@@ -98,8 +98,34 @@ class FixCheckTests(unittest.TestCase):
         A.write_annotation(path, ann, old)
         (self.root / "out/edit.md").unlink()
 
-    def run_check(self, summary, private=False):
-        return C.check(self.root, self.repo, ADIR, "HEAD", self.pending, summary, private)
+    def run_check(self, summary, private=False, changes=None):
+        return C.check(self.root, self.repo, ADIR, "HEAD", self.pending, summary, private, changes)
+
+    def test_a_small_edit_to_a_check_passes_and_is_reported(self):
+        self.agent_fixes(hidden_body="kubectl get pod alpha-v2")
+        changes = []
+        self.assertEqual(self.run_check({"fixed": [{"page": REL, "label": "alpha"}]}, changes=changes), [])
+        self.assertEqual([(c["page"], c["label"]) for c in changes], [(REL, "alpha")])
+        self.assertGreaterEqual(changes[0]["similarity"], C.MIN_EDIT_SIMILARITY)
+
+    def test_a_rewritten_check_fails(self):
+        """Re-anchoring is the agent's job; replacing the test is a person's."""
+        self.agent_fixes(hidden_body='curl -s "http://${INGRESS_GW_ADDRESS}/health" | grep -q ok\nkubectl logs deploy/other')
+        errors = self.run_check({"fixed": [{"page": REL, "label": "alpha"}]})
+        self.assertTrue(any("rewritten" in e for e in errors), errors)
+
+    def test_an_unchanged_check_is_not_reported(self):
+        self.agent_fixes()
+        changes = []
+        self.run_check({"fixed": [{"page": REL, "label": "alpha"}]}, changes=changes)
+        self.assertEqual(changes, [])
+
+    def test_a_deleted_annotation_file_needs_every_piece_removed(self):
+        A.annotation_path(self.root / ADIR, REL).unlink()
+        errors = self.run_check({"unresolved": [{"page": REL, "label": "alpha", "reason": "gone"}]})
+        self.assertTrue(any("deleted" in e for e in errors), errors)
+        summary = {"removed": [{"page": REL, "label": l, "reason": "page section deleted"} for l in ("alpha", "beta")]}
+        self.assertEqual(self.run_check(summary), [])
 
     def test_pending_lists_the_needs_update_markup(self):
         self.assertEqual({(r["page"], r["kind"], r["label"]) for r in self.pending},
