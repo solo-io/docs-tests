@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/baseten.md
 blocks:
-- 1d72c32dd915a7e5 yaml
-- 6b6f1b2fc03e9708 bash
+- 40f2480e1706d07e sh
+- 7865532c36b250f6 yaml
+- 55df32c42939df66 bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export BASETEN_API_KEY="${BASETEN_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 1d72c32dd915a7e5
+    block: 1
+    fingerprint: 7865532c36b250f6
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 43a74344 009395dd 5403edb6
+    lines: a7f80a73 3af99526 e01ccf75 48567548 43a74344 009395dd 5403edb6 8905bcef 8b627d04
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="baseten" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 6b6f1b2fc03e9708
+    block: 2
+    fingerprint: 55df32c42939df66
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d acfb5f76 d860b0f5 fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d 67164833 d860b0f5 fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="baseten" >}}

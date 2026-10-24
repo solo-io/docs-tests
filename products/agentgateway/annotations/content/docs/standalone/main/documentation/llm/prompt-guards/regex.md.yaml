@@ -14,11 +14,10 @@ blocks:
 - f6931a7b2e59dbc5 sh
 - a767eeb219acc20a sh
 - 97352a5d5990ad1b console
-- 934fb8570f75731d yaml
+- 132ae68de4303171 yaml
 - 679c5802f4e6c133 sh
-- 8ece4df048c4b1d4 sh
-- 2824cc69c4a65892 console
-- 87c84ae7c88ac0eb sh
+- 80a6166bf8d7e1cc sh
+- 85d450a845f74aa9 console
 tags:
 - paths: regex
   block: 1
@@ -32,9 +31,9 @@ tags:
     lead: ' '
 - paths: regex
   block: 13
-  fingerprint: 934fb8570f75731d
+  fingerprint: 132ae68de4303171
   lang: yaml
-  lines: c1451f43 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 6d88d930 4208ae28 e8bd2b8e 14ddcd05 7ff23a12 eeb7e2a3 665793a0 3de9d845 cf694735 3f154c69 eee34334 94ecc337 2824cc69 abc56510
+  lines: c1451f43 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 6d88d930 4208ae28 e8bd2b8e 14ddcd05 5095ccef eeb7e2a3 665793a0 3de9d845 cf694735 3f154c69 eee34334 94ecc337 85d450a8 abc56510
   preview: cat <<'EOF' > config-scope.yaml
   form:
     attr: paths="regex"
@@ -42,16 +41,15 @@ tags:
     lead: ' '
 - paths: regex
   block: 15
-  fingerprint: 8ece4df048c4b1d4
+  fingerprint: 80a6166bf8d7e1cc
   lang: sh
-  lines: dc872770 9285509c b11c46be 493f47f6 4b3b16d3 9b7e7d89 07d1cc63 d35463d4 cfae0d42 8e7bae9b
+  lines: dc872770 9285509c b11c46be 493f47f6 4b3b16d3 9b7e7d89 78dfedeb 79d48c96 cfae0d42 8e7bae9b
   preview: curl -s http://localhost:4000/v1/chat/completions \
   form:
     attr: paths="regex"
     only: true
     lead: ' '
 - paths: regex
-  block: 17
   fingerprint: 87c84ae7c88ac0eb
   lang: sh
   lines: dc872770 9285509c b11c46be 493f47f6 b5b33b5c 8e7bae9b
@@ -60,6 +58,7 @@ tags:
     attr: paths="regex"
     only: true
     lead: ' '
+  status: needs-update
 hidden:
 - after:
     section: (top of page)
@@ -328,7 +327,6 @@ hidden:
     occurrence: 0
     words: b9776d7d a9f4b3d2 10882c27 75857a45 b9776d7d 5c4c1964 d1ffaf02 7383711c 75857a45 b9776d7d a9d4034d 77bc06c5 a71dd3a9 8e7fc023 b9776d7d a9d4034d 5654d410 b9776d7d 1f58b914 9c6725dc
     block_before:
-      block: 17
       fingerprint: 87c84ae7c88ac0eb
       lang: sh
       lines: dc872770 9285509c b11c46be 493f47f6 b5b33b5c 8e7bae9b
@@ -358,13 +356,13 @@ hidden:
             value: pii_detected
     EOF
     {{< /doc-test >}}
+  status: needs-update
 - after:
     section: Scan tool call content
     line: 1f9bcad31638162e
     occurrence: 0
     words: b9776d7d a9f4b3d2 10882c27 75857a45 b9776d7d 5c4c1964 d1ffaf02 7383711c 75857a45 b9776d7d a9d4034d 77bc06c5 a71dd3a9 8e7fc023 b9776d7d a9d4034d 5654d410 b9776d7d 1f58b914 9c6725dc
     block_before:
-      block: 17
       fingerprint: 87c84ae7c88ac0eb
       lang: sh
       lines: dc872770 9285509c b11c46be 493f47f6 b5b33b5c 8e7bae9b
@@ -385,3 +383,4 @@ hidden:
     fi
     echo "✓ A scope of toolOutput leaves message text unread"
     {{< /doc-test >}}
+  status: needs-update

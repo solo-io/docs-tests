@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/deepseek.md
 blocks:
-- 41fbd159c3387f78 yaml
-- 0448ec1666bd4025 bash
+- 90f0f7d6044cc9d0 sh
+- e33af7ac5cba3ca4 yaml
+- e1932f2d7d67c437 bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export DEEPSEEK_API_KEY="${DEEPSEEK_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 41fbd159c3387f78
+    block: 1
+    fingerprint: e33af7ac5cba3ca4
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 9d110b03 009395dd 73464744
+    lines: a7f80a73 3af99526 e01ccf75 fb1f1769 9d110b03 009395dd 73464744 8905bcef 65869423
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="deepseek" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 0448ec1666bd4025
+    block: 2
+    fingerprint: e1932f2d7d67c437
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d f0b675cd bd593aad fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d 63464eb4 bd593aad fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="deepseek" >}}

@@ -1,7 +1,8 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/openai.md
 blocks:
-- 438cc883e676d6b5 yaml
+- 4e548af92d68424c sh
+- 5f2318a24db6b8bd yaml
 hidden:
 - after:
     section: (top of page)
@@ -35,10 +36,10 @@ hidden:
     export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 438cc883e676d6b5
+    block: 1
+    fingerprint: 5f2318a24db6b8bd
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+    lines: a7f80a73 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd 4208ae28 8905bcef 901234de
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="openai" >}}
@@ -60,10 +61,10 @@ hidden:
     occurrence: 0
     words: 663ea1bf 5a638a12 57de4cf4 663ea1bf 56e57ada aa9e9b5c b9776d7d 57de4cf4 eb92cc52 3660315a fa42bed0 a0af9f86 7955c819 487b9104 8f4d9088 57de4cf4
     block_before:
-      block: 0
-      fingerprint: 438cc883e676d6b5
+      block: 1
+      fingerprint: 5f2318a24db6b8bd
       lang: yaml
-      lines: a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+      lines: a7f80a73 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd 4208ae28 8905bcef 901234de
       preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="openai" >}}

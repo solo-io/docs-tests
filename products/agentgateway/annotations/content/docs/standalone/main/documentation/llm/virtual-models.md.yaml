@@ -1,9 +1,12 @@
 format: 1
 source: content/docs/standalone/main/documentation/llm/virtual-models.md
 blocks:
-- 962cdc2929dcdb98 yaml
-- be82b168ae9f2ca5 yaml
-- f6c2f68fe46bb607 yaml
+- 207c46b1ff785341 sh
+- c665b3e69245ea10 yaml
+- 8288db4a3fc32dc9 sh
+- b5bdae103c5f4c73 yaml
+- d9ea7671fae30645 sh
+- 549309b1776b5d19 yaml
 - d28752f63857c39b yaml
 hidden:
 - after:
@@ -65,8 +68,8 @@ hidden:
     }
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 962cdc2929dcdb98
+    block: 1
+    fingerprint: c665b3e69245ea10
     lang: yaml
     lines: 3af99526 e01ccf75 1170bbed f49cbe90 6472803d 009395dd d887603d 4208ae28 f9cdc11f 6968fe24 6472803d 009395dd d887603d 4208ae28 0e91355f 6968fe24 6472803d 009395dd 6d88d930 4208ae28 d20cef10 4ba5d1eb 6e024f33 e681e1e6 3035507a b70cf468 e64ac16d 10fbf77b 5a3e261b
     preview: 'llm:'
@@ -113,8 +116,8 @@ hidden:
     occurrence: 0
     words: 4b227777 f1063760 8e7fc023 54d00d86 ad936fcb ca978112 3c8cab8b 34a04005 fa51fd49 f5f0b700 908aec45 b9776d7d d9298a10 54d00d86 d83696c8 663ea1bf 95100519 187897ce 075f4ab8 2e3200de b9776d7d 3c8cab8b 34a04005 d709b860 7175517a fa51fd49 bb8c8605 48acbb9c
     block_before:
-      block: 1
-      fingerprint: be82b168ae9f2ca5
+      block: 3
+      fingerprint: b5bdae103c5f4c73
       lang: yaml
       lines: 3af99526 e01ccf75 7768c93a 6968fe24 84d960d4 009395dd 97682935 6c59a531 d1a43947 0001b31c da505865 eb812154 86dd101e 6968fe24 84d960d4 009395dd a595786b 6c59a531 d1a43947 0001b31c da505865 eb812154 37450114 6968fe24 84d960d4 009395dd a595786b 6c59a531 d1a43947 0001b31c da505865 eb812154 d20cef10 664682a3 6e024f33 715e7c70 3035507a deb614af eea6799a 7debf8d6 785c16ad 9935fc53 785c16ad
       preview: 'llm:'
@@ -170,8 +173,8 @@ hidden:
     assert_models config-failover.yaml '["resilient"]'
     {{< /doc-test >}}
 - after:
-    block: 2
-    fingerprint: f6c2f68fe46bb607
+    block: 5
+    fingerprint: 549309b1776b5d19
     lang: yaml
     lines: 3af99526 e01ccf75 71627c87 f49cbe90 6472803d 009395dd 6d88d930 4208ae28 a48735a3 6968fe24 6472803d 009395dd 6d88d930 4208ae28 7e7b7ac6 6968fe24 6472803d 009395dd d887603d 4208ae28 d20cef10 31e6e75d 6e024f33 9be63f3d 3035507a 965c2da3 22341abd 5a864e6e 2c88c0f5
     preview: 'llm:'

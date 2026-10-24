@@ -1,14 +1,15 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/anthropic.md
 blocks:
-- 0ceedbc7be5a5004 yaml
-- c529c2d2a04e352b sh
+- 112e00592ed741b7 sh
+- d965d8a95862744c yaml
+- 2891c90c6119ff1d sh
 - 4c9c4bdfd6a4ebe7 json
-- fa7f06b4b8419e1c bash
+- 92bfd5bbc773ef2c bash
 - b7a997a3e4a887b0 json
-- f4878fb4e3cae098 sh
+- 911f6f24baf070fc sh
 - e291d67ffa9647fb console
-- 2160451e01557d2a sh
+- e477d9dd014f5ae6 sh
 - 7177c5d4fb2c6643 console
 - 6b07831d8b17dcc6 yaml
 - 25678ad98cad590e yaml
@@ -49,10 +50,10 @@ hidden:
     export ANTHROPIC_AWS_API_KEY="${ANTHROPIC_AWS_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 0ceedbc7be5a5004
+    block: 1
+    fingerprint: d965d8a95862744c
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 84d960d4 009395dd 6c59a531
+    lines: a7f80a73 3af99526 e01ccf75 bbe0baf2 84d960d4 009395dd 6c59a531 8905bcef 949ae88e
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="anthropic" >}}
@@ -69,7 +70,7 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 9
+    block: 10
     fingerprint: 6b07831d8b17dcc6
     lang: yaml
     lines: a7f80a73 3af99526 e01ccf75 e4f1a385 84d960d4 252c8b1b 207d5e5e 595c2775 a92a95fc 009395dd 9738ca7e 6e0bb98a 327c0a60
@@ -95,7 +96,7 @@ hidden:
     agentgateway -f config-claude-platform-apikey.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 10
+    block: 11
     fingerprint: 25678ad98cad590e
     lang: yaml
     lines: a7f80a73 3af99526 e01ccf75 1fa2bf6e 84d960d4 252c8b1b 207d5e5e a92a95fc 009395dd 9b4ed50d 327c0a60 146e11c6 cb39231d c656d1d6 8905bcef 8affe4f3
@@ -127,7 +128,7 @@ hidden:
     occurrence: 0
     words: 663ea1bf 8a84e406 c857d09d 5694d08a 99bb8840 075f4ab8 9c6725dc 56e57ada aa9e9b5c b9776d7d c857d09d 5694d08a eb92cc52 83ca68be fa42bed0 a0af9f86 7955c819 487b9104 8f4d9088 28e17439
     block_before:
-      block: 10
+      block: 11
       fingerprint: 25678ad98cad590e
       lang: yaml
       lines: a7f80a73 3af99526 e01ccf75 1fa2bf6e 84d960d4 252c8b1b 207d5e5e a92a95fc 009395dd 9b4ed50d 327c0a60 146e11c6 cb39231d c656d1d6 8905bcef 8affe4f3

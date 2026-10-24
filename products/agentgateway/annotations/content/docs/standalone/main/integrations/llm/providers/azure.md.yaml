@@ -1,6 +1,7 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/azure.md
 blocks:
+- 0de9aeeab085e34b sh
 - b2a47d3a12fed327 yaml
 - 5c8cacfbe89cb825 yaml
 - 1973578cd0ad630a yaml
@@ -60,7 +61,7 @@ hidden:
     export AZURE_API_KEY="${AZURE_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
+    block: 1
     fingerprint: b2a47d3a12fed327
     lang: yaml
     lines: a7f80a73 3af99526 e01ccf75 e4f1a385 5192013c 009395dd 2e04d362 10ce3d78 9008fb4e
@@ -81,7 +82,7 @@ hidden:
     agentgateway -f config-foundry-implicit.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
+    block: 2
     fingerprint: 5c8cacfbe89cb825
     lang: yaml
     lines: a7f80a73 3af99526 e01ccf75 96c38897 5192013c 146e11c6 71338152 e42a8f5e aa85f165 30ff4d98 8e34e431 009395dd 2e04d362 10ce3d78 9008fb4e
@@ -108,7 +109,7 @@ hidden:
     agentgateway -f config-foundry-apikey.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 2
+    block: 3
     fingerprint: 1973578cd0ad630a
     lang: yaml
     lines: a7f80a73 3af99526 e01ccf75 96c38897 5192013c 009395dd 2e04d362 a909e7a8
@@ -128,7 +129,7 @@ hidden:
     agentgateway -f config-azure-openai.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 3
+    block: 4
     fingerprint: 7910c80a31a93e21
     lang: yaml
     lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 28fedf40 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 1d0d0f2e a8d4bb10 13379516
@@ -157,7 +158,7 @@ hidden:
     agentgateway -f config-adv-foundry-implicit.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 4
+    block: 5
     fingerprint: a0b1ace26557d97e
     lang: yaml
     lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 28fedf40 c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 4f5e86ac 22f5fa44 e93f45a3 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 1d0d0f2e a8d4bb10 13379516
@@ -194,7 +195,7 @@ hidden:
     agentgateway -f config-adv-foundry-client-secret.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 5
+    block: 6
     fingerprint: 6d100124d1fece87
     lang: yaml
     lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 4f5e86ac 22f5fa44 e93f45a3
@@ -227,7 +228,7 @@ hidden:
     agentgateway -f config-adv-client-secret.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 6
+    block: 7
     fingerprint: 314f1a1b982c2947
     lang: yaml
     lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b ac4d1e30
@@ -257,7 +258,7 @@ hidden:
     agentgateway -f config-adv-system-managed-identity.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 7
+    block: 8
     fingerprint: 29fdf95b7c93bb92
     lang: yaml
     lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 582f9f5f c39d492f 831e2131 5adcff7a 682f9a67 e9b4453a
@@ -292,7 +293,7 @@ hidden:
     agentgateway -f config-adv-user-managed-identity.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 10
+    block: 11
     fingerprint: 6eaa10af7025e8ea
     lang: yaml
     lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 435024e5 48924e65
@@ -323,7 +324,7 @@ hidden:
     agentgateway -f config-adv-workload-identity.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 11
+    block: 12
     fingerprint: 205f7a4605c0fc9b
     lang: yaml
     lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 193598f2 eaaad965 aeca2b3d 871f11e1 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d 267b78eb 8ae971a3 a8d4bb10 8b2f24b2 c8f3f59a 81b74571 71338152 71bbd638
@@ -357,7 +358,7 @@ hidden:
     agentgateway -f config-claude-foundry.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 12
+    block: 13
     fingerprint: d4077c467b2b78b2
     lang: sh
     lines: 7cbc85e0 67c5a3ac b0cead6d 236c401b e66f4a20 fc075a9d

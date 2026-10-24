@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/cohere.md
 blocks:
-- c8795656a94bdf10 yaml
-- 740bad77551018f9 bash
+- c8c0c1e86150419f sh
+- 26d607c263af5213 yaml
+- dbe306983dae0ffb bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export COHERE_API_KEY="${COHERE_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: c8795656a94bdf10
+    block: 1
+    fingerprint: 26d607c263af5213
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 9e4715dd 009395dd 7d8c20d5
+    lines: a7f80a73 3af99526 e01ccf75 d29982b5 9e4715dd 009395dd 7d8c20d5 8905bcef a4280cba
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="cohere" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 740bad77551018f9
+    block: 2
+    fingerprint: dbe306983dae0ffb
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d f8c898c9 64925938 fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d 3d079052 64925938 fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="cohere" >}}

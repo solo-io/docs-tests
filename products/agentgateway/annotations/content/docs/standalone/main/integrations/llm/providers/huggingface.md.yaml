@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/huggingface.md
 blocks:
-- 17f3eb674b23db30 yaml
-- 0bc1fe771f07bc59 bash
+- 0c92baffc815ef7c sh
+- 61894148a2914ab2 yaml
+- d585d2616c84ef69 bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export HUGGINGFACE_API_KEY="${HUGGINGFACE_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 17f3eb674b23db30
+    block: 1
+    fingerprint: 61894148a2914ab2
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 1174a851 009395dd ad8ebf36
+    lines: a7f80a73 3af99526 e01ccf75 fa99fa96 1174a851 009395dd ad8ebf36 8905bcef 1ce4eefc
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="huggingface" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 0bc1fe771f07bc59
+    block: 2
+    fingerprint: d585d2616c84ef69
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d 13bdd368 5c189baa fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d 840bf9a6 5c189baa fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="huggingface" >}}

@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/openrouter.md
 blocks:
-- b99e3cff0ddc8db1 yaml
-- f0682ddf67c73cee bash
+- 12dab95645ec0841 sh
+- db6ce6708a792af0 yaml
+- 04a0c98d075239d2 bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export OPENROUTER_API_KEY="${OPENROUTER_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: b99e3cff0ddc8db1
+    block: 1
+    fingerprint: db6ce6708a792af0
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 e3c8b29f 009395dd 7b0d5b13
+    lines: a7f80a73 3af99526 e01ccf75 0ab921ed e3c8b29f 009395dd 7b0d5b13 8905bcef 598190f2
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="openrouter" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: f0682ddf67c73cee
+    block: 2
+    fingerprint: 04a0c98d075239d2
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d 8be5edef 4b002129 fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d b7427c76 4b002129 fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="openrouter" >}}

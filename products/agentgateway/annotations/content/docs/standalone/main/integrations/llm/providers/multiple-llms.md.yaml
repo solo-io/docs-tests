@@ -1,7 +1,8 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/multiple-llms.md
 blocks:
-- 51c14022ac2706aa yaml
+- 4e548af92d68424c sh
+- 4b8e44afd1439570 yaml
 hidden:
 - after:
     start: true
@@ -33,8 +34,8 @@ hidden:
     export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 51c14022ac2706aa
+    block: 1
+    fingerprint: 4b8e44afd1439570
     lang: yaml
     lines: 3af99526 a1343bf6 c465b0e6 6472803d 009395dd 4208ae28 e01ccf75 36124688 93a4b62b 7f9324d2 009395dd 6d88d930 4ba5d1eb 93a4b62b 7f9324d2 009395dd d887603d
     preview: 'llm:'
@@ -63,8 +64,8 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 51c14022ac2706aa
+    block: 1
+    fingerprint: 4b8e44afd1439570
     lang: yaml
     lines: 3af99526 a1343bf6 c465b0e6 6472803d 009395dd 4208ae28 e01ccf75 36124688 93a4b62b 7f9324d2 009395dd 6d88d930 4ba5d1eb 93a4b62b 7f9324d2 009395dd d887603d
     preview: 'llm:'
@@ -77,8 +78,8 @@ hidden:
     sleep 3
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 51c14022ac2706aa
+    block: 1
+    fingerprint: 4b8e44afd1439570
     lang: yaml
     lines: 3af99526 a1343bf6 c465b0e6 6472803d 009395dd 4208ae28 e01ccf75 36124688 93a4b62b 7f9324d2 009395dd 6d88d930 4ba5d1eb 93a4b62b 7f9324d2 009395dd d887603d
     preview: 'llm:'

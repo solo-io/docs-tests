@@ -1,7 +1,9 @@
 format: 1
 source: assets/agw-docs/standalone/virtual-keys.md
 blocks:
-- aa6f19a2604b03bd yaml
+- 6212e39efb2a6664 yaml
+- f6931a7b2e59dbc5 sh
+- f12acf9695b42f9c yaml
 - f6931a7b2e59dbc5 sh
 - 06ff1013a015bbbd sh
 - fb18796f7a483c68 json
@@ -65,8 +67,8 @@ blocks:
 - 49396d85aa7de61b json
 tags:
 - paths: virtual-keys
-  block: 0
-  fingerprint: aa6f19a2604b03bd
+  block: 2
+  fingerprint: f12acf9695b42f9c
   lang: yaml
   lines: 2a7b4933 a7f80a73 3af99526 c8f3f59a e5522222 b0299c0e 1fe7fd13 d90b372a 8c8c4228 cb473c79 82f05e2b 8c8c4228 e22a2214 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
   preview: cat <<'EOF' > config.yaml
@@ -75,7 +77,7 @@ tags:
     only: true
     lead: ' '
 - paths: virtual-keys
-  block: 2
+  block: 4
   fingerprint: 06ff1013a015bbbd
   lang: sh
   lines: dc872770 d01a0be4 67c5a3ac b0cead6d a90f7a89 e66f4a20 8e7bae9b
@@ -85,7 +87,7 @@ tags:
     only: true
     lead: ' '
 - paths: virtual-keys
-  block: 4
+  block: 6
   fingerprint: e81571ce6b225c3d
   lang: sh
   lines: 7e9c3b57 856301a1 67c5a3ac b0cead6d a90f7a89 e66f4a20 fc075a9d
@@ -125,7 +127,7 @@ hidden:
     {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
     {{< /doc-test >}}
 - after:
-    block: 1
+    block: 3
     fingerprint: f6931a7b2e59dbc5
     lang: sh
     lines: f6931a7b
@@ -140,7 +142,7 @@ hidden:
     sleep 3
     {{< /doc-test >}}
 - after:
-    block: 5
+    block: 7
     fingerprint: 63282280f2ffab49
     lang: ''
     lines: '63282280'
