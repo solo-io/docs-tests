@@ -21,12 +21,15 @@ So there are only two outcomes a contributor sees besides a pass:
             nothing.
 
 A scenario that fails on main still runs on the PR. If it passes, the PR fixed
-it, and it says so. If it fails at a different step from the nightly, on a page
+it, and it says so. If it fails at a step the nightly ran and got past, on a page
 the PR affects, the PR broke that step, and it is the PR's like any other
-failure: "fails on main" says only that something else on that scenario was
-already broken. Without the nightly's steps (--known-failing alone), every
-failure of a known-failing scenario is "Test update required". The docs team sees it
-            in the nightly results, so nothing else is notified.
+failure: "fails on main" says only that something later on that scenario was
+already broken. A failure at the nightly's own step, or at one the nightly
+never reached, is "Test update required": main never showed that step working,
+so it may be broken there too. Without the nightly's steps (--known-failing
+alone), or with nightly results from a runner that did not record `reached`,
+every failure of a known-failing scenario is "Test update required". The docs
+team sees it in the nightly results, so nothing else is notified.
 
 A failed `assert` (a check docs-tests added) is never the contributor's. The
 split comes from `failed_step` in the results, which the runner records from
@@ -48,6 +51,7 @@ more common stale-test case on the contributor, which is what this replaces.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import pathlib
 import re
@@ -86,11 +90,22 @@ def _fence(text: str) -> str:
     return f"{ticks}\n{text}\n{ticks}"
 
 
-def _step_id(step: dict | None) -> tuple | None:
-    """What makes two failures the same failure: the step, not its line, which moves as pages change."""
-    if not step:
-        return None
-    return (step.get("kind"), step.get("file"), (step.get("command") or "").strip())
+def _step_hash(step: dict) -> str:
+    """A step's id, as `step_hash` in doc_test_run.py computes it: kind, page, and command, not the line."""
+    text = f"{step.get('kind')}\0{step.get('file')}\0{(step.get('command') or '').strip()}"
+    return hashlib.sha1(text.encode()).hexdigest()[:12]
+
+
+def _main_got_past(ours: dict | None, theirs: dict | None) -> bool:
+    """Whether the nightly run on main ran our failing step and went on past it.
+
+    Only then does main show the step working, so its failure here is the PR's.
+    False when the nightly failed before any step, or its runner did not record
+    the steps it reached.
+    """
+    if not ours or not theirs:
+        return False
+    return _step_hash(ours) in (theirs.get("reached") or ())
 
 
 def verdict(key: str, result: dict | None, affected: set[str] | None, known: set[str],
@@ -111,13 +126,12 @@ def verdict(key: str, result: dict | None, affected: set[str] | None, known: set
             return {"conclusion": SUCCESS, "title": "Passed (fails on main)",
                     "summary": "Every step in this guide worked. It fails in the nightly run on main, "
                                "so this change fixes it."}
-        # The same failure as on main is not this PR's. A failure somewhere
-        # else is judged like any other: on the day every nightly scenario
-        # broke at install, a PR that broke a page step was otherwise blamed
-        # for nothing.
+        # A failure at a step main ran and got past is judged like any other.
+        # Anything else is not this PR's: the same failure as on main, or a
+        # step main never reached, since it may be broken there too. When the
+        # nightly broke at install, every later step is one it never reached.
         ours = (result or {}).get("failed_step")
-        if known_steps is None or key not in known_steps or ours is None \
-                or _step_id(ours) == _step_id(known_steps[key]):
+        if known_steps is None or not _main_got_past(ours, known_steps.get(key)):
             return {"conclusion": SKIPPED, "title": UPDATE_REQUIRED_TITLE, "summary": UPDATE_REQUIRED_SUMMARY}
     if result is None:
         # The job produced nothing to read: a runner fault, not the page.
@@ -245,7 +259,7 @@ def main() -> int:
     parser.add_argument("--known-failing", help="result keys (file::test) failing on main, one per line")
     parser.add_argument("--known-results",
                         help="merged test-results.yaml of the nightly run on main; its failures count as known, "
-                             "and a failure at a different step from the nightly's is judged like any other")
+                             "and a failure at a step the nightly ran and got past is judged like any other")
     parser.add_argument("--output", required=True, help="where to write the verdicts as JSON")
     parser.add_argument("--groups", help="where to write the three group checks as JSON")
     parser.add_argument("--summary", help="append a Markdown table here (e.g. $GITHUB_STEP_SUMMARY)")
