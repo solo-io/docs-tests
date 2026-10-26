@@ -916,6 +916,49 @@ FAILED_STEP_COMMAND_LINES = 15
 FAILED_STEP_OUTPUT_LINES = 30
 
 
+STEP_MARKER_LINE = re.compile(r"^printf '%s\\n' '([^']+)' > ")
+
+
+def step_hash(kind: str, file: str, command: str) -> str:
+    """A short id for a step: its kind, page, and command, not its line, which moves as pages change.
+
+    classify_pr_results.py computes the same id from a recorded failed_step,
+    so the two must stay in step.
+    """
+    return hashlib.sha1(f"{kind}\0{file}\0{command.strip()}".encode()).hexdigest()[:12]
+
+
+def script_steps(script: str) -> List[Tuple[str, str]]:
+    """Every step marker in the script, in run order, with the command under it.
+
+    The command is cut to FAILED_STEP_COMMAND_LINES lines, as failed_step
+    records it, so step_hash gives the same id either way.
+    """
+    steps: List[Tuple[str, str]] = []
+    lines = script.splitlines()
+    for i, text in enumerate(lines):
+        match = STEP_MARKER_LINE.match(text)
+        if not match:
+            continue
+        command: List[str] = []
+        for body in lines[i + 1:]:
+            if body.startswith(("# Source:", "# Hidden source", "# Test include:")):
+                break
+            command.append(body)
+        while command and not command[-1].strip():
+            command.pop()
+        steps.append((match.group(1), "\n".join(command[:FAILED_STEP_COMMAND_LINES])))
+    return steps
+
+
+def _parse_marker(marker: str) -> Optional[Tuple[str, str, int]]:
+    kind, _, where = marker.strip().partition(" ")
+    file, _, line = where.rpartition(":")
+    if kind not in ("page", "setup", "assert") or not file or not line.isdigit():
+        return None
+    return kind, file, int(line)
+
+
 def failed_step_from(marker: str, script: str, output: str) -> Optional[Dict[str, Any]]:
     """The step a failed script stopped on, from the last marker it wrote.
 
@@ -923,28 +966,33 @@ def failed_step_from(marker: str, script: str, output: str) -> Optional[Dict[str
     doc_test_extract.py). That is what lets a pull request tell "your change
     broke a step" apart from "a test no longer matches the page". Returns None when the script wrote no
     marker, so it failed before its first step.
+
+    `reached` lists the step_hash of every step that ran and finished before
+    this one. A pull request's failure at a step the nightly run on main never
+    got past says nothing about the PR, because that step may be broken on
+    main too; classify_pr_results.py reads this to tell the two apart.
     """
     marker = marker.strip()
-    kind, _, where = marker.partition(" ")
-    file, _, line = where.rpartition(":")
-    if kind not in ("page", "setup", "assert") or not file or not line.isdigit():
+    parsed = _parse_marker(marker)
+    if parsed is None:
         return None
-    command: List[str] = []
-    lines = script.splitlines()
-    for i, text in enumerate(lines):
-        if text.startswith("printf ") and f"'{marker}'" in text:
-            for body in lines[i + 1:]:
-                if body.startswith(("# Source:", "# Hidden source", "# Test include:")):
-                    break
-                command.append(body)
-    while command and not command[-1].strip():
-        command.pop()
+    kind, file, line = parsed
+    command = ""
+    reached: List[str] = []
+    for step_marker, step_command in script_steps(script):
+        if step_marker == marker:
+            command = step_command
+            break
+        step = _parse_marker(step_marker)
+        if step is not None:
+            reached.append(step_hash(step[0], step[1], step_command))
     return {
         "kind": kind,
         "file": file,
-        "line": int(line),
-        "command": "\n".join(command[:FAILED_STEP_COMMAND_LINES]),
+        "line": line,
+        "command": command,
         "output_tail": "\n".join(output.strip().splitlines()[-FAILED_STEP_OUTPUT_LINES:]),
+        "reached": reached,
     }
 
 
