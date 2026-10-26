@@ -3,7 +3,7 @@ source: content/docs/standalone/latest/documentation/configuration/security/netw
 blocks:
 - 25bcd6e5e8818226 yaml
 - 8c484f3a85bbd247 yaml
-- 1b0f96e29574133c yaml
+- 2de671b1cac48dbd yaml
 - 52d2a170c7be7579 yaml
 - a49202043d9d9605 yaml
 hidden:
@@ -24,7 +24,7 @@ hidden:
     #     with all three rule types (`allow`, `deny`, `require`) and the
     #     `source.address`, `source.port`, and `destination.hostname` CEL variables.
     #   * "Examples": all four example configs are accepted - the private-range
-    #     allowlist (`cidr(...).containsIP(...)`), the mTLS `source.tls.identity`
+    #     allowlist (`cidr(...).containsIP(...)`), the mTLS `source.spiffeId`
     #     requirement, the TLS SNI `destination.hostname` requirement, and the
     #     layered L4+L7 config that combines `networkAuthorization` with a
     #     route-level `authorization` policy.
@@ -37,6 +37,11 @@ hidden:
     #     (`127.0.0.1`) lets the connection reach HTTP routing - observed as a `503`
     #     from the placeholder backend rather than a connection failure, confirming
     #     network authorization is the thing that let it through.
+    #   * "Require mTLS client identity" at runtime: with test client certificates
+    #     for `spiffe://cluster.local/ns/default/sa/my-service` and
+    #     `.../sa/other-service` from the same CA, the example admits only the
+    #     `my-service` client (observed as a 503 from the placeholder backend) and
+    #     rejects the other client and a client with no certificate.
     #
     # WHAT THIS TEST DOES NOT VALIDATE (and why):
     #   * Evaluation order rules for `deny` match and denylist semantics - requires
@@ -50,9 +55,6 @@ hidden:
     #     `networkAuthorization` config at all behaves like any other page's
     #     unauthenticated route), so a dedicated example would add no signal beyond
     #     what every other doc test on this site already demonstrates.
-    #   * `source.tls.identity` and `source.tls.subject_alt_names` at runtime -
-    #     requires config/traffic the page omits; the page shows no TLS listener or
-    #     client certificate setup, so the mTLS example is only validated as config.
     #   * `destination.hostname` at runtime - requires TLS SNI traffic that the page
     #     omits, so the TLS SNI example is only validated as config.
     #   * The route-level `authorization` JWT requirement in the layered example -
@@ -175,19 +177,81 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 2
-    fingerprint: 1b0f96e29574133c
+    fingerprint: 2de671b1cac48dbd
     lang: yaml
-    lines: 1b6c26b3 f9685371 3de9d845 1526feb7
+    lines: 1b6c26b3 f9685371 3de9d845 7e2f063e 943d11d8 0b02fb9c 0b26dbca 3195c5f5 a833fd55 e95406b4 e20596a1 d67b54bf d897654b c64a4012
     preview: 'frontendPolicies:'
   content: |-
     {{< doc-test paths="network-authz" >}}
+    # Runtime check for "Require mTLS client identity". Create a test CA, a server
+    # certificate for localhost, and two client certificates from the same CA: one
+    # with the SPIFFE ID that the example requires, and one with a different
+    # SPIFFE ID. The example's gateway reads certs/cert.pem, certs/key.pem, and
+    # certs/ca.pem, and --validate-only reads those files too.
+    mkdir -p certs
+    openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj "/CN=test-ca" \
+      -keyout certs/ca.key -out certs/ca.pem 2>/dev/null
+    issue_cert() {
+      openssl req -newkey rsa:2048 -nodes -subj "/CN=$1" \
+        -keyout "certs/$1.key" -out "certs/$1.csr" 2>/dev/null
+      printf 'subjectAltName=%s\n' "$2" > "certs/$1.ext"
+      openssl x509 -req -in "certs/$1.csr" -CA certs/ca.pem -CAkey certs/ca.key \
+        -CAcreateserial -days 1 -extfile "certs/$1.ext" -out "certs/$1.pem" 2>/dev/null
+    }
+    issue_cert server "DNS:localhost,IP:127.0.0.1"
+    cp certs/server.pem certs/cert.pem
+    cp certs/server.key certs/key.pem
+    issue_cert my-service "URI:spiffe://cluster.local/ns/default/sa/my-service"
+    issue_cert other-service "URI:spiffe://cluster.local/ns/default/sa/other-service"
+
     cat <<'EOF' > config-mtls.yaml
     frontendPolicies:
       networkAuthorization:
         rules:
-        - require: 'source.tls.identity == "spiffe://cluster.local/ns/default/sa/my-service"'
+        - require: 'source.spiffeId == "spiffe://cluster.local/ns/default/sa/my-service"'
+
+    gateways:
+      default:
+        port: 3443
+        tls:
+          cert: certs/cert.pem
+          key: certs/key.pem
+          root: certs/ca.pem
+    routes:
+    - backends:
+      - host: localhost:8080
     EOF
     agentgateway -f config-mtls.yaml --validate-only
+
+    agentgateway -f config-mtls.yaml &
+    AGW_PID=$!
+    sleep 3
+
+    # A connection that network authorization admits reaches HTTP routing and gets
+    # a 503 from the placeholder backend at localhost:8080. A rejected connection is
+    # reset at L4, so curl reports 000.
+    client_status() {
+      curl -s -o /dev/null -w '%{http_code}' --max-time 5 --cacert certs/ca.pem "$@" https://localhost:3443/ || true
+    }
+    ALLOWED=$(client_status --cert certs/my-service.pem --key certs/my-service.key)
+    OTHER=$(client_status --cert certs/other-service.pem --key certs/other-service.key)
+    NO_CERT=$(client_status)
+    kill $AGW_PID 2>/dev/null || true
+    wait $AGW_PID 2>/dev/null || true
+
+    if [ "$ALLOWED" != "503" ]; then
+      echo "FAIL: expected the client with the required SPIFFE ID to reach HTTP routing (503), got $ALLOWED"
+      exit 1
+    fi
+    if [ "$OTHER" != "000" ]; then
+      echo "FAIL: expected the client with a different SPIFFE ID to be rejected, got $OTHER"
+      exit 1
+    fi
+    if [ "$NO_CERT" != "000" ]; then
+      echo "FAIL: expected a client without a certificate to be rejected, got $NO_CERT"
+      exit 1
+    fi
+    echo "✓ Network authorization admitted only the client whose certificate carries the required SPIFFE ID"
     {{< /doc-test >}}
 - after:
     block: 3
