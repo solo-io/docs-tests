@@ -223,7 +223,7 @@ def summary_markdown(verdicts: list[dict]) -> str:
     icon = {SUCCESS: "✅", FAILURE: "❌", SKIPPED: "⏭️"}
     counts = {c: sum(1 for v in verdicts if v["conclusion"] == c) for c in (SUCCESS, FAILURE, SKIPPED)}
     lines = [
-        f"## Doc tests: {counts[SUCCESS]} passed, {counts[FAILURE]} broken by this change, "
+        f"## Doc tests: {counts[SUCCESS]} passed, {counts[FAILURE]} broken, "
         f"{counts[SKIPPED]} need a test update",
         "",
         "| Result | Scenario | |",
