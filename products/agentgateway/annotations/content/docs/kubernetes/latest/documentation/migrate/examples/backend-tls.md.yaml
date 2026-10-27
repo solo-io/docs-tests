@@ -1,0 +1,112 @@
+format: 1
+source: content/docs/kubernetes/latest/documentation/migrate/examples/backend-tls.md
+blocks:
+- 6bbce598b1165a62 bash
+- ca7b440a7c7636ea bash
+- cb19341450cd628f bash
+- 8aea19b183549f5d yaml
+- 4dd6da3dcd22ee02 yaml
+- 944a286051f388ed bash
+tags:
+- paths: migrate-backend-tls
+  block: 0
+  fingerprint: 6bbce598b1165a62
+  lang: bash
+  lines: 30f9b196 4912a691 f1089fb2 8c8c4228 fd56fe6e 0ccc8edc 72ab0e66 2412755f 69feff77 35763a11 58523378 613a2e81 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c ee705c26 f12798fe 1ef117a2 5e67d79f bcbaf886 abc56510
+  preview: cat <<'EOF' > backend-tls-ingress.yaml
+  form:
+    attr: paths="migrate-backend-tls"
+    only: true
+    lead: ' '
+- paths: migrate-backend-tls
+  block: 1
+  fingerprint: ca7b440a7c7636ea
+  lang: bash
+  lines: 9a48758b 7f3bdf52
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=agentgateway \
+  form:
+    attr: paths="migrate-backend-tls"
+    only: true
+    lead: ' '
+- paths: migrate-backend-tls
+  block: 2
+  fingerprint: cb19341450cd628f
+  lang: bash
+  lines: cb193414
+  preview: cat backend-tls-agentgateway.yaml
+  form:
+    attr: paths="migrate-backend-tls"
+    only: true
+    lead: ' '
+- paths: migrate-backend-tls
+  block: 5
+  fingerprint: 944a286051f388ed
+  lang: bash
+  lines: 944a2860
+  preview: kubectl apply -f backend-tls-agentgateway.yaml
+  form:
+    attr: paths="migrate-backend-tls"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 6bbce598b1165a62
+    lang: bash
+    lines: 30f9b196 4912a691 f1089fb2 8c8c4228 fd56fe6e 0ccc8edc 72ab0e66 2412755f 69feff77 35763a11 58523378 613a2e81 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c ee705c26 f12798fe 1ef117a2 5e67d79f bcbaf886 abc56510
+    preview: cat <<'EOF' > backend-tls-ingress.yaml
+  content: |-
+    {{< doc-test paths="migrate-backend-tls" >}}
+    # Install the ingress2gateway version this guide documents, for this OS and CPU.
+    I2G_VERSION="${I2G_VERSION:-v0.5.0}"
+    i2g_arch=$(uname -m)
+    [ "$i2g_arch" = "aarch64" ] && i2g_arch=arm64
+    # A throwaway dir, so a local run leaves nothing in your home directory.
+    I2G_BIN="${TMPDIR:-/tmp}/doc-test-ingress2gateway-${I2G_VERSION}"
+    mkdir -p "$I2G_BIN"
+    export PATH="$I2G_BIN:$PATH"
+    if ! ingress2gateway version 2>/dev/null | grep -q "${I2G_VERSION#v}"; then
+      curl -fsSL "https://github.com/kgateway-dev/ingress2gateway/releases/download/${I2G_VERSION}/ingress2gateway_$(uname -s)_${i2g_arch}.tar.gz" \
+        | tar -xz -C "$I2G_BIN" ingress2gateway
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 944a286051f388ed
+    lang: bash
+    lines: 944a2860
+    preview: kubectl apply -f backend-tls-agentgateway.yaml
+  content: |-
+    {{< doc-test paths="migrate-backend-tls" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the BackendTLSPolicy validates the backend hostname
+      wait:
+        target:
+          kind: BackendTLSPolicy
+          metadata:
+            namespace: default
+            name: secure-api-backend-tls
+        jsonPath: "$.spec.validation.hostname"
+        jsonPathExpectation:
+          comparator: equals
+          value: "internal-api.example.com"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: the AgentgatewayPolicy sets the SNI
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: secure-api-backend-tls
+        jsonPath: "$.spec.backend.tls.sni"
+        jsonPathExpectation:
+          comparator: equals
+          value: "internal-api.example.com"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    kubectl delete -f backend-tls-agentgateway.yaml --ignore-not-found
+    {{< /doc-test >}}

@@ -1,0 +1,149 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/observability.md
+blocks:
+- 0cf4e54c604ce7e0 yaml
+- f6931a7b2e59dbc5 sh
+- 3b2f16635f2d988d sh
+- c3c51655074c8463
+- 6d4f725cb7fffa90
+tags:
+- paths: llm-observability
+  block: 0
+  fingerprint: 0cf4e54c604ce7e0
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 1b6c26b3 390f7e12 a97a9e13 8def7c01 9adf3fc1 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="llm-observability"
+    only: true
+    lead: ' '
+- paths: llm-observability
+  block: 2
+  fingerprint: 3b2f16635f2d988d
+  lang: sh
+  lines: b8c497bf 9285509c b11c46be 9abe8061 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 fc075a9d
+  preview: curl http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="llm-observability"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: (top of page)
+    line: a7a22dc24faff3ed
+    occurrence: 0
+    words: 2998b323 cf07194e 0a149844 9f82f7b3 5a95db2a 6201111b ca978112 a18b869b b81f37a0 897abbb1 c97ace4c 924b1f28 177a7ea3 98f38f12 6201111b b5ac69fc 1f58b914 a9f4b3d2 460ee6aa 6201111b 3c469e9d 0a4e4c29 4d327af4 15646ccf
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-observability" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "View traces": Jaeger and the OpenTelemetry collector start from the same
+    #     example files the page embeds; the tracing config is accepted and, after the
+    #     documented request, the agentgateway service shows up in Jaeger (queried
+    #     through the Jaeger API instead of the UI).
+    #   * "View LLM metrics": after the request, the metrics endpoint on port 15020
+    #     exposes agentgateway_gen_ai_client_token_usage with gen_ai_token_type="input"
+    #     and the request model gpt-4o.
+    #   * "Process logs": the request log line records gen_ai.request.model=gpt-4o and
+    #     http.status=200.
+    #   The request goes to a local mock LLM instead of OpenAI.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Realized costs and the agctl analytics/logs commands - they need a cost
+    #     catalog and a request-log database that this page does not set up.
+    #   * The rate-limited log example - display only.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-llm-observability-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-llm-observability-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    {{< /doc-test >}}
+- after:
+    section: View traces
+    line: ae4a179ed556a59e
+    occurrence: 0
+    words: 6b86b273 d9c0d341 ea62dcb6 21a355f1 eac369bb
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-observability" >}}
+    # The page's Jaeger snippet embeds these two files from agentgateway.dev at build
+    # time; fetch the same files here.
+    curl -fsSL https://agentgateway.dev/examples/mcp-telemetry/otel-collector-config.yaml -o otel-collector-config.yaml
+    curl -fsSL https://agentgateway.dev/examples/mcp-telemetry/docker-compose.yaml -o jaeger-compose.yaml
+    docker compose -f jaeger-compose.yaml up -d
+    for _ in $(seq 1 60); do curl -sf -o /dev/null -m 2 http://localhost:16686/api/services && break; sleep 2; done
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 0cf4e54c604ce7e0
+    lang: yaml
+    lines: 2a7b4933 a7f80a73 1b6c26b3 390f7e12 a97a9e13 8def7c01 9adf3fc1 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+    preview: cat <<'EOF' > config.yaml
+  content: |2-
+       {{< doc-test paths="llm-observability" >}}
+       to_mock config.yaml config-mock.yaml
+       agentgateway -f config-mock.yaml --validate-only
+       start_agw config-mock.yaml
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 3b2f16635f2d988d
+    lang: sh
+    lines: b8c497bf 9285509c b11c46be 9abe8061 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 fc075a9d
+    preview: curl http://localhost:4000/v1/chat/completions \
+  content: |2-
+       {{< doc-test paths="llm-observability" >}}
+       sleep 1
+       metrics=$(curl -s -m 10 http://localhost:15020/metrics)
+       grep 'agentgateway_gen_ai_client_token_usage' <<<"$metrics" | grep 'gen_ai_token_type="input"' | grep -q 'gen_ai_request_model="gpt-4o"' \
+         || { echo "FAIL: no input token usage series for gpt-4o"; grep gen_ai <<<"$metrics" || true; exit 1; }
+       echo "ok: the token usage metric records the request"
+       grep 'gen_ai.request.model=gpt-4o' /tmp/doc-test-llm-observability-agw.log | grep -q 'http.status=200' \
+         || { echo "FAIL: no request log line"; cat /tmp/doc-test-llm-observability-agw.log; exit 1; }
+       echo "ok: the process log records the LLM request"
+       # Jaeger: keep sending requests until the agentgateway service has reported spans.
+       found=""
+       for _ in $(seq 1 40); do
+         if curl -s -m 5 http://localhost:16686/api/services | grep -q '"agentgateway'; then found=yes; break; fi
+         curl -s -o /dev/null -m 10 http://localhost:4000/v1/chat/completions -H 'content-type: application/json' \
+           -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "trace me"}]}' || true
+         sleep 3
+       done
+       services=$(curl -s -m 5 http://localhost:16686/api/services || true)
+       stop_agw
+       docker compose -f jaeger-compose.yaml down
+       [ -n "$found" ] || { echo "FAIL: Jaeger has no agentgateway service. Services: $services"; exit 1; }
+       echo "ok: traces for the LLM request reach Jaeger"
+       {{< /doc-test >}}

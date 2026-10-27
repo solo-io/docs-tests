@@ -1,0 +1,86 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/rbac.md
+blocks:
+- 858888d88a059f34 yaml
+- f0cb7021f7d87722 sh
+- 5af6f08bec1adea1 sh
+- 328b735d1f8d98a9 console
+- 8c8fd354758a03a6 sh
+- a59d10167ebed420 sh
+- a27e7b645de1589d sh
+tags:
+- paths: llm-rbac,llm-rbac-run
+  block: 0
+  fingerprint: 858888d88a059f34
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 72dea497 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 32ecf0ce e4f6a86d d48a6346 d25a61e1 1188488c 0a06a173 81a99cff abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-rbac,llm-rbac-run"
+    only: true
+    lead: ' '
+- paths: llm-rbac-run
+  block: 6
+  fingerprint: a27e7b645de1589d
+  lang: sh
+  lines: 8a912a24 baa54982 e2c644e6 8ed52926
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} rbac-policy -n {{< re
+  form:
+    attr: paths="llm-rbac-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 858888d88a059f34
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 72dea497 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 32ecf0ce e4f6a86d d48a6346 d25a61e1 1188488c 0a06a173 81a99cff abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-rbac-run" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the rbac-policy policy is accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: rbac-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: a request without the x-llm header is denied
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/gemini"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "", "messages": [{"role": "user", "content": "Explain how AI works in simple terms."}]}
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 403
+       - name: a request with the x-llm gemini header is allowed
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/gemini"
+           method: POST
+           headers:
+             content-type: application/json
+             x-llm: gemini
+           body: |
+             {"model": "", "messages": [{"role": "user", "content": "Explain how AI works in simple terms."}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

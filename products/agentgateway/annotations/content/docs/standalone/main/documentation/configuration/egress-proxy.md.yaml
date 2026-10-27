@@ -1,0 +1,375 @@
+format: 1
+source: content/docs/standalone/main/documentation/configuration/egress-proxy.md
+blocks:
+- 1f5c0535a7dee257 sh
+- d583b74db98d8bcb yaml
+- 286fd1b17063f137 sh
+- eb610f26b231d8ac sh
+- 92413e9787e7d079 console
+- d050828a8629db52 sh
+- 246e60916a65e8e8 console
+- d2a164e4a3694c8b yaml
+- b3a19e3f87cec1d6 sh
+- 452261b2b53e74ba yaml
+- cc4c5da34951fa7a sh
+- 55e841f0957c0a3a sh
+- e96ea03dbc96b9fc console
+- df59933b65a40375 sh
+- 92413e9787e7d079 console
+- 81fc2a76b5143ec1 sh
+- 44cf562aaf4edaa0 console
+- 1172ffcc2ad7844d sh
+- 3265f407f6c1976d yaml
+- 382f6f5fa2e7a9e3 sh
+- eb610f26b231d8ac sh
+- 92413e9787e7d079 console
+- 08768c6882fe03e3 sh
+- f68f2b06043b0f49 console
+- a77155ce704ed5ea sh
+- 8ec14b464d174c07 json
+- f00f99dbc91239f6 yaml
+- a077e39126882acb sh
+- 2796e5802d2a2cad sh
+- 42bbcf5d4ede71b9 console
+- 067dd9261047a397 console
+- f1239c6402f6b486 yaml
+- dfc7580c66923383 sh
+- bf8de9b6a8784c2d sh
+- 58b8382c050ee035 console
+- b14203e3d72810b1 console
+- d8391118be4f8f26 yaml
+- dfc7580c66923383 sh
+- bf8de9b6a8784c2d sh
+- 9ae05f4b746352b7 console
+tags:
+- paths: egress-proxy
+  block: 1
+  fingerprint: d583b74db98d8bcb
+  lang: yaml
+  lines: 105f9a83 f4a9035a 05ca4235 796eea4c b190db08 e0bcff08 943d11d8 02252937 c6ba4159 c10d7538 71ccd6a9 8b2c0e0a 93a32401 b9cd7e51 bab8ab32 de5e4bab 301e1bfa 5817cab5 1f7e7cc1 d72f261d 88755831 abc56510
+  preview: cat <<EOF > egress.yaml
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 8
+  fingerprint: b3a19e3f87cec1d6
+  lang: sh
+  lines: b3a19e3f
+  preview: printf 'egressuser:%s\n' "$(openssl passwd -apr1 'secretpw')" > htpasswd.txt
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 9
+  fingerprint: 452261b2b53e74ba
+  lang: yaml
+  lines: fd5d638b f4a9035a 1b6c26b3 315099db d6a0daf6 05ca4235 796eea4c c10d7538 e3c53dc8 069de162 c8f3f59a de77b3a7 80428c42 9106ce1d b0299c0e 0d241db7 b4026c96 30ff4d98 ced07ec1 06fe1038 d67b54bf e5c26f46 301e1bfa 5817cab5 1f7e7cc1 d72f261d 88755831 abc56510
+  preview: cat <<EOF > egress-auth.yaml
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 13
+  fingerprint: df59933b65a40375
+  lang: sh
+  lines: df59933b
+  preview: curl --proxy http://127.0.0.1:3000 --proxy-user egressuser:secretpw --head https
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 17
+  fingerprint: 1172ffcc2ad7844d
+  lang: sh
+  lines: 52b1902f be9e37dd 0d7112c1 d0917ad7 b723f8f1 5f451111
+  preview: openssl req -x509 -newkey rsa:2048 -nodes -keyout ca-key.pem -out ca-cert.pem -d
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 18
+  fingerprint: 3265f407f6c1976d
+  lang: yaml
+  lines: 2f9df952 f4a9035a 05ca4235 796eea4c b190db08 e0bcff08 943d11d8 02252937 c6ba4159 c10d7538 a4bb7b19 a6fc82e4 53aa10f9 3195c5f5 691a8b46 d4677eed 6277e0a2 9612184a 53aa10f9 3195c5f5 691a8b46 d4677eed 71ccd6a9 8b2c0e0a 93a32401 b9cd7e51 bab8ab32 de5e4bab 301e1bfa 5817cab5 1f7e7cc1 d72f261d 88755831 d67b54bf b037a11e 2c53fb8c c8f3f59a 169e5e52 b70d0f66 bb15a7a1 3af99526 24e419eb e01ccf75 4ba5d1eb 6472803d 009395dd d03b3990 abc56510
+  preview: cat <<EOF > egress-conditional.yaml
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 22
+  fingerprint: 08768c6882fe03e3
+  lang: sh
+  lines: 08768c68
+  preview: curl --proxy http://127.0.0.1:3000 --cacert ca-cert.pem https://static.example.c
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 24
+  fingerprint: a77155ce704ed5ea
+  lang: sh
+  lines: a77155ce
+  preview: curl --proxy http://127.0.0.1:3000 --cacert ca-cert.pem https://llm.example.com/
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 26
+  fingerprint: f00f99dbc91239f6
+  lang: yaml
+  lines: 49b35622 f4a9035a 05ca4235 796eea4c b190db08 e0bcff08 02286607 e8153209 c10d7538 2407cef5 3195c5f5 6aa5d66a a34e77f8 b4e3bc61 d67b54bf d897654b 88755831 c8f3f59a 48924e65 c8f3f59a f372f1cb 14ddcd05 207d5e5e 0ae23cc8 99c83b01 207d5e5e 73a2cc9c abc56510
+  preview: cat <<EOF > egress-inspect.yaml
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 28
+  fingerprint: 2796e5802d2a2cad
+  lang: sh
+  lines: 2796e580
+  preview: curl --proxy http://127.0.0.1:3000 --cacert ca-cert.pem --include https://httpbi
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+- paths: egress-proxy
+  block: 31
+  fingerprint: f1239c6402f6b486
+  lang: yaml
+  lines: ffae2b47 f4a9035a 05ca4235 796eea4c c10d7538 50c600d4 069de162 d67b54bf 42ab7c07 301e1bfa fc745d97 d72f261d 88755831 abc56510
+  preview: cat <<EOF > egress-loopback.yaml
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: (top of page)
+    line: a51e5d2603877b17
+    occurrence: 0
+    words: 56e57ada 9f584196 f83f07be f4bf9f7f ea325d76 e0603c49 5a638a12 1241936d 10c22bcf fed5e6c7 075f4ab8 8f4d9088 251fecd5 fd963e4f 1241936d cde0fb0d b1d6b91b 56e57ada 6201111b 56e57ada 531b7889 77bc06c5 1af0500e 151e58a8 ba78973d eabc01f1 663ea1bf ed4561f6
+    block_before: null
+  content: |-
+    {{< doc-test paths="egress-proxy" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Every example config is accepted by agentgateway (--validate-only).
+    #   * Tunnel mode allowlist: an allowlisted host (pypi.org) is reachable through the
+    #     proxy (200); a host outside the allowlist (example.com) fails with a client
+    #     TLS error after the tunnel is set up, not with a proxy refusal.
+    #   * Route mode: a request without credentials gets 407 with
+    #     `proxy-authenticate: Basic realm="agentgateway-egress"`; with credentials an
+    #     allowlisted host returns 200; a host outside the allowlist gets 404 to the
+    #     CONNECT request (curl exit code 56).
+    #   * Selected TLS termination: pypi.org still passes through; static.example.com
+    #     returns `hello from agentgateway`; llm.example.com serves the `smart` model in
+    #     /v1/models, all with the generated CA.
+    #   * Inspect all HTTPS: a request to httpbingo.org through the dynamic CA carries
+    #     the request transformation upstream and the response transformation back.
+    #   * "Loopback and link-local destinations": a dynamic backend refuses
+    #     localhost:15021 with 503 `backend not allowed` and logs the documented
+    #     reason; after adding config.backend.allowDynamicLoopback, the same request
+    #     returns 200 `ready`.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The `export HTTPS_PROXY` example - setting it would route every later HTTPS
+    #     call in the test through the proxy; the tests pass --proxy explicitly.
+    #   * The tcpRoutes dynamic `target` expression fragment - mirror.example.com does
+    #     not exist.
+    # REQUIREMENTS: outbound internet access to pypi.org and httpbingo.org.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-egress-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-egress-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    # The tunnel-mode examples declare a gateway on port 443. On Linux, an unprivileged
+    # process cannot bind a port below 1024 unless the unprivileged range is lowered.
+    if [ "$(uname -s)" = Linux ]; then
+      first_port=$(sysctl -n net.ipv4.ip_unprivileged_port_start 2>/dev/null || echo 0)
+      if [ "$first_port" -gt 443 ]; then
+        sudo -n sysctl -w net.ipv4.ip_unprivileged_port_start=443 >/dev/null 2>&1 || true
+      fi
+    fi
+    PROXY=http://127.0.0.1:3000
+    # Print the status code of a HEAD request through the proxy; 000 on failure.
+    via_proxy() { curl -s -o /dev/null -m 20 -w '%{http_code}' --noproxy '' --proxy "$PROXY" "$@" || true; }
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: d583b74db98d8bcb
+    lang: yaml
+    lines: 105f9a83 f4a9035a 05ca4235 796eea4c b190db08 e0bcff08 943d11d8 02252937 c6ba4159 c10d7538 71ccd6a9 8b2c0e0a 93a32401 b9cd7e51 bab8ab32 de5e4bab 301e1bfa 5817cab5 1f7e7cc1 d72f261d 88755831 abc56510
+    preview: cat <<EOF > egress.yaml
+  content: |2-
+       {{< doc-test paths="egress-proxy" >}}
+       agentgateway -f egress.yaml --validate-only
+       start_agw egress.yaml
+       code=$(via_proxy --head https://pypi.org/)
+       [ "$code" = 200 ] || { echo "FAIL: allowlisted pypi.org should return 200 through the proxy, got $code"; exit 1; }
+       echo "ok: pypi.org is reachable through the tunnel"
+       rc=0
+       curl -s -o /dev/null -m 20 --noproxy '' --proxy "$PROXY" --head https://example.com/ || rc=$?
+       # 0 would mean it got through; 7 or 56 would mean the proxy refused the CONNECT.
+       case "$rc" in
+         0|7|56) echo "FAIL: example.com should fail with a TLS error after the tunnel, curl exit $rc"; exit 1 ;;
+       esac
+       echo "ok: example.com is refused with a client TLS error (curl exit $rc)"
+       stop_agw
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 452261b2b53e74ba
+    lang: yaml
+    lines: fd5d638b f4a9035a 1b6c26b3 315099db d6a0daf6 05ca4235 796eea4c c10d7538 e3c53dc8 069de162 c8f3f59a de77b3a7 80428c42 9106ce1d b0299c0e 0d241db7 b4026c96 30ff4d98 ced07ec1 06fe1038 d67b54bf e5c26f46 301e1bfa 5817cab5 1f7e7cc1 d72f261d 88755831 abc56510
+    preview: cat <<EOF > egress-auth.yaml
+  content: |2-
+       {{< doc-test paths="egress-proxy" >}}
+       agentgateway -f egress-auth.yaml --validate-only
+       start_agw egress-auth.yaml
+       out=$(curl -s --verbose -m 20 --noproxy '' --proxy "$PROXY" --head https://pypi.org/ 2>&1 || true)
+       grep -q '< HTTP/1.1 407' <<<"$out" || { echo "FAIL: no 407 without credentials"; echo "$out"; exit 1; }
+       grep -qi 'proxy-authenticate: Basic realm="agentgateway-egress"' <<<"$out" \
+         || { echo "FAIL: no Basic proxy-authenticate challenge"; echo "$out"; exit 1; }
+       echo "ok: a request without credentials is challenged with 407"
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 81fc2a76b5143ec1
+    lang: sh
+    lines: 81fc2a76
+    preview: curl --verbose --proxy http://127.0.0.1:3000 --proxy-user egressuser:secretpw --
+  content: |2-
+       {{< doc-test paths="egress-proxy" >}}
+       code=$(via_proxy --proxy-user egressuser:secretpw --head https://pypi.org/)
+       [ "$code" = 200 ] || { echo "FAIL: authenticated pypi.org should return 200, got $code"; exit 1; }
+       rc=0
+       out=$(curl -s --verbose -m 20 --noproxy '' --proxy "$PROXY" --proxy-user egressuser:secretpw --head https://example.com/ 2>&1) || rc=$?
+       grep -q '< HTTP/1.1 404' <<<"$out" || { echo "FAIL: example.com should get 404 to the CONNECT"; echo "$out"; exit 1; }
+       [ "$rc" = 56 ] || { echo "FAIL: curl should exit 56 when the proxy refuses, got $rc"; exit 1; }
+       echo "ok: an authenticated client gets 404 for a host outside the allowlist (curl exit 56)"
+       stop_agw
+       {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 3265f407f6c1976d
+    lang: yaml
+    lines: 2f9df952 f4a9035a 05ca4235 796eea4c b190db08 e0bcff08 943d11d8 02252937 c6ba4159 c10d7538 a4bb7b19 a6fc82e4 53aa10f9 3195c5f5 691a8b46 d4677eed 6277e0a2 9612184a 53aa10f9 3195c5f5 691a8b46 d4677eed 71ccd6a9 8b2c0e0a 93a32401 b9cd7e51 bab8ab32 de5e4bab 301e1bfa 5817cab5 1f7e7cc1 d72f261d 88755831 d67b54bf b037a11e 2c53fb8c c8f3f59a 169e5e52 b70d0f66 bb15a7a1 3af99526 24e419eb e01ccf75 4ba5d1eb 6472803d 009395dd d03b3990 abc56510
+    preview: cat <<EOF > egress-conditional.yaml
+  content: |2-
+       {{< doc-test paths="egress-proxy" >}}
+       agentgateway -f egress-conditional.yaml --validate-only
+       OPENAI_API_KEY=dummy start_agw egress-conditional.yaml
+       code=$(via_proxy --head https://pypi.org/)
+       [ "$code" = 200 ] || { echo "FAIL: pypi.org should still pass through, got $code"; exit 1; }
+       echo "ok: pypi.org passes through unchanged"
+       {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: a77155ce704ed5ea
+    lang: sh
+    lines: a77155ce
+    preview: curl --proxy http://127.0.0.1:3000 --cacert ca-cert.pem https://llm.example.com/
+  content: |2-
+       {{< doc-test paths="egress-proxy" >}}
+       body=$(curl -s -m 20 --noproxy '' --proxy "$PROXY" --cacert ca-cert.pem https://static.example.com/)
+       [ "$body" = "hello from agentgateway" ] || { echo "FAIL: static.example.com body was: $body"; exit 1; }
+       models=$(curl -s -m 20 --noproxy '' --proxy "$PROXY" --cacert ca-cert.pem https://llm.example.com/v1/models)
+       [ "$(jq -r '.data[0].id' <<<"$models")" = smart ] || { echo "FAIL: llm.example.com models: $models"; exit 1; }
+       echo "ok: agentgateway terminates TLS for static.example.com and llm.example.com"
+       stop_agw
+       {{< /doc-test >}}
+- after:
+    block: 26
+    fingerprint: f00f99dbc91239f6
+    lang: yaml
+    lines: 49b35622 f4a9035a 05ca4235 796eea4c b190db08 e0bcff08 02286607 e8153209 c10d7538 2407cef5 3195c5f5 6aa5d66a a34e77f8 b4e3bc61 d67b54bf d897654b 88755831 c8f3f59a 48924e65 c8f3f59a f372f1cb 14ddcd05 207d5e5e 0ae23cc8 99c83b01 207d5e5e 73a2cc9c abc56510
+    preview: cat <<EOF > egress-inspect.yaml
+  content: |2-
+       {{< doc-test paths="egress-proxy" >}}
+       agentgateway -f egress-inspect.yaml --validate-only
+       start_agw egress-inspect.yaml
+       {{< /doc-test >}}
+- after:
+    block: 28
+    fingerprint: 2796e5802d2a2cad
+    lang: sh
+    lines: 2796e580
+    preview: curl --proxy http://127.0.0.1:3000 --cacert ca-cert.pem --include https://httpbi
+  content: |2-
+       {{< doc-test paths="egress-proxy" >}}
+       out=$(curl -s -m 30 --noproxy '' --proxy "$PROXY" --cacert ca-cert.pem --include https://httpbingo.org/headers)
+       grep -qi '^x-agentgateway-resp-message: Hello from agentgateway!' <<<"$out" \
+         || { echo "FAIL: response header missing"; echo "$out"; exit 1; }
+       grep -q '"X-Agentgateway-Req-Message"' <<<"$out" || { echo "FAIL: request header not seen upstream"; echo "$out"; exit 1; }
+       echo "ok: HTTP policies apply to intercepted HTTPS traffic"
+       stop_agw
+       {{< /doc-test >}}
+- after:
+    block: 31
+    fingerprint: f1239c6402f6b486
+    lang: yaml
+    lines: ffae2b47 f4a9035a 05ca4235 796eea4c c10d7538 50c600d4 069de162 d67b54bf 42ab7c07 301e1bfa fc745d97 d72f261d 88755831 abc56510
+    preview: cat <<EOF > egress-loopback.yaml
+  content: |2-
+       {{< doc-test paths="egress-proxy" >}}
+       agentgateway -f egress-loopback.yaml --validate-only
+       start_agw egress-loopback.yaml
+       out=$(curl -s -i -m 20 --noproxy '' --proxy "$PROXY" http://localhost:15021/healthz/ready || true)
+       head -n1 <<<"$out" | grep -q ' 503' || { echo "FAIL: loopback should be refused with 503"; echo "$out"; exit 1; }
+       grep -q 'backend not allowed' <<<"$out" || { echo "FAIL: body should be 'backend not allowed'"; echo "$out"; exit 1; }
+       sleep 1
+       grep -q 'dynamic backend resolved to a loopback or link-local address' /tmp/doc-test-egress-agw.log \
+         || { echo "FAIL: log does not record the reason"; cat /tmp/doc-test-egress-agw.log; exit 1; }
+       echo "ok: a dynamic backend refuses loopback by default"
+       stop_agw
+       # Step 4: add config.backend.allowDynamicLoopback to the top of the file.
+       { printf 'config:\n  backend:\n    allowDynamicLoopback: true\n'; cat egress-loopback.yaml; } > egress-loopback.tmp
+       mv egress-loopback.tmp egress-loopback.yaml
+       agentgateway -f egress-loopback.yaml --validate-only
+       start_agw egress-loopback.yaml
+       out=$(curl -s -i -m 20 --noproxy '' --proxy "$PROXY" http://localhost:15021/healthz/ready || true)
+       head -n1 <<<"$out" | grep -q ' 200' || { echo "FAIL: loopback should be allowed"; echo "$out"; exit 1; }
+       grep -q 'ready' <<<"$out" || { echo "FAIL: body should be 'ready'"; echo "$out"; exit 1; }
+       echo "ok: allowDynamicLoopback lets the dynamic backend reach localhost"
+       stop_agw
+       {{< /doc-test >}}

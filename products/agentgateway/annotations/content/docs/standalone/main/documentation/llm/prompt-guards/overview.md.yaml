@@ -1,0 +1,339 @@
+format: 1
+source: content/docs/standalone/main/documentation/llm/prompt-guards/overview.md
+blocks:
+- bb017bef7ed02b67 mermaid
+- 213fb49af3bc0b12 yaml
+- f591c71b0a0620a5 yaml
+- e42d056101ad17c7 yaml
+- 95fc464f1986b043 yaml
+hidden:
+- after:
+    section: (top of page)
+    line: 08764977d0327529
+    occurrence: 0
+    words: 680dce63 487b9104 ec72420d 6201111b e30b3910 75857a45 2d5e8600 3a6eb079 b40356e6 6201111b 58904eff ed7002b4 a24e10fd 8cff4f7d ed7002b4 856e8bd3 1e2135d1
+    block_before: null
+  content: |-
+    {{< doc-test paths="guardrails-overview" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # The page shows config fragments without heredocs; each test config below restates
+    # the fragment and adds only the model entry needed to run it against a local mock LLM.
+    # WHAT THIS TEST VALIDATES:
+    #   * "Customize rejection responses": the credit card guard returns the documented
+    #     422 with a JSON content-type and the configured body; a guard without a
+    #     `rejection` block returns the default 403 and the body `The request was
+    #     rejected due to inappropriate content`.
+    #   * The audit mode and streaming guardrail example configs are accepted
+    #     (--validate-only).
+    #   * Guard scope: a prompt whose SSN is only in a tool call argument passes a guard with
+    #     the default scope (200) and is rejected by the page's scope example, which
+    #     adds `toolInput` (403). This is the "Guards do not scan tool call arguments
+    #     by default" and "Setting scope replaces the default" claims.
+    #   * Webhook scope: a response webhook with a scope other than [messages] fails
+    #     to load.
+    #   * An empty `scope` list fails to load with `scope must not be empty`.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Audit mode at runtime - the example's openAIModeration guard calls live OpenAI.
+    #   * Streaming guardrails at runtime - the local mock LLM does not stream.
+    #   * Mask behavior and the route-type table - covered by the regex guide or
+    #     display-only.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-guardrails-overview-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-guardrails-overview-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    # Load a config that must be refused, and check the documented error text.
+    expect_load_error() {
+      local out
+      if out=$(agentgateway -f "$1" --validate-only 2>&1); then
+        echo "FAIL: $1 should not load"; echo "$out"; exit 1
+      fi
+      if ! grep -qF "$2" <<<"$out"; then
+        echo "FAIL: $1 did not report: $2"; echo "$out"; exit 1
+      fi
+      echo "ok: $1 is refused with: $2"
+    }
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 213fb49af3bc0b12
+    lang: yaml
+    lines: 3af99526 c8f3f59a e8bd2b8e 14ddcd05 51da151f 665793a0 3de9d845 5349a995 3f154c69 1ad6a9ce 38dc0152 207d5e5e e5fbfe69 3cd03edc
+    preview: 'llm:'
+  content: |-
+    {{< doc-test paths="guardrails-overview" >}}
+    # The fragment from the page, plus one model. The model also carries a guard
+    # without a `rejection` block, to show the default 403 response.
+    cat <<'EOF' > guard-rejection.yaml
+    llm:
+      policies:
+        guardrails:
+          request:
+          - regex:
+              action: reject
+              rules:
+              - builtin: creditCard
+            rejection:
+              status: 422
+              headers:
+                set:
+                  content-type: "application/json"
+              body: '{"error":"Request contains sensitive information."}'
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+        guardrails:
+          request:
+          - regex:
+              action: reject
+              rules:
+              - builtin: email
+    EOF
+    to_mock guard-rejection.yaml guard-rejection-mock.yaml
+    agentgateway -f guard-rejection-mock.yaml --validate-only
+    start_agw guard-rejection-mock.yaml
+    YAMLTest -f - <<'EOF'
+    - name: the credit card guard returns the custom 422 JSON rejection
+      retries: 3
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Card 4111 1111 1111 1111"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 422
+        headers:
+          - name: content-type
+            comparator: contains
+            value: application/json
+        bodyJsonPath:
+          - path: "$.error"
+            comparator: equals
+            value: Request contains sensitive information.
+    - name: a guard without rejection settings returns the default 403 and body
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Mail test@example.com"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains:
+          - The request was rejected due to inappropriate content
+    - name: a clean prompt reaches the model
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hello"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    stop_agw
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f591c71b0a0620a5
+    lang: yaml
+    lines: a7f80a73 3af99526 4b0e6312 e01ccf75 ca08b9f0 91030a0b a1343bf6 cd410e85 91030a0b c8f3f59a e8bd2b8e 14ddcd05 51da151f aef01f4f 3de9d845 5349a995 e21ce5bf aef01f4f
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="guardrails-overview" >}}
+    cat <<'EOF' > guard-audit.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      gateways: [default]
+      models:
+      - name: gpt-4o
+        provider: openai
+      providers:
+      - name: openai
+        provider: openai
+      policies:
+        guardrails:
+          request:
+          - regex:
+              action: audit
+              rules:
+              - builtin: creditCard
+          - openAIModeration:
+              action: audit
+    EOF
+    agentgateway -f guard-audit.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: e42d056101ad17c7
+    lang: yaml
+    lines: 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 e8bd2b8e 14ddcd05 5095ccef eeb7e2a3 665793a0 3de9d845 cf694735 99c83b01 99bb03c2 eeb7e2a3 665793a0 3de9d845 ed023f12
+    preview: 'llm:'
+  content: |-
+    {{< doc-test paths="guardrails-overview" >}}
+    cat <<'EOF' > guard-scope.yaml
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+        guardrails:
+          request:
+          - scope: [systemPrompt, messages, toolOutput, toolInput]
+            regex:
+              action: reject
+              rules:
+              - builtin: ssn
+          response:
+          - scope: [messages, toolInput]
+            regex:
+              action: reject
+              rules:
+              - pattern: "(?i)internal-only"
+    EOF
+    agentgateway -f guard-scope.yaml --validate-only
+    # Contrast config: the same request guard with `scope` omitted (the default).
+    cat <<'EOF' > guard-scope-default.yaml
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+        guardrails:
+          request:
+          - regex:
+              action: reject
+              rules:
+              - builtin: ssn
+    EOF
+    cat <<'EOF' > tool-input-ssn.json
+    {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "file my claim"}, {"role": "assistant", "tool_calls": [{"id": "c1", "type": "function", "function": {"name": "file_claim", "arguments": "{\"ssn\": \"123-45-6789\"}"}}]}, {"role": "tool", "tool_call_id": "c1", "content": "claim filed"}]}
+    EOF
+    status_for() {
+      curl -s -o /dev/null -w '%{http_code}' -m 15 http://localhost:4000/v1/chat/completions \
+        -H 'content-type: application/json' --data @tool-input-ssn.json
+    }
+    to_mock guard-scope-default.yaml guard-scope-default-mock.yaml
+    start_agw guard-scope-default-mock.yaml
+    code=$(status_for)
+    stop_agw
+    [ "$code" = 200 ] || { echo "FAIL: default scope should not scan tool call arguments, got $code"; exit 1; }
+    echo "ok: with the default scope, an SSN in tool call arguments passes ($code)"
+    to_mock guard-scope.yaml guard-scope-mock.yaml
+    start_agw guard-scope-mock.yaml
+    code=$(status_for)
+    stop_agw
+    [ "$code" = 403 ] || { echo "FAIL: scope with toolInput should reject the SSN in tool call arguments, got $code"; exit 1; }
+    echo "ok: with toolInput in scope, the SSN in tool call arguments is rejected ($code)"
+    # An empty scope list is refused.
+    sed 's/- scope: \[systemPrompt, messages, toolOutput, toolInput\]/- scope: []/' guard-scope.yaml > guard-scope-empty.yaml
+    expect_load_error guard-scope-empty.yaml "scope must not be empty"
+    {{< /doc-test >}}
+- after:
+    section: Webhook scope
+    line: e9461f5fb45fdc7e
+    occurrence: 0
+    words: d9298a10 89445ea0 b4d5a180 b9776d7d b7d64a92 75857a45 b4a070a2
+    block_before:
+      block: 3
+      fingerprint: e42d056101ad17c7
+      lang: yaml
+      lines: 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 e8bd2b8e 14ddcd05 5095ccef eeb7e2a3 665793a0 3de9d845 cf694735 99c83b01 99bb03c2 eeb7e2a3 665793a0 3de9d845 ed023f12
+      preview: 'llm:'
+  content: |-
+    {{< doc-test paths="guardrails-overview" >}}
+    # A response webhook may only use the [messages] scope.
+    cat <<'EOF' > guard-webhook-scope.yaml
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+        guardrails:
+          response:
+          - scope: [toolInput]
+            webhook:
+              target:
+                host: localhost:8000
+    EOF
+    if agentgateway -f guard-webhook-scope.yaml --validate-only > /tmp/doc-test-guard-webhook-scope.log 2>&1; then
+      echo "FAIL: a response webhook with scope [toolInput] should not load"; cat /tmp/doc-test-guard-webhook-scope.log; exit 1
+    fi
+    echo "ok: a response webhook with scope [toolInput] does not load"
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 95fc464f1986b043
+    lang: yaml
+    lines: 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 6d88d930 4208ae28 e8bd2b8e ba2229b6 99c83b01 51da151f 665793a0 3de9d845 79720b31
+    preview: 'llm:'
+  content: |-
+    {{< doc-test paths="guardrails-overview" >}}
+    cat <<'EOF' > guard-streaming.yaml
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          model: gpt-4o-mini
+          apiKey: "$OPENAI_API_KEY"
+        guardrails:
+          streaming: Enabled
+          response:
+          - regex:
+              action: reject
+              rules:
+              - builtin: email
+    EOF
+    agentgateway -f guard-streaming.yaml --validate-only
+    {{< /doc-test >}}

@@ -1,0 +1,176 @@
+format: 1
+source: content/docs/standalone/latest/documentation/observability/traces/configs/otel.md
+blocks:
+- 92645e5012950d56 yaml
+- 1147fcece7470665 sh
+- 5c191b4c93e187f6 yaml
+- f497d9e89bf86e5c sh
+- 6b0984a689c30b6a sh
+- 4dd6d3b68381efc7 yaml
+- fa7346d3048726ae sh
+- 20734918c312ca8b sh
+- 739d9e4e318a348b yaml
+- d9109b5f8a172635 sh
+tags:
+- paths: otel-collector
+  block: 1
+  fingerprint: 1147fcece7470665
+  lang: sh
+  lines: 15dba691 51836f33 16135787 9a5f2d4c
+  preview: docker run -d --name otel-collector \
+  form:
+    attr: paths="otel-collector"
+    only: true
+    lead: ' '
+- paths: otel-collector
+  block: 3
+  fingerprint: f497d9e89bf86e5c
+  lang: sh
+  lines: f497d9e8
+  preview: docker rm -f otel-collector
+  form:
+    attr: paths="otel-collector"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="otel-collector" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Binary and Docker" steps 1-2: the documented collector config and docker run
+    #     start an OTel Collector that accepts OTLP/gRPC on localhost:4317.
+    #   * Step 3: with the documented `frontendPolicies.tracing` settings, agentgateway
+    #     exports request spans to the collector (the debug exporter prints them).
+    #   * Step 4: `docker rm -f otel-collector` cleanup.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The "Kubernetes (Helm)" tab - needs a cluster; this is a standalone test.
+    #   * Exporters other than `debug` - they need a tracing backend account.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 92645e5012950d56
+    lang: yaml
+    lines: aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 3e81ada3 b7685c3f 23e4c81d fbb64f63 ada604fb 3897150c 1738e439 80a766f7 6f411f1c bd3874e4 91ef1ed6
+    preview: 'receivers:'
+  content: |2-
+       {{< doc-test paths="otel-collector" >}}
+       # Step 1 shows the collector config as a file to create; write it verbatim.
+       cat > otel-collector-config.yaml <<'EOF'
+       receivers:
+         otlp:
+           protocols:
+             grpc:
+               endpoint: 0.0.0.0:4317
+
+       processors:
+         batch:
+
+       exporters:
+         debug:
+           verbosity: detailed
+
+       service:
+         pipelines:
+           traces:
+             receivers: [otlp]
+             processors: [batch]
+             exporters: [debug]
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 5c191b4c93e187f6
+    lang: yaml
+    lines: a7f80a73 1b6c26b3 390f7e12 a97a9e13 9adf3fc1
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |2-
+       {{< doc-test paths="otel-collector" >}}
+       # Test-only backend: echo each request as JSON (method, path, headers). Repeated
+       # headers are kept as lists so the test can see exactly what agentgateway forwarded.
+       cat > doc-test-echo.py <<'PY'
+       import json, sys
+       from http.server import BaseHTTPRequestHandler, HTTPServer
+       class H(BaseHTTPRequestHandler):
+           def _reply(self):
+               headers = {}
+               for k in self.headers.keys():
+                   headers[k.lower()] = self.headers.get_all(k)
+               status = 404 if self.path.startswith("/missing") else 200
+               body = json.dumps({"method": self.command, "path": self.path, "headers": headers}).encode()
+               self.send_response(status)
+               self.send_header("content-type", "application/json")
+               self.send_header("content-length", str(len(body)))
+               self.end_headers()
+               self.wfile.write(body)
+           do_GET = do_POST = do_PUT = do_DELETE = _reply
+           def log_message(self, *a):
+               pass
+       HTTPServer(("127.0.0.1", int(sys.argv[1])), H).serve_forever()
+       PY
+       start_echo() {
+         python3 doc-test-echo.py "$1" > "/tmp/doc-test-echo-$1.log" 2>&1 &
+         ECHO_PIDS="${ECHO_PIDS:-} $!"
+         for _ in $(seq 1 20); do curl -sf -o /dev/null "http://localhost:$1/" && return 0; sleep 0.5; done
+         echo "echo backend on port $1 did not start"; return 1
+       }
+
+       # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+       # would be set in a subshell and the gateway would never be stopped.
+       start_gateway() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+         AGW_PID=$!
+       }
+       stop_gateway() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+       wait_http() {
+         for _ in $(seq 1 "${2:-30}"); do
+           code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+           [ -n "$code" ] && [ "$code" != "000" ] && return 0
+           sleep 1
+         done
+         echo "$1 did not answer"; return 1
+       }
+       trap 'stop_gateway; kill ${ECHO_PIDS:-} 2>/dev/null || true; docker rm -f otel-collector >/dev/null 2>&1 || true' EXIT
+       start_echo 8080
+
+       # Step 3's tracing settings, on a gateway with one route so there is traffic to trace.
+       cat > config.yaml <<'EOF'
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       frontendPolicies:
+         tracing:
+           host: localhost:4317
+           randomSampling: true
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - host: localhost:8080
+       EOF
+       agentgateway -f config.yaml --validate-only
+       start_gateway config.yaml
+       wait_http http://localhost:3000/ 30
+
+       found=""
+       for _ in $(seq 1 30); do
+         curl -s -o /dev/null http://localhost:3000/otel-check || true
+         docker logs otel-collector > /tmp/doc-test-otel-collector.log 2>&1 || true
+         if grep -q 'Span #' /tmp/doc-test-otel-collector.log; then found=yes; break; fi
+         sleep 2
+       done
+       [ -n "$found" ] || { echo "no spans reached the collector"; tail -40 /tmp/doc-test-otel-collector.log; exit 1; }
+       grep -q '/otel-check' /tmp/doc-test-otel-collector.log
+       stop_gateway
+       {{< /doc-test >}}

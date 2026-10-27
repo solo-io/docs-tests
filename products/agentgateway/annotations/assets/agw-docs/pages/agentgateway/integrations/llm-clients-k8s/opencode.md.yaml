@@ -1,0 +1,183 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients-k8s/opencode.md
+blocks:
+- 477a5355dc90fe9f sh
+- ad284c002350f5e9 sh
+- 8e8ec263b97284af sh
+- 62f8e1ec095e1857 sh
+- dcab96dc70f1a691 sh
+- 21048a4705f4e5ec sh
+- 7d64943ab3aaefde
+- 9304eab286abd475
+tags:
+- paths: llm-client-opencode
+  block: 0
+  fingerprint: 477a5355dc90fe9f
+  lang: sh
+  lines: 477a5355
+  preview: export AGENTGATEWAY_BASE_URL="http://${INGRESS_GW_ADDRESS}/v1"
+  form:
+    attr: paths="llm-client-opencode"
+    only: true
+    lead: ' '
+- paths: llm-client-opencode
+  block: 1
+  fingerprint: ad284c002350f5e9
+  lang: sh
+  lines: ad284c00
+  preview: export AGENTGATEWAY_API_KEY='vk-alice-4f9c2a'
+  form:
+    attr: paths="llm-client-opencode"
+    only: true
+    lead: ' '
+- paths: llm-client-opencode
+  block: 2
+  fingerprint: 8e8ec263b97284af
+  lang: sh
+  lines: f6d68ba2 021fb596 af0c415a d19194d2 9143d611 452e29fe 068b20cd 64b9835e e3d69356 1b8fbef4 338c2dea e52a1813 4c2699ef 4439f19a db6c6529 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa abc56510
+  preview: cat > opencode.json <<'EOF'
+  form:
+    attr: paths="llm-client-opencode"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 477a5355dc90fe9f
+    lang: sh
+    lines: 477a5355
+    preview: export AGENTGATEWAY_BASE_URL="http://${INGRESS_GW_ADDRESS}/v1"
+  content: |2-
+       {{< doc-test paths="llm-client-opencode" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Before you begin" step 3, restated: virtual key authentication on the Gateway
+       #     (the vk-alice-4f9c2a key, stored as a SHA-256 hash as in the virtual keys guide).
+       #   * AGENTGATEWAY_BASE_URL is the gateway address with the /v1 suffix, and
+       #     opencode.json reads the base URL and key from those variables and lists the
+       #     model it requests.
+       #   * The virtual key: a request with `Authorization: Bearer $AGENTGATEWAY_API_KEY`
+       #     for gpt-4o-mini succeeds; a missing or unknown key gets 401.
+       #   * The proxy-log check: the request appears in the agentgateway-proxy logs with
+       #     http.status=200.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * OpenCode itself (`opencode`, `opencode run`) - an interactive client that is
+       #     not installed in CI. The requests below send what OpenCode sends.
+       #   * The /v1/chat/completions route path. The guide uses the OpenAI provider
+       #     guide's v1/chat/completions route; the shared openai-setup prerequisite
+       #     (which points the backend at the httpbun mock LLM) leaves the route on the
+       #     /openai path instead, so the requests and the log check use /openai.
+       #   * The exact 401 error text - it differs between versions.
+       kubectl apply -f- <<EOF
+       apiVersion: v1
+       kind: ConfigMap
+       metadata:
+         name: llm-api-keys
+         namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+         labels:
+           agentgateway.dev/apikey: "true"
+       data:
+         alice: |
+           {
+             "keyHash": "sha256:84d589f2439e4d9ff4438aa840e63ffcbf231a87e7fef929f975d2bde03dc78c",
+             "metadata": {
+               "user_id": "alice"
+             }
+           }
+       EOF
+       kubectl apply -f- <<EOF
+       apiVersion: {{< reuse "agw-docs/snippets/api-version.md" >}}
+       kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+       metadata:
+         name: api-key-auth
+         namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+       spec:
+         targetRefs:
+           - group: gateway.networking.k8s.io
+             kind: Gateway
+             name: agentgateway-proxy
+         traffic:
+           apiKeyAuthentication:
+             mode: Strict
+             configMapSelector:
+               matchLabels:
+                 agentgateway.dev/apikey: "true"
+       EOF
+       YAMLTest -f - <<'EOF'
+       - name: wait for the api-key-auth policy to be accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               name: api-key-auth
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 8e8ec263b97284af
+    lang: sh
+    lines: f6d68ba2 021fb596 af0c415a d19194d2 9143d611 452e29fe 068b20cd 64b9835e e3d69356 1b8fbef4 338c2dea e52a1813 4c2699ef 4439f19a db6c6529 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa abc56510
+    preview: cat > opencode.json <<'EOF'
+  content: |2-
+       {{< doc-test paths="llm-client-opencode" >}}
+       [ "$AGENTGATEWAY_BASE_URL" = "http://${INGRESS_GW_ADDRESS}/v1" ] \
+         || { echo "FAIL: AGENTGATEWAY_BASE_URL is '$AGENTGATEWAY_BASE_URL'"; exit 1; }
+       jq -e '.provider.agentgateway.options.baseURL == "{env:AGENTGATEWAY_BASE_URL}"
+         and .provider.agentgateway.options.apiKey == "{env:AGENTGATEWAY_API_KEY}"
+         and .provider.agentgateway.npm == "@ai-sdk/openai-compatible"
+         and .provider.agentgateway.models["gpt-4o-mini"] != null
+         and .model == "agentgateway/gpt-4o-mini"' opencode.json >/dev/null \
+         || { echo "FAIL: opencode.json does not match the guide"; cat opencode.json; exit 1; }
+       # What OpenCode sends: a chat completion for gpt-4o-mini with the virtual key as a
+       # bearer token. Sent to /openai, the openai-setup route (see the note at the top).
+       send() {
+         curl -s -o /dev/null -w '%{http_code}' -m 15 "http://${INGRESS_GW_ADDRESS}/openai" \
+           -H 'content-type: application/json' "$@" || true
+       }
+       BODY='{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Say hello"}]}'
+       code=""
+       for _ in $(seq 1 30); do
+         code=$(send -H "Authorization: Bearer $AGENTGATEWAY_API_KEY" -d "$BODY")
+         [ "$code" = 200 ] && break
+         sleep 2
+       done
+       [ "$code" = 200 ] || { echo "FAIL: the virtual key should be accepted, got $code"; exit 1; }
+       code=$(send -d "$BODY")
+       [ "$code" = 401 ] || { echo "FAIL: a missing key should get 401, got $code"; exit 1; }
+       code=$(send -H "Authorization: Bearer vk-unknown" -d "$BODY")
+       [ "$code" = 401 ] || { echo "FAIL: an unknown key should get 401, got $code"; exit 1; }
+       echo "ok: virtual key accepted, missing and unknown keys get 401"
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 21048a4705f4e5ec
+    lang: sh
+    lines: 9b8ec0fc 36e12410 c8bb1b8b
+    preview: kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/names
+  content: |2-
+       {{< doc-test paths="llm-client-opencode" >}}
+       # The log check above, restated for the /openai route path (see the note at the top).
+       found=""
+       for _ in $(seq 1 15); do
+         logs=$(kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --since=5m 2>/dev/null || true)
+         if grep -q 'http.path=/openai.*http.status=200' <<<"$logs"; then found=yes; break; fi
+         sleep 2
+       done
+       [ -n "$found" ] || { echo "FAIL: no http.path=/openai entry with http.status=200 in the proxy logs"; tail -n 20 <<<"$logs"; exit 1; }
+       echo "ok: the request is in the agentgateway-proxy logs with http.status=200"
+       # Cleanup: remove the virtual key authentication this test added, so later guides
+       # on the same Gateway are not asked for a key.
+       kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} api-key-auth -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
+       kubectl delete configmap llm-api-keys -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
+       rm -f opencode.json
+       {{< /doc-test >}}

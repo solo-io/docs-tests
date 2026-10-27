@@ -1,0 +1,117 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients-k8s/curl.md
+blocks:
+- 64483cd5ec2168c3 sh
+- c762e543d181714b json
+- 444987a8d074668b sh
+- 9ef14723fc6618f9 sh
+hidden:
+- after:
+    block: 0
+    fingerprint: 64483cd5ec2168c3
+    lang: sh
+    lines: d9460060 fc68f389 b0cead6d 493f47f6 4b3b16d3 0d576d6c cfae0d42 c83aa0a4
+    preview: curl "http://$INGRESS_GW_ADDRESS/<route-path>" \
+  content: |-
+    {{< doc-test paths="llm-client-curl" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Get the gateway URL": the LoadBalancer command sets INGRESS_GW_ADDRESS.
+    #   * "Send a request": the documented request, sent to the /openai route that the
+    #     OpenAI provider guide creates, returns a chat completion (200, the requested
+    #     model, an assistant message, token usage).
+    #   * "Authentication": the same request with an `Authorization: Bearer` header
+    #     also returns 200.
+    #   * "Streaming responses": `stream: true` returns SSE chunks that end with [DONE].
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The OpenAI provider itself - the openai-setup prerequisite points the
+    #     backend at the httpbun mock LLM, so no provider key is needed.
+    #   * The port-forward tab - doc tests reach the gateway through the LoadBalancer.
+    # The page's requests use a `<route-path>` placeholder. The openai-setup prerequisite
+    # creates the HTTPRoute with the /openai path (pointed at the httpbun mock LLM), so the
+    # request is restated here with /openai in place of <route-path>.
+    YAMLTest -f - <<'EOF'
+    - name: the documented request returns a chat completion through the /openai route
+      retries: 3
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello from Kubernetes!"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.model"
+            comparator: equals
+            value: gpt-4o-mini
+          - path: "$.choices[0].message.role"
+            comparator: equals
+            value: assistant
+          - path: "$.usage.total_tokens"
+            comparator: greaterThan
+            value: 0
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 444987a8d074668b
+    lang: sh
+    lines: d9460060 fc68f389 b7255b6c b0cead6d 493f47f6 2e292b6f c83aa0a4
+    preview: curl "http://$INGRESS_GW_ADDRESS/<route-path>" \
+  content: |-
+    {{< doc-test paths="llm-client-curl" >}}
+    # The page's requests use a `<route-path>` placeholder. The openai-setup prerequisite
+    # creates the HTTPRoute with the /openai path (pointed at the httpbun mock LLM), so the
+    # request is restated here with /openai in place of <route-path>.
+    # The route has no client authentication, so the extra header must not break the request.
+    YAMLTest -f - <<'EOF'
+    - name: a request with an Authorization header also returns a completion
+      retries: 3
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+        method: POST
+        headers:
+          content-type: application/json
+          Authorization: Bearer YOUR_API_KEY
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.choices[0].message.role"
+            comparator: equals
+            value: assistant
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 9ef14723fc6618f9
+    lang: sh
+    lines: d9460060 3f1c826f fc68f389 b0cead6d 493f47f6 5e2fbcd2 7eaaff4c fc075a9d
+    preview: curl "http://$INGRESS_GW_ADDRESS/<route-path>" \
+  content: |-
+    {{< doc-test paths="llm-client-curl" >}}
+    # The page's requests use a `<route-path>` placeholder. The openai-setup prerequisite
+    # creates the HTTPRoute with the /openai path (pointed at the httpbun mock LLM), so the
+    # request is restated here with /openai in place of <route-path>.
+    STREAM_RESPONSE=$(curl -s -N -m 30 "http://${INGRESS_GW_ADDRESS}/openai" \
+      -H "content-type: application/json" \
+      -d '{
+        "model": "gpt-4o-mini",
+        "messages": [{"role": "user", "content": "Write a haiku about the cloud"}],
+        "stream": true
+      }' || true)
+    grep -q "chat.completion.chunk" <<<"$STREAM_RESPONSE" \
+      || { echo "FAIL: the streamed response has no chat.completion.chunk events"; echo "$STREAM_RESPONSE" | head -20; exit 1; }
+    grep -q '\[DONE\]' <<<"$STREAM_RESPONSE" \
+      || { echo "FAIL: the stream does not end with [DONE]"; exit 1; }
+    echo "ok: the streamed response is SSE chunks ending with [DONE]"
+    {{< /doc-test >}}

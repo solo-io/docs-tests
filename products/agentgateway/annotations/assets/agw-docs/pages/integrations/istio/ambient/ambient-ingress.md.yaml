@@ -1,0 +1,223 @@
+format: 1
+source: assets/agw-docs/pages/integrations/istio/ambient/ambient-ingress.md
+blocks:
+- 21ea0cd870a77740 mermaid
+- 2785e70e5b9efe91 sh
+- de6676ae0b90d94a sh
+- 6f076d3d5ed00b99 yaml
+- 4c2bfd499dc90826 sh
+- f8b46cafdd0f4353 yaml
+- 4f74874374fda64f sh
+- 34de13590e19f4c7 sh
+- 59dce55d703a18df console
+- a81c139400bf385a sh
+- 72f2c71b5c4923db sh
+- 5113949fa1bb6ed7
+- 2689523f477b4a91 sh
+- 0392a015f95742d6 sh
+tags:
+- paths: istio-ambient-ingress
+  block: 1
+  fingerprint: 2785e70e5b9efe91
+  lang: sh
+  lines: 5f8e0090 14ef31f8 b005b231 beac8a45
+  preview: kubectl config current-context
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+- paths: istio-ambient-ingress
+  block: 2
+  fingerprint: de6676ae0b90d94a
+  lang: sh
+  lines: de6676ae
+  preview: kubectl label ns agentgateway-system istio.io/dataplane-mode=ambient --overwrite
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+- paths: istio-ambient-ingress
+  block: 3
+  fingerprint: 6f076d3d5ed00b99
+  lang: yaml
+  lines: abbd1bdc f1540154 e7b550ce 8c8c4228 d217c891 fa1e8330 b30b9286 cb3f91d5 f1540154 2ed8aa83 8c8c4228 d217c891 0f10c5bc cb3f91d5 f1540154 0d6480f0 8c8c4228 d217c891 0f10c5bc fa1e8330 c2e1f378 36184fa5 8432e015 c2e1f378 0ff65a1a 82601aaa bca8e5f7 b1d5c800 cb3f91d5 58584366 ab78925c 8c8c4228 d217c891 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac c2e1f378 a58565b2 8c8c4228 fa1e8330 c2e1f378 36184fa5 52da62ae 04968f51 80e9487c e1874cb7 0ff65a1a a46d7c6d cb3f91d5 58584366 ab78925c 8c8c4228 904f57c3 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac 9572ea37 a58565b2 8c8c4228 fa1e8330 9572ea37 36184fa5 04968f51 e76618e7 b6bbbc55 a5eff862 abc56510 20539fa4 f5bff6e3
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+- paths: istio-ambient-ingress
+  block: 4
+  fingerprint: 4c2bfd499dc90826
+  lang: sh
+  lines: 4c2bfd49
+  preview: kubectl -n agentgateway-system delete pod -l gateway.networking.k8s.io/gateway-n
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+- paths: istio-ambient-ingress
+  block: 5
+  fingerprint: f8b46cafdd0f4353
+  lang: yaml
+  lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 69c39a09 f497f0e2 36184fa5 549957da c10d7538 82601aaa da480536 069de162 d9f386b5 5f37c61e c3201545 e83d405d cb3f91d5 8c67597e 56bf9360 8c8c4228 1b3fb2bc 0f10c5bc 36184fa5 d3d416e7 49321131 f497f0e2 301e1bfa bf0611ca 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510 b10b3c4b
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+- paths: istio-ambient-ingress
+  block: 10
+  fingerprint: 72f2c71b5c4923db
+  lang: sh
+  lines: 106c96a2 619b722f
+  preview: kubectl -n istio-system logs -l app=ztunnel --since=1m | \
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+- paths: istio-ambient-ingress
+  block: 13
+  fingerprint: 0392a015f95742d6
+  lang: sh
+  lines: 98a310e8 2c3c92c8 98ea4846 1ca02b8f 676f4b90 ad83708a af691b82
+  preview: kubectl -n httpbin delete httproute httpbin-ingress --ignore-not-found
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 21ea0cd870a77740
+    lang: mermaid
+    lines: 35bb4631 3e98e7e7 dde68d4b 2c7d37fd
+    preview: flowchart LR
+  content: |-
+    {{< doc-test paths="istio-ambient-ingress" >}}
+    # Step 1 links out to the ambientmesh.io quickstart; install Istio in ambient
+    # mode the same way, with istioctl in a throwaway dir.
+    ISTIO_VERSION="${ISTIO_VERSION:-1.31.3}"
+    istio_arch=$(uname -m)
+    case "$istio_arch" in x86_64) istio_arch=amd64 ;; aarch64) istio_arch=arm64 ;; esac
+    istio_os=$(uname -s | tr '[:upper:]' '[:lower:]')
+    [ "$istio_os" = "darwin" ] && istio_os=osx
+    ISTIO_BIN="${TMPDIR:-/tmp}/doc-test-istioctl-${ISTIO_VERSION}"
+    mkdir -p "$ISTIO_BIN"
+    export PATH="$ISTIO_BIN:$PATH"
+    if [ ! -x "$ISTIO_BIN/istioctl" ]; then
+      curl -fsSL "https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istioctl-${ISTIO_VERSION}-${istio_os}-${istio_arch}.tar.gz" \
+        | tar -xz -C "$ISTIO_BIN" istioctl
+    fi
+    istioctl install --set profile=ambient --skip-confirmation
+    kubectl -n istio-system rollout status deploy/istiod --timeout=300s
+    kubectl -n istio-system rollout status ds/ztunnel --timeout=300s
+    kubectl -n istio-system rollout status ds/istio-cni-node --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 2785e70e5b9efe91
+    lang: sh
+    lines: 5f8e0090 14ef31f8 b005b231 beac8a45
+    preview: kubectl config current-context
+  content: |-
+    {{< doc-test paths="istio-ambient-ingress" >}}
+    # The preflight claims: an agentgateway GatewayClass exists and a ztunnel pod
+    # runs on each node.
+    kubectl get gatewayclass agentgateway >/dev/null
+    nodes=$(kubectl get nodes --no-headers | wc -l | tr -d ' ')
+    zt=$(kubectl -n istio-system get pods -l app=ztunnel --field-selector=status.phase=Running --no-headers | wc -l | tr -d ' ')
+    if [ "$zt" -lt "$nodes" ]; then
+      echo "found ${zt} running ztunnel pods for ${nodes} nodes"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 4f74874374fda64f
+    lang: sh
+    lines: 4f748743
+    preview: kubectl -n agentgateway-system port-forward svc/ambient-ingress 8888:80 &
+  content: |-
+    {{< doc-test paths="istio-ambient-ingress" >}}
+    # Automated runs can't use the page's port-forward, so reach the same Service
+    # through the LoadBalancer address that the cluster assigns to it.
+    AMBIENT_URL=""
+    for i in $(seq 1 90); do
+      lb=$(kubectl -n agentgateway-system get svc ambient-ingress -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}" 2>/dev/null || true)
+      if [ -n "$lb" ]; then
+        AMBIENT_URL="http://${lb}:80"
+        code=$(curl -s -o /dev/null -m 5 -w "%{http_code}" "${AMBIENT_URL}/get" -H "host: www.example.com" || true)
+        [ "$code" = "200" ] && break
+      fi
+      sleep 2
+    done
+    export AMBIENT_URL
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 34de13590e19f4c7
+    lang: sh
+    lines: 34de1359
+    preview: 'curl -sSi -m 10 http://127.0.0.1:8888/get -H "host: www.example.com"'
+  content: |-
+    {{< doc-test paths="istio-ambient-ingress" >}}
+    # Claims: status 200, and httpbin echoes Host: www.example.com.
+    resp=$(curl -sS -m 10 -w '\n%{http_code}' ${AMBIENT_URL}/get -H "host: www.example.com")
+    code=$(printf '%s' "$resp" | tail -n1)
+    body=$(printf '%s' "$resp" | sed '$d')
+    if [ "$code" != "200" ]; then
+      echo "expected 200 through the ambient ingress, got ${code}"
+      exit 1
+    fi
+    host=$(printf '%s' "$body" | jq -r '.headers.Host[0]')
+    if [ "$host" != "www.example.com" ]; then
+      echo "httpbin echoed Host '${host}', expected www.example.com"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: a81c139400bf385a
+    lang: sh
+    lines: 40e174a2 363ab3c4 a4c3ed04
+    preview: for i in 1 2 3; do
+  content: |2-
+       {{< doc-test paths="istio-ambient-ingress" >}}
+       # ztunnel logs a connection when it completes, and the proxy may hold pooled
+       # connections open, so keep sending requests until an inbound httpbin entry shows up.
+       found=""
+       for i in $(seq 1 30); do
+         for j in 1 2 3; do
+           curl -sSI -m 10 ${AMBIENT_URL}/get -H "host: www.example.com" -H "connection: close" > /dev/null || true
+         done
+         found=$(kubectl -n istio-system logs -l app=ztunnel --since=2m --tail=-1 2>/dev/null | grep 'dst.namespace="httpbin"' | grep 'src.namespace="agentgateway-system"' || true)
+         [ -n "$found" ] && break
+         sleep 4
+       done
+       if [ -z "$found" ]; then
+         echo "no ztunnel access log for agentgateway-system -> httpbin"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 72f2c71b5c4923db
+    lang: sh
+    lines: 106c96a2 619b722f
+    preview: kubectl -n istio-system logs -l app=ztunnel --since=1m | \
+  content: |2-
+       {{< doc-test paths="istio-ambient-ingress" >}}
+       # Claim: src.identity and dst.identity are SPIFFE URIs and dst.hbone_addr is set.
+       line=$(kubectl -n istio-system logs -l app=ztunnel --since=3m --tail=-1 \
+         | grep 'dst.namespace="httpbin"' | grep 'src.namespace="agentgateway-system"' | tail -n1)
+       echo "$line"
+       for want in 'src.identity="spiffe://cluster.local/ns/agentgateway-system/' \
+                   'dst.identity="spiffe://cluster.local/ns/httpbin/sa/httpbin"' \
+                   'dst.hbone_addr=' ':15008 '; do
+         case "$line" in
+           *"$want"*) ;;
+           *) echo "ztunnel log line is missing '${want}'"; exit 1 ;;
+         esac
+       done
+       {{< /doc-test >}}

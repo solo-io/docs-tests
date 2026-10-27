@@ -1,0 +1,221 @@
+format: 1
+source: content/docs/standalone/main/reference/cel/yaml-and-examples.md
+blocks:
+- 62504c6ae15b893d yaml
+- 3e2990ac473c8937 yaml
+- dfa379b59a8c52f5
+- 443cf90f307d38ce
+- 986fb04fdcacd70d
+- 69b3f4a0baf078d3 yaml
+- 0664690ec796ce4c yaml
+- b71c9c6916536e36 yaml
+- 760684c9b3dba0c8 yaml
+hidden:
+- after:
+    block: 8
+    fingerprint: 760684c9b3dba0c8
+    lang: yaml
+    lines: 4cf35fb7 b7b5f484 630c812d 8902dc3d 8afe8781 5abdbf91 ba86cf75 60fbdaef f8bf7d5e e10733bd
+    preview: 'remoteRateLimit:'
+  content: |-
+    {{< doc-test paths="cel-yaml-examples" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "CEL in YAML": every quoting style in the first example parses to a CEL
+    #     expression that evaluates to the string "hello", and every style in the second
+    #     example parses to the expression `request`.
+    #   * "Default function": the fallback examples return their fallback when the value
+    #     cannot be resolved (`"anonymous"`, `"light"`, `"user"`).
+    #   * The `with` example's logic returns val1+val2 for the commented example body.
+    #   * The logging, authorization, and rate limiting example blocks are accepted by
+    #     agentgateway when placed in a config (`config.logging`, `mcp.policies`, and a
+    #     route's `policies`).
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The runtime effect of the authorization and rate limiting rules - the page shows
+    #     expression syntax only; JWTs and a rate limit server are out of scope here.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+    # would be set in a subshell and the gateway would never be stopped.
+    start_gateway() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+      AGW_PID=$!
+    }
+    stop_gateway() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+    wait_http() {
+      for _ in $(seq 1 "${2:-30}"); do
+        code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+        [ -n "$code" ] && [ "$code" != "000" ] && return 0
+        sleep 1
+      done
+      echo "$1 did not answer"; return 1
+    }
+
+    # The CEL playground page posts to the admin API's CEL endpoint; call it directly.
+    # cel_eval EXPRESSION [DATA_JSON]: print the JSON response {result, error}.
+    cel_eval() {
+      python3 - "$1" "${2:-null}" <<'PY'
+    import json, sys, urllib.request
+    body = {"expression": sys.argv[1]}
+    data = json.loads(sys.argv[2])
+    if data is not None:
+        body["data"] = data
+    for path in ("/api/cel", "/cel"):
+        req = urllib.request.Request("http://localhost:15000" + path, json.dumps(body).encode(),
+                                     {"content-type": "application/json"})
+        try:
+            print(urllib.request.urlopen(req, timeout=10).read().decode())
+            break
+        except urllib.error.HTTPError as e:
+            if e.code == 404 and path == "/api/cel":
+                continue
+            print(e.read().decode())
+            break
+    PY
+    }
+    # cel_expect EXPRESSION EXPECTED_JSON: the expression evaluates to EXPECTED_JSON.
+    cel_expect() {
+      out=$(cel_eval "$1")
+      echo "$out" | jq -e --argjson want "$2" '.result == $want' >/dev/null \
+        || { echo "CEL '$1': expected $2, got $out"; return 1; }
+    }
+
+    cat <<'EOF' > config.yaml
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        directResponse:
+          body: "ok"
+          status: 200
+    EOF
+    trap 'stop_gateway' EXIT
+    start_gateway config.yaml
+    wait_http http://localhost:15000/ui/ 30
+
+    # The page's two quoting examples, verbatim.
+    cat <<'EOF' > cel-hello.yaml
+    doubleQuote: "'hello'"
+    doubleQuoteEscaped: "\"hello\""
+    singleQuote: '"hello"'
+    blockSingle: |
+      'hello'
+    blockDouble: |
+      "hello"
+    EOF
+    cat <<'EOF' > cel-request.yaml
+    doubleQuote: "request"
+    singleQuote: 'request'
+    block: |
+      request
+    EOF
+    python3 -c 'import json,yaml; print("\n".join(v.strip() for v in yaml.safe_load(open("cel-hello.yaml")).values()))' > /tmp/doc-test-cel-hello.txt
+    [ "$(wc -l < /tmp/doc-test-cel-hello.txt | tr -d ' ')" = "5" ]
+    while IFS= read -r expr; do
+      cel_expect "$expr" '"hello"'
+    done < /tmp/doc-test-cel-hello.txt
+    python3 - <<'PY'
+    import yaml
+    vals = [v.strip() for v in yaml.safe_load(open("cel-request.yaml")).values()]
+    assert vals == ["request"] * 3, vals
+    PY
+
+    cel_expect 'default(request.headers["x-user-id"], "anonymous")' '"anonymous"'
+    cel_expect 'default(json(request.body).user.preferences.theme, "light")' '"light"'
+    cel_expect 'default(jwt.role, "user")' '"user"'
+    cel_expect '{"type":"sum","val1":2,"val2":3,"val4":"hello"}.with(b, b.type == "sum" ? b.val1 + b.val2 : b.val3)' 5
+
+    # The logging, authorization, and rate limiting blocks, placed where they belong.
+    cat <<'EOF' > config-logs.yaml
+    config:
+      logging:
+        # Include logs where there was no response or there was an error
+        filter: |
+           !has(response) || response.code > 299
+        fields:
+          add:
+            user.agent: 'request.headers["user-agent"]'
+            span.name: '"openai.chat"'
+            gen_ai.usage.prompt_tokens: 'llm.inputTokens'
+            json.field: |
+              json(request.body).with(b,
+                 b.type == "sum" ?
+                   b.val1 + b.val2 :
+                   b.val3
+              )
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: localhost:8080
+    EOF
+    agentgateway -f config-logs.yaml --validate-only
+
+    cat <<'EOF' > config-mcpauthz.yaml
+    mcp:
+      port: 3000
+      policies:
+        mcpAuthorization:
+          rules:
+          - 'mcp.tool.name == "echo"'
+          - 'jwt.sub == "test-user" && mcp.tool.name == "add"'
+          - 'mcp.tool.name == "printEnv" && jwt.nested.key == "value"'
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-mcpauthz.yaml --validate-only
+
+    cat <<'EOF' > config-mcpauthz-list.yaml
+    mcp:
+      port: 3000
+      policies:
+        mcpAuthorization:
+          rules:
+          - 'mcp.methodName == "tools/list"'
+          - 'mcp.methodName == "tools/call" && jwt.sub == "test-user"'
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    agentgateway -f config-mcpauthz-list.yaml --validate-only
+
+    cat <<'EOF' > config-ratelimit.yaml
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        remoteRateLimit:
+          host: localhost:8081
+          domain: example
+          descriptors:
+          - entries:
+             - key: some-static-value
+               value: '"something"'
+             - key: organization
+               value: 'request.headers["x-organization"]'
+             - key: authenticated
+               value: 'has(jwt.sub)'
+      backends:
+      - host: localhost:8080
+    EOF
+    agentgateway -f config-ratelimit.yaml --validate-only
+    stop_gateway
+    {{< /doc-test >}}

@@ -1,0 +1,296 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/prompt-guards.md
+blocks:
+- c79a01b6f1e791d2 yaml
+- 5432b9c66bb9b68a yaml
+- fbb00ba49ab6cebb yaml
+- 2662d5f15e0701b3 sh
+- 8132386419984d10 sh
+- bd7a2a6a8f675c80
+- 04e2fa219e0061df sh
+- 9b827a4f58b86544 sh
+- e647400eda5a8cc6 json
+- 145b049405d465f4 yaml
+- ba9393f39b7e4c98 sh
+- 1f6de0ff84278585 sh
+- df22c6fe470093fb json
+- a29e50155301d5fc yaml
+- 37968bad60867d7c sh
+- 3cbc87c7681f34db console
+- d6f503429e9f539e sh
+- b5146100fc798a54 sh
+- ca585bc762028421 console
+- 9878d4d36f1fc415 sh
+- 2e23bae7e1b961fa sh
+- 2be82983ff5d6ed1 yaml
+- 572d3611fe6fb816 sh
+- 3cbc87c7681f34db console
+- f9b11bbe31516b4e sh
+- f04ab0635cd7ede2 sh
+- 86425c004860e60c console
+- a5fffc7aba9a6285 sh
+- 2dd4373f2c94df5b shell
+- c79a01b6f1e791d2 yaml
+- ce1a732a3a57ef18 sh
+- 3128945fc7cc731c console
+- 3c21e54fe89e4091 yaml
+- a5e89ced47d2865c sh
+- adb41b225521f4fe console
+- 0de002d1219dcb71 yaml
+- 4fd22c23ab40a4dc sh
+- b3341b88ae8f83a3 console
+- 280acf91b1127b4d yaml
+- 3dfc2e5091919b76 sh
+- ca7362f3619e0244 console
+- 5b5b6f49f0609317 yaml
+- 1564a1640a7609a4 sh
+- 7dbd3626f21a436b console
+- af566439e06e07a4 yaml
+- 42e5c802d7da4b2a sh
+- e4e80caa81d48844 console
+- 2f81016e932de864 yaml
+- a2f4afa241160850 sh
+- 9f04b3b17ad28cf9 console
+- c94b21abfb062245 yaml
+- d10bdd52376e1933 sh
+- f0555d62b43273f7
+- 7fdcf0d40836b84d yaml
+- a98ad827f1519274 sh
+- da6d9caeae8bee7a console
+tags:
+- paths: guardrails-regex
+  block: 0
+  fingerprint: c79a01b6f1e791d2
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f ceea3490 eaaad965 92bb250e 0a1a0438 d31c69b7 eb54a172 99c83b01 60c03189 a10b540a abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex,guardrails-regex-run
+  block: 1
+  fingerprint: 5432b9c66bb9b68a
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 3c9df703 a007a685 eeb7e2a3 ceea3490 eaaad965 ba37d056 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="guardrails-regex,guardrails-regex-run"
+    only: true
+    lead: ' '
+- paths: guardrails-regex,guardrails-regex-run
+  block: 9
+  fingerprint: 145b049405d465f4
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 99c83b01 51da151f 8096ca96 6eb574a8 f51fdba0 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="guardrails-regex,guardrails-regex-run"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 13
+  fingerprint: a29e50155301d5fc
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 ed535c3a 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 9a90c1a9 0df67073 99c83b01 8512ea49 eeb7e2a3 ceea3490 8096ca96 59ccf9fd abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 21
+  fingerprint: 2be82983ff5d6ed1
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 1b2fcb6e 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 9a90c1a9 3d898d54 be171b79 0df67073 ce280bd1 99c83b01 bc144f64 eeb7e2a3 ceea3490 8096ca96 59ccf9fd abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 29
+  fingerprint: c79a01b6f1e791d2
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f ceea3490 eaaad965 92bb250e 0a1a0438 d31c69b7 eb54a172 99c83b01 60c03189 a10b540a abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 32
+  fingerprint: 3c21e54fe89e4091
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f ceea3490 eaaad965 af107ec8 fe54771a 1899980d 0655251d 99c83b01 b9d15ba7 a10b540a abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 35
+  fingerprint: 0de002d1219dcb71
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f ceea3490 eaaad965 d21f7d48 236b24fe dc418e36 614d5bff 99c83b01 7134d9be a10b540a abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 38
+  fingerprint: 280acf91b1127b4d
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f ceea3490 eaaad965 6a15d189 c770469e c91b8fce e39d73ad 1fd6aa1a 3d6ecebd fbb292f3 ca5f1eda 99c83b01 218536d4 d8586499 abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 41
+  fingerprint: 5b5b6f49f0609317
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f ceea3490 eaaad965 ac2d05e9 07a82b10 af89a880 17a2d587 9078d75f 99c83b01 4dca6f92 a10b540a abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 44
+  fingerprint: af566439e06e07a4
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f ceea3490 eaaad965 af165a81 f988ceca ac3f8e28 8059609c 99c83b01 2beaca27 a10b540a abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 47
+  fingerprint: 2f81016e932de864
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f ceea3490 eaaad965 8674abe1 18c532a7 30fecd3c f031aeaf 99c83b01 2fa30a3c a10b540a abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 50
+  fingerprint: c94b21abfb062245
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f ceea3490 8096ca96 6eb574a8 59ccf9fd 8693faa9 db89b2d3 6cb9dd54 99c83b01 31adabed d8586499 abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+- paths: guardrails-regex
+  block: 53
+  fingerprint: 7fdcf0d40836b84d
+  lang: yaml
+  lines: 1b7d1862 fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f f51fdba0 eaaad965 6a15d189 c770469e 0157dc53 ac835f9e f59de218 99c83b01 c204f04d abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="guardrails-regex"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 5432b9c66bb9b68a
+    lang: yaml
+    lines: abbd1bdc fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 3c9df703 a007a685 eeb7e2a3 ceea3490 eaaad965 ba37d056 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="guardrails-regex-run" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the request prompt guard to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: openai-prompt-guard
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: a prompt that mentions a credit card is rejected
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-4", "messages": [{"role": "user", "content": "Can you give me some examples of Master Card credit card numbers?"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 403
+       - name: the same prompt without the word credit is allowed
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-4", "messages": [{"role": "user", "content": "Can you give me some examples of Master Card card numbers?"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 145b049405d465f4
+    lang: yaml
+    lines: abbd1bdc fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 99c83b01 51da151f 8096ca96 6eb574a8 f51fdba0 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="guardrails-regex-run" >}}
+       # The httpbun mock returns the content it is given, so the reply carries a
+       # card number that the response guard must mask.
+       YAMLTest -f - <<'EOF'
+       - name: wait for the response prompt guard to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: openai-prompt-guard
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: a credit card number in the response is masked
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-4", "messages": [{"role": "user", "content": "What type of number is 4242424242424242?"}], "httpbun": {"content": "4242424242424242 is an even number."}}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.choices[0].message.content"
+               comparator: equals
+               value: "<CREDIT_CARD> is an even number."
+       EOF
+       {{< /doc-test >}}

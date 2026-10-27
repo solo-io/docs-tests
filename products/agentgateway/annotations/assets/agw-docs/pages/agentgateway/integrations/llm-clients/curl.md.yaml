@@ -1,0 +1,166 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/curl.md
+blocks:
+- 4603b939ef995fea sh
+- df6ffeb16e09d5f8 json
+- 024f31be65d2ce12 sh
+- 12a6f4773474c3d6 sh
+tags:
+- paths: llm-client-curl
+  block: 0
+  fingerprint: 4603b939ef995fea
+  lang: sh
+  lines: ce5ac92e fc68f389 b0cead6d 493f47f6 4b3b16d3 06f1b75f cfae0d42 c83aa0a4
+  preview: curl http://localhost:3000/v1/chat/completions \
+  form:
+    attr: paths="llm-client-curl"
+    only: true
+    lead: ' '
+- paths: llm-client-curl
+  block: 2
+  fingerprint: 024f31be65d2ce12
+  lang: sh
+  lines: ce5ac92e fc68f389 b7255b6c b0cead6d 493f47f6 2e292b6f c83aa0a4
+  preview: curl http://localhost:3000/v1/chat/completions \
+  form:
+    attr: paths="llm-client-curl"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: (top of page)
+    line: 477d5da9b74027d9
+    occurrence: 0
+    words: 9f86d081 6201111b 110c08f1 0695b563 56e57ada a24e10fd 427e4b79
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-client-curl" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Config file tab's config is accepted, and serves LLM traffic on port 3000
+    #     (run against a local mock LLM instead of OpenAI).
+    #   * "Send a request" and "Authentication": both documented curl commands run,
+    #     and return a chat completion (200, the requested model, an assistant message).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Streaming responses" - the local mock LLM does not stream.
+    #   * The UI tab - browser-only steps.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-curl-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-curl-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    {{< /doc-test >}}
+- after:
+    section: Send a request
+    line: e2710978f46d872f
+    occurrence: 0
+    words: 27ce1d1b ca978112 1f58b914
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-client-curl" >}}
+    # The Config file tab's agentgateway config (shown without a heredoc), restated.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      port: 3000
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+    to_mock config.yaml config-mock.yaml
+    start_agw config-mock.yaml
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 4603b939ef995fea
+    lang: sh
+    lines: ce5ac92e fc68f389 b0cead6d 493f47f6 4b3b16d3 06f1b75f cfae0d42 c83aa0a4
+    preview: curl http://localhost:3000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="llm-client-curl" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the documented request returns a chat completion through port 3000
+      retries: 3
+      http:
+        url: "http://localhost:3000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello, how are you?"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.model"
+            comparator: equals
+            value: gpt-4o-mini
+          - path: "$.choices[0].message.role"
+            comparator: equals
+            value: assistant
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 024f31be65d2ce12
+    lang: sh
+    lines: ce5ac92e fc68f389 b7255b6c b0cead6d 493f47f6 2e292b6f c83aa0a4
+    preview: curl http://localhost:3000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="llm-client-curl" >}}
+    YAMLTest -f - <<'EOF'
+    - name: a request with an Authorization header also returns a completion
+      retries: 3
+      http:
+        url: "http://localhost:3000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          authorization: Bearer YOUR_API_KEY
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    stop_agw
+    {{< /doc-test >}}

@@ -23,6 +23,117 @@ hidden:
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="fault-injection" >}}
+    # Test-only backend: echo each request as JSON (method, path, headers). Repeated
+    # headers are kept as lists so the test can see exactly what agentgateway forwarded.
+    cat > doc-test-echo.py <<'PY'
+    import json, sys
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    class H(BaseHTTPRequestHandler):
+        def _reply(self):
+            headers = {}
+            for k in self.headers.keys():
+                headers[k.lower()] = self.headers.get_all(k)
+            status = 404 if self.path.startswith("/missing") else 200
+            body = json.dumps({"method": self.command, "path": self.path, "headers": headers}).encode()
+            self.send_response(status)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        do_GET = do_POST = do_PUT = do_DELETE = _reply
+        def log_message(self, *a):
+            pass
+    HTTPServer(("127.0.0.1", int(sys.argv[1])), H).serve_forever()
+    PY
+    start_echo() {
+      python3 doc-test-echo.py "$1" > "/tmp/doc-test-echo-$1.log" 2>&1 &
+      ECHO_PIDS="${ECHO_PIDS:-} $!"
+      for _ in $(seq 1 20); do curl -sf -o /dev/null "http://localhost:$1/" && return 0; sleep 0.5; done
+      echo "echo backend on port $1 did not start"; return 1
+    }
+
+    # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+    # would be set in a subshell and the gateway would never be stopped.
+    start_gateway() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+      AGW_PID=$!
+    }
+    stop_gateway() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+    wait_http() {
+      for _ in $(seq 1 "${2:-30}"); do
+        code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+        [ -n "$code" ] && [ "$code" != "000" ] && return 0
+        sleep 1
+      done
+      echo "$1 did not answer"; return 1
+    }
+
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES (runtime):
+    #   * "Inject a delay": with the routing-based `delay.duration: 2s` policy, a request
+    #     through agentgateway takes at least 2 seconds to complete, while the same
+    #     backend answers immediately without the gateway.
+    #   * "Inject a probabilistic or random delay": a CEL `duration` is evaluated per
+    #     request; the table's fixed-CEL row `duration("500ms")` delays each request by
+    #     at least 500ms.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The probabilistic `random() < 0.1 ? 500 : 0` example at runtime - it delays
+    #     only about 10% of requests, which a short test cannot assert reliably. The
+    #     config is validated below.
+    # ============================================================================
+    trap 'stop_gateway; kill ${ECHO_PIDS:-} 2>/dev/null || true' EXIT
+    start_echo 8080
+
+    cat <<'EOF' > config-delay-run.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        delay:
+          duration: 2s
+      backends:
+      - host: localhost:8080
+    EOF
+    start_gateway config-delay-run.yaml
+    wait_http http://localhost:3000/ 30
+    t=$(curl -s -o /dev/null -w '%{time_total}' http://localhost:3000/)
+    python3 -c "import sys; t=float(sys.argv[1]); assert t >= 2.0, f'request took {t}s, expected >= 2s'" "$t"
+    stop_gateway
+
+    cat <<'EOF' > config-delay-cel-run.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        delay:
+          duration: 'duration("500ms")'
+      backends:
+      - host: localhost:8080
+    EOF
+    start_gateway config-delay-cel-run.yaml
+    wait_http http://localhost:3000/ 30
+    t=$(curl -s -o /dev/null -w '%{time_total}' http://localhost:3000/)
+    python3 -c "import sys; t=float(sys.argv[1]); assert t >= 0.5, f'request took {t}s, expected >= 0.5s'" "$t"
+    stop_gateway
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f77bf76423372376
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 6c474e8d 27bdfadc d72f261d c64a4012
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="fault-injection" >}}
     # WHAT THIS TEST VALIDATES:
     #   * The delay (fault injection) policy is accepted by agentgateway in the
     #     routing-based, simplified MCP, and CEL-expression forms.

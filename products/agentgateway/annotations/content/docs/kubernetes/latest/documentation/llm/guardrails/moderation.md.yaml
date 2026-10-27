@@ -1,0 +1,215 @@
+format: 1
+source: content/docs/kubernetes/latest/documentation/llm/guardrails/moderation.md
+blocks:
+- eb334b852972ad2f yaml
+- 8e7e4dfde0943afc sh
+- bffe56eefd859525 sh
+- 67707fc188efa15c
+- 1b19cf197dcec4d1 yaml
+- 8e7e4dfde0943afc sh
+- bffe56eefd859525 sh
+- 726f55f1ccd9b817 json
+- 0618e2b254da6415 yaml
+- 80cd8f50faeeb03b sh
+tags:
+- paths: guardrails-moderation
+  block: 0
+  fingerprint: eb334b852972ad2f
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 e21ce5bf c8f3f59a 146e11c6 9ebc4789 4df4f75f 491a231d 99c83b01 187e3306 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="guardrails-moderation"
+    only: true
+    lead: ' '
+- paths: guardrails-moderation,guardrails-moderation-inline
+  block: 4
+  fingerprint: 1b19cf197dcec4d1
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 5b083eec 794e7c38 491a231d 1188488c 6336a21b ef1b2a3e 96f1000b e3aa22a4 c8f3f59a 146e11c6 9ebc4789 4df4f75f ad3afdb1 d67b54bf 98b45d4c 958c810b 70b3b09e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="guardrails-moderation,guardrails-moderation-inline"
+    only: true
+    lead: ' '
+- paths: guardrails-moderation-inline
+  block: 5
+  fingerprint: 8e7e4dfde0943afc
+  lang: sh
+  lines: 5a09f03a fc68f389 b0cead6d a90f7a89 4b3b16d3 021fb596 09d1b3dd 40bfa271 d10b36aa cfae0d42 fc075a9d
+  preview: curl -i "$INGRESS_GW_ADDRESS/openai" \
+  form:
+    attr: paths="guardrails-moderation-inline"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 4
+    fingerprint: 1b19cf197dcec4d1
+    lang: yaml
+    lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 5b083eec 794e7c38 491a231d 1188488c 6336a21b ef1b2a3e 96f1000b e3aa22a4 c8f3f59a 146e11c6 9ebc4789 4df4f75f ad3afdb1 d67b54bf 98b45d4c 958c810b 70b3b09e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="guardrails-moderation-inline" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Moderate content inline on the OpenAI provider": the documented backend
+       #     translates in full, and every chat request that agentgateway sends to
+       #     OpenAI carries the configured `moderation` parameter (model
+       #     omni-moderation-latest, input Block, output Score). A mock provider in the
+       #     cluster logs each request body it receives.
+       #   * A `moderation` value that the client sends is replaced by the configured one.
+       #
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * "Block harmful content with the moderation prompt guard", the scope example,
+       #     and the guard cleanup: agentgateway calls the OpenAI Moderation API itself,
+       #     with no host override, so the guard needs a real OpenAI API key.
+       #     Credentialed, not tested.
+       #   * The `moderation` results in the response: OpenAI produces them.
+       kubectl apply -f- <<'EOF'
+       apiVersion: v1
+       kind: ConfigMap
+       metadata:
+         name: moderation-mock
+         namespace: default
+       data:
+         mock.py: |
+           import json
+           from http.server import BaseHTTPRequestHandler, HTTPServer
+           class Handler(BaseHTTPRequestHandler):
+               def do_POST(self):
+                   length = int(self.headers.get("content-length") or 0)
+                   request = json.loads(self.rfile.read(length) or b"{}")
+                   print(json.dumps(request), flush=True)
+                   message = dict(role="assistant", content="mock completion")
+                   response = dict(id="chatcmpl-mock", object="chat.completion", created=0,
+                                   model=request.get("model", "mock"),
+                                   choices=[dict(index=0, finish_reason="stop", message=message)],
+                                   usage=dict(prompt_tokens=1, completion_tokens=1, total_tokens=2))
+                   payload = json.dumps(response).encode()
+                   self.send_response(200)
+                   self.send_header("content-type", "application/json")
+                   self.send_header("content-length", str(len(payload)))
+                   self.end_headers()
+                   self.wfile.write(payload)
+               def log_message(self, *args):
+                   pass
+           HTTPServer(("0.0.0.0", 3094), Handler).serve_forever()
+       EOF
+       kubectl apply -f- <<'EOF'
+       apiVersion: apps/v1
+       kind: Deployment
+       metadata:
+         name: moderation-mock
+         namespace: default
+       spec:
+         replicas: 1
+         selector:
+           matchLabels:
+             app: moderation-mock
+         template:
+           metadata:
+             labels:
+               app: moderation-mock
+           spec:
+             containers:
+             - name: mock
+               image: python:3.12-alpine
+               command: ["python", "-u", "/app/mock.py"]
+               ports:
+               - containerPort: 3094
+               volumeMounts:
+               - name: app
+                 mountPath: /app
+             volumes:
+             - name: app
+               configMap:
+                 name: moderation-mock
+       EOF
+       kubectl apply -f- <<'EOF'
+       apiVersion: v1
+       kind: Service
+       metadata:
+         name: moderation-mock
+         namespace: default
+       spec:
+         selector:
+           app: moderation-mock
+         ports:
+         - port: 3094
+           targetPort: 3094
+       EOF
+       kubectl rollout status deployment/moderation-mock -n default --timeout=180s
+       # Point the documented backend at the mock. `path: null` drops the httpbun path
+       # from the openai-setup prerequisite, so requests keep the OpenAI path.
+       kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge \
+         -p '{"spec":{"ai":{"provider":{"host":"moderation-mock.default.svc.cluster.local","port":3094,"path":null}}}}'
+       YAMLTest -f - <<'EOF'
+       - name: the openai backend with inline moderation is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       # Accepted=True also covers a partly translated backend (reason PartiallyValid),
+       # which can silently drop its auth policy. The reason tells the two apart.
+       - name: the openai backend with inline moderation translated in full, not partly
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       # Assert on the last request body that the mock received.
+       check_upstream() {
+         kubectl logs deployment/moderation-mock -n default --tail=1 > /tmp/moderation-up.json
+         python3 - "$1" <<'PY'
+       import json, sys
+       up = json.load(open("/tmp/moderation-up.json"))
+       mod = up.get("moderation") or {}
+       policy = mod.get("policy") or {}
+       mode = lambda side: str((policy.get(side) or {}).get("mode", "")).lower()
+       if not eval(sys.argv[1]):
+           sys.exit(f"FAIL: {sys.argv[1]}\nupstream body: {up}")
+       PY
+       }
+       for _ in $(seq 1 30); do
+         [ "$(curl -s -m 10 -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/openai" -H content-type:application/json \
+           -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Hello"}]}')" = "200" ] && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 8e7e4dfde0943afc
+    lang: sh
+    lines: 5a09f03a fc68f389 b0cead6d a90f7a89 4b3b16d3 021fb596 09d1b3dd 40bfa271 d10b36aa cfae0d42 fc075a9d
+    preview: curl -i "$INGRESS_GW_ADDRESS/openai" \
+  content: |2-
+       {{< doc-test paths="guardrails-moderation-inline" >}}
+       # The request that left the gateway carries the configured moderation parameter.
+       check_upstream 'mod.get("model") == "omni-moderation-latest" and mode("input") == "block" and mode("output") == "score"'
+       # A client-supplied moderation value is replaced with the configured one.
+       curl -s -m 10 -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/openai" -H "content-type: application/json" \
+         -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Hello"}], "moderation": {"model": "client-weaker-model"}}'
+       check_upstream 'mod.get("model") == "omni-moderation-latest" and mode("input") == "block"'
+       echo "inline moderation is set by the gateway and cannot be overridden by the client"
+       {{< /doc-test >}}

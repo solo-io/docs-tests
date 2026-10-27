@@ -1,0 +1,272 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/providers/multiple-endpoints.md
+blocks:
+- 402929906e195adb yaml
+- a83812e62d6a3547 yaml
+- eaf8332eef89d38b yaml
+- ac342a6bae678173 yaml
+- 92bf0ee6ea4d4dbb sh
+- 536e4afaf66f9861 sh
+- a26ff369a1c78414 sh
+- 5d11cb358ca449ae sh
+- 96733a83ec57ca60 sh
+- e0d12612a06cbbba sh
+tags:
+- paths: providers-multiple-endpoints,providers-multiple-endpoints-run
+  block: 0
+  fingerprint: 402929906e195adb
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 01556da0 341b9ea6 9d538f19 94902150 c8f3f59a 146e11c6 9ebc4789 4df4f75f ad3afdb1 d67b54bf 98b45d4c 4e2ad8de 48b657b4 5f6d076e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="providers-multiple-endpoints,providers-multiple-endpoints-run"
+    only: true
+    lead: ' '
+- paths: providers-multiple-endpoints-run
+  block: 1
+  fingerprint: a83812e62d6a3547
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="providers-multiple-endpoints-run"
+    only: true
+    lead: ' '
+- paths: providers-multiple-endpoints,providers-multiple-endpoints-run
+  block: 2
+  fingerprint: eaf8332eef89d38b
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 eab76e7d 9d538f19 94902150 c8f3f59a 146e11c6 9ebc4789 4df4f75f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="providers-multiple-endpoints,providers-multiple-endpoints-run"
+    only: true
+    lead: ' '
+- paths: providers-multiple-endpoints,providers-multiple-endpoints-run
+  block: 3
+  fingerprint: ac342a6bae678173
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 9b39f94c 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 d67b54bf 98b45d4c 4e2ad8de 48b657b4 5f6d076e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="providers-multiple-endpoints,providers-multiple-endpoints-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: a83812e62d6a3547
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="providers-multiple-endpoints-run" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES, for both the backend `routes` map and the
+       # alternative AgentgatewayPolicy `routes`:
+       #   * /openai/v1/chat/completions is handled as `Completions`: a chat request
+       #     returns a completion with token usage, and an embeddings body on that path
+       #     is rejected by the gateway as an unparseable Completions request.
+       #   * /openai/v1/embeddings is handled as `Passthrough`: the same embeddings body
+       #     is forwarded without being parsed as a Completions request.
+       #
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Real embeddings and model lists from OpenAI: the backend is patched to the
+       #     httpbun mock LLM, which serves chat completions only, so the test checks
+       #     how the gateway classifies each path rather than the provider's answer.
+       # The apply above replaced the provider block; point it back at the httpbun mock.
+       kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge --patch-file /dev/stdin <<EOF
+       spec:
+         ai:
+           provider:
+             host: httpbun.default.svc.cluster.local
+             port: 3090
+             path: /llm/chat/completions
+       EOF
+       YAMLTest -f - <<'EOF'
+       - name: the openai backend with a routes map is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       # Accepted=True also covers a partly translated backend (reason PartiallyValid),
+       # which can silently drop its auth policy. The reason tells the two apart.
+       - name: the openai backend with a routes map translated in full, not partly
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       # Classify each documented path: a Completions route parses the body, a
+       # Passthrough route does not.
+       EMBED_BODY='{"model": "text-embedding-ada-002", "input": "The food was delicious"}'
+       for _ in $(seq 1 30); do
+         STATUS=$(curl -s -m 10 -o /tmp/me-resp.txt -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/openai/v1/chat/completions" \
+           -H content-type:application/json -d "$EMBED_BODY")
+         [ "$STATUS" = "400" ] && grep -q 'failed to parse Completions request' /tmp/me-resp.txt && break
+         sleep 2
+       done
+       grep -q 'failed to parse Completions request' /tmp/me-resp.txt \
+         || { echo "FAIL: the backend routes map: /v1/chat/completions did not parse the body as Completions (HTTP $STATUS)"; cat /tmp/me-resp.txt; exit 1; }
+       # Retried, because a newly attached policy can take a moment to reach the proxy.
+       for _ in $(seq 1 15); do
+         curl -s -m 10 -o /tmp/me-resp.txt "http://${INGRESS_GW_ADDRESS}:80/openai/v1/embeddings" \
+           -H content-type:application/json -d "$EMBED_BODY"
+         grep -q 'failed to parse' /tmp/me-resp.txt || break
+         sleep 2
+       done
+       if grep -q 'failed to parse' /tmp/me-resp.txt; then
+         echo "FAIL: the backend routes map: /v1/embeddings was parsed instead of passed through"; cat /tmp/me-resp.txt; exit 1
+       fi
+       YAMLTest -f - <<'EOF'
+       - name: with the backend routes map, a chat request on /v1/chat/completions returns a completion with token usage
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai/v1/chat/completions"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}", "messages": [{"role": "user", "content": "Hello!"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.prompt_tokens"
+               comparator: greaterThan
+               value: 0
+             - path: "$.usage.completion_tokens"
+               comparator: greaterThan
+               value: 0
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: ac342a6bae678173
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 9b39f94c 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 d67b54bf 98b45d4c 4e2ad8de 48b657b4 5f6d076e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="providers-multiple-endpoints-run" >}}
+       # Point the replaced backend at the httpbun mock again.
+       kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge --patch-file /dev/stdin <<EOF
+       spec:
+         ai:
+           provider:
+             host: httpbun.default.svc.cluster.local
+             port: 3090
+             path: /llm/chat/completions
+       EOF
+       YAMLTest -f - <<'EOF'
+       - name: the openai backend without routes is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       # Accepted=True also covers a partly translated backend (reason PartiallyValid),
+       # which can silently drop its auth policy. The reason tells the two apart.
+       - name: the openai backend without routes translated in full, not partly
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       - name: the openai-routes policy is accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: openai-routes
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Classify each documented path: a Completions route parses the body, a
+       # Passthrough route does not.
+       EMBED_BODY='{"model": "text-embedding-ada-002", "input": "The food was delicious"}'
+       for _ in $(seq 1 30); do
+         STATUS=$(curl -s -m 10 -o /tmp/me-resp.txt -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/openai/v1/chat/completions" \
+           -H content-type:application/json -d "$EMBED_BODY")
+         [ "$STATUS" = "400" ] && grep -q 'failed to parse Completions request' /tmp/me-resp.txt && break
+         sleep 2
+       done
+       grep -q 'failed to parse Completions request' /tmp/me-resp.txt \
+         || { echo "FAIL: the policy routes: /v1/chat/completions did not parse the body as Completions (HTTP $STATUS)"; cat /tmp/me-resp.txt; exit 1; }
+       # Retried, because a newly attached policy can take a moment to reach the proxy.
+       for _ in $(seq 1 15); do
+         curl -s -m 10 -o /tmp/me-resp.txt "http://${INGRESS_GW_ADDRESS}:80/openai/v1/embeddings" \
+           -H content-type:application/json -d "$EMBED_BODY"
+         grep -q 'failed to parse' /tmp/me-resp.txt || break
+         sleep 2
+       done
+       if grep -q 'failed to parse' /tmp/me-resp.txt; then
+         echo "FAIL: the policy routes: /v1/embeddings was parsed instead of passed through"; cat /tmp/me-resp.txt; exit 1
+       fi
+       YAMLTest -f - <<'EOF'
+       - name: with the policy routes, a chat request on /v1/chat/completions returns a completion with token usage
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai/v1/chat/completions"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}", "messages": [{"role": "user", "content": "Hello!"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.prompt_tokens"
+               comparator: greaterThan
+               value: 0
+             - path: "$.usage.completion_tokens"
+               comparator: greaterThan
+               value: 0
+       EOF
+       {{< /doc-test >}}

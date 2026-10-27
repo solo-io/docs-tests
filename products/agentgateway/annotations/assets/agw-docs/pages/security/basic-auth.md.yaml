@@ -1,0 +1,112 @@
+format: 1
+source: assets/agw-docs/pages/security/basic-auth.md
+blocks:
+- 12490d16f60a05d3 mermaid
+- 2f143757ad5ef9e9 shell
+- 5a1584769c3f8df6
+- 00aefc459518cfbb yaml
+- 2a58bac864da7655 sh
+- 86e869390b17f47b sh
+- ecbae8a5524633c3
+- 691ee609dbcfc053 sh
+- bdfeaef44475711c
+- 81d0358c43a2d9ec sh
+- 5148d5251ffef2f3 sh
+- ae43bc43954fcb59
+- 3c3e14ea645eac9a sh
+- da0e64ac67fcb938 yaml
+- c198058cb425c72c yaml
+- 29bf183d26e345ec yaml
+- 4284ef26f57c6c3e yaml
+tags:
+- paths: extauth-basic-run
+  block: 3
+  fingerprint: 00aefc459518cfbb
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 529ff855 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d e7b5d6b1 d3cb008e c9888a7d c975081a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-basic-run"
+    only: true
+    lead: ' '
+- paths: extauth-basic-run
+  block: 7
+  fingerprint: 691ee609dbcfc053
+  lang: sh
+  lines: 691ee609
+  preview: echo -n "user:password" | base64
+  form:
+    attr: paths="extauth-basic-run"
+    only: true
+    lead: ' '
+- paths: extauth-basic-run
+  block: 12
+  fingerprint: 3c3e14ea645eac9a
+  lang: sh
+  lines: 3c3e14ea
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} basic-auth -n {{< reu
+  form:
+    attr: paths="extauth-basic-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 00aefc459518cfbb
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 529ff855 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d e7b5d6b1 d3cb008e c9888a7d c975081a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-basic-run" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the basic-auth policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: basic-auth
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: a request without credentials is rejected
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/headers"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 401
+       - name: a request with the user's credentials succeeds
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/headers"
+           method: GET
+           headers:
+             host: www.example.com
+             Authorization: basic dXNlcjpwYXNzd29yZA==
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+       - name: a request with a wrong password is rejected
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/headers"
+           method: GET
+           headers:
+             host: www.example.com
+             Authorization: basic dXNlcjp3cm9uZw==
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 401
+       EOF
+       {{< /doc-test >}}

@@ -1,0 +1,162 @@
+format: 1
+source: assets/agw-docs/pages/security/byo-extauth.md
+blocks:
+- 587a5aefdb6c7530 mermaid
+- c51817fc4d5761e7 yaml
+- 66cd26e367ecb7a0 yaml
+- 55d810278a41bd12 sh
+- e8d2d32e2cd345f9 sh
+- 4259049d37c460ce txt
+- db2a328108879216 yaml
+- 05b972d92e10c22a yaml
+- 9ad4938f205b5493 yaml
+- 55d810278a41bd12 sh
+- e8d2d32e2cd345f9 sh
+- 1d16c70d1bdc2016 txt
+- f48a2f6e5c34a9ea sh
+- 140edc8bd19c6b35 sh
+- 0a165f7292d0f57d sh
+tags:
+- paths: extauth-byo-ext-auth-service-run
+  block: 1
+  fingerprint: c51817fc4d5761e7
+  lang: yaml
+  lines: abbd1bdc 58584366 ab78925c 8c8c4228 8af957d1 852ae295 fa1e8330 23cc601c 36184fa5 97bcd5e0 8432e015 839a5cac 23cc601c a58565b2 8c8c4228 fa1e8330 23cc601c 73ca09d5 36184fa5 04968f51 92abaa1b 852ae295 0ff65a1a 088263b2 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-byo-ext-auth-service-run"
+    only: true
+    lead: ' '
+- paths: extauth-byo-ext-auth-service-run
+  block: 2
+  fingerprint: 66cd26e367ecb7a0
+  lang: yaml
+  lines: abbd1bdc f1540154 0d6480f0 8c8c4228 8af957d1 852ae295 fa1e8330 23cc601c 36184fa5 0ff65a1a d8212fc2 7811827d 9693ecf1 7d42f305 8432e015 23cc601c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-byo-ext-auth-service-run"
+    only: true
+    lead: ' '
+- paths: extauth-byo-ext-auth-service,extauth-byo-ext-auth-service-run
+  block: 6
+  fingerprint: db2a328108879216
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 8af957d1 ca1d7a94 fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d e833744f 70c97555 852ae295 8af957d1 b8eebd11 d9e87793 71338152 fe125d83 de18e677 97971c76 97ea68ad 4ff9878c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-byo-ext-auth-service,extauth-byo-ext-auth-service-run"
+    only: true
+    lead: ' '
+- paths: extauth-byo-ext-auth-service
+  block: 7
+  fingerprint: 05b972d92e10c22a
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 8af957d1 215af578 fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d e833744f 70c97555 852ae295 8af957d1 b8eebd11 d9e87793 71338152 fe125d83 de18e677 97971c76 97ea68ad 4ff9878c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-byo-ext-auth-service"
+    only: true
+    lead: ' '
+- paths: extauth-byo-ext-auth-service
+  block: 8
+  fingerprint: 9ad4938f205b5493
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 8af957d1 ad8710b0 fa1e8330 23cc601c 36184fa5 588a5d84 e9a46ca1 f84e6062 6666820d bb85cefe e833744f 70c97555 852ae295 b8eebd11 d9e87793 71338152 fe125d83 de18e677 97971c76 97ea68ad 4ff9878c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-byo-ext-auth-service"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 66cd26e367ecb7a0
+    lang: yaml
+    lines: abbd1bdc f1540154 0d6480f0 8c8c4228 8af957d1 852ae295 fa1e8330 23cc601c 36184fa5 0ff65a1a d8212fc2 7811827d 9693ecf1 7d42f305 8432e015 23cc601c abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-byo-ext-auth-service-run" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the ext-authz service to be available
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: agentgateway-system
+               name: ext-authz
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: before the policy, the openai route answers without authorization
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Write 5 sentences."}]}
+         source:
+           type: local
+         retries: 10
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: db2a328108879216
+    lang: yaml
+    lines: abbd1bdc fbc30693 7f57603a 8c8c4228 8af957d1 ca1d7a94 fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d e833744f 70c97555 852ae295 8af957d1 b8eebd11 d9e87793 71338152 fe125d83 de18e677 97971c76 97ea68ad 4ff9878c abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-byo-ext-auth-service-run" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the gateway ext auth policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: gateway-ext-auth-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: a request without the x-ext-authz header is denied
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Write 5 sentences."}]}
+         source:
+           type: local
+         retries: 10
+         expect:
+           statusCode: 403
+           bodyContains:
+           - 'denied by ext_authz'
+       - name: a request with the x-ext-authz allow header is authorized
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+           method: POST
+           headers:
+             content-type: application/json
+             x-ext-authz: allow
+           body: |
+             {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Write 5 sentences."}]}
+         source:
+           type: local
+         retries: 10
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

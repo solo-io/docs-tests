@@ -1,0 +1,168 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/quickstart/llm-models.md
+blocks:
+- 4e548af92d68424c sh
+- f64ee25a12a74cd9 yaml
+- 8e50aa3716f855ab yaml
+- 53cce199336b49ad yaml
+- f2c2d5cd64270e15 sh
+- d13ade6c62874937 sh
+- 452e2e34d9956db4 sh
+- ad08f867fb6712ef sh
+- 1891d570cade6075 json
+- 60b897be22273803 sh
+- 3651bc4d42e56bec
+- 1198282e13b692c2 sh
+tags:
+- paths: quickstart-llm-run
+  block: 1
+  fingerprint: f64ee25a12a74cd9
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f 8af957d1 1426decf 2f7c298d 73825423 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="quickstart-llm-run"
+    only: true
+    lead: ' '
+- paths: quickstart-llm-run
+  block: 2
+  fingerprint: 8e50aa3716f855ab
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 8af957d1 36184fa5 ddf06799 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d d94df5c7 b5a028c9 56bf9360 e9a46ca1 eef5a849 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="quickstart-llm-run"
+    only: true
+    lead: ' '
+- paths: quickstart-llm,quickstart-llm-run
+  block: 3
+  fingerprint: 53cce199336b49ad
+  lang: yaml
+  lines: 16c71da1 263e4531 eef5a849 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 f0ce727c 75515aa4 0323852a c8f3f59a 146e11c6 9ebc4789 4df4f75f f372f1cb 5565245d 5dbf4c01 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="quickstart-llm,quickstart-llm-run"
+    only: true
+    lead: ' '
+- paths: quickstart-llm-run
+  block: 7
+  fingerprint: ad08f867fb6712ef
+  lang: sh
+  lines: 9ca89dad 67c5a3ac b0cead6d 871ce36c 4524fe64 c83aa0a4
+  preview: curl -s "http://$INGRESS_GW_ADDRESS/v1/chat/completions" \
+  form:
+    attr: paths="quickstart-llm-run"
+    only: true
+    lead: ' '
+- paths: quickstart-llm-run
+  block: 9
+  fingerprint: 60b897be22273803
+  lang: sh
+  lines: 60b897be
+  preview: curl -s "http://$INGRESS_GW_ADDRESS/v1/models" | jq -r '.data[].id'
+  form:
+    attr: paths="quickstart-llm-run"
+    only: true
+    lead: ' '
+- paths: quickstart-llm-run
+  block: 11
+  fingerprint: 1198282e13b692c2
+  lang: sh
+  lines: 7a0c8eaa bee798d4
+  preview: kubectl delete agentgatewaymodel openai -n {{< reuse "agw-docs/snippets/namespac
+  form:
+    attr: paths="quickstart-llm-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 4e548af92d68424c
+    lang: sh
+    lines: 4e548af9
+    preview: export OPENAI_API_KEY='<your-api-key>'
+  content: |2-
+       {{< doc-test paths="quickstart-llm-run" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * Steps 1-3: the Secret, the Gateway with the model route kind allowed, and
+       #     the AgentgatewayModel apply, and the model is accepted by the Gateway.
+       #   * Step 4: a chat completion for `openai/gpt-5-mini` succeeds, and the provider
+       #     receives `gpt-5-mini`, so the `stripPrefix` transformation runs. The httpbun
+       #     mock echoes the model it receives, which is how the test sees it.
+       #   * Step 4, optional: `/v1/models` lists `openai/gpt-5-mini` from the catalog.
+       #   * Cleanup runs.
+       #
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * A live completion from OpenAI: the model is patched with `baseURL` to the
+       #     httpbun mock LLM, so no provider key is needed.
+       #   * The INGRESS_GW_ADDRESS steps: the gateway prerequisite already sets the
+       #     address, and the port-forward step blocks.
+       #
+       # The visible export is a placeholder. Keep the CI placeholder key.
+       export OPENAI_API_KEY="${OPENAI_API_KEY:-mock-key}"
+       {{< reuse "agw-docs/snippets/deploy-mock-llm.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 53cce199336b49ad
+    lang: yaml
+    lines: 16c71da1 263e4531 eef5a849 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 f0ce727c 75515aa4 0323852a c8f3f59a 146e11c6 9ebc4789 4df4f75f f372f1cb 5565245d 5dbf4c01 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="quickstart-llm-run" >}}
+    # Point the model at the httpbun mock LLM. Completions go to <baseURL>/chat/completions.
+    kubectl patch {{< reuse "agw-docs/snippets/agentgatewaymodel.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge \
+      -p '{"spec":{"baseURL":"http://httpbun.default.svc.cluster.local:3090/llm"}}'
+    YAMLTest -f - <<'EOF'
+    - name: the openai model is accepted by the Gateway
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/agentgatewaymodel.md" >}}
+          metadata:
+            namespace: agentgateway-system
+            name: openai
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    - name: openai/gpt-5-mini reaches the provider as gpt-5-mini
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: "/v1/chat/completions"
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "openai/gpt-5-mini", "messages": [{"role": "user", "content": "Say hello in one sentence."}]}
+      source:
+        type: local
+      retries: 15
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.model"
+            comparator: equals
+            value: "gpt-5-mini"
+          - path: "$.usage.total_tokens"
+            comparator: greaterThan
+            value: 0
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 60b897be22273803
+    lang: sh
+    lines: 60b897be
+    preview: curl -s "http://$INGRESS_GW_ADDRESS/v1/models" | jq -r '.data[].id'
+  content: |2-
+       {{< doc-test paths="quickstart-llm-run" >}}
+       # The catalog expands openai/* into the OpenAI models, with the prefix.
+       curl -s "http://${INGRESS_GW_ADDRESS}/v1/models" | jq -e '[.data[].id] | index("openai/gpt-5-mini") != null' >/dev/null \
+         || { echo "FAIL: /v1/models does not list openai/gpt-5-mini"; curl -s "http://${INGRESS_GW_ADDRESS}/v1/models"; exit 1; }
+       {{< /doc-test >}}

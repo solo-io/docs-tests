@@ -1,0 +1,401 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/api-keys.md
+blocks:
+- 4dfa950e1169e409 sh
+- afb9bd93b8237394 yaml
+- a83812e62d6a3547 yaml
+- d693ff6e7ec87311 sh
+- 4add227ffc8cc21b json
+- c6c7a6bb8927fa0a sh
+- f64ee25a12a74cd9 yaml
+- eaf8332eef89d38b yaml
+- 5b341abadff25824 yaml
+- d693ff6e7ec87311 sh
+- 4add227ffc8cc21b json
+- 6c1f5fa57682c75a yaml
+- 5b341abadff25824 yaml
+- 59282f62c543ad0b sh
+- 4add227ffc8cc21b json
+- fe447698510720e1 sh
+- 865e0e271ff9196a sh
+- 213720b0721a50c0 sh
+- 78289e12df97f919 sh
+- bdad69bd89a9422c json
+tags:
+- paths: llm-api-keys,llm-api-keys-run
+  block: 1
+  fingerprint: afb9bd93b8237394
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 e00aaf9e 341b9ea6 c8f3f59a 146e11c6 c2d35ad1 ad3afdb1 d67b54bf 958c810b 98b45d4c 182273b4 5f6d076e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-api-keys,llm-api-keys-run"
+    only: true
+    lead: ' '
+- paths: llm-api-keys-run
+  block: 2
+  fingerprint: a83812e62d6a3547
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-api-keys-run"
+    only: true
+    lead: ' '
+- paths: llm-api-keys-run
+  block: 6
+  fingerprint: f64ee25a12a74cd9
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f 8af957d1 1426decf 2f7c298d 73825423 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-api-keys-run"
+    only: true
+    lead: ' '
+- paths: llm-api-keys,llm-api-keys-run
+  block: 7
+  fingerprint: eaf8332eef89d38b
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 eab76e7d 9d538f19 94902150 c8f3f59a 146e11c6 9ebc4789 4df4f75f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-api-keys,llm-api-keys-run"
+    only: true
+    lead: ' '
+- paths: llm-api-keys-run
+  block: 8
+  fingerprint: 5b341abadff25824
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-api-keys-run"
+    only: true
+    lead: ' '
+- paths: llm-api-keys,llm-api-keys-run
+  block: 11
+  fingerprint: 6c1f5fa57682c75a
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 5b083eec c8f3f59a 146e11c6 99e5eb4e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-api-keys,llm-api-keys-run"
+    only: true
+    lead: ' '
+- paths: llm-api-keys-run
+  block: 12
+  fingerprint: 5b341abadff25824
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-api-keys-run"
+    only: true
+    lead: ' '
+- paths: llm-api-keys-run
+  block: 16
+  fingerprint: 865e0e271ff9196a
+  lang: sh
+  lines: 9b1285aa 1d8483f5 bc73c86d
+  preview: kubectl create secret generic openai-secret -n {{< reuse "agw-docs/snippets/name
+  form:
+    attr: paths="llm-api-keys-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 4dfa950e1169e409
+    lang: sh
+    lines: 4dfa950e
+    preview: export TOKEN=<your-ai-provider-token>
+  content: |2-
+       {{< doc-test paths="llm-api-keys-run" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * Each of the three ways to provide the key (inline, Secret, passthrough):
+       #     the documented backend and HTTPRoute apply, the backend translates in full
+       #     (reason Accepted, not PartiallyValid, which is what a dropped auth policy
+       #     looks like), and a request along the documented /openai route returns an
+       #     OpenAI-shaped completion with token usage.
+       #   * "Rotate a provider key": the documented `kubectl create secret ... | kubectl
+       #     apply` updates the Secret in place to the new key, and requests keep
+       #     succeeding afterwards.
+       #
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * That OpenAI accepts the key. Every backend is patched to the httpbun mock
+       #     LLM after it is applied, so no request reaches OpenAI and no real key is
+       #     needed. The mock does not check credentials.
+       #   * The placeholder `export` steps (`<your-ai-provider-token>` and similar):
+       #     they do not run as written, so the hidden steps set the variables instead.
+       #
+       # The visible export is a placeholder. Use the CI placeholder key instead.
+       export TOKEN="${TOKEN:-${OPENAI_API_KEY:-mock-token}}"
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: a83812e62d6a3547
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 9399d187 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-api-keys-run" >}}
+       # Every visible apply of the openai backend replaces its provider block, so point
+       # it back at the httpbun mock LLM (deployed by the openai-setup prerequisite)
+       # after each one.
+       point_openai_at_mock() {
+       kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge --patch-file /dev/stdin <<EOF
+       spec:
+         ai:
+           provider:
+             host: httpbun.default.svc.cluster.local
+             port: 3090
+             path: /llm/chat/completions
+       EOF
+       }
+       point_openai_at_mock
+       YAMLTest -f - <<'EOF'
+       - name: the inline-key openai backend is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       # Accepted=True also covers a partly translated backend (reason PartiallyValid),
+       # which can silently drop its auth policy. The reason tells the two apart.
+       - name: the inline-key openai backend translated in full, not partly
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       - name: a request through the inline-key backend returns a completion with token usage
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}", "messages": [{"role": "user", "content": "Say hello in one word"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.prompt_tokens"
+               comparator: greaterThan
+               value: 0
+             - path: "$.usage.completion_tokens"
+               comparator: greaterThan
+               value: 0
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: c6c7a6bb8927fa0a
+    lang: sh
+    lines: c6c7a6bb
+    preview: export OPENAI_API_KEY=<insert your API key>
+  content: |2-
+       {{< doc-test paths="llm-api-keys-run" >}}
+       # The visible export is a placeholder. Keep the CI placeholder key.
+       export OPENAI_API_KEY="${OPENAI_API_KEY:-mock-key}"
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 5b341abadff25824
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-api-keys-run" >}}
+       point_openai_at_mock
+       YAMLTest -f - <<'EOF'
+       - name: the Secret-key openai backend is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       # Accepted=True also covers a partly translated backend (reason PartiallyValid),
+       # which can silently drop its auth policy. The reason tells the two apart.
+       - name: the Secret-key openai backend translated in full, not partly
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       - name: a request through the Secret-key backend returns a completion with token usage
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}", "messages": [{"role": "user", "content": "Say hello in one word"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.prompt_tokens"
+               comparator: greaterThan
+               value: 0
+             - path: "$.usage.completion_tokens"
+               comparator: greaterThan
+               value: 0
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 5b341abadff25824
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-api-keys-run" >}}
+       # Passthrough sends the client's Authorization header on to the provider.
+       point_openai_at_mock
+       YAMLTest -f - <<'EOF'
+       - name: the passthrough openai backend is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       # Accepted=True also covers a partly translated backend (reason PartiallyValid),
+       # which can silently drop its auth policy. The reason tells the two apart.
+       - name: the passthrough openai backend translated in full, not partly
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       - name: a request through the passthrough backend returns a completion with token usage
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: application/json
+             Authorization: "Bearer mock-client-token"
+           body: |
+             {"model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}", "messages": [{"role": "user", "content": "Say hello in one word"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.prompt_tokens"
+               comparator: greaterThan
+               value: 0
+             - path: "$.usage.completion_tokens"
+               comparator: greaterThan
+               value: 0
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: fe447698510720e1
+    lang: sh
+    lines: fe447698
+    preview: export NEW_OPENAI_API_KEY=<insert your new API key>
+  content: |2-
+       {{< doc-test paths="llm-api-keys-run" >}}
+       # The visible export is a placeholder. Use a distinct test value so the
+       # rotation below is observable.
+       export NEW_OPENAI_API_KEY="${NEW_OPENAI_API_KEY:-mock-rotated-key}"
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 865e0e271ff9196a
+    lang: sh
+    lines: 9b1285aa 1d8483f5 bc73c86d
+    preview: kubectl create secret generic openai-secret -n {{< reuse "agw-docs/snippets/name
+  content: |2-
+       {{< doc-test paths="llm-api-keys-run" >}}
+       # The documented command updates the existing Secret in place.
+       ROTATED=$(kubectl get secret openai-secret -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.Authorization}' | base64 -d)
+       if [ "$ROTATED" != "$NEW_OPENAI_API_KEY" ]; then
+         echo "FAIL: openai-secret holds '$ROTATED', not the new key"
+         exit 1
+       fi
+       YAMLTest -f - <<'EOF'
+       - name: requests keep succeeding after the key rotation
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}", "messages": [{"role": "user", "content": "Say hello in one word"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.prompt_tokens"
+               comparator: greaterThan
+               value: 0
+             - path: "$.usage.completion_tokens"
+               comparator: greaterThan
+               value: 0
+       EOF
+       {{< /doc-test >}}

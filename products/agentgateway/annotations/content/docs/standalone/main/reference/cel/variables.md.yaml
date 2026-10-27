@@ -1,0 +1,159 @@
+format: 1
+source: content/docs/standalone/main/reference/cel/variables.md
+blocks:
+- 8a8b154e6ff855e5 yaml
+hidden:
+- after:
+    block: 0
+    fingerprint: 8a8b154e6ff855e5
+    lang: yaml
+    lines: a7f80a73 2180b199 14cbb6f6 bbc15136
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="cel-variables" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Session detection rules": `request.agent.session` for each row of the examples
+    #     table (vendor header wins over x-session-id, x-session-id alone, Codex headers
+    #     only with a Codex User-Agent, too-short values ignored).
+    #   * "Override session detection": the documented `config.standardAttributes.session`
+    #     example takes the session from `x-conversation`, and leaves requests without
+    #     that header with no session even when they carry a recognized session header.
+    #   * "Repeated request headers": for `curl -H 'x-a: 1' -H 'x-a: 2'`, the table's
+    #     results for `== "1"` (false), `raw()[...][0]` ("1"), `join()` ("1,2"), and
+    #     `split()` (two values); and `split()` also splits comma-separated values.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The list and error rows (`request.headers["x-a"]` and `.startsWith`) as header
+    #     values - a list or an error cannot be written to a request header; the test
+    #     checks the `== "1"` row instead, which shows the same type change.
+    #   * The "Variables by policy type" table and the function tables - reference
+    #     material, partly rendered from the upstream schema at build time.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # Test-only backend: echo each request as JSON (method, path, headers). Repeated
+    # headers are kept as lists so the test can see exactly what agentgateway forwarded.
+    cat > doc-test-echo.py <<'PY'
+    import json, sys
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    class H(BaseHTTPRequestHandler):
+        def _reply(self):
+            headers = {}
+            for k in self.headers.keys():
+                headers[k.lower()] = self.headers.get_all(k)
+            status = 404 if self.path.startswith("/missing") else 200
+            body = json.dumps({"method": self.command, "path": self.path, "headers": headers}).encode()
+            self.send_response(status)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        do_GET = do_POST = do_PUT = do_DELETE = _reply
+        def log_message(self, *a):
+            pass
+    HTTPServer(("127.0.0.1", int(sys.argv[1])), H).serve_forever()
+    PY
+    start_echo() {
+      python3 doc-test-echo.py "$1" > "/tmp/doc-test-echo-$1.log" 2>&1 &
+      ECHO_PIDS="${ECHO_PIDS:-} $!"
+      for _ in $(seq 1 20); do curl -sf -o /dev/null "http://localhost:$1/" && return 0; sleep 0.5; done
+      echo "echo backend on port $1 did not start"; return 1
+    }
+
+    # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+    # would be set in a subshell and the gateway would never be stopped.
+    start_gateway() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+      AGW_PID=$!
+    }
+    stop_gateway() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+    wait_http() {
+      for _ in $(seq 1 "${2:-30}"); do
+        code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+        [ -n "$code" ] && [ "$code" != "000" ] && return 0
+        sleep 1
+      done
+      echo "$1 did not answer"; return 1
+    }
+    trap 'stop_gateway; kill ${ECHO_PIDS:-} 2>/dev/null || true' EXIT
+    start_echo 8080
+
+    # Each expression is copied into a request header; the echo backend returns them.
+    cat <<'EOF' > config-cel-vars.yaml
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        transformations:
+          request:
+            add:
+              x-session: 'default(request.agent.session, "none")'
+              x-eq: 'string(request.headers["x-a"] == "1")'
+              x-raw0: 'request.headers.raw()["x-a"][0]'
+              x-join: 'request.headers.join()["x-a"]'
+              x-split-n: 'string(size(request.headers.split()["x-a"]))'
+      backends:
+      - host: localhost:8080
+    EOF
+    start_gateway config-cel-vars.yaml
+    wait_http http://localhost:3000/ 30
+
+    # hdr NAME CURL_ARGS...: print the value of header NAME that the backend received.
+    hdr() {
+      local name="$1"; shift
+      curl -s http://localhost:3000/ "$@" | jq -r --arg n "$name" '.headers[$n][0] // "MISSING"'
+    }
+    expect() {
+      [ "$2" = "$3" ] || { echo "$1: expected '$3', got '$2'"; exit 1; }
+    }
+
+    expect "vendor header wins" \
+      "$(hdr x-session -H 'x-claude-code-session-id: e96634a3-fa28-4083' -H 'x-session-id: opencode-1234')" "e96634a3-fa28-4083"
+    expect "x-session-id" "$(hdr x-session -H 'x-session-id: opencode-1234')" "opencode-1234"
+    expect "codex user agent" \
+      "$(hdr x-session -H 'User-Agent: codex_cli_rs/0.50.0' -H 'thread-id: 019a-thread-0001')" "019a-thread-0001"
+    expect "non-codex user agent" \
+      "$(hdr x-session -H 'User-Agent: curl/8.7.1' -H 'session-id: 019a-thread-0001')" "none"
+    expect "short value" "$(hdr x-session -H 'x-session-id: short')" "none"
+
+    expect '== "1"' "$(hdr x-eq -H 'x-a: 1' -H 'x-a: 2')" "false"
+    expect 'raw()[0]' "$(hdr x-raw0 -H 'x-a: 1' -H 'x-a: 2')" "1"
+    expect 'join()' "$(hdr x-join -H 'x-a: 1' -H 'x-a: 2')" "1,2"
+    expect 'split() size' "$(hdr x-split-n -H 'x-a: 1' -H 'x-a: 2')" "2"
+    expect 'split() commas' "$(hdr x-split-n -H 'x-a: 1,2' -H 'x-a: 3')" "3"
+    expect 'raw()[0] single' "$(hdr x-raw0 -H 'x-a: 7')" "7"
+    stop_gateway
+
+    # "Override session detection" with the page's example expression.
+    cat <<'EOF' > config-cel-session.yaml
+    config:
+      standardAttributes:
+        session: 'default(request.headers["x-conversation"], "")'
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        transformations:
+          request:
+            add:
+              x-session: 'default(request.agent.session, "none")'
+      backends:
+      - host: localhost:8080
+    EOF
+    start_gateway config-cel-session.yaml
+    wait_http http://localhost:3000/ 30
+    expect "override header" "$(hdr x-session -H 'x-conversation: conv-1')" "conv-1"
+    expect "override ignores x-session-id" "$(hdr x-session -H 'x-session-id: opencode-1234')" "none"
+    stop_gateway
+    {{< /doc-test >}}

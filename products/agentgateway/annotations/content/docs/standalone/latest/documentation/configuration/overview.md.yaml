@@ -1,0 +1,128 @@
+format: 1
+source: content/docs/standalone/latest/documentation/configuration/overview.md
+blocks:
+- c7a87e9e58fd4e4c yaml
+- f6931a7b2e59dbc5 shell
+- 54af248b997a4f0d yaml
+hidden:
+- after:
+    block: 2
+    fingerprint: 54af248b997a4f0d
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 41e65779
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="config-overview" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Example configuration file": the published mcp-basic example config downloads
+    #     and agentgateway accepts it (--validate-only).
+    #   * "Configuration overview": the minimal config accepts HTTP traffic on port 3000
+    #     and forwards it to the backend on localhost:8000.
+    #   * "Supported file formats are JSON and YAML": the same config as JSON is accepted.
+    #   * "Write to the file": a route change in the file is picked up without a restart.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "UI" updates - UI-only.
+    #   * That the top-level `config` section is NOT reloaded - asserting a negative on a
+    #     static setting needs a startup-only field with an observable effect; see the
+    #     static-configuration test for the shutdown fields.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # Test-only backend: echo each request as JSON (method, path, headers). Repeated
+    # headers are kept as lists so the test can see exactly what agentgateway forwarded.
+    cat > doc-test-echo.py <<'PY'
+    import json, sys
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    class H(BaseHTTPRequestHandler):
+        def _reply(self):
+            headers = {}
+            for k in self.headers.keys():
+                headers[k.lower()] = self.headers.get_all(k)
+            status = 404 if self.path.startswith("/missing") else 200
+            body = json.dumps({"method": self.command, "path": self.path, "headers": headers}).encode()
+            self.send_response(status)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        do_GET = do_POST = do_PUT = do_DELETE = _reply
+        def log_message(self, *a):
+            pass
+    HTTPServer(("127.0.0.1", int(sys.argv[1])), H).serve_forever()
+    PY
+    start_echo() {
+      python3 doc-test-echo.py "$1" > "/tmp/doc-test-echo-$1.log" 2>&1 &
+      ECHO_PIDS="${ECHO_PIDS:-} $!"
+      for _ in $(seq 1 20); do curl -sf -o /dev/null "http://localhost:$1/" && return 0; sleep 0.5; done
+      echo "echo backend on port $1 did not start"; return 1
+    }
+
+    # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+    # would be set in a subshell and the gateway would never be stopped.
+    start_gateway() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+      AGW_PID=$!
+    }
+    stop_gateway() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+    wait_http() {
+      for _ in $(seq 1 "${2:-30}"); do
+        code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+        [ -n "$code" ] && [ "$code" != "000" ] && return 0
+        sleep 1
+      done
+      echo "$1 did not answer"; return 1
+    }
+    trap 'stop_gateway; kill ${ECHO_PIDS:-} 2>/dev/null || true' EXIT
+
+    curl -fsSL https://agentgateway.dev/examples/mcp-basic/config.yaml -o example-config.yaml
+    agentgateway -f example-config.yaml --validate-only
+
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: localhost:8000
+    EOF
+    agentgateway -f config.yaml --validate-only
+    python3 -c 'import json,yaml; json.dump(yaml.safe_load(open("config.yaml")), open("config.json","w"))'
+    agentgateway -f config.json --validate-only
+
+    start_echo 8000
+    start_gateway config.yaml
+    wait_http http://localhost:3000/ 30
+    curl -s http://localhost:3000/overview-check | jq -e '.path == "/overview-check"' >/dev/null
+
+    # Change the file while agentgateway runs: the new route answers without a restart.
+    cat <<'EOF' > /tmp/doc-test-overview-next.yaml
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        directResponse:
+          body: "reloaded"
+          status: 200
+    EOF
+    cat /tmp/doc-test-overview-next.yaml > config.yaml
+    body=""
+    for _ in $(seq 1 30); do
+      body=$(curl -s http://localhost:3000/ || true)
+      [ "$body" = "reloaded" ] && break
+      sleep 1
+    done
+    [ "$body" = "reloaded" ] || { echo "file change was not picked up (got '$body')"; exit 1; }
+    stop_gateway
+    {{< /doc-test >}}

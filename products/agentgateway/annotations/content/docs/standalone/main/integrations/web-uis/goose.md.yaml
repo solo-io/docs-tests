@@ -1,0 +1,127 @@
+format: 1
+source: content/docs/standalone/main/integrations/web-uis/goose.md
+blocks:
+- c187bf2aa4f5c9ae
+- 6d7907f46c4c4343 yaml
+- ec31d50682bbce88 sh
+- 535331dd99bc6523 sh
+- b38ad7219cb5cea6 yaml
+- 08b764818d202409 sh
+- 804f07dd2de05770 sh
+- 2206a864430de080
+tags:
+- paths: goose
+  block: 3
+  fingerprint: 535331dd99bc6523
+  lang: sh
+  lines: 041a1ed9 e73e0eeb ac612aec 14b737f2
+  preview: export GOOSE_PROVIDER=openai
+  form:
+    attr: paths="goose"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: (top of page)
+    line: cf8fe6011a2ed16e
+    occurrence: 0
+    words: c2d37dd0 3e194352 3aeb0024 3acdaa98 c2d37dd0 fa51fd49 ea325d76 403cae7d 40aa96c5 32e83e92 d4f0bc5a 75857a45 496aca80 8e7fc023 ab72caab 487b9104 0c4d01e8 0695b563 7c9bbe5e a402c433 4d327af4 b9776d7d 9372c470 ea7792a2 2ea88c7a 10182ab8 fc6672ad c2d37dd0 043a7187 487b9104 f46f5990 9c6725dc 56e57ada 64ea62de bb0347a4 ca978112 947f1875 81df6358 663ea1bf 97a5e41b c549779d 8a46fd6f 460ee6aa b81f37a0 98f38f12 6201111b 78b49fb2 1e19bab2 1216b2a8 22c313d2 b9776d7d d4f0bc5a
+    block_before: null
+  content: |-
+    {{< doc-test paths="goose" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Step 1 config is accepted and serves LLM traffic on port 3000 (against a
+    #     local mock LLM instead of OpenAI).
+    #   * Step 3: with the documented Goose environment variables exported, a request in
+    #     the form Goose's openai provider sends ($OPENAI_HOST/v1/chat/completions,
+    #     model $GOOSE_MODEL, the placeholder key) succeeds, and agentgateway logs it
+    #     with gen_ai.request.model=gpt-4o, as Step 4 describes.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Goose itself (`goose session`, `goose run`) - not installed in CI.
+    #   * The UI tab - browser-only steps.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-goose-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-goose-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Start agentgateway'
+    line: 94cb94b65a9b667f
+    occurrence: 0
+    words: 3e64cc41 d4735e3a cced28c6 56e57ada
+    block_before:
+      block: 1
+      fingerprint: 6d7907f46c4c4343
+      lang: yaml
+      lines: a7f80a73 3af99526 2b6bc07a e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="goose" >}}
+    # The Config file tab's agentgateway config (shown without a heredoc), restated.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      port: 3000
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+    to_mock config.yaml config-mock.yaml
+    start_agw config-mock.yaml
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 535331dd99bc6523
+    lang: sh
+    lines: 041a1ed9 e73e0eeb ac612aec 14b737f2
+    preview: export GOOSE_PROVIDER=openai
+  content: |-
+    {{< doc-test paths="goose" >}}
+    code=$(curl -s -o /tmp/doc-test-goose-reply.json -w '%{http_code}' -m 15 "$OPENAI_HOST/v1/chat/completions" \
+      -H 'content-type: application/json' -H "Authorization: Bearer $OPENAI_API_KEY" \
+      -d "{\"model\": \"$GOOSE_MODEL\", \"messages\": [{\"role\": \"user\", \"content\": \"say hello\"}]}")
+    [ "$code" = 200 ] || { echo "FAIL: a Goose-style request should succeed, got $code"; cat /tmp/doc-test-goose-reply.json; exit 1; }
+    [ "$(jq -r .model /tmp/doc-test-goose-reply.json)" = gpt-4o ] || { echo "FAIL: wrong model"; cat /tmp/doc-test-goose-reply.json; exit 1; }
+    sleep 1
+    grep -q 'gen_ai.request.model=gpt-4o' /tmp/doc-test-goose-agw.log \
+      || { echo "FAIL: the request is not in the agentgateway log"; cat /tmp/doc-test-goose-agw.log; exit 1; }
+    echo "ok: a Goose-style request reaches the model through agentgateway"
+    stop_agw
+    {{< /doc-test >}}

@@ -22,14 +22,14 @@ tags:
     attr: paths="audio-deploy"
     only: true
     lead: ' '
-- paths: audio-backend
+- paths: audio-backend,providers-audio
   block: 3
   fingerprint: a92d22db515bed9b
   lang: yaml
   lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 d5590a43 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 bdd64589 d80847cc da480536 c8f3f59a ad3afdb1 d67b54bf d7be2a84 48b657b4 5f6d076e abc56510
   preview: kubectl apply -f- <<EOF
   form:
-    attr: paths="audio-backend"
+    attr: paths="audio-backend,providers-audio"
     only: true
     lead: ' '
 - paths: audio-route

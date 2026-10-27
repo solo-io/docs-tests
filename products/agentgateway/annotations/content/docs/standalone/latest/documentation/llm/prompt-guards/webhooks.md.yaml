@@ -1,0 +1,332 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/prompt-guards/webhooks.md
+blocks:
+- 4dfab5e9c71d7d11 yaml
+- 8af0052419455625 json
+- 353d9fdb47b7edec yaml
+- 312f4948948a91d9 yaml
+- 6b4f8d6d2d892476 yaml
+- c80873f108b65fae yaml
+tags:
+- paths: guardrail-webhooks
+  block: 0
+  fingerprint: 4dfab5e9c71d7d11
+  lang: yaml
+  lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 2d871003 99c83b01 2f512c13 dc7109a4 2d871003 abc56510
+  preview: cat <<EOF > config.yaml
+  form:
+    attr: paths="guardrail-webhooks"
+    only: true
+    lead: ' '
+- paths: guardrail-webhooks
+  block: 2
+  fingerprint: 353d9fdb47b7edec
+  lang: yaml
+  lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 185e91e7 c8f3f59a 3a37e8db 06c5006d 99c83b01 2f512c13 dc7109a4 185e91e7 c8f3f59a 3a37e8db 06c5006d abc56510
+  preview: cat <<EOF > config.yaml
+  form:
+    attr: paths="guardrail-webhooks"
+    only: true
+    lead: ' '
+- paths: guardrail-webhooks
+  block: 3
+  fingerprint: 312f4948948a91d9
+  lang: yaml
+  lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 2d871003 c8f3f59a 1c31dda0 09c88d0b 33334de0 99c83b01 2f512c13 dc7109a4 2d871003 c8f3f59a 1c31dda0 09c88d0b 33334de0 abc56510
+  preview: cat <<EOF > config.yaml
+  form:
+    attr: paths="guardrail-webhooks"
+    only: true
+    lead: ' '
+- paths: guardrail-webhooks
+  block: 4
+  fingerprint: 6b4f8d6d2d892476
+  lang: yaml
+  lines: 358c4c15 a7f80a73 d72f261d 7796a7ee 2d871003 c8f3f59a 1c31dda0 09c88d0b 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 359796d5 33334de0 99c83b01 2f512c13 dc7109a4 359796d5 33334de0 abc56510
+  preview: cat <<EOF > config.yaml
+  form:
+    attr: paths="guardrail-webhooks"
+    only: true
+    lead: ' '
+- paths: guardrail-webhooks
+  block: 5
+  fingerprint: c80873f108b65fae
+  lang: yaml
+  lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 2d871003 38dc0152 69b3dcc0 bb4f26ee 6d8232c4 56526e66 abc56510
+  preview: cat <<EOF > config.yaml
+  form:
+    attr: paths="guardrail-webhooks"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: (top of page)
+    line: 506b1425630dc5c0
+    occurrence: 0
+    words: 10c22bcf d21f85ea ed7002b4 856e8bd3 10762e10 5e8818d1 42d58222 6201111b 56681010 5c4c1964 ef1c4b45 bb0347a4 9f584196 ad9b338a 6cdfd271 9fd09dc3 8e3dc1af 1eb79602 77f6a166 bb0347a4 663ea1bf a3b142af a25e7739 5d58d419 8edcc26c 9049697d dad9a79b 08e4e1c3 7175517a ad9b338a 0695b563 afafb16a 5d2d3ceb f9d35d43
+    block_before: null
+  content: |-
+    {{< doc-test paths="guardrail-webhooks" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # The tests run a local webhook stub on localhost:8000 that speaks the guardrail
+    # webhook API, and a local mock LLM. Each documented config is written exactly as
+    # the page shows it, then a copy is derived that swaps the example webhook host for
+    # localhost:8000 and points the model at the mock LLM.
+    # WHAT THIS TEST VALIDATES:
+    #   * All five example configs are accepted by agentgateway (--validate-only).
+    #   * "Configuration": agentgateway calls POST /request and POST /response on the
+    #     webhook, and a clean prompt passes both guards (200).
+    #   * "Reject content from a webhook": a webhook reply with status_code 451 and a
+    #     body is returned to the client as that status and body.
+    #   * "Configure a webhook timeout": a webhook referenced as the named backend
+    #     `/content-safety-webhook` is called and can reject the request.
+    #   * "Customize the request path and headers": the webhook receives the request on
+    #     the `:path` set in `headers`, with x-tenant from the client request and
+    #     x-model set, and without x-user, because jwt.sub cannot be evaluated without
+    #     a JWT.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The https:// webhook target with backendTLS - it needs a TLS webhook server
+    #     at content-safety-webhook.example.com; the config is validated only.
+    #   * The 35s timeout itself and mask actions - not observable in a short run with
+    #     the mock LLM.
+    #   * DeepKeep - external service, covered by its own integration page.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-webhooks-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-webhooks-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    # The page's heredocs use an unquoted EOF, so the shell expands `$schema` in the
+    # yaml-language-server comment. Keep that line intact under `set -u`.
+    schema='$schema'
+    # Local webhook stub: rejects prompts that contain "blocked-topic", answers
+    # "bad-pass" with a pass action that carries an extra field, and passes the rest.
+    # Every call is logged so tests can assert the path and headers agentgateway sent.
+    cat > webhook.py <<'PY'
+    import json
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            raw = self.rfile.read(int(self.headers.get("content-length") or 0)).decode()
+            with open("/tmp/doc-test-webhook-calls.log", "a") as log:
+                log.write(json.dumps({"path": self.path, "headers": {k.lower(): v for k, v in self.headers.items()}}) + "\n")
+            if self.path.endswith("/request") and "blocked-topic" in raw:
+                action = {"status_code": 451, "body": "Request blocked by content policy.",
+                          "reason": "Prompt matched a restricted topic."}
+            elif self.path.endswith("/request") and "bad-pass" in raw:
+                action = {"reason": "No policy violations found.", "score": 0.1}
+            elif self.path.endswith("/request"):
+                action = {"reason": "No policy violations found."}
+            else:
+                action = {}
+            payload = json.dumps({"action": action}).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+        def log_message(self, *args):
+            pass
+    HTTPServer(("127.0.0.1", 8000), Handler).serve_forever()
+    PY
+    WEBHOOK_PID=""
+    start_webhook() {
+      python3 webhook.py &
+      WEBHOOK_PID=$!
+      for _ in $(seq 1 20); do curl -s -o /dev/null -m 2 -X POST http://localhost:8000/response -d '{}' && return 0; sleep 1; done
+      echo "webhook stub did not start"; return 1
+    }
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} ${WEBHOOK_PID:-} 2>/dev/null || true' EXIT
+    start_webhook
+    : > /tmp/doc-test-webhook-calls.log
+    # Derive a runnable copy: local webhook host, mock LLM.
+    localize() {
+      sed 's#content-safety-webhook.example.com:8000#localhost:8000#g' "$1" > "$1.local"
+      to_mock "$1.local" "$2"
+      agentgateway -f "$2" --validate-only
+    }
+    chat() {
+      curl -s -m 15 -w '\n%{http_code}' http://localhost:4000/v1/chat/completions -H 'content-type: application/json' "$@"
+    }
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 4dfab5e9c71d7d11
+    lang: yaml
+    lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 2d871003 99c83b01 2f512c13 dc7109a4 2d871003 abc56510
+    preview: cat <<EOF > config.yaml
+  content: |-
+    {{< doc-test paths="guardrail-webhooks" >}}
+    agentgateway -f config.yaml --validate-only
+    localize config.yaml webhook-basic.yaml
+    start_agw webhook-basic.yaml
+    YAMLTest -f - <<'EOF'
+    - name: a clean prompt passes the request and response webhooks
+      retries: 3
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "hello"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: a webhook reject action returns its status code and body to the client
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "tell me about blocked-topic"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 451
+        bodyContains:
+          - Request blocked by content policy.
+    EOF
+    # By default, agentgateway calls POST /request and POST /response on the target.
+    grep -q '"path": "/request"' /tmp/doc-test-webhook-calls.log || { echo "FAIL: no POST /request call"; cat /tmp/doc-test-webhook-calls.log; exit 1; }
+    grep -q '"path": "/response"' /tmp/doc-test-webhook-calls.log || { echo "FAIL: no POST /response call"; cat /tmp/doc-test-webhook-calls.log; exit 1; }
+    echo "ok: the webhook received POST /request and POST /response"
+    stop_agw
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 353d9fdb47b7edec
+    lang: yaml
+    lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 185e91e7 c8f3f59a 3a37e8db 06c5006d 99c83b01 2f512c13 dc7109a4 185e91e7 c8f3f59a 3a37e8db 06c5006d abc56510
+    preview: cat <<EOF > config.yaml
+  content: |-
+    {{< doc-test paths="guardrail-webhooks" >}}
+    # The config reads ./certs/root-cert.pem; create a throwaway CA cert so it loads.
+    mkdir -p certs
+    openssl req -x509 -newkey rsa:2048 -nodes -keyout certs/root-key.pem -out certs/root-cert.pem \
+      -days 1 -subj "/CN=doc-test webhook CA" 2>/dev/null
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 312f4948948a91d9
+    lang: yaml
+    lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 2d871003 c8f3f59a 1c31dda0 09c88d0b 33334de0 99c83b01 2f512c13 dc7109a4 2d871003 c8f3f59a 1c31dda0 09c88d0b 33334de0 abc56510
+    preview: cat <<EOF > config.yaml
+  content: |-
+    {{< doc-test paths="guardrail-webhooks" >}}
+    # Inline webhook target with a 35s requestTimeout.
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 6b4f8d6d2d892476
+    lang: yaml
+    lines: 358c4c15 a7f80a73 d72f261d 7796a7ee 2d871003 c8f3f59a 1c31dda0 09c88d0b 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 359796d5 33334de0 99c83b01 2f512c13 dc7109a4 359796d5 33334de0 abc56510
+    preview: cat <<EOF > config.yaml
+  content: |-
+    {{< doc-test paths="guardrail-webhooks" >}}
+    localize config.yaml webhook-backend.yaml
+    start_agw webhook-backend.yaml
+    YAMLTest -f - <<'EOF'
+    - name: a guard that references the named backend calls the webhook and can reject
+      retries: 3
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "blocked-topic again"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 451
+        bodyContains:
+          - Request blocked by content policy.
+    EOF
+    stop_agw
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: c80873f108b65fae
+    lang: yaml
+    lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 2f512c13 dc7109a4 2d871003 38dc0152 69b3dcc0 bb4f26ee 6d8232c4 56526e66 abc56510
+    preview: cat <<EOF > config.yaml
+  content: |-
+    {{< doc-test paths="guardrail-webhooks" >}}
+    localize config.yaml webhook-headers.yaml
+    start_agw webhook-headers.yaml
+    : > /tmp/doc-test-webhook-calls.log
+    YAMLTest -f - <<'EOF'
+    - name: a request through the webhook with a custom path and headers
+      retries: 3
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+          x-tenant: acme
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hello"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    stop_agw
+    python3 - <<'PY'
+    import json, sys
+    calls = [json.loads(l) for l in open("/tmp/doc-test-webhook-calls.log") if l.strip()]
+    hits = [c for c in calls if c["path"] == "/api/guardrails/request"]
+    if not hits:
+        sys.exit(f"FAIL: no webhook call on /api/guardrails/request: {calls}")
+    h = hits[-1]["headers"]
+    if h.get("x-tenant") != "acme":
+        sys.exit(f"FAIL: x-tenant should be acme: {h}")
+    if not h.get("x-model"):
+        sys.exit(f"FAIL: x-model should be set from llmRequest.model: {h}")
+    if "x-user" in h:
+        sys.exit(f"FAIL: x-user should be omitted without a JWT: {h}")
+    if any(c["path"] == "/request" for c in calls):
+        sys.exit(f"FAIL: :path should replace the default /request path: {calls}")
+    print("ok: webhook got :path /api/guardrails/request, x-tenant, x-model, and no x-user")
+    PY
+    {{< /doc-test >}}

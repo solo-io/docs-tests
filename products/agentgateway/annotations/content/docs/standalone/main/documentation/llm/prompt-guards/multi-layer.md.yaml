@@ -1,0 +1,169 @@
+format: 1
+source: content/docs/standalone/main/documentation/llm/prompt-guards/multi-layer.md
+blocks:
+- 71176fe8810acbcc yaml
+hidden:
+- after:
+    section: (top of page)
+    line: 2b5bab245e4d86a3
+    occurrence: 0
+    words: bb0347a4 9f584196 90d08e58 3f8a7e66 cf07194e 74a3c826 8e7fc023 acba2551 58296753 bf37c7c2 7f9c40c9 21b0fc5e 433c3507 74a3c826 ba78973d e255d11c 58296753 b9776d7d 3eeb7e96 151e58a8 adf5a890 58296753 b9776d7d b7d64a92
+    block_before: null
+  content: |-
+    {{< doc-test paths="multi-layer-guardrails" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The combined shared + model-specific guardrail config is accepted by
+    #     agentgateway (--validate-only). The page shows it without a heredoc, so it is
+    #     restated below.
+    #   * The shared request layer applies to the `*` model: a prompt with an SSN, a
+    #     credit card number, or an email address is rejected with the shared
+    #     `rejection.body`. The rejection happens before the model layer, so neither
+    #     OpenAI moderation nor the webhook is called for these prompts.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The model layer (OpenAI moderation, webhook) and the response-side masking -
+    #     external dependency: moderation needs a live OpenAI key, and the webhook host
+    #     content-safety-webhook.example.com does not exist.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-multi-layer-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-multi-layer-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 71176fe8810acbcc
+    lang: yaml
+    lines: a7f80a73 3af99526 c8f3f59a e8bd2b8e 14ddcd05 0d9b02f6 51da151f 665793a0 3de9d845 cf694735 5349a995 79720b31 3f154c69 f862e26c 99c83b01 51da151f 90afc833 3de9d845 cf694735 5349a995 e01ccf75 e4f1a385 6472803d 009395dd e050b084 4208ae28 e8bd2b8e 14ddcd05 229c6d34 e21ce5bf 491a231d c8f3f59a 81b74571 7217bcc4 3f154c69 9429f10d f5b0b114 2f512c13 dc7109a4 2d871003 99c83b01 2f512c13 dc7109a4 2d871003
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="multi-layer-guardrails" >}}
+    cat <<'EOF' > multi-layer.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      policies:
+        guardrails:
+          request:
+          # Shared layer 1: Fast regex check for known patterns
+          - regex:
+              action: reject
+              rules:
+              - builtin: ssn
+              - builtin: creditCard
+              - builtin: email
+            rejection:
+              body: "Request contains PII and cannot be processed"
+          response:
+          - regex:
+              action: mask
+              rules:
+              - builtin: ssn
+              - builtin: creditCard
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          model: gpt-3.5-turbo
+          apiKey: "$OPENAI_API_KEY"
+        guardrails:
+          request:
+          # Model layer: OpenAI moderation for harmful content
+          - openAIModeration:
+              model: omni-moderation-latest
+              policies:
+                backendAuth:
+                  key: "$OPENAI_API_KEY"
+            rejection:
+              body: "Content blocked by moderation policy"
+          # Model layer: Custom webhook for domain-specific checks
+          - webhook:
+              target:
+                host: content-safety-webhook.example.com:8000
+          response:
+          - webhook:
+              target:
+                host: content-safety-webhook.example.com:8000
+    EOF
+    agentgateway -f multi-layer.yaml --validate-only
+    start_agw multi-layer.yaml
+    YAMLTest -f - <<'EOF'
+    - name: the shared layer rejects an SSN for the model
+      retries: 3
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "My SSN is 123-45-6789"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains:
+          - Request contains PII and cannot be processed
+    - name: the shared layer rejects a credit card number
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Charge 4111 1111 1111 1111 please"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains:
+          - Request contains PII and cannot be processed
+    - name: the shared layer rejects an email address
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Mail test@example.com"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains:
+          - Request contains PII and cannot be processed
+    EOF
+    stop_agw
+    {{< /doc-test >}}

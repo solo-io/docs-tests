@@ -1,0 +1,285 @@
+format: 1
+source: content/docs/kubernetes/main/documentation/llm/api-types/decisions.md
+blocks:
+- 1a77e625e291247c console
+- 436d03f70c8e3e17 yaml
+- 6dd7dc618eaf5a74 sh
+- cd809e652bf2cfbe sh
+- 9573c063ef0363cb json
+- d2767adc0faacc4c sh
+- 6eb39e83bda2f994 sh
+- 87bca36f3543e9db json
+- 9268342045097109 sh
+tags:
+- paths: api-types-decisions,api-types-decisions-run
+  block: 1
+  fingerprint: 436d03f70c8e3e17
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 c8f3f59a 146e11c6 9ebc4789 4df4f75f ad3afdb1 d67b54bf 138055e4 0e235740 98b45d4c 5f6d076e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="api-types-decisions,api-types-decisions-run"
+    only: true
+    lead: ' '
+- paths: api-types-decisions-run
+  block: 2
+  fingerprint: 6dd7dc618eaf5a74
+  lang: sh
+  lines: f0111a91 506a4604 b0cead6d 90c924a8 9fb7aad9 0a391602 c83aa0a4
+  preview: curl "http://$INGRESS_GW_ADDRESS/v1/decisions" \
+  form:
+    attr: paths="api-types-decisions-run"
+    only: true
+    lead: ' '
+- paths: api-types-decisions-run
+  block: 5
+  fingerprint: d2767adc0faacc4c
+  lang: sh
+  lines: 3cd104d3 506a4604 b0cead6d 90c924a8 7c5a504d 8c32c0bd c83aa0a4
+  preview: curl "http://$INGRESS_GW_ADDRESS/v1/systemone" \
+  form:
+    attr: paths="api-types-decisions-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 436d03f70c8e3e17
+    lang: yaml
+    lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 c8f3f59a 146e11c6 9ebc4789 4df4f75f ad3afdb1 d67b54bf 138055e4 0e235740 98b45d4c 5f6d076e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="api-types-decisions-run" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Map the Decisions route type": the documented backend translates in full,
+       #     with `Decisions` and `SystemOne` accepted as route types.
+       #   * "Send a Decisions request": the Decisions request reaches OpenAI natively
+       #     and the answers come back; the SystemOne request reaches OpenAI translated
+       #     to the Decisions format (a list of `predicate` questions) and comes back in
+       #     the SystemOne format (`answers.visible_damage.noul`).
+       #   * "Verify token tracking": the metrics endpoint reports token usage with
+       #     gen_ai_operation_name="decisions".
+       #
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Real answers from OpenAI: the backend is patched to a mock provider in the
+       #     cluster that speaks the Decisions API and answers every question with
+       #     probability 0.64. The httpbun mock LLM only speaks chat completions.
+       #
+       # The mock provider, with each request it receives logged to stdout.
+       kubectl apply -f- <<'EOF'
+       apiVersion: v1
+       kind: ConfigMap
+       metadata:
+         name: decisions-mock
+         namespace: default
+       data:
+         mock.py: |
+           import json, sys
+           from http.server import BaseHTTPRequestHandler, HTTPServer
+           class Handler(BaseHTTPRequestHandler):
+               def do_POST(self):
+                   length = int(self.headers.get("content-length") or 0)
+                   request = json.loads(self.rfile.read(length) or b"{}")
+                   print(json.dumps(dict(path=self.path, body=request)), flush=True)
+                   questions = request.get("questions")
+                   if isinstance(questions, dict):
+                       answers = {k: {"type": q["type"], q["type"]: 0.64} for k, q in questions.items()}
+                       usage = dict(input_tokens=156, output_tokens=0)
+                   else:
+                       answers = [dict(type=q["type"], name=q.get("name"), probability=0.64) for q in questions or []]
+                       usage = dict(input_tokens=156, output_tokens=0, total_tokens=156)
+                   payload = json.dumps(dict(model=request.get("model", "mock"), answers=answers, usage=usage)).encode()
+                   self.send_response(200)
+                   self.send_header("content-type", "application/json")
+                   self.send_header("content-length", str(len(payload)))
+                   self.end_headers()
+                   self.wfile.write(payload)
+               def log_message(self, *args):
+                   pass
+           HTTPServer(("0.0.0.0", 3091), Handler).serve_forever()
+       EOF
+       kubectl apply -f- <<'EOF'
+       apiVersion: apps/v1
+       kind: Deployment
+       metadata:
+         name: decisions-mock
+         namespace: default
+       spec:
+         replicas: 1
+         selector:
+           matchLabels:
+             app: decisions-mock
+         template:
+           metadata:
+             labels:
+               app: decisions-mock
+           spec:
+             containers:
+             - name: mock
+               image: python:3.12-alpine
+               command: ["python", "-u", "/app/mock.py"]
+               ports:
+               - containerPort: 3091
+               volumeMounts:
+               - name: app
+                 mountPath: /app
+             volumes:
+             - name: app
+               configMap:
+                 name: decisions-mock
+       EOF
+       kubectl apply -f- <<'EOF'
+       apiVersion: v1
+       kind: Service
+       metadata:
+         name: decisions-mock
+         namespace: default
+       spec:
+         selector:
+           app: decisions-mock
+         ports:
+         - port: 3091
+           targetPort: 3091
+       EOF
+       kubectl rollout status deployment/decisions-mock -n default --timeout=180s
+
+       # Point the documented backend at the mock. `path: null` drops the httpbun path
+       # that the openai-setup prerequisite patched in, so each route type keeps its
+       # own OpenAI path.
+       kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge \
+         -p '{"spec":{"ai":{"provider":{"host":"decisions-mock.default.svc.cluster.local","port":3091,"path":null}}}}'
+       YAMLTest -f - <<'EOF'
+       - name: the openai backend with the Decisions and SystemOne routes is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       # Accepted=True also covers a partly translated backend (reason PartiallyValid),
+       # which can silently drop its auth policy. The reason tells the two apart.
+       - name: the openai backend with the Decisions and SystemOne routes translated in full, not partly
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+
+       # The page sends requests to /v1/decisions and /v1/systemone at the gateway root,
+       # which the catch-all route from the OpenAI guide's default tab serves. The
+       # openai-setup prerequisite uses that guide's /openai custom route instead, so
+       # apply the default one here.
+       kubectl apply -f- <<EOF
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: HTTPRoute
+       metadata:
+         name: openai
+         namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+       spec:
+         parentRefs:
+           - name: agentgateway-proxy
+             namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+         rules:
+           - backendRefs:
+             - name: openai
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               group: {{< reuse "agw-docs/snippets/group.md" >}}
+               kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+       EOF
+
+       # POST a JSON body to a gateway path; the response goes to /tmp/decisions-resp.json
+       # and the status code to stdout.
+       post() {
+         curl -s -m 10 -o /tmp/decisions-resp.json -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80$1" \
+           -H 'Content-Type: application/json' -d "$2"
+       }
+       # Run a Python assertion against the last request the mock received (`up`) and
+       # the last gateway response (`resp`).
+       check() {
+         kubectl logs deployment/decisions-mock -n default --tail=1 > /tmp/decisions-up.json
+         python3 - "$1" <<'PY'
+       import json, sys
+       up = json.load(open("/tmp/decisions-up.json"))
+       try:
+           resp = json.load(open("/tmp/decisions-resp.json"))
+       except Exception:
+           resp = None
+       if not eval(sys.argv[1]):
+           sys.exit(f"FAIL: {sys.argv[1]}\nupstream: {up}\nresponse: {resp}")
+       PY
+       }
+       DECISIONS_BODY='{"model": "<decisions-model>", "input": [{"role": "user", "content": [{"type": "input_text", "text": "The package was left in the rain and the box is soaked through."}]}], "questions": [{"type": "predicate", "name": "visible_damage", "instructions": "Does the customer report visible damage to the package?"}]}'
+       SYSTEMONE_BODY='{"model": "<decisions-model>", "state": [{"role": "user", "content": "The package was left in the rain and the box is soaked through."}], "questions": {"visible_damage": {"type": "noul", "instructions": "Does the customer report visible damage to the package?"}}}'
+
+       # Wait until the new route and backend serve Decisions requests.
+       for _ in $(seq 1 30); do [ "$(post /v1/decisions "$DECISIONS_BODY")" = "200" ] && break; sleep 2; done
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 6dd7dc618eaf5a74
+    lang: sh
+    lines: f0111a91 506a4604 b0cead6d 90c924a8 9fb7aad9 0a391602 c83aa0a4
+    preview: curl "http://$INGRESS_GW_ADDRESS/v1/decisions" \
+  content: |2-
+       {{< doc-test paths="api-types-decisions-run" >}}
+       # OpenAI receives Decisions requests natively, on its /v1/decisions path.
+       check 'up["path"] == "/v1/decisions" and up["body"]["questions"][0]["type"] == "predicate"'
+       STATUS=$(post /v1/decisions "$DECISIONS_BODY")
+       [ "$STATUS" = "200" ] || { echo "FAIL: decisions request returned $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
+       check 'resp["answers"][0] == {"type": "predicate", "name": "visible_damage", "probability": 0.64}'
+       echo "the Decisions request is answered in the Decisions format"
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: d2767adc0faacc4c
+    lang: sh
+    lines: 3cd104d3 506a4604 b0cead6d 90c924a8 7c5a504d 8c32c0bd c83aa0a4
+    preview: curl "http://$INGRESS_GW_ADDRESS/v1/systemone" \
+  content: |2-
+       {{< doc-test paths="api-types-decisions-run" >}}
+       # OpenAI receives the SystemOne request translated to the Decisions format, and
+       # the client gets the reply back in the SystemOne format.
+       check 'up["path"] == "/v1/decisions" and isinstance(up["body"]["questions"], list)'
+       check 'up["body"]["questions"][0]["type"] == "predicate" and up["body"]["questions"][0]["name"] == "visible_damage"'
+       STATUS=$(post /v1/systemone "$SYSTEMONE_BODY")
+       [ "$STATUS" = "200" ] || { echo "FAIL: systemone request returned $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
+       check 'resp["answers"]["visible_damage"] == {"type": "noul", "noul": 0.64}'
+       echo "the SystemOne request is translated to Decisions and back"
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: '9268342045097109'
+    lang: sh
+    lines: '92683420'
+    preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
+  content: |2-
+       {{< doc-test paths="api-types-decisions-run" >}}
+       sleep 3
+       # Step 3: the token usage metric carries the decisions operation name.
+       METRICS=$(kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/$(kubectl get pods -n agentgateway-system -l gateway.networking.k8s.io/gateway-name=agentgateway-proxy -o jsonpath='{.items[0].metadata.name}'):15020/proxy/metrics")
+       for type in input output; do
+         echo "$METRICS" | grep 'agentgateway_gen_ai_client_token_usage_sum' \
+           | grep 'gen_ai_operation_name="decisions"' | grep -q "gen_ai_token_type=\"$type\"" \
+           || { echo "FAIL: no $type token usage with gen_ai_operation_name=\"decisions\""; echo "$METRICS" | grep gen_ai_client_token_usage || true; exit 1; }
+       done
+       echo "token usage for Decisions requests is recorded"
+       {{< /doc-test >}}

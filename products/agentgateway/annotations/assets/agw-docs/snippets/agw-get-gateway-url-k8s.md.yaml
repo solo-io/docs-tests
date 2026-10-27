@@ -4,14 +4,14 @@ blocks:
 - 4adde065965bc1d3 sh
 - 5bbc58dd3cbf8ecd sh
 tags:
-- paths: llm-clients-k8s-gateway-url
+- paths: llm-clients-k8s-gateway-url,llm-client-curl,llm-client-openai-sdk
   block: 0
   fingerprint: 4adde065965bc1d3
   lang: sh
   lines: 7f5ae30f 5a7cc868 cdb8a07c
   preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
   form:
-    attr: paths="llm-clients-k8s-gateway-url"
+    attr: paths="llm-clients-k8s-gateway-url,llm-client-curl,llm-client-openai-sdk"
     only: true
     lead: ' '
 hidden:

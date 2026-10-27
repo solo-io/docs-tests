@@ -1,0 +1,170 @@
+format: 1
+source: content/docs/standalone/latest/integrations/web-uis/open-webui.md
+blocks:
+- a95a72349118a58d
+- be5c5ca3b7137a6b yaml
+- ec31d50682bbce88 sh
+- e6057ad7800bac6c
+- e0a9819ca27d8a7a sh
+- 2206a864430de080
+- 559ff6c690f38e8e yaml
+tags:
+- paths: open-webui
+  block: 4
+  fingerprint: e0a9819ca27d8a7a
+  lang: sh
+  lines: a2395f10 aeece971 59e61c81 011f7d72 9e1bb821 7c6b3a24 025fdd54
+  preview: docker run -d \
+  form:
+    attr: paths="open-webui"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: be5c5ca3b7137a6b
+    lang: yaml
+    lines: a7f80a73 3af99526 2b6bc07a e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="open-webui" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Config file tab's config is accepted and serves chat completions on port
+    #     3000 (against a local mock LLM instead of OpenAI), and agentgateway logs each
+    #     one as http.path=/v1/chat/completions with http.status=200.
+    #   * Step 3's `docker run` starts Open WebUI, which answers on port 3080.
+    #   * Step 4, through Open WebUI's API instead of the browser: the initial admin
+    #     account is created, the model list is populated from agentgateway's
+    #     /v1/models, and a chat sent through Open WebUI comes back with the mock LLM's
+    #     reply, so the request went Open WebUI -> agentgateway -> LLM.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The UI tab, and the browser itself - the same steps run through Open WebUI's
+    #     HTTP API.
+    #   * The Docker Compose example - it runs the agentgateway container image instead
+    #     of the binary under test.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    AGW_LOG=/tmp/doc-test-open-webui-agw.log
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true; docker rm -f open-webui >/dev/null 2>&1 || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > "$AGW_LOG" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat "$AGW_LOG"; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    # wait_http URL [TRIES]: wait until URL answers with any HTTP status (1 s apart).
+    wait_http() {
+      for _ in $(seq 1 "${2:-30}"); do
+        code=$(curl -s -o /dev/null -w '%{http_code}' -m 5 "$1" 2>/dev/null || true)
+        [ -n "$code" ] && [ "$code" != "000" ] && return 0
+        sleep 1
+      done
+      echo "$1 did not answer"; return 1
+    }
+    # The Config file tab's agentgateway config (shown without a heredoc), restated.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      port: 3000
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+    to_mock config.yaml config-mock.yaml
+    # A container left over from an earlier run would make the documented `docker run` fail.
+    docker rm -f open-webui >/dev/null 2>&1 || true
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: ec31d50682bbce88
+    lang: sh
+    lines: 4e548af9 f6931a7b
+    preview: export OPENAI_API_KEY='<your-api-key>'
+  content: |-
+    {{< doc-test paths="open-webui" >}}
+    # Step 2 runs agentgateway in the foreground with a real key; run the same config
+    # in the background against the local mock LLM instead.
+    start_agw config-mock.yaml
+    out=$(curl -s -m 15 http://localhost:3000/v1/chat/completions \
+        -H 'content-type: application/json' \
+        -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello"}]}' || true)
+    jq -e '.model == "gpt-4o-mini" and .choices[0].message.content == "mock completion"' <<<"$out" >/dev/null \
+      || { echo "FAIL: no completion for gpt-4o-mini on port 3000: $out"; cat "$AGW_LOG"; exit 1; }
+    # The log entry that the page shows: the chat completion, proxied with status 200.
+    sleep 1
+    grep -Eq 'http.path=/v1/chat/completions.*http.status=200' "$AGW_LOG" \
+      || { echo "FAIL: no http.path=/v1/chat/completions http.status=200 entry in the agentgateway log"; cat "$AGW_LOG"; exit 1; }
+    echo "ok: agentgateway serves chat completions on port 3000 and logs them"
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: e0a9819ca27d8a7a
+    lang: sh
+    lines: a2395f10 aeece971 59e61c81 011f7d72 9e1bb821 7c6b3a24 025fdd54
+    preview: docker run -d \
+  content: |-
+    {{< doc-test paths="open-webui" >}}
+    # Open WebUI downloads models and migrates its database on first start; wait for it.
+    for _ in $(seq 1 120); do
+      curl -sf -o /dev/null -m 5 http://localhost:3080/health && break
+      sleep 5
+    done
+    curl -sf -m 5 http://localhost:3080/health \
+      || { echo "FAIL: Open WebUI did not become healthy on port 3080"; docker logs open-webui 2>&1 | tail -40; exit 1; }
+    # Step 4.1: create the initial admin account (the first sign-up becomes the admin).
+    TOKEN=$(curl -s -m 30 -X POST http://localhost:3080/api/v1/auths/signup \
+      -H 'content-type: application/json' \
+      -d '{"name": "Doc Test", "email": "doc-test@example.com", "password": "doc-test-Passw0rd!"}' | jq -r '.token // empty' || true)
+    [ -n "$TOKEN" ] || { echo "FAIL: could not create the Open WebUI admin account"; exit 1; }
+    # Step 4.2: the model list comes from agentgateway's /v1/models.
+    models=$(curl -s -m 60 http://localhost:3080/api/models -H "Authorization: Bearer $TOKEN" || true)
+    jq -e '[.data[]?.id] | index("gpt-4o-mini") != null' <<<"$models" >/dev/null \
+      || { echo "FAIL: Open WebUI's model list has no gpt-4o-mini from agentgateway: $(head -c 500 <<<"$models")"; docker logs open-webui 2>&1 | tail -20; exit 1; }
+    before=$(grep -Ec 'http.path=/v1/chat/completions.*http.status=200' "$AGW_LOG" || true)
+    # Step 4.3: a chat through Open WebUI reaches agentgateway and returns the LLM's reply.
+    reply=$(curl -s -m 120 -X POST http://localhost:3080/api/chat/completions \
+      -H "Authorization: Bearer $TOKEN" -H 'content-type: application/json' \
+      -d '{"model": "gpt-4o-mini", "stream": false, "messages": [{"role": "user", "content": "Hello"}]}' || true)
+    jq -e '.choices[0].message.content == "mock completion"' <<<"$reply" >/dev/null \
+      || { echo "FAIL: the chat through Open WebUI did not return the mock reply: $(head -c 500 <<<"$reply")"; tail -20 "$AGW_LOG"; exit 1; }
+    # Step 5: the chat added a chat-completion entry with status 200 to the agentgateway log.
+    sleep 1
+    after=$(grep -Ec 'http.path=/v1/chat/completions.*http.status=200' "$AGW_LOG" || true)
+    [ "${after:-0}" -gt "${before:-0}" ] \
+      || { echo "FAIL: the chat from Open WebUI is not in the agentgateway log"; tail -20 "$AGW_LOG"; exit 1; }
+    echo "ok: a chat sent through Open WebUI went through agentgateway"
+    docker rm -f open-webui >/dev/null 2>&1 || true
+    stop_agw
+    {{< /doc-test >}}

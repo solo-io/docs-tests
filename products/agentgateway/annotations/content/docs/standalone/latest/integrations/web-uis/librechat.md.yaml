@@ -1,0 +1,142 @@
+format: 1
+source: content/docs/standalone/latest/integrations/web-uis/librechat.md
+blocks:
+- be501838a0d51626
+- be5c5ca3b7137a6b yaml
+- ec31d50682bbce88 sh
+- 4d4b95645bad5bcb yaml
+- e0d6162d01695958 sh
+- 2206a864430de080
+hidden:
+- after:
+    block: 1
+    fingerprint: be5c5ca3b7137a6b
+    lang: yaml
+    lines: a7f80a73 3af99526 2b6bc07a e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="librechat" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Config file tab's config is accepted and serves chat completions on port
+    #     3000 (against a local mock LLM instead of OpenAI), and agentgateway logs each
+    #     one as http.path=/v1/chat/completions with http.status=200.
+    #   * Gateway side of the librechat.yaml custom endpoint: both listed models
+    #     (gpt-4o, and gpt-4o-mini, which is also the titleModel) get completions on
+    #     port 3000 with the placeholder apiKey sent as a bearer token.
+    #   * /v1/models lists catalog models, including gpt-4o and gpt-4o-mini, for the
+    #     wildcard model (the page's note on `fetch`).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * LibreChat itself - the page sets it up from LibreChat's own Docker Compose
+    #     stack (with MongoDB) and gives no container command, and chatting requires
+    #     registering and logging in to an account in the browser. Only the gateway
+    #     side of the integration is tested.
+    #   * The UI tab - browser-only steps.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    AGW_LOG=/tmp/doc-test-librechat-agw.log
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > "$AGW_LOG" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat "$AGW_LOG"; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    # wait_http URL [TRIES]: wait until URL answers with any HTTP status (1 s apart).
+    wait_http() {
+      for _ in $(seq 1 "${2:-30}"); do
+        code=$(curl -s -o /dev/null -w '%{http_code}' -m 5 "$1" 2>/dev/null || true)
+        [ -n "$code" ] && [ "$code" != "000" ] && return 0
+        sleep 1
+      done
+      echo "$1 did not answer"; return 1
+    }
+    # The Config file tab's agentgateway config (shown without a heredoc), restated.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      port: 3000
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+    to_mock config.yaml config-mock.yaml
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: ec31d50682bbce88
+    lang: sh
+    lines: 4e548af9 f6931a7b
+    preview: export OPENAI_API_KEY='<your-api-key>'
+  content: |-
+    {{< doc-test paths="librechat" >}}
+    # Step 2 runs agentgateway in the foreground with a real key; run the same config
+    # in the background against the local mock LLM instead.
+    start_agw config-mock.yaml
+    out=$(curl -s -m 15 http://localhost:3000/v1/chat/completions \
+        -H 'content-type: application/json' \
+        -H "Authorization: Bearer placeholder" \
+        -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "Hello"}]}' || true)
+    jq -e '.model == "gpt-4o" and .choices[0].message.content == "mock completion"' <<<"$out" >/dev/null \
+      || { echo "FAIL: no completion for gpt-4o on port 3000: $out"; cat "$AGW_LOG"; exit 1; }
+    out=$(curl -s -m 15 http://localhost:3000/v1/chat/completions \
+        -H 'content-type: application/json' \
+        -H "Authorization: Bearer placeholder" \
+        -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello"}]}' || true)
+    jq -e '.model == "gpt-4o-mini" and .choices[0].message.content == "mock completion"' <<<"$out" >/dev/null \
+      || { echo "FAIL: no completion for gpt-4o-mini on port 3000: $out"; cat "$AGW_LOG"; exit 1; }
+    # The log entry that the page shows: the chat completion, proxied with status 200.
+    sleep 1
+    grep -Eq 'http.path=/v1/chat/completions.*http.status=200' "$AGW_LOG" \
+      || { echo "FAIL: no http.path=/v1/chat/completions http.status=200 entry in the agentgateway log"; cat "$AGW_LOG"; exit 1; }
+    echo "ok: agentgateway serves chat completions on port 3000 and logs them"
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 4d4b95645bad5bcb
+    lang: yaml
+    lines: cab58bc2 00e1c550 f775c99b b6fb1fd3 7e2d2b1d afeb556f 99d904d0 e01ccf75 2e9c06d3 f99a4860 5050ce57 19049260 38baa40c
+    preview: 'version: 1.2.1'
+  content: |-
+    {{< doc-test paths="librechat" >}}
+    # The baseURL above is agentgateway's port 3000 with the /v1 suffix, and the requests
+    # in Step 2 sent both listed models with the placeholder key. The page's note on
+    # `fetch`: for the wildcard model, /v1/models lists the provider's catalog models.
+    code=$(curl -s -o /tmp/doc-test-librechat-models.json -w '%{http_code}' -m 10 http://localhost:3000/v1/models \
+      -H "Authorization: Bearer placeholder" || true)
+    [ "$code" = 200 ] && jq -e '[.data[]?.id] | index("gpt-4o") != null and index("gpt-4o-mini") != null' /tmp/doc-test-librechat-models.json >/dev/null \
+      || { echo "FAIL: /v1/models answered $code without gpt-4o and gpt-4o-mini"; cat /tmp/doc-test-librechat-models.json; exit 1; }
+    echo "ok: /v1/models lists $(jq '.data | length' /tmp/doc-test-librechat-models.json) models, including both listed in librechat.yaml"
+    stop_agw
+    {{< /doc-test >}}

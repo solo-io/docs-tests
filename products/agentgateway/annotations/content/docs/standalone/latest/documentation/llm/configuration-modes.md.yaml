@@ -1,0 +1,302 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/configuration-modes.md
+blocks:
+- 438cc883e676d6b5 yaml
+- 8f99450714efcfd6 yaml
+- e492e93ce786d3c7 yaml
+- a41deb9e17970c54 yaml
+- b5f66af574b9b32f yaml
+hidden:
+- after:
+    section: (top of page)
+    line: dbd5194d7767980b
+    occurrence: 0
+    words: 56e57ada 92ab364e 3fc4ccfe 063bffb4 663ea1bf 90d08e58 487b9104 1e19bab2 bec16879 e309757b 10c22bcf 9d6f965a a3b142af 352b8477
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-configuration-modes" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # The page shows its configs without heredocs, so each one is restated in a
+    # hidden block below and kept byte-for-byte equal to the page.
+    # WHAT THIS TEST VALIDATES:
+    #   * All five example configs are accepted by agentgateway (--validate-only).
+    #   * "LLM listener ports and TLS": with no gateway defined, the implied default
+    #     gateway serves LLM traffic on port 4000 at /v1/chat/completions (basic example,
+    #     run against a local mock LLM).
+    #   * The TLS example: the llm section attaches to the gateway named `default`, so
+    #     LLM traffic is served over TLS on port 8443 (run against the mock LLM, with a
+    #     self-signed cert substituted for the /etc/agentgateway/tls paths).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The JWT, authorization, and header-matching behavior of the advanced LLM
+    #     example - the page shows no request for it; only the config is validated.
+    #   * Path-based routing in the routing-based examples - they target live OpenAI and
+    #     Anthropic and api.example.com; the configs are validated only.
+    #   * The MCP stdio target in the TLS example - it needs npx and is not exercised.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-config-modes-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-config-modes-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-test}"
+    # The advanced LLM example reads a JWKS from ./public-key.json; generate one.
+    openssl genrsa -out jwt-key.pem 2048 2>/dev/null
+    python3 - <<'PY'
+    import base64, json, subprocess
+    mod = subprocess.check_output(["openssl", "rsa", "-in", "jwt-key.pem", "-noout", "-modulus"]).decode().strip().split("=", 1)[1]
+    n = base64.urlsafe_b64encode(bytes.fromhex(mod)).rstrip(b"=").decode()
+    json.dump({"keys": [{"kty": "RSA", "kid": "doc-test", "use": "sig", "alg": "RS256", "n": n, "e": "AQAB"}]}, open("public-key.json", "w"))
+    PY
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 438cc883e676d6b5
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="llm-configuration-modes" >}}
+    cat <<'EOF' > modes-basic.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f modes-basic.yaml --validate-only
+    to_mock modes-basic.yaml modes-basic-mock.yaml
+    start_agw modes-basic-mock.yaml
+    YAMLTest -f - <<'EOF'
+    - name: with no gateway defined, LLM traffic is served on port 4000
+      retries: 3
+      http:
+        url: "http://localhost:4000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hello"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.model"
+            comparator: equals
+            value: gpt-4o-mini
+    EOF
+    stop_agw
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 8f99450714efcfd6
+    lang: yaml
+    lines: a7f80a73 3af99526 c8f3f59a e34dc3a0 153f9913 143c90e6 44ec9b74 fd8c676c d48a6346 3de9d845 2ecd8155 e01ccf75 84869aea 84d960d4 009395dd a595786b 6c59a531 eaaad965 d0672ddc e2a51e95 03a5afea 092e5673 6f43a33f 6472803d 009395dd d887603d 4208ae28
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="llm-configuration-modes" >}}
+    cat <<'EOF' > modes-advanced.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      policies:
+        jwtAuth:
+          issuer: agentgateway.dev
+          audiences: [api.example.com]
+          jwks:
+            file: ./public-key.json
+        authorization:
+          rules:
+          - 'jwt.email.endsWith("@example.com")'
+      models:
+      - name: claude-haiku
+        provider: anthropic
+        params:
+          model: claude-3-5-haiku-20241022
+          apiKey: "$ANTHROPIC_API_KEY"
+        matches:
+        - headers:
+          - name: x-org
+            value:
+              exact: engineering
+      - name: gpt-4
+        provider: openAI
+        params:
+          model: gpt-4o
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f modes-advanced.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: e492e93ce786d3c7
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c f51d9754 3195c5f5 87af5e91 269b59df 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 82726b6f 3035507a 9f87593f a68fe535 ca335149 6329244e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="llm-configuration-modes" >}}
+    cat <<'EOF' > modes-tls.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 8443
+        tls:
+          cert: /etc/agentgateway/tls/tls.crt
+          key: /etc/agentgateway/tls/tls.key
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    mcp:
+      targets:
+      - name: tools
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    # The page's cert paths are under /etc; use a self-signed cert in ./tls instead.
+    mkdir -p tls
+    openssl req -x509 -newkey rsa:2048 -nodes -keyout tls/tls.key -out tls/tls.crt -days 1 \
+      -subj "/CN=localhost" -addext "subjectAltName=DNS:localhost" 2>/dev/null
+    sed 's#/etc/agentgateway/tls/#./tls/#' modes-tls.yaml > modes-tls-local.yaml
+    agentgateway -f modes-tls-local.yaml --validate-only
+    to_mock modes-tls-local.yaml modes-tls-mock.yaml
+    start_agw modes-tls-mock.yaml
+    YAMLTest -f - <<'EOF'
+    - name: the llm section attaches to the default gateway and is served over TLS on 8443
+      retries: 3
+      http:
+        url: "https://localhost:8443"
+        path: /v1/chat/completions
+        method: POST
+        skipSslVerification: true
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "hello"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    stop_agw
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: a41deb9e17970c54
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 e050b084 c8f3f59a 81b74571 7217bcc4
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="llm-configuration-modes" >}}
+    cat <<'EOF' > modes-routing.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    gateways:
+      default:
+        port: 3000
+        protocol: HTTP
+    routes:
+    - backends:
+      - ai:
+          name: openai
+          provider:
+            openAI:
+              model: gpt-3.5-turbo
+      policies:
+        backendAuth:
+          key: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f modes-routing.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: b5f66af574b9b32f
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf 40131044 0a75b229 eaaad965 aeca2b3d dca727ff d72f261d 4c6bd846 6666820d 93a4b62b 6ea70ff2 d887603d c8f3f59a 81b74571 7217bcc4 c0dc1081 fe912145 eaaad965 aeca2b3d 16fe4b8d d72f261d 4c6bd846 eae4f7ec 93a4b62b 12456441 a595786b c8f3f59a 81b74571 03f0b4b2 37c1a9a2 5a4f1593 eaaad965 aeca2b3d b66c6592 d72f261d 4c1e7539
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="llm-configuration-modes" >}}
+    cat <<'EOF' > modes-routing-advanced.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    gateways:
+      default:
+        port: 3000
+        protocol: HTTP
+    routes:
+    # Route OpenAI requests
+    - name: openai-route
+      matches:
+      - path:
+          pathPrefix: /openai
+      backends:
+      - ai:
+          name: openai
+          provider:
+            openAI:
+              model: gpt-4o
+      policies:
+        backendAuth:
+          key: "$OPENAI_API_KEY"
+    # Route Anthropic requests
+    - name: anthropic-route
+      matches:
+      - path:
+          pathPrefix: /anthropic
+      backends:
+      - ai:
+          name: anthropic
+          provider:
+            anthropic:
+              model: claude-3-5-haiku-20241022
+      policies:
+        backendAuth:
+          key: "$ANTHROPIC_API_KEY"
+    # Non-LLM backend
+    - name: api-route
+      matches:
+      - path:
+          pathPrefix: /api
+      backends:
+      - host: api.example.com:443
+    EOF
+    agentgateway -f modes-routing-advanced.yaml --validate-only
+    {{< /doc-test >}}

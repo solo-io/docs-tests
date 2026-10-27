@@ -1,0 +1,128 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/functions.md
+blocks:
+- 93d9c1a85439a0f0 mermaid
+- ecf48e08aaf47030 sh
+- 48aa3597a983deed sh
+- 1f67ee532713332c json
+- 231a9a428def16ec json
+- d0babca3ca990112 sh
+- 7e58721b0cf82c21 sh
+- 4028dff8f51bf8bf json
+tags:
+- paths: llm-functions
+  block: 1
+  fingerprint: ecf48e08aaf47030
+  lang: sh
+  lines: bdf399f0 2665f611 4b3b16d3 021fb596 09d1b3dd c002fb1f d10b36aa 39d4b54e 7313c7d4 ed5ec14c 021fb596 5edd855b 1fd3f740 29c992bb 77cd7923 0d25306d 578b7fdc 75d5a96b ec3196bf ee11afe1 393cd48d e52a1813 3dbbb570 e52a1813 c0666399 d10b36aa d10b36aa d10b36aa 39d4b54e 1fece934 fc075a9d
+  preview: curl "$INGRESS_GW_ADDRESS/openai" -H content-type:application/json  -d '{
+  form:
+    attr: paths="llm-functions"
+    only: true
+    lead: ' '
+- paths: llm-functions
+  block: 5
+  fingerprint: d0babca3ca990112
+  lang: sh
+  lines: e6ed3afa 2665f611 4b3b16d3 021fb596 09d1b3dd c002fb1f e52a1813 021fb596 7d33edf2 a9400ae0 cc9bcddb 021fb596 2a1bfcf0 5edd855b 1fd3f740 29c992bb baaa1ab2 d10b36aa d10b36aa cfae0d42 e52a1813 021fb596 fbab2387 a26c4b10 29c992bb 8c23675d d10b36aa cfae0d42 fc075a9d
+  preview: 'curl "$INGRESS_GW_ADDRESS/openai" -H "Content-Type: application/json" -d ''{'
+  form:
+    attr: paths="llm-functions"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: ecf48e08aaf47030
+    lang: sh
+    lines: bdf399f0 2665f611 4b3b16d3 021fb596 09d1b3dd c002fb1f d10b36aa 39d4b54e 7313c7d4 ed5ec14c 021fb596 5edd855b 1fd3f740 29c992bb 77cd7923 0d25306d 578b7fdc 75d5a96b ec3196bf ee11afe1 393cd48d e52a1813 3dbbb570 e52a1813 c0666399 d10b36aa d10b36aa d10b36aa 39d4b54e 1fece934 fc075a9d
+    preview: curl "$INGRESS_GW_ADDRESS/openai" -H content-type:application/json  -d '{
+  content: |2-
+       {{< doc-test paths="llm-functions" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * Step 1: a chat request that carries a `tools` list and
+       #     `parallel_tool_calls` passes through the gateway's chat completion handling
+       #     to the provider and returns a completion with token usage.
+       #   * Step 4: a follow-up request that carries an assistant `tool_calls` message
+       #     with null content and a `tool` result message is accepted the same way.
+       #
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * That the model suggests `get_weather` (steps 2 and 5): the openai-setup
+       #     prerequisite points the backend at the httpbun mock LLM, which does not
+       #     call tools. Which tool a model picks is the provider's behavior, not the
+       #     gateway's.
+       YAMLTest -f - <<'EOF'
+       - name: a request with a tools list returns a completion
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {
+               "model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}",
+               "messages": [{"role": "user", "content": "How is the current weather in Columbus?"}],
+               "parallel_tool_calls": false,
+               "tools": [{"type": "function", "function": {"name": "get_weather", "description": "Get the current weather",
+                 "parameters": {"type": "object", "properties": {"location": {"type": "string", "description": "The city and country, eg. San Francisco, USA"},
+                 "format": {"type": "string", "enum": ["celsius", "fahrenheit", "rankine"]}}, "required": ["location", "format"]}}}],
+               "stream": false
+             }
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.prompt_tokens"
+               comparator: greaterThan
+               value: 0
+             - path: "$.usage.completion_tokens"
+               comparator: greaterThan
+               value: 0
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: d0babca3ca990112
+    lang: sh
+    lines: e6ed3afa 2665f611 4b3b16d3 021fb596 09d1b3dd c002fb1f e52a1813 021fb596 7d33edf2 a9400ae0 cc9bcddb 021fb596 2a1bfcf0 5edd855b 1fd3f740 29c992bb baaa1ab2 d10b36aa d10b36aa cfae0d42 e52a1813 021fb596 fbab2387 a26c4b10 29c992bb 8c23675d d10b36aa cfae0d42 fc075a9d
+    preview: 'curl "$INGRESS_GW_ADDRESS/openai" -H "Content-Type: application/json" -d ''{'
+  content: |2-
+       {{< doc-test paths="llm-functions" >}}
+       YAMLTest -f - <<'EOF'
+       - name: a request with a tool call and its result returns a completion
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {
+               "model": "{{< reuse "agw-docs/snippets/openai-model.md" >}}",
+               "messages": [
+                 {"role": "user", "content": "How is the current weather in Columbus?"},
+                 {"role": "assistant", "content": null, "tool_calls": [{"id": "call_iMGPsr4Xx1u0G5sOzFsTCbQU", "type": "function",
+                   "function": {"name": "get_weather", "arguments": "{\"format\":\"celsius\",\"location\":\"Columbus, OH\"}"}}]},
+                 {"role": "tool", "tool_call_id": "call_iMGPsr4Xx1u0G5sOzFsTCbQU", "name": "get_weather", "content": "{ \"temperature\": 15, \"condition\": \"Cloudy\" }"}
+               ]
+             }
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.prompt_tokens"
+               comparator: greaterThan
+               value: 0
+             - path: "$.usage.completion_tokens"
+               comparator: greaterThan
+               value: 0
+       EOF
+       {{< /doc-test >}}
