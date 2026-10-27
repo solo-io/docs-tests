@@ -649,9 +649,11 @@ an assertion or command failed. Any of these can be the cause:
 | The product's behavior changed (the daily run installs the latest dev build) | The content repo if the change is intended, the product repo if it is a bug |
 | The environment was flaky, for example a slow load balancer or a rate-limited registry | Usually a re-run; a wait or retry here if it repeats |
 
-Nothing tells these apart automatically. Compare what changed since the last passing
-run: commits to the page in the content repo, commits to its annotation or `tests.yaml`
-entry here, and the product version. Whichever one moved is usually the cause.
+Compare what changed since the last passing run: commits to the page in the content
+repo, commits to its annotation or `tests.yaml` entry here, and the product version.
+Whichever one moved is usually the cause. The daily fixer job sorts each nightly
+failure into these causes and drafts a fix for the first two (see
+[Fixing a failing doc test](#fixing-a-failing-doc-test)).
 
 ### Fixing markup that needs update
 
@@ -723,6 +725,103 @@ fails when any of the following is true:
 
 The fixer records its work in a JSON summary with `fixed`, `unresolved`, and `removed`
 lists. The comment at the top of the script describes the format.
+
+### Fixing a failing doc test
+
+The same daily fixer job also reads the last nightly run's failures and drafts fixes
+for them. A person can follow the same steps. Nothing it writes is published until
+the failing scenario passes on a cluster with the fix applied, and nothing reaches any
+`main` branch until someone reviews and merges the pull request it opens.
+
+1. **List the work.** `scripts/collect_failures.py` turns a nightly run's results into
+   a short list. Each entry has the scenario (`key`, `page`, `test`), the step that
+   broke (`step`: its kind, page, line and command), and the last part of its
+   output. When the page is a shell that rebases another site's page, `upstream_page`
+   and `step.upstream_file` name that page. A content fix goes there, not in the
+   shell.
+
+2. **Read the failure, then the pages.** Start from the step's command and output.
+   Open the step's page and the scenario's page, and follow each
+   `{{< reuse "..." >}}` to the file it pulls in. The page you edit is usually a
+   reused file under `assets/`, not the page the result names. Read the page's
+   annotation here too (`products/<product>/annotations/<page>.yaml`): a hidden
+   check that broke lives there, not in the page.
+
+3. **Decide what kind of failure it is.**
+
+   | Kind | What it looks like | What to do |
+   |---|---|---|
+   | `content` | The page tells the reader to do something that does not work: a wrong name, field, flag, path, or value. | Fix the page or the file it reuses. |
+   | `test` | The page is right, but the test is not: a stale assertion, a missing wait, a hidden check with the wrong name. | Fix the annotation here. |
+   | `environment` | Something outside the page and the test: a timeout pulling an image, a rate limit, a missing secret, a cluster that never came up. | Report it. |
+   | `product` | The page and the test agree, and the product does something else. | Report it. A person decides whether the page or the product changes. |
+   | `unknown` | You cannot tell from what you have. | Report it, saying what you would need. |
+
+   A step that broke because an earlier step of the same scenario did not do its job
+   is that earlier step's failure. Fix the earlier one.
+
+4. **Fix it the way a writer would.** Change as little as you can.
+
+   - Where the site already has a snippet for a value that differs between sites
+     (a GatewayClass, a namespace, a deployment name), use it instead of the
+     literal: `{{< reuse "agw-docs/snippets/<name>.md" >}}`.
+   - Where it has none and the value differs between a site and a site that rebases
+     it, add one in both: the upstream snippet with the upstream value, and a file
+     at the same path in the consumer's `assets/` with its value. The consumer's
+     copy shadows the upstream one in its build and in its tests.
+   - A check here that must work on more than one site reuses the same snippet, or
+     reads the value from the cluster, rather than naming one site's value.
+     `{{< reuse "..." >}}` inside a hidden check is expanded at test time, with each
+     site's own copy of the snippet.
+   - **Editing a page moves its markup's anchors.** A tag follows its block's text,
+     and a hidden check follows the line or block before it, so changing that text
+     can leave markup that no longer attaches. After every page edit, run the
+     `attach` command from step 6 of
+     [Fixing markup that needs update](#fixing-markup-that-needs-update) on the page.
+     Re-anchor anything that no longer attaches with `annotate` and `save` (steps 2
+     and 5 there), keeping its contents. The check refuses markup you left
+     unattached.
+
+5. **Never put test markup in a content page.** No `paths=` tags, no
+   `{{< doc-test >}}` blocks, no front matter `test:` key. Test markup lives here
+   only. Some pages still carry inline markup from before the move; the run removes
+   it before it tests, so editing it changes nothing.
+
+6. **Keep the private side out of public repos.** A consumer's pages, its product
+   name, and its values never appear in a public repo's files or in the text that
+   goes with them, apart from the consumer's own annotations here, which follow the
+   private rules in [Fixing markup that needs update](#fixing-markup-that-needs-update).
+
+7. **Record each failure** in the summary's `failures` list, one row each:
+
+   ```json
+   {"key": "<key from the list>", "kind": "content", "fix": true,
+    "reason": "why it failed and what you changed",
+    "public_reason": "the same, in words fit for the public repo's pull request",
+    "files": ["<every file you changed for it, workspace-relative>"]}
+   ```
+
+   `public_reason` is needed whenever the row changes a public content repo. It is
+   the only text of the row that reaches that repo.
+
+`scripts/failure_fix_check.py` holds the fixer to these rules before anything runs on
+a cluster. It fails when any of the following is true:
+
+- A failure has no row, or a row has no kind or reason.
+- An `environment`, `product`, or `unknown` row changes a file.
+- A file changed that no row lists, or that is outside the paths a fix may change:
+  `content/docs/` and `assets/` upstream, `assets/<product>-docs/` in a consumer, and
+  annotation files here. `tests.yaml` is not among them.
+- An annotation changed for a failure belongs to a page that the failure's scenario
+  does not run.
+- A content page gains test markup.
+- A line added to a public content repo, or a `public_reason`, names the private
+  side.
+
+A check edited to fix a failure may change more than a re-anchor would, so
+`annotation_fix_check.py --exempt-pages` does not hold it to the small-edit rule. The
+cluster run holds it instead: the workflow re-runs every failure with a fix, and drops
+the fix of any that still fails.
 
 ---
 

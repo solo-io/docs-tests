@@ -23,6 +23,14 @@ them does not hold.
    the page, fails: re-anchoring is the agent's job, rewriting a test is a
    person's. The agent leaves such a piece unresolved instead. Every check whose
    contents changed is written to --changes-out, so a reviewer sees them.
+   A page listed in --exempt-pages is not held to this: the failure fixer
+   edited its checks to fix a failing test, which can take more than a small
+   edit, and the workflow re-runs those tests on a cluster instead.
+
+In a run that also fixes failing tests, the same agent may change files under
+other annotation directories (another product's pages, which a failing
+scenario also runs). Pass each with --also-changed; failure_fix_check.py checks
+those, and this script runs again for each with its own --annotations.
 
 The agent's summary is JSON:
 
@@ -147,8 +155,10 @@ def listed(summary: dict, key: str, errors: List[str]) -> List[Tuple[str, str]]:
 
 
 def check(root: Path, repo: Path, adir_rel: str, base: str, pending: List[dict], summary: dict,
-          private: bool, changes: Optional[List[dict]] = None) -> List[str]:
+          private: bool, changes: Optional[List[dict]] = None, also_changed: Tuple[str, ...] = (),
+          exempt_pages: Optional[Set[str]] = None) -> List[str]:
     errors: List[str] = []
+    exempt_pages = exempt_pages or set()
     changes = [] if changes is None else changes
     listed(summary, "fixed", errors)
     unresolved = set(listed(summary, "unresolved", errors))
@@ -156,8 +166,10 @@ def check(root: Path, repo: Path, adir_rel: str, base: str, pending: List[dict],
     removed = set(removed_rows)
 
     changed = changed_files(root, base)
-    outside = [f for f in changed if not f.startswith(adir_rel.rstrip("/") + "/")]
-    errors += [f"changed outside {adir_rel}: {f}" for f in outside]
+    mine = adir_rel.rstrip("/") + "/"
+    others = tuple(a.rstrip("/") + "/" for a in also_changed)
+    outside = [f for f in changed if not f.startswith(mine)]
+    errors += [f"changed outside {adir_rel}: {f}" for f in outside if not f.startswith(others)]
 
     pending_pages = {r["page"] for r in pending}
     touched: Set[str] = set()
@@ -198,7 +210,7 @@ def check(root: Path, repo: Path, adir_rel: str, base: str, pending: List[dict],
 
         for label, sim in edited_checks(old, ann):
             changes.append({"page": page, "label": label, "similarity": round(sim, 2)})
-            if sim < MIN_EDIT_SIMILARITY:
+            if sim < MIN_EDIT_SIMILARITY and page not in exempt_pages:
                 what = "is new on the page" if sim == 0 else f"was rewritten ({sim:.0%} like its previous version)"
                 errors.append(f"{page}: hidden check {label} {what}; leave it unresolved for a person instead")
 
@@ -227,14 +239,21 @@ def main(argv=None) -> int:
     ap.add_argument("--summary", required=True, help="the agent's JSON summary")
     ap.add_argument("--private", action="store_true", help="the product's pages are not public")
     ap.add_argument("--changes-out", help="write the hidden checks whose contents changed here, as JSON")
+    ap.add_argument("--also-changed", action="append", default=[],
+                    help="another annotation directory this run may change (checked by its own run of this script)")
+    ap.add_argument("--exempt-pages", help="file of pages, one per line, whose checks were edited to fix a "
+                                           "failing test and are re-run instead of held to the small-edit rule")
     args = ap.parse_args(argv)
+    exempt = set()
+    if args.exempt_pages and Path(args.exempt_pages).exists():
+        exempt = {l.strip() for l in Path(args.exempt_pages).read_text(encoding="utf-8").splitlines() if l.strip()}
     changes: List[dict] = []
 
     pending = json.loads(Path(args.pending).read_text(encoding="utf-8"))
     try:
         summary = json.loads(Path(args.summary).read_text(encoding="utf-8"))
         errors = check(Path(args.root), Path(args.repo), args.annotations, args.base, pending, summary, args.private,
-                       changes)
+                       changes, tuple(args.also_changed), exempt)
     except (OSError, ValueError) as e:
         errors = [f"summary: {e}"]
     if args.changes_out:
