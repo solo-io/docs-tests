@@ -271,6 +271,20 @@ hidden:
       preview: curl -s -o /dev/null -w "%{http_code}\n" "$INGRESS_GW_ADDRESS/v1/chat/completion
   content: |-
     {{< doc-test paths="virtual-keys-ratelimit-test" >}}
+    # Wait until the proxy enforces the rate-limit policy. Accepted status can land
+    # before the data plane picks up the policy, and unlimited requests don't count.
+    for attempt in $(seq 1 30); do
+      if curl -s -D - -o /dev/null \
+        "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer vk-alice-4f9c2a" \
+        -d '{"model":"gpt-4","messages":[{"role":"user","content":"Say hello"}]}' \
+        | grep -qi '^x-ratelimit-limit:'; then
+        break
+      fi
+      sleep 2
+    done
+
     # Drain Alice's 100-token daily budget. httpbun returns ~20-30 tokens per response,
     # so a handful of requests pushes Alice over the budget.
     for i in $(seq 1 10); do
