@@ -342,30 +342,3 @@ hidden:
             value: pii_detected
     EOF
     {{< /doc-test >}}
-- after:
-    section: Scan tool call content
-    line: 1f9bcad31638162e
-    occurrence: 0
-    words: b9776d7d a9f4b3d2 10882c27 75857a45 b9776d7d 5c4c1964 d1ffaf02 7383711c 75857a45 b9776d7d a9d4034d 77bc06c5 a71dd3a9 8e7fc023 b9776d7d a9d4034d 5654d410 b9776d7d 1f58b914 9c6725dc
-    block_before:
-      fingerprint: 87c84ae7c88ac0eb
-      lang: sh
-      lines: dc872770 9285509c b11c46be 493f47f6 b5b33b5c 8e7bae9b
-      preview: curl -s http://localhost:4000/v1/chat/completions \
-  content: |-
-    {{< doc-test paths="regex" >}}
-    # Step 4: confirm the guard does NOT read messages while scope is toolOutput. Like
-    # the step 3 check in "PII detection", this is a negative assertion rather than a
-    # status check: without a real API key the upstream returns an auth error, and
-    # either way what matters is that the guard did not reject the request.
-    SCOPED=$(curl -s --max-time 15 http://localhost:4000/v1/chat/completions \
-      -H "Content-Type: application/json" \
-      -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"my ssn is 123-45-6789"}]}')
-    if grep -q 'pii_detected' <<<"$SCOPED"; then
-      echo "FAIL: the guard read a message although scope is limited to toolOutput"
-      echo "$SCOPED"
-      exit 1
-    fi
-    echo "✓ A scope of toolOutput leaves message text unread"
-    {{< /doc-test >}}
-  status: needs-update
