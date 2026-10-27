@@ -8,16 +8,6 @@ blocks:
 - c5081832d24b7ffe promql
 - 17c0f2aab5939dd3 promql
 - adc75735c2053aba yaml
-tags:
-- paths: cost-tracking
-  block: 0
-  fingerprint: 422e8dc115fd8601
-  lang: sh
-  lines: 92683420 fbb97a21
-  preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
-  form:
-    bare: ',paths="cost-tracking"'
-    at: 2
 hidden:
 - after:
     block: 0
@@ -27,14 +17,12 @@ hidden:
     preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
   content: |2-
        {{< doc-test paths="cost-tracking" >}}
-       COST_PF_PID=$!
-       trap 'kill $COST_PF_PID 2>/dev/null || true' EXIT
        # ============================================================================
        # Doc test coverage for this guide (these comments are not rendered on the page)
        # ============================================================================
        # WHAT THIS TEST VALIDATES:
        #   * "View token usage metrics": after LLM requests, the metrics endpoint on the
-       #     port-forwarded port 15020 exposes agentgateway_gen_ai_client_token_usage
+       #     proxy pod's port 15020 (read through the API server) exposes agentgateway_gen_ai_client_token_usage
        #     with the labels that the page lists (token type, operation name, system,
        #     request and response model), `_sum` holds the tokens consumed, and
        #     `_count` counts the requests.
@@ -90,9 +78,10 @@ hidden:
          expect:
            statusCode: 200
        EOF
+       kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/$(kubectl get pods -n agentgateway-system -l gateway.networking.k8s.io/gateway-name=agentgateway-proxy -o jsonpath='{.items[0].metadata.name}'):15020/proxy/metrics" > /tmp/doc-test-metrics.txt
        python3 - <<'PY'
        import sys, urllib.request
-       text = urllib.request.urlopen("http://localhost:15020/metrics", timeout=10).read().decode()
+       text = open("/tmp/doc-test-metrics.txt").read()
        want = ['gen_ai_operation_name="chat"', 'gen_ai_request_model="gpt-4"', 'gen_ai_system="openai"', "gen_ai_response_model="]
        def value(suffix, token_type):
            for line in text.splitlines():
@@ -126,7 +115,7 @@ hidden:
   content: |-
     {{< doc-test paths="cost-tracking" >}}
     # Verify metrics endpoint is accessible and contains token usage metrics
-    curl -s http://localhost:15020/metrics | grep -q "agentgateway_gen_ai_client_token_usage"
+    kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/$(kubectl get pods -n agentgateway-system -l gateway.networking.k8s.io/gateway-name=agentgateway-proxy -o jsonpath='{.items[0].metadata.name}'):15020/proxy/metrics" | grep -q "agentgateway_gen_ai_client_token_usage"
     if [ $? -eq 0 ]; then
       echo "✓ Token usage metrics found"
     else

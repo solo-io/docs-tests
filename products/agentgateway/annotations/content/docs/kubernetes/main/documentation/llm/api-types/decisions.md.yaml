@@ -41,16 +41,6 @@ tags:
     attr: paths="api-types-decisions-run"
     only: true
     lead: ' '
-- paths: api-types-decisions-run
-  block: 8
-  fingerprint: '9268342045097109'
-  lang: sh
-  lines: '92683420'
-  preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
-  form:
-    attr: paths="api-types-decisions-run"
-    only: true
-    lead: ' '
 hidden:
 - after:
     block: 1
@@ -283,11 +273,9 @@ hidden:
     preview: kubectl port-forward deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippe
   content: |2-
        {{< doc-test paths="api-types-decisions-run" >}}
-       DECISIONS_PF_PID=$!
-       trap 'kill $DECISIONS_PF_PID 2>/dev/null || true' EXIT
        sleep 3
        # Step 3: the token usage metric carries the decisions operation name.
-       METRICS=$(curl -s -m 10 http://localhost:15020/metrics)
+       METRICS=$(kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/$(kubectl get pods -n agentgateway-system -l gateway.networking.k8s.io/gateway-name=agentgateway-proxy -o jsonpath='{.items[0].metadata.name}'):15020/proxy/metrics")
        for type in input output; do
          echo "$METRICS" | grep 'agentgateway_gen_ai_client_token_usage_sum' \
            | grep 'gen_ai_operation_name="decisions"' | grep -q "gen_ai_token_type=\"$type\"" \

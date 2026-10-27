@@ -659,6 +659,33 @@ scenarios:
     type: schema
     source: agw-docs/pages/agentgateway/llm/api-keys.md
     path: llm-api-keys
+  llm-client-curl:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/curl.md
+    path: llm-client-curl
+  llm-client-openai-sdk:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/openai-sdk.md
+    path: llm-client-openai-sdk
+  llm-client-opencode:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/opencode.md
+    path: llm-client-opencode
   llm-functions:
     needs:
     - install-standard

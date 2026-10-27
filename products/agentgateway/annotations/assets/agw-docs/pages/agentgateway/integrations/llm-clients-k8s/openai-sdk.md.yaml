@@ -1,0 +1,92 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients-k8s/openai-sdk.md
+blocks:
+- 7ab6bdbc8b08546a sh
+- ccbeca5af56a5af1 python
+- f1ff8bc6bceed2c1 sh
+- c687080a20770890 javascript
+hidden:
+- after:
+    block: 1
+    fingerprint: ccbeca5af56a5af1
+    lang: python
+    lines: de2abade e729d651 e69e79eb da1f808e 88e3a346 96470125 ba5ec51d 71e2a5c0 205d2ceb ff87353b ba5ec51d 1046017e
+    preview: import os
+  content: |2-
+       {{< doc-test paths="llm-client-openai-sdk" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Get the gateway URL": the LoadBalancer command sets INGRESS_GW_ADDRESS.
+       #   * The Python and Node.js scripts from the page, installed into a temporary
+       #     directory, get a completion back through the gateway's /openai route.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * `pip install openai` / `npm install openai` into the reader's project - the
+       #     test installs into a throwaway directory instead of the runner's environment.
+       #   * The OpenAI provider itself - the openai-setup prerequisite points the
+       #     backend at the httpbun mock LLM.
+       #   * The port-forward tab - doc tests reach the gateway through the LoadBalancer.
+       # The page's requests use a `<route-path>` placeholder. The openai-setup prerequisite
+       # creates the HTTPRoute with the /openai path (pointed at the httpbun mock LLM), so the
+       # script is restated here with /openai in place of <route-path>.
+       SDK_DIR="${TMPDIR:-/tmp}/doc-test-openai-sdk-k8s"
+       rm -rf "$SDK_DIR" && mkdir -p "$SDK_DIR"
+       python3 -m venv "$SDK_DIR/venv"
+       "$SDK_DIR/venv/bin/pip" install -q openai
+       cat > "$SDK_DIR/client.py" <<'PY'
+       import os
+       from openai import OpenAI
+
+       gateway_address = os.environ["INGRESS_GW_ADDRESS"]
+
+       client = OpenAI(
+           base_url=f"http://{gateway_address}/openai",
+           api_key="anything",  # placeholder if gateway has no auth
+       )
+
+       response = client.chat.completions.create(
+           model="gpt-4o-mini",
+           messages=[{"role": "user", "content": "Hello from Kubernetes!"}],
+       )
+       print(response.choices[0].message.content)
+       PY
+       out=$("$SDK_DIR/venv/bin/python" "$SDK_DIR/client.py")
+       [ -n "$out" ] || { echo "FAIL: the Python SDK script printed no completion text"; exit 1; }
+       echo "ok: the Python SDK script got a completion through the gateway: $out"
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: c687080a20770890
+    lang: javascript
+    lines: 4db7290b 243b3dad ccd6eca5 9017652b 8d056fcd 29576b54 6128c9ad 04a1fe9c 200c14f3 29576b54 3a4c3a1f
+    preview: import OpenAI from "openai";
+  content: |2-
+       {{< doc-test paths="llm-client-openai-sdk" >}}
+       # The page's requests use a `<route-path>` placeholder. The openai-setup prerequisite
+       # creates the HTTPRoute with the /openai path (pointed at the httpbun mock LLM), so the
+       # script is restated here with /openai in place of <route-path>.
+       mkdir -p "$SDK_DIR/node" && cd "$SDK_DIR/node"
+       npm init -y >/dev/null
+       npm install --silent openai
+       cat > client.mjs <<'JS'
+       import OpenAI from "openai";
+
+       const gatewayAddress = process.env.INGRESS_GW_ADDRESS;
+
+       const client = new OpenAI({
+         baseURL: `http://${gatewayAddress}/openai`,
+         apiKey: "anything",
+       });
+
+       const response = await client.chat.completions.create({
+         model: "gpt-4o-mini",
+         messages: [{ role: "user", content: "Hello from Kubernetes!" }],
+       });
+       console.log(response.choices[0].message.content);
+       JS
+       out=$(node client.mjs)
+       cd - >/dev/null
+       [ -n "$out" ] || { echo "FAIL: the Node.js SDK script printed no completion text"; exit 1; }
+       echo "ok: the Node.js SDK script got a completion through the gateway: $out"
+       {{< /doc-test >}}

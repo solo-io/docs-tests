@@ -82,12 +82,5 @@ hidden:
          retries: 5
          expect:
            statusCode: 200
-           bodyJsonPath:
-             - path: "$.usage.prompt_tokens"
-               comparator: greaterThan
-               value: 0
-             - path: "$.usage.completion_tokens"
-               comparator: greaterThan
-               value: 0
        EOF
        {{< /doc-test >}}

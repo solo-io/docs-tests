@@ -1,0 +1,136 @@
+format: 1
+source: content/docs/standalone/main/documentation/observability/traces/configs/jaeger.md
+blocks:
+- c47db541d53d2a0a sh
+- 5c191b4c93e187f6 yaml
+- 3c793802cfb966ca sh
+- d66bfd6d6d63a4df sh
+- 20734918c312ca8b sh
+- 2938402d2f3e75ca yaml
+- ca9965c5a7769400 sh
+- ed3982551c77468a yaml
+- 49a6a982a4303cb7 yaml
+- 331e4dcccd52bea8 sh
+- 4b5962624777bb21 sh
+tags:
+- paths: jaeger-standalone
+  block: 0
+  fingerprint: c47db541d53d2a0a
+  lang: sh
+  lines: c4af5b03 21b14c26 51836f33 8aa51d82 62651dca
+  preview: docker run -d --name jaeger \
+  form:
+    attr: paths="jaeger-standalone"
+    only: true
+    lead: ' '
+- paths: jaeger-standalone
+  block: 2
+  fingerprint: 3c793802cfb966ca
+  lang: sh
+  lines: 3c793802
+  preview: docker rm -f jaeger
+  form:
+    attr: paths="jaeger-standalone"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: c47db541d53d2a0a
+    lang: sh
+    lines: c4af5b03 21b14c26 51836f33 8aa51d82 62651dca
+    preview: docker run -d --name jaeger \
+  content: |2-
+       {{< doc-test paths="jaeger-standalone" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Binary and Docker" step 1: the documented `docker run` starts Jaeger, and its
+       #     query API answers on localhost:16686.
+       #   * Step 2 (Config file): with the documented `frontendPolicies.tracing` settings,
+       #     agentgateway exports request spans to Jaeger on localhost:4317.
+       #   * Step 3: the Jaeger query API (what the Jaeger UI reads) lists an agentgateway
+       #     service with a trace for the test request.
+       #   * Step 4: `docker rm -f jaeger` cleanup.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The UI tab - browser-only steps.
+       #   * The Helm installation - needs a cluster; this is a standalone test.
+       #   * The Docker Compose example - it runs the agentgateway container image instead
+       #     of the binary under test, with a config that the page does not give in full.
+       {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+       AGW_PID=""
+       ECHO_PID=""
+       AGW_LOG=/tmp/doc-test-jaeger-agw.log
+       trap 'kill ${AGW_PID:-} ${ECHO_PID:-} 2>/dev/null || true; docker rm -f jaeger >/dev/null 2>&1 || true' EXIT
+       for _ in $(seq 1 60); do
+         curl -sf -o /dev/null -m 3 http://localhost:16686/api/services && break
+         sleep 2
+       done
+       curl -sf -o /dev/null -m 3 http://localhost:16686/api/services \
+         || { echo "FAIL: the Jaeger query API did not answer on localhost:16686"; docker logs jaeger 2>&1 | tail -20; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 5c191b4c93e187f6
+    lang: yaml
+    lines: a7f80a73 1b6c26b3 390f7e12 a97a9e13 9adf3fc1
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |2-
+       {{< doc-test paths="jaeger-standalone" >}}
+       # Step 2's tracing settings, on a gateway with one route so there is traffic to trace.
+       # The backend is a test-only echo server on port 8080.
+       cat > doc-test-echo.py <<'PY'
+       from http.server import BaseHTTPRequestHandler, HTTPServer
+       class H(BaseHTTPRequestHandler):
+           def do_GET(self):
+               body = b"ok"
+               self.send_response(200)
+               self.send_header("content-length", str(len(body)))
+               self.end_headers()
+               self.wfile.write(body)
+           def log_message(self, *a):
+               pass
+       HTTPServer(("127.0.0.1", 8080), H).serve_forever()
+       PY
+       python3 doc-test-echo.py > /tmp/doc-test-jaeger-echo.log 2>&1 &
+       ECHO_PID=$!
+       cat > config.yaml <<'EOF'
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       frontendPolicies:
+         tracing:
+           host: localhost:4317
+           randomSampling: true
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - host: localhost:8080
+       EOF
+       agentgateway -f config.yaml --validate-only
+       agentgateway -f config.yaml > "$AGW_LOG" 2>&1 &
+       AGW_PID=$!
+       for _ in $(seq 1 30); do
+         curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && break
+         sleep 1
+       done
+       # Step 3 checks the Jaeger UI by eye. Query the API that the UI reads instead, and keep
+       # sending requests until an agentgateway service has reported a trace for them.
+       svc=""
+       for _ in $(seq 1 30); do
+         curl -s -o /dev/null -m 5 http://localhost:3000/jaeger-check || true
+         svc=$(curl -s -m 5 http://localhost:16686/api/services | jq -r '.data[]? | select(startswith("agentgateway"))' | head -n 1 || true)
+         if [ -n "$svc" ] && curl -s -m 5 "http://localhost:16686/api/traces?service=${svc}&limit=50" | grep -q '/jaeger-check'; then
+           break
+         fi
+         svc=""
+         sleep 2
+       done
+       [ -n "$svc" ] || { echo "FAIL: Jaeger has no agentgateway trace for /jaeger-check"; curl -s http://localhost:16686/api/services; tail -20 "$AGW_LOG"; exit 1; }
+       echo "ok: Jaeger received a trace for /jaeger-check from service $svc"
+       kill "${AGW_PID:-}" ${ECHO_PID:-} 2>/dev/null || true
+       wait "${AGW_PID:-}" 2>/dev/null || true
+       AGW_PID=""
+       ECHO_PID=""
+       {{< /doc-test >}}
