@@ -1,0 +1,246 @@
+<title>Doc Test Coverage</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#F4F6F5; --panel:#FFFFFF; --ink:#18221F; --muted:#5C6B66; --rule:#DCE3E0;
+  --both:#1E7550; --func:#4C9BB8; --schema:#8A6FB5; --skip:#B4BCB8; --untested:#D08A2E;
+  --pass:#1E7550; --fail:#C23B32; --held:#8A6FB5; --chip-ink:#FFFFFF; --focus:#2C6E8F;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --ground:#121816; --panel:#1A2220; --ink:#E4EBE8; --muted:#97A5A0; --rule:#2C3734;
+  --both:#3FAE7C; --func:#5FB0CE; --schema:#A68BD0; --skip:#55605C; --untested:#E09B42;
+  --pass:#3FAE7C; --fail:#E4675D; --held:#A68BD0; --chip-ink:#0E1412; --focus:#6FB6D8;
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#121816; --panel:#1A2220; --ink:#E4EBE8; --muted:#97A5A0; --rule:#2C3734;
+  --both:#3FAE7C; --func:#5FB0CE; --schema:#A68BD0; --skip:#55605C; --untested:#E09B42;
+  --pass:#3FAE7C; --fail:#E4675D; --held:#A68BD0; --chip-ink:#0E1412; --focus:#6FB6D8;
+}
+body{background:var(--ground);color:var(--ink);font:14px/1.5 "IBM Plex Sans",system-ui,-apple-system,sans-serif;padding-inline:16px;padding-block:28px 48px}
+.wrap{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font-size:26px;font-weight:600;margin:0;text-wrap:balance}
+h2{font-size:17px;font-weight:600;margin:0 0 10px}
+.sub{color:var(--muted);margin:4px 0 0;max-width:80ch}
+.sub a{color:inherit}
+.mono,code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;background:transparent;color:var(--ink);padding:6px 12px;font:inherit;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--ground)}
+button:focus-visible,input:focus-visible,select:focus-visible,.srow:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.overview{overflow-x:auto;background:var(--panel);border:1px solid var(--rule);border-radius:6px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.tile .n{font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.tile .l{color:var(--muted);font-size:12.5px;display:flex;align-items:center;gap:6px}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block;flex:none}
+.bar{display:flex;height:12px;border-radius:3px;overflow:hidden;background:var(--rule);min-width:80px}
+.bar span{display:block;height:100%}
+.sections{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:6px 14px}
+.srow{display:grid;grid-template-columns:minmax(110px,170px) 1fr 150px;gap:12px;align-items:center;padding:7px 0;border-bottom:1px solid var(--rule);cursor:pointer}
+.srow:last-child{border-bottom:0}
+.srow:hover .sname{text-decoration:underline}
+.sname{font-weight:500;overflow-wrap:anywhere}
+.scount{color:var(--muted);font-size:12.5px;font-variant-numeric:tabular-nums;text-align:right}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:12.5px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.notes{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:14px 18px}
+.notes ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.notes li{max-width:80ch}
+.tablebox{overflow-x:auto;background:var(--panel);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%}
+.tablebox table{min-width:640px}
+th,td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--panel)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.overview tr{cursor:pointer}
+.overview tr:hover td:first-child{text-decoration:underline}
+.chip{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:500;color:var(--chip-ink);white-space:nowrap}
+.c-both{background:var(--both)}.c-func{background:var(--func)}.c-schema{background:var(--schema)}
+.c-skip{background:var(--skip);color:var(--ink)}.c-untested{background:var(--untested)}
+.r-notrun{color:var(--muted);font-style:italic}
+.r-pass{color:var(--pass);font-weight:500}.r-fail{color:var(--fail);font-weight:600}.r-held{color:var(--held);font-weight:500}
+.scen{color:var(--muted);font-size:12px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+input[type=search],select{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:6px 10px}
+input[type=search]{flex:1 1 220px;min-width:0}
+.count{color:var(--muted);font-size:12.5px}
+@media (max-width:560px){.srow{grid-template-columns:1fr;gap:4px}.scount{text-align:left}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Doc test coverage</h1>
+    <p class="sub" id="generated"></p>
+  </header>
+
+  <section>
+    <h2>All products</h2>
+    <div class="overview"><table>
+      <thead><tr><th>Product / tree</th><th>Progress</th><th class="num">Tested</th><th class="num">No test</th><th class="num">Skipped</th><th class="num">Failed</th></tr></thead>
+      <tbody id="overview"></tbody>
+    </table></div>
+  </section>
+
+  <div class="controls" role="group" aria-label="Tree">
+    <div class="seg" id="prodSeg"></div>
+    <div class="seg" id="modeSeg"></div>
+    <div class="seg" id="verSeg"></div>
+  </div>
+  <p class="sub" id="source" style="margin-top:-18px"></p>
+
+  <section><div class="tiles" id="tiles"></div></section>
+
+  <section>
+    <h2>Progress by section</h2>
+    <div class="legend" style="margin-bottom:10px">
+      <span><i class="sw" style="background:var(--both)"></i>Schema + functional</span>
+      <span><i class="sw" style="background:var(--func)"></i>Functional only</span>
+      <span><i class="sw" style="background:var(--schema)"></i>Schema only</span>
+      <span><i class="sw" style="background:var(--untested)"></i>No test yet</span>
+      <span><i class="sw" style="background:var(--skip)"></i>Skipped on purpose</span>
+    </div>
+    <div class="sections" id="sections"></div>
+  </section>
+
+  <section class="notes">
+    <h2>How to read this</h2>
+    <ul>
+      <li><b>Functional</b> runs the page's commands in a kind cluster (or a standalone binary) and checks real behavior. A scenario with no <code>type:</code> is functional.</li>
+      <li><b>Schema</b> compares the page's YAML against the CRD schema without running it.</li>
+      <li><b>Hidden checks</b> counts the <code>doc-test</code> assertion blocks in the page's annotation files. A functional test with 0 checks only proves the commands exit cleanly. A dash means the page rebases an upstream page, so its checks live in the upstream product's annotations.</li>
+      <li><b>Live</b> and <b>credentialed</b> test types exist in the runner. They show up in the Tests column when a scenario uses them.</li>
+      <li><b>Skipped on purpose</b> pages are listed under <code>skip:</code> in <code>tests.yaml</code> (indexes, concept pages, reference). The runner counts them as covered, so its coverage figure is higher than the tested count here.</li>
+      <li><b>Nightly</b> is the newest completed scheduled or manual run of the content repo's doc-test workflow. <b>Held</b> means the scenario was skipped because its markup needs an update. <b>Not run yet</b> means at least one of the page's scenarios has no result in that run: it was added after the run, or it only exists on a docs-tests branch.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Pages</h2>
+    <div class="filters" style="margin-bottom:10px">
+      <input type="search" id="q" placeholder="Filter by page or scenario" aria-label="Filter by page or scenario">
+      <select id="st" aria-label="Status">
+        <option value="">All statuses</option>
+        <option value="tested">Any test</option>
+        <option value="both">Schema + functional</option>
+        <option value="func">Functional only</option>
+        <option value="schema">Schema only</option>
+        <option value="untested">No test yet</option>
+        <option value="skip">Skipped on purpose</option>
+        <option value="fail">Failed in the last run</option>
+        <option value="notrun">Not run yet</option>
+        <option value="nochecks">Functional, no hidden checks</option>
+      </select>
+      <select id="sec" aria-label="Section"><option value="">All sections</option></select>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tablebox"><table>
+      <thead><tr><th>Page</th><th>Tests</th><th>Nightly</th><th class="num">Hidden checks</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table></div>
+  </section>
+</div>
+
+<script>
+const REPORT = __DATA__;
+const LABEL={both:"Schema + functional",func:"Functional only",schema:"Schema only",untested:"No test yet",skip:"Skipped on purpose"};
+const ORDER=["both","func","schema","untested","skip"];
+const TESTED=["both","func","schema"];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const P=Object.fromEntries(REPORT.products.map(p=>[p.key,p]));
+let prod=REPORT.products[0]?.key, mode, ver;
+try{const s=JSON.parse(localStorage.getItem("doccov")||"{}");if(P[s.prod]){prod=s.prod;mode=s.mode;ver=s.ver;}}catch(e){}
+function save(){try{localStorage.setItem("doccov",JSON.stringify({prod,mode,ver}))}catch(e){}}
+
+const trees=k=>[...new Set(P[k].rows.map(r=>r[0]+"/"+r[1]))].sort();
+const modes=k=>[...new Set(P[k].rows.map(r=>r[0]))].sort();
+const vers=(k,m)=>[...new Set(P[k].rows.filter(r=>r[0]===m).map(r=>r[1]))].sort().reverse();
+function fix(){
+  if(!modes(prod).includes(mode)) mode=modes(prod)[0];
+  if(!vers(prod,mode).includes(ver)) ver=vers(prod,mode)[0];
+}
+const rows=()=>P[prod].rows.filter(r=>r[0]===mode&&r[1]===ver);
+function counts(R){const c={n:R.length,both:0,func:0,schema:0,untested:0,skip:0,fail:0,notrun:0};R.forEach(r=>{c[r[4]]++;if(r[5]==="fail")c.fail++;if(r[5]==="notrun")c.notrun++;});c.tested=c.both+c.func+c.schema;return c;}
+function bar(c){return `<div class="bar">${ORDER.map(k=>c[k]?`<span style="width:${100*c[k]/c.n}%;background:var(--${k})" title="${LABEL[k]}: ${c[k]}"></span>`:"").join("")}</div>`;}
+
+const DT=REPORT.docs_tests;
+$("generated").innerHTML=`Generated ${esc(REPORT.generated)}. Test definitions from docs-tests <code>${esc(DT.branch)}</code> at <code>${esc(DT.sha)}</code>${DT.dirty?", <b>with uncommitted changes</b>":""}. Each product's pages come from its content repo's default branch.`;
+
+function overview(){
+  $("overview").innerHTML=REPORT.products.flatMap(p=>trees(p.key).map(t=>{
+    const [m,v]=t.split("/");const c=counts(p.rows.filter(r=>r[0]===m&&r[1]===v));
+    return `<tr data-p="${esc(p.key)}" data-m="${esc(m)}" data-v="${esc(v)}" tabindex="0"><td><b>${esc(p.key)}</b> <span class="mono">${esc(t)}</span></td><td>${bar(c)}</td><td class="num">${c.tested}</td><td class="num">${c.untested}</td><td class="num">${c.skip}</td><td class="num"${c.fail?' style="color:var(--fail);font-weight:600"':""}>${c.fail}</td></tr>`;
+  })).join("");
+  document.querySelectorAll("#overview tr").forEach(tr=>{
+    const go=()=>{prod=tr.dataset.p;mode=tr.dataset.m;ver=tr.dataset.v;$("sec").value="";save();render();$("prodSeg").scrollIntoView({block:"start"});};
+    tr.onclick=go;tr.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();go();}};
+  });
+}
+
+function segs(){
+  const mk=(id,vals,cur,set)=>{
+    $(id).innerHTML=vals.map(v=>`<button data-v="${esc(v)}" aria-pressed="${v===cur}">${esc(v)}</button>`).join("");
+    $(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{set(b.dataset.v);fix();$("sec").value="";save();render();});
+  };
+  mk("prodSeg",REPORT.products.map(p=>p.key),prod,v=>prod=v);
+  mk("modeSeg",modes(prod),mode,v=>mode=v);
+  mk("verSeg",vers(prod,mode),ver,v=>ver=v);
+  const p=P[prod], run=p.run;
+  const runTxt=run?`Nightly: <a href="${esc(run.url)}">${esc(run.event)} run, ${esc(run.createdAt.slice(0,16).replace("T"," "))} UTC</a> (${esc(run.conclusion)}).`:"No nightly results.";
+  $("source").innerHTML=`<code>${esc(p.repo)}</code> <code>${esc(p.ref)}</code> at <code>${esc(p.sha)}</code>. ${runTxt}`;
+}
+
+function tiles(R){
+  const c=counts(R), judged=c.n-c.skip;
+  const t=[
+    ["Pages with a test",c.tested,judged?`${Math.round(100*c.tested/judged)}% of ${judged} non-skipped pages`:"",null],
+    ["Schema + functional",c.both,"","both"],["Functional only",c.func,"","func"],
+    ...(c.schema?[["Schema only",c.schema,"","schema"]]:[]),
+    ["No test yet",c.untested,"","untested"],["Skipped on purpose",c.skip,"","skip"],
+    ["Failed in the last run",c.fail,P[prod].run?(c.fail?"filter below":"none failed"):"no results","fail"],
+    ...(c.notrun?[["Not run yet",c.notrun,"new since the last run",null]]:[]),
+  ];
+  $("tiles").innerHTML=t.map(([l,n,s,k])=>`<div class="tile"><span class="l">${k&&k!=="fail"?`<i class="sw" style="background:var(--${k})"></i>`:""}${l}</span><span class="n"${k==="fail"&&n?' style="color:var(--fail)"':""}>${n}</span>${s?`<span class="l">${s}</span>`:""}</div>`).join("");
+}
+
+function sections(R){
+  const m={};R.forEach(r=>(m[r[2]]=m[r[2]]||[]).push(r));
+  const list=Object.entries(m).map(([s,rs])=>[s,counts(rs)]).filter(([,c])=>c.n>1||c.untested)
+    .sort((a,b)=>(b[1].untested-a[1].untested)||(b[1].n-a[1].n));
+  $("sections").innerHTML=list.map(([s,c])=>`<div class="srow" data-sec="${esc(s)}" tabindex="0" role="button" aria-label="Show ${esc(s)} pages"><span class="sname">${esc(s)}</span>${bar(c)}<span class="scount">${c.tested}/${c.n-c.skip} tested · ${c.untested} to go</span></div>`).join("");
+  document.querySelectorAll(".srow").forEach(el=>{
+    const go=()=>{$("sec").value=el.dataset.sec;table();$("q").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});};
+    el.onclick=go;el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}};
+  });
+  const cur=$("sec").value, secs=Object.keys(m).sort();
+  $("sec").innerHTML=`<option value="">All sections</option>`+secs.map(s=>`<option${s===cur?" selected":""}>${esc(s)}</option>`).join("");
+}
+
+function table(){
+  const q=$("q").value.trim().toLowerCase(), st=$("st").value, sec=$("sec").value;
+  const R=rows().filter(r=>{
+    if(sec&&r[2]!==sec) return false;
+    if(st==="tested"&&!TESTED.includes(r[4])) return false;
+    if(LABEL[st]&&r[4]!==st) return false;
+    if((st==="fail"||st==="notrun")&&r[5]!==st) return false;
+    if(st==="nochecks"&&!(["both","func"].includes(r[4])&&r[6]===0)) return false;
+    if(q&&!(r[3].toLowerCase().includes(q)||r[7].join(" ").toLowerCase().includes(q))) return false;
+    return true;
+  }).sort((a,b)=>a[3].localeCompare(b[3]));
+  $("count").textContent=`${R.length} page${R.length===1?"":"s"}`;
+  $("tbody").innerHTML=R.map(r=>{
+    const night={pass:'<span class="r-pass">passed</span>',fail:'<span class="r-fail">failed</span>',held:'<span class="r-held" title="Markup needs update, scenario held back">held</span>',notrun:'<span class="r-notrun" title="A scenario on this page has no result in the last run">not run yet</span>'}[r[5]]||"";
+    const scen=r[7].length?`<div class="scen mono">${r[7].map(esc).join(", ")}</div>`:"";
+    const checks=TESTED.includes(r[4])?(r[6]===null?"–":r[6]):"";
+    return `<tr><td><span class="mono">${esc(r[3])}</span>${scen}</td><td><span class="chip c-${r[4]}">${LABEL[r[4]]}</span></td><td>${night}</td><td class="mono num">${checks}</td></tr>`;
+  }).join("");
+}
+
+function render(){fix();segs();const R=rows();tiles(R);sections(R);table();}
+["q","st","sec"].forEach(id=>$(id).addEventListener("input",table));
+overview();render();
+</script>
