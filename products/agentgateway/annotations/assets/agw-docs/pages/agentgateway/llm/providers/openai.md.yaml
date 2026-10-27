@@ -61,7 +61,7 @@ hidden:
     - name: wait for openai backend to be ready
       wait:
         target:
-          kind: AgentgatewayBackend
+          kind: {{< reuse "agw-docs/snippets/backend.md" >}}
           metadata:
             namespace: agentgateway-system
             name: openai
@@ -83,7 +83,7 @@ hidden:
     - name: the openai backend translated in full, not partly
       wait:
         target:
-          kind: AgentgatewayBackend
+          kind: {{< reuse "agw-docs/snippets/backend.md" >}}
           metadata:
             namespace: agentgateway-system
             name: openai
@@ -142,7 +142,7 @@ hidden:
     - name: wait for the openai backend to settle after the mock LLM patch
       wait:
         target:
-          kind: AgentgatewayBackend
+          kind: {{< reuse "agw-docs/snippets/backend.md" >}}
           metadata:
             namespace: agentgateway-system
             name: openai
@@ -159,7 +159,7 @@ hidden:
     - name: the patched openai backend translated in full, not partly
       wait:
         target:
-          kind: AgentgatewayBackend
+          kind: {{< reuse "agw-docs/snippets/backend.md" >}}
           metadata:
             namespace: agentgateway-system
             name: openai

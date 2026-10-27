@@ -4,7 +4,7 @@ blocks:
 - 23e1629973fa738d sh
 - f13bcf656c36a736 sh
 - 344869ba8be3d547 sh
-- e430fe606ff60e60 sh
+- 202bdd90689653cc sh
 - ceb2f64a390ff083 yaml
 - fd63aeae6b709cca yaml
 - a212705b5b6f87c3 yaml
@@ -128,16 +128,16 @@ tags:
 hidden:
 - after:
     block: 3
-    fingerprint: e430fe606ff60e60
+    fingerprint: 202bdd90689653cc
     lang: sh
-    lines: e430fe60
-    preview: kubectl rollout restart deployment/agentgateway -n {{< reuse "agw-docs/snippets/
+    lines: 202bdd90
+    preview: kubectl rollout restart deployment/{{< reuse "agw-docs/snippets/helm-agentgatewa
   content: |-
     {{< doc-test paths="locality-aware-routing" >}}
     NODE_NAME=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
     kubectl label node "$NODE_NAME" topology.kubernetes.io/region=region topology.kubernetes.io/zone=zone --overwrite
-    kubectl rollout restart deployment/agentgateway -n agentgateway-system
-    kubectl rollout status deployment/agentgateway -n agentgateway-system --timeout=180s
+    kubectl rollout restart deployment/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+    kubectl rollout status deployment/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=180s
     {{< /doc-test >}}
 - after:
     block: 4
