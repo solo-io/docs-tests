@@ -817,11 +817,35 @@ a cluster. It fails when any of the following is true:
 - A content page gains test markup.
 - A line added to a public content repo, or a `public_reason`, names the private
   side.
+- An added line reads a secret or the environment, calls `gh`, or names a web host
+  that its repo does not already name. These lines run on a cluster before anyone
+  reviews them.
 
 A check edited to fix a failure may change more than a re-anchor would, so
 `annotation_fix_check.py --exempt-pages` does not hold it to the small-edit rule. The
 cluster run holds it instead: the workflow re-runs every failure with a fix, and drops
 the fix of any that still fails.
+
+#### A second attempt
+
+A re-run often fails later in the scenario than the nightly did, because the fix
+got past the step that broke first. So when the re-run of a fix fails, the fixer tries
+once more, for that failure only:
+
+- Every checkout already holds the first attempt's changes.
+- The failure's entry in the list carries `previous_attempt`: the kind and reason
+  the first attempt gave, the files it changed, and the step and output where the
+  re-run failed (`rerun_step`, `rerun_output`). For a fix that broke the open
+  source site's own test of the same page, `broke_open_source` names that test.
+- Read the re-run's failure as a new one, and decide its kind again (step 3). Fix it
+  on top of the first attempt only when it is `content` or `test`. Otherwise record
+  it with `"fix": false`, and the first attempt's changes are taken back with it.
+- The row's `reason` and `public_reason` describe the whole fix, both attempts.
+  `files` lists only what this attempt changed; the workflow adds the first
+  attempt's.
+
+The second attempt is re-run the same way, and a fix that still fails is not
+published.
 
 ---
 
