@@ -4,6 +4,10 @@ Inject test status metadata into markdown front matter based on test-results.yam
 
 This script reads the test results file and updates the front matter of each
 tested document with a `test_status` field indicating whether all tests passed.
+A page that passed also gets `test_types`, the kinds of test that ran on it
+(schema, functional, live, credentialed), which the Verified badge's tooltip
+lists. The kinds come from the results, never from tests.yaml: a scenario that
+declares `[schema, functional]` but ran only `functional` claims only that.
 
 Usage:
     python3 scripts/inject_test_status.py [--results-file PATH] [--only PATH ...] [--dry-run]
@@ -62,6 +66,29 @@ def compute_document_status(doc_path: str, tests: Dict, skipped: Optional[Dict] 
     return "partial" if has_skipped else "passed"
 
 
+# Badge order for the known kinds, cheapest check first. An unknown kind sorts
+# after these, alphabetically; the badge partial skips any kind it has no
+# wording for, so a new kind never shows its raw name to readers.
+TYPE_ORDER = ["schema", "functional", "live", "credentialed"]
+
+
+def compute_document_types(doc_path: str, tests: Dict) -> List[str]:
+    """
+    The kinds of test that ran for a document, in TYPE_ORDER.
+
+    A result with no `type` is "functional", the runner's default for a
+    scenario that declares none (results written before the field existed).
+    """
+    prefix = f"{doc_path}::"
+    kinds = {
+        (v or {}).get("type") or "functional"
+        for k, v in tests.items()
+        if k.startswith(prefix)
+    }
+    known = [t for t in TYPE_ORDER if t in kinds]
+    return known + sorted(kinds - set(TYPE_ORDER))
+
+
 def parse_front_matter(content: str) -> tuple[Optional[str], Optional[Dict], str]:
     """
     Parse YAML front matter from markdown content.
@@ -89,11 +116,15 @@ def parse_front_matter(content: str) -> tuple[Optional[str], Optional[Dict], str
     return raw_fm, parsed, body
 
 
-def update_front_matter(content: str, test_status: Optional[str]) -> str:
+def update_front_matter(
+    content: str, test_status: Optional[str], test_types: Optional[List[str]] = None
+) -> str:
     """
     Update the front matter with test_status field.
-    
+
     If test_status is None, removes any existing test_status field.
+    `test_types` is written only alongside `passed`, and removed otherwise, so
+    a page that stops passing can't keep a list of checks it no longer passes.
     """
     if yaml is None:
         raise RuntimeError("PyYAML is required. Install it with: pip install pyyaml")
@@ -108,7 +139,12 @@ def update_front_matter(content: str, test_status: Optional[str]) -> str:
             del parsed_fm["test_status"]
     else:
         parsed_fm["test_status"] = test_status
-    
+
+    if test_status == "passed" and test_types:
+        parsed_fm["test_types"] = list(test_types)
+    else:
+        parsed_fm.pop("test_types", None)
+
     new_fm = yaml.safe_dump(parsed_fm, sort_keys=False, default_flow_style=False, allow_unicode=True, width=1000)
     new_fm = new_fm.rstrip("\n")
     
@@ -169,7 +205,8 @@ def process_documents(
             continue
         
         content = full_path.read_text(encoding="utf-8")
-        updated = update_front_matter(content, status)
+        types = compute_document_types(doc_path, tests) if status == "passed" else None
+        updated = update_front_matter(content, status, types)
         
         if content != updated:
             full_path.write_text(updated, encoding="utf-8")
