@@ -1,0 +1,170 @@
+format: 1
+source: assets/agw-docs/standalone/setup/binary.md
+blocks:
+- f1037e7153c7f93e shell
+- 56e57ada05a8887e sh
+- c3cc6a78c51e8ef1 yaml
+- f6931a7b2e59dbc5 sh
+tags:
+- paths: binary-install
+  block: 0
+  fingerprint: f1037e7153c7f93e
+  lang: shell
+  lines: f1037e71
+  preview: agentgateway --version
+  form:
+    attr: paths="binary-install"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Verify the installation
+    line: 68ad54534395d8c4
+    occurrence: 0
+    words: a12dd3a7 8e7fc023 b9776d7d 56e57ada 9a3a45d0 fa51fd49 a51a6c19
+    block_before: null
+  content: |-
+    {{< doc-test paths="binary-install" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Verify the installation": `agentgateway --version` prints JSON with a version
+    #     and git revision.
+    #   * "Run agentgateway" with no arguments: agentgateway writes config.yaml under
+    #     $XDG_CONFIG_HOME/agentgateway with the documented content (SQLite database in
+    #     the same directory, `default` gateway on port 4000, UI on that gateway), serves
+    #     the UI at http://localhost:4000/ui, and does not overwrite an existing file on
+    #     the next run.
+    #   * "Run agentgateway" with `-f config.yaml`: a file with no `ui` section serves the
+    #     UI only on the admin interface (http://localhost:15000/ui), and agentgateway
+    #     reloads the file when it changes, without a restart.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Download and install" (install script, specific version, nightly `gh run
+    #     download`) - the install script needs sudo to write /usr/local/bin and the
+    #     nightly build needs a GitHub Actions run ID. The test installs the binary for
+    #     the docs version with the shared install snippet instead.
+    #   * The two foreground `agentgateway` commands are run in the background with their
+    #     output in /tmp, so that the test can query them.
+    #   * Opening the UI in a browser - checked as an HTTP 200 instead.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: f1037e7153c7f93e
+    lang: shell
+    lines: f1037e71
+    preview: agentgateway --version
+  content: |-
+    {{< doc-test paths="binary-install" >}}
+    agentgateway --version > /tmp/doc-test-agw-version.json
+    jq -e '(.version | length > 0) and (.git_revision | length > 0)' /tmp/doc-test-agw-version.json >/dev/null
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 56e57ada05a8887e
+    lang: sh
+    lines: 56e57ada
+    preview: agentgateway
+  content: |-
+    {{< doc-test paths="binary-install" >}}
+    # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+    # would be set in a subshell and the gateway would never be stopped.
+    start_gateway() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+      AGW_PID=$!
+    }
+    stop_gateway() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+    wait_http() {
+      for _ in $(seq 1 "${2:-30}"); do
+        code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+        [ -n "$code" ] && [ "$code" != "000" ] && return 0
+        sleep 1
+      done
+      echo "$1 did not answer"; return 1
+    }
+
+    # Use a throwaway config directory instead of the runner's ~/.config.
+    export XDG_CONFIG_HOME="${TMPDIR:-/tmp}/doc-test-xdg-$$"
+    rm -rf "$XDG_CONFIG_HOME"; mkdir -p "$XDG_CONFIG_HOME"
+    GEN="$XDG_CONFIG_HOME/agentgateway/config.yaml"
+    trap 'stop_gateway; rm -rf "$XDG_CONFIG_HOME"' EXIT
+
+    agentgateway > /tmp/doc-test-agw-bare.log 2>&1 &
+    AGW_PID=$!
+    ok=""
+    for _ in $(seq 1 30); do
+      [ "$(curl -s -o /dev/null -w '%{http_code}' -m 3 http://localhost:4000/ui/ || true)" = "200" ] && ok=yes && break
+      sleep 1
+    done
+    [ -n "$ok" ] || { echo "generated config did not serve the UI on :4000"; cat /tmp/doc-test-agw-bare.log; exit 1; }
+    test -f "$GEN"
+    python3 - "$GEN" "$XDG_CONFIG_HOME" <<'PY'
+    import sys, yaml
+    c = yaml.safe_load(open(sys.argv[1]))
+    url = c["config"]["database"]["url"]
+    assert url.startswith("sqlite://") and url.endswith("/agentgateway/data.db"), url
+    assert sys.argv[2] in url, (url, sys.argv[2])
+    assert c["gateways"]["default"]["port"] == 4000, c
+    assert c["ui"]["gateways"] == "default", c
+    PY
+    stop_gateway
+
+    # "Agentgateway does not overwrite an existing file": mark the file, run again, and
+    # confirm that the mark is still there.
+    echo "# doc-test-marker" >> "$GEN"
+    agentgateway > /tmp/doc-test-agw-bare2.log 2>&1 &
+    AGW_PID=$!
+    wait_http http://localhost:4000/ui/ 30
+    grep -q '^# doc-test-marker$' "$GEN"
+    stop_gateway
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="binary-install" >}}
+    # A configuration file of your own, with no `ui` section. The route answers directly,
+    # so the test can tell the gateway port apart from the UI.
+    cat > config.yaml <<'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 4000
+    routes:
+    - policies:
+        directResponse:
+          body: "before-reload"
+          status: 200
+    EOF
+    start_gateway config.yaml
+    wait_http http://localhost:15000/ui/ 30
+    # Without a `ui` section, the UI is served on the admin interface only.
+    [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:15000/ui/)" = "200" ]
+    [ "$(curl -s http://localhost:4000/ui/)" = "before-reload" ]
+
+    # "Agentgateway watches the file and reloads it": change the route and wait for the
+    # running process to serve the new body.
+    # Rewrite in place (same inode), the way an editor save would.
+    sed 's/before-reload/after-reload/' config.yaml > /tmp/doc-test-config.yaml.new
+    cat /tmp/doc-test-config.yaml.new > config.yaml
+    body=""
+    for _ in $(seq 1 30); do
+      body=$(curl -s http://localhost:4000/ || true)
+      [ "$body" = "after-reload" ] && break
+      sleep 1
+    done
+    [ "$body" = "after-reload" ] || { echo "config change was not reloaded (got '$body')"; exit 1; }
+    stop_gateway
+    {{< /doc-test >}}

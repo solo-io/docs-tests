@@ -1,0 +1,107 @@
+format: 1
+source: content/docs/standalone/latest/documentation/configuration/static-configuration.md
+blocks:
+- 9ddc547e9241bcb8 yaml
+hidden:
+- after:
+    block: 0
+    fingerprint: 9ddc547e9241bcb8
+    lang: yaml
+    lines: 2180b199 6edeb457 06d59b28
+    preview: 'config:'
+  content: |-
+    {{< doc-test paths="static-config" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The shutdown-timing example config is accepted.
+    #   * "Shutdown timing" at runtime: after SIGTERM, the gateway keeps accepting new
+    #     connections during `connectionMinTerminationDeadline`, then refuses them, and
+    #     the process exits once no connections remain (well before the maximum).
+    #   * The CONNECTION_MIN_TERMINATION_DEADLINE environment variable takes precedence
+    #     over the config field: with it set to 0s, new connections are refused right
+    #     after SIGTERM.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That in-flight connections are drained up to `connectionTerminationDeadline` -
+    #     needs a long-lived request held open across the shutdown.
+    #   * The TERMINATION_GRACE_PERIOD_SECONDS fallback arithmetic - not observable
+    #     without timing a held-open connection.
+    #   * The schema table - rendered from the upstream schema file at build time.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    config:
+      connectionMinTerminationDeadline: 10s
+      connectionTerminationDeadline: 55s
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        directResponse:
+          body: "ok"
+          status: 200
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    # Shorter deadlines than the example so that the test runs quickly.
+    cat <<'EOF' > config-shutdown.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    config:
+      connectionMinTerminationDeadline: 5s
+      connectionTerminationDeadline: 20s
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        directResponse:
+          body: "ok"
+          status: 200
+    EOF
+
+    AGW_PID=""
+    trap '[ -n "${AGW_PID:-}" ] && kill -9 "$AGW_PID" 2>/dev/null || true' EXIT
+    wait_ok() {
+      for _ in $(seq 1 30); do
+        [ "$(curl -s -m 2 http://localhost:3000/ || true)" = "ok" ] && return 0
+        sleep 1
+      done
+      echo "gateway did not start"; return 1
+    }
+
+    agentgateway -f config-shutdown.yaml > /tmp/doc-test-agw-shutdown.log 2>&1 &
+    AGW_PID=$!
+    wait_ok
+    kill -TERM "$AGW_PID"
+    sleep 1
+    # Within the minimum deadline: new connections are still accepted.
+    [ "$(curl -s -m 2 http://localhost:3000/ || true)" = "ok" ] \
+      || { echo "new connection refused during connectionMinTerminationDeadline"; cat /tmp/doc-test-agw-shutdown.log; exit 1; }
+    # After the minimum deadline and with no open connections, the process exits well
+    # before the 20s maximum.
+    exited=""
+    for _ in $(seq 1 12); do
+      kill -0 "$AGW_PID" 2>/dev/null || { exited=yes; break; }
+      sleep 1
+    done
+    [ -n "$exited" ] || { echo "agentgateway still running 13s after SIGTERM"; exit 1; }
+    AGW_PID=""
+    [ "$(curl -s -o /dev/null -w '%{http_code}' -m 2 http://localhost:3000/ || true)" = "000" ]
+
+    # The environment variable takes precedence over the config field.
+    CONNECTION_MIN_TERMINATION_DEADLINE=0s agentgateway -f config-shutdown.yaml > /tmp/doc-test-agw-shutdown-env.log 2>&1 &
+    AGW_PID=$!
+    wait_ok
+    kill -TERM "$AGW_PID"
+    sleep 1
+    [ "$(curl -s -o /dev/null -w '%{http_code}' -m 2 http://localhost:3000/ || true)" = "000" ] \
+      || { echo "new connection accepted after SIGTERM with CONNECTION_MIN_TERMINATION_DEADLINE=0s"; exit 1; }
+    for _ in $(seq 1 10); do kill -0 "$AGW_PID" 2>/dev/null || break; sleep 1; done
+    kill -9 "$AGW_PID" 2>/dev/null || true
+    AGW_PID=""
+    {{< /doc-test >}}

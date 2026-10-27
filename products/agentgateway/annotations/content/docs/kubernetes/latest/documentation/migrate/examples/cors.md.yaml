@@ -1,0 +1,97 @@
+format: 1
+source: content/docs/kubernetes/latest/documentation/migrate/examples/cors.md
+blocks:
+- 304bd4b899888e8a bash
+- b878f0e981756793 bash
+- af4760e024ac1f8f bash
+- 39695d8efc54f194 yaml
+- 04a1abf99517d600 bash
+tags:
+- paths: migrate-cors
+  block: 0
+  fingerprint: 304bd4b899888e8a
+  lang: bash
+  lines: 20c04c45 4912a691 f1089fb2 8c8c4228 b3cc0d98 0ccc8edc 72ab0e66 880cda12 3d770d75 83acecb9 b866a2a0 e005f013 36184fa5 9620a283 3de9d845 d0888ee2 1c31dda0 6a61c178 b2bf84ed 3897150c 46f88b9e f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > cors-ingress.yaml
+  form:
+    attr: paths="migrate-cors"
+    only: true
+    lead: ' '
+- paths: migrate-cors
+  block: 1
+  fingerprint: b878f0e981756793
+  lang: bash
+  lines: 9a48758b a54b994c
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=agentgateway \
+  form:
+    attr: paths="migrate-cors"
+    only: true
+    lead: ' '
+- paths: migrate-cors
+  block: 2
+  fingerprint: af4760e024ac1f8f
+  lang: bash
+  lines: af4760e0
+  preview: cat cors-agentgateway.yaml
+  form:
+    attr: paths="migrate-cors"
+    only: true
+    lead: ' '
+- paths: migrate-cors
+  block: 4
+  fingerprint: 04a1abf99517d600
+  lang: bash
+  lines: 04a1abf9
+  preview: kubectl apply -f cors-agentgateway.yaml
+  form:
+    attr: paths="migrate-cors"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 304bd4b899888e8a
+    lang: bash
+    lines: 20c04c45 4912a691 f1089fb2 8c8c4228 b3cc0d98 0ccc8edc 72ab0e66 880cda12 3d770d75 83acecb9 b866a2a0 e005f013 36184fa5 9620a283 3de9d845 d0888ee2 1c31dda0 6a61c178 b2bf84ed 3897150c 46f88b9e f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+    preview: cat <<'EOF' > cors-ingress.yaml
+  content: |-
+    {{< doc-test paths="migrate-cors" >}}
+    # Install the ingress2gateway version this guide documents, for this OS and CPU.
+    I2G_VERSION="${I2G_VERSION:-v0.5.0}"
+    i2g_arch=$(uname -m)
+    [ "$i2g_arch" = "aarch64" ] && i2g_arch=arm64
+    # A throwaway dir, so a local run leaves nothing in your home directory.
+    I2G_BIN="${TMPDIR:-/tmp}/doc-test-ingress2gateway-${I2G_VERSION}"
+    mkdir -p "$I2G_BIN"
+    export PATH="$I2G_BIN:$PATH"
+    if ! ingress2gateway version 2>/dev/null | grep -q "${I2G_VERSION#v}"; then
+      curl -fsSL "https://github.com/kgateway-dev/ingress2gateway/releases/download/${I2G_VERSION}/ingress2gateway_$(uname -s)_${i2g_arch}.tar.gz" \
+        | tar -xz -C "$I2G_BIN" ingress2gateway
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 04a1abf99517d600
+    lang: bash
+    lines: 04a1abf9
+    preview: kubectl apply -f cors-agentgateway.yaml
+  content: |-
+    {{< doc-test paths="migrate-cors" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the CORS policy keeps max age 3600
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: cors-demo
+        jsonPath: "$.spec.traffic.cors.maxAge"
+        jsonPathExpectation:
+          comparator: equals
+          value: 3600
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    kubectl delete -f cors-agentgateway.yaml --ignore-not-found
+    {{< /doc-test >}}

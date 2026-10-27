@@ -1,0 +1,187 @@
+format: 1
+source: assets/agw-docs/pages/security/apikey-auth.md
+blocks:
+- ca43b8b7bc5b74ef mermaid
+- 7e74addeb58e3f09 sh
+- 1de56ad984b44636 yaml
+- ef571264ec65d242 yaml
+- 78d9f330cbd4e9b8 yaml
+- aca0dd949446b0fe sh
+- 6cde765be25411d2 yaml
+- 2a58bac864da7655 sh
+- 86e869390b17f47b sh
+- ecbae8a5524633c3
+- 57b571b202be4333 sh
+- 42cc801ebcdc941e sh
+- ae43bc43954fcb59
+- 50c9df1c027d116c sh
+- 78d9f330cbd4e9b8 yaml
+- 6cde765be25411d2 yaml
+- 79f5e0acb6558918 yaml
+- 52cea814666d994b yaml
+- 79f5e0acb6558918 yaml
+- 52cea814666d994b yaml
+- 4ad9a19a2c63ad46 yaml
+- 6c27af7ed2a50c29 yaml
+- 78785e162e6aa5e4 yaml
+- b2eec001763c96c1 yaml
+tags:
+- paths: apikey-auth
+  block: 2
+  fingerprint: 1de56ad984b44636
+  lang: yaml
+  lines: abbd1bdc f1540154 033792b5 8c8c4228 4ab3129b 8af957d1 fa1e8330 c2e1f378 ff72caa3 1fd01721 021fb596 89b24664 88f913d6 1eabe205 d10b36aa d10b36aa abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="apikey-auth"
+    only: true
+    lead: ' '
+- paths: security-apikey,apikey-auth
+  block: 3
+  fingerprint: ef571264ec65d242
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 1fba0f57 839a5cac c2e1f378 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="security-apikey,apikey-auth"
+    only: true
+    lead: ' '
+- paths: security-apikey
+  block: 6
+  fingerprint: 6cde765be25411d2
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 9ebc4789 4ab3129b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="security-apikey"
+    only: true
+    lead: ' '
+- paths: apikey-auth
+  block: 13
+  fingerprint: 50c9df1c027d116c
+  lang: sh
+  lines: 46503052 26cda8df fdc34a5c
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} apikey-auth -n {{< re
+  form:
+    attr: paths="apikey-auth"
+    only: true
+    lead: ' '
+- paths: security-apikey
+  block: 15
+  fingerprint: 6cde765be25411d2
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 9ebc4789 4ab3129b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="security-apikey"
+    only: true
+    lead: ' '
+- paths: security-apikey
+  block: 17
+  fingerprint: 52cea814666d994b
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 27bd7707 839a5cac c2e1f378 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="security-apikey"
+    only: true
+    lead: ' '
+- paths: security-apikey
+  block: 19
+  fingerprint: 52cea814666d994b
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 27bd7707 839a5cac c2e1f378 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="security-apikey"
+    only: true
+    lead: ' '
+- paths: security-apikey
+  block: 20
+  fingerprint: 4ad9a19a2c63ad46
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 5a52fee2 4e2fb320 d3cb008e 1fba0f57 839a5cac c2e1f378 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="security-apikey"
+    only: true
+    lead: ' '
+- paths: security-apikey
+  block: 21
+  fingerprint: 6c27af7ed2a50c29
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 5a52fee2 4e2fb320 d3cb008e 9ebc4789 4ab3129b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="security-apikey"
+    only: true
+    lead: ' '
+- paths: security-apikey
+  block: 22
+  fingerprint: 78785e162e6aa5e4
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 1535809c 1fba0f57 839a5cac c2e1f378 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="security-apikey"
+    only: true
+    lead: ' '
+- paths: security-apikey
+  block: 23
+  fingerprint: b2eec001763c96c1
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 1535809c 9ebc4789 4ab3129b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="security-apikey"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: ef571264ec65d242
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 97862ff9 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 4e2fb320 d3cb008e 1fba0f57 839a5cac c2e1f378 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="apikey-auth" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the apikey-auth policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: apikey-auth
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: a request without an API key is rejected
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/headers"
+           method: GET
+           headers:
+             host: www.example.com
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 401
+       - name: a request with a valid API key succeeds
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/headers"
+           method: GET
+           headers:
+             host: www.example.com
+             Authorization: Bearer N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

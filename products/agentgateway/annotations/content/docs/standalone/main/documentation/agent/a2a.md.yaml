@@ -1,0 +1,156 @@
+format: 1
+source: content/docs/standalone/main/documentation/agent/a2a.md
+blocks:
+- f41c92eb6ab8c6b0 yaml
+- f6931a7b2e59dbc5 sh
+- 8411ee14cce5c685 sh
+- 5ca76e3aa1534a02 sh
+- 4b26fa5f0664fca8 sh
+- d51c09a0430410ec
+- 67ff84532da10260 sh
+- bf429c49238fb1c2 json
+- 3712f3e3b52e8cf6 text
+tags:
+- paths: a2a
+  block: 2
+  fingerprint: 8411ee14cce5c685
+  lang: sh
+  lines: 8411ee14
+  preview: git clone https://github.com/a2aproject/a2a-samples.git
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+- paths: a2a
+  block: 6
+  fingerprint: 67ff84532da10260
+  lang: sh
+  lines: 67ff8453
+  preview: curl localhost:3000/.well-known/agent.json | jq
+  form:
+    attr: paths="a2a"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="a2a" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Set up the agentgateway": the published traffic-a2a example config (which the
+    #     page embeds) runs, proxying port 3000 to localhost:9999 with the `a2a` policy.
+    #   * "Set up an ADK agent": the A2A samples clone and the Hello World agent runs.
+    #   * "Verify the A2A connection" step 2: the agent card through agentgateway has the
+    #     Hello World agent's name and skill, and its `url` is rewritten to
+    #     http://localhost:3000.
+    #   * Step 1, without the interactive CLI client: an A2A `message/send` of "hi"
+    #     through agentgateway returns "Hello World".
+    #   * Step 3: the agentgateway request log records the A2A method.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The interactive CLI client (`uv run ... hosts/cli`) - it prompts for input; the
+    #     test sends the same A2A request with curl.
+    #   * The UI steps - UI-only.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: f41c92eb6ab8c6b0
+    lang: yaml
+    lines: 358c4c15 eb172b71 abc56510
+    preview: cat <<EOF > config.yaml
+  content: |2-
+       {{< doc-test paths="a2a" >}}
+       # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+       # would be set in a subshell and the gateway would never be stopped.
+       start_gateway() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+         AGW_PID=$!
+       }
+       stop_gateway() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+       wait_http() {
+         for _ in $(seq 1 "${2:-30}"); do
+           code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+           [ -n "$code" ] && [ "$code" != "000" ] && return 0
+           sleep 1
+         done
+         echo "$1 did not answer"; return 1
+       }
+
+       # Step 1's config.yaml embeds the published example; download the same file.
+       curl -fsSL https://agentgateway.dev/examples/traffic-a2a/config.yaml -o config.yaml
+       agentgateway -f config.yaml --validate-only
+       # Step 2 runs it in the foreground; run it in the background instead.
+       start_gateway config.yaml
+       AGW_LOG=/tmp/doc-test-agw-config.yaml.log
+       trap 'stop_gateway; kill ${A2A_AGENT_PID:-} 2>/dev/null || true' EXIT
+       wait_http http://localhost:3000/ 30
+
+       # "Before you begin" step 2 installs uv; the install snippet put ~/.local/bin on PATH.
+       if ! command -v uv >/dev/null 2>&1; then
+         curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+       fi
+       command -v uv >/dev/null
+       rm -rf a2a-samples   # the next step clones into a fresh directory
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 8411ee14cce5c685
+    lang: sh
+    lines: 8411ee14
+    preview: git clone https://github.com/a2aproject/a2a-samples.git
+  content: |2-
+       {{< doc-test paths="a2a" >}}
+       # Step 2 of "Set up an ADK agent" runs in the foreground; run it in the background.
+       rm -f /tmp/doc-test-a2a-agent.log
+       uv run --directory a2a-samples/samples/python/agents/helloworld . > /tmp/doc-test-a2a-agent.log 2>&1 &
+       A2A_AGENT_PID=$!
+       up=""
+       for _ in $(seq 1 90); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 http://localhost:9999/.well-known/agent.json || true)
+         code2=$(curl -s -o /dev/null -w '%{http_code}' -m 3 http://localhost:9999/.well-known/agent-card.json || true)
+         if [ "$code" = "200" ] || [ "$code2" = "200" ]; then up=yes; break; fi
+         sleep 2
+       done
+       [ -n "$up" ] || { echo "Hello World agent did not start"; tail -40 /tmp/doc-test-a2a-agent.log; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 67ff84532da10260
+    lang: sh
+    lines: 67ff8453
+    preview: curl localhost:3000/.well-known/agent.json | jq
+  content: |2-
+       {{< doc-test paths="a2a" >}}
+       curl -s localhost:3000/.well-known/agent.json > /tmp/doc-test-agent-card.json
+       jq -e '.name == "Hello World Agent"
+              and .url == "http://localhost:3000"
+              and any(.skills[]; .id == "hello_world")' /tmp/doc-test-agent-card.json >/dev/null \
+         || { echo "unexpected agent card through agentgateway"; cat /tmp/doc-test-agent-card.json; exit 1; }
+
+       # Step 1 without the interactive client: send "hi" as an A2A message through the gateway.
+       curl -s -X POST http://localhost:3000/ -H 'content-type: application/json' -d '{
+         "jsonrpc": "2.0", "id": "1", "method": "message/send",
+         "params": {"message": {"role": "user", "messageId": "doc-test-1",
+                                "parts": [{"kind": "text", "text": "hi"}]}}
+       }' > /tmp/doc-test-a2a-reply.json
+       grep -q 'Hello World' /tmp/doc-test-a2a-reply.json \
+         || { echo "agent did not answer Hello World"; cat /tmp/doc-test-a2a-reply.json; exit 1; }
+
+       # Step 3: the request log records the A2A method for the call.
+       sleep 1
+       grep -q 'message/send' "$AGW_LOG" && grep 'message/send' "$AGW_LOG" | grep -q 'a2a' \
+         || { echo "no A2A request log line"; tail -20 "$AGW_LOG"; exit 1; }
+       kill "$A2A_AGENT_PID" 2>/dev/null || true
+       stop_gateway
+       {{< /doc-test >}}

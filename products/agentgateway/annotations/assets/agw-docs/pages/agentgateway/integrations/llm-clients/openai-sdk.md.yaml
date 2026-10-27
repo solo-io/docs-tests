@@ -1,0 +1,186 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/openai-sdk.md
+blocks:
+- 7ab6bdbc8b08546a sh
+- 1c25f958163d1840 python
+- 13dc43721a29a586 sh
+- 4d9ed9b0f0e899cb python
+- f1ff8bc6bceed2c1 sh
+- e22f934f2155c956 javascript
+tags:
+- paths: llm-client-openai-sdk
+  block: 2
+  fingerprint: 13dc43721a29a586
+  lang: sh
+  lines: 6d1710a8 1a02f835
+  preview: export OPENAI_BASE_URL=http://localhost:3000/v1
+  form:
+    attr: paths="llm-client-openai-sdk"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: (top of page)
+    line: 3191970edbe5637e
+    occurrence: 0
+    words: a3b142af b9776d7d 7d3194f7 11a4a60b 7175517a 324373d8 a9d0df18 663ea1bf 27ce1d1b ec72420d 9c6725dc 56e57ada
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-client-openai-sdk" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Config file tab's config serves LLM traffic on port 3000 (against a local
+    #     mock LLM instead of OpenAI).
+    #   * The Python and Node.js scripts from the page, installed into a temporary
+    #     directory, get the mock's completion text back through agentgateway.
+    #   * The environment-variable form: with OPENAI_BASE_URL and OPENAI_API_KEY
+    #     exported as shown, `OpenAI()` with no arguments reaches agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * `pip install openai` / `npm install openai` into the reader's project - the
+    #     test installs into a throwaway directory instead of the runner's environment.
+    #   * The UI tab - browser-only steps.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-openai-sdk-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-openai-sdk-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    {{< /doc-test >}}
+- after:
+    section: Python
+    line: a1e59f5ee37b4556
+    occurrence: 0
+    words: 11a4a60b
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-client-openai-sdk" >}}
+    # The Config file tab's agentgateway config (shown without a heredoc), restated.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      port: 3000
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+    to_mock config.yaml config-mock.yaml
+    start_agw config-mock.yaml
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 1c25f958163d1840
+    lang: python
+    lines: e729d651 da1f808e 670478ce 96470125 ba5ec51d 71e2a5c0 205d2ceb 8b03a826 ba5ec51d 1046017e
+    preview: from openai import OpenAI
+  content: |2-
+       {{< doc-test paths="llm-client-openai-sdk" >}}
+       SDK_DIR="${TMPDIR:-/tmp}/doc-test-openai-sdk"
+       rm -rf "$SDK_DIR" && mkdir -p "$SDK_DIR"
+       python3 -m venv "$SDK_DIR/venv"
+       "$SDK_DIR/venv/bin/pip" install -q openai
+       cat > "$SDK_DIR/client.py" <<'PY'
+       from openai import OpenAI
+
+       client = OpenAI(
+           base_url="http://localhost:3000/v1",
+           api_key="anything",  # placeholder if gateway has no auth
+       )
+
+       response = client.chat.completions.create(
+           model="gpt-4o-mini",
+           messages=[{"role": "user", "content": "Hello!"}],
+       )
+       print(response.choices[0].message.content)
+       PY
+       out=$("$SDK_DIR/venv/bin/python" "$SDK_DIR/client.py")
+       [ "$out" = "mock completion" ] || { echo "FAIL: Python SDK printed: $out"; exit 1; }
+       echo "ok: the Python SDK script got a completion through agentgateway"
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 13dc43721a29a586
+    lang: sh
+    lines: 6d1710a8 1a02f835
+    preview: export OPENAI_BASE_URL=http://localhost:3000/v1
+  content: |-
+    {{< doc-test paths="llm-client-openai-sdk" >}}
+    # The exports above set OPENAI_BASE_URL; the client takes no arguments.
+    cat > "$SDK_DIR/client_env.py" <<'PY'
+    from openai import OpenAI
+
+    client = OpenAI()  # picks up OPENAI_BASE_URL and OPENAI_API_KEY from env
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": "Hello!"}],
+    )
+    print(response.choices[0].message.content)
+    PY
+    out=$("$SDK_DIR/venv/bin/python" "$SDK_DIR/client_env.py")
+    [ "$out" = "mock completion" ] || { echo "FAIL: env-configured client printed: $out"; exit 1; }
+    echo "ok: OpenAI() picks up OPENAI_BASE_URL and reaches agentgateway"
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: e22f934f2155c956
+    lang: javascript
+    lines: 4db7290b ccd6eca5 b5f6bf42 8d056fcd 29576b54 6128c9ad 04a1fe9c e4422e8c 29576b54 3a4c3a1f
+    preview: import OpenAI from "openai";
+  content: |2-
+       {{< doc-test paths="llm-client-openai-sdk" >}}
+       mkdir -p "$SDK_DIR/node" && cd "$SDK_DIR/node"
+       npm init -y >/dev/null
+       npm install --silent openai
+       cat > client.mjs <<'JS'
+       import OpenAI from "openai";
+
+       const client = new OpenAI({
+         baseURL: "http://localhost:3000/v1",
+         apiKey: "anything",
+       });
+
+       const response = await client.chat.completions.create({
+         model: "gpt-4o-mini",
+         messages: [{ role: "user", content: "Hello!" }],
+       });
+       console.log(response.choices[0].message.content);
+       JS
+       out=$(node client.mjs)
+       cd - >/dev/null
+       [ "$out" = "mock completion" ] || { echo "FAIL: Node.js SDK printed: $out"; exit 1; }
+       echo "ok: the Node.js SDK script got a completion through agentgateway"
+       stop_agw
+       {{< /doc-test >}}

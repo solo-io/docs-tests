@@ -1,0 +1,45 @@
+format: 1
+source: content/docs/standalone/latest/reference/configuration/validation.md
+blocks:
+- a7f80a7326be2ff6 yaml
+- e37aa8bb905e2c79 yaml
+- 83bc1648e28efe6b yaml
+hidden:
+- after:
+    block: 2
+    fingerprint: 83bc1648e28efe6b
+    lang: yaml
+    lines: 83bc1648
+    preview: '# yaml-language-server: $schema=https://raw.githubusercontent.com/agentgateway/a'
+  content: |-
+    {{< doc-test paths="schema-validation" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Default schema validation off main": the schema URL in the modeline resolves
+    #     (following redirects) to a JSON schema for the config file.
+    #   * "Version-specific schema validation": the URL pattern resolves for this docs
+    #     version's release tag, and the `v0.12.0` example URL resolves.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * IDE or editor behavior - GUI-only.
+    #   * The version-specific URL on the `main` docs version - main has no release tag
+    #     (its version is a `latest-dev` placeholder), so that check is skipped there.
+    # ============================================================================
+    check_schema() {
+      curl -fsSL --retry 3 "$1" -o /tmp/doc-test-schema.json \
+        || { echo "schema URL did not resolve: $1"; return 1; }
+      jq -e 'type == "object" and (.properties | type == "object")' /tmp/doc-test-schema.json >/dev/null \
+        || { echo "not a JSON schema: $1"; return 1; }
+    }
+    check_schema "https://agentgateway.dev/schema/config"
+    jq -e '.properties | has("gateways") and has("routes")' /tmp/doc-test-schema.json >/dev/null
+
+    VERSION="v{{< reuse "agw-docs/versions/n-patch.md" >}}"
+    case "$VERSION" in
+      *latest-dev*) echo "main docs version has no release tag; skipping the version-specific URL" ;;
+      *) check_schema "https://raw.githubusercontent.com/agentgateway/agentgateway/refs/tags/${VERSION}/schema/config.json" ;;
+    esac
+    check_schema "https://raw.githubusercontent.com/agentgateway/agentgateway/refs/tags/v0.12.0/schema/config.json"
+    {{< /doc-test >}}

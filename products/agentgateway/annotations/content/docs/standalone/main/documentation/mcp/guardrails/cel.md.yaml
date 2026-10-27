@@ -1,0 +1,207 @@
+format: 1
+source: content/docs/standalone/main/documentation/mcp/guardrails/cel.md
+blocks:
+- e51a523f998ab375 yaml
+- f6931a7b2e59dbc5 sh
+- 1014e2dcc47483bb sh
+- 9c738027f048c7f1 sh
+- c0d16254a1112450 sh
+- 2c27259044e4907e console
+- ca54bc7b7b247554 sh
+- d6af21033d0c6f98 console
+- 32ba5d98173ef459 sh
+tags:
+- paths: mcp-guardrails-cel
+  block: 2
+  fingerprint: 1014e2dcc47483bb
+  lang: sh
+  lines: 3680aa1c 67c5a3ac 4347ff3f d31d31d3 1fc29d35 7f562581 1ae4dd65
+  preview: export MCP_SESSION_ID=$(curl -s -D - http://localhost:3000/mcp \
+  form:
+    attr: paths="mcp-guardrails-cel"
+    only: true
+    lead: ' '
+- paths: mcp-guardrails-cel
+  block: 3
+  fingerprint: 9c738027f048c7f1
+  lang: sh
+  lines: 2b185ce9 67c5a3ac 4347ff3f d31d31d3 6bbbbab2 12994e67
+  preview: curl -s http://localhost:3000/mcp \
+  form:
+    attr: paths="mcp-guardrails-cel"
+    only: true
+    lead: ' '
+- paths: mcp-guardrails-cel
+  block: 4
+  fingerprint: c0d16254a1112450
+  lang: sh
+  lines: 2b185ce9 67c5a3ac 4347ff3f d31d31d3 6bbbbab2 97a28b93
+  preview: curl -s http://localhost:3000/mcp \
+  form:
+    attr: paths="mcp-guardrails-cel"
+    only: true
+    lead: ' '
+- paths: mcp-guardrails-cel
+  block: 6
+  fingerprint: ca54bc7b7b247554
+  lang: sh
+  lines: 2b185ce9 67c5a3ac 4347ff3f d31d31d3 6bbbbab2 89b4ace1
+  preview: curl -s http://localhost:3000/mcp \
+  form:
+    attr: paths="mcp-guardrails-cel"
+    only: true
+    lead: ' '
+- paths: mcp-guardrails-cel
+  block: 8
+  fingerprint: 32ba5d98173ef459
+  lang: sh
+  lines: 32ba5d98
+  preview: rm config.yaml
+  form:
+    attr: paths="mcp-guardrails-cel"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: 13bf0f96d587d261
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 dddece3d
+    block_before: null
+  content: |-
+    {{< doc-test paths="mcp-guardrails-cel" >}}
+    # Install agentgateway binary
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: e51a523f998ab375
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 19c2fa74 ead663af 9d7e2b17 fd12af70 ff9fe88b d31d0ec6 622b2ab2 0f27179b 726c2761 a56659ca 3e81ada3 63eb0a6d f126d30e b36fa061 890e4049 185c4837 9eda43d2 9f6dd90c be0ed466 f1dc7941 59370bc7 2bddcd5b f126d30e b36fa061 890e4049 185c4837 9eda43d2 9f6dd90c 2f0d254c b248dbe0 d73a7732 a7102666 ad71ae96 fa21a7b5 164867cf ba5ec51d 2c58b0f2 24614450 62c216cc f126d30e b36fa061 4aaf80c5 0e74550e b248dbe0 84819e4d 8fc24fb0 12036054 ce84cf0e 03c7a8a9 25bb328c d9ea4a79 ba5ec51d 24614450 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |2-
+       {{< doc-test paths="mcp-guardrails-cel" >}}
+       cat <<'EOF' > config.yaml
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - policies:
+           mcpGuardrails:
+             processors:
+             - kind: expression
+               methods:
+                 tools/call: request
+               condition: >-
+                 mcp.params.name == 'echo' &&
+                 has(mcp.params.arguments) &&
+                 has(mcp.params.arguments.message) &&
+                 mcp.params.arguments.message.contains('DO_NOT_SEND')
+               reject: "Messages containing DO_NOT_SEND may not be sent upstream"
+             - kind: expression
+               methods:
+                 tools/call: request
+               condition: >-
+                 mcp.params.name == 'echo' &&
+                 has(mcp.params.arguments) &&
+                 has(mcp.params.arguments.message)
+               transform: >-
+                 mcp.params.with(p, p.merge({
+                   'arguments': p.arguments.merge({
+                     'message': p.arguments.message.regexReplaceAll(
+                       '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+[.][A-Za-z]{2,}',
+                       '[EMAIL]'
+                     )
+                   })
+                 }))
+             - kind: expression
+               methods:
+                 tools/call: response
+               condition: has(mcp.result.content)
+               transform: >-
+                 mcp.result.with(r, r.merge({
+                   'content': r.content.map(item,
+                     item.type == 'text'
+                       ? item.merge({'text': item.text.regexReplaceAll(
+                           'demo-secret-[A-Za-z0-9]+', '[SECRET]'
+                         )})
+                       : item
+                   )
+                 }))
+         backends:
+         - mcp:
+             targets:
+             - name: everything
+               stdio:
+                 cmd: npx
+                 args: ["@modelcontextprotocol/server-everything"]
+       EOF
+       agentgateway -f config.yaml --validate-only
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="mcp-guardrails-cel" >}}
+       agentgateway -f config.yaml &
+       AGW_PID=$!
+       trap 'kill $AGW_PID 2>/dev/null || true' EXIT
+       # Wait for the stdio MCP backend to be ready. On first run, agentgateway downloads
+       # @modelcontextprotocol/server-everything via npx, which can take a while.
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/mcp \
+           -H 'Content-Type: application/json' \
+           -H 'Accept: application/json, text/event-stream' \
+           -H 'MCP-Protocol-Version: 2025-03-26' \
+           -d '{"jsonrpc":"2.0","id":0,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"warmup","version":"1.0"}}}' || true)
+         [ "$code" = "200" ] && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: d6af21033d0c6f98
+    lang: console
+    lines: d6af2103
+    preview: '{"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"Messages con'
+  content: |-
+    {{< doc-test paths="mcp-guardrails-cel" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * MCP session handshake (initialize + notifications/initialized) - steps 1-2
+    #   * Request-phase transform masks both email addresses, and response-phase
+    #     transform masks both demo secrets (step 3)
+    #   * Request-phase reject returns an isError tool result with the reject message (step 4)
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The displayed config's cors policy - browser-only, curl does not send CORS requests.
+    mcp_post() {
+      curl -s -i http://localhost:3000/mcp \
+        -H "Content-Type: application/json" \
+        -H "Accept: application/json, text/event-stream" \
+        -H "MCP-Protocol-Version: 2025-03-26" \
+        -H "mcp-session-id: $MCP_SESSION_ID" \
+        -d "$1"
+    }
+    export MCP_SESSION_ID=$(curl -s -D - http://localhost:3000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -H "MCP-Protocol-Version: 2025-03-26" \
+      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"curl","version":"1.0.0"}}}' \
+      | grep -i "mcp-session-id:" | sed 's/.*: //' | tr -d '\r')
+    mcp_post '{"jsonrpc":"2.0","method":"notifications/initialized"}' >/dev/null
+    MASKED=$(mcp_post '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"echo","arguments":{"message":"Contact alice@example.com and bob@example.org; tokens demo-secret-abc and demo-secret-xyz"}}}')
+    # Check transport framing as well as the transformed text.
+    echo "$MASKED" | grep -iq '^content-type: text/event-stream' && echo "$MASKED" | grep -q '^data: ' \
+      || { echo "FAIL: expected an SSE tool result: $MASKED"; exit 1; }
+
+    echo "$MASKED" | grep -q 'Echo: Contact \[EMAIL\] and \[EMAIL\]; tokens \[SECRET\] and \[SECRET\]' \
+      && echo "✓ request and response masking" || { echo "FAIL: masking: $MASKED"; exit 1; }
+    REJECTED=$(mcp_post '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"echo","arguments":{"message":"DO_NOT_SEND alice@example.com"}}}')
+    # A request-phase rejection is an HTTP 200 JSON response, without SSE framing.
+    echo "$REJECTED" | grep -Eq '^HTTP/[0-9.]+ 200' && echo "$REJECTED" | grep -iq '^content-type: application/json' && echo "$REJECTED" | grep -q '^{' \
+      || { echo "FAIL: expected an HTTP 200 JSON rejection: $REJECTED"; exit 1; }
+    echo "$REJECTED" | grep -q '"isError":true' && echo "$REJECTED" | grep -q 'Messages containing DO_NOT_SEND may not be sent upstream' \
+      && echo "✓ DO_NOT_SEND call rejected" || { echo "FAIL: reject: $REJECTED"; exit 1; }
+    {{< /doc-test >}}

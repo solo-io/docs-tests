@@ -1,0 +1,111 @@
+format: 1
+source: content/docs/kubernetes/latest/documentation/migrate/examples/rate-limiting.md
+blocks:
+- c6a09864025c3ff2 bash
+- 4d066c19bf4d78c7 bash
+- f3fd3cf37ab26605 bash
+- 11829fbfbaf75320 yaml
+- 107794687c9bb92b bash
+tags:
+- paths: migrate-rate-limiting
+  block: 0
+  fingerprint: c6a09864025c3ff2
+  lang: bash
+  lines: ceffa8d4 4912a691 f1089fb2 8c8c4228 a04ffde6 0ccc8edc 72ab0e66 1ef24a9c e084be6c 36184fa5 9620a283 3de9d845 d0888ee2 1c31dda0 6a61c178 b2bf84ed 3897150c 46f88b9e f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > ratelimit-ingress.yaml
+  form:
+    attr: paths="migrate-rate-limiting"
+    only: true
+    lead: ' '
+- paths: migrate-rate-limiting
+  block: 1
+  fingerprint: 4d066c19bf4d78c7
+  lang: bash
+  lines: 9a48758b 85ca37b4
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=agentgateway \
+  form:
+    attr: paths="migrate-rate-limiting"
+    only: true
+    lead: ' '
+- paths: migrate-rate-limiting
+  block: 2
+  fingerprint: f3fd3cf37ab26605
+  lang: bash
+  lines: f3fd3cf3
+  preview: cat ratelimit-agentgateway.yaml
+  form:
+    attr: paths="migrate-rate-limiting"
+    only: true
+    lead: ' '
+- paths: migrate-rate-limiting
+  block: 4
+  fingerprint: 107794687c9bb92b
+  lang: bash
+  lines: '10779468'
+  preview: kubectl apply -f ratelimit-agentgateway.yaml
+  form:
+    attr: paths="migrate-rate-limiting"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: c6a09864025c3ff2
+    lang: bash
+    lines: ceffa8d4 4912a691 f1089fb2 8c8c4228 a04ffde6 0ccc8edc 72ab0e66 1ef24a9c e084be6c 36184fa5 9620a283 3de9d845 d0888ee2 1c31dda0 6a61c178 b2bf84ed 3897150c 46f88b9e f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+    preview: cat <<'EOF' > ratelimit-ingress.yaml
+  content: |-
+    {{< doc-test paths="migrate-rate-limiting" >}}
+    # Install the ingress2gateway version this guide documents, for this OS and CPU.
+    I2G_VERSION="${I2G_VERSION:-v0.5.0}"
+    i2g_arch=$(uname -m)
+    [ "$i2g_arch" = "aarch64" ] && i2g_arch=arm64
+    # A throwaway dir, so a local run leaves nothing in your home directory.
+    I2G_BIN="${TMPDIR:-/tmp}/doc-test-ingress2gateway-${I2G_VERSION}"
+    mkdir -p "$I2G_BIN"
+    export PATH="$I2G_BIN:$PATH"
+    if ! ingress2gateway version 2>/dev/null | grep -q "${I2G_VERSION#v}"; then
+      curl -fsSL "https://github.com/kgateway-dev/ingress2gateway/releases/download/${I2G_VERSION}/ingress2gateway_$(uname -s)_${i2g_arch}.tar.gz" \
+        | tar -xz -C "$I2G_BIN" ingress2gateway
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 107794687c9bb92b
+    lang: bash
+    lines: '10779468'
+    preview: kubectl apply -f ratelimit-agentgateway.yaml
+  content: |-
+    {{< doc-test paths="migrate-rate-limiting" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the local rate limit is 10 requests
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: ratelimit-demo
+        jsonPath: "$.spec.traffic.rateLimit.local[0].requests"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: the burst is 20
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: ratelimit-demo
+        jsonPath: "$.spec.traffic.rateLimit.local[0].burst"
+        jsonPathExpectation:
+          comparator: equals
+          value: 20
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    kubectl delete -f ratelimit-agentgateway.yaml --ignore-not-found
+    {{< /doc-test >}}

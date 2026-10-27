@@ -1,0 +1,89 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/llm/alias.md
+blocks:
+- 8f249b77774bc017 yaml
+- 7eba1922be570e0d sh
+- 9acc3c934bde895b sh
+- 0bd10fed1102cdb8 sh
+- 55b88dbcab0e7cdd sh
+- 7170ee76c339e143 console
+- d7c008e6e37ad2ab sh
+- ce13ee557f7cf904 sh
+- 090b5dc21bba086f sh
+- f9b0444fddc031d0 sh
+- 1bb57f3b156c9c40 console
+- 126ac3d509448251 sh
+tags:
+- paths: llm-alias
+  block: 0
+  fingerprint: 8f249b77774bc017
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 c8f3f59a 146e11c6 9ebc4789 4df4f75f ad3afdb1 bbeb9289 bc42cc59 8163b909 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-alias"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 8f249b77774bc017
+    lang: yaml
+    lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b e51789a0 c8f3f59a 146e11c6 9ebc4789 4df4f75f ad3afdb1 bbeb9289 bc42cc59 8163b909 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-alias" >}}
+       # The openai-setup prerequisite points the openai backend at the httpbun mock,
+       # which echoes back the model it receives, so the response model shows the alias
+       # was rewritten before the request left the gateway.
+       YAMLTest -f - <<'EOF'
+       - name: the openai backend with aliases is accepted in full
+         wait:
+           target:
+             kind: AgentgatewayBackend
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       - name: the fast alias resolves to gpt-3.5-turbo
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "fast", "messages": [{"role": "user", "content": "Say hello in one word"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: equals
+               value: "gpt-3.5-turbo"
+       - name: the smart alias resolves to gpt-4-turbo
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "smart", "messages": [{"role": "user", "content": "Say hello in one word"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.model"
+               comparator: equals
+               value: "gpt-4-turbo"
+       EOF
+       {{< /doc-test >}}

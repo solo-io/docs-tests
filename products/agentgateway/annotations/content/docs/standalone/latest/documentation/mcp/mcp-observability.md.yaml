@@ -1,0 +1,212 @@
+format: 1
+source: content/docs/standalone/latest/documentation/mcp/mcp-observability.md
+blocks:
+- 7c1a088cc43180ba yaml
+- f6931a7b2e59dbc5 sh
+- 9285230a9ef31a10
+- 2202b453090df4a0 yaml
+- 9d0180cddd5ee049 yaml
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="mcp-observability" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "View traces" steps 1-3: the Jaeger and collector stack from the published
+    #     mcp-telemetry example starts, and agentgateway runs with the documented tracing
+    #     config and the `everything` MCP server.
+    #   * Steps 4-5, through the MCP API and the Jaeger API rather than the UIs: an `echo`
+    #     tool call produces a trace with a `call_tool` operation in Jaeger.
+    #   * "View MCP metrics": `mcp_requests_total` on http://localhost:15020/metrics has a
+    #     series for the tool call with the documented labels (`server`, `method`,
+    #     `resource`, `resource_type`).
+    #   * "View logs": the stdout log line for the tool call has `mcp.method.name=tools/call`,
+    #     `mcp.target=everything`, and `gen_ai.tool.name=echo`.
+    #   * The first access log policy example: only `tools/call` requests are logged, and
+    #     the entry carries the added `tool_args` and `tool_result` fields. The second
+    #     example (`mcp.toolsList`) is accepted by agentgateway.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The agentgateway and Jaeger UIs - UI-only; the test uses the same MCP endpoint
+    #     the playground uses and the Jaeger query API.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 7c1a088cc43180ba
+    lang: yaml
+    lines: 358c4c15 a7f80a73 1b6c26b3 390f7e12 a97a9e13 8def7c01 9adf3fc1 82726b6f 2b6bc07a 3035507a 233e460f a68fe535 ca335149 6329244e abc56510
+    preview: cat <<EOF > config.yaml
+  content: |2-
+       {{< doc-test paths="mcp-observability" >}}
+       # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+       # would be set in a subshell and the gateway would never be stopped.
+       start_gateway() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+         AGW_PID=$!
+       }
+       stop_gateway() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+       wait_http() {
+         for _ in $(seq 1 "${2:-30}"); do
+           code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+           [ -n "$code" ] && [ "$code" != "000" ] && return 0
+           sleep 1
+         done
+         echo "$1 did not answer"; return 1
+       }
+
+       # Minimal MCP client over streamable HTTP. Responses can be server-sent events, so
+       # `data:` lines are unwrapped before parsing.
+       MCP_URL="${MCP_URL:-http://localhost:3000/mcp}"
+       mcp_init() {
+         MCP_SID=$(curl -sS -D - -o /dev/null --max-time 15 -X POST "$MCP_URL" \
+           -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+           -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"doctest","version":"1.0"}},"id":1}' \
+           | grep -i '^mcp-session-id:' | tr -d '\r' | awk '{print $2}' || true)
+         if [ -n "$MCP_SID" ]; then
+           curl -sS --max-time 10 -o /dev/null -X POST "$MCP_URL" \
+             -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+             -H "Mcp-Session-Id: $MCP_SID" -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' || true
+         fi
+       }
+       # mcp_call METHOD PARAMS_JSON: print the JSON-RPC response body.
+       mcp_call() {
+         curl -sS --max-time 30 -X POST "$MCP_URL" \
+           -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+           ${MCP_SID:+-H "Mcp-Session-Id: $MCP_SID"} \
+           -d "{\"jsonrpc\":\"2.0\",\"method\":\"$1\",\"params\":$2,\"id\":2}" \
+           | sed -n 's/^data: //p; /^{/p' | head -1
+       }
+       # mcp_tools: wait for the MCP targets to come up and print the tool names. It is
+       # usually called as $(mcp_tools), a subshell: call mcp_init afterwards to get a
+       # session in the calling shell.
+       mcp_tools() {
+         local names=""
+         for _ in $(seq 1 30); do
+           mcp_init
+           names=$(mcp_call tools/list '{}' 2>/dev/null | jq -r '[.result.tools[].name] | join(" ")' 2>/dev/null || true)
+           [ -n "$names" ] && break
+           sleep 2
+         done
+         echo "$names"
+       }
+
+       # Step 1 (the Jaeger snippet): the collector config and Compose file come from the
+       # published mcp-telemetry example, as the page's snippet embeds them.
+       curl -fsSL https://agentgateway.dev/examples/mcp-telemetry/otel-collector-config.yaml -o otel-collector-config.yaml
+       curl -fsSL https://agentgateway.dev/examples/mcp-telemetry/docker-compose.yaml -o docker-compose.yaml
+       docker compose -f docker-compose.yaml up -d
+       trap 'stop_gateway; docker compose -f docker-compose.yaml down >/dev/null 2>&1 || true' EXIT
+       npm install -g @modelcontextprotocol/server-everything >/dev/null 2>&1 || true
+
+       # Step 2's config.yaml. The page's heredoc is unquoted, so `$schema` would expand
+       # (and abort under `set -u`); write the same YAML with a quoted heredoc.
+       cat <<'EOF' > config.yaml
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       frontendPolicies:
+         tracing:
+           host: localhost:4317
+           protocol: grpc
+           randomSampling: true
+       mcp:
+         port: 3000
+         targets:
+         - name: everything
+           stdio:
+             cmd: npx
+             args: ["@modelcontextprotocol/server-everything"]
+       EOF
+       start_gateway config.yaml
+       AGW_LOG=/tmp/doc-test-agw-config.yaml.log
+       wait_http http://localhost:16686/ 60
+
+       tools=$(mcp_tools)
+       mcp_init   # mcp_tools ran in a subshell; open the session in this shell
+       case " $tools " in *" echo "*) ;; *) echo "echo tool not listed: $tools"; cat "$AGW_LOG"; exit 1 ;; esac
+       mcp_call tools/call '{"name":"echo","arguments":{"message":"doc-test-observability"}}' > /tmp/doc-test-mcp-call.json
+       grep -q 'doc-test-observability' /tmp/doc-test-mcp-call.json
+
+       # "View logs"
+       sleep 2
+       grep 'mcp.method.name=tools/call' "$AGW_LOG" | grep 'mcp.target=everything' | grep -q 'gen_ai.tool.name=echo' \
+         || { echo "no tools/call log line with the documented MCP fields"; grep 'mcp' "$AGW_LOG" | tail -5; exit 1; }
+
+       # "View MCP metrics"
+       curl -s http://localhost:15020/metrics > /tmp/doc-test-metrics.txt
+       grep -E 'mcp_requests_total\{' /tmp/doc-test-metrics.txt | grep 'method="tools/call"' | grep 'resource="echo"' \
+         | grep 'resource_type="tool"' | grep -q 'server="everything"' \
+         || { echo "no mcp_requests_total series for the echo tool call"; grep mcp_requests_total /tmp/doc-test-metrics.txt; exit 1; }
+
+       # "View traces" step 5: Jaeger has a call_tool operation.
+       found=""
+       for _ in $(seq 1 30); do
+         for svc in $(curl -s http://localhost:16686/api/services | jq -r '.data[]?' 2>/dev/null); do
+           if curl -s "http://localhost:16686/api/services/${svc}/operations" | jq -e '.data | index("call_tool")' >/dev/null 2>&1; then
+             found=yes
+           fi
+         done
+         [ -n "$found" ] && break
+         sleep 2
+       done
+       [ -n "$found" ] || { echo "Jaeger has no call_tool operation"; curl -s http://localhost:16686/api/services; exit 1; }
+       stop_gateway
+
+       # The first access log policy example: log only tool calls, with arguments and result.
+       cat <<'EOF' > config-accesslog.yaml
+       frontendPolicies:
+         accessLog:
+           filter: 'mcp.methodName == "tools/call"'
+           add:
+             tool_args: 'mcp.tool.arguments'
+             tool_result: 'mcp.tool.result'
+             tool_error: 'mcp.tool.error'
+       mcp:
+         port: 3000
+         targets:
+         - name: everything
+           stdio:
+             cmd: npx
+             args: ["@modelcontextprotocol/server-everything"]
+       EOF
+       start_gateway config-accesslog.yaml
+       AGW_LOG=/tmp/doc-test-agw-config-accesslog.yaml.log
+       MCP_SID=""
+       tools=$(mcp_tools)
+       [ -n "$tools" ]
+       mcp_init
+       mcp_call tools/call '{"name":"echo","arguments":{"message":"doc-test-args"}}' > /dev/null
+       sleep 2
+       grep -q 'tool_args=' "$AGW_LOG" && grep 'tool_args=' "$AGW_LOG" | grep -q 'doc-test-args' \
+         || { echo "tools/call log entry has no tool_args"; grep request "$AGW_LOG" | tail -5; exit 1; }
+       grep -q 'tool_result=' "$AGW_LOG"
+       if grep 'request' "$AGW_LOG" | grep -q 'mcp.method.name=tools/list'; then
+         echo "tools/list was logged despite the tools/call filter"; exit 1
+       fi
+       stop_gateway
+
+       cat <<'EOF' > config-toolslist.yaml
+       frontendPolicies:
+         accessLog:
+           filter: 'mcp.methodName == "tools/list"'
+           add:
+             tools: 'mcp.toolsList'
+       mcp:
+         port: 3000
+         targets:
+         - name: everything
+           stdio:
+             cmd: npx
+             args: ["@modelcontextprotocol/server-everything"]
+       EOF
+       agentgateway -f config-toolslist.yaml --validate-only
+       {{< /doc-test >}}

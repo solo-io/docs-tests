@@ -1,0 +1,232 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/api-keys.md
+blocks:
+- bbc0c8c3430c8a96 yaml
+- fa79f88dcd70aee0 sh
+- 6212e39efb2a6664 yaml
+- 1ceb157e680d6839 sh
+- 9f7371489c5f09b9 yaml
+- 3dd2976b39470b5b sh
+- bdad69bd89a9422c json
+tags:
+- paths: llm-api-keys-standalone
+  block: 0
+  fingerprint: bbc0c8c3430c8a96
+  lang: yaml
+  lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd b39172da abc56510
+  preview: cat <<EOF > config.yaml
+  form:
+    attr: paths="llm-api-keys-standalone"
+    only: true
+    lead: ' '
+- paths: llm-api-keys-standalone
+  block: 2
+  fingerprint: 6212e39efb2a6664
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="llm-api-keys-standalone"
+    only: true
+    lead: ' '
+- paths: llm-api-keys-standalone
+  block: 3
+  fingerprint: 1ceb157e680d6839
+  lang: sh
+  lines: 86de869c c96e98a8
+  preview: printf '%s' "<your-api-key>" > openai-key
+  form:
+    attr: paths="llm-api-keys-standalone"
+    only: true
+    lead: ' '
+- paths: llm-api-keys-standalone
+  block: 4
+  fingerprint: 9f7371489c5f09b9
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 146e11c6 71338152 03a5afea ec372ba0 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="llm-api-keys-standalone"
+    only: true
+    lead: ' '
+- paths: llm-api-keys-standalone
+  block: 5
+  fingerprint: 3dd2976b39470b5b
+  lang: sh
+  lines: dc872770 67c5a3ac fcbb4765
+  preview: curl -s http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="llm-api-keys-standalone"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Configure your agentgateway proxy
+    line: ff6c616e26133a37
+    occurrence: 0
+    words: 6b86b273 90d08e58 b9776d7d 56e57ada 1241936d 6201111b e08d706b 4d040d3f 2c70e12b 58296753 b9776d7d 5110c478 c0d2856b 9251036c
+    block_before: null
+  blank_before: []
+  content: |-
+    {{< doc-test paths="llm-api-keys-standalone" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Inline, Environment variable, and File: each documented config passes
+    #     --validate-only, and agentgateway sends exactly the configured key to the
+    #     provider as `Authorization: Bearer <key>`. A local mock provider echoes the
+    #     Authorization header it receives back as the completion text, so the test
+    #     sees the key that left the gateway.
+    #   * File, and the File row of "Rotate a provider key": after the key file is
+    #     replaced, the next requests carry the new key with no restart.
+    #   * "Rotate a provider key" step 3: the documented request succeeds.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That OpenAI accepts the key: the configs are run against the local mock
+    #     (a copy of each config with `baseUrl` added), so no real key is needed.
+    #   * The UI tab: it is a browser flow.
+    #   * Inline and Environment variable rotation: inline reload and an env var
+    #     restart are not exercised, only the file reload.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # A mock OpenAI provider that answers every chat completion with the
+    # Authorization header it received.
+    cat > /tmp/key-echo-llm.py <<'PY'
+    import json
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            length = int(self.headers.get("content-length") or 0)
+            request = json.loads(self.rfile.read(length) or b"{}")
+            message = dict(role="assistant", content=self.headers.get("authorization", ""))
+            response = dict(id="chatcmpl-mock", object="chat.completion", created=0,
+                            model=request.get("model", "mock"),
+                            choices=[dict(index=0, finish_reason="stop", message=message)],
+                            usage=dict(prompt_tokens=1, completion_tokens=1, total_tokens=2))
+            payload = json.dumps(response).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+        def log_message(self, *args):
+            pass
+    HTTPServer(("127.0.0.1", 3092), Handler).serve_forever()
+    PY
+    python3 /tmp/key-echo-llm.py > /tmp/key-echo-llm.log 2>&1 &
+    KEY_ECHO_PID=$!
+    AGW_PID=""
+    trap 'kill $AGW_PID $KEY_ECHO_PID 2>/dev/null || true' EXIT
+    for _ in $(seq 1 20); do curl -s -o /dev/null -m 2 -X POST http://localhost:3092 -d '{}' && break; sleep 1; done
+
+    # Copy config.yaml to config-mock.yaml with the provider pointed at the mock.
+    mock_config() {
+      python3 - <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path("config.yaml").read_text()
+    url = "baseUrl: http://localhost:3092"
+    out, n = re.subn(r"^(\s*)params:\s*$", lambda m: m.group(0) + "\n" + m.group(1) + "  " + url, src, flags=re.M)
+    if not n:
+        out, n = re.subn(r"^(\s*)provider: openAI\s*$",
+                         lambda m: m.group(0) + "\n" + m.group(1) + "params:\n" + m.group(1) + "  " + url, src, flags=re.M)
+    if not n:
+        sys.exit("no openAI provider in config.yaml")
+    pathlib.Path("config-mock.yaml").write_text(out)
+    PY
+    }
+    start_agw() {
+      agentgateway -f config.yaml --validate-only
+      mock_config
+      agentgateway -f config-mock.yaml > /tmp/agw-api-keys.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do curl -s -o /dev/null -m 2 http://localhost:4000/ && return 0; sleep 1; done
+      echo "FAIL: agentgateway did not start"; cat /tmp/agw-api-keys.log; exit 1
+    }
+    stop_agw() {
+      kill $AGW_PID 2>/dev/null || true
+      wait $AGW_PID 2>/dev/null || true
+      AGW_PID=""
+    }
+    # The Authorization header that reached the provider for one request.
+    sent_auth() {
+      curl -s -m 10 http://localhost:4000/v1/chat/completions -H "Content-Type: application/json" \
+        -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello!"}]}' \
+        | python3 -c 'import json,sys; print(json.load(sys.stdin)["choices"][0]["message"]["content"])' 2>/dev/null || true
+    }
+    # Wait up to 15 s for the provider to receive "Bearer <key>".
+    expect_key() {
+      GOT=""
+      for _ in $(seq 1 15); do GOT=$(sent_auth); [ "$GOT" = "Bearer $1" ] && return 0; sleep 1; done
+      echo "FAIL: the provider received '$GOT', expected 'Bearer $1'"; cat /tmp/agw-api-keys.log; exit 1
+    }
+
+    # The Inline step writes config.yaml through an unquoted heredoc, so the shell
+    # expands the `$schema` in its first comment line. Keep that line intact (and
+    # keep `set -u` from failing on it).
+    schema='$schema'  # a literal, not an expansion
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: bbc0c8c3430c8a96
+    lang: yaml
+    lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd b39172da abc56510
+    preview: cat <<EOF > config.yaml
+  content: |2-
+       {{< doc-test paths="llm-api-keys-standalone" >}}
+       start_agw
+       expect_key "sk-proj...."
+       stop_agw
+       echo "inline key reaches the provider"
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: fa79f88dcd70aee0
+    lang: sh
+    lines: fa79f88d
+    preview: export OPENAI_API_KEY=<your-api-key>
+  content: |2-
+       {{< doc-test paths="llm-api-keys-standalone" >}}
+       # The visible export is a placeholder. Keep the CI placeholder key, or a test value.
+       export OPENAI_API_KEY="${OPENAI_API_KEY:-sk-mock-env-key}"
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 6212e39efb2a6664
+    lang: yaml
+    lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+    preview: cat <<'EOF' > config.yaml
+  content: |2-
+       {{< doc-test paths="llm-api-keys-standalone" >}}
+       start_agw
+       expect_key "$OPENAI_API_KEY"
+       stop_agw
+       echo "environment variable key reaches the provider"
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 9f7371489c5f09b9
+    lang: yaml
+    lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 146e11c6 71338152 03a5afea ec372ba0 abc56510
+    preview: cat <<'EOF' > config.yaml
+  content: |2-
+       {{< doc-test paths="llm-api-keys-standalone" >}}
+       start_agw
+       expect_key "<your-api-key>"
+       # "Rotate a provider key", File row: replace the file contents. The next request
+       # uses the new key, without a restart. The gateway keeps running for step 3.
+       printf '%s' "sk-rotated-file-key" > openai-key
+       expect_key "sk-rotated-file-key"
+       echo "a replaced key file is picked up without a restart"
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 3dd2976b39470b5b
+    lang: sh
+    lines: dc872770 67c5a3ac fcbb4765
+    preview: curl -s http://localhost:4000/v1/chat/completions \
+  content: |2-
+       {{< doc-test paths="llm-api-keys-standalone" >}}
+       expect_key "sk-rotated-file-key"
+       stop_agw
+       {{< /doc-test >}}

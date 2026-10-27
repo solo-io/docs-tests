@@ -1,0 +1,111 @@
+format: 1
+source: content/docs/kubernetes/main/documentation/migrate/examples/basic.md
+blocks:
+- 6aa3b27ee0b058f3 bash
+- 84a7f9a5d18e61c1 bash
+- 79a9f21077324e9e bash
+- 756bd7c36ffd9619 yaml
+- 6d9a28ab71a42922 bash
+tags:
+- paths: migrate-basic
+  block: 0
+  fingerprint: 6aa3b27ee0b058f3
+  lang: bash
+  lines: f9775e53 4912a691 f1089fb2 8c8c4228 84559fb5 36184fa5 9620a283 3de9d845 9deb1b8d 1c31dda0 6a61c178 b2bf84ed 3897150c ffe0d779 f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > basic-ingress.yaml
+  form:
+    attr: paths="migrate-basic"
+    only: true
+    lead: ' '
+- paths: migrate-basic
+  block: 1
+  fingerprint: 84a7f9a5d18e61c1
+  lang: bash
+  lines: 84a7f9a5
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=agentgateway --input-f
+  form:
+    attr: paths="migrate-basic"
+    only: true
+    lead: ' '
+- paths: migrate-basic
+  block: 2
+  fingerprint: 79a9f21077324e9e
+  lang: bash
+  lines: 79a9f210
+  preview: cat basic-agentgateway.yaml
+  form:
+    attr: paths="migrate-basic"
+    only: true
+    lead: ' '
+- paths: migrate-basic
+  block: 4
+  fingerprint: 6d9a28ab71a42922
+  lang: bash
+  lines: bb64d3b0 444e8359 3771ff7f
+  preview: kubectl apply -f basic-agentgateway.yaml
+  form:
+    attr: paths="migrate-basic"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 6aa3b27ee0b058f3
+    lang: bash
+    lines: f9775e53 4912a691 f1089fb2 8c8c4228 84559fb5 36184fa5 9620a283 3de9d845 9deb1b8d 1c31dda0 6a61c178 b2bf84ed 3897150c ffe0d779 f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+    preview: cat <<'EOF' > basic-ingress.yaml
+  content: |-
+    {{< doc-test paths="migrate-basic" >}}
+    # Install the ingress2gateway version this guide documents, for this OS and CPU.
+    I2G_VERSION="${I2G_VERSION:-v0.5.0}"
+    i2g_arch=$(uname -m)
+    [ "$i2g_arch" = "aarch64" ] && i2g_arch=arm64
+    # A throwaway dir, so a local run leaves nothing in your home directory.
+    I2G_BIN="${TMPDIR:-/tmp}/doc-test-ingress2gateway-${I2G_VERSION}"
+    mkdir -p "$I2G_BIN"
+    export PATH="$I2G_BIN:$PATH"
+    if ! ingress2gateway version 2>/dev/null | grep -q "${I2G_VERSION#v}"; then
+      curl -fsSL "https://github.com/kgateway-dev/ingress2gateway/releases/download/${I2G_VERSION}/ingress2gateway_$(uname -s)_${i2g_arch}.tar.gz" \
+        | tar -xz -C "$I2G_BIN" ingress2gateway
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 6d9a28ab71a42922
+    lang: bash
+    lines: bb64d3b0 444e8359 3771ff7f
+    preview: kubectl apply -f basic-agentgateway.yaml
+  content: |-
+    {{< doc-test paths="migrate-basic" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the Gateway uses the agentgateway class
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: default
+            name: nginx
+        jsonPath: "$.spec.gatewayClassName"
+        jsonPathExpectation:
+          comparator: equals
+          value: "agentgateway"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: the HTTPRoute attaches to the nginx Gateway
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: demo-localhost-demo-localdev-me
+        jsonPath: "$.spec.parentRefs[0].name"
+        jsonPathExpectation:
+          comparator: equals
+          value: "nginx"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    kubectl delete -f basic-agentgateway.yaml --ignore-not-found
+    {{< /doc-test >}}

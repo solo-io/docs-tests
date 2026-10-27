@@ -1,0 +1,29 @@
+format: 1
+source: content/docs/kubernetes/latest/documentation/llm/guardrails/overview.md
+blocks:
+- 5675158b472524fa mermaid
+- d2849155461c4058 yaml
+- ea3ec12dfabaff68 yaml
+- d8cdd65b82540b38 yaml
+- 72bea51a57c7cec3 yaml
+tags:
+- paths: guardrails-overview
+  block: 2
+  fingerprint: ea3ec12dfabaff68
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 548239e3 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b 14ddcd05 51da151f e86294d1 8096ca96 6eb574a8 e21ce5bf e86294d1 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="guardrails-overview"
+    only: true
+    lead: ' '
+- paths: guardrails-overview
+  block: 4
+  fingerprint: 72bea51a57c7cec3
+  lang: yaml
+  lines: fbc30693 7f57603a 8c8c4228 b309a767 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 7262a56b ba2229b6 99c83b01 51da151f 8096ca96 8693faa9 ceea3490
+  preview: 'apiVersion: {{< reuse "agw-docs/snippets/api-version.md" >}}'
+  form:
+    attr: paths="guardrails-overview"
+    only: true
+    lead: ' '

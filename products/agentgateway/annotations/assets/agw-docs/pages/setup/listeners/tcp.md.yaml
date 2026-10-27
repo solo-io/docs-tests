@@ -1,0 +1,158 @@
+format: 1
+source: assets/agw-docs/pages/setup/listeners/tcp.md
+blocks:
+- f03bceb430d7be14 yaml
+- fa8f66a7c78ef6e8 yaml
+- cd42a2b0908d81af yaml
+- e5c6ccd93bc6564a yaml
+- e15078ad489daf33 sh
+- da271aa649eb4d2b console
+- 1d6513ab88b61b72 yaml
+- fa79451ffc18ab68 yaml
+- 2191de4c191625c4 yaml
+- 5e227e3ac873fe01 sh
+- bd7535ddb71a9fb8 console
+- ac54890b66b99b23 sh
+- 737230021092761d sh
+- 3851ae25901b936a sh
+- 260b59cd9c929c77 sh
+- 2cf24dba5fb0a30e console
+- a47b08e28644bff4 console
+- 8bc0abcc3f449f78 shell
+tags:
+- paths: tcp-listener
+  block: 0
+  fingerprint: f03bceb430d7be14
+  lang: yaml
+  lines: 16c71da1 f1540154 7963e6b7 8c8c4228 fa1e8330 5fbc7904 f75543c5 0ccc8edc 36184fa5 04968f51 7c6d5dab ff42c2c6 f75543c5 d2c48006 cb3f91d5 f1540154 0d6480f0 8c8c4228 fa1e8330 5fbc7904 f75543c5 0ccc8edc 36184fa5 0ff65a1a 82601aaa 3ca9cd2c 9693ecf1 d10e4e47 8432e015 5fbc7904 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tcp-listener"
+    only: true
+    lead: ' '
+- paths: tcp-listener
+  block: 1
+  fingerprint: fa8f66a7c78ef6e8
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7cfd31d9 8af957d1 fa1e8330 5fbc7904 36184fa5 2fae86d3 c10d7538 83feb025 bca8e5f7 9b5e8f6f 5f37c61e d94df5c7 cda3fdb3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tcp-listener"
+    only: true
+    lead: ' '
+- paths: tcp-listener
+  block: 6
+  fingerprint: 1d6513ab88b61b72
+  lang: yaml
+  lines: 16c71da1 979905a0 e47a48f5 8c8c4228 4f02dcc9 0ccc8edc 36184fa5 0e20b496 b5a028c9 53721f39 8af957d1 55708cb7 e6365cc1 0d6480f0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tcp-listener"
+    only: true
+    lead: ' '
+- paths: tcp-listener
+  block: 7
+  fingerprint: fa79451ffc18ab68
+  lang: yaml
+  lines: 16c71da1 23a9133c 53721f39 8c8c4228 3a220dfe 8af957d1 fa1e8330 5fbc7904 36184fa5 d3d416e7 53c0030d 8af957d1 4100bae7 3de9d845 a3b86ab6 b340bc35 0ccc8edc 3ca9cd2c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tcp-listener"
+    only: true
+    lead: ' '
+- paths: tcp-listener
+  block: 11
+  fingerprint: ac54890b66b99b23
+  lang: sh
+  lines: d496dfce 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  form:
+    attr: paths="tcp-listener"
+    only: true
+    lead: ' '
+- paths: tcp-listener
+  block: 17
+  fingerprint: 8bc0abcc3f449f78
+  lang: shell
+  lines: 8bc0abcc
+  preview: kubectl delete -A gateways,tcproutes,pod,svc -l app=tcp-echo
+  form:
+    attr: paths="tcp-listener"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: f03bceb430d7be14
+    lang: yaml
+    lines: 16c71da1 f1540154 7963e6b7 8c8c4228 fa1e8330 5fbc7904 f75543c5 0ccc8edc 36184fa5 04968f51 7c6d5dab ff42c2c6 f75543c5 d2c48006 cb3f91d5 f1540154 0d6480f0 8c8c4228 fa1e8330 5fbc7904 f75543c5 0ccc8edc 36184fa5 0ff65a1a 82601aaa 3ca9cd2c 9693ecf1 d10e4e47 8432e015 5fbc7904 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="tcp-listener" >}}
+       kubectl wait --for=condition=Ready pod/tcp-echo -n default --timeout=180s
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: fa79451ffc18ab68
+    lang: yaml
+    lines: 16c71da1 23a9133c 53721f39 8c8c4228 3a220dfe 8af957d1 fa1e8330 5fbc7904 36184fa5 d3d416e7 53c0030d 8af957d1 4100bae7 3de9d845 a3b86ab6 b340bc35 0ccc8edc 3ca9cd2c abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="tcp-listener" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the tcp-gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: agentgateway-system
+               name: tcp-gateway
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 2
+       - name: wait for the TCPRoute to be accepted
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # The next step reads the LoadBalancer address, so wait until it is assigned.
+       for i in $(seq 1 90); do
+         lb=$(kubectl get svc tcp-gateway -n agentgateway-system -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}" 2>/dev/null || true)
+         [ -n "$lb" ] && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: ac54890b66b99b23
+    lang: sh
+    lines: d496dfce 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  content: |2-
+       {{< doc-test paths="tcp-listener" >}}
+       # The guide's nc session is interactive; send one line and expect it echoed back.
+       out=""
+       for i in $(seq 1 30); do
+         out=$(printf 'hello\n' | nc -w 3 "${INGRESS_GW_ADDRESS}" 8000 2>/dev/null || true)
+         [ "$out" = "hello" ] && break
+         sleep 2
+       done
+       if [ "$out" != "hello" ]; then
+         echo "TCP echo through tcp-gateway:8000 returned '${out}', expected 'hello'"
+         exit 1
+       fi
+       {{< /doc-test >}}

@@ -1,0 +1,128 @@
+format: 1
+source: assets/agw-docs/pages/observability/traces/configs/jaeger.md
+blocks:
+- 082207e4b805de9e sh
+- e80dcca9bed32c34 sh
+- a04e2a43d0bd1eb1 console
+- 4552d03e3e383977 yaml
+- 8e9ee40e36fd0633 sh
+- e6deb289da21eadd sh
+- 099e31a923b288a4 sh
+- fd4deab47750b4d4 sh
+- 5e1e628ab07b213c sh
+tags:
+- paths: jaeger-traces
+  block: 0
+  fingerprint: 082207e4b805de9e
+  lang: sh
+  lines: 8260aaf3 2d95e9b1 1ab5a7f6 7937c26d 2a24ff0e 8ce613ee 2257aa60 bc4043fc
+  preview: helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+  form:
+    attr: paths="jaeger-traces"
+    only: true
+    lead: ' '
+- paths: configs-jaeger,jaeger-traces
+  block: 3
+  fingerprint: 4552d03e3e383977
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 384949ad 10e12544 5a41b93f e9ef40ee 3e371bf8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="configs-jaeger,jaeger-traces"
+    only: true
+    lead: ' '
+- paths: jaeger-traces
+  block: 5
+  fingerprint: e6deb289da21eadd
+  lang: sh
+  lines: 4bcfc75e 036345c8
+  preview: curl -vi -X POST http://$INGRESS_GW_ADDRESS:80/post \
+  form:
+    attr: paths="jaeger-traces"
+    only: true
+    lead: ' '
+- paths: jaeger-traces
+  block: 7
+  fingerprint: fd4deab47750b4d4
+  lang: sh
+  lines: fd4deab4
+  preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} tracing -n {{< reuse '
+  form:
+    attr: paths="jaeger-traces"
+    only: true
+    lead: ' '
+- paths: jaeger-traces
+  block: 8
+  fingerprint: 5e1e628ab07b213c
+  lang: sh
+  lines: 56cd8968 f43f2d53
+  preview: helm uninstall jaeger -n tracing
+  form:
+    attr: paths="jaeger-traces"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 082207e4b805de9e
+    lang: sh
+    lines: 8260aaf3 2d95e9b1 1ab5a7f6 7937c26d 2a24ff0e 8ce613ee 2257aa60 bc4043fc
+    preview: helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+  content: |2-
+       {{< doc-test paths="jaeger-traces" >}}
+       kubectl wait --for=condition=Available deployment --all -n tracing --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 4552d03e3e383977
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 384949ad 10e12544 5a41b93f e9ef40ee 3e371bf8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jaeger-traces" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tracing policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: agentgateway-system
+            name: tracing
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: e6deb289da21eadd
+    lang: sh
+    lines: 4bcfc75e 036345c8
+    preview: curl -vi -X POST http://$INGRESS_GW_ADDRESS:80/post \
+  content: |2-
+       {{< doc-test paths="jaeger-traces" >}}
+       # The guide checks the Jaeger UI by eye. Query the same Jaeger API instead, through
+       # the Kubernetes API server's service proxy (no local port needed), and keep sending
+       # requests until the agentgateway service has reported spans.
+       jaeger_services() {
+         kubectl get --raw "/api/v1/namespaces/tracing/services/jaeger-query:16686/proxy/api/services" 2>/dev/null || true
+       }
+       found=""
+       for i in $(seq 1 40); do
+         curl -s -o /dev/null -X POST "http://${INGRESS_GW_ADDRESS}:80/post" -H "host: www.example.com" || true
+         if jaeger_services | grep -q '"agentgateway'; then
+           found=yes
+           break
+         fi
+         sleep 3
+       done
+       services=$(jaeger_services)
+       if [ -z "$found" ]; then
+         echo "Jaeger has no agentgateway service. Services: ${services}"
+         exit 1
+       fi
+       {{< /doc-test >}}

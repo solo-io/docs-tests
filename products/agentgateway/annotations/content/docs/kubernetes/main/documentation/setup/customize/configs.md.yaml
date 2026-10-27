@@ -1,0 +1,70 @@
+format: 1
+source: content/docs/kubernetes/main/documentation/setup/customize/configs.md
+blocks:
+- 80d7b1c7a58db30e yaml
+tags:
+- paths: customize-configs-2,customize-configs-run
+  block: 0
+  fingerprint: 80d7b1c7a58db30e
+  lang: yaml
+  lines: 6b3c98d2 fbc30693 cdc933a1 8c8c4228 20c44513 8af957d1 36184fa5 8db70061 b5aae968 b49b3d3f 969caf28 83b93fca abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="customize-configs-2,customize-configs-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 80d7b1c7a58db30e
+    lang: yaml
+    lines: 6b3c98d2 fbc30693 cdc933a1 8c8c4228 20c44513 8af957d1 36184fa5 8db70061 b5aae968 b49b3d3f 969caf28 83b93fca abc56510
+    preview: kubectl apply --server-side -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="customize-configs-run" >}}
+    # Attach the parameters to a Gateway so that a proxy starts with the headers.
+    kubectl apply --server-side -f- <<'EOF'
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: Gateway
+    metadata:
+      name: xds-headers
+      namespace: agentgateway-system
+    spec:
+      gatewayClassName: agentgateway
+      infrastructure:
+        parametersRef:
+          group: agentgateway.dev
+          kind: AgentgatewayParameters
+          name: agentgateway-config
+      listeners:
+        - name: http
+          port: 80
+          protocol: HTTP
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: the proxy with XDS_HEADER_* variables starts and becomes available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: agentgateway-system
+            name: xds-headers
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    for pair in XDS_HEADER_X_ISTIO_REVISION=canary XDS_HEADER_X_TENANT=team-a; do
+      name=${pair%%=*}; want=${pair#*=}
+      got=$(kubectl get deployment xds-headers -n agentgateway-system \
+        -o jsonpath="{.spec.template.spec.containers[0].env[?(@.name=='${name}')].value}")
+      if [ "$got" != "$want" ]; then
+        echo "${name} on the xds-headers proxy is '${got}', expected '${want}'"
+        exit 1
+      fi
+    done
+    kubectl delete gateway xds-headers -n agentgateway-system
+    {{< /doc-test >}}

@@ -1,0 +1,132 @@
+format: 1
+source: assets/agw-docs/snippets/gemini-setup.md
+blocks:
+- d77446fa5b858846 bash
+- 4045dadca65b9fa4 yaml
+- bd51de829b9e08eb yaml
+- efd3bcd262c20d87 yaml
+- 250b86ba731de4dd yaml
+- 9f19a7c2c1da953b yaml
+- a4e5d0b99228eb50 sh
+- 98d10fb672098a00 sh
+- 50e5e89b981ca983 sh
+- be87e2382c927d4c sh
+- 856174118cb74ba8 sh
+- a47ce7be9cc4875a sh
+- d2105d920a8777f6 json
+tags:
+- paths: llm-rbac-run
+  block: 1
+  fingerprint: 4045dadca65b9fa4
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 684bf5ae 8af957d1 1426decf 2f7c298d 8dafd736 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="llm-rbac-run"
+    only: true
+    lead: ' '
+- paths: llm-rbac-run
+  block: 2
+  fingerprint: bd51de829b9e08eb
+  lang: yaml
+  lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 32ecf0ce 8af957d1 36184fa5 ad3afdb1 93a4b62b ca5c3b0c 641c6bc8 c8f3f59a 146e11c6 9ebc4789 684bf5ae abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-rbac-run"
+    only: true
+    lead: ' '
+- paths: llm-rbac-run
+  block: 5
+  fingerprint: 9f19a7c2c1da953b
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 32ecf0ce 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 79b10c33 94ae491e f047ee91 8af957d1 22aec9ce 99d7dba1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-rbac-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: (top of page)
+    line: afff08787940e2b4
+    occurrence: 0
+    words: d4735e3a fa8847b0 ca978112 2bb80d53 663ea1bf 20dc65af 663ea1bf bbdefa29
+    block_before:
+      block: 0
+      fingerprint: d77446fa5b858846
+      lang: bash
+      lines: d77446fa
+      preview: export GOOGLE_KEY=<your-api-key>
+  content: |-
+    {{< doc-test paths="llm-rbac-run" >}}
+    # ============================================================================
+    # Doc test coverage for the CEL-based RBAC guide (these comments are not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Set up access to Gemini": the Secret, the Gemini backend, and the custom
+    #     /gemini HTTPRoute apply, and the backend translates in full.
+    #   * "Set up RBAC permissions": the AgentgatewayPolicy is accepted; a request
+    #     without the `x-llm: gemini` header is denied with 403, and the same request
+    #     with the header succeeds with 200.
+    #   * Cleanup runs.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * A live completion from Gemini: the backend is patched to the httpbun mock
+    #     LLM, so no Google API key is needed. The policy decision happens in the
+    #     gateway before any provider call, so the 403 does not depend on the mock.
+    #   * The "Gemini default" and "OpenAI-compatible" route tabs: the RBAC policy
+    #     targets the custom /gemini route.
+    #
+    # The visible export is a placeholder. Use a test value.
+    export GOOGLE_KEY="${GOOGLE_KEY:-mock-google-key}"
+    {{< reuse "agw-docs/snippets/deploy-mock-llm.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 9f19a7c2c1da953b
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 32ecf0ce 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 79b10c33 94ae491e f047ee91 8af957d1 22aec9ce 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-rbac-run" >}}
+       kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} google -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge --patch-file /dev/stdin <<EOF
+       spec:
+         ai:
+           provider:
+             host: httpbun.default.svc.cluster.local
+             port: 3090
+             path: /llm/chat/completions
+       EOF
+       YAMLTest -f - <<'EOF'
+       - name: the google backend is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: google
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       # Accepted=True also covers a partly translated backend (reason PartiallyValid),
+       # which can silently drop its auth policy. The reason tells the two apart.
+       - name: the google backend translated in full, not partly
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: google
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}

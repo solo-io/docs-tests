@@ -1,0 +1,258 @@
+format: 1
+source: assets/agw-docs/standalone/setup/docker.md
+blocks:
+- bf0cb80388ee7692 sh
+- 5a74a38ebd5f7c0d yaml
+- f4da159d9fcd081a sh
+- 70f1c3e96ce7cc0e sh
+- 718e1597675dbcec sh
+- f3c018a8989b57ef
+- f38b43443d2a25ca sh
+- 1c6ea4027de80dbe
+- 1a5546d58c862a6e yaml
+- dc96a322030eadf3 sh
+- 19e98e5bf22f4ee2 sh
+- c141d0868cab3e36
+- 9582816bf2b9b282 sh
+- 4b5962624777bb21 sh
+tags:
+- paths: docker-install
+  block: 0
+  fingerprint: bf0cb80388ee7692
+  lang: sh
+  lines: af5a067d a2395f10 a6ac5528 023baa28 4d4fd1b0 798e742e bc5ceb52
+  preview: mkdir agentgateway-config
+  form:
+    attr: paths="docker-install"
+    only: true
+    lead: ' '
+- paths: docker-install
+  block: 2
+  fingerprint: f4da159d9fcd081a
+  lang: sh
+  lines: 2a7b4933 a7f80a73 2180b199 19bcae4b d8e4815a 943d11d8 0b02fb9c 06267a46 6cda733c 5bd82bc9 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="docker-install"
+    only: true
+    lead: ' '
+- paths: docker-install
+  block: 3
+  fingerprint: 70f1c3e96ce7cc0e
+  lang: sh
+  lines: 1159639e a2395f10 a6ac5528 023baa28 1d3f8f4b e2ebca0b 798e742e 542bf2ee 5edc8b60
+  preview: mkdir -p data
+  form:
+    attr: paths="docker-install"
+    only: true
+    lead: ' '
+- paths: docker-install
+  block: 4
+  fingerprint: 718e1597675dbcec
+  lang: sh
+  lines: 718e1597
+  preview: docker ps --filter name=agentgateway
+  form:
+    attr: paths="docker-install"
+    only: true
+    lead: ' '
+- paths: docker-install
+  block: 6
+  fingerprint: f38b43443d2a25ca
+  lang: sh
+  lines: f38b4344
+  preview: docker logs agentgateway
+  form:
+    attr: paths="docker-install"
+    only: true
+    lead: ' '
+- paths: docker-install
+  block: 9
+  fingerprint: dc96a322030eadf3
+  lang: sh
+  lines: af5a067d 331e4dcc
+  preview: mkdir agentgateway-config
+  form:
+    attr: paths="docker-install"
+    only: true
+    lead: ' '
+- paths: docker-install
+  block: 10
+  fingerprint: 19e98e5bf22f4ee2
+  lang: sh
+  lines: 19e98e5b
+  preview: docker compose ps
+  form:
+    attr: paths="docker-install"
+    only: true
+    lead: ' '
+- paths: docker-install
+  block: 12
+  fingerprint: 9582816bf2b9b282
+  lang: sh
+  lines: 9582816b
+  preview: docker rm -f agentgateway
+  form:
+    attr: paths="docker-install"
+    only: true
+    lead: ' '
+- paths: docker-install
+  block: 13
+  fingerprint: 4b5962624777bb21
+  lang: sh
+  lines: 4b596262
+  preview: docker compose down
+  form:
+    attr: paths="docker-install"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: bf0cb80388ee7692
+    lang: sh
+    lines: af5a067d a2395f10 a6ac5528 023baa28 4d4fd1b0 798e742e bc5ceb52
+    preview: mkdir agentgateway-config
+  content: |-
+    {{< doc-test paths="docker-install" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Mount a directory": the container starts as the current user, generates
+    #     config.yaml in the mounted directory with the documented content (SQLite
+    #     database under /config, `default` gateway on 4000, UI on that gateway), and
+    #     serves the UI at http://localhost:4000/ui.
+    #   * "Mount a configuration file": the documented config.yaml and docker run start a
+    #     container that loads /config.yaml and serves the UI on port 4000.
+    #   * "Verify that the container runs" / "Find the UI address": `docker ps` lists the
+    #     container, and the logs report the loaded file and the UI address.
+    #   * "Run with Docker Compose": the documented compose.yaml starts the service and
+    #     serves the UI on port 4000; `docker compose ps` lists it as running.
+    #   * Cleanup: `docker rm -f agentgateway` and `docker compose down`.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Opening the UI in a browser - checked as an HTTP 200 from /ui instead.
+    #   * The compose file's literal `user: "1000:1000"` - the page says to replace it
+    #     with your own IDs; the test substitutes `id -u`/`id -g` so the container can
+    #     write the mounted directory on any runner.
+    # ============================================================================
+    trap 'docker rm -f agentgateway >/dev/null 2>&1 || true; docker compose -f compose.yaml down >/dev/null 2>&1 || true' EXIT
+
+    wait_ui() {
+      for _ in $(seq 1 60); do
+        [ "$(curl -s -o /dev/null -w '%{http_code}' -m 3 http://localhost:4000/ui/ 2>/dev/null || true)" = "200" ] && return 0
+        sleep 2
+      done
+      echo "UI at http://localhost:4000/ui did not return 200"; docker logs agentgateway 2>&1 | tail -30 || true; return 1
+    }
+    wait_ui
+
+    # The generated file matches the page: SQLite under /config, `default` gateway on 4000,
+    # and the UI attached to that gateway.
+    test -f agentgateway-config/config.yaml
+    python3 - <<'PY'
+    import yaml
+    c = yaml.safe_load(open("agentgateway-config/config.yaml"))
+    assert c["config"]["database"]["url"] == "sqlite:///config/data.db", c
+    assert c["gateways"]["default"]["port"] == 4000, c
+    assert c["ui"]["gateways"] == "default", c
+    PY
+    {{< /doc-test >}}
+- after:
+    section: Start the container
+    line: 292edfd79b2f66cb
+    occurrence: 0
+    words: 6ca7ea2f b9776d7d b7d64a92 d4536f25 6ebd0a2e 663ea1bf 157dca92 d3ef7de5 d0b4ba23 10c22bcf 3549b002 41ffd8b7 aa9e9b5c 3549b002 fa42bed0 a0af9f86 caf9f906 8fb6d5f3 3549b002 823a4e0e
+    block_before:
+      block: 2
+      fingerprint: f4da159d9fcd081a
+      lang: sh
+      lines: 2a7b4933 a7f80a73 2180b199 19bcae4b d8e4815a 943d11d8 0b02fb9c 06267a46 6cda733c 5bd82bc9 abc56510
+      preview: cat <<'EOF' > config.yaml
+  content: |2-
+       {{< doc-test paths="docker-install" >}}
+       # Free the container name and port before the "Mount a configuration file" tab.
+       docker rm -f agentgateway >/dev/null 2>&1 || true
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 70f1c3e96ce7cc0e
+    lang: sh
+    lines: 1159639e a2395f10 a6ac5528 023baa28 1d3f8f4b e2ebca0b 798e742e 542bf2ee 5edc8b60
+    preview: mkdir -p data
+  content: |2-
+       {{< doc-test paths="docker-install" >}}
+       wait_ui
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 718e1597675dbcec
+    lang: sh
+    lines: 718e1597
+    preview: docker ps --filter name=agentgateway
+  content: |-
+    {{< doc-test paths="docker-install" >}}
+    running=$(docker ps --filter name=agentgateway --filter status=running --format '{{.Names}}')
+    [ "$running" = "agentgateway" ]
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: f38b43443d2a25ca
+    lang: sh
+    lines: f38b4344
+    preview: docker logs agentgateway
+  content: |-
+    {{< doc-test paths="docker-install" >}}
+    # The logs name the loaded file and the UI address, as the example output shows.
+    # (Logs go to a file first: `docker logs | grep -q` can fail under pipefail.)
+    for _ in $(seq 1 10); do
+      docker logs agentgateway > /tmp/doc-test-agw-docker.log 2>&1 || true
+      grep -q 'serving UI at http://localhost:4000/ui' /tmp/doc-test-agw-docker.log && break
+      sleep 1
+    done
+    grep -q 'loaded config from File("/config.yaml")' /tmp/doc-test-agw-docker.log
+    grep -q 'serving UI at http://localhost:4000/ui' /tmp/doc-test-agw-docker.log
+
+    # Remove the container from the tabs above so that the Compose service can use the
+    # same name, port, and a fresh agentgateway-config directory (`mkdir` without -p).
+    docker rm -f agentgateway >/dev/null 2>&1 || true
+    rm -rf agentgateway-config data
+
+    # "Create the Compose file": the page's compose.yaml, with your own user and group IDs
+    # in place of the literal 1000:1000, as the page instructs.
+    cat > compose.yaml <<EOF
+    services:
+      agentgateway:
+        container_name: agentgateway
+        restart: unless-stopped
+        image: {{< reuse "agw-docs/standalone/image-ref.md" >}}:{{< reuse "agw-docs/versions/image-tag.md" >}}
+        user: "$(id -u):$(id -g)"
+        ports:
+          - "4000:4000"
+        volumes:
+          - ./agentgateway-config:/config
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: dc96a322030eadf3
+    lang: sh
+    lines: af5a067d 331e4dcc
+    preview: mkdir agentgateway-config
+  content: |-
+    {{< doc-test paths="docker-install" >}}
+    wait_ui
+    test -f agentgateway-config/config.yaml
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 19e98e5bf22f4ee2
+    lang: sh
+    lines: 19e98e5b
+    preview: docker compose ps
+  content: |-
+    {{< doc-test paths="docker-install" >}}
+    services=$(docker compose ps --status running --services)
+    [ "$services" = "agentgateway" ]
+    {{< /doc-test >}}

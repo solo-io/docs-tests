@@ -45,9 +45,7 @@ prerequisites:
 # manifest form of front matter `test: skip`; they count as covered.
 skip:
 - page: documentation/traffic-management/_index.md
-- page: documentation/traffic-management/buffer.md
 - page: documentation/traffic-management/header-control/_index.md
-- page: documentation/traffic-management/load-balancing.md
 - page: documentation/traffic-management/match/_index.md
 - page: documentation/traffic-management/redirect/_index.md
 - page: documentation/traffic-management/rewrite/_index.md
@@ -57,21 +55,14 @@ skip:
 - page: documentation/traffic-management/transformations/_index.md
 - page: documentation/traffic-management/transformations/templating-language.md
 - page: documentation/llm/_index.md
-- page: documentation/llm/about.md
 - page: documentation/llm/api-types/_index.md
 - page: documentation/llm/cost-controls/_index.md
-- page: documentation/llm/cost-controls/attribution.md
-- page: documentation/llm/cost-controls/dashboard.md
 - page: documentation/llm/guardrails/_index.md
 - page: documentation/llm/guardrails/webhook/_index.md
 - page: documentation/llm/inference/benchmarking.md
-- page: documentation/llm/inference/inference-routing.md
-- page: documentation/llm/inference/multiple-inference-pools.md
 - page: documentation/llm/models/_index.md
-- page: documentation/llm/models/about.md
 - page: documentation/llm/providers.md
 - page: documentation/security/_index.md
-- page: documentation/security/backend-authn/_index.md
 - page: documentation/security/backend-authn/providers/_index.md
 - page: documentation/security/backend-authn/token-exchange/_index.md
 - page: documentation/security/extauth/_index.md
@@ -92,7 +83,6 @@ skip:
 - page: documentation/resiliency/timeouts/about.md
 - page: documentation/resiliency/timeouts/per-try-timeout.md
 - page: documentation/observability/_index.md
-- page: documentation/observability/metrics/dataplane.md
 - page: documentation/observability/metrics/overview.md
 - page: documentation/observability/traces/attribute-reference.md
 - page: documentation/operations/_index.md
@@ -104,7 +94,6 @@ skip:
 - page: documentation/about/gateway-api.md
 - page: documentation/about/overview.md
 - page: documentation/about/policies/_index.md
-- page: documentation/about/policies/conditional-policies.md
 - page: documentation/about/policies/filter-order.md
 - page: documentation/about/policies/overview.md
 - page: documentation/about/policies/target-merge.md
@@ -134,11 +123,7 @@ skip:
 - page: integrations/llm/clients/_index.md
 - page: integrations/llm/clients/microsoft-intune.md
 - page: integrations/llm/observability/_index.md
-- page: integrations/llm/observability/arize.md
-- page: integrations/llm/observability/axiom.md
-- page: integrations/llm/observability/datadog.md
 - page: integrations/llm/providers/_index.md
-- page: integrations/llm/providers/custom.md
 - page: integrations/llm/routing/_index.md
 - page: integrations/mcp/_index.md
 - page: integrations/mcp/clients/claude-code.md
@@ -163,6 +148,20 @@ skip:
 - page: documentation/_index.md
 - page: not-in-version.md
 - dir: release-notes/
+- page: documentation/llm/guardrails/webhook/openapi-spec.md
+- page: documentation/llm/inference/_index.md
+- page: documentation/observability/access-logs/_index.md
+- page: documentation/observability/metrics/_index.md
+- page: documentation/observability/traces/_index.md
+- page: documentation/observability/traces/configs/_index.md
+- page: documentation/security/access-logging.md
+- page: documentation/security/backend-authn/token-exchange/idps/_index.md
+- page: documentation/security/jwt/mcp.md
+- page: integrations/agent-runtimes/_index.md
+- page: integrations/llm/providers/copilot.md
+- page: integrations/llm/routing/vllm-semantic-router.md
+- page: integrations/netbird.md
+- page: reference/api-kubespec/_index.md
 scenarios:
   access-logs:
     type:
@@ -198,6 +197,46 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/header-control/response-header.md
     path: add-response-header
+  agent-agentcore-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/agent/agentcore.md
+    path: agent-agentcore
+  agent-runtimes-kagent-schema:
+    type: schema
+    source: agw-docs/pages/integrations/kagent.md
+    path: agent-runtimes-kagent
+  api-types-decisions:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/api-types/decisions.md
+    path: api-types-decisions-run
+  api-types-decisions-schema:
+    type: schema
+    page: documentation/llm/api-types/decisions.md
+    path: api-types-decisions
+  apikey-auth:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/apikey-auth.md
+    path: apikey-auth
+  arize-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/arize.md
+    path: arize
+  axiom-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/axiom.md
+    path: axiom
+  backend-authn-config-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-config-k8s.md
+    path: backend-authn-config
   basic:
     needs:
     - install-experimental
@@ -207,6 +246,10 @@ scenarios:
       path: route-delegation-prereq
     source: agw-docs/pages/traffic-management/route-delegation/basic.md
     path: basic
+  buffer-schema:
+    type: schema
+    page: documentation/traffic-management/buffer.md
+    path: buffer
   buffering:
     type:
     - schema
@@ -228,6 +271,76 @@ scenarios:
     type: schema
     source: agw-docs/pages/traffic-management/transformations/status.md
     path: change-response-status
+  clients-claude-desktop-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/claude-desktop.md
+    path: clients-claude-desktop
+  conditional-policies-schema:
+    type: schema
+    source: agw-docs/pages/conditional-policies.md
+    path: conditional-policies
+  configs-grafana-cloud-schema:
+    type: schema
+    source: agw-docs/pages/observability/traces/configs/grafana-cloud.md
+    path: configs-grafana-cloud
+  configs-honeycomb-schema:
+    type: schema
+    source: agw-docs/pages/observability/traces/configs/honeycomb.md
+    path: configs-honeycomb
+  configs-jaeger-schema:
+    type: schema
+    source: agw-docs/pages/observability/traces/configs/jaeger.md
+    path: configs-jaeger
+  configs-otel-schema:
+    type: schema
+    source: agw-docs/pages/observability/traces/configs/otel.md
+    path: configs-otel
+  cost-attribution-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/cost-controls/attribution.md
+    path: cost-attribution
+  cost-dashboard-schema:
+    type: schema
+    page: documentation/llm/cost-controls/dashboard.md
+    path: cost-dashboard
+  cost-tracking:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/cost-tracking.md
+    path: cost-tracking
+  custom-provider-schema:
+    type: schema
+    page: integrations/llm/providers/custom.md
+    path: custom-provider
+  customize-callout-proxy-schema:
+    type: schema
+    page: documentation/setup/customize/callout-proxy.md
+    path: customize-callout-proxy
+  customize-configs:
+    needs:
+    - install-standard
+    page: documentation/setup/customize/configs.md
+    path: customize-configs-run
+  customize-configs-2-schema:
+    type: schema
+    page: documentation/setup/customize/configs.md
+    path: customize-configs-2
+  customize-configs-schema:
+    type: schema
+    source: agw-docs/pages/setup/customize-examples.md
+    path: customize-configs
+  datadog-traces-schema:
+    type: schema
+    source: agw-docs/pages/observability/traces/configs/datadog.md
+    path: datadog-traces
+  dataplane-metrics-schema:
+    type: schema
+    source: agw-docs/pages/observability/metrics/dataplane.md
+    path: dataplane-metrics
   decode:
     type: functional
     needs:
@@ -272,6 +385,42 @@ scenarios:
     type: schema
     source: agw-docs/pages/traffic-management/transformations/encode.md
     path: encode
+  examples-backend-tls-schema:
+    type: schema
+    page: documentation/migrate/examples/backend-tls.md
+    path: examples-backend-tls
+  examples-cors-schema:
+    type: schema
+    page: documentation/migrate/examples/cors.md
+    path: examples-cors
+  examples-external-auth-schema:
+    type: schema
+    page: documentation/migrate/examples/external-auth.md
+    path: examples-external-auth
+  examples-rate-limiting-schema:
+    type: schema
+    page: documentation/migrate/examples/rate-limiting.md
+    path: examples-rate-limiting
+  extauth-basic:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/security/basic-auth.md
+    path: extauth-basic-run
+  extauth-byo-ext-auth-service:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/security/byo-extauth.md
+    path: extauth-byo-ext-auth-service-run
+  extauth-byo-ext-auth-service-schema:
+    type: schema
+    source: agw-docs/pages/security/byo-extauth.md
+    path: extauth-byo-ext-auth-service
   extproc:
     type:
     - schema
@@ -307,6 +456,62 @@ scenarios:
     - install-standard
     source: agw-docs/pages/traffic-management/grpc.md
     path: grpc
+  guardrails-bedrock-guardrails-schema:
+    type: schema
+    page: documentation/llm/guardrails/bedrock-guardrails.md
+    path: guardrails-bedrock-guardrails
+  guardrails-cel:
+    needs:
+    - install-experimental
+    - gateway
+    page: documentation/mcp/guardrails/cel.md
+    path: guardrails-cel-run
+  guardrails-cel-schema:
+    type: schema
+    page: documentation/mcp/guardrails/cel.md
+    path: guardrails-cel
+  guardrails-google-model-armor-schema:
+    type: schema
+    page: documentation/llm/guardrails/google-model-armor.md
+    path: guardrails-google-model-armor
+  guardrails-moderation:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/guardrails/moderation.md
+    path: guardrails-moderation-inline
+  guardrails-moderation-schema:
+    type: schema
+    page: documentation/llm/guardrails/moderation.md
+    path: guardrails-moderation
+  guardrails-multi-layer-schema:
+    type: schema
+    page: documentation/llm/guardrails/multi-layer.md
+    path: guardrails-multi-layer
+  guardrails-overview-schema:
+    type: schema
+    page: documentation/llm/guardrails/overview.md
+    path: guardrails-overview
+  guardrails-processors-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/mcp/mcp-guardrails-processors.md
+    path: guardrails-processors
+  guardrails-regex:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/prompt-guards.md
+    path: guardrails-regex-run
+  guardrails-regex-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/prompt-guards.md
+    path: guardrails-regex
   header-match-exact:
     needs:
     - install-experimental
@@ -359,6 +564,14 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/redirect/https.md
     path: https-redirect
+  idps-google-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-te-google.md
+    path: idps-google
+  inference-routing-schema:
+    type: schema
+    page: documentation/llm/inference/inference-routing.md
+    path: inference-routing
   inject-body-field-into-body:
     type:
     - schema
@@ -389,6 +602,22 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/transformations/inject-response-headers.md
     path: inject-response-headers
+  istio-ambient-egress-schema:
+    type: schema
+    source: agw-docs/pages/integrations/istio/ambient/ambient-egress.md
+    path: istio-ambient-egress
+  istio-ambient-ingress:
+    needs:
+    - install-standard
+    source: agw-docs/pages/integrations/istio/ambient/ambient-ingress.md
+    path: istio-ambient-ingress
+  jaeger-traces:
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    source: agw-docs/pages/observability/traces/configs/jaeger.md
+    path: jaeger-traces
   label:
     needs:
     - install-experimental
@@ -398,6 +627,51 @@ scenarios:
       path: route-delegation-prereq
     source: agw-docs/pages/traffic-management/route-delegation/label.md
     path: label
+  listener-mtls:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    source: agw-docs/pages/setup/listeners/listener-mtls.md
+    path: listener-mtls
+  llm-alias:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/alias.md
+    path: llm-alias
+  llm-api-keys:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/api-keys.md
+    path: llm-api-keys-run
+  llm-api-keys-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/api-keys.md
+    path: llm-api-keys
+  llm-functions:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/functions.md
+    path: llm-functions
+  llm-model-exposure-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/model-exposure-patterns.md
+    path: llm-model-exposure
   llm-model-headers:
     type:
     - schema
@@ -410,6 +684,33 @@ scenarios:
       path: openai-setup
     page: documentation/traffic-management/transformations/llm-model-headers.md
     path: llm-model-headers
+  llm-prompt-enrichment-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/prompt-enrichment.md
+    path: llm-prompt-enrichment
+  llm-prompt-templates:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/prompt-templates.md
+    path: llm-prompt-templates-run
+  llm-prompt-templates-schema:
+    type: schema
+    page: documentation/llm/prompt-templates.md
+    path: llm-prompt-templates
+  llm-rbac:
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/rbac.md
+    path: llm-rbac-run
+  llm-rbac-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/rbac.md
+    path: llm-rbac
   llm-transformations:
     type:
     - schema
@@ -422,11 +723,31 @@ scenarios:
       path: openai-setup
     page: documentation/traffic-management/transformations/llm-model-headers.md
     path: llm-transformations
+  load-balancing-schema:
+    type: schema
+    source: agw-docs/pages/traffic-management/load-balancing.md
+    path: load-balancing
   locality-aware-routing:
     needs:
     - install-experimental
     source: agw-docs/pages/traffic-management/locality-aware-routing.md
     path: locality-aware-routing
+  mcp-https-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/mcp/https.md
+    path: mcp-https
+  mcp-mcp-access-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/mcp/mcp-access.md
+    path: mcp-mcp-access
+  mcp-session-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/mcp/session.md
+    path: mcp-session
+  mcp-tool-access-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/mcp/tool-access.md
+    path: mcp-tool-access
   method-match:
     needs:
     - install-experimental
@@ -434,6 +755,45 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/match/method.md
     path: method-match
+  migrate-backend-tls:
+    needs:
+    - install-experimental
+    page: documentation/migrate/examples/backend-tls.md
+    path: migrate-backend-tls
+  migrate-basic:
+    needs:
+    - install-experimental
+    page: documentation/migrate/examples/basic.md
+    path: migrate-basic
+  migrate-canary:
+    needs:
+    - install-experimental
+    page: documentation/migrate/examples/canary.md
+    path: migrate-canary
+  migrate-cors:
+    needs:
+    - install-experimental
+    page: documentation/migrate/examples/cors.md
+    path: migrate-cors
+  migrate-external-auth:
+    needs:
+    - install-experimental
+    page: documentation/migrate/examples/external-auth.md
+    path: migrate-external-auth
+  migrate-rate-limiting:
+    needs:
+    - install-experimental
+    page: documentation/migrate/examples/rate-limiting.md
+    path: migrate-rate-limiting
+  migrate-ssl-redirect:
+    needs:
+    - install-experimental
+    page: documentation/migrate/examples/ssl-redirect.md
+    path: migrate-ssl-redirect
+  models-about-schema:
+    type: schema
+    page: documentation/llm/models/about.md
+    path: models-about
   multi-level:
     needs:
     - install-experimental
@@ -443,6 +803,10 @@ scenarios:
       path: route-delegation-prereq
     source: agw-docs/pages/traffic-management/route-delegation/multi-level-delegation.md
     path: multi-level
+  multiple-inference-pools-schema:
+    type: schema
+    page: documentation/llm/inference/multiple-inference-pools.md
+    path: multiple-inference-pools
   native-policies:
     needs:
     - install-experimental
@@ -452,6 +816,14 @@ scenarios:
       path: route-delegation-prereq
     source: agw-docs/pages/traffic-management/route-delegation/inheritance/native-policies.md
     path: native-policies
+  observability-braintrust-schema:
+    type: schema
+    page: integrations/llm/observability/braintrust.md
+    path: observability-braintrust
+  operations-debug-schema:
+    type: schema
+    page: documentation/operations/debug.md
+    path: operations-debug
   path-match-exact:
     needs:
     - install-experimental
@@ -513,6 +885,63 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/rewrite/path.md
     path: path-rewrite-prefix
+  providers-anthropic-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/providers/anthropic.md
+    path: providers-anthropic
+  providers-audio-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/providers/audio.md
+    path: providers-audio
+  providers-aws-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-aws.md
+    path: providers-aws
+  providers-azure-2-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/providers/azure.md
+    path: providers-azure-2
+  providers-azure-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-azure.md
+    path: providers-azure
+  providers-backend-tunnel-proxy-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/providers/backend-tunnel-proxy.md
+    path: providers-backend-tunnel-proxy
+  providers-bedrock-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/providers/bedrock.md
+    path: providers-bedrock
+  providers-copilot-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-copilot.md
+    path: providers-copilot
+  providers-gcp-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-gcp.md
+    path: providers-gcp
+  providers-multiple-endpoints:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/llm/providers/multiple-endpoints.md
+    path: providers-multiple-endpoints-run
+  providers-multiple-endpoints-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/providers/multiple-endpoints.md
+    path: providers-multiple-endpoints
+  providers-typesafe-schema:
+    type: schema
+    page: integrations/llm/providers/typesafe.md
+    path: providers-typesafe
+  providers-vertex-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/llm/providers/vertex.md
+    path: providers-vertex
   query:
     type:
     - schema
@@ -530,6 +959,16 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/match/query.md
     path: query-match
+  quickstart-llm:
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/quickstart/llm-models.md
+    path: quickstart-llm-run
+  quickstart-llm-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/quickstart/llm-models.md
+    path: quickstart-llm
   remove-header:
     type:
     - schema
@@ -576,6 +1015,14 @@ scenarios:
     type: schema
     source: agw-docs/pages/traffic-management/transformations/rewrite.md
     path: rewrite
+  routing-kserve-schema:
+    type: schema
+    source: agw-docs/pages/integrations/kserve.md
+    path: routing-kserve
+  security-apikey-schema:
+    type: schema
+    source: agw-docs/pages/security/apikey-auth.md
+    path: security-apikey
   set-request-header:
     needs:
     - install-experimental
@@ -590,6 +1037,11 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/header-control/response-header.md
     path: set-response-header
+  tcp-listener:
+    needs:
+    - install-experimental
+    source: agw-docs/pages/setup/listeners/tcp.md
+    path: tcp-listener
   tracing:
     type:
     - schema
@@ -673,6 +1125,9 @@ scenarios:
     page: documentation/llm/cost-controls/costs.md
     path: costs
   failover:
+    type:
+    - schema
+    - functional
     needs:
     - helm-standard
     - gateway
@@ -682,12 +1137,18 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/failover.md
     path: failover
   gemini-inbound:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
     source: agw-docs/pages/agentgateway/llm/api-types/gemini.md
     path: gemini-inbound
   llm-final-transformations:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -777,6 +1238,9 @@ scenarios:
     page: documentation/llm/models/serve.md
     path: serve-model
   shared-connection-settings:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -846,6 +1310,9 @@ scenarios:
     source: agw-docs/pages/security/authorization.md
     path: backend-authorization
   backend-authn-key:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -862,6 +1329,9 @@ scenarios:
     source: agw-docs/pages/security/backendtls.md
     path: backendtls-secret-ca
   claim-level-rate-limit:
+    type:
+    - schema
+    - functional
     needs:
     - helm-standard
     - gateway
@@ -949,6 +1419,9 @@ scenarios:
     page: documentation/security/rate-limit-http.md
     path: local-rate-limit
   te-jwt-bearer:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -956,6 +1429,9 @@ scenarios:
     source: agw-docs/pages/security/backend-authn-te-jwt-bearer.md
     path: te-jwt-bearer
   te-mcp:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -963,6 +1439,9 @@ scenarios:
     source: agw-docs/pages/security/backend-authn-te-mcp.md
     path: te-mcp
   te-standard:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1015,6 +1494,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/mcp/rate-limit.md
     path: mcp-local-rate-limit
   setup-auth0:
+    type:
+    - schema
+    - functional
     needs:
     - helm-experimental
     - gateway
@@ -1024,6 +1506,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/mcp/mcp-auth-auth0.md
     path: setup-auth0
   setup-authentik:
+    type:
+    - schema
+    - functional
     needs:
     - helm-experimental
     - gateway
@@ -1033,6 +1518,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/mcp/mcp-auth-authentik.md
     path: setup-authentik
   setup-descope:
+    type:
+    - schema
+    - functional
     needs:
     - helm-experimental
     - gateway
@@ -1068,6 +1556,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/mcp/static.md
     path: setup-mcp-server
   setup-okta:
+    type:
+    - schema
+    - functional
     needs:
     - helm-experimental
     - gateway
@@ -1097,6 +1588,9 @@ scenarios:
     source: agw-docs/pages/resiliency/backend-health.md
     path: backend-health
   backend-timeouts:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1253,6 +1747,9 @@ scenarios:
     path: timeout-in-trafficpolicy
   # --- observability (documentation/observability/) ---
   access-log-otlp:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1346,6 +1843,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/claude-code.md
     path: claude-code-k8s
   crewai-k8s:
+    type:
+    - schema
+    - functional
     needs:
     - helm-standard
     - gateway
@@ -1370,6 +1870,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/providers/ollama.md
     path: ollama-provider-setup
   openai-compatible-validate:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     source: agw-docs/pages/agentgateway/llm/providers/openai-compatible.md
@@ -1472,3 +1975,24 @@ scenarios:
     - install-standard
     - gateway
     - httpbin
+
+  web-uis-chatbot-ui-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/integrations/web-uis-k8s/chatbot-ui.md
+    path: web-uis-chatbot-ui
+  web-uis-goose-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/integrations/web-uis-k8s/goose.md
+    path: web-uis-goose
+  web-uis-librechat-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/integrations/web-uis-k8s/librechat.md
+    path: web-uis-librechat
+  web-uis-open-webui-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/integrations/web-uis-k8s/open-webui.md
+    path: web-uis-open-webui
+  webhook-guardrails-schema:
+    type: schema
+    source: agw-docs/pages/agentgateway/guardrails.md
+    path: webhook-guardrails

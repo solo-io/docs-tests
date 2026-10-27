@@ -1,0 +1,97 @@
+format: 1
+source: content/docs/kubernetes/latest/documentation/migrate/examples/ssl-redirect.md
+blocks:
+- c54a5d254d0924ab bash
+- 3419371ce891ed81 bash
+- 2c2d0910ad93674b bash
+- d4b867216373b783 yaml
+- b5c92c9d5c3949d4 bash
+tags:
+- paths: migrate-ssl-redirect
+  block: 0
+  fingerprint: c54a5d254d0924ab
+  lang: bash
+  lines: 6b4b37a7 4912a691 f1089fb2 8c8c4228 79b808e6 72ab0e66 651b7c23 36184fa5 9620a283 3195c5f5 a7bcd62e 870d4c12 d41c9350 3de9d845 a8622e8a 1c31dda0 6a61c178 b2bf84ed 3897150c f40ce49b f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > ssl-redirect-ingress.yaml
+  form:
+    attr: paths="migrate-ssl-redirect"
+    only: true
+    lead: ' '
+- paths: migrate-ssl-redirect
+  block: 1
+  fingerprint: 3419371ce891ed81
+  lang: bash
+  lines: 9a48758b 278f38ef
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=agentgateway \
+  form:
+    attr: paths="migrate-ssl-redirect"
+    only: true
+    lead: ' '
+- paths: migrate-ssl-redirect
+  block: 2
+  fingerprint: 2c2d0910ad93674b
+  lang: bash
+  lines: 2c2d0910
+  preview: cat ssl-redirect-agentgateway.yaml
+  form:
+    attr: paths="migrate-ssl-redirect"
+    only: true
+    lead: ' '
+- paths: migrate-ssl-redirect
+  block: 4
+  fingerprint: b5c92c9d5c3949d4
+  lang: bash
+  lines: b5c92c9d
+  preview: kubectl apply -f ssl-redirect-agentgateway.yaml
+  form:
+    attr: paths="migrate-ssl-redirect"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: c54a5d254d0924ab
+    lang: bash
+    lines: 6b4b37a7 4912a691 f1089fb2 8c8c4228 79b808e6 72ab0e66 651b7c23 36184fa5 9620a283 3195c5f5 a7bcd62e 870d4c12 d41c9350 3de9d845 a8622e8a 1c31dda0 6a61c178 b2bf84ed 3897150c f40ce49b f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+    preview: cat <<'EOF' > ssl-redirect-ingress.yaml
+  content: |-
+    {{< doc-test paths="migrate-ssl-redirect" >}}
+    # Install the ingress2gateway version this guide documents, for this OS and CPU.
+    I2G_VERSION="${I2G_VERSION:-v0.5.0}"
+    i2g_arch=$(uname -m)
+    [ "$i2g_arch" = "aarch64" ] && i2g_arch=arm64
+    # A throwaway dir, so a local run leaves nothing in your home directory.
+    I2G_BIN="${TMPDIR:-/tmp}/doc-test-ingress2gateway-${I2G_VERSION}"
+    mkdir -p "$I2G_BIN"
+    export PATH="$I2G_BIN:$PATH"
+    if ! ingress2gateway version 2>/dev/null | grep -q "${I2G_VERSION#v}"; then
+      curl -fsSL "https://github.com/kgateway-dev/ingress2gateway/releases/download/${I2G_VERSION}/ingress2gateway_$(uname -s)_${i2g_arch}.tar.gz" \
+        | tar -xz -C "$I2G_BIN" ingress2gateway
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: b5c92c9d5c3949d4
+    lang: bash
+    lines: b5c92c9d
+    preview: kubectl apply -f ssl-redirect-agentgateway.yaml
+  content: |-
+    {{< doc-test paths="migrate-ssl-redirect" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the HTTP route redirects with 308
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: ssl-redirect-demo-secure-example-com-http
+        jsonPath: "$.spec.rules[0].filters[0].requestRedirect.statusCode"
+        jsonPathExpectation:
+          comparator: equals
+          value: 308
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    kubectl delete -f ssl-redirect-agentgateway.yaml --ignore-not-found
+    {{< /doc-test >}}

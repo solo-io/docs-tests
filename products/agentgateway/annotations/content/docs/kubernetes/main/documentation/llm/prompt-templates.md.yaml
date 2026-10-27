@@ -1,0 +1,135 @@
+format: 1
+source: content/docs/kubernetes/main/documentation/llm/prompt-templates.md
+blocks:
+- b535acef61d9c3bb yaml
+- 2244c7e60de18ce6 sh
+- 38ac2c62455798fb sh
+- 011c7bf136c25b85 yaml
+- ebae16459d9a80ed sh
+- fce9ff35f218be4b sh
+- a6299913c49c5da9 yaml
+- 959b8146aec06960 yaml
+- 3aeaa70692ec514c yaml
+- ee4df9c6ddee83d3 yaml
+- a59057a15a894753 sh
+tags:
+- paths: llm-prompt-templates,llm-prompt-templates-run
+  block: 0
+  fingerprint: b535acef61d9c3bb
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 99650df0 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 0f9cde8d d03aa869 fb9e8236 091b7bd5 cf3aff5e fb9e8236 fcdfb026 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-prompt-templates,llm-prompt-templates-run"
+    only: true
+    lead: ' '
+- paths: llm-prompt-templates,llm-prompt-templates-run
+  block: 3
+  fingerprint: 011c7bf136c25b85
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 3459d0c7 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 8905bcef 14ddcd05 94ecc337 31a54ba2 021fb596 af24be86 4512310d b02cd0ca d10b36aa 79d96cb7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="llm-prompt-templates,llm-prompt-templates-run"
+    only: true
+    lead: ' '
+- paths: llm-prompt-templates-run
+  block: 10
+  fingerprint: a59057a15a894753
+  lang: sh
+  lines: a59057a1
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} static-prompt-templat
+  form:
+    attr: paths="llm-prompt-templates-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: b535acef61d9c3bb
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 99650df0 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d bb85cefe ad3afdb1 0f9cde8d d03aa869 fb9e8236 091b7bd5 cf3aff5e fb9e8236 fcdfb026 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-prompt-templates-run" >}}
+       # The httpbun mock counts the prompt it receives in usage.prompt_tokens. The user
+       # message alone is under 10 tokens; with the prepended and appended system
+       # messages it is well over 20, which shows the template reached the provider.
+       YAMLTest -f - <<'EOF'
+       - name: wait for the static-prompt-template policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: static-prompt-template
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: the static template adds system messages to the prompt
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "How do I return a product?"}]}
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.usage.prompt_tokens"
+               comparator: greaterThan
+               value: 20
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 011c7bf136c25b85
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 3459d0c7 8af957d1 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 8905bcef 14ddcd05 94ecc337 31a54ba2 021fb596 af24be86 4512310d b02cd0ca d10b36aa 79d96cb7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-prompt-templates-run" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the dynamic-prompt-template policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: dynamic-prompt-template
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # The transformation puts the x-user-id header into a system message, so a longer
+       # user ID must produce a larger prompt at the provider.
+       prompt_tokens() {
+         curl -s -w '\n%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/openai" -H content-type:application/json -H "x-user-id: $1" \
+           -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "What are my recent orders?"}]}' > /tmp/doc-test-prompt.out || true
+         python3 -c 'import json,sys; print(json.loads(open("/tmp/doc-test-prompt.out").read().rsplit("\n",1)[0])["usage"]["prompt_tokens"])' 2>/dev/null
+       }
+       short=""; long=""
+       for i in $(seq 1 10); do
+         short=$(prompt_tokens alice || true)
+         long=$(prompt_tokens "alice from the returns team in the north region office" || true)
+         [ -n "$short" ] && [ -n "$long" ] && [ "$long" -gt "$short" ] && break
+         sleep 2
+       done
+       if ! { [ -n "$short" ] && [ -n "$long" ] && [ "$long" -gt "$short" ]; }; then
+         echo "x-user-id was not injected into the prompt: prompt_tokens short=${short} long=${long}"
+         echo "last response (body, then HTTP status):"; cat /tmp/doc-test-prompt.out || true
+         exit 1
+       fi
+       {{< /doc-test >}}

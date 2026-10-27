@@ -122,22 +122,124 @@ skip:
 - page: documentation/_index.md
 - page: not-in-version.md
 - dir: release-notes/
+- page: documentation/about/architecture.md
+- page: documentation/about/introduction.md
+- page: documentation/configuration/policies/_index.md
+- page: documentation/configuration/security/backend-authn/token-exchange/idps/_index.md
+- page: documentation/faqs.md
+- page: integrations/llm/routing/vllm-semantic-router.md
+- page: integrations/mcp/clients/antigravity.md
+- page: integrations/mcp/clients/claude.md
+- page: integrations/mcp/clients/cursor.md
+- page: integrations/mcp/clients/devin.md
+- page: integrations/mcp/clients/opencode.md
+- page: integrations/mcp/clients/vscode.md
+- page: integrations/netbird.md
+- page: integrations/llm/clients/continue.md
+- page: integrations/llm/clients/cursor.md
 scenarios:
+  a2a:
+    page: documentation/agent/a2a.md
+    path: a2a
+  api-types-decisions:
+    page: documentation/llm/api-types/decisions.md
+    path: api-types-decisions-run
+  binary-install:
+    source: agw-docs/standalone/setup/binary.md
+    path: binary-install
   buffer:
     page: documentation/configuration/traffic-management/buffer.md
     path: buffer
+  cel-playground:
+    page: reference/cel/playground.md
+    path: cel-playground
+  cel-variables:
+    page: reference/cel/variables.md
+    path: cel-variables
+  cel-yaml-examples:
+    page: reference/cel/yaml-and-examples.md
+    path: cel-yaml-examples
+  config-overview:
+    page: documentation/configuration/overview.md
+    path: config-overview
+  copilot-validate:
+    source: agw-docs/pages/agentgateway/integrations/llm-clients/github-copilot.md
+    path: copilot-validate
   direct-response:
     page: documentation/configuration/traffic-management/direct-response.md
     path: direct-response
+  docker-install:
+    source: agw-docs/standalone/setup/docker.md
+    path: docker-install
+  egress-proxy:
+    page: documentation/configuration/egress-proxy.md
+    path: egress-proxy
   extproc:
     page: documentation/configuration/traffic-management/extproc.md
     path: extproc
+  fault-injection:
+    page: documentation/configuration/resiliency/fault-injection.md
+    path: fault-injection
+  goose:
+    page: integrations/web-uis/goose.md
+    path: goose
+  guardrail-webhooks:
+    page: documentation/llm/prompt-guards/webhooks.md
+    path: guardrail-webhooks
+  guardrails-overview:
+    page: documentation/llm/prompt-guards/overview.md
+    path: guardrails-overview
+  llm-api-keys:
+    page: documentation/llm/api-keys.md
+    path: llm-api-keys-standalone
+  llm-client-curl:
+    source: agw-docs/pages/agentgateway/integrations/llm-clients/curl.md
+    path: llm-client-curl
+  llm-client-openai-sdk:
+    source: agw-docs/pages/agentgateway/integrations/llm-clients/openai-sdk.md
+    path: llm-client-openai-sdk
+  llm-client-opencode:
+    source: agw-docs/pages/agentgateway/integrations/llm-clients/opencode.md
+    path: llm-client-opencode
+  llm-configuration-modes:
+    page: documentation/llm/configuration-modes.md
+    path: llm-configuration-modes
+  llm-observability:
+    page: documentation/llm/observability.md
+    path: llm-observability
+  llm-policies:
+    page: documentation/configuration/traffic-management/llm.md
+    path: llm-policies
   manipulation:
     page: documentation/configuration/traffic-management/manipulation.md
     path: manipulation
   matching:
     page: documentation/configuration/traffic-management/matching.md
     path: matching
+  mcp-guardrails-cel:
+    page: documentation/mcp/guardrails/cel.md
+    path: mcp-guardrails-cel
+  mcp-observability:
+    page: documentation/mcp/mcp-observability.md
+    path: mcp-observability
+  mcp-openapi:
+    page: integrations/mcp/servers/openapi.md
+    path: mcp-openapi
+  multi-layer-guardrails:
+    page: documentation/llm/prompt-guards/multi-layer.md
+    path: multi-layer-guardrails
+  otel-collector:
+    page: documentation/observability/traces/configs/otel.md
+    path: otel-collector
+  otlp-log-export:
+    page: documentation/observability/access-logs/export.md
+    path: otlp-log-export
+  prometheus-standalone:
+    page: documentation/observability/metrics/prometheus.md
+    path: prometheus-standalone
+  prompt-guards-moderation:
+    page: documentation/llm/prompt-guards/moderation.md
+    path: prompt-guards-moderation-inline
   redirects:
     page: documentation/configuration/traffic-management/redirects.md
     path: redirects
@@ -147,6 +249,12 @@ scenarios:
   route-delegation:
     page: documentation/configuration/traffic-management/route-delegation.md
     path: route-delegation
+  schema-validation:
+    page: reference/configuration/validation.md
+    path: schema-validation
+  static-config:
+    page: documentation/configuration/static-configuration.md
+    path: static-config
   transformations:
     page: documentation/configuration/traffic-management/transformations.md
     path: transformations

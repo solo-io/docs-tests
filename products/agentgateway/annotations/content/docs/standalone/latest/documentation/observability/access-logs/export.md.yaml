@@ -1,0 +1,298 @@
+format: 1
+source: content/docs/standalone/latest/documentation/observability/access-logs/export.md
+blocks:
+- 6ad1bfd3d70d1d97 sh
+- 1147fcece7470665 sh
+- c16fbe4319756203 yaml
+- eb39572f6c8e44d5 sh
+- f497d9e89bf86e5c sh
+- 6b0984a689c30b6a sh
+- a01117a03e92f399 yaml
+- fa7346d3048726ae sh
+- 20734918c312ca8b sh
+- d017511b7006c1bc yaml
+- daa4701573db5b87 sh
+- d9109b5f8a172635 sh
+- fcdc32307e01c22b yaml
+- 0f40a303a8a33eab yaml
+- 553bbb8677aa8107 yaml
+- 237e12b8276cf9f2 yaml
+tags:
+- paths: otlp-log-export
+  block: 0
+  fingerprint: 6ad1bfd3d70d1d97
+  lang: sh
+  lines: 1fb4def6 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 3e81ada3 b7685c3f 23e4c81d fbb64f63 ada604fb 3897150c 1738e439 eb330b86 6f411f1c bd3874e4 91ef1ed6 abc56510
+  preview: cat > otel-collector-config.yaml << 'EOF'
+  form:
+    attr: paths="otlp-log-export"
+    only: true
+    lead: ' '
+- paths: otlp-log-export
+  block: 1
+  fingerprint: 1147fcece7470665
+  lang: sh
+  lines: 15dba691 51836f33 16135787 9a5f2d4c
+  preview: docker run -d --name otel-collector \
+  form:
+    attr: paths="otlp-log-export"
+    only: true
+    lead: ' '
+- paths: otlp-log-export
+  block: 3
+  fingerprint: eb39572f6c8e44d5
+  lang: sh
+  lines: eb39572f
+  preview: docker logs otel-collector
+  form:
+    attr: paths="otlp-log-export"
+    only: true
+    lead: ' '
+- paths: otlp-log-export
+  block: 4
+  fingerprint: f497d9e89bf86e5c
+  lang: sh
+  lines: f497d9e8
+  preview: docker rm -f otel-collector
+  form:
+    attr: paths="otlp-log-export"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="otlp-log-export" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Binary and Docker installations" steps 1-2: the documented collector config
+    #     and docker run start an OTel Collector with a logs pipeline.
+    #   * Step 3 (Config file tab) and step 4: with `frontendPolicies.accessLog.otlp`,
+    #     each proxied request reaches the collector as a `LogRecord` in the
+    #     `agentgateway.access` scope, with `gateway`, `http.request.method`, `url.path`,
+    #     and `http.response.status_code` attributes.
+    #   * "Filter logs before export": `otlp.filter: 'response.code >= 400'` exports the
+    #     404 request and not the 200 request.
+    #   * "Customize exported fields": the `trace_id` field from `x-trace-id` is added and
+    #     `server.address` is removed from the exported record.
+    #   * The two top-level `filter` examples are accepted by agentgateway.
+    #   * Step 5: `docker rm -f otel-collector` cleanup.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The UI tabs - UI-only.
+    #   * The "Helm installations" section - needs a cluster; this is a standalone test.
+    #   * That the top-level filter also limits stdout and the database - not asserted.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 1147fcece7470665
+    lang: sh
+    lines: 15dba691 51836f33 16135787 9a5f2d4c
+    preview: docker run -d --name otel-collector \
+  content: |2-
+       {{< doc-test paths="otlp-log-export" >}}
+       # Test-only backend: echo each request as JSON (method, path, headers). Repeated
+       # headers are kept as lists so the test can see exactly what agentgateway forwarded.
+       cat > doc-test-echo.py <<'PY'
+       import json, sys
+       from http.server import BaseHTTPRequestHandler, HTTPServer
+       class H(BaseHTTPRequestHandler):
+           def _reply(self):
+               headers = {}
+               for k in self.headers.keys():
+                   headers[k.lower()] = self.headers.get_all(k)
+               status = 404 if self.path.startswith("/missing") else 200
+               body = json.dumps({"method": self.command, "path": self.path, "headers": headers}).encode()
+               self.send_response(status)
+               self.send_header("content-type", "application/json")
+               self.send_header("content-length", str(len(body)))
+               self.end_headers()
+               self.wfile.write(body)
+           do_GET = do_POST = do_PUT = do_DELETE = _reply
+           def log_message(self, *a):
+               pass
+       HTTPServer(("127.0.0.1", int(sys.argv[1])), H).serve_forever()
+       PY
+       start_echo() {
+         python3 doc-test-echo.py "$1" > "/tmp/doc-test-echo-$1.log" 2>&1 &
+         ECHO_PIDS="${ECHO_PIDS:-} $!"
+         for _ in $(seq 1 20); do curl -sf -o /dev/null "http://localhost:$1/" && return 0; sleep 0.5; done
+         echo "echo backend on port $1 did not start"; return 1
+       }
+
+       # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+       # would be set in a subshell and the gateway would never be stopped.
+       start_gateway() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+         AGW_PID=$!
+       }
+       stop_gateway() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+       wait_http() {
+         for _ in $(seq 1 "${2:-30}"); do
+           code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+           [ -n "$code" ] && [ "$code" != "000" ] && return 0
+           sleep 1
+         done
+         echo "$1 did not answer"; return 1
+       }
+       trap 'stop_gateway; kill ${ECHO_PIDS:-} 2>/dev/null || true; docker rm -f otel-collector >/dev/null 2>&1 || true' EXIT
+       start_echo 8080
+
+       # collector_since TIMESTAMP: the collector output since TIMESTAMP, in a file.
+       collector_since() {
+         docker logs --since "$1" otel-collector > /tmp/doc-test-otel-logs.log 2>&1 || true
+       }
+       # wait_for_record TIMESTAMP PATTERN: send nothing, just wait until PATTERN shows up.
+       wait_for_record() {
+         for _ in $(seq 1 30); do
+           collector_since "$1"
+           grep -q -- "$2" /tmp/doc-test-otel-logs.log && return 0
+           sleep 2
+         done
+         echo "collector never logged '$2'"; tail -60 /tmp/doc-test-otel-logs.log; return 1
+       }
+
+       # Step 3 (Config file tab), on a gateway with one route so there is traffic to log.
+       cat > config.yaml <<'EOF'
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       frontendPolicies:
+         accessLog:
+           otlp:
+             host: localhost:4317
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - host: localhost:8080
+       EOF
+       agentgateway -f config.yaml --validate-only
+       start_gateway config.yaml
+       wait_http http://localhost:3000/ 30
+       T0=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+       curl -s -o /dev/null http://localhost:3000/export-check
+       wait_for_record "$T0" '/export-check'
+       for want in 'LogRecord #' 'agentgateway.access' 'gateway' 'http.request.method' 'url.path' 'http.response.status_code'; do
+         grep -q -- "$want" /tmp/doc-test-otel-logs.log || { echo "collector output has no '$want'"; exit 1; }
+       done
+       stop_gateway
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: eb39572f6c8e44d5
+    lang: sh
+    lines: eb39572f
+    preview: docker logs otel-collector
+  content: |2-
+       {{< doc-test paths="otlp-log-export" >}}
+       # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+       # would be set in a subshell and the gateway would never be stopped.
+       start_gateway() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+         AGW_PID=$!
+       }
+       stop_gateway() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+       wait_http() {
+         for _ in $(seq 1 "${2:-30}"); do
+           code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+           [ -n "$code" ] && [ "$code" != "000" ] && return 0
+           sleep 1
+         done
+         echo "$1 did not answer"; return 1
+       }
+       # "Filter logs before export": only error responses go to the collector.
+       cat > config-filter.yaml <<'EOF'
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       frontendPolicies:
+         accessLog:
+           otlp:
+             host: localhost:4317
+             filter: 'response.code >= 400'
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - host: localhost:8080
+       EOF
+       start_gateway config-filter.yaml
+       wait_http http://localhost:3000/ 30
+       sleep 3
+       T1=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+       curl -s -o /dev/null http://localhost:3000/filter-ok
+       curl -s -o /dev/null http://localhost:3000/missing-filter
+       wait_for_record "$T1" '/missing-filter'
+       sleep 3
+       collector_since "$T1"
+       if grep -q -- '/filter-ok' /tmp/doc-test-otel-logs.log; then
+         echo "a 200 response was exported despite otlp.filter"; exit 1
+       fi
+       stop_gateway
+
+       # The two top-level `filter` examples.
+       cat > config-filter-top.yaml <<'EOF'
+       frontendPolicies:
+         accessLog:
+           filter: 'response.code >= 400'
+           otlp:
+             host: localhost:4317
+       EOF
+       agentgateway -f config-filter-top.yaml --validate-only
+       cat > config-filter-override.yaml <<'EOF'
+       frontendPolicies:
+         accessLog:
+           filter: 'response.code >= 400'
+           otlp:
+             host: localhost:4317
+             filter: 'true'
+       EOF
+       agentgateway -f config-filter-override.yaml --validate-only
+
+       # "Customize exported fields": add trace_id from a header, remove server.address.
+       cat > config-fields.yaml <<'EOF'
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       frontendPolicies:
+         accessLog:
+           otlp:
+             host: localhost:4317
+             fields:
+               add:
+                 trace_id: 'request.headers["x-trace-id"]'
+               remove:
+                 - server.address
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - host: localhost:8080
+       EOF
+       start_gateway config-fields.yaml
+       wait_http http://localhost:3000/ 30
+       sleep 3
+       T2=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+       curl -s -o /dev/null -H 'x-trace-id: doc-test-trace-123' http://localhost:3000/fields-check
+       wait_for_record "$T2" '/fields-check'
+       grep -q 'trace_id' /tmp/doc-test-otel-logs.log
+       grep -q 'doc-test-trace-123' /tmp/doc-test-otel-logs.log
+       if grep -q 'server.address' /tmp/doc-test-otel-logs.log; then
+         echo "server.address was not removed from the exported record"; exit 1
+       fi
+       stop_gateway
+       {{< /doc-test >}}

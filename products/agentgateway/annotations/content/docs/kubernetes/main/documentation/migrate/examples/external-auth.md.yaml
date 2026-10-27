@@ -1,0 +1,97 @@
+format: 1
+source: content/docs/kubernetes/main/documentation/migrate/examples/external-auth.md
+blocks:
+- 4cb48a9e6a4d0c57 bash
+- c0dcd8f4129e4bf6 bash
+- ce6cc94b5aa6a0cd bash
+- 3ede764c97aef137 yaml
+- f5cd959c53ba62fc bash
+tags:
+- paths: migrate-external-auth
+  block: 0
+  fingerprint: 4cb48a9e6a4d0c57
+  lang: bash
+  lines: 14f11ea1 4912a691 f1089fb2 8c8c4228 0baa2076 0ccc8edc 72ab0e66 aa6538db d1d83b08 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c a5cb33ee f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > external-auth-ingress.yaml
+  form:
+    attr: paths="migrate-external-auth"
+    only: true
+    lead: ' '
+- paths: migrate-external-auth
+  block: 1
+  fingerprint: c0dcd8f4129e4bf6
+  lang: bash
+  lines: 9a48758b 91ceb66b
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=agentgateway \
+  form:
+    attr: paths="migrate-external-auth"
+    only: true
+    lead: ' '
+- paths: migrate-external-auth
+  block: 2
+  fingerprint: ce6cc94b5aa6a0cd
+  lang: bash
+  lines: ce6cc94b
+  preview: cat external-auth-agentgateway.yaml
+  form:
+    attr: paths="migrate-external-auth"
+    only: true
+    lead: ' '
+- paths: migrate-external-auth
+  block: 4
+  fingerprint: f5cd959c53ba62fc
+  lang: bash
+  lines: f5cd959c
+  preview: kubectl apply -f external-auth-agentgateway.yaml
+  form:
+    attr: paths="migrate-external-auth"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 4cb48a9e6a4d0c57
+    lang: bash
+    lines: 14f11ea1 4912a691 f1089fb2 8c8c4228 0baa2076 0ccc8edc 72ab0e66 aa6538db d1d83b08 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c a5cb33ee f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+    preview: cat <<'EOF' > external-auth-ingress.yaml
+  content: |-
+    {{< doc-test paths="migrate-external-auth" >}}
+    # Install the ingress2gateway version this guide documents, for this OS and CPU.
+    I2G_VERSION="${I2G_VERSION:-v0.5.0}"
+    i2g_arch=$(uname -m)
+    [ "$i2g_arch" = "aarch64" ] && i2g_arch=arm64
+    # A throwaway dir, so a local run leaves nothing in your home directory.
+    I2G_BIN="${TMPDIR:-/tmp}/doc-test-ingress2gateway-${I2G_VERSION}"
+    mkdir -p "$I2G_BIN"
+    export PATH="$I2G_BIN:$PATH"
+    if ! ingress2gateway version 2>/dev/null | grep -q "${I2G_VERSION#v}"; then
+      curl -fsSL "https://github.com/kgateway-dev/ingress2gateway/releases/download/${I2G_VERSION}/ingress2gateway_$(uname -s)_${i2g_arch}.tar.gz" \
+        | tar -xz -C "$I2G_BIN" ingress2gateway
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: f5cd959c53ba62fc
+    lang: bash
+    lines: f5cd959c
+    preview: kubectl apply -f external-auth-agentgateway.yaml
+  content: |-
+    {{< doc-test paths="migrate-external-auth" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the ext auth policy points at auth-service
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: ext-auth-demo
+        jsonPath: "$.spec.traffic.extAuth.backendRef.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: "auth-service"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    kubectl delete -f external-auth-agentgateway.yaml --ignore-not-found
+    {{< /doc-test >}}

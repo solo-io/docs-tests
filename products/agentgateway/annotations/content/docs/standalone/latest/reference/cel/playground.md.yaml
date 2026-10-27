@@ -1,0 +1,110 @@
+format: 1
+source: content/docs/standalone/latest/reference/cel/playground.md
+blocks:
+- f6931a7b2e59dbc5 sh
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="cel-playground" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Step 1-2: with agentgateway running, the CEL playground page is served at
+    #     http://localhost:15000/ui/cel/.
+    #   * Step 5, through the API the playground calls rather than the UI: an expression
+    #     is evaluated and its result returned.
+    #   * "Custom functions loaded from your configuration are available": a function
+    #     defined in `config.customFunctions` evaluates in the playground.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The Expression / Request Context YAML / Evaluate UI interaction and the Result
+    #     card - UI-only; the test posts the same request the page sends.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="cel-playground" >}}
+       # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+       # would be set in a subshell and the gateway would never be stopped.
+       start_gateway() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+         AGW_PID=$!
+       }
+       stop_gateway() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+       wait_http() {
+         for _ in $(seq 1 "${2:-30}"); do
+           code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+           [ -n "$code" ] && [ "$code" != "000" ] && return 0
+           sleep 1
+         done
+         echo "$1 did not answer"; return 1
+       }
+
+       # The CEL playground page posts to the admin API's CEL endpoint; call it directly.
+       # cel_eval EXPRESSION [DATA_JSON]: print the JSON response {result, error}.
+       cel_eval() {
+         python3 - "$1" "${2:-null}" <<'PY'
+       import json, sys, urllib.request
+       body = {"expression": sys.argv[1]}
+       data = json.loads(sys.argv[2])
+       if data is not None:
+           body["data"] = data
+       for path in ("/api/cel", "/cel"):
+           req = urllib.request.Request("http://localhost:15000" + path, json.dumps(body).encode(),
+                                        {"content-type": "application/json"})
+           try:
+               print(urllib.request.urlopen(req, timeout=10).read().decode())
+               break
+           except urllib.error.HTTPError as e:
+               if e.code == 404 and path == "/api/cel":
+                   continue
+               print(e.read().decode())
+               break
+       PY
+       }
+       # cel_expect EXPRESSION EXPECTED_JSON: the expression evaluates to EXPECTED_JSON.
+       cel_expect() {
+         out=$(cel_eval "$1")
+         echo "$out" | jq -e --argjson want "$2" '.result == $want' >/dev/null \
+           || { echo "CEL '$1': expected $2, got $out"; return 1; }
+       }
+
+       cat <<'EOF' > config.yaml
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       config:
+         customFunctions: |
+           this.hasTenantPrefix(tenant) {
+             this.startsWith("/tenants/" + tenant + "/")
+           }
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - policies:
+           directResponse:
+             body: "ok"
+             status: 200
+       EOF
+       trap 'stop_gateway' EXIT
+       start_gateway config.yaml
+       wait_http http://localhost:15000/ui/ 30
+       [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:15000/ui/cel/)" = "200" ]
+       cel_expect '1 + 1' 2
+       cel_expect '"agentgateway".startsWith("agent")' true
+       cel_expect '"/tenants/acme/orders".hasTenantPrefix("acme")' true
+       stop_gateway
+       {{< /doc-test >}}

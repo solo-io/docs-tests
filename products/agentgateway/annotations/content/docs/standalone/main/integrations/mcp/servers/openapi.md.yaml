@@ -1,0 +1,306 @@
+format: 1
+source: content/docs/standalone/main/integrations/mcp/servers/openapi.md
+blocks:
+- 460189219744c9e2 json
+- 7f165883bfcf425c sh
+- 8069368c48ef5d43 sh
+- 88120a84da619ad0 sh
+- 43ffa22b5db00397 sh
+- 05dbdb2064278b61 sh
+- 724cb00dd0e6631c sh
+- bd924c5a78947b1c sh
+- 2a9be9d48ba04efe sh
+- 1f6de6ed0df0968f sh
+- c803bc6d053cfe79 sh
+- f1aca748dd9ef042 yaml
+- f6931a7b2e59dbc5 sh
+- b4c997338c63b42d json
+- 21162d5dd59e0f43 json
+- fad81fa25feda5a4 json
+- 6d903c43b5f0259d json
+- d4e8d899645ab3be json
+- 5754012cd69d3821 json
+- f83867e2a258ab33 json
+- a6cafbf8c24c34f5 json
+- 069ae198cdb60210 json
+- 1887ca9386c00f62 json
+- f3e90b0a8171c970 console
+- ca8054b6c7a9bfc1 yaml
+- f3d743856bee8bd7 yaml
+- 866997deab4c799a yaml
+- 6bbe21e7dda9de35 yaml
+tags:
+- paths: mcp-openapi
+  block: 1
+  fingerprint: 7f165883bfcf425c
+  lang: sh
+  lines: 7f165883
+  preview: docker pull swaggerapi/petstore3:unstable
+  form:
+    attr: paths="mcp-openapi"
+    only: true
+    lead: ' '
+- paths: mcp-openapi
+  block: 2
+  fingerprint: 8069368c48ef5d43
+  lang: sh
+  lines: 8069368c
+  preview: docker run  --name swaggerapi-petstore3 -d -p 8080:8080 swaggerapi/petstore3:uns
+  form:
+    attr: paths="mcp-openapi"
+    only: true
+    lead: ' '
+- paths: mcp-openapi
+  block: 7
+  fingerprint: bd924c5a78947b1c
+  lang: sh
+  lines: bd924c5a
+  preview: curl http://localhost:8080/api/v3/openapi.json > openapi.json
+  form:
+    attr: paths="mcp-openapi"
+    only: true
+    lead: ' '
+- paths: mcp-openapi
+  block: 9
+  fingerprint: 1f6de6ed0df0968f
+  lang: sh
+  lines: 1f6de6ed
+  preview: curl -L https://agentgateway.dev/examples/mcp-openapi/config.yaml -o config.yaml
+  form:
+    attr: paths="mcp-openapi"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="mcp-openapi" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Sample Petstore server" (AMD64 tab): the image pulls and the server runs on 8080.
+    #   * "Configure the agentgateway": the OpenAPI schema downloads; the published
+    #     mcp-openapi example config downloads and is accepted; the page's local-file
+    #     config (`schema.file: openapi.json`) runs.
+    #   * "Verify access to the Petstore APIs", through the MCP API rather than the UI
+    #     playground: tools/list returns one tool per operation named after its
+    #     `operationId` (`getPetById`, `findPetsByStatus`, `addPet`), and calling
+    #     `getInventory` returns the inventory as structured content with `isError: false`.
+    #   * "Tool response content": a JSON object response arrives in `structuredContent`
+    #     and as a `text` block with the serialized JSON.
+    #   * "Schema URL", "Inline schema", and "Stateless sessions": each config runs and
+    #     lists the expected tools (the inline schema lists only `getPetById`).
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The UI tabs and the playground (Apply CORS, Initialize, Call tool) - UI-only.
+    #   * The ARM64 tab - builds the image from source with Maven; CI runs on AMD64.
+    #   * "Override the schema server path" - its example points at example.com, which
+    #     serves no OpenAPI schema.
+    #   * The other rows of the response-content table and the path parameter rules -
+    #     the Petstore server does not return those response types on demand.
+    # ============================================================================
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 8069368c48ef5d43
+    lang: sh
+    lines: 8069368c
+    preview: docker run  --name swaggerapi-petstore3 -d -p 8080:8080 swaggerapi/petstore3:uns
+  content: |2-
+       {{< doc-test paths="mcp-openapi" >}}
+       trap 'docker rm -f swaggerapi-petstore3 >/dev/null 2>&1 || true' EXIT
+       for _ in $(seq 1 60); do
+         curl -sf -o /dev/null http://localhost:8080/api/v3/openapi.json && break
+         sleep 2
+       done
+       curl -sf -o /dev/null http://localhost:8080/api/v3/openapi.json
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: f1aca748dd9ef042
+    lang: yaml
+    lines: a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 ead663af 9d7e2b17 fd12af70 9d7e2b17 3035507a a7ec89ea 2a783db0 4f369ea9 7e743532 de164bdf
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |2-
+       {{< doc-test paths="mcp-openapi" >}}
+       # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+       # would be set in a subshell and the gateway would never be stopped.
+       start_gateway() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+         AGW_PID=$!
+       }
+       stop_gateway() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+       wait_http() {
+         for _ in $(seq 1 "${2:-30}"); do
+           code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+           [ -n "$code" ] && [ "$code" != "000" ] && return 0
+           sleep 1
+         done
+         echo "$1 did not answer"; return 1
+       }
+
+       # Minimal MCP client over streamable HTTP. Responses can be server-sent events, so
+       # `data:` lines are unwrapped before parsing.
+       MCP_URL="${MCP_URL:-http://localhost:3000/mcp}"
+       mcp_init() {
+         MCP_SID=$(curl -sS -D - -o /dev/null --max-time 15 -X POST "$MCP_URL" \
+           -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+           -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"doctest","version":"1.0"}},"id":1}' \
+           | grep -i '^mcp-session-id:' | tr -d '\r' | awk '{print $2}' || true)
+         if [ -n "$MCP_SID" ]; then
+           curl -sS --max-time 10 -o /dev/null -X POST "$MCP_URL" \
+             -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+             -H "Mcp-Session-Id: $MCP_SID" -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' || true
+         fi
+       }
+       # mcp_call METHOD PARAMS_JSON: print the JSON-RPC response body.
+       mcp_call() {
+         curl -sS --max-time 30 -X POST "$MCP_URL" \
+           -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+           ${MCP_SID:+-H "Mcp-Session-Id: $MCP_SID"} \
+           -d "{\"jsonrpc\":\"2.0\",\"method\":\"$1\",\"params\":$2,\"id\":2}" \
+           | sed -n 's/^data: //p; /^{/p' | head -1
+       }
+       # mcp_tools: wait for the MCP targets to come up and print the tool names. It is
+       # usually called as $(mcp_tools), a subshell: call mcp_init afterwards to get a
+       # session in the calling shell.
+       mcp_tools() {
+         local names=""
+         for _ in $(seq 1 30); do
+           mcp_init
+           names=$(mcp_call tools/list '{}' 2>/dev/null | jq -r '[.result.tools[].name] | join(" ")' 2>/dev/null || true)
+           [ -n "$names" ] && break
+           sleep 2
+         done
+         echo "$names"
+       }
+       trap 'stop_gateway; docker rm -f swaggerapi-petstore3 >/dev/null 2>&1 || true' EXIT
+       jq -e '.paths | length > 0' openapi.json >/dev/null
+
+       # The downloaded example config is accepted as published.
+       agentgateway -f config.yaml --validate-only
+
+       # Step 2: update config.yaml to the page's local-file config, then step 3: run it.
+       cat > config.yaml <<'EOF'
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       mcp:
+         port: 3000
+         policies:
+           cors:
+             allowOrigins:
+               - "*"
+             allowHeaders:
+               - "*"
+         targets:
+         - name: openapi
+           openapi:
+             schema:
+               file: openapi.json
+             host: localhost:8080
+       EOF
+       start_gateway config.yaml
+       tools=$(mcp_tools)
+       mcp_init   # mcp_tools ran in a subshell; open the session in this shell
+       for t in getPetById findPetsByStatus addPet getInventory; do
+         case " $tools " in *" $t "*) ;; *) echo "tool $t not listed: $tools"; exit 1 ;; esac
+       done
+       mcp_call tools/call '{"name":"getInventory","arguments":{}}' > /tmp/doc-test-inventory.json
+       jq -e '.result.isError == false
+              and (.result.structuredContent | type == "object")
+              and (.result.content[0].type == "text")
+              and ((.result.content[0].text | fromjson) == .result.structuredContent)' /tmp/doc-test-inventory.json >/dev/null \
+         || { echo "unexpected getInventory result"; cat /tmp/doc-test-inventory.json; exit 1; }
+       stop_gateway
+
+       # "Schema URL"
+       cat > config-url.yaml <<'EOF'
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       mcp:
+         port: 3000
+         policies:
+           cors:
+             allowOrigins:
+               - "*"
+             allowHeaders:
+               - "*"
+         targets:
+         - name: openapi
+           openapi:
+             schema:
+               url: http://localhost:8080/api/v3/openapi.json
+             host: localhost:8080
+       EOF
+       start_gateway config-url.yaml
+       tools=$(mcp_tools)
+       case " $tools " in *" getPetById "*) ;; *) echo "schema URL config: getPetById not listed: $tools"; exit 1 ;; esac
+       stop_gateway
+
+       # "Inline schema": only the one inline operation becomes a tool.
+       cat > config-inline.yaml <<'EOF'
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       mcp:
+         port: 3000
+         policies:
+           cors:
+             allowOrigins:
+               - "*"
+             allowHeaders:
+               - "*"
+         targets:
+         - name: openapi
+           openapi:
+             schema: |
+               {
+                 "openapi": "3.0.0",
+                 "info": { "title": "Petstore", "version": "1.0.0" },
+                 "servers": [{ "url": "/" }],
+                 "paths": {
+                   "/pet/{petId}": {
+                     "get": {
+                       "operationId": "getPetById",
+                       "summary": "Find pet by ID",
+                       "parameters": [
+                         {
+                           "name": "petId",
+                           "in": "path",
+                           "required": true,
+                           "schema": { "type": "integer", "format": "int64" }
+                         }
+                       ],
+                       "responses": { "200": { "description": "successful operation" } }
+                     }
+                   }
+                 }
+               }
+             host: localhost:8080
+       EOF
+       start_gateway config-inline.yaml
+       tools=$(mcp_tools)
+       [ "$tools" = "getPetById" ] || { echo "inline schema: expected only getPetById, got '$tools'"; exit 1; }
+       stop_gateway
+
+       # "Stateless sessions"
+       cat > config-stateless.yaml <<'EOF'
+       mcp:
+         port: 3000
+         statefulMode: stateless
+         targets:
+         - name: openapi
+           openapi:
+             schema:
+               url: http://localhost:8080/api/v3/openapi.json
+             host: localhost:8080
+       EOF
+       start_gateway config-stateless.yaml
+       tools=$(mcp_tools)
+       case " $tools " in *" getInventory "*) ;; *) echo "stateless config: getInventory not listed: $tools"; exit 1 ;; esac
+       stop_gateway
+       {{< /doc-test >}}

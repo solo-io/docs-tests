@@ -1,0 +1,111 @@
+format: 1
+source: content/docs/kubernetes/latest/documentation/migrate/examples/canary.md
+blocks:
+- 587adb137d2c589c bash
+- 00846c32ca415570 bash
+- 0058da3a518faa75 bash
+- 8170d075688dd18e yaml
+- 99359a1c87bcb2e0 bash
+tags:
+- paths: migrate-canary
+  block: 0
+  fingerprint: 587adb137d2c589c
+  lang: bash
+  lines: 4c7c61ff 53faee69 4912a691 f1089fb2 8c8c4228 3ad8f970 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c 81fe9157 f12798fe aa9675f5 7c781356 bcbaf886 cb3f91d5 3e7e3f0d 4912a691 f1089fb2 8c8c4228 b4b5731f 72ab0e66 5bf931e4 924edd14 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c 0b793dc4 f12798fe aa9675f5 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > canary-ingress.yaml
+  form:
+    attr: paths="migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate-canary
+  block: 1
+  fingerprint: 00846c32ca415570
+  lang: bash
+  lines: 9a48758b 91a664dc
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=agentgateway \
+  form:
+    attr: paths="migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate-canary
+  block: 2
+  fingerprint: 0058da3a518faa75
+  lang: bash
+  lines: 0058da3a
+  preview: cat canary-agentgateway.yaml
+  form:
+    attr: paths="migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate-canary
+  block: 4
+  fingerprint: 99359a1c87bcb2e0
+  lang: bash
+  lines: 99359a1c
+  preview: kubectl apply -f canary-agentgateway.yaml
+  form:
+    attr: paths="migrate-canary"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 587adb137d2c589c
+    lang: bash
+    lines: 4c7c61ff 53faee69 4912a691 f1089fb2 8c8c4228 3ad8f970 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c 81fe9157 f12798fe aa9675f5 7c781356 bcbaf886 cb3f91d5 3e7e3f0d 4912a691 f1089fb2 8c8c4228 b4b5731f 72ab0e66 5bf931e4 924edd14 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c 0b793dc4 f12798fe aa9675f5 7c781356 bcbaf886 abc56510
+    preview: cat <<'EOF' > canary-ingress.yaml
+  content: |-
+    {{< doc-test paths="migrate-canary" >}}
+    # Install the ingress2gateway version this guide documents, for this OS and CPU.
+    I2G_VERSION="${I2G_VERSION:-v0.5.0}"
+    i2g_arch=$(uname -m)
+    [ "$i2g_arch" = "aarch64" ] && i2g_arch=arm64
+    # A throwaway dir, so a local run leaves nothing in your home directory.
+    I2G_BIN="${TMPDIR:-/tmp}/doc-test-ingress2gateway-${I2G_VERSION}"
+    mkdir -p "$I2G_BIN"
+    export PATH="$I2G_BIN:$PATH"
+    if ! ingress2gateway version 2>/dev/null | grep -q "${I2G_VERSION#v}"; then
+      curl -fsSL "https://github.com/kgateway-dev/ingress2gateway/releases/download/${I2G_VERSION}/ingress2gateway_$(uname -s)_${i2g_arch}.tar.gz" \
+        | tar -xz -C "$I2G_BIN" ingress2gateway
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 99359a1c87bcb2e0
+    lang: bash
+    lines: 99359a1c
+    preview: kubectl apply -f canary-agentgateway.yaml
+  content: |-
+    {{< doc-test paths="migrate-canary" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the primary backend gets 80% of traffic
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: app-canary-app-example-com
+        jsonPath: "$.spec.rules[0].backendRefs[0].weight"
+        jsonPathExpectation:
+          comparator: equals
+          value: 80
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: the canary backend gets 20% of traffic
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: app-canary-app-example-com
+        jsonPath: "$.spec.rules[0].backendRefs[1].weight"
+        jsonPathExpectation:
+          comparator: equals
+          value: 20
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    kubectl delete -f canary-agentgateway.yaml --ignore-not-found
+    {{< /doc-test >}}
