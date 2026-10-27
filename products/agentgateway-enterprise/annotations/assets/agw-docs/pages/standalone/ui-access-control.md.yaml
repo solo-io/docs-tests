@@ -1,0 +1,237 @@
+format: 1
+source: assets/agw-docs/pages/standalone/ui-access-control.md
+blocks:
+- 9426b9aa0d196592 yaml
+- 69dfde2bf7b35179 yaml
+- fce6f78721220dcc yaml
+- cd1d3db485855df9 yaml
+- 288c4af02a951261 sh
+- 90bc698625713d9f console
+- 03c7b3490eef8365 sh
+- 162ea3ca5a4a4756 json
+- 5813f3b096b61395 sh
+tags:
+- paths: ui-access-control
+  block: 4
+  fingerprint: 288c4af02a951261
+  lang: sh
+  lines: 288c4af0
+  preview: agentgateway --validate-only -f config.yaml
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 2
+- paths: ui-access-control
+  block: 6
+  fingerprint: 03c7b3490eef8365
+  lang: sh
+  lines: 54e9831d 694915c0
+  preview: curl -s http://localhost:4001/api/permissions \
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 2
+- paths: ui-access-control
+  block: 8
+  fingerprint: 5813f3b096b61395
+  lang: sh
+  lines: 99eaaa56 694915c0
+  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config \
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 2
+hidden:
+- after:
+    section: Apply the policies
+    line: 9fc299ef7642e7ca
+    occurrence: 0
+    words: b9776d7d 3547cb11 b8bc0e4f a5408438 7dfb4cf6 55efa093 82244417 d80c9bf9 b7a7513c 58296753 a379a6f6 cdc29937 f905b195 15eaa752 b9776d7d 1f58b914 bb8c8605 10882c27 0695b563 b9776d7d 52226f31 d294fcce 1e0584a2 ca978112 948fe603 9f584196 fdf9c202 6ee0eb49 ca978112 1e0584a2 a1d98908 6bd1454e ca978112 1e0584a2 0695b563 ca978112 cd42404d 75857a45 b9776d7d 631aada4 e910c860 18bc3007 9f584196 3316348d b9776d7d 0967115f 7af0b3e4 f4bf9f7f d9298a10 e910c860 18bc3007 58296753 56e57ada a5c935d1 f4bf9f7f fc93cb07 6c793695 90b45ec6 6201111b 1f58b914 10c22bcf ca978112 233562de dd1b3c31 bb0347a4 9f584196 bb8c8605 60be9861 b9776d7d dd1b3c31 663ea1bf 4ed379d4 58296753 0e93a0c9 f4bf9f7f 4249a1a0 58296753 6db7d803 bb0347a4 e6f07d43 d360693a 6201111b 21af6f12 4945a70f 2ad8a704 0695b563 ad936fcb
+    block_before:
+      block: 3
+      fingerprint: cd1d3db485855df9
+      lang: yaml
+      lines: 46687890 c9a3425e e0d20225 ce449972 8bf6f477
+      preview: 'subjects:'
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # Test setup: the enterprise image (a bare binary is not a documented
+    # enterprise install), test users signed by a local JWKS, and the full
+    # configuration that this page builds from its fragments.
+    AGW_IMAGE="{{< reuse "agw-docs/standalone/image-ref.md" >}}:{{< reuse "agw-docs/versions/image-tag.md" >}}"
+    : "${AGENTGATEWAY_LICENSE_KEY:?set AGENTGATEWAY_LICENSE_KEY to an enterprise agentgateway license key}"
+    RBAC_TEST_DIR="$(mktemp -d)"
+    cd "$RBAC_TEST_DIR"
+    openssl genrsa -out key.pem 2048 2>/dev/null
+    python3 - <<'PY'
+    import base64, json, subprocess, time
+    def b64(b): return base64.urlsafe_b64encode(b).rstrip(b"=").decode()
+    mod = subprocess.check_output(["openssl", "rsa", "-in", "key.pem", "-noout", "-modulus"]).decode().strip().split("=")[1]
+    json.dump({"keys": [{"kty": "RSA", "alg": "RS256", "use": "sig", "kid": "k1", "n": b64(bytes.fromhex(mod)), "e": "AQAB"}]}, open("jwks.json", "w"))
+    def token(claims):
+        head = b64(json.dumps({"alg": "RS256", "typ": "JWT", "kid": "k1"}).encode())
+        claims = dict(iss="https://idp.example.com", aud="agw-ui", exp=int(time.time()) + 3600, **claims)
+        body = b64(json.dumps(claims).encode())
+        sig = subprocess.run(["openssl", "dgst", "-sha256", "-sign", "key.pem"], input=f"{head}.{body}".encode(), capture_output=True, check=True).stdout
+        return f"{head}.{body}.{b64(sig)}"
+    users = {
+        "ADMIN": {"sub": "u1", "email": "pat@example.com", "groups": ["platform-admins"]},
+        "AUDITOR": {"sub": "u2", "email": "al@example.com", "groups": ["auditors"]},
+        "DEVELOPER": {"sub": "u3", "email": "carol@example.com", "groups": ["developers"]},
+        "ALICE": {"sub": "u4", "email": "alice@example.com"},
+        "NOBODY": {"sub": "u5", "email": "x@other.example.com", "groups": ["others"]},
+    }
+    with open("tokens.env", "w") as f:
+        for name, claims in users.items():
+            f.write(f"TOKEN_{name}={token(claims)}\n")
+    PY
+    set -a; . ./tokens.env; set +a
+    cat > config.yaml <<'EOF'
+    config:
+      standardAttributes:
+        user: 'has(jwt.email) ? jwt.email : jwt.sub'
+    gateways:
+      ui-gateway:
+        port: 4001
+    ui:
+      gateways: [ui-gateway]
+      policies:
+        jwtAuth:
+          mode: strict
+          issuer: https://idp.example.com
+          audiences: [agw-ui]
+          jwks:
+            file: /cfg/jwks.json
+    llm:
+      port: 4000
+      models:
+      - name: gpt-4o
+        provider: openai
+        params:
+          apiKey: sk-doc-test
+      - name: claude
+        provider: anthropic
+        params:
+          apiKey: sk-doc-test
+    rbac:
+      mode: fine-grained
+      policies:
+      - name: admins
+        subjects:
+        - group: platform-admins
+        preset: admin
+      - name: auditors
+        subjects:
+        - group: auditors
+        preset: viewer
+      - name: developers
+        subjects:
+        - group: developers
+        preset: self-service
+      - name: model-owners
+        subjects:
+        - group: ml-team
+        - user: alice@example.com
+        preset: self-service
+        grants:
+        - resource: llm.model
+          access: manage
+          scope:
+            names:
+            - gpt-4o
+    EOF
+    # The page runs `agentgateway --validate-only -f config.yaml`; run it in the image.
+    agentgateway() {
+      docker run --rm --user "$(id -u):$(id -g)" \
+        -e ENTERPRISE_AGENTGATEWAY_LICENSE_KEY="$AGENTGATEWAY_LICENSE_KEY" \
+        -v "$RBAC_TEST_DIR:/cfg" -w /cfg "$AGW_IMAGE" "$@"
+    }
+    {{< /doc-test >}}
+- after:
+    section: Apply the policies
+    line: 265aa0440d11b4e4
+    occurrence: 0
+    words: 4e074085 157dca92 b9776d7d b7d64a92 3b9c358f ca978112 c071cf5f 4ea5ee68 665a4f0f b9776d7d 3b9c358f 6201111b 1754dbdd b9776d7d 11507a0e 5b3a02e5 935f6831 b9776d7d 3b9c358f fa51fd49 254bb97b ec654fac b9776d7d 4ea5ee68 98f38f12 b9776d7d ca00fccf 6201111b 308f4070 b9776d7d 6da06335 5b3a02e5
+    block_before:
+      block: 5
+      fingerprint: 90bc698625713d9f
+      lang: console
+      lines: 90bc6986
+      preview: 'Error: rbac.policies[1].grants[0]: unknown management resource "llm.models"; exp'
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    docker rm -f agw-rbac-doc-test >/dev/null 2>&1 || true
+    docker run -d --name agw-rbac-doc-test --user "$(id -u):$(id -g)" \
+      -e ENTERPRISE_AGENTGATEWAY_LICENSE_KEY="$AGENTGATEWAY_LICENSE_KEY" \
+      -v "$RBAC_TEST_DIR:/cfg" -p 4001:4001 "$AGW_IMAGE" -f /cfg/config.yaml
+    for i in $(seq 1 60); do
+      code="$(curl -s -o /dev/null -w '%{http_code}' http://localhost:4001/api/runtime || true)"
+      [ "$code" != "000" ] && break
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    section: Verify access
+    line: 6d956fc02f156d52
+    occurrence: 0
+    words: 6b86b273 27ce1d1b ca978112 1f58b914 663ea1bf b9776d7d 14c2529e 4fe3cdd4 b6bf7bc8 0695b563 b9776d7d 631aada4 28391d3b ca978112 04f8996d b9776d7d b6bf7bc8 153b2a38 b9776d7d 04f8996d 6201111b 4ed379d4 8e7fc023 56e57ada a486fbc9 6201111b b9776d7d 73e665dc 8e7fc023 b9776d7d 04f8996d 9150c74c 7ab37787 49960de5 b0efc797 0695b563 b9776d7d d80c9bf9 28391d3b b9776d7d 4ea5ee68 8e7fc023 0e9a0002 b9776d7d d3ef7de5
+    block_before:
+      block: 5
+      fingerprint: 90bc698625713d9f
+      lang: console
+      lines: 90bc6986
+      preview: 'Error: rbac.policies[1].grants[0]: unknown management resource "llm.models"; exp'
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # The page's commands use $ID_TOKEN; test them as a member of developers.
+    ID_TOKEN="$TOKEN_DEVELOPER"
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 5813f3b096b61395
+    lang: sh
+    lines: 99eaaa56 694915c0
+    preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config \
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    code() { curl -s -o /dev/null -w '%{http_code}' "$@"; }
+    perms() { curl -sf http://localhost:4001/api/permissions -H "Authorization: Bearer $1"; }
+    # Before you begin: strict authentication rejects a request without a token.
+    test "$(code http://localhost:4001/api/permissions)" = "401"
+    # Each example policy grants what the expected-access table says.
+    perms "$TOKEN_DEVELOPER" | python3 -c '
+    import json, sys
+    p = json.load(sys.stdin)
+    assert p["user"] == "carol@example.com", p["user"]
+    assert p["groups"] == ["developers"], p["groups"]
+    got = {(g["resource"], g["access"], json.dumps(g.get("scope"), sort_keys=True)) for g in p["permissions"]}
+    self_scope = json.dumps({"owner": "self"}, sort_keys=True)
+    want = {("llm.apiKey", "manage", self_scope), ("logs", "view", self_scope), ("analytics", "view", self_scope), ("llm.budget", "view", self_scope)}
+    assert got == want, got'
+    perms "$TOKEN_ADMIN" | python3 -c '
+    import json, sys
+    p = json.load(sys.stdin)
+    assert {"resource": "config", "access": "manage"} in p["permissions"], p["permissions"]'
+    perms "$TOKEN_AUDITOR" | python3 -c '
+    import json, sys
+    p = json.load(sys.stdin)
+    assert p["permissions"], "auditor has no grants"
+    assert all(g["access"] == "view" for g in p["permissions"]), p["permissions"]
+    assert not any(g["resource"] == "config" for g in p["permissions"]), p["permissions"]'
+    perms "$TOKEN_NOBODY" | python3 -c '
+    import json, sys
+    p = json.load(sys.stdin)
+    assert p["permissions"] == [], p["permissions"]'
+    # Verify access step 2: the page says 403 for a resource the user cannot access.
+    test "$(code http://localhost:4001/api/config -H "Authorization: Bearer $TOKEN_DEVELOPER")" = "403"
+    test "$(code http://localhost:4001/api/config -H "Authorization: Bearer $TOKEN_ADMIN")" = "200"
+    # model-owners: manage gpt-4o only.
+    put_model() {
+      code -X PUT -H "Authorization: Bearer $1" -H 'content-type: application/json' \
+        -d "{\"value\":{\"name\":\"$2\",\"provider\":\"$3\",\"params\":{\"apiKey\":\"sk-doc-test\"}}}" \
+        "http://localhost:4001/api/config/resources/llm.model/$2"
+    }
+    test "$(put_model "$TOKEN_ALICE" gpt-4o openai)" = "200"
+    test "$(put_model "$TOKEN_ALICE" claude anthropic)" = "403"
+    test "$(put_model "$TOKEN_AUDITOR" gpt-4o openai)" = "403"
+    docker rm -f agw-rbac-doc-test >/dev/null 2>&1 || true
+    cd - >/dev/null
+    rm -rf "$RBAC_TEST_DIR"
+    {{< /doc-test >}}

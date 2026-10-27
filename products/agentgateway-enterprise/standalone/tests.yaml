@@ -1,0 +1,26 @@
+# Doc-test scenario definitions for the enterprise agentgateway docs, standalone mode.
+#
+# Unlike ../kubernetes/tests.yaml, these scenarios test enterprise-only pages,
+# so their bodies live in the consuming site's own assets/ and there is no
+# upstream page to rebase. Scenarios are keyed by that assets/ file (source:),
+# the same way ../../agentgateway/standalone/tests.yaml keys its pages.
+#
+# Standalone scenarios need no kind cluster. Each one starts the enterprise
+# image with Docker in a hidden block of its annotation, because the bare
+# binary is not a documented enterprise install path. The image reference
+# comes from the site's own image-ref and image-tag snippets, so a scenario
+# always runs the image that its page documents. The license comes from the
+# AGENTGATEWAY_LICENSE_KEY secret that the consuming site's workflow already
+# sets for the kubernetes install.
+version: 1
+mode: standalone
+content_root: content/en/agentgateway
+prerequisites: {}
+scenarios:
+  # configuration/security/ui-access-control.md: the Config file steps and
+  # Verify access. The UI tab is not covered; it needs a browser.
+  ui-access-control:
+    type:
+    - functional
+    source: agw-docs/pages/standalone/ui-access-control.md
+    path: ui-access-control

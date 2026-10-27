@@ -1,0 +1,150 @@
+format: 1
+source: assets/agw-docs/pages/security/ui-access-control.md
+blocks:
+- d933d5cd663ba8df yaml
+- afc1921048333f93 yaml
+- 4b914202e942b161 sh
+- c2e0ae940fe197c1 yaml
+- f766750937f8bfe2 yaml
+- 90e80782ac26b553 yaml
+- 95de733f0a8e5d55 yaml
+- 961098698a80cafd yaml
+- 814df3463a797227 sh
+- 6bd4429e3ebcfe40 sh
+- a5f6610832cdbdb0 sh
+tags:
+- paths: ui-access-control
+  block: 2
+  fingerprint: 4b914202e942b161
+  lang: sh
+  lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 666811ac
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 2
+- paths: ui-access-control
+  block: 3
+  fingerprint: c2e0ae940fe197c1
+  lang: yaml
+  lines: 16c71da1 00c69c65 d458a0a9 8c8c4228 c8287c69 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 8f1ec67d d1c8af1c 233e460f 3b5f91f3 65e8ed0b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 4
+- paths: ui-access-control
+  block: 4
+  fingerprint: f766750937f8bfe2
+  lang: yaml
+  lines: 16c71da1 00c69c65 d458a0a9 8c8c4228 9fece684 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb f394fda4 d1c8af1c 8e06efdc a935af65 680e93de d6212102 90efcf47 ecff1b88 f394fda4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 4
+- paths: ui-access-control
+  block: 5
+  fingerprint: 90e80782ac26b553
+  lang: yaml
+  lines: 16c71da1 00c69c65 d458a0a9 8c8c4228 ff755410 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 88fac4cd d1c8af1c 596dfd1d 54a2c0f3 65e8ed0b e38c5ed2 582b8461 680e93de abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 4
+- paths: ui-access-control
+  block: 6
+  fingerprint: 95de733f0a8e5d55
+  lang: yaml
+  lines: 16c71da1 00c69c65 d458a0a9 8c8c4228 4b022c7d 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 3e69a81c d1c8af1c 31c77ae3 7cf07a71 65e8ed0b d6212102 90efcf47 ecff1b88 f394fda4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 4
+- paths: ui-access-control
+  block: 8
+  fingerprint: 814df3463a797227
+  lang: sh
+  lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 3a43a0c8
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 2
+- paths: ui-access-control
+  block: 9
+  fingerprint: 6bd4429e3ebcfe40
+  lang: sh
+  lines: 6bd4429e
+  preview: kubectl get enterpriseagentgatewayrbacpolicies -A
+  form:
+    bare: ',paths="ui-access-control"'
+    at: 2
+hidden:
+- after:
+    block: 1
+    fingerprint: afc1921048333f93
+    lang: yaml
+    lines: 6cda733c 84c31baf ab71c7b8 21c7ae94 103ed1b8 fec3eeff 5d0ec020 aaa4f050 16da5de3 6bc2d087
+    preview: 'ui:'
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # The page assumes the UI is installed (Before you begin links to its setup).
+    # Turn on the UI subchart with its built-in identity provider, and write the
+    # Helm values from steps 2 and 3 to the file that step 4 names.
+    helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} \
+      --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} \
+      --version {{< reuse "agw-docs/versions/helm-version-flag.md" >}} \
+      --reset-then-reuse-values \
+      --set ui.enabled=true \
+      --wait --timeout 10m
+    kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/enterprise-agentgateway-ui --timeout=10m
+    cat > ui-rbac-values.yaml <<'EOF'
+    ui:
+      rbac:
+        subjectMapping:
+          userClaim: email
+          groupsClaim: groups
+        roleMapping:
+          roleMapper: "has(claims.groups) ? claims.groups.transformList(i, v, v in rolesMap, rolesMap[v]) : []"
+          roleMappings:
+            platform-admins: global.Admin
+            finops: global.Writer
+            developers: global.Reader
+          defaultRoles:
+          - global.Reader
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 4b914202e942b161
+    lang: sh
+    lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 666811ac
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/enterprise-agentgateway-ui --timeout=10m
+    kubectl get crd enterpriseagentgatewayrbacpolicies.enterpriseagentgateway.solo.io
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 814df3463a797227
+    lang: sh
+    lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 3a43a0c8
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/enterprise-agentgateway-ui --timeout=10m
+    MODE="$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get deploy enterprise-agentgateway-ui -o jsonpath='{.spec.template.spec.containers[*].env[?(@.name=="MANAGEMENT_RBAC_MODE")].value}')"
+    test "$MODE" = "fine-grained"
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 6bd4429e3ebcfe40
+    lang: sh
+    lines: 6bd4429e
+    preview: kubectl get enterpriseagentgatewayrbacpolicies -A
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # Every policy on the page is valid: the UI backend sets Accepted=True.
+    for policy in admins team-a-routes finops team-a-keys; do
+      kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} wait enterpriseagentgatewayrbacpolicy/"$policy" \
+        --for=condition=Accepted=True --timeout=5m
+    done
+    {{< /doc-test >}}

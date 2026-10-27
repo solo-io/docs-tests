@@ -3,6 +3,8 @@
 # Covers traffic-management: every kubernetes traffic-management scenario in
 # ../../agentgateway/kubernetes/tests.yaml, minus the schema-only ones (the
 # consuming site's workflow runs functional and live tests only).
+# It also covers one enterprise-only page, security/ui-access-control.md,
+# described at its scenario below.
 #
 # The consuming site publishes the enterprise docs from its own repo; almost
 # every page there is a rebase shell,
@@ -535,3 +537,15 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/validate.md
     path: validate-skip
+  # security/ui-access-control.md is enterprise-only: its body is the site's
+  # own assets/ page, not a rebase shell, so it is keyed by source:. The
+  # scenario turns on the UI subchart in a hidden block, runs the page's Helm
+  # upgrades and policy applies, and checks that every example policy is
+  # accepted. It does not log in as each user; that needs an identity provider.
+  ui-access-control:
+    type:
+    - functional
+    needs:
+    - install-standard
+    source: agw-docs/pages/security/ui-access-control.md
+    path: ui-access-control
