@@ -829,7 +829,7 @@ the fix of any that still fails.
 #### A second attempt
 
 A re-run often fails later in the scenario than the nightly did, because the fix
-got past the step that broke first. So when a fix's re-run fails, the fixer tries
+got past the step that broke first. So when the re-run of a fix fails, the fixer tries
 once more, for that failure only:
 
 - Every checkout already holds the first attempt's changes.
