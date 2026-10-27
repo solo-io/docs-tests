@@ -114,6 +114,25 @@ class FixCheckTests(unittest.TestCase):
         errors = self.run_check({"fixed": [{"page": REL, "label": "alpha"}]})
         self.assertTrue(any("rewritten" in e for e in errors), errors)
 
+    def test_a_rewritten_check_on_an_exempt_page_passes_and_is_reported(self):
+        """The failure fixer rewrote it to fix a failing test; the workflow re-runs it instead."""
+        self.agent_fixes(hidden_body='curl -s "http://${INGRESS_GW_ADDRESS}/health" | grep -q ok\nkubectl logs deploy/other')
+        changes = []
+        errors = C.check(self.root, self.repo, ADIR, "HEAD", self.pending, {"fixed": [{"page": REL, "label": "alpha"}]},
+                         False, changes, (), {REL})
+        self.assertEqual(errors, [])
+        self.assertEqual([c["label"] for c in changes], ["alpha"])
+
+    def test_a_change_in_an_also_changed_directory_is_left_to_its_own_run(self):
+        self.agent_fixes()
+        other = self.root / "products/other/annotations/x.md.yaml"
+        other.parent.mkdir(parents=True)
+        other.write_text("format: 1\n")
+        summary = {"fixed": [{"page": REL, "label": "alpha"}]}
+        self.assertTrue(any("changed outside" in e for e in self.run_check(summary)))
+        self.assertEqual(C.check(self.root, self.repo, ADIR, "HEAD", self.pending, summary, False, None,
+                                 ("products/other/annotations",)), [])
+
     def test_an_unchanged_check_is_not_reported(self):
         self.agent_fixes()
         changes = []
