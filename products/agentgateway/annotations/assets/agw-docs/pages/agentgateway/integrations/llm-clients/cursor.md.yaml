@@ -1,7 +1,7 @@
 format: 1
 source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/cursor.md
 blocks:
-- f1de9e489ba88cb1
+- 440fbc64e887efd9
 hidden:
 - after:
     start: true
@@ -14,18 +14,19 @@ hidden:
     #   * The Config file tab's config is accepted, and serves LLM traffic on port 3000
     #     (run against a local mock LLM instead of OpenAI).
     #   * The request that Cursor sends when configured as the page says: with Override
-    #     OpenAI Base URL set to http://localhost:3000, Cursor posts to `<base
-    #     URL>/chat/completions` (http://localhost:3000/chat/completions), with no
+    #     OpenAI Base URL set to http://localhost:3000/v1, Cursor posts to `<base
+    #     URL>/chat/completions` (http://localhost:3000/v1/chat/completions), with no
     #     provider API key. It returns 200 and a chat completion for the requested
     #     model.
-    #   * "Verify the connection": the request reaches agentgateway, shown by an
-    #     agentgateway log entry for that path with http.status=200.
+    #   * "Verify the connection": the request reaches agentgateway as a parsed chat
+    #     completion, shown by an agentgateway log entry for that path with
+    #     http.status=200 and gen_ai.operation.name=chat. A request on a path agentgateway
+    #     does not recognize is passed through and logs no gen_ai fields.
     # WHAT THIS TEST DOES NOT VALIDATE (and why):
     #   * Cursor itself - it is a GUI app that cannot run in CI, so this test emulates
     #     the request it sends. The settings steps are UI-only.
-    #   * Which path agentgateway forwards to OpenAI. The base URL has no /v1, so the
-    #     request is not on a standard /v1 serving path; the local mock LLM answers on
-    #     any path, so it cannot show whether OpenAI would.
+    #   * Cursor's `<base URL>/models` lookup - Cursor's use of it is not documented on
+    #     the page.
     #   * Streaming replies - the local mock LLM does not stream.
     #   * The UI tab - browser-only steps.
     {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
@@ -81,10 +82,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: f1de9e489ba88cb1
+    fingerprint: 440fbc64e887efd9
     lang: ''
-    lines: f1de9e48
-    preview: http://localhost:3000
+    lines: 440fbc64
+    preview: http://localhost:3000/v1
   content: |2-
        {{< doc-test paths="llm-client-cursor" >}}
        # Emulates the request that Cursor sends with the setting above, because Cursor is
@@ -94,7 +95,7 @@ hidden:
          retries: 3
          http:
            url: "http://localhost:3000"
-           path: /chat/completions
+           path: /v1/chat/completions
            method: POST
            headers:
              content-type: application/json
@@ -115,14 +116,15 @@ hidden:
                comparator: equals
                value: assistant
        EOF
-       # "Verify the connection": the request went through agentgateway.
+       # "Verify the connection": the request went through agentgateway as a chat completion.
+       # AGW_LOG is the file agentgateway writes its log to.
        found=""
        for _ in $(seq 1 10); do
-         if awk '/http.path=\/chat\/completions/ && /http.status=200/ {f=1} END {exit !f}' "$AGW_LOG"; then found=yes; break; fi
+         if awk '/http.path=\/v1\/chat\/completions( |$)/ && /http.status=200( |$)/ && /gen_ai.operation.name=chat( |$)/ {f=1} END {exit !f}' "$AGW_LOG"; then found=yes; break; fi
          sleep 1
        done
-       [ -n "$found" ] || { echo "FAIL: no http.path=/chat/completions entry with http.status=200 in the agentgateway log"; tail -n 20 "$AGW_LOG"; exit 1; }
-       echo "ok: the agentgateway log shows the /chat/completions request with http.status=200"
+       [ -n "$found" ] || { echo "FAIL: no http.path=/v1/chat/completions entry with http.status=200 and gen_ai.operation.name=chat in the agentgateway log"; tail -n 20 "$AGW_LOG"; exit 1; }
+       echo "ok: the agentgateway log shows the /v1/chat/completions request with http.status=200 and gen_ai.operation.name=chat"
        stop_agw
        rm -f cursor-config.yaml cursor-config-mock.yaml
        {{< /doc-test >}}

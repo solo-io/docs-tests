@@ -1,13 +1,13 @@
 format: 1
 source: assets/agw-docs/pages/agentgateway/integrations/llm-clients-k8s/continue.md
 blocks:
-- 20ca57e84a603819 yaml
+- 87e24369da14c8e5 yaml
 hidden:
 - after:
     block: 0
-    fingerprint: 20ca57e84a603819
+    fingerprint: 87e24369da14c8e5
     lang: yaml
-    lines: dfb4fab7 4b5feab8 a04604c3 e01ccf75 b4a3548a 91030a0b 6d88d930 7ea09c85 b493088c
+    lines: dfb4fab7 4b5feab8 a04604c3 e01ccf75 b4a3548a 91030a0b 6d88d930 9e3fbba9 b493088c
     preview: 'name: agentgateway'
   content: |-
     {{< doc-test paths="llm-client-continue" >}}
@@ -16,28 +16,62 @@ hidden:
     # ============================================================================
     # WHAT THIS TEST VALIDATES:
     #   * "Get the gateway URL": the LoadBalancer command sets INGRESS_GW_ADDRESS.
-    #   * The request that Continue sends when configured as above, with
-    #     http://<INGRESS_GW_ADDRESS>/<route-path> filled in as http://${INGRESS_GW_ADDRESS}/openai
-    #     (the /openai route that the OpenAI provider guide creates): Continue's `openai`
-    #     provider posts to `<apiBase>/chat/completions` with the configured `model` and
-    #     `apiKey` as a bearer token. It returns 200 and a chat completion for the requested
-    #     model.
-    #   * "Verify the connection": the request reaches the agentgateway backend, shown by an
-    #     agentgateway-proxy log entry for http.path=/openai/chat/completions with http.status=200.
+    #   * The request that Continue sends when configured as above, with the documented
+    #     base URL http://<INGRESS_GW_ADDRESS>/v1, through the route from the OpenAI
+    #     guide's "OpenAI v1/chat/completions" tab (restated below as openai-v1):
+    #     Continue's `openai` provider posts to `<apiBase>/chat/completions` with the
+    #     configured `model` and `apiKey` as a bearer token. It returns 200 and a chat
+    #     completion for the requested model.
+    #   * "Verify the connection": the request reaches the agentgateway backend as a
+    #     parsed chat completion, shown by an agentgateway-proxy log entry for
+    #     http.path=/v1/chat/completions with http.status=200, gen_ai.operation.name=chat,
+    #     and gen_ai.request.model=gpt-4o-mini. A request on a path agentgateway does not
+    #     recognize is passed through and logs no gen_ai fields.
     # WHAT THIS TEST DOES NOT VALIDATE (and why):
-    #   * Continue itself - it is a GUI app that cannot run in CI, so this test emulates the
-    #     request it sends. The settings steps above are UI-only.
+    #   * Continue itself - it is a GUI app that cannot run in CI, so this test emulates
+    #     the request it sends. The settings steps above are done in the app.
     #   * Editing ~/.continue/config.yaml - it would change the runner's home directory,
     #     and the file only matters to the Continue extension.
     #   * A real OpenAI completion - openai-setup points the backend at the httpbun mock LLM.
     #   * The port-forward tab - doc tests reach the gateway through the LoadBalancer.
     [ -n "${INGRESS_GW_ADDRESS:-}" ] || { echo "FAIL: INGRESS_GW_ADDRESS is empty"; exit 1; }
+    # Test-only setup: openai-setup creates only the OpenAI guide's "Custom route" tab
+    # (/openai, rewritten to /v1/chat/completions). This page needs the guide's default
+    # "OpenAI v1/chat/completions" tab route (no path match, forwards every path), restated
+    # here under its own name so the openai route stays in place. Removed at the end.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: openai-v1
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      parentRefs:
+        - name: agentgateway-proxy
+          namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+      rules:
+        - backendRefs:
+          - name: openai
+            namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+            group: {{< reuse "agw-docs/snippets/group.md" >}}
+            kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+    EOF
+    # Wait until the new route serves /v1/chat/completions.
+    code=""
+    for _ in $(seq 1 30); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' -m 15 "http://${INGRESS_GW_ADDRESS}/v1/chat/completions" \
+        -H 'content-type: application/json' \
+        -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "route check"}]}' || true)
+      [ "$code" = 200 ] && break
+      sleep 2
+    done
+    [ "$code" = 200 ] || { echo "FAIL: /v1/chat/completions returned $code through the openai-v1 route"; exit 1; }
     # Emulates Continue's request, because Continue is a GUI app.
     YAMLTest -f - <<'EOF'
     - name: the request Continue sends returns a chat completion
       retries: 5
       http:
-        url: "http://${INGRESS_GW_ADDRESS}:80/openai/chat/completions"
+        url: "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions"
         method: POST
         headers:
           content-type: application/json
@@ -62,7 +96,7 @@ hidden:
     # Continue streams chat replies, so the same request with stream: true must come back
     # as server-sent chat.completion.chunk events that end with [DONE].
     STREAM_OUT="${TMPDIR:-/tmp}/doc-test-llm-client-continue-stream.txt"
-    curl -s -N -m 30 "http://${INGRESS_GW_ADDRESS}/openai/chat/completions" \
+    curl -s -N -m 30 "http://${INGRESS_GW_ADDRESS}/v1/chat/completions" \
       -H 'content-type: application/json' \
       -H 'Authorization: Bearer anything' \
       -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello from Continue"}], "stream": true}' \
@@ -73,14 +107,16 @@ hidden:
       || { echo "FAIL: the streamed reply does not end with [DONE]"; tail -5 "$STREAM_OUT"; exit 1; }
     echo "ok: the streamed reply is chat.completion.chunk events ending with [DONE]"
     # "Verify the connection": the request went through the agentgateway backend.
+    # The logs are saved to a file before they are searched.
     PROXY_LOG="${TMPDIR:-/tmp}/doc-test-llm-client-continue-proxy.log"
     found=""
     for _ in $(seq 1 15); do
       kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --since=5m > "$PROXY_LOG" 2>/dev/null || true
-      if awk '/http.path=\/openai\/chat\/completions/ && /http.status=200/ {f=1} END {exit !f}' "$PROXY_LOG"; then found=yes; break; fi
+      if awk '/http.path=\/v1\/chat\/completions( |$)/ && /http.status=200( |$)/ && /gen_ai.operation.name=chat( |$)/ && /gen_ai.request.model=gpt-4o-mini( |$)/ {f=1} END {exit !f}' "$PROXY_LOG"; then found=yes; break; fi
       sleep 2
     done
-    [ -n "$found" ] || { echo "FAIL: no http.path=/openai/chat/completions entry with http.status=200 in the proxy logs"; tail -n 20 "$PROXY_LOG"; exit 1; }
-    echo "ok: the request is in the agentgateway-proxy logs with http.status=200"
+    [ -n "$found" ] || { echo "FAIL: no http.path=/v1/chat/completions entry with http.status=200, gen_ai.operation.name=chat, and gen_ai.request.model=gpt-4o-mini in the proxy logs"; tail -n 20 "$PROXY_LOG"; exit 1; }
+    echo "ok: the request is in the agentgateway-proxy logs as documented"
     rm -f "$PROXY_LOG" "${STREAM_OUT:-}"
+    kubectl delete httproute openai-v1 -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
     {{< /doc-test >}}

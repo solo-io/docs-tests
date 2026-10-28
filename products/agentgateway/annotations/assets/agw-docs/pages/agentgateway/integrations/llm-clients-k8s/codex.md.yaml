@@ -47,7 +47,9 @@ hidden:
     #     overrides plus the documented env_key field and a prompt, and prints the mock
     #     LLM's reply that came back through agentgateway.
     #   * "Verify the CLI connection": the documented log command finds the request, and
-    #     an entry has http.path=/v1/responses and http.status=200.
+    #     a new entry from Codex has http.path=/v1/responses and http.status=200, plus
+    #     gen_ai.operation.name=chat, which agentgateway logs only when it parsed the
+    #     request as a Responses API call rather than passing it through.
     # WHAT THIS TEST DOES NOT VALIDATE (and why):
     #   * The Profile tab and the ChatGPT desktop app section - both write ~/.codex on the
     #     runner, and the app is a GUI.
@@ -130,7 +132,7 @@ hidden:
     # request rather than the readiness probe's.
     CODEX_LOG="${TMPDIR:-/tmp}/doc-test-codex-proxy.log"
     kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --since=10m > "$CODEX_LOG" 2>/dev/null || true
-    CODEX_BEFORE=$(awk '/http.path=\/v1\/responses/ && /http.status=200/ {n++} END {print n+0}' "$CODEX_LOG")
+    CODEX_BEFORE=$(awk '/http.path=\/v1\/responses( |$)/ && /http.status=200( |$)/ && /gen_ai.operation.name=chat( |$)/ {n++} END {print n+0}' "$CODEX_LOG")
     TO=""
     if command -v timeout >/dev/null 2>&1; then TO="timeout 300"; fi
     if ! (cd "$CODEX_TMP/work" && CODEX_HOME="$CODEX_TMP/home" $TO "$CODEX_TMP/node_modules/.bin/codex" exec \
@@ -153,10 +155,10 @@ hidden:
     found=""
     for _ in $(seq 1 15); do
       kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --since=10m > "$CODEX_LOG" 2>/dev/null || true
-      if [ "$(awk '/http.path=\/v1\/responses/ && /http.status=200/ {n++} END {print n+0}' "$CODEX_LOG")" -gt "$CODEX_BEFORE" ]; then found=yes; break; fi
+      if [ "$(awk '/http.path=\/v1\/responses( |$)/ && /http.status=200( |$)/ && /gen_ai.operation.name=chat( |$)/ {n++} END {print n+0}' "$CODEX_LOG")" -gt "$CODEX_BEFORE" ]; then found=yes; break; fi
       sleep 2
     done
-    [ -n "$found" ] || { echo "FAIL: no new http.path=/v1/responses entry with http.status=200 from Codex"; tail -n 20 "$CODEX_LOG"; exit 1; }
+    [ -n "$found" ] || { echo "FAIL: no new http.path=/v1/responses entry with http.status=200 and gen_ai.operation.name=chat from Codex"; tail -n 20 "$CODEX_LOG"; exit 1; }
     {{< /doc-test >}}
 - after:
     block: 7
@@ -166,11 +168,12 @@ hidden:
     preview: kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/names
   content: |2-
        {{< doc-test paths="llm-client-codex" >}}
-       # "A successful entry has http.status=200 and http.path=/v1/responses."
+       # "A successful entry has http.status=200 and http.path=/v1/responses." The entry must also
+       # have gen_ai.operation.name=chat, so the request was parsed as an LLM call, not passed through.
        kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --since=10m > "$CODEX_LOG" 2>/dev/null || true
-       [ "$(awk '/http.path=\/v1\/responses/ && /http.status=200/ {n++} END {print n+0}' "$CODEX_LOG")" -gt "$CODEX_BEFORE" ] \
-         || { echo "FAIL: no http.path=/v1/responses entry with http.status=200"; tail -n 20 "$CODEX_LOG"; exit 1; }
-       echo "ok: the proxy log has http.path=/v1/responses with http.status=200"
+       [ "$(awk '/http.path=\/v1\/responses( |$)/ && /http.status=200( |$)/ && /gen_ai.operation.name=chat( |$)/ {n++} END {print n+0}' "$CODEX_LOG")" -gt "$CODEX_BEFORE" ] \
+         || { echo "FAIL: no new http.path=/v1/responses entry with http.status=200 and gen_ai.operation.name=chat"; tail -n 20 "$CODEX_LOG"; exit 1; }
+       echo "ok: the proxy log has http.path=/v1/responses with http.status=200 and gen_ai.operation.name=chat"
        # Cleanup: remove the test-only route and put the mock path back for later guides.
        kubectl delete httproute codex-openai-v1 -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
        kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge \
