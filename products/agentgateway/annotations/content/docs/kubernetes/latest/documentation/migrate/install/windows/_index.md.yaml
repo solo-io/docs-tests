@@ -1,0 +1,117 @@
+format: 1
+source: content/docs/kubernetes/latest/documentation/migrate/install/windows/_index.md
+blocks:
+- c1e619e6e7b22986 bash
+- 35f210ebea383d78 bash
+- 1b4d5a129d05077e bash
+- 2e3a8898d4aa19f1 bash
+- 2e1a376c4e13f8b3 bash
+- fd41371d904fe50b bash
+- 896b20f5145ad524 bash
+tags:
+- paths: migrate-install-windows
+  block: 0
+  fingerprint: c1e619e6e7b22986
+  lang: bash
+  lines: 67d16d56 c9de6754 3471cb7f 5e386f28
+  preview: VERSION=v0.5.0
+  form:
+    attr: paths="migrate-install-windows"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows
+  block: 1
+  fingerprint: 35f210ebea383d78
+  lang: bash
+  lines: 35f210eb
+  preview: curl -LO "https://github.com/kgateway-dev/ingress2gateway/releases/download/${VE
+  form:
+    attr: paths="migrate-install-windows"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows
+  block: 2
+  fingerprint: 1b4d5a129d05077e
+  lang: bash
+  lines: 1b4d5a12
+  preview: curl -LO https://github.com/kgateway-dev/ingress2gateway/releases/download/${VER
+  form:
+    attr: paths="migrate-install-windows"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows
+  block: 5
+  fingerprint: fd41371d904fe50b
+  lang: bash
+  lines: fd41371d
+  preview: tar -xvf ingress2gateway_${OS}_${ARCH}.zip
+  form:
+    attr: paths="migrate-install-windows"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows
+  block: 6
+  fingerprint: 896b20f5145ad524
+  lang: bash
+  lines: 896b20f5
+  preview: ingress2gateway version
+  form:
+    attr: paths="migrate-install-windows"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: c1e619e6e7b22986
+    lang: bash
+    lines: 67d16d56 c9de6754 3471cb7f 5e386f28
+    preview: VERSION=v0.5.0
+  content: |2-
+        {{< doc-test paths="migrate-install-windows" >}}
+        # Runs on a Windows runner (runner: windows in tests.yaml) in Git Bash, the shell the
+        # page's ${VAR} syntax needs. Use this machine's architecture instead of the page's arm64
+        # example, and put Windows' own tar.exe first on PATH: the page says to use Command
+        # Prompt, whose tar can extract a .zip, and Git Bash's GNU tar cannot.
+        case "${PROCESSOR_ARCHITECTURE:-AMD64}" in ARM64) ARCH=arm64 ;; x86) ARCH=i386 ;; *) ARCH=x86_64 ;; esac
+        export PATH="/c/Windows/System32:$PATH"
+        DOC_TEST_DIR=$(mktemp -d)
+        cd "$DOC_TEST_DIR"
+        {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 1b4d5a129d05077e
+    lang: bash
+    lines: 1b4d5a12
+    preview: curl -LO https://github.com/kgateway-dev/ingress2gateway/releases/download/${VER
+  content: |2-
+        {{< doc-test paths="migrate-install-windows" >}}
+        # The page asks readers to compare CertUtil's hash with checksums.txt by eye. Do the
+        # same comparison here. (CertUtil prints the hash, not "OK" as the page's example shows.)
+        want=$(grep -F "  ingress2gateway_${OS}_${ARCH}.zip" checksums.txt | awk '{print $1}')
+        got=$(CertUtil -hashfile "ingress2gateway_${OS}_${ARCH}.zip" SHA256 | sed -n 2p | tr -d ' \r' | tr 'A-F' 'a-f')
+        [ -n "$want" ] && [ "$want" = "$got" ] || { echo "checksum mismatch: checksums.txt=$want CertUtil=$got"; exit 1; }
+        {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: fd41371d904fe50b
+    lang: bash
+    lines: fd41371d
+    preview: tar -xvf ingress2gateway_${OS}_${ARCH}.zip
+  content: |2-
+        {{< doc-test paths="migrate-install-windows" >}}
+        # Step 5 asks readers to add the binary's folder to PATH; do that for this shell.
+        export PATH="$DOC_TEST_DIR:$PATH"
+        {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 896b20f5145ad524
+    lang: bash
+    lines: 896b20f5
+    preview: ingress2gateway version
+  content: |2-
+        {{< doc-test paths="migrate-install-windows" >}}
+        out=$(ingress2gateway version 2>&1)
+        echo "$out"
+        echo "$out" | grep -q "${VERSION#v}" || { echo "version output does not mention ${VERSION}"; exit 1; }
+        cd / && rm -rf "$DOC_TEST_DIR"
+        {{< /doc-test >}}

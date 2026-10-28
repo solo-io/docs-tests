@@ -330,6 +330,28 @@ a whole config file. A scenario in which nothing was validated fails rather than
 vacuously, so `schema` stays opt-in per scenario, not automatic. Helm values and CRD CEL
 rules are not checked; see [#19](https://github.com/solo-io/docs-tests/issues/19).
 
+### Running a scenario on macOS or Windows
+
+Scenarios run on Linux, in a kind cluster, unless their `tests.yaml` entry sets `runner:`.
+Set it only for a page that has to run on another OS, such as an install guide for macOS
+or Windows:
+
+```yaml
+  migrate-install-macos:
+    runner: macos        # or windows; linux is the default
+    page: documentation/migrate/install/macos/_index.md
+    path: migrate-install-macos
+```
+
+- A `macos` or `windows` scenario runs its script directly, with **no cluster**. Hosted
+  macOS and Windows runners have no Docker, so these scenarios cannot use `needs:`
+  prerequisites that install agentgateway in Kubernetes.
+- `--list-tests` reports each scenario's `runner`, and the consuming site's workflow sends
+  it to a job on that OS (`macos-latest` or `windows-latest`). The script still runs in
+  bash; on Windows that is Git Bash, named through `DOC_TEST_BASH`.
+- A local run skips scenarios for another OS with a `SKIPPED (runner)` warning.
+  `--generate-only` still generates them, so you can read the script on any machine.
+
 ---
 
 ## Tracing prerequisites

@@ -4,6 +4,7 @@ import argparse
 import json
 import logging
 import os
+import platform
 import hashlib
 import re
 import subprocess
@@ -40,6 +41,19 @@ class TestCase:
     script_path: Path
     manifest_path: Path
     type: str = "functional"
+    # The OS the scenario runs on. Every scenario runs on Linux in a kind
+    # cluster unless its manifest entry names another runner; a non-Linux
+    # scenario runs its script directly, with no cluster (hosted macOS and
+    # Windows runners have no Docker).
+    runner: str = "linux"
+
+
+RUNNERS = ("linux", "macos", "windows")
+
+
+def host_runner() -> str:
+    """This machine's runner name, in the terms a manifest `runner:` uses."""
+    return {"Darwin": "macos", "Windows": "windows"}.get(platform.system(), "linux")
 
 
 def parse_front_matter(markdown_path: Path) -> Dict:
@@ -432,6 +446,12 @@ def build_test_cases_from_manifests(
             if not refs:
                 raise RuntimeError(f"{mpath}: scenario '{name}' has no steps.")
 
+            runner = str(entry.get("runner") or "linux")
+            if runner not in RUNNERS:
+                raise RuntimeError(
+                    f"{mpath}: scenario '{name}' has `runner: {runner}`; use one of {', '.join(RUNNERS)}."
+                )
+
             raw_type = entry.get("type", "functional")
             test_types = raw_type if isinstance(raw_type, list) else [raw_type]
             test_types = [t for t in test_types if isinstance(t, str) and t]
@@ -477,6 +497,7 @@ def build_test_cases_from_manifests(
                             script_path=generated_dir / f"{doc_slug}-{test_slug}.sh",
                             manifest_path=generated_dir / f"{doc_slug}-{test_slug}.manifest.json",
                             type=test_type,
+                            runner=runner,
                         )
                     )
 
@@ -637,6 +658,10 @@ def run_command(command: List[str], cwd: Path, env: Optional[Dict[str, str]] = N
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        # UTF-8 on every OS: Windows would otherwise decode with its locale
+        # code page and fail on the check marks YAMLTest prints.
+        encoding="utf-8",
+        errors="replace",
         env={**os.environ, **env} if env else None,
     )
 
@@ -996,6 +1021,39 @@ def failed_step_from(marker: str, script: str, output: str) -> Optional[Dict[str
     }
 
 
+def run_test_case_without_cluster(
+    repo_root: Path, test_case: TestCase, script_content: str, context_slug: str, context_base_dir: Optional[Path]
+) -> Dict:
+    """Run a non-Linux scenario's script directly, with no kind cluster.
+
+    DOC_TEST_BASH names the bash to use. On Windows, set it to Git Bash: a bare
+    `bash` can resolve to the WSL launcher in System32 first.
+    """
+    step_file = test_case.script_path.with_suffix(".step")
+    step_file.unlink(missing_ok=True)
+    test_code, output = run_command(
+        [os.environ.get("DOC_TEST_BASH") or "bash", test_case.script_path.as_posix()], repo_root,
+        env={"DOC_TEST_STEP_FILE": str(step_file)},
+    )
+    result: Dict[str, Any] = {
+        "status": "passed" if test_code == 0 else "failed",
+        "checks": [line.strip() for line in output.splitlines() if line.strip().startswith("✓ ")],
+        "runner": test_case.runner,
+    }
+    if test_code != 0:
+        result["error"] = output.strip()
+        marker = step_file.read_text(encoding="utf-8") if step_file.exists() else ""
+        failed_step = failed_step_from(marker, script_content, output)
+        if failed_step:
+            result["failed_step"] = failed_step
+        if context_base_dir is not None:
+            context_dir = context_base_dir / context_slug
+            context_dir.mkdir(parents=True, exist_ok=True)
+            (context_dir / "test-execution.log").write_text(output, encoding="utf-8")
+            result["context_dir"] = str(context_dir.relative_to(repo_root))
+    return result
+
+
 def run_test_case(repo_root: Path, test_case: TestCase, cluster_prefix: str, context_base_dir: Optional[Path] = None, pause: bool = False, keep_cluster: bool = False) -> Dict:
     test_slug = sanitize_name(test_case.name)
     cluster_name = make_cluster_name(cluster_prefix, test_slug)
@@ -1024,6 +1082,9 @@ def run_test_case(repo_root: Path, test_case: TestCase, cluster_prefix: str, con
             "checks": checks,
             "error": "Test shell script contains 'kubectl port-forward', which is not supported in automated tests.",
         }
+
+    if test_case.runner != "linux":
+        return run_test_case_without_cluster(repo_root, test_case, script_content, context_slug, context_base_dir)
 
     create_code, create_output = create_cluster_with_retries(cluster_name, repo_root)
     if create_code != 0:
@@ -1367,11 +1428,23 @@ def main() -> int:
 
     if args.list_tests:
         entries = [
-            {"file": tc.document.relative_to(repo_root).as_posix(), "test": tc.name, "type": tc.type}
+            {"file": tc.document.relative_to(repo_root).as_posix(), "test": tc.name, "type": tc.type, "runner": tc.runner}
             for tc in test_cases
         ]
         print(json.dumps(entries))
         return 0
+
+    # A scenario for another OS cannot run here: a macOS install guide run on a
+    # Linux host would test the wrong thing and fail. CI sends each scenario to
+    # a runner of its own OS, so this only drops tests from local runs.
+    here = host_runner()
+    for tc in [tc for tc in test_cases if tc.runner != here and not args.generate_only]:
+        logger.warning(
+            "SKIPPED (runner): %s::%s runs on %s, and this host is %s.",
+            tc.document.relative_to(repo_root).as_posix(), tc.name, tc.runner, here,
+        )
+    if not args.generate_only:
+        test_cases = [tc for tc in test_cases if tc.runner == here]
 
     if not test_cases:
         logger.info("No docs with test metadata found.")
