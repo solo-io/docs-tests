@@ -109,7 +109,7 @@ hidden:
        # the Kubernetes API server's service proxy (no local port needed), and keep sending
        # requests until the agentgateway service has reported spans.
        jaeger_services() {
-         kubectl get --raw "/api/v1/namespaces/tracing/services/jaeger-query:16686/proxy/api/services" 2>/dev/null || true
+         kubectl get --raw "/api/v1/namespaces/tracing/services/jaeger:16686/proxy/api/v3/services" 2>/dev/null || true
        }
        found=""
        for i in $(seq 1 40); do
