@@ -17,8 +17,10 @@ hidden:
     #     `openai` provider posts to `<apiBase>/chat/completions`
     #     (http://localhost:3000/v1/chat/completions) with the configured `model`. It
     #     returns 200 and a chat completion for the requested model.
-    #   * "Verify the connection": the request reaches agentgateway, shown by an
-    #     agentgateway log entry for that path with http.status=200.
+    #   * "Verify the connection": the request reaches agentgateway as a parsed chat
+    #     completion, shown by an agentgateway log entry for that path with
+    #     http.status=200 and gen_ai.operation.name=chat. A request on a path agentgateway
+    #     does not recognize is passed through and logs no gen_ai fields.
     # WHAT THIS TEST DOES NOT VALIDATE (and why):
     #   * Continue itself - it is a GUI app that cannot run in CI, so this test emulates
     #     the request it sends. The settings steps are UI-only.
@@ -113,14 +115,15 @@ hidden:
             comparator: equals
             value: assistant
     EOF
-    # "Verify the connection": the request went through agentgateway.
+    # "Verify the connection": the request went through agentgateway as a chat completion.
+    # AGW_LOG is the file agentgateway writes its log to.
     found=""
     for _ in $(seq 1 10); do
-      if awk '/http.path=\/v1\/chat\/completions/ && /http.status=200/ {f=1} END {exit !f}' "$AGW_LOG"; then found=yes; break; fi
+      if awk '/http.path=\/v1\/chat\/completions( |$)/ && /http.status=200( |$)/ && /gen_ai.operation.name=chat( |$)/ {f=1} END {exit !f}' "$AGW_LOG"; then found=yes; break; fi
       sleep 1
     done
-    [ -n "$found" ] || { echo "FAIL: no http.path=/v1/chat/completions entry with http.status=200 in the agentgateway log"; tail -n 20 "$AGW_LOG"; exit 1; }
-    echo "ok: the agentgateway log shows the /v1/chat/completions request with http.status=200"
+    [ -n "$found" ] || { echo "FAIL: no http.path=/v1/chat/completions entry with http.status=200 and gen_ai.operation.name=chat in the agentgateway log"; tail -n 20 "$AGW_LOG"; exit 1; }
+    echo "ok: the agentgateway log shows the /v1/chat/completions request with http.status=200 and gen_ai.operation.name=chat"
     stop_agw
     rm -f continue-config.yaml continue-config-mock.yaml
     {{< /doc-test >}}
