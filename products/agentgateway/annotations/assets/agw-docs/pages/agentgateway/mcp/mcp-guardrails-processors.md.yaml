@@ -15,3 +15,131 @@ tags:
     attr: paths="guardrails-processors"
     only: true
     lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 344643297f8b3cb9
+    lang: mermaid
+    lines: 536f52ac 94a4e583 33d861bd 8551eac6 6bede41f be4936b2 dfa73835 ce565c59 4437c82d bbc78fbb 990272f4 4de21d63 32202ae5 71a2886e b478ae57 0f00e37e d2fbda92 bbc78fbb 990272f4 fcde29d1 fc134877 74b29f53 361e48d0 361e48d0
+    preview: sequenceDiagram
+  content: |-
+    {{< doc-test paths="mcp-guardrails-processors" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The standalone Configuration example (an expression processor, then a remote processor)
+    #     is accepted inside a complete config with an MCP backend.
+    #   * The rules that the page states are enforced at load time: an expression processor takes
+    #     exactly one of `reject` or `transform`, it does not accept `failureMode`, and the
+    #     standalone phase values are lowercase (`Request` is rejected).
+    #   * The CEL `reject` runs before the remote processor: a `delete_records` call returns an
+    #     HTTP 200 tool result with `isError: true` and the reject message.
+    #   * Failure modes: with no ExtMCP server listening on localhost:9001, `failClosed` turns a
+    #     `tools/call` into a JSON-RPC error, and `failOpen` lets the same call through.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * A real ExtMCP server (mutation, the remote error-code table, `mcp_error`) - there is no
+    #     published reference ExtMCP server image to run locally.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # The page shows the policy on its own; place it on a route with an MCP backend.
+    write_config() {
+      cat > "$1" <<EOF
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - policies:
+        mcpGuardrails:
+          processors:
+          - kind: expression
+            condition: mcp.params.name == "delete_records"
+            reject: "delete_records is not available through this gateway"
+            methods:
+              tools/call: request
+          - kind: remote
+            host: "localhost:9001"
+            failureMode: $2
+            methods:
+              tools/call: request
+              tools/list: response
+      backends:
+      - mcp:
+          targets:
+          - name: everything
+            stdio:
+              cmd: npx
+              args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    }
+    write_config processors.yaml failClosed
+    agentgateway -f processors.yaml --validate-only
+
+    # Each invalid variant must be rejected when the configuration loads.
+    expect_invalid() {
+      if agentgateway -f "$1" --validate-only >"$1.log" 2>&1; then
+        echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+      fi
+      echo "rejected as documented: $2"
+    }
+    REJECT_LINE='        reject: "delete_records is not available through this gateway"'
+    awk -v r="$REJECT_LINE" '{print} $0==r {print "        transform: \"mcp.params\""}' processors.yaml > processors-both.yaml
+    expect_invalid processors-both.yaml "set exactly one action: reject or transform"
+    grep -vF "$REJECT_LINE" processors.yaml > processors-none.yaml
+    expect_invalid processors-none.yaml "set exactly one action: reject or transform"
+    awk -v r="$REJECT_LINE" '{print} $0==r {print "        failureMode: failOpen"}' processors.yaml > processors-fm.yaml
+    expect_invalid processors-fm.yaml "expression processors do not support failureMode"
+    sed 's/tools\/list: response/tools\/list: Response/' processors.yaml > processors-phase.yaml
+    expect_invalid processors-phase.yaml "the standalone phase values are lowercase"
+
+    AGW_PID=""
+    stop_agw() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    trap stop_agw EXIT
+    mcp() {
+      curl -s -i --max-time 60 http://localhost:3000/mcp \
+        -H "Content-Type: application/json" \
+        -H "Accept: application/json, text/event-stream" \
+        -H "MCP-Protocol-Version: 2025-03-26" \
+        ${MCP_SESSION_ID:+-H "mcp-session-id: $MCP_SESSION_ID"} \
+        -d "$1"
+    }
+    start_agw() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-processors-$2.log" 2>&1 &
+      AGW_PID=$!
+      # On first run, npx downloads @modelcontextprotocol/server-everything, which can take a while.
+      MCP_SESSION_ID=""
+      for i in $(seq 1 60); do
+        MCP_SESSION_ID=$(mcp '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"curl","version":"1.0.0"}}}' 2>/dev/null \
+          | grep -i '^mcp-session-id:' | sed 's/.*: //' | tr -d '\r' || true)
+        [ -n "$MCP_SESSION_ID" ] && break
+        sleep 2
+      done
+      [ -n "$MCP_SESSION_ID" ] || { echo "FAIL: no MCP session"; cat "/tmp/doc-test-agw-processors-$2.log"; exit 1; }
+      mcp '{"jsonrpc":"2.0","method":"notifications/initialized"}' >/dev/null
+    }
+
+    # failClosed, and nothing listens on localhost:9001.
+    start_agw processors.yaml closed
+    DENIED=$(mcp '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"delete_records","arguments":{}}}')
+    echo "$DENIED" | grep -Eq '^HTTP/[0-9.]+ 200' && echo "$DENIED" | grep -q '"isError":true' \
+      && echo "$DENIED" | grep -q 'delete_records is not available through this gateway' \
+      || { echo "FAIL: expected the CEL reject as an isError tool result: $DENIED"; exit 1; }
+    echo "CEL reject runs first and returns an isError tool result"
+    CLOSED=$(mcp '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"echo","arguments":{"message":"hello"}}}')
+    echo "$CLOSED" | grep -q '"error"' && ! echo "$CLOSED" | grep -q 'Echo: hello' \
+      || { echo "FAIL: expected a JSON-RPC error with the remote processor unreachable and failClosed: $CLOSED"; exit 1; }
+    echo "failClosed denies the call when the ExtMCP server is unreachable"
+    stop_agw
+
+    # failOpen: the same call goes through.
+    write_config processors-open.yaml failOpen
+    agentgateway -f processors-open.yaml --validate-only
+    start_agw processors-open.yaml open
+    OPEN=$(mcp '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"echo","arguments":{"message":"hello"}}}')
+    echo "$OPEN" | grep -q 'Echo: hello' \
+      || { echo "FAIL: expected failOpen to allow the call: $OPEN"; exit 1; }
+    echo "failOpen allows the call when the ExtMCP server is unreachable"
+    stop_agw
+    {{< /doc-test >}}

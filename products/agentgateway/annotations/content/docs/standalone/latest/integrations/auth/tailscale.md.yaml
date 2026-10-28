@@ -1,0 +1,301 @@
+format: 1
+source: content/docs/standalone/latest/integrations/auth/tailscale.md
+blocks:
+- f7bd372f9a3a8396 bash
+- 823e7ca3462cfb04 bash
+- a149548172ecbffe yaml
+- ae65042354efe199 yaml
+- f6931a7b2e59dbc5 bash
+- e6057ad7800bac6c
+- e0cbc66f3840b0d0 bash
+- 6737115fb7787de4
+- ca724c0cead98617 bash
+- 9a98bf6a9ba574c3
+- ab931ac52afb20da bash
+- 1cc6c71220b4d473
+- b49f43e7407b5d40 bash
+tags:
+- paths: tailscale
+  block: 6
+  fingerprint: e0cbc66f3840b0d0
+  lang: bash
+  lines: e0cbc66f
+  preview: curl -i http://localhost:3000/mcp
+  form:
+    attr: paths="tailscale"
+    only: true
+    lead: ' '
+- paths: tailscale
+  block: 8
+  fingerprint: ca724c0cead98617
+  lang: bash
+  lines: 7a9b9cd2 13c53da2
+  preview: TAILSCALE_IP=$(tailscale ip -4)
+  form:
+    attr: paths="tailscale"
+    only: true
+    lead: ' '
+- paths: tailscale
+  block: 10
+  fingerprint: ab931ac52afb20da
+  lang: bash
+  lines: 7a9b9cd2 e847cbe0 67c5a3ac c3a2a178 7f5f76a3
+  preview: TAILSCALE_IP=$(tailscale ip -4)
+  form:
+    attr: paths="tailscale"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 823e7ca3462cfb04
+    lang: bash
+    lines: 823e7ca3
+    preview: tailscale ip -4
+  content: |2-
+       {{< doc-test paths="tailscale" >}}
+       # WHAT THIS TEST VALIDATES (against a stand-in for the Tailscale local API on a Unix socket):
+       #   * Both the Linux and macOS configurations load.
+       #   * The extAuthz policy calls the whois API over the Unix socket with the request's source
+       #     address and the `local-tailscaled.sock` authority.
+       #   * Step 3: a request from localhost, which has no Tailscale identity, is denied; a request
+       #     from another address of this machine passes authorization and reaches the MCP server
+       #     (406 without text/event-stream, then a complete initialize request succeeds).
+       #   * The access log records the node name and login name extracted from the whois response.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * A real tailnet and tailscaled - external dependency; needs a Tailscale account. The test
+       #     serves the whois API from a small script on /tmp/doc-test-tailscaled.sock (the config's
+       #     socket path is changed to it) that answers like tailscaled: 404 `no match for IP:port` for
+       #     127.0.0.1, and a node and user profile for any other address. A `tailscale` shell function
+       #     stands in for `tailscale ip -4` and prints a non-loopback address of this machine.
+       #   * The exact denial status for localhost (the page shows 403) - it depends on what the real
+       #     tailscaled returns, which the stand-in cannot prove.
+       {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: f6931a7b2e59dbc5
+    lang: bash
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="tailscale" >}}
+       AGW_PID=""
+       stop_agw() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       cleanup() {
+         stop_agw
+         [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+         return 0
+       }
+       trap cleanup EXIT
+       # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+       start_agw() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+         AGW_PID=$!
+         for _ in $(seq 1 30); do
+           curl -s -o /dev/null -m 2 "$3" && return 0
+           kill -0 "$AGW_PID" 2>/dev/null || break
+           sleep 1
+         done
+         echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+       }
+       # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+       expect_invalid() {
+         if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+           echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+         fi
+         echo "rejected as documented: $2"
+       }
+       cat <<'EOF' > tailscale-linux.yaml
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       frontendPolicies:
+         accessLog:
+           add:
+             tailscale.node: extauthz.tailscaleNode
+             tailscale.email: extauthz.tailscaleEmail
+
+       gateways:
+         default:
+           port: 3000
+           protocol: HTTP
+       routes:
+       - name: application
+         backends:
+         - mcp:
+             targets:
+             - name: everything
+               stdio:
+                 cmd: npx
+                 args: ["@modelcontextprotocol/server-everything"]
+         policies:
+           cors:
+             allowOrigins: ["*"]
+             allowHeaders: ["*"]
+             exposeHeaders: ["Mcp-Session-Id"]
+           extAuthz:
+             host: unix:/run/tailscale/tailscaled.sock
+             protocol:
+               http:
+                 path: |
+                   "/localapi/v0/whois?addr=" + source.address
+                 addRequestHeaders:
+                   :authority: '"local-tailscaled.sock"'
+                 metadata:
+                   tailscaleNode: json(response.body).Node.Name
+                   tailscaleEmail: json(response.body).UserProfile.LoginName
+       EOF
+       cat <<'EOF' > tailscale-macos.yaml
+       # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+       frontendPolicies:
+         accessLog:
+           add:
+             tailscale.node: extauthz.tailscaleNode
+             tailscale.email: extauthz.tailscaleEmail
+
+       gateways:
+         default:
+           port: 3000
+           protocol: HTTP
+       routes:
+       - name: application
+         backends:
+         - mcp:
+             targets:
+             - name: everything
+               stdio:
+                 cmd: npx
+                 args: ["@modelcontextprotocol/server-everything"]
+         policies:
+           cors:
+             allowOrigins: ["*"]
+             allowHeaders: ["*"]
+             exposeHeaders: ["Mcp-Session-Id"]
+           extAuthz:
+             host: unix:/var/run/tailscale/tailscaled.sock
+             protocol:
+               http:
+                 path: |
+                   "/localapi/v0/whois?addr=" + source.address
+                 addRequestHeaders:
+                   :authority: '"local-tailscaled.sock"'
+                 metadata:
+                   tailscaleNode: json(response.body).Node.Name
+                   tailscaleEmail: json(response.body).UserProfile.LoginName
+       EOF
+       agentgateway -f tailscale-linux.yaml --validate-only
+       agentgateway -f tailscale-macos.yaml --validate-only
+
+       # The stand-in for the Tailscale local API.
+       SOCK=/tmp/doc-test-tailscaled.sock
+       rm -f "$SOCK"
+       cat > tailscaled-stub.py <<'PY'
+       import json, socketserver, sys, urllib.parse
+       from http.server import BaseHTTPRequestHandler
+       class H(BaseHTTPRequestHandler):
+           def do_GET(self):
+               url = urllib.parse.urlsplit(self.path)
+               addr = dict(urllib.parse.parse_qsl(url.query)).get("addr", "")
+               with open("/tmp/doc-test-tailscale-whois.log", "a") as f:
+                   f.write(json.dumps({"path": url.path, "addr": addr, "host": self.headers.get("host", "")}) + "\n")
+               loopback = "127.0.0.1" in addr or addr in ("::1", "[::1]") or addr.startswith("[::1]:")
+               if url.path != "/localapi/v0/whois" or not addr or loopback:
+                   body, status = b"no match for IP:port\n", 404
+               else:
+                   body = json.dumps({"Node": {"Name": "doc-test-node.tailnet.ts.net."},
+                                      "UserProfile": {"LoginName": "doc-user@example.com"}}).encode()
+                   status = 200
+               self.send_response(status)
+               self.send_header("content-type", "application/json" if status == 200 else "text/plain")
+               self.send_header("content-length", str(len(body)))
+               self.end_headers()
+               self.wfile.write(body)
+           def address_string(self):
+               return "unix"
+           def log_message(self, *a):
+               pass
+       class S(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
+           daemon_threads = True
+       S(sys.argv[1], H).serve_forever()
+       PY
+       : > /tmp/doc-test-tailscale-whois.log
+       python3 tailscaled-stub.py "$SOCK" > /tmp/doc-test-tailscaled-stub.out 2>&1 &
+       MOCK_PID=$!
+       for _ in $(seq 1 20); do [ -S "$SOCK" ] && break; sleep 1; done
+       curl -s --unix-socket "$SOCK" -o /dev/null http://local-tailscaled.sock/localapi/v0/whois?addr=10.0.0.1 \
+         || { echo "FAIL: the whois stand-in did not start"; cat /tmp/doc-test-tailscaled-stub.out; exit 1; }
+       : > /tmp/doc-test-tailscale-whois.log
+
+       # A non-loopback address of this machine stands in for the Tailscale IP.
+       LAN_IP=$(ip -4 route get 1.1.1.1 2>/dev/null | awk '{for (i = 1; i < NF; i++) if ($i == "src") print $(i + 1)}' || true)
+       [ -n "$LAN_IP" ] || LAN_IP=$(hostname -I 2>/dev/null | awk '{print $1}' || true)
+       [ -n "$LAN_IP" ] || { echo "FAIL: no non-loopback IPv4 address found"; exit 1; }
+       tailscale() { echo "$LAN_IP"; }
+
+       # The Linux configuration, with the stand-in socket.
+       sed "s#unix:/run/tailscale/tailscaled.sock#unix:$SOCK#" tailscale-linux.yaml > config.yaml
+       agentgateway -f config.yaml --validate-only
+       agentgateway -f config.yaml > /tmp/doc-test-agw-tailscale.log 2>&1 &
+       AGW_PID=$!
+       for _ in $(seq 1 30); do curl -s -o /dev/null -m 2 http://localhost:3000/mcp && break; sleep 1; done
+       : > /tmp/doc-test-tailscale-whois.log
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: e0cbc66f3840b0d0
+    lang: bash
+    lines: e0cbc66f
+    preview: curl -i http://localhost:3000/mcp
+  content: |2-
+       {{< doc-test paths="tailscale" >}}
+       CODE=$(curl -s -o tailscale-local.txt -w '%{http_code}' http://localhost:3000/mcp)
+       case "$CODE" in 2*|406) echo "FAIL: a localhost request was not denied ($CODE)"; cat tailscale-local.txt; exit 1 ;; esac
+       echo "ok: localhost request denied ($CODE: $(head -c 80 tailscale-local.txt))"
+       python3 - <<'PY'
+       import json
+       calls = [json.loads(l) for l in open("/tmp/doc-test-tailscale-whois.log") if l.strip()]
+       assert calls, "the gateway did not call the whois API"
+       c = calls[-1]
+       assert c["path"] == "/localapi/v0/whois", c
+       assert "127.0.0.1" in c["addr"] or "::1" in c["addr"], c
+       assert c["host"] == "local-tailscaled.sock", c
+       print("ok: whois called over the socket with addr", c["addr"], "and authority", c["host"])
+       PY
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: ca724c0cead98617
+    lang: bash
+    lines: 7a9b9cd2 13c53da2
+    preview: TAILSCALE_IP=$(tailscale ip -4)
+  content: |2-
+       {{< doc-test paths="tailscale" >}}
+       CODE=$(curl -s -o tailscale-406.txt -w '%{http_code}' "http://$TAILSCALE_IP:3000/mcp")
+       [ "$CODE" = "406" ] || { echo "FAIL: expected 406 from the MCP server, got $CODE"; cat tailscale-406.txt; exit 1; }
+       grep -qi 'text/event-stream' tailscale-406.txt || { echo "FAIL: unexpected 406 body"; cat tailscale-406.txt; exit 1; }
+       echo "ok: request from $TAILSCALE_IP passed authorization and reached the MCP server (406)"
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: ab931ac52afb20da
+    lang: bash
+    lines: 7a9b9cd2 e847cbe0 67c5a3ac c3a2a178 7f5f76a3
+    preview: TAILSCALE_IP=$(tailscale ip -4)
+  content: |2-
+       {{< doc-test paths="tailscale" >}}
+       CODE=$(curl -s -o tailscale-init.txt -w '%{http_code}' -X POST "http://$TAILSCALE_IP:3000/mcp" \
+         -H "Content-Type: application/json" -H "Accept: text/event-stream" \
+         -d '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}')
+       [ "$CODE" = "200" ] && grep -q 'serverInfo' tailscale-init.txt \
+         || { echo "FAIL: initialize through the Tailscale IP returned $CODE"; cat tailscale-init.txt; exit 1; }
+       echo "ok: initialize succeeded"
+       for _ in $(seq 1 10); do grep -q 'tailscale.email=' /tmp/doc-test-agw-tailscale.log && break; sleep 1; done
+       grep 'tailscale.node=doc-test-node.tailnet.ts.net.' /tmp/doc-test-agw-tailscale.log | grep -q 'tailscale.email=doc-user@example.com' \
+         || { echo "FAIL: the access log has no Tailscale identity"; cat /tmp/doc-test-agw-tailscale.log; exit 1; }
+       echo "ok: access log records tailscale.node and tailscale.email"
+       stop_agw
+       {{< /doc-test >}}

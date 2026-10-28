@@ -1,0 +1,42 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/codex.md
+blocks:
+- 11ab7a675881abb5 sh
+- 6b0c8bbbd4e5d1f5 sh
+- b8506803051a0c0f sh
+- 32b8e161ca90f0c3 sh
+- fc48fdcf70824038 sh
+- 2f5ac0238d4d8028 toml
+- e4790a0dd4b27010 bash
+- 6b6e7716c512faca
+- 245fa5eb2bfea1ae sh
+- 6b6e7716c512faca
+hidden:
+- after:
+    block: 5
+    fingerprint: 2f5ac0238d4d8028
+    lang: toml
+    lines: 2f5ac023
+    preview: env_key = "AGENTGATEWAY_API_KEY"
+  content: |-
+    {{< doc-test paths="codex" >}}
+    export AGENTGATEWAY_API_KEY="${AGENTGATEWAY_API_KEY:-codex-doc-test-client-key}"
+    BASE_URL="http://localhost:4000/v1"
+    CODE=$(curl -s -o codex-resp.json -w '%{http_code}' "$BASE_URL/responses" \
+      -H 'content-type: application/json' -H "authorization: Bearer $AGENTGATEWAY_API_KEY" \
+      -d '{"model": "gpt-5-codex", "input": [{"role": "user", "content": [{"type": "input_text", "text": "Hello"}]}]}')
+    [ "$CODE" = "200" ] || { echo "FAIL: Responses request returned $CODE"; cat codex-resp.json; exit 1; }
+    python3 - <<'PY'
+    import json, os
+    up = json.load(open("/tmp/doc-test-codex-last.json"))
+    assert up["path"].endswith("/responses"), up["path"]
+    assert up["body"]["model"] == "gpt-5-codex", up["body"].get("model")
+    assert up["headers"].get("authorization") == "Bearer " + os.environ["OPENAI_API_KEY"], up["headers"].get("authorization")
+    print("ok: the Responses request reached the upstream with the client's model and the provider key")
+    PY
+    for _ in $(seq 1 10); do grep -q 'http.path=/v1/responses' /tmp/doc-test-agw-codex.log && break; sleep 1; done
+    grep 'http.path=/v1/responses' /tmp/doc-test-agw-codex.log | grep -q 'protocol=llm' \
+      || { echo "FAIL: the request is not in the agentgateway log"; cat /tmp/doc-test-agw-codex.log; exit 1; }
+    echo "ok: the agentgateway log shows the /v1/responses request"
+    stop_agw
+    {{< /doc-test >}}

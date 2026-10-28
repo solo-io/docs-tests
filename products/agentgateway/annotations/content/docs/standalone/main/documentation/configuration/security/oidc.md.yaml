@@ -1,0 +1,539 @@
+format: 1
+source: content/docs/standalone/main/documentation/configuration/security/oidc.md
+blocks:
+- 4b8490a1c7f20548 mermaid
+- dc995fe6865c0ee3 bash
+- 267da2880781ad1d yaml
+- 2752e9ca912e252d yaml
+- 50625c4852c983ee yaml
+- 3f4474a408dc8017 yaml
+- 5c42cc2f8dccc6a0 yaml
+- dbd2bda3454a7f5b yaml
+- adb31865db7e6183 yaml
+- ba87bc2b7a8f2d36 yaml
+- 87a006c06802dcd5 html
+- 4d5b09dce745addd yaml
+- 3619263df7c663e5 sh
+- 35627793dc234d6c yaml
+- 68c5c4343ab7e749 yaml
+tags:
+- paths: oidc-browser
+  block: 1
+  fingerprint: dc995fe6865c0ee3
+  lang: bash
+  lines: dc995fe6
+  preview: export OIDC_COOKIE_SECRET="$(python3 -c 'import os; print(os.urandom(32).hex())'
+  form:
+    attr: paths="oidc-browser"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: dc995fe6865c0ee3
+    lang: bash
+    lines: dc995fe6
+    preview: export OIDC_COOKIE_SECRET="$(python3 -c 'import os; print(os.urandom(32).hex())'
+  content: |-
+    {{< doc-test paths="oidc-browser" >}}
+    # WHAT THIS TEST VALIDATES (against a local test-only OIDC provider and a local echo backend):
+    #   * The Simplified (LLM), Simplified (MCP), and Routing-based examples load when the issuer is
+    #     reachable; loading fails with `OIDC_COOKIE_SECRET is required` when the variable is not set,
+    #     and with `failed to decode oidc discovery response` when the issuer is unreachable.
+    #   * Navigation and fetch requests: a request without Sec-Fetch-Mode (curl) is redirected to the
+    #     provider's authorization endpoint with PKCE (S256) and the `openid`, `profile`, and `email`
+    #     scopes; `Sec-Fetch-Mode: cors` gets 401.
+    #   * The full Authorization Code Flow: the provider redirects back to the callback, the gateway
+    #     exchanges the code with the PKCE verifier, sets a session cookie, returns the browser to the
+    #     original path, and the cookie alone then reaches the backend.
+    #   * Custom login page and logout: the redirect to `login.redirect` with `returnTo`, the 401 plus
+    #     Location for fetches, the `login.path` endpoint, and the logout rules (POST with a matching
+    #     Origin gets 303 to the login page and clears the session; GET gets 405; no Origin is refused).
+    #   * Access log enrichment: `jwt.sub` and `jwt.email` from the session appear in the access log.
+    #   * Bearer tokens (sessionOrBearer): a valid ID token for the client is accepted without the
+    #     login flow and the Authorization header is removed before the backend; an invalid,
+    #     expired, or wrong-audience token gets 401; with the default `session` value the header is
+    #     ignored and the request is redirected to log in.
+    #   * permissive: with the page's jwtAuth and authorization policies, a request without
+    #     credentials gets 403, a browser navigation (Accept: text/html) is redirected to log in, and
+    #     both a token from the second issuer and an OIDC ID token are let through.
+    #   * `sessionTtl` is accepted.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The UI tab - GUI-only.
+    #   * Keycloak itself and the keycloak.example.com examples - external dependency; the examples
+    #     differ from the tested ones only in the issuer URL. The local provider logs the user in
+    #     without a form.
+    #   * Refresh tokens - the session would have to outlive the ID token.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    AGW_PID=""
+    stop_agw() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    cleanup() {
+      stop_agw
+      [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+      return 0
+    }
+    trap cleanup EXIT
+    # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+    start_agw() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -s -o /dev/null -m 2 "$3" && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+    }
+    # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+    expect_invalid() {
+      if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+        echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+      fi
+      echo "rejected as documented: $2"
+    }
+    # A test-only OIDC provider on localhost:7080 that serves discovery, JWKS, an authorization
+    # endpoint that logs the user in at once, and a token endpoint that issues signed ID tokens.
+    mkdir -p oidc-keys
+    openssl genrsa -out oidc-keys/idp.pem 2048 2>/dev/null
+    openssl genrsa -out oidc-keys/cli.pem 2048 2>/dev/null
+    cat > oidc-idp.py <<'PY'
+    # Test-only OpenID Connect provider. Serve: oidc-idp.py serve PORT KEYDIR
+    # Mint a token: oidc-idp.py mint KEYDIR KEYNAME ISS AUD SUB [EXP_OFFSET]
+    import base64, json, os, subprocess, sys, time, urllib.parse, uuid
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    def b64(data):
+        return base64.urlsafe_b64encode(data).rstrip(b"=").decode()
+
+    def jwk(keydir, name):
+        mod = subprocess.check_output(["openssl", "rsa", "-in", f"{keydir}/{name}.pem", "-noout", "-modulus"]).decode().strip().split("=", 1)[1]
+        return {"kty": "RSA", "kid": name, "use": "sig", "alg": "RS256", "n": b64(bytes.fromhex(mod)), "e": "AQAB"}
+
+    def sign(keydir, name, claims):
+        header = b64(json.dumps({"alg": "RS256", "typ": "JWT", "kid": name}).encode())
+        payload = b64(json.dumps(claims).encode())
+        signing_input = f"{header}.{payload}".encode()
+        sig = subprocess.run(["openssl", "dgst", "-sha256", "-sign", f"{keydir}/{name}.pem"], input=signing_input,
+                             capture_output=True, check=True).stdout
+        return f"{header}.{payload}.{b64(sig)}"
+
+    def claims(iss, aud, sub, exp_offset=3600, **extra):
+        now = int(time.time())
+        c = {"iss": iss, "aud": aud, "sub": sub, "iat": now, "exp": now + int(exp_offset), "email": f"{sub}@example.com"}
+        c.update(extra)
+        return c
+
+    if sys.argv[1] == "mint":
+        keydir, name, iss, aud, sub = sys.argv[2:7]
+        print(sign(keydir, name, claims(iss, aud, sub, sys.argv[7] if len(sys.argv) > 7 else 3600)))
+        sys.exit(0)
+
+    PORT, KEYDIR = int(sys.argv[2]), sys.argv[3]
+    REALM = "/realms/agentgateway"
+    ISSUER = f"http://localhost:{PORT}{REALM}"
+    CODES = {}
+
+    class H(BaseHTTPRequestHandler):
+        def reply(self, status, body=b"", ctype="application/json", headers=()):
+            self.send_response(status)
+            for k, v in headers:
+                self.send_header(k, v)
+            self.send_header("content-type", ctype)
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_GET(self):
+            url = urllib.parse.urlsplit(self.path)
+            q = dict(urllib.parse.parse_qsl(url.query))
+            if url.path == REALM + "/.well-known/openid-configuration":
+                doc = {"issuer": ISSUER, "authorization_endpoint": ISSUER + "/protocol/openid-connect/auth",
+                       "token_endpoint": ISSUER + "/protocol/openid-connect/token",
+                       "jwks_uri": ISSUER + "/protocol/openid-connect/certs",
+                       "token_endpoint_auth_methods_supported": ["client_secret_basic", "client_secret_post"],
+                       "response_types_supported": ["code"], "subject_types_supported": ["public"],
+                       "id_token_signing_alg_values_supported": ["RS256"]}
+                self.reply(200, json.dumps(doc).encode())
+            elif url.path == REALM + "/protocol/openid-connect/certs":
+                self.reply(200, json.dumps({"keys": [jwk(KEYDIR, "idp")]}).encode())
+            elif url.path == "/cli/jwks.json":
+                self.reply(200, json.dumps({"keys": [jwk(KEYDIR, "cli")]}).encode())
+            elif url.path == REALM + "/protocol/openid-connect/auth":
+                # Log the user in at once: no login form, straight back to the gateway with a code.
+                with open(os.path.join(KEYDIR, "last-auth.json"), "w") as f:
+                    json.dump(q, f)
+                code = uuid.uuid4().hex
+                CODES[code] = q
+                loc = q["redirect_uri"] + "?" + urllib.parse.urlencode({"code": code, "state": q.get("state", "")})
+                self.reply(302, headers=[("location", loc)], ctype="text/plain")
+            else:
+                self.reply(404, b"{}")
+
+        def do_POST(self):
+            url = urllib.parse.urlsplit(self.path)
+            n = int(self.headers.get("content-length") or 0)
+            form = dict(urllib.parse.parse_qsl(self.rfile.read(n).decode()))
+            if url.path != REALM + "/protocol/openid-connect/token":
+                return self.reply(404, b"{}")
+            with open(os.path.join(KEYDIR, "last-token.json"), "w") as f:
+                json.dump({"form": {k: v for k, v in form.items() if k != "client_secret"},
+                           "authorization": self.headers.get("authorization", "")}, f)
+            auth = CODES.pop(form.get("code", ""), None)
+            if auth is None:
+                return self.reply(400, json.dumps({"error": "invalid_grant"}).encode())
+            token = sign(KEYDIR, "idp", claims(ISSUER, auth["client_id"], "doc-user", nonce=auth.get("nonce")))
+            self.reply(200, json.dumps({"access_token": "doc-test-access", "token_type": "Bearer",
+                                        "expires_in": 3600, "id_token": token}).encode())
+
+        def log_message(self, *a):
+            pass
+
+    ThreadingHTTPServer(("127.0.0.1", PORT), H).serve_forever()
+    PY
+    python3 oidc-idp.py serve 7080 oidc-keys > /tmp/doc-test-oidc-idp.log 2>&1 &
+    IDP_PID=$!
+    # An echo backend on localhost:18080, the backend of the Routing-based example.
+    cat > oidc-echo.py <<'PY'
+    import json
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+    class H(BaseHTTPRequestHandler):
+        def do_GET(self):
+            body = json.dumps({"path": self.path, "headers": {k.lower(): v for k, v in self.headers.items()}}).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        do_POST = do_GET
+        def log_message(self, *a):
+            pass
+    ThreadingHTTPServer(("127.0.0.1", 18080), H).serve_forever()
+    PY
+    python3 oidc-echo.py > /tmp/doc-test-oidc-echo.log 2>&1 &
+    ECHO_PID=$!
+    trap 'cleanup; kill "$IDP_PID" "$ECHO_PID" 2>/dev/null || true' EXIT
+    for _ in $(seq 1 20); do
+      curl -sf -o /dev/null -m 2 http://localhost:7080/realms/agentgateway/.well-known/openid-configuration \
+        && curl -sf -o /dev/null -m 2 http://localhost:18080/ && break
+      sleep 1
+    done
+    curl -sf -o /dev/null -m 2 http://localhost:7080/realms/agentgateway/.well-known/openid-configuration \
+      || { echo "FAIL: the test OIDC provider did not start"; cat /tmp/doc-test-oidc-idp.log; exit 1; }
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+
+    mint() { python3 oidc-idp.py mint oidc-keys "$@"; }
+    IDP_ISSUER=http://localhost:7080/realms/agentgateway
+    # hdr FILE NAME: print a response header value from a curl -D dump.
+    hdr() { grep -i "^$2:" "$1" | head -1 | sed 's/^[^:]*: *//' | tr -d '\r'; }
+    # req OUTPREFIX CURL_ARGS...: request without following redirects; prints the status code.
+    req() {
+      local p=$1; shift
+      curl -s -o "$p.body" -D "$p.headers" -w '%{http_code}' "$@"
+    }
+    expect_code() {
+      [ "$1" = "$2" ] || { echo "FAIL: $3: expected $2, got $1"; exit 1; }
+      echo "ok: $3 ($1)"
+    }
+    # login JAR URL: run the whole browser flow with a cookie jar; prints the final status code.
+    login() {
+      curl -s -L -c "$1" -b "$1" -o login.body -w '%{http_code}' "$2"
+    }
+
+    # The Routing-based example from the Config file tab.
+    cat <<'EOF' > oidc-routing.yaml
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: localhost:18080
+      matches:
+      - path:
+          pathPrefix: /
+      policies:
+        oidc:
+          issuer: http://localhost:7080/realms/agentgateway
+          clientId: agentgateway-browser
+          clientSecret: agentgateway-secret
+          redirectURI: http://localhost:3000/oauth/callback
+          scopes:
+          - profile
+          - email
+    EOF
+    cat <<'EOF' > oidc-llm.yaml
+    llm:
+      policies:
+        oidc:
+          issuer: http://localhost:7080/realms/agentgateway
+          clientId: agentgateway-browser
+          clientSecret: agentgateway-secret
+          redirectURI: http://localhost:3000/oauth/callback
+          scopes:
+          - profile
+          - email
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    cat <<'EOF' > oidc-mcp.yaml
+    mcp:
+      port: 3000
+      policies:
+        oidc:
+          issuer: http://localhost:7080/realms/agentgateway
+          clientId: agentgateway-browser
+          clientSecret: agentgateway-secret
+          redirectURI: http://localhost:3000/oauth/callback
+          scopes:
+          - profile
+          - email
+      targets:
+      - name: everything
+        stdio:
+          cmd: npx
+          args: ["@modelcontextprotocol/server-everything"]
+    EOF
+
+    # Without OIDC_COOKIE_SECRET, a config with an oidc policy does not load.
+    if env -u OIDC_COOKIE_SECRET agentgateway -f oidc-routing.yaml --validate-only > oidc-nosecret.log 2>&1; then
+      echo "FAIL: the oidc config loaded without OIDC_COOKIE_SECRET"; exit 1
+    fi
+    grep -q 'OIDC_COOKIE_SECRET is required' oidc-nosecret.log || { echo "FAIL: unexpected error"; cat oidc-nosecret.log; exit 1; }
+    echo "ok: OIDC_COOKIE_SECRET is required"
+
+    for f in oidc-routing.yaml oidc-llm.yaml oidc-mcp.yaml; do agentgateway -f "$f" --validate-only; done
+
+    # An unreachable issuer: the discovery document cannot be loaded.
+    sed 's#localhost:7080#localhost:7081#' oidc-routing.yaml > oidc-unreachable.yaml
+    if agentgateway -f oidc-unreachable.yaml --validate-only > oidc-unreachable.log 2>&1; then
+      echo "FAIL: a config with an unreachable issuer loaded"; exit 1
+    fi
+    grep -q 'failed to decode oidc discovery response' oidc-unreachable.log \
+      || { echo "FAIL: unexpected error"; cat oidc-unreachable.log; exit 1; }
+    echo "ok: unreachable issuer fails with failed to decode oidc discovery response"
+
+    start_agw oidc-routing.yaml oidc-routing http://localhost:3000/
+    # Navigation (no Sec-Fetch-Mode, as with curl): redirect to the provider, with PKCE and scopes.
+    expect_code "$(req nav http://localhost:3000/app)" 302 "curl request is redirected to log in"
+    python3 - "$(hdr nav.headers location)" <<'PY'
+    import sys, urllib.parse
+    loc = urllib.parse.urlsplit(sys.argv[1])
+    q = dict(urllib.parse.parse_qsl(loc.query))
+    assert sys.argv[1].startswith("http://localhost:7080/realms/agentgateway/protocol/openid-connect/auth"), sys.argv[1]
+    assert q.get("response_type") == "code" and q.get("client_id") == "agentgateway-browser", q
+    assert q.get("redirect_uri") == "http://localhost:3000/oauth/callback", q
+    assert q.get("code_challenge_method") == "S256" and q.get("code_challenge"), q
+    assert {"openid", "profile", "email"} <= set(q.get("scope", "").split()), q.get("scope")
+    print("ok: authorization request uses PKCE S256 and the openid, profile, and email scopes")
+    PY
+    expect_code "$(req fetch -H 'Sec-Fetch-Mode: cors' http://localhost:3000/app)" 401 "fetch request gets 401"
+    expect_code "$(req navigate -H 'Sec-Fetch-Mode: navigate' http://localhost:3000/app)" 302 "navigation is redirected"
+
+    # The whole Authorization Code Flow, as a browser with a cookie jar runs it.
+    rm -f jar-basic
+    expect_code "$(login jar-basic http://localhost:3000/app)" 200 "login flow ends at the protected resource"
+    python3 -c 'import json,sys; b=json.load(open("login.body")); assert b["path"]=="/app", b' \
+      || { echo "FAIL: the flow did not return to the original path"; cat login.body; exit 1; }
+    python3 - <<'PY'
+    import base64, hashlib, json
+    auth = json.load(open("oidc-keys/last-auth.json"))
+    tok = json.load(open("oidc-keys/last-token.json"))
+    verifier = tok["form"].get("code_verifier", "")
+    challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+    assert tok["form"].get("grant_type") == "authorization_code", tok
+    assert verifier and challenge == auth["code_challenge"], "the code verifier does not match the code challenge"
+    print("ok: the code exchange sent the PKCE verifier for the challenge")
+    PY
+    expect_code "$(req session -b jar-basic http://localhost:3000/app)" 200 "the session cookie alone reaches the backend"
+    stop_agw
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: ba87bc2b7a8f2d36
+    lang: yaml
+    lines: c8f3f59a f1ef853f 10db1aa9 dcc3e510 db4ac7df 149e264d ba4c5d16 45907b5a ecb31bdc bef4d6ca 5d415cb4 ecb31bdc
+    preview: 'policies:'
+  content: |-
+    {{< doc-test paths="oidc-browser" >}}
+    # The Custom login page and logout example, on the Routing-based config.
+    cat <<'EOF' > oidc-login.yaml
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: localhost:18080
+      matches:
+      - path:
+          pathPrefix: /
+      policies:
+        oidc:
+          issuer: http://localhost:7080/realms/agentgateway
+          clientId: agentgateway-browser
+          clientSecret: agentgateway-secret
+          redirectURI: http://localhost:3000/oauth/callback
+          login:
+            path: /auth/login
+            redirect: /login
+          logout:
+            path: /auth/logout
+            redirect: /login
+    EOF
+    agentgateway -f oidc-login.yaml --validate-only
+    start_agw oidc-login.yaml oidc-login http://localhost:3000/
+    expect_code "$(req lnav http://localhost:3000/app?x=1)" 302 "navigation goes to the login page"
+    python3 - "$(hdr lnav.headers location)" <<'PY'
+    import sys, urllib.parse
+    loc = urllib.parse.urlsplit(sys.argv[1])
+    assert loc.path == "/login", sys.argv[1]
+    assert dict(urllib.parse.parse_qsl(loc.query)).get("returnTo") == "/app?x=1", sys.argv[1]
+    print("ok: login.redirect gets returnTo with the original path and query")
+    PY
+    expect_code "$(req lfetch -H 'Sec-Fetch-Mode: cors' http://localhost:3000/app)" 401 "fetch gets 401"
+    case "$(hdr lfetch.headers location)" in /login*) echo "ok: the 401 has a Location header with the login page" ;;
+      *) echo "FAIL: the 401 has no Location for login.redirect: $(hdr lfetch.headers location)"; exit 1 ;; esac
+    expect_code "$(req lstart 'http://localhost:3000/auth/login?returnTo=%2Fapp')" 302 "login.path starts the flow"
+    case "$(hdr lstart.headers location)" in http://localhost:7080/*) echo "ok: login.path redirects to the provider" ;;
+      *) echo "FAIL: login.path redirected to $(hdr lstart.headers location)"; exit 1 ;; esac
+    rm -f jar-login
+    expect_code "$(login jar-login 'http://localhost:3000/auth/login?returnTo=%2Fapp')" 200 "login through login.path"
+    python3 -c 'import json; b=json.load(open("login.body")); assert b["path"]=="/app", b' \
+      || { echo "FAIL: login did not return to returnTo"; cat login.body; exit 1; }
+    expect_code "$(req lsession -b jar-login http://localhost:3000/app)" 200 "session works"
+
+    # Logout: GET is not allowed, a POST without Origin is refused, a same-origin POST signs out.
+    expect_code "$(req lgetout -b jar-login http://localhost:3000/auth/logout)" 405 "GET to logout.path"
+    CODE=$(req lnoorigin -b jar-login -X POST http://localhost:3000/auth/logout)
+    [ "$CODE" != "303" ] || { echo "FAIL: a logout POST without Origin was accepted"; exit 1; }
+    echo "ok: logout without Origin refused ($CODE)"
+    expect_code "$(req lout -b jar-login -c jar-login -X POST -H 'Origin: http://localhost:3000' http://localhost:3000/auth/logout)" 303 "same-origin logout POST"
+    [ "$(hdr lout.headers location)" = "/login" ] || { echo "FAIL: logout redirected to $(hdr lout.headers location)"; exit 1; }
+    expect_code "$(req lafter -b jar-login http://localhost:3000/app)" 302 "after logout, the next request starts a new login"
+    stop_agw
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 4d5b09dce745addd
+    lang: yaml
+    lines: c8f3f59a f1ef853f 10db1aa9 dcc3e510 db4ac7df 149e264d 31d0a222
+    preview: 'policies:'
+  content: |2-
+       {{< doc-test paths="oidc-browser" >}}
+       # Accept ID tokens from the OIDC provider (credentials: sessionOrBearer).
+       cat <<'EOF' > oidc-bearer.yaml
+       gateways:
+         default:
+           port: 3000
+       routes:
+       - backends:
+         - host: localhost:18080
+         matches:
+         - path:
+             pathPrefix: /
+         policies:
+           oidc:
+             issuer: http://localhost:7080/realms/agentgateway
+             clientId: agentgateway-browser
+             clientSecret: agentgateway-secret
+             redirectURI: http://localhost:3000/oauth/callback
+             credentials: sessionOrBearer
+       EOF
+       agentgateway -f oidc-bearer.yaml --validate-only
+       GOOD=$(mint idp "$IDP_ISSUER" agentgateway-browser api-user)
+       start_agw oidc-bearer.yaml oidc-bearer http://localhost:3000/
+       expect_code "$(req bgood -H "Authorization: Bearer $GOOD" http://localhost:3000/)" 200 "valid ID token"
+       python3 -c 'import json; h=json.load(open("bgood.body"))["headers"]; assert "authorization" not in h, h' \
+         || { echo "FAIL: the Authorization header reached the backend"; exit 1; }
+       echo "ok: the Authorization header is removed before the backend"
+       expect_code "$(req bforged -H "Authorization: Bearer $(mint cli "$IDP_ISSUER" agentgateway-browser api-user)" http://localhost:3000/)" 401 "token signed by another key"
+       expect_code "$(req bexpired -H "Authorization: Bearer $(mint idp "$IDP_ISSUER" agentgateway-browser api-user -120)" http://localhost:3000/)" 401 "expired token"
+       expect_code "$(req baud -H "Authorization: Bearer $(mint idp "$IDP_ISSUER" other-client api-user)" http://localhost:3000/)" 401 "token for another audience"
+       expect_code "$(req bnone http://localhost:3000/)" 302 "no Authorization header uses the browser flow"
+       stop_agw
+       # The default credentials value, session, ignores the Authorization header.
+       start_agw oidc-routing.yaml oidc-session http://localhost:3000/
+       expect_code "$(req bsession -H "Authorization: Bearer $GOOD" http://localhost:3000/)" 302 "session mode ignores a bearer token"
+       stop_agw
+       # sessionTtl from the Fields table.
+       sed 's#      credentials: sessionOrBearer#      sessionTtl: 12h#' oidc-bearer.yaml > oidc-ttl.yaml
+       agentgateway -f oidc-ttl.yaml --validate-only
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 35627793dc234d6c
+    lang: yaml
+    lines: c8f3f59a f1ef853f 10db1aa9 dcc3e510 db4ac7df 149e264d 8b55d2ee e34dc3a0 4f5ce54e 98847e19 44ec9b74 25f7c99e d48a6346 3de9d845 219dacaa
+    preview: 'policies:'
+  content: |-
+    {{< doc-test paths="oidc-browser" >}}
+    # Pass API clients to other authentication policies (credentials: permissive). The page's
+    # jwtAuth JWKS URL is on cli.example.com; the test serves that issuer's JWKS from the local provider.
+    cat <<'EOF' > oidc-permissive.yaml
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - host: localhost:18080
+      matches:
+      - path:
+          pathPrefix: /
+      policies:
+        oidc:
+          issuer: http://localhost:7080/realms/agentgateway
+          clientId: agentgateway-browser
+          clientSecret: agentgateway-secret
+          redirectURI: http://localhost:3000/oauth/callback
+          credentials: permissive
+        jwtAuth:
+          issuer: https://cli.example.com
+          audiences: [my-app-cli]
+          jwks:
+            url: http://localhost:7080/cli/jwks.json
+        authorization:
+          rules:
+          - allow: has(jwt.sub)
+    EOF
+    agentgateway -f oidc-permissive.yaml --validate-only
+    start_agw oidc-permissive.yaml oidc-permissive http://localhost:3000/
+    expect_code "$(req pnone http://localhost:3000/)" 403 "no credentials: rejected by the authorization rule"
+    expect_code "$(req phtml -H 'Accept: text/html' http://localhost:3000/)" 302 "browser navigation starts the login flow"
+    expect_code "$(req pcli -H "Authorization: Bearer $(mint cli https://cli.example.com my-app-cli cli-user)" http://localhost:3000/)" 200 "token from the second issuer"
+    expect_code "$(req pidp -H "Authorization: Bearer $GOOD" http://localhost:3000/)" 200 "OIDC ID token"
+    stop_agw
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 68c5c4343ab7e749
+    lang: yaml
+    lines: 1b6c26b3 52e214e3 274fdf3f abf9c40f 6f0104d7
+    preview: 'frontendPolicies:'
+  content: |-
+    {{< doc-test paths="oidc-browser" >}}
+    # Access log enrichment from the session's claims.
+    cat <<'EOF' > oidc-accesslog.yaml
+    frontendPolicies:
+      accessLog:
+        add:
+          user.id: jwt.sub
+          user.email: jwt.email
+    EOF
+    cat oidc-routing.yaml >> oidc-accesslog.yaml
+    agentgateway -f oidc-accesslog.yaml --validate-only
+    start_agw oidc-accesslog.yaml oidc-accesslog http://localhost:3000/
+    rm -f jar-log
+    expect_code "$(login jar-log http://localhost:3000/app)" 200 "login"
+    expect_code "$(req logged -b jar-log http://localhost:3000/logged)" 200 "request with the session"
+    for _ in $(seq 1 10); do grep -q 'user.id=doc-user' /tmp/doc-test-agw-oidc-accesslog.log && break; sleep 1; done
+    grep 'http.path=/logged' /tmp/doc-test-agw-oidc-accesslog.log | grep 'user.id=doc-user' | grep -q 'user.email=doc-user@example.com' \
+      || { echo "FAIL: the access log has no user.id and user.email from the session"; cat /tmp/doc-test-agw-oidc-accesslog.log; exit 1; }
+    echo "ok: access log records jwt.sub and jwt.email from the session"
+    stop_agw
+    {{< /doc-test >}}

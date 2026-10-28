@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/latest/integrations/llm/providers/mistral.md
 blocks:
-- 16a50bd663d60f2e yaml
-- 00a117b5f91a0303 bash
+- 1d5a01ad24f1dc84 sh
+- 08486f0c0e7938c9 yaml
+- 078811f9e049cff6 bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export MISTRAL_API_KEY="${MISTRAL_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 16a50bd663d60f2e
+    block: 1
+    fingerprint: 08486f0c0e7938c9
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 bf1e382f 009395dd e00b0679
+    lines: a7f80a73 3af99526 e01ccf75 5a2494d2 bf1e382f 009395dd e00b0679 8905bcef b984c6f4
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="mistral" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 00a117b5f91a0303
+    block: 2
+    fingerprint: 078811f9e049cff6
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d 3e245ae7 5a979985 fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d 596887bd 5a979985 fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="mistral" >}}

@@ -1,0 +1,67 @@
+format: 1
+source: content/docs/standalone/latest/integrations/llm/observability/langfuse.md
+blocks:
+- d1179fe16c363a87 bash
+- 9d84521d59bddc60 bash
+- 409a433951e945fd yaml
+- f6931a7b2e59dbc5 sh
+- 275af2c5a50aeb42 yaml
+- 8c5d086ced82dde4 yaml
+- 30629115acf4a8fd yaml
+hidden:
+- after:
+    block: 5
+    fingerprint: 8c5d086ced82dde4
+    lang: yaml
+    lines: a7f80a73 1b6c26b3 390f7e12 7017af1e 5abef05f 726224a8 9adf3fc1 c8f3f59a 48924e65 8fb7eebc 207d5e5e 574b5b8e 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 6d88d930 c8f3f59a 81b74571 7217bcc4
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="langfuse-validate" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Langfuse tracing configuration on this page is accepted by agentgateway
+    #     (--validate-only), so the tracing, policies, and header fields are spelled and
+    #     shaped correctly.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That Langfuse receives traces - external dependency: needs a real Langfuse
+    #     account and API key. The test uses placeholder credentials and never contacts
+    #     Langfuse.
+    #   * The UI tab, the Docker run or Compose example, and the dashboard checks -
+    #     browser-only steps or a different binary than the one under test.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    # Placeholder credentials. agentgateway expands the ${...} references when it loads
+    # the config, so they must be set, but nothing is sent anywhere.
+    export LANGFUSE_AUTH_HEADER="${LANGFUSE_AUTH_HEADER:-$(printf '%s' 'pk-lf-test:sk-lf-test' | base64 | tr -d '\n')}"
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    cat > config-langfuse.yaml <<'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    frontendPolicies:
+      tracing:
+        host: cloud.langfuse.com:443
+        protocol: http
+        path: /api/public/otel/v1/traces
+        randomSampling: true
+        policies:
+          backendTLS: {}
+          requestHeaderModifier:
+            set:
+              Authorization: "Basic ${LANGFUSE_AUTH_HEADER}"
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - ai:
+          name: openai
+          provider:
+            openAI:
+              model: gpt-4o-mini
+      policies:
+        backendAuth:
+          key: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config-langfuse.yaml --validate-only
+    echo "ok: the Langfuse tracing config is valid"
+    {{< /doc-test >}}

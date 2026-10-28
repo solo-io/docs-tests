@@ -1,0 +1,96 @@
+format: 1
+source: content/docs/standalone/latest/integrations/networking/cert-manager.md
+blocks:
+- 85952507464fc2e5 bash
+- ba1572df078083a6 yaml
+- 4313aeb6e8ed989c yaml
+- 8616247e6668a5eb yaml
+- 420a334242a74eb7 yaml
+- a65be5b9a51d8b17 yaml
+hidden:
+- after:
+    block: 4
+    fingerprint: 420a334242a74eb7
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c c6ba4159 53aa10f9 3195c5f5 545fc46c 1b8086e5 d67b54bf d897654b df374e41 3035507a 5bcefbc4 a68fe535 ca335149 6329244e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="cert-manager" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The agentgateway configuration in "Manual certificate" loads and serves HTTPS with the
+    #     tls.crt and tls.key files of a certificate for localhost and agentgateway.local (the DNS
+    #     names of the "Self-signed certificates for development" Certificate): a client that trusts
+    #     that certificate completes the TLS handshake and reaches the MCP backend.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * cert-manager, the ClusterIssuer, Certificate, and Gateway resources, and Let's Encrypt -
+    #     need a Kubernetes cluster and a public DNS name, which a standalone test does not have.
+    #     openssl creates the certificate instead, in ./certs rather than /certs (writing to /certs
+    #     needs root). The test listens on 8443 instead of 443 for the same reason.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    AGW_PID=""
+    stop_agw() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    cleanup() {
+      stop_agw
+      [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+      return 0
+    }
+    trap cleanup EXIT
+    # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+    start_agw() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -s -o /dev/null -m 2 "$3" && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+    }
+    # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+    expect_invalid() {
+      if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+        echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+      fi
+      echo "rejected as documented: $2"
+    }
+    mkdir -p certs
+    openssl req -x509 -newkey rsa:2048 -nodes -keyout certs/tls.key -out certs/tls.crt -days 1 \
+      -subj "/CN=localhost" -addext "subjectAltName=DNS:localhost,DNS:agentgateway.local" 2>/dev/null
+    cat <<'EOF' > cert-manager.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 443
+        protocol: HTTPS
+        tls:
+          cert: /certs/tls.crt
+          key: /certs/tls.key
+    routes:
+    - backends:
+      - mcp:
+          targets:
+          - name: my-server
+            stdio:
+              cmd: npx
+              args: ["@modelcontextprotocol/server-everything"]
+    EOF
+    sed -e 's#/certs/#./certs/#' cert-manager.yaml > cert-manager-local.yaml
+    agentgateway -f cert-manager-local.yaml --validate-only
+    sed 's/port: 443/port: 8443/' cert-manager-local.yaml > cert-manager-8443.yaml
+    start_agw cert-manager-8443.yaml cert-manager https://localhost:8443/
+    OUT=$(curl -s -o /dev/null -w '%{http_code} %{ssl_verify_result}' --cacert certs/tls.crt https://localhost:8443/mcp || true)
+    case "$OUT" in
+      "000 "*) echo "FAIL: TLS handshake with the certificate failed: $OUT"; cat /tmp/doc-test-agw-cert-manager.log; exit 1 ;;
+      *" 0") echo "ok: HTTPS served with the certificate (status and verify result: $OUT)" ;;
+      *) echo "FAIL: certificate did not verify: $OUT"; exit 1 ;;
+    esac
+    OUT=$(curl -s -o /dev/null -w '%{http_code}' --cacert certs/tls.crt --resolve agentgateway.local:8443:127.0.0.1 https://agentgateway.local:8443/mcp || true)
+    [ "$OUT" != "000" ] || { echo "FAIL: TLS failed for agentgateway.local"; exit 1; }
+    echo "ok: agentgateway.local verifies too ($OUT)"
+    stop_agw
+    {{< /doc-test >}}

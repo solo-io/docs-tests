@@ -2,7 +2,8 @@ format: 1
 source: content/docs/standalone/latest/documentation/llm/cost-controls/budget-limits/per-key.md
 blocks:
 - 982b20f29d0d22fc sh
-- 6a2d16dd3e066e88 yaml
+- 2680fdb3834e0832 sh
+- 405f91400fa8c349 yaml
 - f6931a7b2e59dbc5 sh
 - 7bfb9bf0763a6f2f sh
 - 27badc983df1780b
@@ -13,11 +14,13 @@ blocks:
 - db78c11e05c8f08c sh
 - 3a6a882b627d8815 json
 - 6236037da4221cd3
+- 47ad37b2810b3fa0 sh
+- 36b90d8715d49870 text
 - aa0948ce9cb4a91f sh
 - 7b2b39a265e612f2 json
 - b572c975077dbcf9 sh
 - 4d1f961569b25f68
-- 6f40656ce16a45f2
+- 433adba273ad3fdf
 - 0644f35ee068fc43 yaml
 - 5e8adae3b063a621 yaml
 - 0cc81097b9672fd9
@@ -35,17 +38,17 @@ tags:
     only: true
     lead: ' '
 - paths: apikey-budgets
-  block: 1
-  fingerprint: 6a2d16dd3e066e88
+  block: 2
+  fingerprint: 405f91400fa8c349
   lang: yaml
-  lines: 2a7b4933 a7f80a73 2180b199 19bcae4b c2440413 a4974671 06872e95 3af99526 c8f3f59a e5522222 b0299c0e 1fe7fd13 74ed6bcb 8c8c4228 e25ba274 23b597a2 2939245c bf75dafc 7d14aac7 dc36242a 74d317cd 4f29ddd3 1fe164f7 3f1bb532 5aea7895 cd900df0 8c8c4228 c8998653 bf75dafc 40741e9c dc36242a 1891bc00 7f51eb89 1fe164f7 3f1bb532 1591cfcc e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+  lines: 2a7b4933 a7f80a73 2180b199 19bcae4b c2440413 a4974671 06872e95 3af99526 c8f3f59a e5522222 b0299c0e 1fe7fd13 74ed6bcb 8c8c4228 e25ba274 23b597a2 2939245c bf75dafc 7d14aac7 dc36242a 74d317cd 4f29ddd3 1fe164f7 3f1bb532 5aea7895 cd900df0 8c8c4228 c8998653 bf75dafc 19a9fb79 dc36242a 1891bc00 7f51eb89 1591cfcc e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
   preview: cat <<'EOF' > config.yaml
   form:
     attr: paths="apikey-budgets"
     only: true
     lead: ' '
 - paths: apikey-budgets
-  block: 3
+  block: 4
   fingerprint: 7bfb9bf0763a6f2f
   lang: sh
   lines: 838d5e8c dab5c917 67c5a3ac b0cead6d d1df8c5f b3f5e176 e66f4a20 fc075a9d
@@ -55,7 +58,7 @@ tags:
     only: true
     lead: ' '
 - paths: apikey-budgets
-  block: 5
+  block: 6
   fingerprint: 21e3a99ac15f55dc
   lang: sh
   lines: dc872770 dab5c917 67c5a3ac b0cead6d ebbdd826 b3f5e176 e66f4a20 fc075a9d
@@ -65,7 +68,7 @@ tags:
     only: true
     lead: ' '
 - paths: apikey-budgets
-  block: 7
+  block: 8
   fingerprint: 80c8e6319e418690
   lang: sh
   lines: 40e174a2 80dcf755 dab5c917 67c5a3ac b0cead6d d1df8c5f b3f5e176 e66f4a20 fc075a9d a4c3ed04
@@ -75,7 +78,7 @@ tags:
     only: true
     lead: ' '
 - paths: apikey-budgets
-  block: 9
+  block: 10
   fingerprint: db78c11e05c8f08c
   lang: sh
   lines: dc872770 dab5c917 67c5a3ac b0cead6d d1df8c5f b3f5e176 e66f4a20 fc075a9d
@@ -85,7 +88,7 @@ tags:
     only: true
     lead: ' '
 - paths: apikey-budgets
-  block: 12
+  block: 15
   fingerprint: aa0948ce9cb4a91f
   lang: sh
   lines: aa0948ce
@@ -95,7 +98,7 @@ tags:
     only: true
     lead: ' '
 - paths: apikey-budgets
-  block: 14
+  block: 17
   fingerprint: b572c975077dbcf9
   lang: sh
   lines: 1fb4d896 80dcf755 9a3ec7ea 67c5a3ac b0cead6d d1df8c5f b3f5e176 e66f4a20 fc075a9d a4c3ed04
@@ -151,7 +154,7 @@ hidden:
     {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
     {{< /doc-test >}}
 - after:
-    block: 2
+    block: 3
     fingerprint: f6931a7b2e59dbc5
     lang: sh
     lines: f6931a7b
@@ -171,7 +174,7 @@ hidden:
     occurrence: 0
     words: ca978112 20cd938a 1f58b914 6497e4b3 b080c643 ca978112 5c4c1964 a1d98908 56e57ada 961eb436 254bb97b 97488fba 2ad8a704 663ea1bf b9776d7d 2c70e12b 043a7187 0af96a8e
     block_before:
-      block: 6
+      block: 7
       fingerprint: ba8bf99de0fcafd6
       lang: json
       lines: ba8bf99d
@@ -223,7 +226,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 11
+    block: 12
     fingerprint: 6236037da4221cd3
     lang: ''
     lines: 6236037d
@@ -275,11 +278,11 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 16
-    fingerprint: 6f40656ce16a45f2
+    block: 19
+    fingerprint: 433adba273ad3fdf
     lang: ''
-    lines: 6f40656c
-    preview: warn budget API key budget exceeded api_key="team-b" budget="daily-tokens" used=
+    lines: 433adba2
+    preview: warn budget API key budget exceeded api_key="team-b" budget="lifetime-tokens" us
   content: |-
     {{< doc-test paths="apikey-budgets" >}}
     sleep 2
@@ -294,7 +297,7 @@ hidden:
       expect:
         statusCode: 200
         bodyJsonPath:
-          - path: "$.budgets[?(@.name=='daily-tokens')].usage.exceeded"
+          - path: "$.budgets[?(@.name=='lifetime-tokens')].usage.exceeded"
             comparator: equals
             value: true
 

@@ -32,6 +32,15 @@ blocks:
 - 2796e5802d2a2cad sh
 - 42bbcf5d4ede71b9 console
 - 067dd9261047a397 console
+- f1239c6402f6b486 yaml
+- dfc7580c66923383 sh
+- bf8de9b6a8784c2d sh
+- 58b8382c050ee035 console
+- b14203e3d72810b1 console
+- d8391118be4f8f26 yaml
+- dfc7580c66923383 sh
+- bf8de9b6a8784c2d sh
+- 9ae05f4b746352b7 console
 tags:
 - paths: egress-proxy
   block: 1
@@ -133,6 +142,16 @@ tags:
     attr: paths="egress-proxy"
     only: true
     lead: ' '
+- paths: egress-proxy
+  block: 31
+  fingerprint: f1239c6402f6b486
+  lang: yaml
+  lines: ffae2b47 f4a9035a 05ca4235 796eea4c c10d7538 50c600d4 069de162 d67b54bf 42ab7c07 301e1bfa fc745d97 d72f261d 88755831 abc56510
+  preview: cat <<EOF > egress-loopback.yaml
+  form:
+    attr: paths="egress-proxy"
+    only: true
+    lead: ' '
 hidden:
 - after:
     section: (top of page)
@@ -159,6 +178,10 @@ hidden:
     #     /v1/models, all with the generated CA.
     #   * Inspect all HTTPS: a request to httpbingo.org through the dynamic CA carries
     #     the request transformation upstream and the response transformation back.
+    #   * "Loopback and link-local destinations": a dynamic backend refuses
+    #     localhost:15021 with 503 `backend not allowed` and logs the documented
+    #     reason; after adding config.backend.allowDynamicLoopback, the same request
+    #     returns 200 `ready`.
     # WHAT THIS TEST DOES NOT VALIDATE (and why):
     #   * The `export HTTPS_PROXY` example - setting it would route every later HTTPS
     #     call in the test through the proxy; the tests pass --proxy explicitly.
@@ -319,5 +342,40 @@ hidden:
          || { echo "FAIL: response header missing"; echo "$out"; exit 1; }
        grep -q '"X-Agentgateway-Req-Message"' <<<"$out" || { echo "FAIL: request header not seen upstream"; echo "$out"; exit 1; }
        echo "ok: HTTP policies apply to intercepted HTTPS traffic"
+       stop_agw
+       {{< /doc-test >}}
+- after:
+    block: 31
+    fingerprint: f1239c6402f6b486
+    lang: yaml
+    lines: ffae2b47 f4a9035a 05ca4235 796eea4c c10d7538 50c600d4 069de162 d67b54bf 42ab7c07 301e1bfa fc745d97 d72f261d 88755831 abc56510
+    preview: cat <<EOF > egress-loopback.yaml
+  content: |2-
+       {{< doc-test paths="egress-proxy" >}}
+       agentgateway -f egress-loopback.yaml --validate-only
+       start_agw egress-loopback.yaml
+       out=$(curl -s -i -m 20 --noproxy '' --proxy "$PROXY" http://localhost:15021/healthz/ready || true)
+       head -n1 <<<"$out" | grep -q ' 503' || { echo "FAIL: loopback should be refused with 503"; echo "$out"; exit 1; }
+       grep -q 'backend not allowed' <<<"$out" || { echo "FAIL: body should be 'backend not allowed'"; echo "$out"; exit 1; }
+       sleep 1
+       grep -q 'dynamic backend resolved to a loopback or link-local address' /tmp/doc-test-egress-agw.log \
+         || { echo "FAIL: log does not record the reason"; cat /tmp/doc-test-egress-agw.log; exit 1; }
+       echo "ok: a dynamic backend refuses loopback by default"
+       stop_agw
+       # Step 4: add config.backend.allowDynamicLoopback to the top of the file.
+       # Skip the prepend if the file already has a top-level config key, and print the
+       # file if it doesn't validate (a nightly once failed here with "duplicate field
+       # `config`" that did not reproduce locally).
+       if ! grep -q '^config:' egress-loopback.yaml; then
+         { printf 'config:\n  backend:\n    allowDynamicLoopback: true\n'; cat egress-loopback.yaml; } > egress-loopback.tmp
+         mv egress-loopback.tmp egress-loopback.yaml
+       fi
+       agentgateway -f egress-loopback.yaml --validate-only \
+         || { echo "FAIL: egress-loopback.yaml does not validate:"; cat egress-loopback.yaml; exit 1; }
+       start_agw egress-loopback.yaml
+       out=$(curl -s -i -m 20 --noproxy '' --proxy "$PROXY" http://localhost:15021/healthz/ready || true)
+       head -n1 <<<"$out" | grep -q ' 200' || { echo "FAIL: loopback should be allowed"; echo "$out"; exit 1; }
+       grep -q 'ready' <<<"$out" || { echo "FAIL: body should be 'ready'"; echo "$out"; exit 1; }
+       echo "ok: allowDynamicLoopback lets the dynamic backend reach localhost"
        stop_agw
        {{< /doc-test >}}

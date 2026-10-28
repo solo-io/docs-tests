@@ -1,0 +1,96 @@
+format: 1
+source: content/docs/standalone/main/integrations/llm/observability/braintrust.md
+blocks:
+- 625fe1215d615043 sh
+- 5be8456aa315b1c6 yaml
+- 4dde06870f7fcdcd yaml
+- f6931a7b2e59dbc5 sh
+- ce407a71cefb68f6 sh
+- 469d4f24f7080a61 sh
+hidden:
+- after:
+    block: 1
+    fingerprint: 5be8456aa315b1c6
+    lang: yaml
+    lines: a7f80a73 1b6c26b3 390f7e12 ad710532 5abef05f 28ca221e 9adf3fc1 be1f9f20 c8f3f59a 48924e65 8fb7eebc 207d5e5e 3ec2cb03 7dbc0e30 cab2be2b 51fdc0ec
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="braintrust-validate" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Braintrust tracing configuration on this page is accepted by agentgateway
+    #     (--validate-only), so the tracing, policies, and header fields are spelled and
+    #     shaped correctly.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That Braintrust receives traces - external dependency: needs a real Braintrust
+    #     account and API key. The test uses placeholder credentials and never contacts
+    #     Braintrust.
+    #   * The UI tab, the Docker run or Compose example, and the dashboard checks -
+    #     browser-only steps or a different binary than the one under test.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    # Placeholder credentials. agentgateway expands the ${...} references when it loads
+    # the config, so they must be set, but nothing is sent anywhere.
+    export BRAINTRUST_API_KEY="${BRAINTRUST_API_KEY:-placeholder-key}"
+    export BRAINTRUST_PARENT="${BRAINTRUST_PARENT:-project_name:doc-test}"
+    cat > config-braintrust.yaml <<'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    frontendPolicies:
+      tracing:
+        host: api.braintrust.dev:443
+        protocol: http
+        path: /otel/v1/traces
+        randomSampling: true
+        clientSampling: true
+        policies:
+          backendTLS: {}
+          requestHeaderModifier:
+            set:
+              Authorization: "Bearer ${BRAINTRUST_API_KEY}"
+              x-bt-parent: "${BRAINTRUST_PARENT}"
+        resources:
+          service.name: '"agentgateway"'
+    EOF
+    agentgateway -f config-braintrust.yaml --validate-only
+    echo "ok: the Braintrust tracing config is valid"
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 4dde06870f7fcdcd
+    lang: yaml
+    lines: 1b6c26b3 390f7e12 73c054bf 62d3ca9b da55eb60 d87754d1 92ddd701 7d33edf2 a165c8ab 24614450
+    preview: 'frontendPolicies:'
+  content: |-
+    {{< doc-test paths="braintrust-validate" >}}
+    # "Capture prompt and response content": the same tracing policy with the
+    # message attributes added is also valid (CEL expressions included).
+    cat > config-braintrust-content.yaml <<'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    frontendPolicies:
+      tracing:
+        host: api.braintrust.dev:443
+        protocol: http
+        path: /otel/v1/traces
+        randomSampling: true
+        clientSampling: true
+        policies:
+          backendTLS: {}
+          requestHeaderModifier:
+            set:
+              Authorization: "Bearer ${BRAINTRUST_API_KEY}"
+              x-bt-parent: "${BRAINTRUST_PARENT}"
+        resources:
+          service.name: '"agentgateway"'
+        attributes:
+          llm.input_messages: >-
+            flattenRecursive(llm.prompt.map(c, {"message": c}))
+          llm.output_messages: >-
+            flattenRecursive(llm.completion.map(c, {
+              "role": "assistant",
+              "content": c
+            }))
+    EOF
+    agentgateway -f config-braintrust-content.yaml --validate-only
+    echo "ok: the Braintrust tracing config with message content attributes is valid"
+    {{< /doc-test >}}

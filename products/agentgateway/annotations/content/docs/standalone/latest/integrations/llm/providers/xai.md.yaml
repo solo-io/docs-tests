@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/latest/integrations/llm/providers/xai.md
 blocks:
-- aa2e09965985c13c yaml
-- 9db1e818227da9c4 bash
+- 7e4331fe9df2b4ba sh
+- e0f2414caf236ba7 yaml
+- 88adc004536b3465 bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export XAI_API_KEY="${XAI_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: aa2e09965985c13c
+    block: 1
+    fingerprint: e0f2414caf236ba7
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 74869b29 009395dd 47231736
+    lines: a7f80a73 3af99526 e01ccf75 74fd6c1e 74869b29 009395dd 47231736 8905bcef 9e5cef73
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="xai" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 9db1e818227da9c4
+    block: 2
+    fingerprint: 88adc004536b3465
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d a2c1caa2 da1b778b fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d c720253d da1b778b fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="xai" >}}

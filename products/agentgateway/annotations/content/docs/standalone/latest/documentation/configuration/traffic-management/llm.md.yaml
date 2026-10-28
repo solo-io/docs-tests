@@ -1,6 +1,7 @@
 format: 1
 source: content/docs/standalone/latest/documentation/configuration/traffic-management/llm.md
-blocks: []
+blocks:
+- fa44870cd55e8181 yaml
 hidden:
 - after:
     section: (top of page)
@@ -14,6 +15,7 @@ hidden:
     # Doc test coverage for this guide (these comments are not rendered on the page)
     # ============================================================================
     # WHAT THIS TEST VALIDATES:
+    #   * Prompt caching: the example config is accepted.
     #   * "Model resolution order" note: with the simplified llm.models config, a
     #     request that omits `model` fails with 400 and the `missing_model` error code,
     #     even though the model sets `params.model`. The same request with a model succeeds.
@@ -57,11 +59,42 @@ hidden:
     }
     {{< /doc-test >}}
 - after:
+    block: 0
+    fingerprint: fa44870cd55e8181
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 bbe0baf2 84d960d4 009395dd 6c59a531 8905bcef 949ae88e 148b536e 564121a7
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="llm-policies" >}}
+    # The prompt caching example config is accepted (--validate-only). The page shows
+    # it without a heredoc, so it is restated here.
+    export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-test}"
+    cat <<'EOF' > config-caching.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: "anthropic/*"
+        provider: anthropic
+        params:
+          apiKey: "$ANTHROPIC_API_KEY"
+        transformation:
+          model: llmRequest.model.stripPrefix("anthropic/")
+        promptCaching:
+          cacheTools: true
+    EOF
+    agentgateway -f config-caching.yaml --validate-only
+    {{< /doc-test >}}
+- after:
     section: Model resolution order
     line: 5cc6ad3c8dfdebd8
     occurrence: 0
     words: 1eb79602 3eeb7e96 1754dbdd 663ea1bf 32e83e92 d8f9b68a 0695b563 b9776d7d b804c1b5 f370351d b7d64a92 b9776d7d 1f58b914 4137b01e c0cbff04 9372c470 a511aeee 56e57ada f480ffb2 2ad8a704 663ea1bf b1a36d25 b9776d7d 9372c470 ca978112 1f58b914 1216b2a8 9372c470 c1481e2e 0695b563 ca978112 26d22866 6201111b b9776d7d 88091826 ca00fccf 5694d08a ec38063c 15eaa752 b9776d7d 9372c470 82c6db3d 36b6f961
-    block_before: null
+    block_before:
+      block: 0
+      fingerprint: fa44870cd55e8181
+      lang: yaml
+      lines: a7f80a73 3af99526 e01ccf75 bbe0baf2 84d960d4 009395dd 6c59a531 8905bcef 949ae88e 148b536e 564121a7
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="llm-policies" >}}
     # A model that sets params.model, served from the local mock LLM.

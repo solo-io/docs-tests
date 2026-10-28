@@ -451,6 +451,15 @@ scenarios:
     - httpbin
     source: agw-docs/pages/traffic-management/transformations/forward.md
     path: forward
+  gemini:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/agentgateway/llm/providers/gemini.md
+    path: gemini
   grpc:
     needs:
     - install-standard
@@ -807,6 +816,9 @@ scenarios:
     - install-experimental
     page: documentation/migrate/examples/external-auth.md
     path: migrate-external-auth
+  migrate-install-linux:
+    page: documentation/migrate/install/linux/_index.md
+    path: migrate-install-linux
   migrate-rate-limiting:
     needs:
     - install-experimental
@@ -916,6 +928,10 @@ scenarios:
     type: schema
     source: agw-docs/pages/agentgateway/llm/providers/anthropic.md
     path: providers-anthropic
+  providers-audio-main-schema:
+    type: schema
+    page: integrations/llm/providers/audio.md
+    path: providers-audio
   providers-audio-schema:
     type: schema
     source: agw-docs/pages/agentgateway/llm/providers/audio.md

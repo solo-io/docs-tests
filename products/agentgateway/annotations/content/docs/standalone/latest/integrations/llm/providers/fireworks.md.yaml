@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/latest/integrations/llm/providers/fireworks.md
 blocks:
-- 43090d20cbd35c48 yaml
-- 88a8f78b515bcadf bash
+- 8fbf52d01f7f2de7 sh
+- a8c65ae6d3ae13d9 yaml
+- f22ba7d2e054c3b0 bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export FIREWORKS_API_KEY="${FIREWORKS_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 43090d20cbd35c48
+    block: 1
+    fingerprint: a8c65ae6d3ae13d9
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 c271712c 009395dd 71c560e9
+    lines: a7f80a73 3af99526 e01ccf75 8eebbb4b c271712c 009395dd 71c560e9 8905bcef d28c1a3d
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="fireworks" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 88a8f78b515bcadf
+    block: 2
+    fingerprint: f22ba7d2e054c3b0
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d dd429329 90b8905e fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d 55c73ae7 90b8905e fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="fireworks" >}}

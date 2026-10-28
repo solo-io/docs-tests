@@ -1,14 +1,17 @@
 format: 1
 source: content/docs/standalone/latest/documentation/llm/observability.md
 blocks:
+- a8c7814d439f6a5b sh
 - 0cf4e54c604ce7e0 yaml
 - f6931a7b2e59dbc5 sh
 - 3b2f16635f2d988d sh
 - c3c51655074c8463
 - 6d4f725cb7fffa90
+- 5e4ed8efb52aee97 sh
+- 3f7634456b34e054 text
 tags:
 - paths: llm-observability
-  block: 0
+  block: 1
   fingerprint: 0cf4e54c604ce7e0
   lang: yaml
   lines: 2a7b4933 a7f80a73 1b6c26b3 390f7e12 a97a9e13 8def7c01 9adf3fc1 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
@@ -18,7 +21,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-observability
-  block: 2
+  block: 3
   fingerprint: 3b2f16635f2d988d
   lang: sh
   lines: b8c497bf 9285509c b11c46be 9abe8061 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 fc075a9d
@@ -95,7 +98,12 @@ hidden:
     line: ae4a179ed556a59e
     occurrence: 0
     words: 6b86b273 d9c0d341 ea62dcb6 21a355f1 eac369bb
-    block_before: null
+    block_before:
+      block: 0
+      fingerprint: a8c7814d439f6a5b
+      lang: sh
+      lines: a8c7814d
+      preview: agctl standalone analytics --by provider,model --since 24h
   content: |-
     {{< doc-test paths="llm-observability" >}}
     # The page's Jaeger snippet embeds these two files from agentgateway.dev at build
@@ -106,7 +114,7 @@ hidden:
     for _ in $(seq 1 60); do curl -sf -o /dev/null -m 2 http://localhost:16686/api/services && break; sleep 2; done
     {{< /doc-test >}}
 - after:
-    block: 0
+    block: 1
     fingerprint: 0cf4e54c604ce7e0
     lang: yaml
     lines: 2a7b4933 a7f80a73 1b6c26b3 390f7e12 a97a9e13 8def7c01 9adf3fc1 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
@@ -118,7 +126,7 @@ hidden:
        start_agw config-mock.yaml
        {{< /doc-test >}}
 - after:
-    block: 2
+    block: 3
     fingerprint: 3b2f16635f2d988d
     lang: sh
     lines: b8c497bf 9285509c b11c46be 9abe8061 4b3b16d3 021fb596 09d1b3dd 6a265d62 d10b36aa cfae0d42 fc075a9d

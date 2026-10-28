@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/latest/integrations/llm/providers/deepinfra.md
 blocks:
-- 6d7a21f8576beffb yaml
-- 2da3574b74d70df1 bash
+- dcb7c80478491593 sh
+- 62f9d18cb385c3d1 yaml
+- 4a40035b60eb5b0d bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export DEEPINFRA_API_KEY="${DEEPINFRA_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 6d7a21f8576beffb
+    block: 1
+    fingerprint: 62f9d18cb385c3d1
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 da1edff8 009395dd 32dc478e
+    lines: a7f80a73 3af99526 e01ccf75 226beb11 da1edff8 009395dd 32dc478e 8905bcef d29a1748
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="deepinfra" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 2da3574b74d70df1
+    block: 2
+    fingerprint: 4a40035b60eb5b0d
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d 16ebf252 9bce7e2a fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d 40e4bb0c 9bce7e2a fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="deepinfra" >}}

@@ -1,0 +1,288 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/api-types/decisions.md
+blocks:
+- 1a77e625e291247c console
+- 267da2880781ad1d yaml
+- a4c78415ed5f2936 yaml
+- b547724c9100c9c2 yaml
+- 6bc22470a403f4a5 sh
+- 9573c063ef0363cb json
+- 7ab488df94dad468 sh
+- 87bca36f3543e9db json
+- 84772cd5ce84c76f sh
+- 57f1a587c15cf7ee console
+tags:
+- paths: api-types-decisions-run
+  block: 4
+  fingerprint: 6bc22470a403f4a5
+  lang: sh
+  lines: 309e19a9 506a4604 b0cead6d 90c924a8 9fb7aad9 0a391602 fc075a9d
+  preview: curl http://localhost:4000/v1/decisions \
+  form:
+    attr: paths="api-types-decisions-run"
+    only: true
+    lead: ' '
+- paths: api-types-decisions-run
+  block: 6
+  fingerprint: 7ab488df94dad468
+  lang: sh
+  lines: 7627e67b 506a4604 b0cead6d 90c924a8 7c5a504d 8c32c0bd fc075a9d
+  preview: curl http://localhost:4000/v1/systemone \
+  form:
+    attr: paths="api-types-decisions-run"
+    only: true
+    lead: ' '
+- paths: api-types-decisions-run
+  block: 8
+  fingerprint: 84772cd5ce84c76f
+  lang: sh
+  lines: 84772cd5
+  preview: curl -s http://localhost:15020/metrics | grep 'agentgateway_gen_ai_client_token_
+  form:
+    attr: paths="api-types-decisions-run"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Map the Decisions route type
+    line: 0eebd65209e02bbc
+    occurrence: 0
+    words: 0695b563 b9776d7d b804c1b5 487b9104 b7d64a92 9390298f 8a84e406 8fb6d5f3 fa51fd49 c0cea2dd 56e57ada 325392e8 3bfc2695 3183d37b 663ea1bf 3183d37b 6201111b 3bfc2695 63c6673a 663ea1bf 63c6673a
+    block_before:
+      block: 0
+      fingerprint: 1a77e625e291247c
+      lang: console
+      lines: 1a77e625
+      preview: 'failed to process LLM request: unsupported conversion: from Decisions to provide'
+  content: |-
+    {{< doc-test paths="api-types-decisions-run" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Map the Decisions route type": all three configs pass --validate-only.
+    #   * The `llm` config maps /v1/decisions and /v1/systemone with no route setup:
+    #     the documented Decisions request returns the provider's answers, and the
+    #     documented SystemOne request reaches the OpenAI provider translated to the
+    #     Decisions format (a list of `predicate` questions) and comes back in the
+    #     SystemOne format (`answers.visible_damage.noul`).
+    #   * The `custom` provider with `formats: [decisions]` sends Decisions requests
+    #     to `baseUrl` + `/decisions`, and a custom provider without `formats`
+    #     rejects them with a 400 that names the conversion, as the page states.
+    #   * The `routes` config maps both paths through `policies.ai.routes`.
+    #   * "Verify token tracking": the metrics endpoint reports token usage with
+    #     gen_ai_operation_name="decisions".
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Real answers from OpenAI: every config runs against a local mock provider
+    #     that answers each question with probability 0.64, so no API key is needed.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-sk-mock}"
+    export CUSTOM_PROVIDER_API_KEY="${CUSTOM_PROVIDER_API_KEY:-sk-mock-custom}"
+
+    # A mock provider on port 3091 (where the point-config-at-mock-llm helper points
+    # the OpenAI provider) that speaks the Decisions API and records every request.
+    cat > /tmp/decisions-mock.py <<'PY'
+    import json
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            length = int(self.headers.get("content-length") or 0)
+            request = json.loads(self.rfile.read(length) or b"{}")
+            with open("/tmp/decisions-mock.jsonl", "a") as log:
+                log.write(json.dumps(dict(path=self.path, body=request)) + "\n")
+            questions = request.get("questions")
+            if isinstance(questions, dict):  # SystemOne
+                answers = {k: {"type": q["type"], q["type"]: 0.64} for k, q in questions.items()}
+                usage = dict(input_tokens=156, output_tokens=0)
+            else:  # Decisions
+                answers = [dict(type=q["type"], name=q.get("name"), probability=0.64) for q in questions or []]
+                usage = dict(input_tokens=156, output_tokens=0, total_tokens=156)
+            payload = json.dumps(dict(model=request.get("model", "mock"), answers=answers, usage=usage)).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+        def log_message(self, *args):
+            pass
+    HTTPServer(("127.0.0.1", 3091), Handler).serve_forever()
+    PY
+    : > /tmp/decisions-mock.jsonl
+    python3 /tmp/decisions-mock.py > /tmp/decisions-mock.log 2>&1 &
+    DECISIONS_MOCK_PID=$!
+    AGW_PID=""
+    trap 'kill $AGW_PID $DECISIONS_MOCK_PID 2>/dev/null || true' EXIT
+    for _ in $(seq 1 20); do curl -s -o /dev/null -m 2 -X POST http://localhost:3091 -d '{"questions": []}' && break; sleep 1; done
+
+    run_agw() {
+      agentgateway -f "$1" > /tmp/agw-decisions.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do curl -s -o /dev/null -m 2 http://localhost:4000/ && return 0; sleep 1; done
+      echo "FAIL: agentgateway did not start with $1"; cat /tmp/agw-decisions.log; exit 1
+    }
+    stop_agw() {
+      kill $AGW_PID 2>/dev/null || true
+      wait $AGW_PID 2>/dev/null || true
+      AGW_PID=""
+    }
+    # POST a JSON body to a gateway path; the response goes to /tmp/decisions-resp.json
+    # and the status code to stdout.
+    post() {
+      curl -s -m 10 -o /tmp/decisions-resp.json -w '%{http_code}' "http://localhost:4000$1" \
+        -H 'Content-Type: application/json' -d "$2"
+    }
+    # Run a Python assertion against the last request the mock received (`up`) and
+    # the last gateway response (`resp`).
+    check() {
+      python3 - "$1" <<'PY'
+    import json, sys
+    up = json.loads(open("/tmp/decisions-mock.jsonl").read().strip().splitlines()[-1])
+    try:
+        resp = json.load(open("/tmp/decisions-resp.json"))
+    except Exception:
+        resp = None
+    if not eval(sys.argv[1]):
+        sys.exit(f"FAIL: {sys.argv[1]}\nupstream: {up}\nresponse: {resp}")
+    PY
+    }
+    DECISIONS_BODY='{"model": "<decisions-model>", "input": [{"role": "user", "content": [{"type": "input_text", "text": "The package was left in the rain and the box is soaked through."}]}], "questions": [{"type": "predicate", "name": "visible_damage", "instructions": "Does the customer report visible damage to the package?"}]}'
+    SYSTEMONE_BODY='{"model": "<decisions-model>", "state": [{"role": "user", "content": "The package was left in the rain and the box is soaked through."}], "questions": {"visible_damage": {"type": "noul", "instructions": "Does the customer report visible damage to the package?"}}}'
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 267da2880781ad1d
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="api-types-decisions-run" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    # Validates config.yaml and writes config-mock.yaml, pointed at port 3091.
+    {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: a4c78415ed5f2936
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e2ed4f51 93a4b62b b6fb1fd3 c7c93cfb 5c1fab26 009395dd a5daba86 e84d2a13
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="api-types-decisions-run" >}}
+    cat <<'EOF' > config-custom.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: decisions-model
+        provider:
+          custom:
+            formats:
+            - type: decisions
+        params:
+          apiKey: "$CUSTOM_PROVIDER_API_KEY"
+          baseUrl: "https://api.example.com/v1"
+    EOF
+    agentgateway -f config-custom.yaml --validate-only
+    sed 's#https://api.example.com/v1#http://localhost:3091/v1#' config-custom.yaml > config-custom-mock.yaml
+    run_agw config-custom-mock.yaml
+    STATUS=$(post /v1/decisions "${DECISIONS_BODY/<decisions-model>/decisions-model}")
+    [ "$STATUS" = "200" ] || { echo "FAIL: custom decisions provider returned $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
+    check 'up["path"] == "/v1/decisions"'
+    stop_agw
+
+    # Without `formats`, the custom provider rejects Decisions requests with a 400
+    # that names the request format and the provider.
+    grep -v -e '^        formats:$' -e '^        - type: decisions$' config-custom-mock.yaml \
+      | sed 's/^      custom:$/      custom: {}/' > config-custom-noformats.yaml
+    run_agw config-custom-noformats.yaml
+    STATUS=$(post /v1/decisions "${DECISIONS_BODY/<decisions-model>/decisions-model}")
+    [ "$STATUS" = "400" ] || { echo "FAIL: expected 400 without formats, got $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
+    grep -q 'unsupported conversion: from Decisions to provider custom' /tmp/decisions-resp.json \
+      || { echo "FAIL: the 400 does not carry the documented error"; cat /tmp/decisions-resp.json; exit 1; }
+    stop_agw
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: b547724c9100c9c2
+    lang: yaml
+    lines: a7f80a73 943d11d8 0b02fb9c 06267a46 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b bcea16b5 c8f3f59a ad3afdb1 d67b54bf f9567f0c 992616e0 4715c39d 22900b42 81b74571 7217bcc4
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="api-types-decisions-run" >}}
+    cat <<'EOF' > config-routes.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    gateways:
+      default:
+        port: 4000
+    routes:
+    - backends:
+      - ai:
+          name: openai
+          provider:
+            openAI: {}
+      policies:
+        ai:
+          routes:
+            "/v1/decisions": "decisions"
+            "/v1/systemone": "systemOne"
+            "/v1/chat/completions": "completions"
+            "*": "passthrough"
+        backendAuth:
+          key: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config-routes.yaml --validate-only
+    sed 's#^      name: openai$#      name: openai\n      hostOverride: localhost:3091#' config-routes.yaml > config-routes-mock.yaml
+    grep -q 'hostOverride: localhost:3091' config-routes-mock.yaml || { echo "FAIL: could not point config-routes.yaml at the mock"; exit 1; }
+    run_agw config-routes-mock.yaml
+    STATUS=$(post /v1/decisions "$DECISIONS_BODY")
+    [ "$STATUS" = "200" ] || { echo "FAIL: routes config decisions request returned $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
+    check 'resp["answers"][0]["probability"] == 0.64'
+    STATUS=$(post /v1/systemone "$SYSTEMONE_BODY")
+    [ "$STATUS" = "200" ] || { echo "FAIL: routes config systemone request returned $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
+    check 'isinstance(up["body"]["questions"], list) and resp["answers"]["visible_damage"]["noul"] == 0.64'
+    stop_agw
+
+    # The requests and metrics steps below run against the `llm` config.
+    run_agw config-mock.yaml
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 6bc22470a403f4a5
+    lang: sh
+    lines: 309e19a9 506a4604 b0cead6d 90c924a8 9fb7aad9 0a391602 fc075a9d
+    preview: curl http://localhost:4000/v1/decisions \
+  content: |-
+    {{< doc-test paths="api-types-decisions-run" >}}
+    # OpenAI receives Decisions requests natively.
+    check 'up["path"].endswith("/decisions") and up["body"]["questions"][0]["type"] == "predicate"'
+    STATUS=$(post /v1/decisions "$DECISIONS_BODY")
+    [ "$STATUS" = "200" ] || { echo "FAIL: decisions request returned $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
+    check 'resp["answers"][0] == {"type": "predicate", "name": "visible_damage", "probability": 0.64}'
+    check 'resp["usage"]["input_tokens"] == 156'
+    echo "the Decisions request is answered in the Decisions format"
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 7ab488df94dad468
+    lang: sh
+    lines: 7627e67b 506a4604 b0cead6d 90c924a8 7c5a504d 8c32c0bd fc075a9d
+    preview: curl http://localhost:4000/v1/systemone \
+  content: |-
+    {{< doc-test paths="api-types-decisions-run" >}}
+    # OpenAI receives the SystemOne request translated to the Decisions format, and
+    # the client gets the reply back in the SystemOne format.
+    check 'up["path"].endswith("/decisions") and isinstance(up["body"]["questions"], list)'
+    check 'up["body"]["questions"][0]["type"] == "predicate" and up["body"]["questions"][0]["name"] == "visible_damage"'
+    STATUS=$(post /v1/systemone "$SYSTEMONE_BODY")
+    [ "$STATUS" = "200" ] || { echo "FAIL: systemone request returned $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
+    check 'resp["answers"]["visible_damage"] == {"type": "noul", "noul": 0.64}'
+    echo "the SystemOne request is translated to Decisions and back"
+    {{< /doc-test >}}

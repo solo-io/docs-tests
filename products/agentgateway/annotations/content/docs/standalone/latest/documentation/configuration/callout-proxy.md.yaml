@@ -1,0 +1,241 @@
+format: 1
+source: content/docs/standalone/latest/documentation/configuration/callout-proxy.md
+blocks:
+- e6dcfcfae4df8819 yaml
+- 6eb27e7468e3cb6a sh
+- 949e47db2f4c1676 sh
+- 81a7783ac529c6d7 sh
+- 741374cedd1f7a87 yaml
+- dbbcb39e9fb80135 sh
+- b6934f81b99b2389 console
+- b1de061a150e89a3 sh
+- f229989470e437c2 console
+- e368aaeed663bf99 sh
+- 9c618e807d395801 console
+- e52e04e3a3ef85e2 sh
+hidden:
+- after:
+    block: 0
+    fingerprint: e6dcfcfae4df8819
+    lang: yaml
+    lines: 2180b199 b38152c7 38921003 2413b1cf c2625f4a f6e2cd7d ca6c547b
+    preview: 'config:'
+  content: |-
+    {{< doc-test paths="callout-proxy" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The Option 1 example (`config.callouts.tunnel` with `noProxy`) is valid.
+    #   * The settings-table claim about schemes: a `socks5://` tunnel URL passes `--validate-only`,
+    #     and agentgateway then fails to start with `invalid callouts config`.
+    #   * The JWKS walkthrough, run against local stand-ins: a JWKS fetch is a callout that goes
+    #     through the forward proxy, agentgateway logs `callouts will use proxy`, an unreachable
+    #     forward proxy makes startup fail with `failed to load JWKS`, and the HTTP_PROXY variable
+    #     (Option 2) has the same effect as `config.callouts.tunnel`.
+    #   * Destinations that bypass the forward proxy: a `noProxy` entry, and a loopback IP address,
+    #     go direct, while the hostname `localhost` goes through the forward proxy.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The Google JWKS URL and the Squid container - external dependency, and a Squid container
+    #     cannot reach a JWKS on the runner's loopback. The test runs a small logging forward proxy
+    #     and a JWKS server on the runner instead, and points the JWKS at `localhost`, which the page
+    #     says goes through the forward proxy.
+    #   * TLS callouts through CONNECT, HTTPS_PROXY, and GCP credential fetches - need a TLS
+    #     callout target or a GCP account.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    expect_start_fail() {
+      local rc=0
+      timeout 30 agentgateway -f "$1" > "$1.start.log" 2>&1 || rc=$?
+      if [ "$rc" = "0" ] || [ "$rc" = "124" ]; then
+        echo "FAIL: agentgateway did not exit with an error for $1 (rc=$rc), but the page says: $3"; cat "$1.start.log"; exit 1
+      fi
+      grep -q "$2" "$1.start.log" || { echo "FAIL: expected '$2' for $1"; cat "$1.start.log"; exit 1; }
+      echo "fails to start as documented: $3"
+    }
+
+    cat <<'EOF' > callouts-example.yaml
+    config:
+      callouts:
+        tunnel:
+          url: http://proxy.example.com:3128
+          noProxy:
+          - internal.example.com
+          - 10.0.0.0/8
+    EOF
+    agentgateway -f callouts-example.yaml --validate-only
+
+    sed 's#http://proxy.example.com:3128#socks5://proxy.example.com:1080#' callouts-example.yaml > callouts-socks5.yaml
+    agentgateway -f callouts-socks5.yaml --validate-only
+    expect_start_fail callouts-socks5.yaml "invalid callouts config" "an unsupported scheme fails at startup"
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: e52e04e3a3ef85e2
+    lang: sh
+    lines: e52e04e3
+    preview: HTTPS_PROXY=http://127.0.0.1:3128 agentgateway -f callout-proxy.yaml
+  content: |2-
+       {{< doc-test paths="callout-proxy" >}}
+       AGW_PID=""
+       stop_agw() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       cleanup() {
+         stop_agw
+         [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+         return 0
+       }
+       trap cleanup EXIT
+       # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+       start_agw() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+         AGW_PID=$!
+         for _ in $(seq 1 30); do
+           curl -s -o /dev/null -m 2 "$3" && return 0
+           kill -0 "$AGW_PID" 2>/dev/null || break
+           sleep 1
+         done
+         echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+       }
+       # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+       expect_invalid() {
+         if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+           echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+         fi
+         echo "rejected as documented: $2"
+       }
+       make_jwks() {
+         openssl genrsa -out jwt-key.pem 2048 2>/dev/null
+         python3 - "$1" <<'PY'
+       import base64, json, subprocess, sys
+       mod = subprocess.check_output(["openssl", "rsa", "-in", "jwt-key.pem", "-noout", "-modulus"]).decode().strip().split("=", 1)[1]
+       n = base64.urlsafe_b64encode(bytes.fromhex(mod)).rstrip(b"=").decode()
+       json.dump({"keys": [{"kty": "RSA", "kid": "doc-test", "use": "sig", "alg": "RS256", "n": n, "e": "AQAB"}]}, open(sys.argv[1], "w"))
+       PY
+       }
+       # A logging forward proxy on 127.0.0.1:3128 that handles both CONNECT tunnels and
+       # absolute-form plaintext requests, and a JWKS server on port 8097.
+       cat > callout-fwd-proxy.py <<'PY'
+       import select, socket, sys, urllib.request
+       from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+       LOG = sys.argv[1]
+       def log(line):
+           with open(LOG, "a") as f:
+               f.write(line + "\n")
+       class P(BaseHTTPRequestHandler):
+           def do_CONNECT(self):
+               log("CONNECT " + self.path)
+               host, port = self.path.rsplit(":", 1)
+               up = socket.create_connection((host, int(port)), timeout=10)
+               self.send_response(200, "Connection established")
+               self.end_headers()
+               conns = [self.connection, up]
+               while True:
+                   r, _, _ = select.select(conns, [], [], 30)
+                   if not r:
+                       break
+                   for s in r:
+                       data = s.recv(65536)
+                       if not data:
+                           up.close()
+                           return
+                       (up if s is self.connection else self.connection).sendall(data)
+           def do_GET(self):
+               log("GET " + self.path)
+               opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+               with opener.open(self.path, timeout=10) as resp:
+                   body = resp.read()
+               self.send_response(200)
+               self.send_header("content-type", "application/json")
+               self.send_header("content-length", str(len(body)))
+               self.end_headers()
+               self.wfile.write(body)
+           def log_message(self, *a):
+               pass
+       ThreadingHTTPServer(("127.0.0.1", 3128), P).serve_forever()
+       PY
+       PROXY_LOG=/tmp/doc-test-callout-proxy.log
+       : > "$PROXY_LOG"
+       python3 callout-fwd-proxy.py "$PROXY_LOG" > /tmp/doc-test-callout-proxy.out 2>&1 &
+       PROXY_PID=$!
+       mkdir -p callout-jwks
+       make_jwks callout-jwks/jwks.json
+       python3 -m http.server 8097 --bind 127.0.0.1 --directory callout-jwks > /tmp/doc-test-callout-jwks.out 2>&1 &
+       JWKS_PID=$!
+       trap 'cleanup; kill "$PROXY_PID" "$JWKS_PID" 2>/dev/null || true' EXIT
+       for _ in $(seq 1 20); do curl -sf -o /dev/null -m 2 http://127.0.0.1:8097/jwks.json && break; sleep 1; done
+       curl -sf -o /dev/null -m 2 http://127.0.0.1:8097/jwks.json || { echo "FAIL: JWKS server did not start"; exit 1; }
+       for _ in $(seq 1 20); do curl -s -o /dev/null -m 2 -x http://127.0.0.1:3128 http://127.0.0.1:8097/jwks.json && break; sleep 1; done
+
+       # write_callout_config FILE JWKS_URL [TUNNEL_URL [NOPROXY]]: the page's step 1 config, with the
+       # JWKS on the runner. Without TUNNEL_URL, the config.callouts section is removed (step 5).
+       write_callout_config() {
+         {
+           if [ -n "${3:-}" ]; then
+             printf 'config:\n  callouts:\n    tunnel:\n      url: %s\n' "$3"
+             if [ -n "${4:-}" ]; then printf '      noProxy:\n      - %s\n' "$4"; fi
+           fi
+           cat <<EOF
+       binds:
+       - port: 3000
+         listeners:
+         - routes:
+           - policies:
+               jwtAuth:
+                 mode: strict
+                 issuer: https://accounts.google.com
+                 jwks:
+                   url: $2
+             backends:
+             - host: httpbin.org:80
+       EOF
+         } > "$1"
+       }
+       # fetched_through_proxy CONFIG NAME: start agentgateway (the JWKS fetch happens at startup) and
+       # report whether the forward proxy saw the fetch.
+       fetched_through_proxy() {
+         : > "$PROXY_LOG"
+         start_agw "$1" "$2" http://localhost:3000/
+         stop_agw
+         grep -q 'localhost:8097' "$PROXY_LOG"
+       }
+
+       # Steps 1-4: config.callouts.tunnel. The hostname localhost goes through the forward proxy.
+       write_callout_config callout-proxy-local.yaml http://localhost:8097/jwks.json http://127.0.0.1:3128
+       agentgateway --validate-only -f callout-proxy-local.yaml
+       fetched_through_proxy callout-proxy-local.yaml callout-tunnel \
+         || { echo "FAIL: the JWKS fetch did not go through the forward proxy"; cat "$PROXY_LOG"; exit 1; }
+       grep -q 'callouts will use proxy' /tmp/doc-test-agw-callout-tunnel.log \
+         || { echo "FAIL: no 'callouts will use proxy' startup log"; cat /tmp/doc-test-agw-callout-tunnel.log; exit 1; }
+       echo "JWKS fetch went through the forward proxy, and the startup log names the proxy"
+
+       # An unreachable forward proxy makes the JWKS fetch, and so startup, fail.
+       write_callout_config callout-proxy-down.yaml http://localhost:8097/jwks.json http://127.0.0.1:3129
+       expect_start_fail callout-proxy-down.yaml "failed to load JWKS" "an unreachable forward proxy fails the JWKS fetch"
+
+       # noProxy keeps the callout direct.
+       write_callout_config callout-proxy-noproxy.yaml http://localhost:8097/jwks.json http://127.0.0.1:3128 localhost
+       if fetched_through_proxy callout-proxy-noproxy.yaml callout-noproxy; then
+         echo "FAIL: a noProxy destination went through the forward proxy"; cat "$PROXY_LOG"; exit 1
+       fi
+       echo "noProxy destination bypassed the forward proxy"
+
+       # A loopback IP address always goes direct.
+       write_callout_config callout-proxy-loopback.yaml http://127.0.0.1:8097/jwks.json http://127.0.0.1:3128
+       : > "$PROXY_LOG"
+       start_agw callout-proxy-loopback.yaml callout-loopback http://localhost:3000/
+       stop_agw
+       if grep -q '8097' "$PROXY_LOG"; then
+         echo "FAIL: a loopback IP callout went through the forward proxy"; cat "$PROXY_LOG"; exit 1
+       fi
+       echo "loopback IP callout bypassed the forward proxy"
+
+       # Step 5: environment variables instead of config.callouts. The JWKS here is plaintext, so the
+       # variable is HTTP_PROXY rather than the page's HTTPS_PROXY.
+       write_callout_config callout-proxy-env.yaml http://localhost:8097/jwks.json
+       export HTTP_PROXY=http://127.0.0.1:3128
+       fetched_through_proxy callout-proxy-env.yaml callout-env \
+         || { echo "FAIL: with HTTP_PROXY set, the JWKS fetch did not go through the forward proxy"; cat "$PROXY_LOG"; exit 1; }
+       unset HTTP_PROXY
+       echo "HTTP_PROXY sends the callout through the forward proxy"
+       {{< /doc-test >}}

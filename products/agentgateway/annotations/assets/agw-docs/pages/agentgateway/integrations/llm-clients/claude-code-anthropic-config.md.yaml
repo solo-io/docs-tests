@@ -4,13 +4,26 @@ blocks:
 - 319ce5509117cc5a yaml
 - f6931a7b2e59dbc5 bash
 tags:
-- paths: claude-code-anthropic-validate
+- paths: claude-code-anthropic-validate,claude-code
   block: 0
   fingerprint: 319ce5509117cc5a
   lang: yaml
   lines: 4524b119 a7f80a73 3af99526 e01ccf75 e4f1a385 84d960d4 009395dd 6c59a531 abc56510
   preview: cat > config.yaml << 'EOF'
   form:
-    attr: paths="claude-code-anthropic-validate"
+    attr: paths="claude-code-anthropic-validate,claude-code"
     only: true
     lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: f6931a7b2e59dbc5
+    lang: bash
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="claude-code" >}}
+       agentgateway -f config.yaml --validate-only
+       to_mock config.yaml claude-code-anthropic-mock.yaml http://127.0.0.1:8000
+       start_agw claude-code-anthropic-mock.yaml claude-code-anthropic http://localhost:4000/
+       {{< /doc-test >}}

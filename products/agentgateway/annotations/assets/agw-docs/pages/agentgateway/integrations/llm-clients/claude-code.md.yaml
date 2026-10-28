@@ -14,6 +14,37 @@ blocks:
 - f6931a7b2e59dbc5 bash
 - e8c5c02f09b5a631 bash
 - fd7ffe8599f2a2c3 bash
+tags:
+- paths: claude-code
+  block: 3
+  fingerprint: ce94b69f01d94adc
+  lang: bash
+  lines: ce94b69f
+  preview: export ANTHROPIC_API_KEY="sk-ant-your-key-here"
+  form:
+    attr: paths="claude-code"
+    only: true
+    lead: ' '
+- paths: claude-code
+  block: 9
+  fingerprint: 50f177c6348d8cff
+  lang: bash
+  lines: 4524b119 943d11d8 0b02fb9c d800e28b 069de162 3af99526 e01ccf75 b5070f28 84d960d4 abc56510
+  preview: cat > config.yaml << 'EOF'
+  form:
+    attr: paths="claude-code"
+    only: true
+    lead: ' '
+- paths: claude-code
+  block: 11
+  fingerprint: e8c5c02f09b5a631
+  lang: bash
+  lines: e8c5c02f
+  preview: export ANTHROPIC_BASE_URL="http://localhost:4001/"
+  form:
+    attr: paths="claude-code"
+    only: true
+    lead: ' '
 hidden:
 - after:
     section: Set up agentgateway
@@ -31,6 +62,35 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
+    block: 3
+    fingerprint: ce94b69f01d94adc
+    lang: bash
+    lines: ce94b69f
+    preview: export ANTHROPIC_API_KEY="sk-ant-your-key-here"
+  content: |2-
+       {{< doc-test paths="claude-code" >}}
+       send_messages() {
+         local url=$1; shift
+         curl -s -o claude-code-resp.json -w '%{http_code}' "$url/v1/messages" \
+           -H 'content-type: application/json' -H 'anthropic-version: 2023-06-01' "$@" \
+           -d '{"model": "claude-sonnet-4-5", "max_tokens": 64, "messages": [{"role": "user", "content": "Hello"}]}'
+       }
+       export ANTHROPIC_BASE_URL="http://localhost:4000"
+       CODE=$(send_messages "$ANTHROPIC_BASE_URL" -H 'x-api-key: client-placeholder')
+       [ "$CODE" = "200" ] || { echo "FAIL: Messages request returned $CODE"; cat claude-code-resp.json; exit 1; }
+       python3 - <<'PY'
+       import json
+       r = json.load(open("claude-code-resp.json"))
+       assert r.get("type") == "message" and r["content"][0]["text"] == "mock completion", r
+       up = json.load(open("/tmp/doc-test-claude-code-last.json"))
+       assert up["path"] == "/v1/chat/completions", up["path"]
+       assert up["body"]["model"] == "Qwen/Qwen3-32B", up["body"].get("model")
+       assert up["headers"].get("authorization") == "Bearer mock-key", up["headers"].get("authorization")
+       print("ok: Messages converted to Chat Completions for Qwen/Qwen3-32B, answer returned as a message")
+       PY
+       stop_agw
+       {{< /doc-test >}}
+- after:
     section: Set up agentgateway
     line: 559df0c1dd804193
     occurrence: 3
@@ -46,3 +106,51 @@ hidden:
     export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-test}"
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: fdb80405454cbf77
+    lang: bash
+    lines: 2edd8727 fd7ffe85
+    preview: export CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1
+  content: |2-
+       {{< doc-test paths="claude-code" >}}
+       CODE=$(send_messages "$ANTHROPIC_BASE_URL")
+       [ "$CODE" = "200" ] || { echo "FAIL: Messages request returned $CODE"; cat claude-code-resp.json; exit 1; }
+       python3 - "$ANTHROPIC_API_KEY" <<'PY'
+       import json, sys
+       up = json.load(open("/tmp/doc-test-claude-code-last.json"))
+       assert up["path"] == "/v1/messages", up["path"]
+       assert up["body"]["model"] == "claude-sonnet-4-5", up["body"].get("model")
+       assert up["headers"].get("x-api-key") == sys.argv[1], up["headers"]
+       print("ok: Messages passed through to /v1/messages with the client's model and the API key")
+       PY
+       stop_agw
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: e8c5c02f09b5a631
+    lang: bash
+    lines: e8c5c02f
+    preview: export ANTHROPIC_BASE_URL="http://localhost:4001/"
+  content: |2-
+       {{< doc-test paths="claude-code" >}}
+       # Point the Teams configuration at the mock instead of api.anthropic.com.
+       python3 - <<'PY'
+       src = open("config.yaml").read()
+       assert "  provider: anthropic\n" in src
+       open("claude-code-teams-mock.yaml", "w").write(
+           src.replace("  provider: anthropic\n", "  provider: anthropic\n    params:\n      baseUrl: http://127.0.0.1:8000\n"))
+       PY
+       agentgateway -f config.yaml --validate-only
+       start_agw claude-code-teams-mock.yaml claude-code-teams http://localhost:4001/
+       CODE=$(send_messages "${ANTHROPIC_BASE_URL%/}" -H 'authorization: Bearer sk-ant-oat-doc-test')
+       [ "$CODE" = "200" ] || { echo "FAIL: Messages request on port 4001 returned $CODE"; cat claude-code-resp.json; exit 1; }
+       python3 - <<'PY'
+       import json
+       up = json.load(open("/tmp/doc-test-claude-code-last.json"))
+       assert up["path"] == "/v1/messages", up["path"]
+       assert up["headers"].get("authorization") == "Bearer sk-ant-oat-doc-test", up["headers"]
+       print("ok: port 4001 serves the Teams config and forwards the client's OAuth token")
+       PY
+       stop_agw
+       {{< /doc-test >}}

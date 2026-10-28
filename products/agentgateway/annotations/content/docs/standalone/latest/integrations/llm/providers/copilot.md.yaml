@@ -1,0 +1,260 @@
+format: 1
+source: content/docs/standalone/latest/integrations/llm/providers/copilot.md
+blocks:
+- 9a146447c3f5d917 yaml
+- 6de864b06df90bbb yaml
+- 422b67617f35ae60 bash
+tags:
+- paths: llm-provider-copilot
+  block: 2
+  fingerprint: 422b67617f35ae60
+  lang: bash
+  lines: 633e696d 67c5a3ac b0cead6d cb3139cb f7cc4a04 fc075a9d
+  preview: curl -X POST http://localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="llm-provider-copilot"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 9a146447c3f5d917
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 a5ec3a2d
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="llm-provider-copilot" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * Both Configuration examples load (`provider: copilot` alone, and with `params.apiKey`),
+    #     and the `copilot: {}` map form is rejected in `llm.models`, as the settings table says.
+    #   * The Example request: with `params.baseUrl` pointed at a local recording mock and a
+    #     placeholder `params.apiKey`, the Chat Completions request succeeds, reaches
+    #     `/chat/completions`, and carries the key plus the Copilot protocol headers.
+    #   * Request formats: a Responses request to `gpt-4.1` is converted to Chat Completions; a
+    #     Messages request to a `claude-*` model passes through to `/v1/messages`; a Chat
+    #     Completions request to `gpt-5` fails with `unsupported conversion`.
+    #   * Troubleshoot: with no credential anywhere, a request returns 500 and agentgateway
+    #     reports `Copilot token not found`; with a custom `params.baseUrl` and no `params.apiKey`,
+    #     no Authorization header is sent even though GH_COPILOT_TOKEN is set.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * That GitHub accepts the credential, or the real model catalog - external dependency;
+    #     needs a GitHub account with a Copilot subscription. Every request that would reach
+    #     api.githubcopilot.com goes to a local mock instead, and the no-credential case fails
+    #     before any connection is made.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    # A local recording mock LLM on port 3093. It answers in the shape of the API that it
+    # is called on (Chat Completions, Responses, or Anthropic Messages) and writes the last request
+    # it received (path, headers, body) to /tmp/doc-test-copilot-last.json, so the test can assert what agentgateway sent.
+    cat > mock-llm-3093.py <<'PY'
+    import json, sys
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    REC = sys.argv[2]
+    class H(BaseHTTPRequestHandler):
+        def do_POST(self):
+            n = int(self.headers.get("content-length") or 0)
+            raw = self.rfile.read(n) if n else b""
+            try:
+                body = json.loads(raw or b"{}")
+            except ValueError:
+                body = {"raw_len": len(raw)}
+            with open(REC, "w") as f:
+                json.dump({"path": self.path, "headers": {k.lower(): v for k, v in self.headers.items()},
+                           "body": body}, f)
+            model = body.get("model", "mock") if isinstance(body, dict) else "mock"
+            usage = {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2}
+            if self.path.endswith("/messages"):
+                out = {"id": "msg_mock", "type": "message", "role": "assistant", "model": model,
+                       "content": [{"type": "text", "text": "mock completion"}],
+                       "stop_reason": "end_turn", "stop_sequence": None,
+                       "usage": {"input_tokens": 1, "output_tokens": 1}}
+            elif self.path.endswith("/responses"):
+                out = {"id": "resp_mock", "object": "response", "created_at": 0, "status": "completed",
+                       "model": model, "output": [{"type": "message", "id": "msg_mock", "status": "completed",
+                       "role": "assistant", "content": [{"type": "output_text", "text": "mock completion",
+                       "annotations": []}]}],
+                       "usage": {"input_tokens": 1, "output_tokens": 1, "total_tokens": 2}}
+            else:
+                out = {"id": "chatcmpl-mock", "object": "chat.completion", "created": 0, "model": model,
+                       "choices": [{"index": 0, "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "mock completion"}}],
+                       "usage": usage}
+            payload = json.dumps(out).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+        do_GET = do_POST
+        def log_message(self, *a):
+            pass
+    HTTPServer(("127.0.0.1", int(sys.argv[1])), H).serve_forever()
+    PY
+    python3 mock-llm-3093.py 3093 /tmp/doc-test-copilot-last.json > /tmp/doc-test-mock-llm-3093.log 2>&1 &
+    MOCK_PID=$!
+    for _ in $(seq 1 20); do curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:3093/probe -d '{}' && break; sleep 1; done
+    curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:3093/probe -d '{}' \
+      || { echo "FAIL: the mock LLM did not start on port 3093"; exit 1; }
+    AGW_PID=""
+    stop_agw() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    cleanup() {
+      stop_agw
+      [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+      return 0
+    }
+    trap cleanup EXIT
+    # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+    start_agw() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -s -o /dev/null -m 2 "$3" && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+    }
+    # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+    expect_invalid() {
+      if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+        echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+      fi
+      echo "rejected as documented: $2"
+    }
+
+    # Keep every credential source empty, so discovery cannot find a real token on the runner.
+    unset GH_COPILOT_TOKEN COPILOT_GITHUB_TOKEN
+    export XDG_CONFIG_HOME="$PWD/copilot-empty-config"
+    mkdir -p "$XDG_CONFIG_HOME"
+
+    cat <<'EOF' > copilot.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: copilot
+    EOF
+    agentgateway -f copilot.yaml --validate-only
+
+    cat <<'EOF' > copilot-map.yaml
+    llm:
+      models:
+      - name: "*"
+        provider:
+          copilot: {}
+    EOF
+    expect_invalid copilot-map.yaml "the copilot: {} map form is not valid in llm.models"
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 6de864b06df90bbb
+    lang: yaml
+    lines: 3af99526 e01ccf75 e4f1a385 a5ec3a2d 009395dd 725775e3
+    preview: 'llm:'
+  content: |-
+    {{< doc-test paths="llm-provider-copilot" >}}
+    cat <<'EOF' > copilot-apikey.yaml
+    llm:
+      models:
+      - name: "*"
+        provider: copilot
+        params:
+          apiKey: "$GH_COPILOT_TOKEN"
+    EOF
+    GH_COPILOT_TOKEN=placeholder agentgateway -f copilot-apikey.yaml --validate-only
+
+    # Run the apiKey example against the local mock instead of api.githubcopilot.com.
+    cat <<'EOF' > copilot-mock.yaml
+    llm:
+      models:
+      - name: "*"
+        provider: copilot
+        params:
+          apiKey: "copilot-doc-test-key"
+          baseUrl: http://127.0.0.1:3093
+    EOF
+    agentgateway -f copilot-mock.yaml --validate-only
+    start_agw copilot-mock.yaml copilot-mock http://localhost:4000/
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 422b67617f35ae60
+    lang: bash
+    lines: 633e696d 67c5a3ac b0cead6d cb3139cb f7cc4a04 fc075a9d
+    preview: curl -X POST http://localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="llm-provider-copilot" >}}
+    REC=/tmp/doc-test-copilot-last.json
+    # The example request reached the Chat Completions path with the key and the protocol headers.
+    python3 - "$REC" <<'PY'
+    import json, sys
+    r = json.load(open(sys.argv[1]))
+    h = r["headers"]
+    assert r["path"].endswith("/chat/completions"), r["path"]
+    assert h.get("authorization") == "Bearer copilot-doc-test-key", h.get("authorization")
+    assert h.get("editor-version", "").startswith("agentgateway/"), h
+    assert h.get("x-initiator") == "agent", h
+    assert h.get("x-interaction-type") == "conversation-agent", h
+    assert r["body"].get("model") == "gpt-4.1", r["body"]
+    print("example request: path, key, and Copilot headers verified")
+    PY
+
+    # A Responses request to gpt-4.1 is converted to Chat Completions.
+    CODE=$(curl -s -o copilot-responses.json -w '%{http_code}' http://localhost:4000/v1/responses \
+      -H "Content-Type: application/json" -d '{"model": "gpt-4.1", "input": "Hello"}')
+    [ "$CODE" = "200" ] || { echo "FAIL: Responses to gpt-4.1 returned $CODE"; cat copilot-responses.json; exit 1; }
+    python3 -c 'import json,sys; p=json.load(open(sys.argv[1]))["path"]; assert p.endswith("/chat/completions"), p' "$REC"
+    echo "Responses request to gpt-4.1 was sent as Chat Completions"
+
+    # A Messages request to a claude-* model passes through to /v1/messages.
+    CODE=$(curl -s -o copilot-messages.json -w '%{http_code}' http://localhost:4000/v1/messages \
+      -H "Content-Type: application/json" \
+      -d '{"model": "claude-sonnet-4", "max_tokens": 16, "messages": [{"role": "user", "content": "Hello"}]}')
+    [ "$CODE" = "200" ] || { echo "FAIL: Messages to claude-sonnet-4 returned $CODE"; cat copilot-messages.json; exit 1; }
+    python3 -c 'import json,sys; p=json.load(open(sys.argv[1]))["path"]; assert p.endswith("/v1/messages"), p' "$REC"
+    echo "Messages request to a claude-* model passed through to /v1/messages"
+
+    # A Chat Completions request to a Responses-only model fails.
+    CODE=$(curl -s -o copilot-gpt5.txt -w '%{http_code}' http://localhost:4000/v1/chat/completions \
+      -H "Content-Type: application/json" -d '{"model": "gpt-5", "messages": [{"role": "user", "content": "Hello"}]}')
+    [ "$CODE" = "400" ] && grep -q 'unsupported conversion' copilot-gpt5.txt \
+      || { echo "FAIL: expected 400 unsupported conversion for gpt-5, got $CODE"; cat copilot-gpt5.txt; exit 1; }
+    echo "Chat Completions to gpt-5 fails with unsupported conversion"
+    stop_agw
+
+    # Troubleshoot: a custom baseUrl without params.apiKey sends no Authorization header, even
+    # with GH_COPILOT_TOKEN set.
+    cat <<'EOF' > copilot-nokey.yaml
+    llm:
+      models:
+      - name: "*"
+        provider: copilot
+        params:
+          baseUrl: http://127.0.0.1:3093
+    EOF
+    export GH_COPILOT_TOKEN=copilot-env-token
+    start_agw copilot-nokey.yaml copilot-nokey http://localhost:4000/
+    curl -s -o /dev/null http://localhost:4000/v1/chat/completions -H "Content-Type: application/json" \
+      -d '{"model": "gpt-4.1", "messages": [{"role": "user", "content": "Hello"}]}'
+    python3 -c 'import json,sys; h=json.load(open(sys.argv[1]))["headers"]; assert "authorization" not in h, h["authorization"]' "$REC"
+    echo "custom baseUrl without apiKey: no Authorization header"
+    stop_agw
+    unset GH_COPILOT_TOKEN
+
+    # Troubleshoot: no credential anywhere, default upstream. Token lookup fails before any
+    # connection to api.githubcopilot.com is made.
+    agentgateway -f copilot.yaml --validate-only
+    start_agw copilot.yaml copilot-notoken http://localhost:4000/
+    CODE=$(curl -s -o copilot-notoken.txt -w '%{http_code}' http://localhost:4000/v1/chat/completions \
+      -H "Content-Type: application/json" -d '{"model": "gpt-4.1", "messages": [{"role": "user", "content": "Hello"}]}')
+    stop_agw
+    [ "$CODE" = "500" ] || { echo "FAIL: expected 500 with no credential, got $CODE"; cat copilot-notoken.txt; exit 1; }
+    cat copilot-notoken.txt /tmp/doc-test-agw-copilot-notoken.log | grep -q 'Copilot token not found' \
+      || { echo "FAIL: Copilot token not found is in neither the response nor the logs"; cat copilot-notoken.txt; exit 1; }
+    echo "no credential: 500 and Copilot token not found"
+    {{< /doc-test >}}

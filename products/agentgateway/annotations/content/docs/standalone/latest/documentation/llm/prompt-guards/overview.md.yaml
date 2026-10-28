@@ -4,7 +4,7 @@ blocks:
 - bb017bef7ed02b67 mermaid
 - 213fb49af3bc0b12 yaml
 - f591c71b0a0620a5 yaml
-- 06fe6b2bd74ab19f yaml
+- e42d056101ad17c7 yaml
 - 95fc464f1986b043 yaml
 hidden:
 - after:
@@ -27,9 +27,12 @@ hidden:
     #     rejected due to inappropriate content`.
     #   * The audit mode and streaming guardrail example configs are accepted
     #     (--validate-only).
-    #   * Guard scope: the scope example (`action: mask` with `scope`) is accepted.
-    #   * A non-regex guard (openAIModeration) with a non-default scope fails to load
-    #     with `only regex and bedrockGuardrails guards support a non-default scope`.
+    #   * Guard scope: a prompt whose SSN is only in a tool call argument passes a guard with
+    #     the default scope (200) and is rejected by the page's scope example, which
+    #     adds `toolInput` (403). This is the "Guards do not scan tool call arguments
+    #     by default" and "Setting scope replaces the default" claims.
+    #   * Webhook scope: a response webhook with a scope other than [messages] fails
+    #     to load.
     #   * An empty `scope` list fails to load with `scope must not be empty`.
     # WHAT THIS TEST DOES NOT VALIDATE (and why):
     #   * Audit mode at runtime - the example's openAIModeration guard calls live OpenAI.
@@ -188,7 +191,6 @@ hidden:
     cat <<'EOF' > guard-audit.yaml
     # yaml-language-server: $schema=https://agentgateway.dev/schema/config
     llm:
-      gateways: [default]
       models:
       - name: gpt-4o
         provider: openai
@@ -209,9 +211,9 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 3
-    fingerprint: 06fe6b2bd74ab19f
+    fingerprint: e42d056101ad17c7
     lang: yaml
-    lines: 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 e8bd2b8e 14ddcd05 f2356338 eeb7e2a3 90afc833 3de9d845 cf694735
+    lines: 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 e8bd2b8e 14ddcd05 5095ccef eeb7e2a3 665793a0 3de9d845 cf694735 99c83b01 99bb03c2 eeb7e2a3 665793a0 3de9d845 ed023f12
     preview: 'llm:'
   content: |-
     {{< doc-test paths="guardrails-overview" >}}
@@ -224,18 +226,21 @@ hidden:
           apiKey: "$OPENAI_API_KEY"
         guardrails:
           request:
-          - scope: [systemPrompt, messages, toolOutput]
+          - scope: [systemPrompt, messages, toolOutput, toolInput]
             regex:
-              action: mask
+              action: reject
               rules:
               - builtin: ssn
+          response:
+          - scope: [messages, toolInput]
+            regex:
+              action: reject
+              rules:
+              - pattern: "(?i)internal-only"
     EOF
     agentgateway -f guard-scope.yaml --validate-only
-    # An empty scope list is refused.
-    sed 's/- scope: \[systemPrompt, messages, toolOutput\]/- scope: []/' guard-scope.yaml > guard-scope-empty.yaml
-    expect_load_error guard-scope-empty.yaml "scope must not be empty"
-    # A non-regex guard with a non-default scope is refused.
-    cat <<'EOF' > guard-scope-moderation.yaml
+    # Contrast config: the same request guard with `scope` omitted (the default).
+    cat <<'EOF' > guard-scope-default.yaml
     llm:
       models:
       - name: "*"
@@ -244,10 +249,66 @@ hidden:
           apiKey: "$OPENAI_API_KEY"
         guardrails:
           request:
-          - scope: [toolOutput]
-            openAIModeration: {}
+          - regex:
+              action: reject
+              rules:
+              - builtin: ssn
     EOF
-    expect_load_error guard-scope-moderation.yaml "only regex and bedrockGuardrails guards support a non-default scope"
+    cat <<'EOF' > tool-input-ssn.json
+    {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "file my claim"}, {"role": "assistant", "tool_calls": [{"id": "c1", "type": "function", "function": {"name": "file_claim", "arguments": "{\"ssn\": \"123-45-6789\"}"}}]}, {"role": "tool", "tool_call_id": "c1", "content": "claim filed"}]}
+    EOF
+    status_for() {
+      curl -s -o /dev/null -w '%{http_code}' -m 15 http://localhost:4000/v1/chat/completions \
+        -H 'content-type: application/json' --data @tool-input-ssn.json
+    }
+    to_mock guard-scope-default.yaml guard-scope-default-mock.yaml
+    start_agw guard-scope-default-mock.yaml
+    code=$(status_for)
+    stop_agw
+    [ "$code" = 200 ] || { echo "FAIL: default scope should not scan tool call arguments, got $code"; exit 1; }
+    echo "ok: with the default scope, an SSN in tool call arguments passes ($code)"
+    to_mock guard-scope.yaml guard-scope-mock.yaml
+    start_agw guard-scope-mock.yaml
+    code=$(status_for)
+    stop_agw
+    [ "$code" = 403 ] || { echo "FAIL: scope with toolInput should reject the SSN in tool call arguments, got $code"; exit 1; }
+    echo "ok: with toolInput in scope, the SSN in tool call arguments is rejected ($code)"
+    # An empty scope list is refused.
+    sed 's/- scope: \[systemPrompt, messages, toolOutput, toolInput\]/- scope: []/' guard-scope.yaml > guard-scope-empty.yaml
+    expect_load_error guard-scope-empty.yaml "scope must not be empty"
+    {{< /doc-test >}}
+- after:
+    section: Webhook scope
+    line: e9461f5fb45fdc7e
+    occurrence: 0
+    words: d9298a10 89445ea0 b4d5a180 b9776d7d b7d64a92 75857a45 b4a070a2
+    block_before:
+      block: 3
+      fingerprint: e42d056101ad17c7
+      lang: yaml
+      lines: 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 e8bd2b8e 14ddcd05 5095ccef eeb7e2a3 665793a0 3de9d845 cf694735 99c83b01 99bb03c2 eeb7e2a3 665793a0 3de9d845 ed023f12
+      preview: 'llm:'
+  content: |-
+    {{< doc-test paths="guardrails-overview" >}}
+    # A response webhook may only use the [messages] scope.
+    cat <<'EOF' > guard-webhook-scope.yaml
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+        guardrails:
+          response:
+          - scope: [toolInput]
+            webhook:
+              target:
+                host: localhost:8000
+    EOF
+    if agentgateway -f guard-webhook-scope.yaml --validate-only > /tmp/doc-test-guard-webhook-scope.log 2>&1; then
+      echo "FAIL: a response webhook with scope [toolInput] should not load"; cat /tmp/doc-test-guard-webhook-scope.log; exit 1
+    fi
+    echo "ok: a response webhook with scope [toolInput] does not load"
     {{< /doc-test >}}
 - after:
     block: 4

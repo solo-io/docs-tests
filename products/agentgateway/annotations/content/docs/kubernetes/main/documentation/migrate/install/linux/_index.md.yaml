@@ -1,0 +1,106 @@
+format: 1
+source: content/docs/kubernetes/main/documentation/migrate/install/linux/_index.md
+blocks:
+- 77bc0cc3219e8c9b bash
+- 58e2f3a385ae2e25 bash
+- 1b4d5a129d05077e bash
+- e7e93c8c95820e31 bash
+- d0ec9764eecd4498 bash
+- bea9765bd4e56982 bash
+- b7d13a8d9e8b7df2 bash
+- fae59f4ea14aa8ca bash
+- 896b20f5145ad524 bash
+tags:
+- paths: migrate-install-linux
+  block: 0
+  fingerprint: 77bc0cc3219e8c9b
+  lang: bash
+  lines: 67d16d56 0a0a9dfd 3471cb7f 5e386f28
+  preview: VERSION=v0.5.0
+  form:
+    attr: paths="migrate-install-linux"
+    only: true
+    lead: ' '
+- paths: migrate-install-linux
+  block: 1
+  fingerprint: 58e2f3a385ae2e25
+  lang: bash
+  lines: 58e2f3a3
+  preview: curl -LO "https://github.com/kgateway-dev/ingress2gateway/releases/download/${VE
+  form:
+    attr: paths="migrate-install-linux"
+    only: true
+    lead: ' '
+- paths: migrate-install-linux
+  block: 2
+  fingerprint: 1b4d5a129d05077e
+  lang: bash
+  lines: 1b4d5a12
+  preview: curl -LO https://github.com/kgateway-dev/ingress2gateway/releases/download/${VER
+  form:
+    attr: paths="migrate-install-linux"
+    only: true
+    lead: ' '
+- paths: migrate-install-linux
+  block: 3
+  fingerprint: e7e93c8c95820e31
+  lang: bash
+  lines: e7e93c8c
+  preview: grep -F "  ingress2gateway_${OS}_${ARCH}.tar.gz" checksums.txt | shasum -a 256 -
+  form:
+    attr: paths="migrate-install-linux"
+    only: true
+    lead: ' '
+- paths: migrate-install-linux
+  block: 5
+  fingerprint: bea9765bd4e56982
+  lang: bash
+  lines: bea9765b
+  preview: tar -xvf ingress2gateway_${OS}_${ARCH}.tar.gz
+  form:
+    attr: paths="migrate-install-linux"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 77bc0cc3219e8c9b
+    lang: bash
+    lines: 67d16d56 0a0a9dfd 3471cb7f 5e386f28
+    preview: VERSION=v0.5.0
+  content: |2-
+        {{< doc-test paths="migrate-install-linux" >}}
+        # ============================================================================
+        # Doc test coverage for this guide (these comments are not rendered on the page)
+        # ============================================================================
+        # WHAT THIS TEST VALIDATES:
+        #   * Steps 2-4: the release tarball and checksums file download from the documented
+        #     URLs, the checksum validates, and the tarball extracts an ingress2gateway binary.
+        #   * Step 6: the extracted binary runs and reports the documented VERSION.
+        # WHAT THIS TEST DOES NOT VALIDATE (and why):
+        #   * Step 5 - it installs with sudo into /usr/local/bin or into ~/.local/bin; the
+        #     test runs the extracted binary in place so it changes nothing outside a temp dir.
+        # Step 1 hardcodes ARCH=arm64 as an example. Use the runner's architecture instead,
+        # named the way the release assets are (x86_64 or arm64).
+        ARCH=$(uname -m)
+        [ "$ARCH" = "aarch64" ] && ARCH=arm64
+        I2G_TEST_PREV_DIR="$PWD"
+        I2G_TEST_DIR=$(mktemp -d "${TMPDIR:-/tmp}/doc-test-i2g-linux.XXXXXX")
+        cd "$I2G_TEST_DIR"
+        {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: bea9765bd4e56982
+    lang: bash
+    lines: bea9765b
+    preview: tar -xvf ingress2gateway_${OS}_${ARCH}.tar.gz
+  content: |2-
+        {{< doc-test paths="migrate-install-linux" >}}
+        # Step 6 runs the installed binary from PATH; run the extracted one in place.
+        I2G_OUT=$(./ingress2gateway version 2>&1)
+        echo "$I2G_OUT"
+        grep -q "${VERSION#v}" <<<"$I2G_OUT" || { echo "FAIL: ingress2gateway version does not report ${VERSION}"; exit 1; }
+        echo "ok: ingress2gateway ${VERSION} runs on ${OS}/${ARCH}"
+        cd "$I2G_TEST_PREV_DIR"
+        rm -rf "$I2G_TEST_DIR"
+        {{< /doc-test >}}

@@ -144,12 +144,30 @@ scenarios:
   api-types-decisions:
     page: documentation/llm/api-types/decisions.md
     path: api-types-decisions-run
+  azure-content-safety:
+    page: documentation/llm/prompt-guards/azure-content-safety.md
+    path: azure-content-safety
+  backend-authn-cross-app-access:
+    source: agw-docs/pages/security/backend-authn-cross-app-access-standalone.md
+    path: cross-app-access
+  backend-authn-te-google:
+    source: agw-docs/pages/security/backend-authn-te-google-standalone.md
+    path: te-google
+  bedrock-guardrails:
+    page: documentation/llm/prompt-guards/bedrock-guardrails.md
+    path: bedrock-guardrails
   binary-install:
     source: agw-docs/standalone/setup/binary.md
     path: binary-install
+  braintrust-validate:
+    page: integrations/llm/observability/braintrust.md
+    path: braintrust-validate
   buffer:
     page: documentation/configuration/traffic-management/buffer.md
     path: buffer
+  callout-proxy:
+    page: documentation/configuration/callout-proxy.md
+    path: callout-proxy
   cel-playground:
     page: reference/cel/playground.md
     path: cel-playground
@@ -159,6 +177,9 @@ scenarios:
   cel-yaml-examples:
     page: reference/cel/yaml-and-examples.md
     path: cel-yaml-examples
+  cert-manager:
+    page: integrations/networking/cert-manager.md
+    path: cert-manager
   chatbot-ui:
     page: integrations/web-uis/chatbot-ui.md
     path: chatbot-ui
@@ -183,6 +204,9 @@ scenarios:
   fault-injection:
     page: documentation/configuration/resiliency/fault-injection.md
     path: fault-injection
+  google-model-armor:
+    page: documentation/llm/prompt-guards/google-model-armor.md
+    path: google-model-armor
   goose:
     page: integrations/web-uis/goose.md
     path: goose
@@ -195,12 +219,30 @@ scenarios:
   jaeger-standalone:
     page: documentation/observability/traces/configs/jaeger.md
     path: jaeger-standalone
+  langfuse-validate:
+    page: integrations/llm/observability/langfuse.md
+    path: langfuse-validate
+  langsmith-validate:
+    page: integrations/llm/observability/langsmith.md
+    path: langsmith-validate
   librechat:
     page: integrations/web-uis/librechat.md
     path: librechat
   llm-api-keys:
     page: documentation/llm/api-keys.md
     path: llm-api-keys-standalone
+  llm-audio:
+    page: documentation/llm/api-types/audio.md
+    path: llm-audio
+  llm-client-claude-code:
+    source: agw-docs/pages/agentgateway/integrations/llm-clients/claude-code.md
+    path: claude-code
+  llm-client-claude-desktop:
+    source: agw-docs/pages/agentgateway/integrations/llm-clients/claude-desktop.md
+    path: claude-desktop
+  llm-client-codex:
+    source: agw-docs/pages/agentgateway/integrations/llm-clients/codex.md
+    path: codex
   llm-client-curl:
     source: agw-docs/pages/agentgateway/integrations/llm-clients/curl.md
     path: llm-client-curl
@@ -219,6 +261,9 @@ scenarios:
   llm-policies:
     page: documentation/configuration/traffic-management/llm.md
     path: llm-policies
+  llm-provider-copilot:
+    page: integrations/llm/providers/copilot.md
+    path: llm-provider-copilot
   manipulation:
     page: documentation/configuration/traffic-management/manipulation.md
     path: manipulation
@@ -228,6 +273,9 @@ scenarios:
   mcp-guardrails-cel:
     page: documentation/mcp/guardrails/cel.md
     path: mcp-guardrails-cel
+  mcp-guardrails-processors:
+    source: agw-docs/pages/agentgateway/mcp/mcp-guardrails-processors.md
+    path: mcp-guardrails-processors
   mcp-observability:
     page: documentation/mcp/mcp-observability.md
     path: mcp-observability
@@ -237,6 +285,12 @@ scenarios:
   multi-layer-guardrails:
     page: documentation/llm/prompt-guards/multi-layer.md
     path: multi-layer-guardrails
+  oauth2-proxy:
+    page: integrations/auth/oauth2-proxy.md
+    path: oauth2-proxy
+  oidc-browser:
+    page: documentation/configuration/security/oidc.md
+    path: oidc-browser
   open-webui:
     page: integrations/web-uis/open-webui.md
     path: open-webui
@@ -246,6 +300,9 @@ scenarios:
   otlp-log-export:
     page: documentation/observability/access-logs/export.md
     path: otlp-log-export
+  phoenix:
+    page: integrations/llm/observability/phoenix.md
+    path: phoenix
   prometheus-standalone:
     page: documentation/observability/metrics/prometheus.md
     path: prometheus-standalone
@@ -267,6 +324,9 @@ scenarios:
   static-config:
     page: documentation/configuration/static-configuration.md
     path: static-config
+  tailscale:
+    page: integrations/auth/tailscale.md
+    path: tailscale
   transformations:
     page: documentation/configuration/traffic-management/transformations.md
     path: transformations
