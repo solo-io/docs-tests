@@ -184,15 +184,23 @@ hidden:
     preview: for i in 1 2 3; do
   content: |2-
        {{< doc-test paths="istio-ambient-ingress" >}}
-       # ztunnel logs a connection when it completes, and the proxy may hold pooled
-       # connections open, so keep sending requests until an inbound httpbin entry shows up.
+       # ztunnel logs a connection when it completes, and the proxy keeps its upstream
+       # connection to httpbin pooled, so `connection: close` from the client does not end
+       # it. If no entry shows up after a few rounds, restart the proxy once so the pooled
+       # connection closes and ztunnel writes the entry.
        found=""
+       restarted=""
        for i in $(seq 1 30); do
          for j in 1 2 3; do
            curl -sSI -m 10 ${AMBIENT_URL}/get -H "host: www.example.com" -H "connection: close" > /dev/null || true
          done
-         found=$(kubectl -n istio-system logs -l app=ztunnel --since=2m --tail=-1 2>/dev/null | grep 'dst.namespace="httpbin"' | grep 'src.namespace="agentgateway-system"' || true)
+         found=$(kubectl -n istio-system logs -l app=ztunnel --since=5m --tail=-1 2>/dev/null | grep 'dst.namespace="httpbin"' | grep 'src.namespace="agentgateway-system"' || true)
          [ -n "$found" ] && break
+         if [ "$i" -ge 5 ] && [ -z "$restarted" ]; then
+           kubectl -n agentgateway-system rollout restart deployment/ambient-ingress
+           kubectl -n agentgateway-system rollout status deployment/ambient-ingress --timeout=120s
+           restarted=yes
+         fi
          sleep 4
        done
        if [ -z "$found" ]; then
@@ -209,7 +217,7 @@ hidden:
   content: |2-
        {{< doc-test paths="istio-ambient-ingress" >}}
        # Claim: src.identity and dst.identity are SPIFFE URIs and dst.hbone_addr is set.
-       line=$(kubectl -n istio-system logs -l app=ztunnel --since=3m --tail=-1 \
+       line=$(kubectl -n istio-system logs -l app=ztunnel --since=6m --tail=-1 \
          | grep 'dst.namespace="httpbin"' | grep 'src.namespace="agentgateway-system"' | tail -n1)
        echo "$line"
        for want in 'src.identity="spiffe://cluster.local/ns/agentgateway-system/' \

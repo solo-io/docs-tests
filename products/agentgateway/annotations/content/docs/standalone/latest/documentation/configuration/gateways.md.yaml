@@ -211,7 +211,8 @@ hidden:
         port: 9000
         protocol: TCP
     tcpRoutes:
-    - gateways: [tcp]
+    - name: tcp-backend
+      gateways: [tcp]
       backends:
       - host: localhost:8000
     EOF

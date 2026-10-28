@@ -1,0 +1,119 @@
+format: 1
+source: content/docs/standalone/main/documentation/llm/prompt-guards/google-model-armor.md
+blocks:
+- aaebd4416b53acaf sh
+- 6faa3f9e13875b92 sh
+- 9bd96b6c5a340304 sh
+- 3683fddee92e899b yaml
+- 77f97627626277a1 yaml
+- 8e1adc414513bed2 sh
+- 2bcfba340b874352 console
+tags:
+- paths: google-model-armor
+  block: 3
+  fingerprint: 3683fddee92e899b
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 848625eb 009395dd 1940230f 8263d052 e8bd2b8e 14ddcd05 528c7b8d 57e8c796 30269070 1e86cf12 c8f3f59a 81b74571 6e90064f 99c83b01 528c7b8d 57e8c796 30269070 1e86cf12 c8f3f59a 81b74571 6e90064f abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="google-model-armor"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 3683fddee92e899b
+    lang: yaml
+    lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 848625eb 009395dd 1940230f 8263d052 e8bd2b8e 14ddcd05 528c7b8d 57e8c796 30269070 1e86cf12 c8f3f59a 81b74571 6e90064f 99c83b01 528c7b8d 57e8c796 30269070 1e86cf12 c8f3f59a 81b74571 6e90064f abc56510
+    preview: cat <<'EOF' > config.yaml
+  content: |-
+    {{< doc-test paths="google-model-armor" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The page's configuration loads once the template, project, and location placeholders are
+    #     filled in.
+    #   * The `action` setting accepts `reject` and `audit` and nothing else, and `location` is
+    #     optional (the table gives it a default).
+    #   * Guard scope: the scope example loads as a request guard.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The gcloud steps and the "Test the guardrail" rejection - external dependency; needs a
+    #     Google Cloud project, a Model Armor template, Application Default Credentials, and a
+    #     Gemini API key.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export GEMINI_API_KEY="${GEMINI_API_KEY:-test}"
+    AGW_PID=""
+    stop_agw() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    cleanup() {
+      stop_agw
+      [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+      return 0
+    }
+    trap cleanup EXIT
+    # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+    start_agw() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -s -o /dev/null -m 2 "$3" && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+    }
+    # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+    expect_invalid() {
+      if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+        echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+      fi
+      echo "rejected as documented: $2"
+    }
+    # Fill in the placeholders, as the reader does.
+    sed -i.bak -e 's/<your-template-id>/doc-test-template/' -e 's/<your-project-id>/doc-test-project/' \
+      -e 's/<location>/us-central1/' config.yaml
+    agentgateway -f config.yaml --validate-only
+
+    # armor_variant OUT TEXT: insert TEXT into the first googleModelArmor block.
+    armor_variant() {
+      awk -v add="$2" '{print} !done && /- googleModelArmor:/ {print add; done=1}' config.yaml > "$1"
+    }
+    armor_variant armor-audit.yaml "          action: audit"
+    agentgateway -f armor-audit.yaml --validate-only
+    armor_variant armor-reject.yaml "          action: reject"
+    agentgateway -f armor-reject.yaml --validate-only
+    armor_variant armor-bad-action.yaml "          action: warn"
+    expect_invalid armor-bad-action.yaml "action is reject or audit"
+    grep -v 'location: us-central1' config.yaml > armor-no-location.yaml
+    agentgateway -f armor-no-location.yaml --validate-only
+    echo "location is optional"
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 77f97627626277a1
+    lang: yaml
+    lines: e8bd2b8e 14ddcd05 7cce6cfa 05894c6a 57e8c796 30269070 1e86cf12 c8f3f59a 81b74571 6e90064f
+    preview: 'guardrails:'
+  content: |-
+    {{< doc-test paths="google-model-armor" >}}
+    # The scope example, as the request guardrails of the config above.
+    python3 - <<'PY'
+    src = open("config.yaml").read()
+    head, _, _ = src.partition("    guardrails:\n")
+    guard = """    guardrails:
+          request:
+          - scope: [systemPrompt, messages]
+            googleModelArmor:
+              templateId: doc-test-template
+              projectId: doc-test-project
+              location: us-central1
+              policies:
+                backendAuth:
+                  gcp: {}
+    """
+    open("armor-scope.yaml", "w").write(head + guard)
+    PY
+    agentgateway -f armor-scope.yaml --validate-only
+    {{< /doc-test >}}

@@ -363,9 +363,15 @@ hidden:
        echo "ok: a dynamic backend refuses loopback by default"
        stop_agw
        # Step 4: add config.backend.allowDynamicLoopback to the top of the file.
-       { printf 'config:\n  backend:\n    allowDynamicLoopback: true\n'; cat egress-loopback.yaml; } > egress-loopback.tmp
-       mv egress-loopback.tmp egress-loopback.yaml
-       agentgateway -f egress-loopback.yaml --validate-only
+       # Skip the prepend if the file already has a top-level config key, and print the
+       # file if it doesn't validate (a nightly once failed here with "duplicate field
+       # `config`" that did not reproduce locally).
+       if ! grep -q '^config:' egress-loopback.yaml; then
+         { printf 'config:\n  backend:\n    allowDynamicLoopback: true\n'; cat egress-loopback.yaml; } > egress-loopback.tmp
+         mv egress-loopback.tmp egress-loopback.yaml
+       fi
+       agentgateway -f egress-loopback.yaml --validate-only \
+         || { echo "FAIL: egress-loopback.yaml does not validate:"; cat egress-loopback.yaml; exit 1; }
        start_agw egress-loopback.yaml
        out=$(curl -s -i -m 20 --noproxy '' --proxy "$PROXY" http://localhost:15021/healthz/ready || true)
        head -n1 <<<"$out" | grep -q ' 200' || { echo "FAIL: loopback should be allowed"; echo "$out"; exit 1; }

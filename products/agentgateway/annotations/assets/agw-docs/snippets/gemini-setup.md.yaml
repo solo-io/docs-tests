@@ -15,37 +15,75 @@ blocks:
 - a47ce7be9cc4875a sh
 - d2105d920a8777f6 json
 tags:
-- paths: llm-rbac-run
+- paths: llm-rbac-run,gemini
   block: 1
   fingerprint: 4045dadca65b9fa4
   lang: yaml
   lines: abbd1bdc f1540154 a67acb0a 8c8c4228 684bf5ae 8af957d1 1426decf 2f7c298d 8dafd736 abc56510
   preview: kubectl apply -f - <<EOF
   form:
-    attr: paths="llm-rbac-run"
+    attr: paths="llm-rbac-run,gemini"
     only: true
     lead: ' '
-- paths: llm-rbac-run
+- paths: llm-rbac-run,gemini
   block: 2
   fingerprint: bd51de829b9e08eb
   lang: yaml
   lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 32ecf0ce 8af957d1 36184fa5 ad3afdb1 93a4b62b ca5c3b0c 641c6bc8 c8f3f59a 146e11c6 9ebc4789 684bf5ae abc56510
   preview: kubectl apply -f- <<EOF
   form:
-    attr: paths="llm-rbac-run"
+    attr: paths="llm-rbac-run,gemini"
     only: true
     lead: ' '
-- paths: llm-rbac-run
+- paths: llm-rbac-run,gemini
   block: 5
   fingerprint: 9f19a7c2c1da953b
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 32ecf0ce 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 79b10c33 94ae491e f047ee91 8af957d1 22aec9ce 99d7dba1 abc56510
   preview: kubectl apply -f- <<EOF
   form:
-    attr: paths="llm-rbac-run"
+    attr: paths="llm-rbac-run,gemini"
+    only: true
+    lead: ' '
+- paths: gemini
+  block: 10
+  fingerprint: 856174118cb74ba8
+  lang: sh
+  lines: c89e67c7 0100c022 4b3b16d3 c9b98e66 cfae0d42 c83aa0a4
+  preview: curl "$INGRESS_GW_ADDRESS/gemini" -H content-type:application/json  -d '{
+  form:
+    attr: paths="gemini"
     only: true
     lead: ' '
 hidden:
+- after:
+    block: 0
+    fingerprint: d77446fa5b858846
+    lang: bash
+    lines: d77446fa
+    preview: export GOOGLE_KEY=<your-api-key>
+  content: |2-
+       {{< doc-test paths="gemini" >}}
+       # ============================================================================
+       # Doc test coverage for the Gemini provider guide (not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * schema: the AgentgatewayBackend for Gemini matches the CRD.
+       #   * "Set up access to Gemini": the Secret, the Gemini backend, and the Custom route
+       #     tab's /gemini HTTPRoute apply; the backend is accepted and translated in full.
+       #   * Step 5 (Custom route tab, LoadBalancer): a chat completion request on /gemini
+       #     returns 200 with an assistant message.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * A live Gemini completion - external dependency: needs a Google API key. The
+       #     backend's host, port, and path are patched to the in-cluster httpbun mock LLM,
+       #     so the gemini provider and its auth policy stay in place but no request leaves
+       #     the cluster.
+       #   * The "Gemini default" and "OpenAI-compatible" route tabs - each creates the same
+       #     HTTPRoute name, so one tab is tested; the Localhost tabs need a port-forward.
+       # The visible export is a placeholder. Use a test value.
+       export GOOGLE_KEY="${GOOGLE_KEY:-mock-google-key}"
+       {{< reuse "agw-docs/snippets/deploy-mock-llm.md" >}}
+       {{< /doc-test >}}
 - after:
     section: (top of page)
     line: afff08787940e2b4
@@ -81,6 +119,69 @@ hidden:
     export GOOGLE_KEY="${GOOGLE_KEY:-mock-google-key}"
     {{< reuse "agw-docs/snippets/deploy-mock-llm.md" >}}
     {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 9f19a7c2c1da953b
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 32ecf0ce 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 79b10c33 94ae491e f047ee91 8af957d1 22aec9ce 99d7dba1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="gemini" >}}
+       kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} google -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge --patch-file /dev/stdin <<EOF
+       spec:
+         ai:
+           provider:
+             host: httpbun.default.svc.cluster.local
+             port: 3090
+             path: /llm/chat/completions
+       EOF
+       YAMLTest -f - <<'EOF'
+       - name: the google backend is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: google
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       # Accepted=True also covers a partly translated backend (reason PartiallyValid),
+       # which can silently drop its auth policy. The reason tells the two apart.
+       - name: the google backend translated in full, not partly
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: google
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       - name: the google HTTPRoute is accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: google
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
 - after:
     block: 5
     fingerprint: 9f19a7c2c1da953b
@@ -129,4 +230,37 @@ hidden:
              timeoutSeconds: 60
              intervalSeconds: 2
        EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 856174118cb74ba8
+    lang: sh
+    lines: c89e67c7 0100c022 4b3b16d3 c9b98e66 cfae0d42 c83aa0a4
+    preview: curl "$INGRESS_GW_ADDRESS/gemini" -H content-type:application/json  -d '{
+  content: |2-
+       {{< doc-test paths="gemini" >}}
+       YAMLTest -f - <<'EOF'
+       - name: a chat completion on the /gemini route succeeds
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/gemini"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "", "messages": [{"role": "user", "content": "Explain how AI works in simple terms."}]}
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.choices[0].message.role"
+             comparator: equals
+             value: assistant
+       EOF
+       # The guide has no cleanup step; remove what it created so later tests start clean.
+       kubectl delete httproute google -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
+       kubectl delete {{< reuse "agw-docs/snippets/backend.md" >}} google -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
+       kubectl delete secret google-secret -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
        {{< /doc-test >}}

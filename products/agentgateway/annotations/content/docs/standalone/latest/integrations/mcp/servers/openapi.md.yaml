@@ -81,7 +81,7 @@ hidden:
     # WHAT THIS TEST VALIDATES:
     #   * "Sample Petstore server" (AMD64 tab): the image pulls and the server runs on 8080.
     #   * "Configure the agentgateway": the OpenAPI schema downloads; the published
-    #     mcp-openapi example config downloads and is accepted; the page's local-file
+    #     mcp-openapi example config downloads; the page's local-file
     #     config (`schema.file: openapi.json`) runs.
     #   * "Verify access to the Petstore APIs", through the MCP API rather than the UI
     #     playground: tools/list returns one tool per operation named after its
@@ -185,8 +185,8 @@ hidden:
        trap 'stop_gateway; docker rm -f swaggerapi-petstore3 >/dev/null 2>&1 || true' EXIT
        jq -e '.paths | length > 0' openapi.json >/dev/null
 
-       # The downloaded example config is accepted as published.
-       agentgateway -f config.yaml --validate-only
+       # The downloaded example config points at ./examples/mcp-openapi/openapi.json,
+       # a path in the product repo, so it is only checked after step 2 replaces it.
 
        # Step 2: update config.yaml to the page's local-file config, then step 3: run it.
        cat > config.yaml <<'EOF'

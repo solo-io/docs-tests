@@ -1,0 +1,88 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/prompt-guards/bedrock-guardrails.md
+blocks:
+- 8865173dd1f43df9 yaml
+tags:
+- paths: bedrock-guardrails
+  block: 0
+  fingerprint: 8865173dd1f43df9
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd 0ee7a881 9b4ed50d e8bd2b8e 14ddcd05 af52f703 2ba8c267 f7556d95 b4d32bbe c8f3f59a 81b74571 d1db16e5 99c83b01 af52f703 2ba8c267 f7556d95 b4d32bbe c8f3f59a 81b74571 d1db16e5 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="bedrock-guardrails"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 8865173dd1f43df9
+    lang: yaml
+    lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd 0ee7a881 9b4ed50d e8bd2b8e 14ddcd05 af52f703 2ba8c267 f7556d95 b4d32bbe c8f3f59a 81b74571 d1db16e5 99c83b01 af52f703 2ba8c267 f7556d95 b4d32bbe c8f3f59a 81b74571 d1db16e5 abc56510
+    preview: cat <<'EOF' > config.yaml
+  content: |-
+    {{< doc-test paths="bedrock-guardrails" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The page's configuration loads once the guardrail ID placeholder is filled in: the
+    #     `guardrails.request` and `guardrails.response` lists, `bedrockGuardrails` with
+    #     `guardrailIdentifier`, `guardrailVersion`, `region`, and `policies.backendAuth.aws`.
+    #   * The settings table: `action` accepts `reject` and `audit` and nothing else, and a guard
+    #     accepts `rejection.status` with a `rejection.body` written as a string or as a byte list.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Blocking behavior, the 403 status, and the Bedrock blocked message - external dependency;
+    #     needs an AWS account, a guardrail, and AWS credentials. The Bedrock Guardrails endpoint is
+    #     derived from the region, so it cannot be pointed at a local mock.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    AGW_PID=""
+    stop_agw() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    cleanup() {
+      stop_agw
+      [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+      return 0
+    }
+    trap cleanup EXIT
+    # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+    start_agw() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -s -o /dev/null -m 2 "$3" && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+    }
+    # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+    expect_invalid() {
+      if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+        echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+      fi
+      echo "rejected as documented: $2"
+    }
+    # Fill in the placeholder, as the reader does.
+    sed -i.bak 's/<your-guardrail-id>/doc-test-guardrail/' config.yaml
+    agentgateway -f config.yaml --validate-only
+
+    # guard_variant OUT TEXT: insert TEXT into the first bedrockGuardrails block.
+    guard_variant() {
+      awk -v add="$2" '{print} !done && /- bedrockGuardrails:/ {print add; done=1}' config.yaml > "$1"
+    }
+    guard_variant bedrock-audit.yaml "          action: audit"
+    agentgateway -f bedrock-audit.yaml --validate-only
+    guard_variant bedrock-reject.yaml "          action: reject"
+    agentgateway -f bedrock-reject.yaml --validate-only
+    guard_variant bedrock-bad-action.yaml "          action: warn"
+    expect_invalid bedrock-bad-action.yaml "action is reject or audit"
+
+    # rejection is set on the guard, next to bedrockGuardrails.
+    awk '{ if (!done && $0 ~ /^      - bedrockGuardrails:/) { print "      - rejection:"; print "          status: 451"; print "          body: \"Blocked by policy\""; sub(/^      - /, "        "); done=1 } print }' config.yaml > bedrock-rejection-string.yaml
+    agentgateway -f bedrock-rejection-string.yaml --validate-only
+    awk '{ if (!done && $0 ~ /^      - bedrockGuardrails:/) { print "      - rejection:"; print "          body: [66, 108, 111, 99, 107, 101, 100]"; sub(/^      - /, "        "); done=1 } print }' config.yaml > bedrock-rejection-bytes.yaml
+    agentgateway -f bedrock-rejection-bytes.yaml --validate-only
+    echo "Bedrock Guardrails configuration and guard settings verified"
+    {{< /doc-test >}}

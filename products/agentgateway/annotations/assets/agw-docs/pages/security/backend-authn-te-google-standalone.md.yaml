@@ -1,0 +1,250 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-te-google-standalone.md
+blocks:
+- 92e658fb93efe9f7 sh
+- 51875d496e300b81 sh
+- 803fa40c3edbeb24 sh
+- e3e429f285d49180 sh
+- 9b8342eb0b29a149 sh
+- c053c3d31165a6ff json
+- 5f353623c756ac63 sh
+- 85bf0e05d6e5577d sh
+- f6931a7b2e59dbc5 sh
+- e3e429f285d49180 sh
+- 84daf2dd683630e7 sh
+- 1bc8ce307075e367 json
+- 901d36f190c79fb2 sh
+- 535b48fd149f62ad
+- 4955f7d40a2a9d19 sh
+- 6ac6f72523c4ffc5 sh
+tags:
+- paths: te-google
+  block: 0
+  fingerprint: 92e658fb93efe9f7
+  lang: sh
+  lines: 888427d5 021fb596 6f17cf8c afa07114 4002a67b 021fb596 3ba065f9 e334325c fe4ada09 1ec16f50 be1075b9 a61b93ea 021fb596 446a45bb d15de3c7 aab74b88 6685a21a c16cba3f 26427009 d10b36aa d10b36aa cfae0d42 d10b36aa 39d4b54e 55d0c79c 021fb596 5148a496 afa07114 1db432fd 07f50448 195edbc3 ee84d78b bfb6ec0e d10b36aa cfae0d42 d10b36aa abc56510
+  preview: cat > agentgateway-realm.json <<'EOF'
+  form:
+    attr: paths="te-google"
+    only: true
+    lead: ' '
+- paths: te-google
+  block: 1
+  fingerprint: 51875d496e300b81
+  lang: sh
+  lines: fd171105 3cb0fc54 33efe395 8d2fbad8 820219b7 2cbf41b0 5620f572
+  preview: docker run -d --name keycloak -p 7080:8080 \
+  form:
+    attr: paths="te-google"
+    only: true
+    lead: ' '
+- paths: te-google
+  block: 2
+  fingerprint: 803fa40c3edbeb24
+  lang: sh
+  lines: 803fa40c
+  preview: until curl -sf http://localhost:7080/realms/agentgateway/.well-known/openid-conf
+  form:
+    attr: paths="te-google"
+    only: true
+    lead: ' '
+- paths: te-google
+  block: 4
+  fingerprint: 9b8342eb0b29a149
+  lang: sh
+  lines: ad9bf5ec 3c8b318b
+  preview: echo "$INBOUND_TOKEN" | cut -d. -f2 | jq -R 'gsub("-";"+") | gsub("_";"/") | . +
+  form:
+    attr: paths="te-google"
+    only: true
+    lead: ' '
+- paths: te-google
+  block: 6
+  fingerprint: 5f353623c756ac63
+  lang: sh
+  lines: 45723920 5fb0fe66
+  preview: 'curl -s http://localhost:7080/realms/agentgateway/protocol/openid-connect/certs '
+  form:
+    attr: paths="te-google"
+    only: true
+    lead: ' '
+- paths: te-google
+  block: 7
+  fingerprint: 85bf0e05d6e5577d
+  lang: sh
+  lines: 5953c068 f4a9035a 943d11d8 0b02fb9c 2b6bc07a d67b54bf 77bf11d9 d72f261d 87a3d122 c8f3f59a 48924e65 81b74571 0b661b52 3dc08938 60804b1a c8f3f59a 48924e65 21cb419c c18c6d94 c6a12b00 837dc1fd 3a306664 61d9749c 629e7a9b abc56510
+  preview: cat > config.yaml <<EOF
+  form:
+    attr: paths="te-google"
+    only: true
+    lead: ' '
+- paths: te-google
+  block: 12
+  fingerprint: 901d36f190c79fb2
+  lang: sh
+  lines: 901d36f1
+  preview: curl -s -w " %{http_code}\n" http://localhost:3000/storage/v1/b/$BUCKET/o
+  form:
+    attr: paths="te-google"
+    only: true
+    lead: ' '
+- paths: te-google
+  block: 14
+  fingerprint: 4955f7d40a2a9d19
+  lang: sh
+  lines: 4955f7d4
+  preview: docker rm -f keycloak
+  form:
+    attr: paths="te-google"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 92e658fb93efe9f7
+    lang: sh
+    lines: 888427d5 021fb596 6f17cf8c afa07114 4002a67b 021fb596 3ba065f9 e334325c fe4ada09 1ec16f50 be1075b9 a61b93ea 021fb596 446a45bb d15de3c7 aab74b88 6685a21a c16cba3f 26427009 d10b36aa d10b36aa cfae0d42 d10b36aa 39d4b54e 55d0c79c 021fb596 5148a496 afa07114 1db432fd 07f50448 195edbc3 ee84d78b bfb6ec0e d10b36aa cfae0d42 d10b36aa abc56510
+    preview: cat > agentgateway-realm.json <<'EOF'
+  content: |2-
+       {{< doc-test paths="te-google" >}}
+       # WHAT THIS TEST VALIDATES:
+       #   * Step 1 as written, against a local Keycloak: the realm imports, the token for testuser has
+       #     the https://keycloak.example.com issuer, the agentgateway audience, and a sub claim, and
+       #     the saved jwks.json holds only signing keys.
+       #   * Step 3: the generated configuration loads with sample project, pool, and provider values.
+       #   * Step 4, last request: without a token, the gateway answers `invalid request` with 400.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Step 2, the token exchange at the Google STS, and the Cloud Storage listing - external
+       #     dependency; need a Google Cloud project with Workload Identity Federation. No request
+       #     with a token is sent, so the gateway never calls sts.googleapis.com.
+       #   * The Troubleshooting table - each row is a Google STS response.
+       {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+       AGW_PID=""
+       stop_agw() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       cleanup() {
+         stop_agw
+         [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+         return 0
+       }
+       trap cleanup EXIT
+       # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+       start_agw() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+         AGW_PID=$!
+         for _ in $(seq 1 30); do
+           curl -s -o /dev/null -m 2 "$3" && return 0
+           kill -0 "$AGW_PID" 2>/dev/null || break
+           sleep 1
+         done
+         echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+       }
+       # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+       expect_invalid() {
+         if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+           echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+         fi
+         echo "rejected as documented: $2"
+       }
+       docker rm -f keycloak >/dev/null 2>&1 || true
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 51875d496e300b81
+    lang: sh
+    lines: fd171105 3cb0fc54 33efe395 8d2fbad8 820219b7 2cbf41b0 5620f572
+    preview: docker run -d --name keycloak -p 7080:8080 \
+  content: |2-
+       {{< doc-test paths="te-google" >}}
+       trap 'cleanup; docker rm -f keycloak >/dev/null 2>&1 || true' EXIT
+       # Bound the visible wait loop that follows, so that a Keycloak that never starts fails the test.
+       for _ in $(seq 1 150); do
+         curl -sf http://localhost:7080/realms/agentgateway/.well-known/openid-configuration > /dev/null && break
+         sleep 2
+       done
+       curl -sf http://localhost:7080/realms/agentgateway/.well-known/openid-configuration > /dev/null \
+         || { echo "FAIL: the Keycloak realm was not served"; docker logs keycloak 2>&1 | tail -50; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 803fa40c3edbeb24
+    lang: sh
+    lines: 803fa40c
+    preview: until curl -sf http://localhost:7080/realms/agentgateway/.well-known/openid-conf
+  content: |2-
+       {{< doc-test paths="te-google" >}}
+       # Step 1.4, the same command as the page.
+       export INBOUND_TOKEN=$(curl -s http://localhost:7080/realms/agentgateway/protocol/openid-connect/token \
+         -u agent:agent-secret -d grant_type=password \
+         -d username=testuser -d password=testpass | jq -r .access_token)
+       [ -n "$INBOUND_TOKEN" ] && [ "$INBOUND_TOKEN" != "null" ] || { echo "FAIL: no token minted"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 9b8342eb0b29a149
+    lang: sh
+    lines: ad9bf5ec 3c8b318b
+    preview: echo "$INBOUND_TOKEN" | cut -d. -f2 | jq -R 'gsub("-";"+") | gsub("_";"/") | . +
+  content: |2-
+       {{< doc-test paths="te-google" >}}
+       echo "$INBOUND_TOKEN" | cut -d. -f2 | jq -R 'gsub("-";"+") | gsub("_";"/") | . + ("=" * ((4 - (length % 4)) % 4)) | @base64d | fromjson' > te-google-claims.json
+       jq -e '.iss == "https://keycloak.example.com/realms/agentgateway"' te-google-claims.json > /dev/null \
+         || { echo "FAIL: unexpected issuer"; cat te-google-claims.json; exit 1; }
+       jq -e '(.aud | if type == "array" then . else [.] end) | index("agentgateway") != null' te-google-claims.json > /dev/null \
+         || { echo "FAIL: agentgateway is not in the audience"; cat te-google-claims.json; exit 1; }
+       [ -n "$USER_SUB" ] && [ "$USER_SUB" != "null" ] || { echo "FAIL: USER_SUB is empty"; exit 1; }
+       echo "ok: token iss, aud, and sub match the page"
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 5f353623c756ac63
+    lang: sh
+    lines: 45723920 5fb0fe66
+    preview: 'curl -s http://localhost:7080/realms/agentgateway/protocol/openid-connect/certs '
+  content: |2-
+       {{< doc-test paths="te-google" >}}
+       jq -e '(.keys | length > 0) and all(.keys[]; .use == "sig")' jwks.json > /dev/null \
+         || { echo "FAIL: jwks.json does not hold only signing keys"; cat jwks.json; exit 1; }
+       echo "ok: jwks.json has $(jq '.keys | length' jwks.json) signing key(s)"
+       # Sample values for the Step 2 outputs that the Step 3 configuration reads.
+       export PROJECT_NUMBER=123456789012 POOL_ID=doc-test-pool PROVIDER_ID=doc-test-provider BUCKET=doc-test-bucket
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 85bf0e05d6e5577d
+    lang: sh
+    lines: 5953c068 f4a9035a 943d11d8 0b02fb9c 2b6bc07a d67b54bf 77bf11d9 d72f261d 87a3d122 c8f3f59a 48924e65 81b74571 0b661b52 3dc08938 60804b1a c8f3f59a 48924e65 21cb419c c18c6d94 c6a12b00 837dc1fd 3a306664 61d9749c 629e7a9b abc56510
+    preview: cat > config.yaml <<EOF
+  content: |2-
+       {{< doc-test paths="te-google" >}}
+       agentgateway -f config.yaml --validate-only
+       grep -q '//iam.googleapis.com/projects/123456789012/locations/global/workloadIdentityPools/doc-test-pool/providers/doc-test-provider' config.yaml \
+         || { echo "FAIL: the shell did not fill in the audience"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="te-google" >}}
+       start_agw config.yaml te-google http://localhost:3000/
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 901d36f190c79fb2
+    lang: sh
+    lines: 901d36f1
+    preview: curl -s -w " %{http_code}\n" http://localhost:3000/storage/v1/b/$BUCKET/o
+  content: |2-
+       {{< doc-test paths="te-google" >}}
+       OUT=$(curl -s -w " %{http_code}" http://localhost:3000/storage/v1/b/$BUCKET/o)
+       [ "$OUT" = "invalid request 400" ] || { echo "FAIL: expected 'invalid request 400', got '$OUT'"; exit 1; }
+       echo "ok: no token -> invalid request 400"
+       stop_agw
+       {{< /doc-test >}}

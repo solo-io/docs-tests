@@ -1,0 +1,123 @@
+format: 1
+source: content/docs/standalone/main/integrations/llm/observability/phoenix.md
+blocks:
+- 2837f16b43df66ab bash
+- d7bcf352825f238b bash
+- 409a433951e945fd yaml
+- f6931a7b2e59dbc5 sh
+- 4bd1e6bb695f2311 yaml
+- e4b2699153d32d9f yaml
+- 08d12edbcc9a34c2 yaml
+hidden:
+- after:
+    block: 4
+    fingerprint: 4bd1e6bb695f2311
+    lang: yaml
+    lines: a7f80a73 1b6c26b3 390f7e12 a97a9e13 8def7c01 9adf3fc1 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 6d88d930 c8f3f59a 81b74571 7217bcc4
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="phoenix" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Quick start": Phoenix runs from the documented arizephoenix/phoenix:latest image,
+    #     and its REST API answers on localhost:6006.
+    #   * "Configuration" (Config file tab): the documented config is accepted
+    #     (--validate-only), and with it agentgateway exports a trace for an LLM request
+    #     directly to Phoenix on localhost:4317, with no OpenTelemetry Collector. The test
+    #     queries Phoenix's spans API instead of the UI, and checks that a span records the
+    #     requested model.
+    #   The LLM request goes to a local mock LLM (hostOverride on the openai backend) instead
+    #   of OpenAI, so no API key is needed.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The visible `docker run` is not run as written: it runs in the foreground and
+    #     publishes only port 6006, and the Config file tab sends gRPC to port 4317. The test
+    #     runs the same image detached and also publishes 4317.
+    #   * `pip install arize-phoenix` / `phoenix serve` - same server, installed with pip.
+    #   * The UI tab - browser-only steps.
+    #   * The Docker Compose example - it runs the agentgateway image instead of the binary
+    #     under test.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    AGW_LOG=/tmp/doc-test-phoenix-agw.log
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true; docker rm -f doc-test-phoenix >/dev/null 2>&1 || true' EXIT
+    docker rm -f doc-test-phoenix >/dev/null 2>&1 || true
+    docker run -d --name doc-test-phoenix -p 6006:6006 -p 4317:4317 arizephoenix/phoenix:latest
+    for _ in $(seq 1 90); do
+      curl -sf -o /dev/null -m 3 http://localhost:6006/v1/projects && break
+      sleep 2
+    done
+    curl -sf -o /dev/null -m 3 http://localhost:6006/v1/projects \
+      || { echo "FAIL: the Phoenix API did not answer on localhost:6006"; docker logs doc-test-phoenix 2>&1 | tail -30; exit 1; }
+
+    # The Config file tab, verbatim.
+    cat > config.yaml <<'EOF'
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    frontendPolicies:
+      tracing:
+        host: localhost:4317
+        protocol: grpc
+        randomSampling: true
+    gateways:
+      default:
+        port: 3000
+    routes:
+    - backends:
+      - ai:
+          name: openai
+          provider:
+            openAI:
+              model: gpt-4o-mini
+      policies:
+        backendAuth:
+          key: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+
+    # Point the openai backend at the local mock LLM; tracing settings are unchanged.
+    sed 's#^      name: openai$#      name: openai\n      hostOverride: localhost:3091#' config.yaml > config-phoenix-mock.yaml
+    grep -q 'hostOverride: localhost:3091' config-phoenix-mock.yaml || { echo "FAIL: could not point config.yaml at the mock LLM"; exit 1; }
+    agentgateway -f config-phoenix-mock.yaml --validate-only
+    agentgateway -f config-phoenix-mock.yaml > "$AGW_LOG" 2>&1 &
+    AGW_PID=$!
+    for _ in $(seq 1 30); do
+      curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && break
+      sleep 1
+    done
+
+    STATUS=$(curl -s -o /tmp/doc-test-phoenix-resp.json -w '%{http_code}' -m 15 http://localhost:3000/v1/chat/completions \
+      -H 'content-type: application/json' \
+      -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "phoenix trace check"}]}')
+    [ "$STATUS" = "200" ] || { echo "FAIL: the LLM request returned $STATUS"; cat /tmp/doc-test-phoenix-resp.json; tail -20 "$AGW_LOG"; exit 1; }
+
+    # The guide checks the Phoenix UI by eye. Read the spans API that the UI uses instead,
+    # across every project (spans without a project attribute land in "default").
+    phoenix_spans() {
+      for project in $(curl -s -m 5 http://localhost:6006/v1/projects | jq -r '.data[]?.name'); do
+        curl -s -m 10 "http://localhost:6006/v1/projects/${project}/spans?limit=100" | jq -c '.data[]?' || true
+      done
+    }
+    found=""
+    for _ in $(seq 1 30); do
+      if phoenix_spans | grep -q 'gpt-4o-mini'; then found=yes; break; fi
+      curl -s -o /dev/null -m 15 http://localhost:3000/v1/chat/completions -H 'content-type: application/json' \
+        -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "phoenix trace check"}]}' || true
+      sleep 3
+    done
+    if [ -z "$found" ]; then
+      echo "FAIL: Phoenix has no span for the gpt-4o-mini request"
+      curl -s -m 5 http://localhost:6006/v1/projects || true
+      phoenix_spans | head -c 2000 || true
+      tail -30 "$AGW_LOG"
+      exit 1
+    fi
+    echo "ok: Phoenix received an agentgateway span for the gpt-4o-mini request"
+    kill "${AGW_PID:-}" 2>/dev/null || true
+    wait "${AGW_PID:-}" 2>/dev/null || true
+    AGW_PID=""
+    docker rm -f doc-test-phoenix >/dev/null 2>&1 || true
+    {{< /doc-test >}}

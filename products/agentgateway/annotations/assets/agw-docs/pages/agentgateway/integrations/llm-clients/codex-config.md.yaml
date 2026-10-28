@@ -1,0 +1,145 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/codex-config.md
+blocks:
+- 313db5a403f074e5 yaml
+- f6931a7b2e59dbc5 bash
+tags:
+- paths: codex
+  block: 0
+  fingerprint: 313db5a403f074e5
+  lang: yaml
+  lines: 4524b119 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+  preview: cat > config.yaml << 'EOF'
+  form:
+    attr: paths="codex"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 313db5a403f074e5
+    lang: yaml
+    lines: 4524b119 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+    preview: cat > config.yaml << 'EOF'
+  content: |2-
+       {{< doc-test paths="codex" >}}
+       # WHAT THIS TEST VALIDATES (against a local recording mock in place of api.openai.com):
+       #   * The agentgateway configuration loads and runs.
+       #   * The request that Codex sends with the documented provider settings (base_url
+       #     http://localhost:4000/v1, wire_api "responses", env_key AGENTGATEWAY_API_KEY): a Responses
+       #     API request succeeds, reaches the upstream /v1/responses path with the client's model (the
+       #     `*` model forwards it), the upstream gets the OPENAI_API_KEY credential, and the request
+       #     appears in the agentgateway log with http.path=/v1/responses and protocol=llm.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Codex itself (the CLI, profiles in ~/.codex, and the ChatGPT desktop app) - a client that
+       #     is not installed in CI and that would write to the home directory. The test sends the
+       #     same request that Codex sends.
+       #   * The UI tab - GUI-only.
+       {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: f6931a7b2e59dbc5
+    lang: bash
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="codex" >}}
+       AGW_PID=""
+       stop_agw() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       cleanup() {
+         stop_agw
+         [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+         return 0
+       }
+       trap cleanup EXIT
+       # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+       start_agw() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+         AGW_PID=$!
+         for _ in $(seq 1 30); do
+           curl -s -o /dev/null -m 2 "$3" && return 0
+           kill -0 "$AGW_PID" 2>/dev/null || break
+           sleep 1
+         done
+         echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+       }
+       # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+       expect_invalid() {
+         if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+           echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+         fi
+         echo "rejected as documented: $2"
+       }
+       to_mock() {
+         python3 - "$1" "$2" "$3" <<'PY'
+       import pathlib, re, sys
+       src = pathlib.Path(sys.argv[1]).read_text()
+       out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: " + sys.argv[3], src, flags=re.M)
+       if not n:
+           sys.exit("no apiKey line in " + sys.argv[1])
+       pathlib.Path(sys.argv[2]).write_text(out)
+       PY
+       }
+       # A local recording mock LLM on port 3096. It answers in the shape of the API that it
+       # is called on (Chat Completions, Responses, or Anthropic Messages) and writes the last request
+       # it received (path, headers, body) to /tmp/doc-test-codex-last.json, so the test can assert what agentgateway sent.
+       cat > mock-llm-3096.py <<'PY'
+       import json, sys
+       from http.server import BaseHTTPRequestHandler, HTTPServer
+       REC = sys.argv[2]
+       class H(BaseHTTPRequestHandler):
+           def do_POST(self):
+               n = int(self.headers.get("content-length") or 0)
+               raw = self.rfile.read(n) if n else b""
+               try:
+                   body = json.loads(raw or b"{}")
+               except ValueError:
+                   body = {"raw_len": len(raw)}
+               with open(REC, "w") as f:
+                   json.dump({"path": self.path, "headers": {k.lower(): v for k, v in self.headers.items()},
+                              "body": body}, f)
+               model = body.get("model", "mock") if isinstance(body, dict) else "mock"
+               usage = {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2}
+               if self.path.endswith("/messages"):
+                   out = {"id": "msg_mock", "type": "message", "role": "assistant", "model": model,
+                          "content": [{"type": "text", "text": "mock completion"}],
+                          "stop_reason": "end_turn", "stop_sequence": None,
+                          "usage": {"input_tokens": 1, "output_tokens": 1}}
+               elif self.path.endswith("/responses"):
+                   out = {"id": "resp_mock", "object": "response", "created_at": 0, "status": "completed",
+                          "model": model, "output": [{"type": "message", "id": "msg_mock", "status": "completed",
+                          "role": "assistant", "content": [{"type": "output_text", "text": "mock completion",
+                          "annotations": []}]}],
+                          "usage": {"input_tokens": 1, "output_tokens": 1, "total_tokens": 2}}
+               else:
+                   out = {"id": "chatcmpl-mock", "object": "chat.completion", "created": 0, "model": model,
+                          "choices": [{"index": 0, "finish_reason": "stop",
+                                       "message": {"role": "assistant", "content": "mock completion"}}],
+                          "usage": usage}
+               payload = json.dumps(out).encode()
+               self.send_response(200)
+               self.send_header("content-type", "application/json")
+               self.send_header("content-length", str(len(payload)))
+               self.end_headers()
+               self.wfile.write(payload)
+           do_GET = do_POST
+           def log_message(self, *a):
+               pass
+       HTTPServer(("127.0.0.1", int(sys.argv[1])), H).serve_forever()
+       PY
+       python3 mock-llm-3096.py 3096 /tmp/doc-test-codex-last.json > /tmp/doc-test-mock-llm-3096.log 2>&1 &
+       MOCK_PID=$!
+       for _ in $(seq 1 20); do curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:3096/probe -d '{}' && break; sleep 1; done
+       curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:3096/probe -d '{}' \
+         || { echo "FAIL: the mock LLM did not start on port 3096"; exit 1; }
+       export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+       agentgateway -f config.yaml --validate-only
+       to_mock config.yaml codex-mock.yaml http://127.0.0.1:3096
+       start_agw codex-mock.yaml codex http://localhost:4000/
+       {{< /doc-test >}}

@@ -1,0 +1,285 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-cross-app-access-standalone.md
+blocks:
+- 998407d919d4a842 mermaid
+- e54c3618c519f0f3 sh
+- 392edc4d3cc87fa1 sh
+- 2d638641d45a9015 sh
+- a70cc5d7298a5340 sh
+- 7bc18982234dc546
+- b2dfdb06c9e76eae sh
+- 0be5f41d3db2882d sh
+- a318081ad6ac8caf sh
+- e01806041c8b6948 sh
+- 7f59b35d2a7eb123 sh
+- 5aed49f92bccb686
+- f117e50f3a8fa0e2 sh
+- 70193fb43a73053d
+- 607cbb0adccb3998 sh
+- f916bfee1dd677df yaml
+- ea5839e7c9b2b5a8 yaml
+tags:
+- paths: cross-app-access
+  block: 1
+  fingerprint: e54c3618c519f0f3
+  lang: sh
+  lines: f03ff12f 09a79453
+  preview: git clone https://github.com/agentgateway/agentgateway.git
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 2
+  fingerprint: 392edc4d3cc87fa1
+  lang: sh
+  lines: 34b20cc9 fc5a3102 7e44f364
+  preview: docker run --name kc-idjag --rm -d -p 8480:8480 \
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 3
+  fingerprint: 2d638641d45a9015
+  lang: sh
+  lines: 2d638641
+  preview: until [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8480/realms/m
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 4
+  fingerprint: a70cc5d7298a5340
+  lang: sh
+  lines: a70cc5d7
+  preview: KCADM="$PWD/docker/kcadm.sh" ./configure-keycloak.sh
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 6
+  fingerprint: b2dfdb06c9e76eae
+  lang: sh
+  lines: b2dfdb06
+  preview: ./docker/kcadm.sh update realms/idjag-demo -s sslRequired=NONE
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 7
+  fingerprint: 0be5f41d3db2882d
+  lang: sh
+  lines: 0be5f41d
+  preview: python3 echo-backend.py &
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 9
+  fingerprint: e01806041c8b6948
+  lang: sh
+  lines: a0152004 2a4725a6 1fd8d2b4 7ab5257d dbbe7959
+  preview: ID_TOKEN=$(curl -s -X POST "http://localhost:8480/realms/idjag-demo/protocol/ope
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 10
+  fingerprint: 7f59b35d2a7eb123
+  lang: sh
+  lines: 8e2e8448 a48482b8 b99887af ad202df0 352ef2a3 e0a87c86 f4ee0d96
+  preview: 'curl -s http://localhost:3030/todos -H "Authorization: Bearer $ID_TOKEN" | pytho'
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 12
+  fingerprint: f117e50f3a8fa0e2
+  lang: sh
+  lines: 745dd912 ef677c0b
+  preview: curl -s -o /dev/null -w "no token   -> %{http_code}\n" http://localhost:3030/tod
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+- paths: cross-app-access
+  block: 14
+  fingerprint: 607cbb0adccb3998
+  lang: sh
+  lines: 0f224048 2322ba50
+  preview: docker rm -f kc-idjag
+  form:
+    attr: paths="cross-app-access"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 998407d919d4a842
+    lang: mermaid
+    lines: 35bb4631 ae58b8aa 449b6b71 7c863972 2cbe7dad c60256dd 39610dfc
+    preview: flowchart LR
+  content: |-
+    {{< doc-test paths="cross-app-access" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The Local example, end to end, as written: Keycloak in Docker as both the IdP and the
+    #     resource authorization server, the example's gateway.yaml, and the echo backend. The
+    #     backend receives a Bearer access token for alice with azp resource-client and the
+    #     todos.read scope, not the inbound ID token; no token gets 400 and a bad token gets 401.
+    #   * Configuration fragments, applied to the example config: `accessTokenScopes: []` loads, a
+    #     scope that is absent from `scopes` loads (warning only), and `privateKeyJwt` loads with
+    #     `assertionAudience` and is rejected without it.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The xaa.dev and Okta/Auth0 demos - external dependency; need hosted accounts.
+    #   * Token caching - not observable from outside the gateway.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    AGW_PID=""
+    stop_agw() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    cleanup() {
+      stop_agw
+      [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+      return 0
+    }
+    trap cleanup EXIT
+    # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+    start_agw() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -s -o /dev/null -m 2 "$3" && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+    }
+    # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+    expect_invalid() {
+      if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+        echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+      fi
+      echo "rejected as documented: $2"
+    }
+    docker rm -f kc-idjag >/dev/null 2>&1 || true
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 392edc4d3cc87fa1
+    lang: sh
+    lines: 34b20cc9 fc5a3102 7e44f364
+    preview: docker run --name kc-idjag --rm -d -p 8480:8480 \
+  content: |2-
+       {{< doc-test paths="cross-app-access" >}}
+       trap 'cleanup; docker rm -f kc-idjag >/dev/null 2>&1 || true' EXIT
+       # Bound the wait, so that a Keycloak that never starts fails the test instead of hanging it.
+       for _ in $(seq 1 120); do
+         [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8480/realms/master || true)" = "200" ] && break
+         sleep 5
+       done
+       [ "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8480/realms/master || true)" = "200" ] \
+         || { echo "FAIL: Keycloak did not become ready"; docker logs kc-idjag 2>&1 | tail -50; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 0be5f41d3db2882d
+    lang: sh
+    lines: 0be5f41d
+    preview: python3 echo-backend.py &
+  content: |2-
+       {{< doc-test paths="cross-app-access" >}}
+       ECHO_PID=$!
+       trap 'cleanup; kill "$ECHO_PID" 2>/dev/null || true; docker rm -f kc-idjag >/dev/null 2>&1 || true' EXIT
+       for _ in $(seq 1 20); do curl -s -o /dev/null -m 2 http://localhost:9000/ && break; sleep 1; done
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: a318081ad6ac8caf
+    lang: sh
+    lines: df2c937c 0d3f7faa
+    preview: export KC_AGENT_SECRET=agent-secret KC_RESOURCE_SECRET=resource-secret
+  content: |2-
+       {{< doc-test paths="cross-app-access" >}}
+       export KC_AGENT_SECRET=agent-secret KC_RESOURCE_SECRET=resource-secret
+       agentgateway -f ./gateway.yaml --validate-only
+
+       # Configuration fragments from the page, applied to the example config.
+       python3 - <<'PY'
+       s = open("gateway.yaml").read()
+       scopes = "            - todos.read\n"
+       assert scopes in s, "the example config changed shape"
+       open("xaa-no-access-scopes.yaml", "w").write(s.replace(scopes, scopes + "            accessTokenScopes: []\n", 1))
+       open("xaa-extra-scope.yaml", "w").write(s.replace(scopes, scopes + "            accessTokenScopes:\n            - other.scope\n", 1))
+       leg1 = """                clientId: agent-client
+                       method: clientSecretBasic
+                       clientSecret: $KC_AGENT_SECRET
+       """
+       assert leg1 in s, "the example config changed shape"
+       pk = """                clientId: gateway-at-chat
+                       method: privateKeyJwt
+                       signingKey:
+                         file: ./xaa-signing-key.pem
+                       alg: RS256
+                       kid: my-signing-key
+                       assertionAudience: https://chat.example.com/oauth2/token
+       """
+       open("xaa-private-key-jwt.yaml", "w").write(s.replace(leg1, pk))
+       open("xaa-private-key-jwt-noaud.yaml", "w").write(
+           s.replace(leg1, pk.replace("                assertionAudience: https://chat.example.com/oauth2/token\n", "")))
+       PY
+       openssl genrsa -out xaa-signing-key.pem 2048 2>/dev/null
+       agentgateway -f xaa-no-access-scopes.yaml --validate-only
+       agentgateway -f xaa-extra-scope.yaml --validate-only
+       echo "ok: a scope absent from scopes does not reject the configuration"
+       agentgateway -f xaa-private-key-jwt.yaml --validate-only
+       expect_invalid xaa-private-key-jwt-noaud.yaml "privateKeyJwt requires an explicit assertionAudience"
+
+       start_agw ./gateway.yaml xaa http://localhost:3030/todos
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 7f59b35d2a7eb123
+    lang: sh
+    lines: 8e2e8448 a48482b8 b99887af ad202df0 352ef2a3 e0a87c86 f4ee0d96
+    preview: 'curl -s http://localhost:3030/todos -H "Authorization: Bearer $ID_TOKEN" | pytho'
+  content: |2-
+       {{< doc-test paths="cross-app-access" >}}
+       curl -s http://localhost:3030/todos -H "Authorization: Bearer $ID_TOKEN" > xaa-echo.json
+       python3 - "$ID_TOKEN" <<'PY'
+       import base64, json, sys
+       d = json.load(open("xaa-echo.json"))
+       h = {k.lower(): v for k, v in d["headers"].items()}
+       tok = h["authorization"].split()[1]
+       assert tok != sys.argv[1], "the inbound ID token reached the backend"
+       p = json.loads(base64.urlsafe_b64decode(tok.split(".")[1] + "=="))
+       assert p["typ"] == "Bearer", p.get("typ")
+       assert p["preferred_username"] == "alice", p.get("preferred_username")
+       assert p["azp"] == "resource-client", p.get("azp")
+       assert "todos.read" in p["scope"].split(), p.get("scope")
+       print("ok: backend received a Bearer token for alice, azp resource-client, scope", p["scope"])
+       PY
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: f117e50f3a8fa0e2
+    lang: sh
+    lines: 745dd912 ef677c0b
+    preview: curl -s -o /dev/null -w "no token   -> %{http_code}\n" http://localhost:3030/tod
+  content: |2-
+       {{< doc-test paths="cross-app-access" >}}
+       [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3030/todos)" = "400" ] \
+         || { echo "FAIL: expected 400 with no token"; exit 1; }
+       [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3030/todos -H 'Authorization: Bearer not.a.jwt')" = "401" ] \
+         || { echo "FAIL: expected 401 with a bad token"; exit 1; }
+       echo "ok: no token -> 400, bad token -> 401"
+       {{< /doc-test >}}

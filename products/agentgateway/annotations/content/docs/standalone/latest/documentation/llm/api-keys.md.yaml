@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/latest/documentation/llm/api-keys.md
 blocks:
 - c264a9e082afc2f6 sh
-- 8998788fe5a1150d yaml
+- be0fff233bf8c063 yaml
 - fa79f88dcd70aee0 sh
 - 12c12a2036c18ba7 yaml
 - 1ceb157e680d6839 sh
@@ -10,6 +10,16 @@ blocks:
 - 9fc3ec3daa0f1d99 sh
 - bdad69bd89a9422c json
 tags:
+- paths: llm-api-keys-standalone
+  block: 1
+  fingerprint: be0fff233bf8c063
+  lang: yaml
+  lines: 358c4c15 a7f80a73 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd b39172da 8905bcef 901234de abc56510
+  preview: cat <<EOF > config.yaml
+  form:
+    attr: paths="llm-api-keys-standalone"
+    only: true
+    lead: ' '
 - paths: llm-api-keys-standalone
   block: 3
   fingerprint: 12c12a2036c18ba7
@@ -36,16 +46,6 @@ tags:
   lang: yaml
   lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 ec4e7f27 6472803d 146e11c6 71338152 03a5afea ec372ba0 8905bcef 901234de abc56510
   preview: cat <<'EOF' > config.yaml
-  form:
-    attr: paths="llm-api-keys-standalone"
-    only: true
-    lead: ' '
-- paths: llm-api-keys-standalone
-  block: 1
-  fingerprint: 8998788fe5a1150d
-  lang: yaml
-  lines: 358c4c15 f4a9035a 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd b39172da 8905bcef 901234de abc56510
-  preview: cat <<EOF > config.yaml
   form:
     attr: paths="llm-api-keys-standalone"
     only: true
@@ -157,7 +157,7 @@ hidden:
     # The Authorization header that reached the provider for one request.
     sent_auth() {
       curl -s -m 10 http://localhost:4000/v1/chat/completions -H "Content-Type: application/json" \
-        -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello!"}]}' \
+        -d '{"model": "openai/gpt-4o-mini", "messages": [{"role": "user", "content": "Hello!"}]}' \
         | python3 -c 'import json,sys; print(json.load(sys.stdin)["choices"][0]["message"]["content"])' 2>/dev/null || true
     }
     # Wait up to 15 s for the provider to receive "Bearer <key>".
@@ -172,6 +172,19 @@ hidden:
     # keep `set -u` from failing on it).
     schema='$schema'  # a literal, not an expansion
     {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: be0fff233bf8c063
+    lang: yaml
+    lines: 358c4c15 a7f80a73 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd b39172da 8905bcef 901234de abc56510
+    preview: cat <<EOF > config.yaml
+  content: |2-
+       {{< doc-test paths="llm-api-keys-standalone" >}}
+       start_agw
+       expect_key "sk-proj...."
+       stop_agw
+       echo "inline key reaches the provider"
+       {{< /doc-test >}}
 - after:
     block: 2
     fingerprint: fa79f88dcd70aee0
@@ -211,19 +224,6 @@ hidden:
        printf '%s' "sk-rotated-file-key" > openai-key
        expect_key "sk-rotated-file-key"
        echo "a replaced key file is picked up without a restart"
-       {{< /doc-test >}}
-- after:
-    block: 1
-    fingerprint: 8998788fe5a1150d
-    lang: yaml
-    lines: 358c4c15 f4a9035a 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd b39172da 8905bcef 901234de abc56510
-    preview: cat <<EOF > config.yaml
-  content: |2-
-       {{< doc-test paths="llm-api-keys-standalone" >}}
-       start_agw
-       expect_key "sk-proj...."
-       stop_agw
-       echo "inline key reaches the provider"
        {{< /doc-test >}}
 - after:
     block: 6

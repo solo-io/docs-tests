@@ -1,0 +1,237 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/api-types/audio.md
+blocks:
+- 5824717ce2e51a17 sh
+- abb2c86f7751cd05 yaml
+- f6931a7b2e59dbc5 sh
+- 78792616aa9297af console
+- 15717211de7dc378 sh
+- 5c89989eea2a86d6 json
+- e5dda58303c739af console
+- 5bdecbf95a774de7 sh
+- 032cd2e29b21d4f5 console
+tags:
+- paths: llm-audio
+  block: 0
+  fingerprint: 5824717ce2e51a17
+  lang: sh
+  lines: 76c4218c 021fb596 46a63d3b e3679252 4c2699ef 94500d02 0c1c2836 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa abc56510
+  preview: cat <<'EOF' > audio-costs.json
+  form:
+    attr: paths="llm-audio"
+    only: true
+    lead: ' '
+- paths: llm-audio
+  block: 1
+  fingerprint: abb2c86f7751cd05
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 2180b199 a4974671 6329b755 1b6c26b3 52e214e3 274fdf3f 7988ad6c 368f403f 993ea539 3af99526 e01ccf75 d1e47997 6472803d 009395dd 4208ae28 df0928bb 6472803d 009395dd 4208ae28 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="llm-audio"
+    only: true
+    lead: ' '
+- paths: llm-audio
+  block: 4
+  fingerprint: 15717211de7dc378
+  lang: sh
+  lines: c1ad0676 3dbb5f10 25a2500e
+  preview: curl http://localhost:4000/v1/audio/transcriptions \
+  form:
+    attr: paths="llm-audio"
+    only: true
+    lead: ' '
+- paths: llm-audio
+  block: 7
+  fingerprint: 5bdecbf95a774de7
+  lang: sh
+  lines: 9911515f 67c5a3ac 1d733c05 594b4bc7
+  preview: curl http://localhost:4000/v1/audio/speech \
+  form:
+    attr: paths="llm-audio"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 5824717ce2e51a17
+    lang: sh
+    lines: 76c4218c 021fb596 46a63d3b e3679252 4c2699ef 94500d02 0c1c2836 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa abc56510
+    preview: cat <<'EOF' > audio-costs.json
+  content: |2-
+       {{< doc-test paths="llm-audio" >}}
+       # WHAT THIS TEST VALIDATES:
+       #   * Steps 1-2: the catalog overlay and the configuration load.
+       #   * Step 4: a multipart transcription request reaches the upstream on the transcriptions path
+       #     with the `model` form field and the uploaded file unchanged, and the access log records
+       #     `gen_ai.operation.name=transcription`, 90 audio seconds, the overlay rate of 0.005, and a
+       #     cost of 0.0075 (so the overlay replaced the built-in rate).
+       #   * The About table: `/v1/audio/translations` is also recorded as `transcription`.
+       #   * Step 6: a speech request returns the upstream's binary audio unchanged, and its access log
+       #     entry records `gen_ai.operation.name=speech` with no cost.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Real OpenAI transcription or speech output - external, paid provider. The test adds
+       #     `params.baseUrl` to point both models at a local mock that answers like the OpenAI audio
+       #     APIs (a transcription with `usage.seconds: 90`, and fixed audio bytes for speech).
+       #   * The `routes` AI backend `detect` and `passthrough` variant in the last paragraph - no
+       #     example configuration on the page.
+       {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: abb2c86f7751cd05
+    lang: yaml
+    lines: 2a7b4933 a7f80a73 2180b199 a4974671 6329b755 1b6c26b3 52e214e3 274fdf3f 7988ad6c 368f403f 993ea539 3af99526 e01ccf75 d1e47997 6472803d 009395dd 4208ae28 df0928bb 6472803d 009395dd 4208ae28 abc56510
+    preview: cat <<'EOF' > config.yaml
+  content: |2-
+       {{< doc-test paths="llm-audio" >}}
+       export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+       AGW_PID=""
+       stop_agw() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       cleanup() {
+         stop_agw
+         [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+         return 0
+       }
+       trap cleanup EXIT
+       # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+       start_agw() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+         AGW_PID=$!
+         for _ in $(seq 1 30); do
+           curl -s -o /dev/null -m 2 "$3" && return 0
+           kill -0 "$AGW_PID" 2>/dev/null || break
+           sleep 1
+         done
+         echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+       }
+       # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+       expect_invalid() {
+         if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+           echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+         fi
+         echo "rejected as documented: $2"
+       }
+       to_mock() {
+         python3 - "$1" "$2" "$3" <<'PY'
+       import pathlib, re, sys
+       src = pathlib.Path(sys.argv[1]).read_text()
+       out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: " + sys.argv[3], src, flags=re.M)
+       if not n:
+           sys.exit("no apiKey line in " + sys.argv[1])
+       pathlib.Path(sys.argv[2]).write_text(out)
+       PY
+       }
+       # A local mock of the OpenAI audio APIs on port 3094. It writes the last request's path and raw
+       # body to /tmp/doc-test-audio-last.*.
+       cat > audio-mock.py <<'PY'
+       import json
+       from http.server import BaseHTTPRequestHandler, HTTPServer
+       class H(BaseHTTPRequestHandler):
+           def do_POST(self):
+               n = int(self.headers.get("content-length") or 0)
+               raw = self.rfile.read(n) if n else b""
+               open("/tmp/doc-test-audio-last.path", "w").write(self.path)
+               open("/tmp/doc-test-audio-last.body", "wb").write(raw)
+               if self.path.endswith("/audio/speech"):
+                   payload, ctype = b"ID3-doc-test-speech-bytes", "audio/mpeg"
+               else:
+                   payload = json.dumps({"text": "Hello from agentgateway.",
+                                         "usage": {"type": "duration", "seconds": 90}}).encode()
+                   ctype = "application/json"
+               self.send_response(200)
+               self.send_header("content-type", ctype)
+               self.send_header("content-length", str(len(payload)))
+               self.end_headers()
+               self.wfile.write(payload)
+           def log_message(self, *a):
+               pass
+       HTTPServer(("127.0.0.1", 3094), H).serve_forever()
+       PY
+       python3 audio-mock.py > /tmp/doc-test-audio-mock.out 2>&1 &
+       MOCK_PID=$!
+       for _ in $(seq 1 20); do curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:3094/probe && break; sleep 1; done
+       curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:3094/probe || { echo "FAIL: audio mock did not start"; exit 1; }
+       agentgateway -f config.yaml --validate-only
+       to_mock config.yaml config-mock.yaml http://127.0.0.1:3094
+       agentgateway -f config-mock.yaml --validate-only
+       # A small stand-in audio file; the mock does not decode it.
+       printf 'ID3-doc-test-audio-%s' "$(date +%s)" > audio.mp3
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="llm-audio" >}}
+       start_agw config-mock.yaml audio http://localhost:4000/
+       AGW_LOG=/tmp/doc-test-agw-audio.log
+       # log_line PATH: wait for the access log entry for PATH, and print it.
+       log_line() {
+         for _ in $(seq 1 15); do
+           grep -F "http.path=$1 " "$AGW_LOG" | tail -1 | grep . && return 0
+           sleep 1
+         done
+         echo "FAIL: no access log entry for $1"; cat "$AGW_LOG"; return 1
+       }
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 15717211de7dc378
+    lang: sh
+    lines: c1ad0676 3dbb5f10 25a2500e
+    preview: curl http://localhost:4000/v1/audio/transcriptions \
+  content: |2-
+       {{< doc-test paths="llm-audio" >}}
+       grep -q '/audio/transcriptions$' /tmp/doc-test-audio-last.path \
+         || { echo "FAIL: upstream path was $(cat /tmp/doc-test-audio-last.path)"; exit 1; }
+       python3 - <<'PY'
+       body = open("/tmp/doc-test-audio-last.body", "rb").read()
+       audio = open("audio.mp3", "rb").read()
+       assert b'name="model"\r\n\r\nwhisper-1\r\n' in body, "model form field not forwarded as whisper-1"
+       assert audio in body, "uploaded file was not forwarded unchanged"
+       print("multipart model field and file forwarded unchanged")
+       PY
+       LINE=$(log_line /v1/audio/transcriptions)
+       echo "$LINE"
+       for want in 'gen_ai.operation.name=transcription' 'gen_ai.request.model=whisper-1' \
+                   'gen_ai.usage.audio_seconds=90' 'audio_rate=0.005' 'audio_cost=0.0075' 'agw.ai.usage.cost.total=0.0075'; do
+         echo "$LINE" | grep -Eq "(^|[[:space:]])${want}([[:space:]]|$)" || { echo "FAIL: transcription log entry lacks $want"; exit 1; }
+       done
+       echo "transcription recorded with 90 s at the overlay rate: cost 0.0075"
+
+       # The About table: translations are recorded the same way.
+       CODE=$(curl -s -o audio-translation.json -w '%{http_code}' http://localhost:4000/v1/audio/translations \
+         -F model=whisper-1 -F file=@audio.mp3)
+       [ "$CODE" = "200" ] || { echo "FAIL: translation returned $CODE"; cat audio-translation.json; exit 1; }
+       grep -q '/audio/translations$' /tmp/doc-test-audio-last.path || { echo "FAIL: translation path"; exit 1; }
+       log_line /v1/audio/translations | grep -q 'gen_ai.operation.name=transcription' \
+         || { echo "FAIL: translation not recorded as transcription"; exit 1; }
+       echo "translation recorded as transcription"
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 5bdecbf95a774de7
+    lang: sh
+    lines: 9911515f 67c5a3ac 1d733c05 594b4bc7
+    preview: curl http://localhost:4000/v1/audio/speech \
+  content: |2-
+       {{< doc-test paths="llm-audio" >}}
+       [ "$(cat speech.mp3)" = "ID3-doc-test-speech-bytes" ] || { echo "FAIL: speech audio not returned unchanged"; exit 1; }
+       grep -q '/audio/speech$' /tmp/doc-test-audio-last.path || { echo "FAIL: speech path"; exit 1; }
+       LINE=$(log_line /v1/audio/speech)
+       echo "$LINE"
+       echo "$LINE" | grep -q 'gen_ai.operation.name=speech' || { echo "FAIL: speech operation not recorded"; exit 1; }
+       if echo "$LINE" | grep -Eq 'agw.ai.usage.cost.total=|gen_ai.usage.audio_seconds='; then
+         echo "FAIL: the speech entry has usage or cost fields"; exit 1
+       fi
+       echo "speech recorded with no usage or cost"
+       stop_agw
+       {{< /doc-test >}}

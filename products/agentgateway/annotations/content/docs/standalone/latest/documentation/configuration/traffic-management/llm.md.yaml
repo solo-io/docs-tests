@@ -15,6 +15,7 @@ hidden:
     # Doc test coverage for this guide (these comments are not rendered on the page)
     # ============================================================================
     # WHAT THIS TEST VALIDATES:
+    #   * Prompt caching: the example config is accepted.
     #   * "Model resolution order" note: with the simplified llm.models config, a
     #     request that omits `model` fails with 400 and the `missing_model` error code,
     #     even though the model sets `params.model`. The same request with a model succeeds.
@@ -56,6 +57,32 @@ hidden:
     pathlib.Path(sys.argv[2]).write_text(out)
     PY
     }
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: fa44870cd55e8181
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 bbe0baf2 84d960d4 009395dd 6c59a531 8905bcef 949ae88e 148b536e 564121a7
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="llm-policies" >}}
+    # The prompt caching example config is accepted (--validate-only). The page shows
+    # it without a heredoc, so it is restated here.
+    export ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-test}"
+    cat <<'EOF' > config-caching.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: "anthropic/*"
+        provider: anthropic
+        params:
+          apiKey: "$ANTHROPIC_API_KEY"
+        transformation:
+          model: llmRequest.model.stripPrefix("anthropic/")
+        promptCaching:
+          cacheTools: true
+    EOF
+    agentgateway -f config-caching.yaml --validate-only
     {{< /doc-test >}}
 - after:
     section: Model resolution order

@@ -51,7 +51,7 @@ hidden:
     cat <<'EOF' > config.yaml
     # yaml-language-server: $schema=https://agentgateway.dev/schema/config
     gateways:
-      default:
+      http:
         port: 3000
         protocol: HTTP
     routes: []
@@ -74,7 +74,7 @@ hidden:
     cat <<'EOF' > config2.yaml
     # yaml-language-server: $schema=https://agentgateway.dev/schema/config
     gateways:
-      default:
+      https:
         port: 443
         protocol: HTTPS
         tls:

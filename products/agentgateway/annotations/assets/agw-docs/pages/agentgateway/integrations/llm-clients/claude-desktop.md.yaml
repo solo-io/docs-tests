@@ -1,0 +1,265 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/claude-desktop.md
+blocks:
+- 50f177c6348d8cff yaml
+- f6931a7b2e59dbc5 bash
+- eac8a87699e75971 bash
+- 962b5275b6631b0b
+- 78d975d57545cc59 bash
+- c1f3393e023e7d72 yaml
+- f6931a7b2e59dbc5 bash
+- c484bce751176948 json
+- 8735c5900b689f7d
+tags:
+- paths: claude-desktop
+  block: 0
+  fingerprint: 50f177c6348d8cff
+  lang: yaml
+  lines: 4524b119 943d11d8 0b02fb9c d800e28b 069de162 3af99526 e01ccf75 b5070f28 84d960d4 abc56510
+  preview: cat > config.yaml << 'EOF'
+  form:
+    attr: paths="claude-desktop"
+    only: true
+    lead: ' '
+- paths: claude-desktop
+  block: 5
+  fingerprint: c1f3393e023e7d72
+  lang: yaml
+  lines: 4524b119 a7f80a73 943d11d8 0b02fb9c d800e28b 069de162 3af99526 c8f3f59a e34dc3a0 b0299c0e 5151e1c7 837dc1fd 043485ef 44ec9b74 613999a5 e01ccf75 b5070f28 84d960d4 009395dd 6c59a531 abc56510
+  preview: cat > config.yaml << 'EOF'
+  form:
+    attr: paths="claude-desktop"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 50f177c6348d8cff
+    lang: yaml
+    lines: 4524b119 943d11d8 0b02fb9c d800e28b 069de162 3af99526 e01ccf75 b5070f28 84d960d4 abc56510
+    preview: cat > config.yaml << 'EOF'
+  content: |2-
+       {{< doc-test paths="claude-desktop" >}}
+       # WHAT THIS TEST VALIDATES (against a local recording mock in place of api.anthropic.com, and a
+       # local JWKS server in place of Entra ID):
+       #   * Subscription passthrough: the Teams configuration listens on port 4001, forwards the
+       #     user's bearer token upstream unchanged, and adds no provider API key; `/v1/models` lists
+       #     Anthropic model IDs from the catalog for the `*` model; the `requestHeaders` example adds
+       #     `anthropic-beta: oauth-2025-04-20` to the upstream request.
+       #   * Identity provider: with the page's jwtAuth configuration (strict mode, issuer, audience,
+       #     JWKS), a request without a token or with a token for another audience gets 401, and a valid
+       #     ID token reaches the backend with the configured ANTHROPIC_API_KEY instead of the user token.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Claude Desktop itself, its developer menu, `claude setup-token`, and MDM profiles - a GUI
+       #     app and real Claude and Entra ID accounts.
+       #   * The Entra ID URLs - the issuer and JWKS hosts are replaced with a local server, because
+       #     loading the config fetches the JWKS.
+       {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: eac8a87699e75971
+    lang: bash
+    lines: eac8a876
+    preview: claude setup-token
+  content: |2-
+       {{< doc-test paths="claude-desktop" >}}
+       AGW_PID=""
+       stop_agw() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       cleanup() {
+         stop_agw
+         [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+         return 0
+       }
+       trap cleanup EXIT
+       # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+       start_agw() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+         AGW_PID=$!
+         for _ in $(seq 1 30); do
+           curl -s -o /dev/null -m 2 "$3" && return 0
+           kill -0 "$AGW_PID" 2>/dev/null || break
+           sleep 1
+         done
+         echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+       }
+       # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+       expect_invalid() {
+         if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+           echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+         fi
+         echo "rejected as documented: $2"
+       }
+       # A local recording mock LLM on port 8000. It answers in the shape of the API that it
+       # is called on (Chat Completions, Responses, or Anthropic Messages) and writes the last request
+       # it received (path, headers, body) to /tmp/doc-test-claude-desktop-last.json, so the test can assert what agentgateway sent.
+       cat > mock-llm-8000.py <<'PY'
+       import json, sys
+       from http.server import BaseHTTPRequestHandler, HTTPServer
+       REC = sys.argv[2]
+       class H(BaseHTTPRequestHandler):
+           def do_POST(self):
+               n = int(self.headers.get("content-length") or 0)
+               raw = self.rfile.read(n) if n else b""
+               try:
+                   body = json.loads(raw or b"{}")
+               except ValueError:
+                   body = {"raw_len": len(raw)}
+               with open(REC, "w") as f:
+                   json.dump({"path": self.path, "headers": {k.lower(): v for k, v in self.headers.items()},
+                              "body": body}, f)
+               model = body.get("model", "mock") if isinstance(body, dict) else "mock"
+               usage = {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2}
+               if self.path.endswith("/messages"):
+                   out = {"id": "msg_mock", "type": "message", "role": "assistant", "model": model,
+                          "content": [{"type": "text", "text": "mock completion"}],
+                          "stop_reason": "end_turn", "stop_sequence": None,
+                          "usage": {"input_tokens": 1, "output_tokens": 1}}
+               elif self.path.endswith("/responses"):
+                   out = {"id": "resp_mock", "object": "response", "created_at": 0, "status": "completed",
+                          "model": model, "output": [{"type": "message", "id": "msg_mock", "status": "completed",
+                          "role": "assistant", "content": [{"type": "output_text", "text": "mock completion",
+                          "annotations": []}]}],
+                          "usage": {"input_tokens": 1, "output_tokens": 1, "total_tokens": 2}}
+               else:
+                   out = {"id": "chatcmpl-mock", "object": "chat.completion", "created": 0, "model": model,
+                          "choices": [{"index": 0, "finish_reason": "stop",
+                                       "message": {"role": "assistant", "content": "mock completion"}}],
+                          "usage": usage}
+               payload = json.dumps(out).encode()
+               self.send_response(200)
+               self.send_header("content-type", "application/json")
+               self.send_header("content-length", str(len(payload)))
+               self.end_headers()
+               self.wfile.write(payload)
+           do_GET = do_POST
+           def log_message(self, *a):
+               pass
+       HTTPServer(("127.0.0.1", int(sys.argv[1])), H).serve_forever()
+       PY
+       python3 mock-llm-8000.py 8000 /tmp/doc-test-claude-desktop-last.json > /tmp/doc-test-mock-llm-8000.log 2>&1 &
+       MOCK_PID=$!
+       for _ in $(seq 1 20); do curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:8000/probe -d '{}' && break; sleep 1; done
+       curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:8000/probe -d '{}' \
+         || { echo "FAIL: the mock LLM did not start on port 8000"; exit 1; }
+       # The Teams configuration, pointed at the mock instead of api.anthropic.com.
+       agentgateway -f config.yaml --validate-only
+       add_base_url() {
+         python3 - "$1" "$2" <<'PY'
+       import sys
+       src = open(sys.argv[1]).read()
+       assert "  provider: anthropic\n" in src, src
+       open(sys.argv[2], "w").write(src.replace("  provider: anthropic\n", "  provider: anthropic\n    params:\n      baseUrl: http://127.0.0.1:8000\n", 1))
+       PY
+       }
+       add_base_url config.yaml claude-desktop-teams-mock.yaml
+       start_agw claude-desktop-teams-mock.yaml claude-desktop-teams http://127.0.0.1:4001/
+       messages() {
+         curl -s -o claude-desktop-resp.json -w '%{http_code}' http://127.0.0.1:4001/v1/messages \
+           -H 'content-type: application/json' -H 'anthropic-version: 2023-06-01' "$@" \
+           -d '{"model": "claude-opus-5", "max_tokens": 64, "messages": [{"role": "user", "content": "Hello"}]}'
+       }
+       CODE=$(messages -H 'authorization: Bearer sk-ant-oat01-doc-test')
+       [ "$CODE" = "200" ] || { echo "FAIL: subscription request returned $CODE"; cat claude-desktop-resp.json; exit 1; }
+       python3 - <<'PY'
+       import json
+       h = json.load(open("/tmp/doc-test-claude-desktop-last.json"))["headers"]
+       assert h.get("authorization") == "Bearer sk-ant-oat01-doc-test", h
+       assert "x-api-key" not in h, h
+       print("ok: the subscription token passed upstream unchanged, and no provider key was added")
+       PY
+       CODE=$(curl -s -o claude-desktop-models.json -w '%{http_code}' http://127.0.0.1:4001/v1/models)
+       [ "$CODE" = "200" ] || { echo "FAIL: /v1/models returned $CODE"; cat claude-desktop-models.json; exit 1; }
+       python3 - <<'PY'
+       import json
+       ids = [m.get("id", "") for m in json.load(open("claude-desktop-models.json")).get("data", [])]
+       assert any(i.startswith("claude-") for i in ids), ids
+       print("ok: /v1/models lists catalog model IDs, such as", [i for i in ids if i.startswith("claude-")][:3])
+       PY
+       stop_agw
+
+       # The note's requestHeaders example, on the Teams configuration.
+       python3 - <<'PY'
+       src = open("config.yaml").read()
+       open("claude-desktop-beta.yaml", "w").write(src.replace("  provider: anthropic\n",
+           "  provider: anthropic\n    requestHeaders:\n      add:\n        anthropic-beta: oauth-2025-04-20\n", 1))
+       PY
+       agentgateway -f claude-desktop-beta.yaml --validate-only
+       add_base_url claude-desktop-beta.yaml claude-desktop-beta-mock.yaml
+       start_agw claude-desktop-beta-mock.yaml claude-desktop-beta http://127.0.0.1:4001/
+       CODE=$(messages -H 'authorization: Bearer sk-ant-oat01-doc-test')
+       [ "$CODE" = "200" ] || { echo "FAIL: request returned $CODE"; exit 1; }
+       python3 -c 'import json; h=json.load(open("/tmp/doc-test-claude-desktop-last.json"))["headers"]; assert h.get("anthropic-beta") == "oauth-2025-04-20", h' \
+         || { echo "FAIL: anthropic-beta was not added upstream"; exit 1; }
+       echo "ok: requestHeaders adds anthropic-beta: oauth-2025-04-20"
+       stop_agw
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: c1f3393e023e7d72
+    lang: yaml
+    lines: 4524b119 a7f80a73 943d11d8 0b02fb9c d800e28b 069de162 3af99526 c8f3f59a e34dc3a0 b0299c0e 5151e1c7 837dc1fd 043485ef 44ec9b74 613999a5 e01ccf75 b5070f28 84d960d4 009395dd 6c59a531 abc56510
+    preview: cat > config.yaml << 'EOF'
+  content: |2-
+       {{< doc-test paths="claude-desktop" >}}
+       # Sample identifiers instead of a real Entra ID registration.
+       export TENANT_ID=doc-test-tenant CLIENT_ID=doc-test-client ANTHROPIC_API_KEY=sk-ant-doc-test
+       # A local JWKS server stands in for login.microsoftonline.com.
+       mkdir -p claude-desktop-idp/$TENANT_ID/discovery/v2.0
+       openssl genrsa -out claude-desktop-idp.pem 2048 2>/dev/null
+       cat > claude-desktop-jwt.py <<'PY'
+       import base64, json, subprocess, sys, time
+       def b64(b): return base64.urlsafe_b64encode(b).rstrip(b"=").decode()
+       key = "claude-desktop-idp.pem"
+       if sys.argv[1] == "jwks":
+           mod = subprocess.check_output(["openssl", "rsa", "-in", key, "-noout", "-modulus"]).decode().strip().split("=", 1)[1]
+           print(json.dumps({"keys": [{"kty": "RSA", "kid": "doc-test", "use": "sig", "alg": "RS256", "n": b64(bytes.fromhex(mod)), "e": "AQAB"}]}))
+       else:
+           iss, aud = sys.argv[2], sys.argv[3]
+           now = int(time.time())
+           h = b64(json.dumps({"alg": "RS256", "typ": "JWT", "kid": "doc-test"}).encode())
+           p = b64(json.dumps({"iss": iss, "aud": aud, "sub": "doc-user", "iat": now, "exp": now + 600}).encode())
+           sig = subprocess.run(["openssl", "dgst", "-sha256", "-sign", key], input=f"{h}.{p}".encode(), capture_output=True, check=True).stdout
+           print(f"{h}.{p}.{b64(sig)}")
+       PY
+       python3 claude-desktop-jwt.py jwks > claude-desktop-idp/$TENANT_ID/discovery/v2.0/keys
+       python3 -m http.server 7090 --bind 127.0.0.1 --directory claude-desktop-idp > /tmp/doc-test-claude-desktop-idp.log 2>&1 &
+       IDP_PID=$!
+       trap 'cleanup; kill "$IDP_PID" 2>/dev/null || true' EXIT
+       for _ in $(seq 1 20); do curl -sf -o /dev/null http://127.0.0.1:7090/$TENANT_ID/discovery/v2.0/keys && break; sleep 1; done
+       LOCAL_ISS="http://127.0.0.1:7090/$TENANT_ID/v2.0"
+       sed -e 's#https://login.microsoftonline.com/\$TENANT_ID/v2.0#http://127.0.0.1:7090/$TENANT_ID/v2.0#' \
+           -e 's#https://login.microsoftonline.com/\$TENANT_ID/discovery/v2.0/keys#http://127.0.0.1:7090/$TENANT_ID/discovery/v2.0/keys#' \
+           config.yaml > claude-desktop-sso.yaml
+       grep -q '127.0.0.1:7090' claude-desktop-sso.yaml || { echo "FAIL: the page config changed shape"; exit 1; }
+       agentgateway -f claude-desktop-sso.yaml --validate-only
+       python3 - <<'PY'
+       src = open("claude-desktop-sso.yaml").read()
+       line = '      apiKey: "$ANTHROPIC_API_KEY"\n'
+       assert line in src
+       open("claude-desktop-sso-mock.yaml", "w").write(src.replace(line, line + "      baseUrl: http://127.0.0.1:8000\n"))
+       PY
+       start_agw claude-desktop-sso-mock.yaml claude-desktop-sso http://127.0.0.1:4001/
+       CODE=$(messages)
+       [ "$CODE" = "401" ] || { echo "FAIL: a request without a token returned $CODE"; exit 1; }
+       echo "ok: no Authorization header -> 401 (strict mode)"
+       CODE=$(messages -H "authorization: Bearer $(python3 claude-desktop-jwt.py token "$LOCAL_ISS" other-client)")
+       [ "$CODE" = "401" ] || { echo "FAIL: a token for another audience returned $CODE"; exit 1; }
+       echo "ok: token for another audience -> 401"
+       TOKEN=$(python3 claude-desktop-jwt.py token "$LOCAL_ISS" "$CLIENT_ID")
+       CODE=$(messages -H "authorization: Bearer $TOKEN")
+       [ "$CODE" = "200" ] || { echo "FAIL: a valid ID token returned $CODE"; cat claude-desktop-resp.json; exit 1; }
+       python3 - "$TOKEN" <<'PY'
+       import json, os, sys
+       h = json.load(open("/tmp/doc-test-claude-desktop-last.json"))["headers"]
+       assert h.get("x-api-key") == os.environ["ANTHROPIC_API_KEY"], h
+       assert sys.argv[1] not in h.get("authorization", ""), "the user token was passed upstream"
+       print("ok: valid ID token accepted; upstream got the proxy's Anthropic key, not the user token")
+       PY
+       stop_agw
+       {{< /doc-test >}}

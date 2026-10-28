@@ -1,0 +1,109 @@
+format: 1
+source: content/docs/standalone/latest/documentation/llm/prompt-guards/azure-content-safety.md
+blocks:
+- c9e47907373c3c95 yaml
+- c42df545546509ab yaml
+- 45972cc895c7faf7 sh
+- 925c9b22e034f573 console
+- 61138bd4f9c1a914 sh
+- 925c9b22e034f573 console
+hidden:
+- after:
+    block: 1
+    fingerprint: c42df545546509ab
+    lang: yaml
+    lines: b25a5a03 46047d9b d0b5294a c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 666b49c3 f696511c f0ae7119
+    preview: '- azureContentSafety:'
+  content: |-
+    {{< doc-test paths="azure-content-safety" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The Simplified (LLM) configuration loads once the endpoint placeholder is filled in, and
+    #     so does the explicit `policies.backendAuth.azure.explicitConfig.clientSecret` example.
+    #   * The `action` setting accepts `audit`.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The two "Test the guardrail" requests and the rejection message - external dependency;
+    #     needs an Azure AI Content Safety resource and an Azure identity.
+    #   * The llm-prompt-guard example tab - fetched from GitHub at build time.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    export AZURE_CLIENT_SECRET="${AZURE_CLIENT_SECRET:-placeholder}"
+    AGW_PID=""
+    stop_agw() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    cleanup() {
+      stop_agw
+      [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+      return 0
+    }
+    trap cleanup EXIT
+    # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+    start_agw() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -s -o /dev/null -m 2 "$3" && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+    }
+    # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+    expect_invalid() {
+      if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+        echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+      fi
+      echo "rejected as documented: $2"
+    }
+    cat <<'EOF' > azure-content-safety.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          model: gpt-4o-mini
+          apiKey: "$OPENAI_API_KEY"
+        guardrails:
+          request:
+          - azureContentSafety:
+              endpoint: <resource-name>.cognitiveservices.azure.com
+              analyzeText:
+                severityThreshold: 2
+              detectJailbreak: {}
+          response:
+          - azureContentSafety:
+              endpoint: <resource-name>.cognitiveservices.azure.com
+              analyzeText:
+                severityThreshold: 2
+    EOF
+    # Fill in the placeholder, as the reader does. The .invalid name never resolves, so no request
+    # can reach a real Azure resource.
+    sed -i.bak 's/<resource-name>.cognitiveservices.azure.com/doc-test.invalid/' azure-content-safety.yaml
+    agentgateway -f azure-content-safety.yaml --validate-only
+
+    awk '{print} !done && /- azureContentSafety:/ {print "          action: audit"; done=1}' azure-content-safety.yaml > azure-audit.yaml
+    agentgateway -f azure-audit.yaml --validate-only
+    # The explicit-credentials guard, placed in the request guardrails of the config above.
+    python3 - <<'PY'
+    src = open("azure-content-safety.yaml").read()
+    guard = """      - azureContentSafety:
+              endpoint: doc-test.invalid
+              analyzeText: {}
+              policies:
+                backendAuth:
+                  azure:
+                    explicitConfig:
+                      clientSecret:
+                        tenant_id: doc-test-tenant
+                        client_id: doc-test-client
+                        client_secret: $AZURE_CLIENT_SECRET
+    """
+    head, _, _ = src.partition("      request:\n")
+    open("azure-explicit.yaml", "w").write(head + "      request:\n" + guard)
+    PY
+    agentgateway -f azure-explicit.yaml --validate-only
+    {{< /doc-test >}}

@@ -1,0 +1,228 @@
+format: 1
+source: content/docs/standalone/main/documentation/llm/prompt-guards/azure-content-safety.md
+blocks:
+- c9e47907373c3c95 yaml
+- c42df545546509ab yaml
+- 59118f6c398c6d7b yaml
+- 45972cc895c7faf7 sh
+- 925c9b22e034f573 console
+- 61138bd4f9c1a914 sh
+- 925c9b22e034f573 console
+hidden:
+- after:
+    block: 1
+    fingerprint: c42df545546509ab
+    lang: yaml
+    lines: b25a5a03 46047d9b d0b5294a c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 666b49c3 f696511c f0ae7119
+    preview: '- azureContentSafety:'
+  content: |-
+    {{< doc-test paths="azure-content-safety" >}}
+    # WHAT THIS TEST VALIDATES:
+    #   * The Simplified (LLM) configuration loads once the endpoint placeholder is filled in, and
+    #     so does the explicit `policies.backendAuth.azure.explicitConfig.clientSecret` example.
+    #   * The `action` setting accepts `audit`.
+    #   * Guard scope: with `scope: [systemPrompt]` and a request that has no system prompt, the
+    #     guard skips the call to Azure AI Content Safety and the request reaches the model, while
+    #     the same guard with the default scope fails closed (the endpoint here is unreachable).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The two "Test the guardrail" requests and the rejection message - external dependency;
+    #     needs an Azure AI Content Safety resource and an Azure identity.
+    #   * The llm-prompt-guard example tab - fetched from GitHub at build time.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    export AZURE_CLIENT_SECRET="${AZURE_CLIENT_SECRET:-placeholder}"
+    AGW_PID=""
+    stop_agw() {
+      [ -n "${AGW_PID:-}" ] || return 0
+      kill "$AGW_PID" 2>/dev/null || true
+      wait "$AGW_PID" 2>/dev/null || true
+      AGW_PID=""
+    }
+    cleanup() {
+      stop_agw
+      [ -n "${MOCK_PID:-}" ] && { kill "$MOCK_PID" 2>/dev/null || true; wait "$MOCK_PID" 2>/dev/null || true; }
+      return 0
+    }
+    trap cleanup EXIT
+    # start_agw CONFIG LOGNAME URL: start agentgateway and wait until URL answers at all.
+    start_agw() {
+      agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -s -o /dev/null -m 2 "$3" && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "FAIL: agentgateway did not start with $1"; cat "/tmp/doc-test-agw-$2.log"; exit 1
+    }
+    # expect_invalid FILE CLAIM: the page says FILE's config is invalid.
+    expect_invalid() {
+      if agentgateway -f "$1" --validate-only > "$1.log" 2>&1; then
+        echo "FAIL: $1 was accepted, but the page says: $2"; exit 1
+      fi
+      echo "rejected as documented: $2"
+    }
+    cat <<'EOF' > azure-content-safety.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          model: gpt-4o-mini
+          apiKey: "$OPENAI_API_KEY"
+        guardrails:
+          request:
+          - azureContentSafety:
+              endpoint: <resource-name>.cognitiveservices.azure.com
+              analyzeText:
+                severityThreshold: 2
+              detectJailbreak: {}
+          response:
+          - azureContentSafety:
+              endpoint: <resource-name>.cognitiveservices.azure.com
+              analyzeText:
+                severityThreshold: 2
+    EOF
+    # Fill in the placeholder, as the reader does. The .invalid name never resolves, so no request
+    # can reach a real Azure resource.
+    sed -i.bak 's/<resource-name>.cognitiveservices.azure.com/doc-test.invalid/' azure-content-safety.yaml
+    agentgateway -f azure-content-safety.yaml --validate-only
+
+    awk '{print} !done && /- azureContentSafety:/ {print "          action: audit"; done=1}' azure-content-safety.yaml > azure-audit.yaml
+    agentgateway -f azure-audit.yaml --validate-only
+    # The explicit-credentials guard, placed in the request guardrails of the config above.
+    python3 - <<'PY'
+    src = open("azure-content-safety.yaml").read()
+    guard = """      - azureContentSafety:
+              endpoint: doc-test.invalid
+              analyzeText: {}
+              policies:
+                backendAuth:
+                  azure:
+                    explicitConfig:
+                      clientSecret:
+                        tenant_id: doc-test-tenant
+                        client_id: doc-test-client
+                        client_secret: $AZURE_CLIENT_SECRET
+    """
+    head, _, _ = src.partition("      request:\n")
+    open("azure-explicit.yaml", "w").write(head + "      request:\n" + guard)
+    PY
+    agentgateway -f azure-explicit.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 59118f6c398c6d7b
+    lang: yaml
+    lines: e8bd2b8e 14ddcd05 7cce6cfa 2e4f9683 46047d9b 5207ffd7 dd9d84dc 49bdb60e
+    preview: 'guardrails:'
+  content: |-
+    {{< doc-test paths="azure-content-safety" >}}
+    # A local recording mock LLM on port 3095. It answers in the shape of the API that it
+    # is called on (Chat Completions, Responses, or Anthropic Messages) and writes the last request
+    # it received (path, headers, body) to /tmp/doc-test-azure-last.json, so the test can assert what agentgateway sent.
+    cat > mock-llm-3095.py <<'PY'
+    import json, sys
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    REC = sys.argv[2]
+    class H(BaseHTTPRequestHandler):
+        def do_POST(self):
+            n = int(self.headers.get("content-length") or 0)
+            raw = self.rfile.read(n) if n else b""
+            try:
+                body = json.loads(raw or b"{}")
+            except ValueError:
+                body = {"raw_len": len(raw)}
+            with open(REC, "w") as f:
+                json.dump({"path": self.path, "headers": {k.lower(): v for k, v in self.headers.items()},
+                           "body": body}, f)
+            model = body.get("model", "mock") if isinstance(body, dict) else "mock"
+            usage = {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2}
+            if self.path.endswith("/messages"):
+                out = {"id": "msg_mock", "type": "message", "role": "assistant", "model": model,
+                       "content": [{"type": "text", "text": "mock completion"}],
+                       "stop_reason": "end_turn", "stop_sequence": None,
+                       "usage": {"input_tokens": 1, "output_tokens": 1}}
+            elif self.path.endswith("/responses"):
+                out = {"id": "resp_mock", "object": "response", "created_at": 0, "status": "completed",
+                       "model": model, "output": [{"type": "message", "id": "msg_mock", "status": "completed",
+                       "role": "assistant", "content": [{"type": "output_text", "text": "mock completion",
+                       "annotations": []}]}],
+                       "usage": {"input_tokens": 1, "output_tokens": 1, "total_tokens": 2}}
+            else:
+                out = {"id": "chatcmpl-mock", "object": "chat.completion", "created": 0, "model": model,
+                       "choices": [{"index": 0, "finish_reason": "stop",
+                                    "message": {"role": "assistant", "content": "mock completion"}}],
+                       "usage": usage}
+            payload = json.dumps(out).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(payload)))
+            self.end_headers()
+            self.wfile.write(payload)
+        do_GET = do_POST
+        def log_message(self, *a):
+            pass
+    HTTPServer(("127.0.0.1", int(sys.argv[1])), H).serve_forever()
+    PY
+    python3 mock-llm-3095.py 3095 /tmp/doc-test-azure-last.json > /tmp/doc-test-mock-llm-3095.log 2>&1 &
+    MOCK_PID=$!
+    for _ in $(seq 1 20); do curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:3095/probe -d '{}' && break; sleep 1; done
+    curl -sf -o /dev/null -m 2 -X POST http://127.0.0.1:3095/probe -d '{}' \
+      || { echo "FAIL: the mock LLM did not start on port 3095"; exit 1; }
+    # scope_config OUT SCOPE_LINE: the page's request guard, with an optional scope line, and the
+    # model pointed at the local mock.
+    scope_config() {
+      {
+        cat <<'EOF'
+    llm:
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          model: gpt-4o-mini
+          apiKey: "$OPENAI_API_KEY"
+          baseUrl: http://127.0.0.1:3095
+        guardrails:
+          request:
+    EOF
+        if [ -n "$2" ]; then printf '      - %s\n        azureContentSafety:\n' "$2"; else printf '      - azureContentSafety:\n'; fi
+        cat <<'EOF'
+              endpoint: doc-test.invalid
+              analyzeText:
+                severityThreshold: 2
+              detectJailbreak: {}
+    EOF
+      } > "$1"
+    }
+    send_user_only() {
+      rm -f /tmp/doc-test-azure-last.json
+      curl -s -o "$1" -w '%{http_code}' localhost:4000/v1/chat/completions -H content-type:application/json \
+        -d '{"model": "", "messages": [{"role": "user", "content": "Hello"}]}'
+    }
+
+    # The page's scope example loads.
+    scope_config azure-scope-page.yaml "scope: [systemPrompt, messages]"
+    agentgateway -f azure-scope-page.yaml --validate-only
+
+    # Nothing in scope: the guard skips the call, so the unreachable endpoint does not matter.
+    scope_config azure-scope-system.yaml "scope: [systemPrompt]"
+    agentgateway -f azure-scope-system.yaml --validate-only
+    start_agw azure-scope-system.yaml azure-scope-system http://localhost:4000/
+    CODE=$(send_user_only azure-scope-skip.json)
+    stop_agw
+    [ "$CODE" = "200" ] && [ -f /tmp/doc-test-azure-last.json ] \
+      || { echo "FAIL: with no text in scope, expected the guard to skip and the model to answer, got $CODE"; cat azure-scope-skip.json; exit 1; }
+    echo "no text in scope: the guard skipped the Azure call"
+
+    # Default scope: the guard does call Azure, the call fails, and the guard fails closed.
+    scope_config azure-scope-default.yaml ""
+    start_agw azure-scope-default.yaml azure-scope-default http://localhost:4000/
+    CODE=$(send_user_only azure-scope-default.json)
+    stop_agw
+    if [ "$CODE" = "200" ] || [ -f /tmp/doc-test-azure-last.json ]; then
+      echo "FAIL: with the message in scope, expected the guard to call Azure and fail closed, got $CODE"; exit 1
+    fi
+    echo "message in scope: the guard called Azure (and failed closed with $CODE)"
+    {{< /doc-test >}}

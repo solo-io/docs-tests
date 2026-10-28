@@ -147,18 +147,19 @@ hidden:
          | grep 'resource_type="tool"' | grep -q 'server="everything"' \
          || { echo "no mcp_requests_total series for the echo tool call"; grep mcp_requests_total /tmp/doc-test-metrics.txt; exit 1; }
 
-       # "View traces" step 5: Jaeger has a call_tool operation.
+       # "View traces" step 5: Jaeger has the tool call's operation. Spans are named
+       # `<method> <target>_<tool>`, so the echo call is `tools/call everything_echo`.
        found=""
        for _ in $(seq 1 30); do
          for svc in $(curl -s http://localhost:16686/api/services | jq -r '.data[]?' 2>/dev/null); do
-           if curl -s "http://localhost:16686/api/services/${svc}/operations" | jq -e '.data | index("call_tool")' >/dev/null 2>&1; then
+           if curl -s "http://localhost:16686/api/services/${svc}/operations" | jq -e '.data | map(select(startswith("tools/call "))) | length > 0' >/dev/null 2>&1; then
              found=yes
            fi
          done
          [ -n "$found" ] && break
          sleep 2
        done
-       [ -n "$found" ] || { echo "Jaeger has no call_tool operation"; curl -s http://localhost:16686/api/services; exit 1; }
+       [ -n "$found" ] || { echo "Jaeger has no tools/call operation"; for svc in $(curl -s http://localhost:16686/api/services | jq -r '.data[]?'); do echo "$svc: $(curl -s "http://localhost:16686/api/services/${svc}/operations" | jq -c '.data')"; done; exit 1; }
        stop_gateway
 
        # The first access log policy example: log only tool calls, with arguments and result.
