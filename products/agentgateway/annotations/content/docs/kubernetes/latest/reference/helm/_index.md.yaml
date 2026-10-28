@@ -4,21 +4,6 @@ blocks:
 - c22a826158bcdfaf sh
 - 99fff97dc5a59048 sh
 - 324263b2ee6bc2c4 sh
-hidden:
-- after:
-    block: 2
-    fingerprint: 324263b2ee6bc2c4
-    lang: sh
-    lines: 324263b2
-    preview: open agentgateway/values.yaml
-  content: |2-
-       {{< doc-test paths="helm-reference" >}}
-       # 'open' launches a desktop editor; check instead that the extracted chart has
-       # a values file with the chart's top-level settings, then remove the download.
-       test -s agentgateway/values.yaml
-       grep -q '^rbac:' agentgateway/values.yaml || { echo "agentgateway/values.yaml has no top-level rbac: key"; exit 1; }
-       rm -rf agentgateway agentgateway-*.tgz
-       {{< /doc-test >}}
 tags:
 - paths: helm-reference
   block: 0
@@ -40,3 +25,18 @@ tags:
     attr: paths="helm-reference"
     only: true
     lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 324263b2ee6bc2c4
+    lang: sh
+    lines: 324263b2
+    preview: open agentgateway/values.yaml
+  content: |2-
+       {{< doc-test paths="helm-reference" >}}
+       # 'open' launches a desktop editor; check instead that the extracted chart has
+       # a values file with the chart's top-level settings, then remove the download.
+       test -s agentgateway/values.yaml
+       grep -q '^rbac:' agentgateway/values.yaml || { echo "agentgateway/values.yaml has no top-level rbac: key"; exit 1; }
+       rm -rf agentgateway agentgateway-*.tgz
+       {{< /doc-test >}}

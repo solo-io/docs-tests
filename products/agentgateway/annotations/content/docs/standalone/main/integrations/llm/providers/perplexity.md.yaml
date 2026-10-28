@@ -1,0 +1,87 @@
+format: 1
+source: content/docs/standalone/main/integrations/llm/providers/perplexity.md
+blocks:
+- d73c2b4095bf9585 yaml
+- 17babdc632a693a2 bash
+hidden:
+- after:
+    section: (top of page)
+    line: 3fb7a36ab1199cc0
+    occurrence: 0
+    words: 27ce1d1b ec72420d 663ea1bf 3bfc2695 e30b3910 7175517a 3bfc2695 f5cccfb7 f5cccfb7 ec72420d ba78973d ba451247 663ea1bf b9776d7d 7d3194f7 e30b3910 e904c9cc 77bc06c5 fa51fd49 b9776d7d f905b195 e904c9cc 8e7fc023 b9776d7d 45d780f8 5c4c1964 c626da0c 663ea1bf 45d780f8 ec72420d 663ea1bf 3bfc2695 31e06f7d fba30f84 51280dab 663ea1bf 27ce1d1b 31e06f7d fba30f84 ec72420d 663ea1bf 45d780f8 a3b142af ca978112 6cdfd271 5c4c1964 fa42bed0 a0af9f86 7955c819 487b9104 1e19bab2 6cdfd271 0695b563 b9776d7d fba30f84 e904c9cc 6201111b dcf96268 3e194352 fd1b0410 3bfc2695
+    block_before: null
+  content: |-
+    {{< doc-test paths="perplexity" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Configuration": the example config is accepted by agentgateway
+    #     (--validate-only), so `provider: perplexity` is a recognized provider and
+    #     the `name` / `params.apiKey` fields are correct.
+    #   * The `params.baseUrl` row of the settings table: with the config loaded,
+    #     agentgateway resolves this provider's upstream to the documented default
+    #     (https://api.perplexity.ai/v1), so the table cannot drift from the product
+    #     without this test failing.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Example request" - external dependency; sending the curl request needs a
+    #     real Perplexity API key and bills a live response, so the test uses a
+    #     placeholder key and asserts on resolved config instead.
+    #   * `params.model` - display-only table row; the example config omits it, so
+    #     there is nothing on this page to run.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # The example config reads the API key from the environment. --validate-only and
+    # the config dump still resolve env vars, so a placeholder is enough here.
+    export PERPLEXITY_API_KEY="${PERPLEXITY_API_KEY:-test}"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: d73c2b4095bf9585
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 97b2faec 009395dd 668ea28e
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="perplexity" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: "*"
+        provider: perplexity
+        params:
+          apiKey: "$PERPLEXITY_API_KEY"
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 17babdc632a693a2
+    lang: bash
+    lines: fc9b3c21 67c5a3ac b0cead6d c9a852c4 e75b3979 fc075a9d
+    preview: curl -X POST http://localhost:4000/v1/responses \
+  content: |-
+    {{< doc-test paths="perplexity" >}}
+    # Confirm the default `params.baseUrl` documented in the settings table is what
+    # agentgateway actually resolves. The admin config dump reports the upstream host
+    # and path prefix separately, so they are recombined before comparing.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    EXPECTED="https://api.perplexity.ai/v1"
+    RESOLVED=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | "https://" + (.hostOverride | sub(":443$"; "")) + (.pathPrefix // "")
+      ] | first')
+    if [ "$RESOLVED" != "$EXPECTED" ]; then
+      echo "FAIL: settings table documents a default baseUrl of $EXPECTED but agentgateway resolved $RESOLVED"
+      exit 1
+    fi
+    echo "✓ Provider default baseUrl resolves to $EXPECTED"
+    {{< /doc-test >}}

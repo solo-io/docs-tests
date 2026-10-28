@@ -1,0 +1,98 @@
+format: 1
+source: content/docs/standalone/main/integrations/llm/providers/typesafe.md
+blocks:
+- 9c3ae17b699b7355 yaml
+hidden:
+- after:
+    section: (top of page)
+    line: 5f5d527d73b37709
+    occurrence: 0
+    words: a3b142af bc74d4c2 9e66a118 f4bf9f7f ea325d76 487b9104 5c4c1964 58296753 56e57ada b9776d7d bc74d4c2 d410850f f480ffb2 b9776d7d bc74d4c2 14c2529e 6201111b b9776d7d 63c6673a 5c4c1964 e904c9cc 10c22bcf 7d3194f7 3183d37b 14c2529e ec72420d
+    block_before: null
+  content: |-
+    {{< doc-test paths="typesafe" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Configuration": the example config is accepted by agentgateway
+    #     (--validate-only), so `provider: typesafe`, `visibility: internal`,
+    #     `llm.virtualModels`, and `params.apiKey` are real fields with the
+    #     documented nesting.
+    #   * The `params.baseUrl` row of the settings table: with the config loaded,
+    #     agentgateway resolves this provider's upstream to the documented default
+    #     (https://api.typesafe.ai/v1), so the table cannot drift from the product
+    #     without this test failing.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Next steps" - external dependency; sending a real evaluation request
+    #     needs a real TypeSafe API key and bills a live evaluation, so the test uses
+    #     a placeholder key and asserts on resolved config instead.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # The example config reads the API key from the environment. --validate-only and
+    # the config dump still resolve env vars, so a placeholder is enough here.
+    export TYPESAFE_API_KEY="${TYPESAFE_API_KEY:-test}"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 9c3ae17b699b7355
+    lang: yaml
+    lines: a7f80a73 3af99526 e01ccf75 c8291f00 6968fe24 e67773b7 009395dd f8e3ccfc d20cef10 e23a89f2 6e024f33 e681e1e6 3035507a da87d065 b82f67fb
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="typesafe" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+
+    llm:
+      models:
+      - name: jev-latest
+        visibility: internal
+        provider: typesafe
+        params:
+          apiKey: "$TYPESAFE_API_KEY"
+      virtualModels:
+      - name: guardrail
+        routing:
+          weighted:
+            targets:
+            - model: jev-latest
+              weight: 100
+    EOF
+    agentgateway -f config.yaml --validate-only
+    {{< /doc-test >}}
+- after:
+    section: Next steps
+    line: 875100947ff3010e
+    occurrence: 0
+    words: f3959239 bb0347a4 acba2551 56e57ada 0695b563 b9776d7d b7d64a92 75857a45 b9776d7d b7d64a92 3fb45623 bb0347a4 9f584196 27ce1d1b 7d3194f7 3183d37b 14c2529e ec72420d 663ea1bf b9776d7d e2efdd7d 9372c470 b9776d7d 20158224 bc74d4c2 5c4c1964 38419231 b9776d7d ec72420d 663ea1bf bc74d4c2 043a7187 bef32d2c 3bfc2695 63c6673a 14c2529e 6db7d803 b9776d7d ec72420d ed4561f6 bc74d4c2 10c22bcf ca978112 a18b869b 2f0a9e4f da7f739f 8e7fc023 f480ffb2 1eb79602 5c4c1964 aa9e9b5c 9e66a118 fa42bed0 a0af9f86 7955c819 487b9104 5dc897f8 9e66a118
+    block_before:
+      block: 0
+      fingerprint: 9c3ae17b699b7355
+      lang: yaml
+      lines: a7f80a73 3af99526 e01ccf75 c8291f00 6968fe24 e67773b7 009395dd f8e3ccfc d20cef10 e23a89f2 6e024f33 e681e1e6 3035507a da87d065 b82f67fb
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="typesafe" >}}
+    # Confirm the default `params.baseUrl` documented in the settings table is what
+    # agentgateway actually resolves. The admin config dump reports the upstream host
+    # and path prefix separately, so they are recombined before comparing.
+    agentgateway -f config.yaml &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    sleep 3
+
+    EXPECTED="https://api.typesafe.ai/v1"
+    RESOLVED=$(curl -sf --max-time 10 http://localhost:15000/config_dump | jq -r '
+      [ .backends[].backend.ai
+        | select(. != null)
+        | .target.providers[].active[].endpoint
+        | "https://" + (.hostOverride | sub(":443$"; "")) + (.pathPrefix // "")
+      ] | first')
+    if [ "$RESOLVED" != "$EXPECTED" ]; then
+      echo "FAIL: settings table documents a default baseUrl of $EXPECTED but agentgateway resolved $RESOLVED"
+      exit 1
+    fi
+    echo "OK: Provider default baseUrl resolves to $EXPECTED"
+    {{< /doc-test >}}
