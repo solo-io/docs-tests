@@ -1,0 +1,518 @@
+format: 1
+source: assets/agw-docs/pages/integrations/argo.md
+blocks:
+- 2b9b028423299a49 sh
+- 0dac81b808db504c yaml
+- b39654a305d886a5 yaml
+- 7cdf37dd29083813 sh
+- 28a976bd1a7a7497 yaml
+- 23a72521b81e70ec yaml
+- efab3cd360a11a7b yaml
+- d93dee3bb6a19d34 yaml
+- d602382db3712cd8 yaml
+- 3553c138221b046f bash
+- 60378deeb39174c6 bash
+- fa91abf5ccb3a7c7 json
+- d13ade6c62874937 bash
+- b14dbb11944001ac bash
+- fa91abf5ccb3a7c7 json
+- d44087c6382df387 bash
+- c1ae8d0faf9044c5 shell
+- 1ad3a3c9cae30793 shell
+- ced390c65ec754a0 shell
+- 3f5d869a1ec16851 sh
+- 08b8071777ccc9a9 shell
+- ce4167e1a50ed91c shell
+- 278fefcccf12bb49 sh
+- d44087c6382df387 bash
+- d3eaeed49dee0e00 shell
+- 92dd402875cb0151 sh
+- b2b35d1c351392e5 sh
+- b4b8f7aee9010e35 sh
+- 79d861f28280e52f sh
+- e6301033546aeb5c sh
+- 74ee73b7d4d92b8c sh
+tags:
+- paths: argo-rollouts
+  block: 0
+  fingerprint: 2b9b028423299a49
+  lang: sh
+  lines: fc48ddf9 b4eaebc4
+  preview: kubectl create namespace argo-rollouts
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 1
+  fingerprint: 0dac81b808db504c
+  lang: yaml
+  lines: 5dce1455 f1540154 033792b5 8c8c4228 e7e78370 3278e6dc ff72caa3 663ea07f 66e8379a 26ddf220 756bec24 982675f5 948721f3 abc56510
+  preview: cat <<EOF | kubectl apply -f -
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 3
+  fingerprint: 7cdf37dd29083813
+  lang: sh
+  lines: 7cdf37dd
+  preview: kubectl rollout restart deployment -n argo-rollouts argo-rollouts
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 4
+  fingerprint: 28a976bd1a7a7497
+  lang: yaml
+  lines: 16c71da1 ace8dc5a b3a13f23 8c8c4228 3fce75e2 3278e6dc 3de9d845 c734a848 9d7e2b17 cab2be2b 9d7e2b17 b9f33094 9d7e2b17 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 5
+  fingerprint: 23a72521b81e70ec
+  lang: yaml
+  lines: 16c71da1 ace8dc5a 9a334d21 8c8c4228 435fe26d d6554051 297d81c1 b3a13f23 3fce75e2 46687890 fc54fec6 2ed8aa83 38bf94be abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 6
+  fingerprint: efab3cd360a11a7b
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 bd59a788 0ccc8edc fa1e8330 720461e4 79311187 36184fa5 8432e015 720461e4 0ff65a1a 83feb025 99dc43b5 1e5bdedf 08a3b86e cb3f91d5 f1540154 0d6480f0 8c8c4228 8f5d5f84 0ccc8edc fa1e8330 720461e4 36184fa5 8432e015 720461e4 0ff65a1a 83feb025 99dc43b5 1e5bdedf 08a3b86e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 7
+  fingerprint: d93dee3bb6a19d34
+  lang: yaml
+  lines: 16c71da1 30222287 e287d393 8c8c4228 16c9ee01 0ccc8edc fa1e8330 720461e4 36184fa5 1e717afb 8432e015 839a5cac 720461e4 a58565b2 8c8c4228 fa1e8330 720461e4 36184fa5 04968f51 c5553ae5 3e45e970 8db70061 10100541 24f20d01 0ff65a1a af96a420 4d6e6491 8632753f 7c4faac7 7afd2998 dda29605 e8f47598 3d9ab0dd b4b9adea 0ccc8edc 56501c6b f7553023 ddf1c3be 72a130db f5e88e2d 806d32c8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 8
+  fingerprint: d602382db3712cd8
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 841046cc 0ccc8edc 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 13258c73 94ae491e ef5a0e55 0d6480f0 99dc43b5 a4dbbb5a 0d6480f0 99dc43b5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 9
+  fingerprint: 3553c138221b046f
+  lang: bash
+  lines: 7f5ae30f 3fe8c79f 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 10
+  fingerprint: 60378deeb39174c6
+  lang: bash
+  lines: 5a9468b0 67c5a3ac b0cead6d 17eb0670 4b3b16d3 d6d43970 cfae0d42 c83aa0a4
+  preview: curl -s http://$INGRESS_GW_ADDRESS/llm/chat/completions \
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 15
+  fingerprint: d44087c6382df387
+  lang: bash
+  lines: d44087c6
+  preview: 'kubectl get pods -l app=httpbun -o yaml | grep image:'
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 17
+  fingerprint: 1ad3a3c9cae30793
+  lang: shell
+  lines: 1ad3a3c9
+  preview: kubectl get httproute httpbun-http-route -o yaml
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 20
+  fingerprint: 08b8071777ccc9a9
+  lang: shell
+  lines: 08b80717
+  preview: kubectl get httproute httpbun-http-route -o jsonpath='{.spec.rules[0].backendRef
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 25
+  fingerprint: 92dd402875cb0151
+  lang: sh
+  lines: 92dd4028
+  preview: kubectl delete httproute httpbun-http-route
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 26
+  fingerprint: b2b35d1c351392e5
+  lang: sh
+  lines: b2b35d1c
+  preview: kubectl delete rollout httpbun-rollout
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 27
+  fingerprint: b4b8f7aee9010e35
+  lang: sh
+  lines: b4b8f7ae
+  preview: kubectl delete services httpbun-canary-service httpbun-stable-service
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 28
+  fingerprint: 79d861f28280e52f
+  lang: sh
+  lines: 79d861f2
+  preview: kubectl delete clusterrole gateway-controller-role -n argo-rollouts
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 29
+  fingerprint: e6301033546aeb5c
+  lang: sh
+  lines: e6301033
+  preview: kubectl delete clusterrolebinding gateway-admin
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+- paths: argo-rollouts
+  block: 30
+  fingerprint: 74ee73b7d4d92b8c
+  lang: sh
+  lines: faf74ee6 49546603
+  preview: kubectl delete -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/rel
+  form:
+    attr: paths="argo-rollouts"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 2b9b028423299a49
+    lang: sh
+    lines: fc48ddf9 b4eaebc4
+    preview: kubectl create namespace argo-rollouts
+  content: |2-
+       {{< doc-test paths="argo-rollouts" >}}
+       # Wait for the Argo Rollouts CRDs and controller before configuring the plugin.
+       kubectl wait --for=condition=Established crd/rollouts.argoproj.io --timeout=120s
+       kubectl rollout status deployment/argo-rollouts -n argo-rollouts --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 0dac81b808db504c
+    lang: yaml
+    lines: 5dce1455 f1540154 033792b5 8c8c4228 e7e78370 3278e6dc ff72caa3 663ea07f 66e8379a 26ddf220 756bec24 982675f5 948721f3 abc56510
+    preview: cat <<EOF | kubectl apply -f -
+  content: |2-
+       {{< doc-test paths="argo-rollouts" >}}
+       # The visible step applies the amd64 plugin. On an arm64 kind node (Apple silicon),
+       # switch to the arm64 build from the page's other tab so the controller can run it.
+       arch=$(kubectl get nodes -o jsonpath='{.items[0].status.nodeInfo.architecture}')
+       if [ "$arch" = "arm64" ]; then
+         kubectl patch configmap argo-rollouts-config -n argo-rollouts --type=merge -p '{"data":{"trafficRouterPlugins":"- name: \"argoproj-labs/gatewayAPI\"\n  location: \"https://github.com/argoproj-labs/rollouts-plugin-trafficrouter-gatewayapi/releases/download/v0.11.0/gatewayapi-plugin-linux-arm64\""}}'
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 7cdf37dd29083813
+    lang: sh
+    lines: 7cdf37dd
+    preview: kubectl rollout restart deployment -n argo-rollouts argo-rollouts
+  content: |2-
+       {{< doc-test paths="argo-rollouts" >}}
+       # The controller downloads the plugin at startup and exits if it cannot load it,
+       # so a completed rollout means the Gateway API plugin is loaded.
+       kubectl rollout status deployment/argo-rollouts -n argo-rollouts --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: d602382db3712cd8
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 841046cc 0ccc8edc 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 13258c73 94ae491e ef5a0e55 0d6480f0 99dc43b5 a4dbbb5a 0d6480f0 99dc43b5 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="argo-rollouts" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the httpbun HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: httpbun-http-route
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 2
+       - name: wait for the initial rollout to be healthy
+         wait:
+           target:
+             kind: Rollout
+             metadata:
+               namespace: default
+               name: httpbun-rollout
+           jsonPath: "$.status.phase"
+           jsonPathExpectation:
+             comparator: equals
+             value: Healthy
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 3
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 3553c138221b046f
+    lang: bash
+    lines: 7f5ae30f 3fe8c79f 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  content: |2-
+            {{< doc-test paths="argo-rollouts" >}}
+            # Wait until the route serves the httpbun mock chat completions endpoint.
+            INGRESS_GW_ADDRESS=${INGRESS_GW_ADDRESS:-$(kubectl get svc -n agentgateway-system agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")}
+            code=""
+            for i in $(seq 1 60); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}/llm/chat/completions" \
+                -H "Content-Type: application/json" \
+                -d '{"model":"gpt-4","messages":[{"role":"user","content":"hi"}]}' || true)
+              [ "$code" = "200" ] && break
+              sleep 3
+            done
+            if [ "$code" != "200" ]; then
+              echo "POST /llm/chat/completions through the gateway returned ${code}, expected 200"
+              exit 1
+            fi
+            {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 60378deeb39174c6
+    lang: bash
+    lines: 5a9468b0 67c5a3ac b0cead6d 17eb0670 4b3b16d3 d6d43970 cfae0d42 c83aa0a4
+    preview: curl -s http://$INGRESS_GW_ADDRESS/llm/chat/completions \
+  content: |2-
+           {{< doc-test paths="argo-rollouts" >}}
+           YAMLTest -f - <<'EOF'
+           - name: chat completion through the httpbun route returns a completion
+             http:
+               url: "http://${INGRESS_GW_ADDRESS}:80"
+               path: /llm/chat/completions
+               method: POST
+               headers:
+                 content-type: application/json
+               body: |
+                 {"model": "gpt-4", "messages": [{"role": "user", "content": "Explain agentgateway in one sentence."}]}
+             source:
+               type: local
+             expect:
+               statusCode: 200
+               bodyJsonPath:
+                 - path: "$.object"
+                   comparator: equals
+                   value: chat.completion
+                 - path: "$.choices[0].message.content"
+                   comparator: exists
+           EOF
+           {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 3f5d869a1ec16851
+    lang: sh
+    lines: 3f5d869a
+    preview: kubectl argo rollouts set image httpbun-rollout httpbun=sharat87/httpbun:latest
+  content: |2-
+       {{< doc-test paths="argo-rollouts" >}}
+       # Same change as the visible `kubectl argo rollouts set image` step, made with
+       # kubectl so the test does not need the kubectl-argo-rollouts plugin.
+       kubectl patch rollout httpbun-rollout -n default --type=json \
+         -p '[{"op":"replace","path":"/spec/template/spec/containers/0/image","value":"sharat87/httpbun:latest"}]'
+       # The page: the rollout pauses at the first canary step with 30% of traffic on the canary.
+       YAMLTest -f - <<'EOF'
+       - name: rollout pauses at the first canary step
+         wait:
+           target:
+             kind: Rollout
+             metadata:
+               namespace: default
+               name: httpbun-rollout
+           jsonPath: "$.status.pauseConditions[0].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: CanaryPauseStep
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 3
+       - name: canary service gets weight 30 in the HTTPRoute
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: httpbun-http-route
+           jsonPath: "$.spec.rules[0].backendRefs[?(@.name=='httpbun-canary-service')].weight"
+           jsonPathExpectation:
+             comparator: equals
+             value: 30
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 3
+       - name: stable service gets weight 70 in the HTTPRoute
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: httpbun-http-route
+           jsonPath: "$.spec.rules[0].backendRefs[?(@.name=='httpbun-stable-service')].weight"
+           jsonPathExpectation:
+             comparator: equals
+             value: 70
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 3
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 22
+    fingerprint: 278fefcccf12bb49
+    lang: sh
+    lines: 278fefcc
+    preview: kubectl argo rollouts promote httpbun-rollout
+  content: |2-
+       {{< doc-test paths="argo-rollouts" >}}
+       # Same as the visible `kubectl argo rollouts promote` step: unpause the rollout and
+       # clear its pause condition (the plugin's promote patches the status subresource).
+       kubectl patch rollout httpbun-rollout -n default --type=merge -p '{"spec":{"paused":false}}'
+       kubectl patch rollout httpbun-rollout -n default --subresource=status --type=merge \
+         -p '{"status":{"pauseConditions":null}}' \
+         || kubectl patch rollout httpbun-rollout -n default --type=merge -p '{"status":{"pauseConditions":null}}'
+       # The page: the rollout continues through the remaining steps (about 30 seconds) until
+       # the canary receives all traffic and becomes the stable version.
+       YAMLTest -f - <<'EOF'
+       - name: rollout finishes the remaining canary steps
+         wait:
+           target:
+             kind: Rollout
+             metadata:
+               namespace: default
+               name: httpbun-rollout
+           jsonPath: "$.status.phase"
+           jsonPathExpectation:
+             comparator: equals
+             value: Healthy
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 3
+       - name: stable service gets all traffic after promotion
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: httpbun-http-route
+           jsonPath: "$.spec.rules[0].backendRefs[?(@.name=='httpbun-stable-service')].weight"
+           jsonPathExpectation:
+             comparator: equals
+             value: 100
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 3
+       - name: canary service gets no traffic after promotion
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: httpbun-http-route
+           jsonPath: "$.spec.rules[0].backendRefs[?(@.name=='httpbun-canary-service')].weight"
+           jsonPathExpectation:
+             comparator: equals
+             value: 0
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 3
+       EOF
+       # The new revision is now the stable one: the stable service selects the new pods.
+       new_hash=$(kubectl get rollout httpbun-rollout -n default -o jsonpath='{.status.currentPodHash}')
+       stable_rs=$(kubectl get rollout httpbun-rollout -n default -o jsonpath='{.status.stableRS}')
+       svc_hash=$(kubectl get svc httpbun-stable-service -n default -o jsonpath='{.spec.selector.rollouts-pod-template-hash}')
+       if [ -z "$new_hash" ] || [ "$stable_rs" != "$new_hash" ] || [ "$svc_hash" != "$new_hash" ]; then
+         echo "after promotion: currentPodHash=${new_hash} stableRS=${stable_rs} stable service selector=${svc_hash}"
+         exit 1
+       fi
+       # The page: after the rollout completes, the httpbun pods run the latest image.
+       # The old ReplicaSet scales down after a delay (30 seconds by default), so poll.
+       images=""
+       for i in $(seq 1 60); do
+         images=$(kubectl get pods -n default -l app=httpbun --field-selector=status.phase!=Failed \
+           -o jsonpath='{range .items[*]}{.spec.containers[0].image}{"\n"}{end}' | sort -u)
+         [ "$images" = "sharat87/httpbun:latest" ] && break
+         sleep 3
+       done
+       if [ "$images" != "sharat87/httpbun:latest" ]; then
+         echo "httpbun pod images after promotion: ${images}"
+         exit 1
+       fi
+       YAMLTest -f - <<'EOF'
+       - name: chat completion through the httpbun route returns a completion
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: /llm/chat/completions
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-4", "messages": [{"role": "user", "content": "Explain agentgateway in one sentence."}]}
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.object"
+               comparator: equals
+               value: chat.completion
+             - path: "$.choices[0].message.content"
+               comparator: exists
+       EOF
+       {{< /doc-test >}}

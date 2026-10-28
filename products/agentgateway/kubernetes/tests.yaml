@@ -225,6 +225,12 @@ scenarios:
     - httpbin
     source: agw-docs/pages/security/apikey-auth.md
     path: apikey-auth
+  argo-rollouts:
+    needs:
+    - install-standard
+    - gateway
+    source: agw-docs/pages/integrations/argo.md
+    path: argo-rollouts
   arize-schema:
     type: schema
     source: agw-docs/pages/agentgateway/llm/arize.md
@@ -544,6 +550,9 @@ scenarios:
       path: route-delegation-prereq
     source: agw-docs/pages/traffic-management/route-delegation/header-query.md
     path: header-query
+  helm-reference:
+    page: reference/helm/_index.md
+    path: helm-reference
   host-match:
     needs:
     - install-standard
