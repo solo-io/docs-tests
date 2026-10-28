@@ -352,6 +352,23 @@ or Windows:
 - A local run skips scenarios for another OS with a `SKIPPED (runner)` warning.
   `--generate-only` still generates them, so you can read the script on any machine.
 
+For a page written in PowerShell, such as a Windows install guide, also set `shell: pwsh`:
+
+```yaml
+  migrate-install-windows:
+    runner: windows
+    shell: pwsh
+    page: documentation/migrate/install/windows/_index.md
+    path: migrate-install-windows
+```
+
+- The scenario is generated as one `.ps1` script and run with `pwsh -File`, so a variable
+  set in one block is still set in the next.
+- Its page blocks are `powershell` (or `pwsh`, `ps1`) fences. Write its hidden
+  `doc-test` blocks in PowerShell too.
+- The script stops on the first error, including a native command's non-zero exit.
+  To fail a check, `throw`.
+
 ---
 
 ## Tracing prerequisites

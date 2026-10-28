@@ -44,5 +44,46 @@ class RunnerTests(unittest.TestCase):
                 self.assertEqual(doc_test_run.host_runner(), expected)
 
 
+class ShellTests(unittest.TestCase):
+    def test_pwsh_scenario_gets_a_ps1_script(self):
+        repo, docs_tests = _repo_with_manifest(
+            "  a:\n    runner: windows\n    shell: pwsh\n    page: documentation/a.md\n    path: a\n"
+            "  b:\n    page: documentation/b.md\n    path: b\n")
+        cases, _, _ = doc_test_run.build_test_cases_from_manifests(repo, docs_tests, repo / "out")
+        by_name = {c.name: c for c in cases}
+        self.assertEqual((by_name["a"].shell, by_name["a"].script_path.suffix), ("pwsh", ".ps1"))
+        self.assertEqual((by_name["b"].shell, by_name["b"].script_path.suffix), ("bash", ".sh"))
+        self.assertEqual(doc_test_run.script_command(by_name["a"])[:2], ["pwsh", "-NoProfile"])
+
+    def test_unknown_shell_is_an_error(self):
+        repo, docs_tests = _repo_with_manifest(
+            "  a:\n    shell: fish\n    page: documentation/a.md\n    path: a\n")
+        with self.assertRaisesRegex(RuntimeError, "shell: fish"):
+            doc_test_run.build_test_cases_from_manifests(repo, docs_tests, repo / "out")
+
+    def test_pwsh_script_selects_powershell_fences_and_uses_pwsh_markers(self):
+        repo = pathlib.Path(tempfile.mkdtemp()).resolve()
+        page = repo / "content/docs/kubernetes/main/documentation/a.md"
+        page.parent.mkdir(parents=True)
+        page.write_text(
+            "---\ntitle: x\n---\n\n"
+            "```powershell {paths=\"a\"}\n$VERSION = \"v1\"\n```\n\n"
+            "{{< doc-test paths=\"a\" >}}\nif (-not $VERSION) { throw \"no version\" }\n{{< /doc-test >}}\n\n"
+            "```bash {paths=\"a\"}\necho bash-only\n```\n")
+        definition = {
+            "name": "a", "main_file": "content/docs/kubernetes/main/documentation/a.md", "shell": "pwsh",
+            "sources": [{"file": "content/docs/kubernetes/main/documentation/a.md", "paths": ["a"]}],
+            "output": {"script": "out/a.ps1", "manifest": "out/a.json"},
+        }
+        script_path = repo / "out/a.ps1"
+        doc_test_run.generate_script_and_manifest(repo, definition, script_path, repo / "out/a.json")
+        script = script_path.read_text()
+        self.assertTrue(script.startswith("$ErrorActionPreference = 'Stop'"))
+        self.assertIn('$VERSION = "v1"', script)
+        self.assertIn("throw", script)
+        self.assertNotIn("echo bash-only", script)
+        self.assertIn("Set-Content -Path $env:DOC_TEST_STEP_FILE", script)
+
+
 if __name__ == "__main__":
     unittest.main()

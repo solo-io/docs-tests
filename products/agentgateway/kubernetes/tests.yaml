@@ -1015,8 +1015,9 @@ scenarios:
     page: documentation/migrate/install/macos/_index.md
     path: migrate-install-macos
   migrate-install-windows:
-    # Runs on a Windows runner (Git Bash) with no cluster.
+    # Runs on a Windows runner with no cluster, as a PowerShell script.
     runner: windows
+    shell: pwsh
     page: documentation/migrate/install/windows/_index.md
     path: migrate-install-windows
   migrate-rate-limiting:
