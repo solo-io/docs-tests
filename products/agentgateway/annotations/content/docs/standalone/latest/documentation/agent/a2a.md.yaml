@@ -67,7 +67,7 @@ hidden:
        {{< doc-test paths="a2a" >}}
        # Step 2 of "Set up an ADK agent" runs in the foreground; run it in the background.
        rm -f /tmp/doc-test-a2a-agent.log
-       uv run --directory a2a-samples/samples/python/agents/helloworld . > /tmp/doc-test-a2a-agent.log 2>&1 &
+       uv run --directory a2a-samples/samples/python/agents/helloworld --with-requirements requirements.txt . > /tmp/doc-test-a2a-agent.log 2>&1 &
        A2A_AGENT_PID=$!
        up=""
        for _ in $(seq 1 90); do
