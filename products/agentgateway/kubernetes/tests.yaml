@@ -1009,6 +1009,16 @@ scenarios:
   migrate-install-linux:
     page: documentation/migrate/install/linux/_index.md
     path: migrate-install-linux
+  migrate-install-macos:
+    # Runs on a macOS runner with no cluster; see `runner:` in the README.
+    runner: macos
+    page: documentation/migrate/install/macos/_index.md
+    path: migrate-install-macos
+  migrate-install-windows:
+    # Runs on a Windows runner (Git Bash) with no cluster.
+    runner: windows
+    page: documentation/migrate/install/windows/_index.md
+    path: migrate-install-windows
   migrate-rate-limiting:
     type:
     - schema
