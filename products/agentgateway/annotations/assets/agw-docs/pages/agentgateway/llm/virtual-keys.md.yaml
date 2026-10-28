@@ -285,16 +285,24 @@ hidden:
       sleep 2
     done
 
-    # Drain Alice's 100-token daily budget. httpbun returns ~20-30 tokens per response,
-    # so a handful of requests pushes Alice over the budget.
-    for i in $(seq 1 10); do
-      curl -s -o /dev/null \
+    # Drain Alice's 100-token daily budget. Token cost is reported after the
+    # upstream response, so keep sending requests until the proxy observes the
+    # updated counter and rejects Alice.
+    ALICE_STATUS=""
+    for i in $(seq 1 40); do
+      ALICE_STATUS=$(curl -s -o /tmp/alice-ratelimit.txt -w "%{http_code}" \
         "http://${INGRESS_GW_ADDRESS}:80/v1/chat/completions" \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer vk-alice-4f9c2a" \
-        -d '{"model":"gpt-4","messages":[{"role":"user","content":"Say hello"}]}'
-      sleep 0.3
+        -d '{"model":"gpt-4","messages":[{"role":"user","content":"Say hello"}]}')
+      [ "$ALICE_STATUS" = "429" ] && break
+      sleep 1
     done
+    if [ "$ALICE_STATUS" != "429" ]; then
+      echo "FAIL: Alice was not rate limited after draining her budget; last status was $ALICE_STATUS"
+      cat /tmp/alice-ratelimit.txt
+      exit 1
+    fi
 
     YAMLTest -f - <<'EOF'
     - name: Alice is rejected with 429 after exhausting her token budget

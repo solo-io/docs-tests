@@ -234,10 +234,11 @@ hidden:
     fi
     {{< /doc-test >}}
 - after:
-    fingerprint: 3299df3b49418cd2
+    block: 17
+    fingerprint: 7042d6a1b2bcb1e7
     lang: ''
-    lines: 3da162c5 c8f5c436 c8f5c436
-    preview: 'upstream call failed: Connect: Connection refused (os error 111)'
+    lines: 25a84382 c8f5c436 c8f5c436
+    preview: connection refused
   content: |2-
        {{< doc-test paths="virtual-models" >}}
        # Wait until the virtual model is served at all. The priority 0 target is
@@ -278,4 +279,5 @@ hidden:
                value: "resolved-internal-fast"
        EOF
        {{< /doc-test >}}
-  status: needs-update
+  blank_before:
+  - ''
