@@ -16,6 +16,10 @@ except ModuleNotFoundError:
 
 
 SHELL_LANGS = {"", "sh", "bash", "shell", "zsh", "yaml", "yml"}
+# A scenario with `shell: pwsh` runs as one PowerShell script, so variables set
+# in one block reach the next. Its page blocks are PowerShell fences; its hidden
+# blocks are PowerShell too, whatever language the hidden block was given.
+PWSH_LANGS = {"powershell", "pwsh", "ps1", "ps"}
 
 
 # The step a failed script was on, for telling a page step that broke apart
@@ -40,7 +44,9 @@ def step_kind(block: "CodeBlock") -> str:
     return "setup"
 
 
-def step_marker(kind: str, rel: str, line: int) -> str:
+def step_marker(kind: str, rel: str, line: int, shell: str = "bash") -> str:
+    if shell == "pwsh":
+        return f"if ($env:DOC_TEST_STEP_FILE) {{ Set-Content -Path $env:DOC_TEST_STEP_FILE -Value '{kind} {rel}:{line}' }}"
     return f"printf '%s\\n' '{kind} {rel}:{line}' > \"${{DOC_TEST_STEP_FILE:-/dev/null}}\""
 
 
@@ -864,7 +870,10 @@ class Extractor:
             for block in result.code_blocks:
                 if self.skip_tabs_without_paths and not block.paths:
                     continue
-                if block.language not in SHELL_LANGS:
+                if self.shell == "pwsh":
+                    if not block.hidden and block.language not in PWSH_LANGS:
+                        continue
+                elif block.language not in SHELL_LANGS:
                     continue
                 if selectors and ("all" in selectors or "all" in block.paths or set(block.paths).intersection(selectors)):
                     selected.append(block)
@@ -897,8 +906,19 @@ class Extractor:
                     selected.append(test_include)
         return selected
 
+    @property
+    def shell(self) -> str:
+        return str(self.definition.get("shell") or "bash")
+
     def build_script(self, blocks: List[CodeBlock], test_includes: List[TestInclude]) -> str:
-        lines = ["#!/usr/bin/env bash", "set -euo pipefail", ""]
+        if self.shell == "pwsh":
+            if test_includes:
+                raise ValueError("doc-test-include is not supported in a `shell: pwsh` scenario.")
+            # Stop on the first failing cmdlet, and on a native command's
+            # non-zero exit (PowerShell 7.3+), as `set -e` does for bash.
+            lines = ["$ErrorActionPreference = 'Stop'", "$PSNativeCommandUseErrorActionPreference = $true", ""]
+        else:
+            lines = ["#!/usr/bin/env bash", "set -euo pipefail", ""]
         seen = set()
         for block in blocks:
             content = block.content.strip("\n")
@@ -914,7 +934,7 @@ class Extractor:
                 lines.append(f"# Hidden source: {rel}:{block.start_line} paths={','.join(block.paths)}")
             else:
                 lines.append(f"# Source: {rel}:{block.start_line} paths={','.join(block.paths)}")
-            lines.append(step_marker(step_kind(block), rel, block.start_line))
+            lines.append(step_marker(step_kind(block), rel, block.start_line, self.shell))
             lines.append(content)
             lines.append("")
 

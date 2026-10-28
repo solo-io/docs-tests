@@ -46,9 +46,22 @@ class TestCase:
     # scenario runs its script directly, with no cluster (hosted macOS and
     # Windows runners have no Docker).
     runner: str = "linux"
+    # bash, or pwsh for a page written in PowerShell (a Windows install guide).
+    # A pwsh scenario is generated as one .ps1 script and run with `pwsh -File`.
+    shell: str = "bash"
 
 
 RUNNERS = ("linux", "macos", "windows")
+SHELLS = ("bash", "pwsh")
+
+
+def script_command(test_case: "TestCase") -> List[str]:
+    """The command that runs a scenario's generated script."""
+    if test_case.shell == "pwsh":
+        return ["pwsh", "-NoProfile", "-NonInteractive", "-File", test_case.script_path.as_posix()]
+    # DOC_TEST_BASH names the bash to use. On Windows, set it to Git Bash: a
+    # bare `bash` can resolve to the WSL launcher in System32 first.
+    return [os.environ.get("DOC_TEST_BASH") or "bash", test_case.script_path.as_posix()]
 
 
 def host_runner() -> str:
@@ -452,6 +465,12 @@ def build_test_cases_from_manifests(
                     f"{mpath}: scenario '{name}' has `runner: {runner}`; use one of {', '.join(RUNNERS)}."
                 )
 
+            shell = str(entry.get("shell") or "bash")
+            if shell not in SHELLS:
+                raise RuntimeError(
+                    f"{mpath}: scenario '{name}' has `shell: {shell}`; use one of {', '.join(SHELLS)}."
+                )
+
             raw_type = entry.get("type", "functional")
             test_types = raw_type if isinstance(raw_type, list) else [raw_type]
             test_types = [t for t in test_types if isinstance(t, str) and t]
@@ -494,10 +513,11 @@ def build_test_cases_from_manifests(
                             document=document,
                             name=effective_name,
                             sources=sources,
-                            script_path=generated_dir / f"{doc_slug}-{test_slug}.sh",
+                            script_path=generated_dir / f"{doc_slug}-{test_slug}{'.ps1' if shell == 'pwsh' else '.sh'}",
                             manifest_path=generated_dir / f"{doc_slug}-{test_slug}.manifest.json",
                             type=test_type,
                             runner=runner,
+                            shell=shell,
                         )
                     )
 
@@ -1032,7 +1052,7 @@ def run_test_case_without_cluster(
     step_file = test_case.script_path.with_suffix(".step")
     step_file.unlink(missing_ok=True)
     test_code, output = run_command(
-        [os.environ.get("DOC_TEST_BASH") or "bash", test_case.script_path.as_posix()], repo_root,
+        script_command(test_case), repo_root,
         env={"DOC_TEST_STEP_FILE": str(step_file)},
     )
     result: Dict[str, Any] = {
@@ -1124,7 +1144,7 @@ def run_test_case(repo_root: Path, test_case: TestCase, cluster_prefix: str, con
         step_file = test_case.script_path.with_suffix(".step")
         step_file.unlink(missing_ok=True)
         test_code, output = run_command(
-            ["bash", test_case.script_path.as_posix()], repo_root,
+            script_command(test_case), repo_root,
             env={"DOC_TEST_STEP_FILE": str(step_file)},
         )
         checks = [line.strip() for line in output.splitlines() if line.strip().startswith("✓ ")]
@@ -1465,6 +1485,7 @@ def main() -> int:
                 "product": args.product,
             },
             "options": DEFAULT_OPTIONS,
+            "shell": test_case.shell,
             "sources": [
                 {
                     "file": src["file"],
