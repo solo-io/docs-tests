@@ -774,6 +774,24 @@ scenarios:
     type: schema
     source: agw-docs/pages/agentgateway/llm/api-keys.md
     path: llm-api-keys
+  llm-client-codex:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/codex.md
+    path: llm-client-codex
+  llm-client-continue:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/continue.md
+    path: llm-client-continue
   llm-client-curl:
     type:
     - schema
@@ -786,6 +804,33 @@ scenarios:
       path: openai-setup
     source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/curl.md
     path: llm-client-curl
+  llm-client-cursor:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/cursor.md
+    path: llm-client-cursor
+  llm-client-devin:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/devin.md
+    path: llm-client-devin
+  llm-client-github-copilot:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/github-copilot.md
+    path: llm-client-github-copilot
   llm-client-openai-sdk:
     type:
     - schema

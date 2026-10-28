@@ -1,0 +1,85 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients-k8s/cursor.md
+blocks:
+- 49110b293ef7ed8a
+hidden:
+- after:
+    block: 0
+    fingerprint: 49110b293ef7ed8a
+    lang: ''
+    lines: 49110b29
+    preview: http://<INGRESS_GW_ADDRESS>/<route-path>
+  content: |2-
+       {{< doc-test paths="llm-client-cursor" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Get the gateway URL": the LoadBalancer command sets INGRESS_GW_ADDRESS.
+       #   * The request that Cursor sends when configured as above, with
+       #     http://<INGRESS_GW_ADDRESS>/<route-path> filled in as http://${INGRESS_GW_ADDRESS}/openai
+       #     (the /openai route that the OpenAI provider guide creates): with Override OpenAI
+       #     Base URL set, Cursor posts to `<base URL>/chat/completions`, with no provider API
+       #     key (the page says to toggle API key overrides off). It returns 200 and a chat
+       #     completion for the requested model.
+       #   * "Verify the connection": the request reaches the agentgateway backend, shown by an
+       #     agentgateway-proxy log entry for http.path=/openai/chat/completions with http.status=200.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Cursor itself - it is a GUI app that cannot run in CI, so this test emulates the
+       #     request it sends. The settings steps above are UI-only.
+       #   * Cursor's `<base URL>/models` lookup - openai-setup pins every upstream request
+       #     to the mock's chat completions endpoint, so a model list cannot be checked
+       #     here.
+       #   * A real OpenAI completion - openai-setup points the backend at the httpbun mock LLM.
+       #   * The port-forward tab - doc tests reach the gateway through the LoadBalancer.
+       [ -n "${INGRESS_GW_ADDRESS:-}" ] || { echo "FAIL: INGRESS_GW_ADDRESS is empty"; exit 1; }
+       # Emulates Cursor's request, because Cursor is a GUI app.
+       YAMLTest -f - <<'EOF'
+       - name: the request Cursor sends returns a chat completion
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80/openai/chat/completions"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "gpt-4o", "messages": [{"role": "user", "content": "Hello from Cursor"}], "stream": false}
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.object"
+               comparator: equals
+               value: chat.completion
+             - path: "$.model"
+               comparator: equals
+               value: gpt-4o
+             - path: "$.choices[0].message.role"
+               comparator: equals
+               value: assistant
+       EOF
+       # Cursor streams chat replies, so the same request with stream: true must come back
+       # as server-sent chat.completion.chunk events that end with [DONE].
+       STREAM_OUT="${TMPDIR:-/tmp}/doc-test-llm-client-cursor-stream.txt"
+       curl -s -N -m 30 "http://${INGRESS_GW_ADDRESS}/openai/chat/completions" \
+         -H 'content-type: application/json' \
+         -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "Hello from Cursor"}], "stream": true}' \
+         > "$STREAM_OUT" || true
+       grep -q 'chat.completion.chunk' "$STREAM_OUT" \
+         || { echo "FAIL: the streamed reply has no chat.completion.chunk events"; head -20 "$STREAM_OUT"; exit 1; }
+       grep -q '\[DONE\]' "$STREAM_OUT" \
+         || { echo "FAIL: the streamed reply does not end with [DONE]"; tail -5 "$STREAM_OUT"; exit 1; }
+       echo "ok: the streamed reply is chat.completion.chunk events ending with [DONE]"
+       # "Verify the connection": the request went through the agentgateway backend.
+       PROXY_LOG="${TMPDIR:-/tmp}/doc-test-llm-client-cursor-proxy.log"
+       found=""
+       for _ in $(seq 1 15); do
+         kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --since=5m > "$PROXY_LOG" 2>/dev/null || true
+         if awk '/http.path=\/openai\/chat\/completions/ && /http.status=200/ {f=1} END {exit !f}' "$PROXY_LOG"; then found=yes; break; fi
+         sleep 2
+       done
+       [ -n "$found" ] || { echo "FAIL: no http.path=/openai/chat/completions entry with http.status=200 in the proxy logs"; tail -n 20 "$PROXY_LOG"; exit 1; }
+       echo "ok: the request is in the agentgateway-proxy logs with http.status=200"
+       rm -f "$PROXY_LOG" "${STREAM_OUT:-}"
+       {{< /doc-test >}}

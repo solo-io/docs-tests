@@ -1,0 +1,179 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients-k8s/codex.md
+blocks:
+- 477a5355dc90fe9f sh
+- 11ab7a675881abb5 sh
+- e377db0246edb17b sh
+- 007d659756fa5ec2 sh
+- fc48fdcf70824038 sh
+- 2f5ac0238d4d8028 toml
+- e4790a0dd4b27010 sh
+- aa34fdb41c2195f2 sh
+- 7bf29d5651704ee9 sh
+- aa34fdb41c2195f2 sh
+tags:
+- paths: llm-client-codex
+  block: 0
+  fingerprint: 477a5355dc90fe9f
+  lang: sh
+  lines: 477a5355
+  preview: export AGENTGATEWAY_BASE_URL="http://${INGRESS_GW_ADDRESS}/v1"
+  form:
+    attr: paths="llm-client-codex"
+    only: true
+    lead: ' '
+- paths: llm-client-codex
+  block: 7
+  fingerprint: aa34fdb41c2195f2
+  lang: sh
+  lines: 9b8ec0fc a6e83528 c8bb1b8b
+  preview: kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/names
+  form:
+    attr: paths="llm-client-codex"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="llm-client-codex" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Set the gateway URL": AGENTGATEWAY_BASE_URL is the gateway address with /v1.
+    #   * "CLI override": the Codex CLI, installed into a temporary directory with
+    #     CODEX_HOME in another temporary directory, runs `codex exec` with the page's -c
+    #     overrides plus the documented env_key field and a prompt, and prints the mock
+    #     LLM's reply that came back through agentgateway.
+    #   * "Verify the CLI connection": the documented log command finds the request, and
+    #     an entry has http.path=/v1/responses and http.status=200.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The Profile tab and the ChatGPT desktop app section - both write ~/.codex on the
+    #     runner, and the app is a GUI.
+    #   * A real OpenAI completion - openai-setup points the backend at the httpbun mock.
+    # Test-only setup for two gaps between the shared openai-setup prerequisite and this page:
+    #   1. openai-setup creates only the OpenAI guide's "Custom route" tab (/openai). Codex
+    #      calls /v1/responses, which the guide's default "OpenAI v1/chat/completions" tab
+    #      route (no path match) serves, so that route is restated here under its own name.
+    #   2. openai-setup pins the mock's path to /llm/chat/completions for every request.
+    #      Codex speaks the Responses API, which httpbun serves at /llm/v1/responses, so the
+    #      backend path is switched for this test and switched back at the end.
+    INGRESS_GW_ADDRESS="${INGRESS_GW_ADDRESS:-$(kubectl get svc -n {{< reuse "agw-docs/snippets/namespace.md" >}} agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")}"
+    [ -n "$INGRESS_GW_ADDRESS" ] || { echo "FAIL: INGRESS_GW_ADDRESS is empty"; exit 1; }
+    export INGRESS_GW_ADDRESS
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: codex-openai-v1
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      parentRefs:
+        - name: agentgateway-proxy
+          namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+      rules:
+        - backendRefs:
+          - name: openai
+            namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+            group: {{< reuse "agw-docs/snippets/group.md" >}}
+            kind: {{< reuse "agw-docs/snippets/backend.md" >}}
+    EOF
+    kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge \
+      -p '{"spec":{"ai":{"provider":{"path":"/llm/v1/responses"}}}}'
+    # Wait until a Responses API request along /v1/responses comes back as a response object.
+    CODEX_PROBE="${TMPDIR:-/tmp}/doc-test-codex-probe.json"
+    code=""
+    for _ in $(seq 1 30); do
+      code=$(curl -s -o "$CODEX_PROBE" -w '%{http_code}' -m 15 "http://${INGRESS_GW_ADDRESS}/v1/responses" \
+        -H 'content-type: application/json' \
+        -d '{"model": "gpt-5-codex", "input": [{"role": "user", "content": [{"type": "input_text", "text": "Hello"}]}]}' || true)
+      [ "$code" = 200 ] && break
+      sleep 2
+    done
+    [ "$code" = 200 ] || { echo "FAIL: /v1/responses returned $code"; cat "$CODEX_PROBE" 2>/dev/null || true; exit 1; }
+    jq -e '.object == "response" and .output[0].content[0].type == "output_text"' "$CODEX_PROBE" >/dev/null \
+      || { echo "FAIL: /v1/responses did not return a Responses API object"; cat "$CODEX_PROBE"; exit 1; }
+    echo "ok: /v1/responses answers through the gateway"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 477a5355dc90fe9f
+    lang: sh
+    lines: 477a5355
+    preview: export AGENTGATEWAY_BASE_URL="http://${INGRESS_GW_ADDRESS}/v1"
+  content: |-
+    {{< doc-test paths="llm-client-codex" >}}
+    [ "$AGENTGATEWAY_BASE_URL" = "http://${INGRESS_GW_ADDRESS}/v1" ] \
+      || { echo "FAIL: AGENTGATEWAY_BASE_URL is '$AGENTGATEWAY_BASE_URL'"; exit 1; }
+    # The next block sets a '<gateway-client-key>' placeholder. The openai-setup route has no
+    # client authentication, so a placeholder value stands in for it.
+    export AGENTGATEWAY_API_KEY="${AGENTGATEWAY_API_KEY:-codex-doc-test-client-key}"
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: e377db0246edb17b
+    lang: sh
+    lines: fb6d04df 8e9a053b 6f996847 25c4cad5
+    preview: codex -c 'model_provider="agentgateway"' \
+  content: |-
+    {{< doc-test paths="llm-client-codex" >}}
+    # The CLI override above starts an interactive session. Run the same -c overrides
+    # non-interactively with `codex exec` and a prompt, plus the documented env_key field.
+    # Codex is installed into a temporary directory and CODEX_HOME points at another, so
+    # nothing is written to ~/.codex. The two retry settings only make a failure fail fast.
+    CODEX_TMP="${TMPDIR:-/tmp}/doc-test-codex"
+    rm -rf "$CODEX_TMP" && mkdir -p "$CODEX_TMP/home" "$CODEX_TMP/work"
+    npm install --silent --prefix "$CODEX_TMP" "@openai/codex@${CODEX_VERSION:-latest}"
+    "$CODEX_TMP/node_modules/.bin/codex" --version
+    # Count the matching log entries before Codex runs, so the checks below see Codex's own
+    # request rather than the readiness probe's.
+    CODEX_LOG="${TMPDIR:-/tmp}/doc-test-codex-proxy.log"
+    kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --since=10m > "$CODEX_LOG" 2>/dev/null || true
+    CODEX_BEFORE=$(awk '/http.path=\/v1\/responses/ && /http.status=200/ {n++} END {print n+0}' "$CODEX_LOG")
+    TO=""
+    if command -v timeout >/dev/null 2>&1; then TO="timeout 300"; fi
+    if ! (cd "$CODEX_TMP/work" && CODEX_HOME="$CODEX_TMP/home" $TO "$CODEX_TMP/node_modules/.bin/codex" exec \
+        --skip-git-repo-check --ephemeral --color never -s read-only \
+        -o "$CODEX_TMP/last-message.txt" \
+        -c 'model_provider="agentgateway"' \
+        -c 'model_providers.agentgateway.name="OpenAI via agentgateway"' \
+        -c "model_providers.agentgateway.base_url=\"${AGENTGATEWAY_BASE_URL}\"" \
+        -c 'model_providers.agentgateway.wire_api="responses"' \
+        -c 'model_providers.agentgateway.env_key="AGENTGATEWAY_API_KEY"' \
+        -c 'model_providers.agentgateway.request_max_retries=1' \
+        -c 'model_providers.agentgateway.stream_max_retries=1' \
+        "Hello" < /dev/null > "$CODEX_TMP/exec.log" 2>&1); then
+      echo "FAIL: codex exec failed"; cat "$CODEX_TMP/exec.log"; exit 1
+    fi
+    grep -q 'httpbun' "$CODEX_TMP/last-message.txt" \
+      || { echo "FAIL: Codex did not print the mock LLM reply"; cat "$CODEX_TMP/exec.log"; exit 1; }
+    echo "ok: codex exec got the mock LLM reply through agentgateway"
+    # Wait for Codex's access log entry, so the page's log command below finds it.
+    found=""
+    for _ in $(seq 1 15); do
+      kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --since=10m > "$CODEX_LOG" 2>/dev/null || true
+      if [ "$(awk '/http.path=\/v1\/responses/ && /http.status=200/ {n++} END {print n+0}' "$CODEX_LOG")" -gt "$CODEX_BEFORE" ]; then found=yes; break; fi
+      sleep 2
+    done
+    [ -n "$found" ] || { echo "FAIL: no new http.path=/v1/responses entry with http.status=200 from Codex"; tail -n 20 "$CODEX_LOG"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: aa34fdb41c2195f2
+    lang: sh
+    lines: 9b8ec0fc a6e83528 c8bb1b8b
+    preview: kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/names
+  content: |2-
+       {{< doc-test paths="llm-client-codex" >}}
+       # "A successful entry has http.status=200 and http.path=/v1/responses."
+       kubectl logs deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --since=10m > "$CODEX_LOG" 2>/dev/null || true
+       [ "$(awk '/http.path=\/v1\/responses/ && /http.status=200/ {n++} END {print n+0}' "$CODEX_LOG")" -gt "$CODEX_BEFORE" ] \
+         || { echo "FAIL: no http.path=/v1/responses entry with http.status=200"; tail -n 20 "$CODEX_LOG"; exit 1; }
+       echo "ok: the proxy log has http.path=/v1/responses with http.status=200"
+       # Cleanup: remove the test-only route and put the mock path back for later guides.
+       kubectl delete httproute codex-openai-v1 -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
+       kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge \
+         -p '{"spec":{"ai":{"provider":{"path":"/llm/chat/completions"}}}}'
+       rm -rf "$CODEX_TMP" "$CODEX_PROBE" "$CODEX_LOG"
+       {{< /doc-test >}}
