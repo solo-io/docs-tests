@@ -1,0 +1,138 @@
+format: 1
+source: assets/agw-docs/pages/integrations/openshell.md
+blocks:
+- cc37348ef36ba0ad mermaid
+- b5b9224209c8dd97 yaml
+- 59f6239d124192b9 bash
+- d2e9e384397b9327 text
+- aca6277d91007525 bash
+- 59830d5ba61eaa73 text
+- 7fc798a4e265669b bash
+- a4cd13b539bbf3ec text
+- b5d82d5dfec4ae1a bash
+- 8b3c8e493521dbca text
+- 0250553a092f0bd0 text
+- ddd2740709c9b19d bash
+- 701b8cdcfb7f0f4d yaml
+- 3366c09fff7aa3f5 bash
+- 76317e713251bed7 bash
+- b37ac2f3fe0d17ac bash
+- 5d684bedb05cd33a text
+- 3abd89cd9ba81bdc bash
+- 16b2c28da2e19c44 bash
+- af5e947f31568e45 bash
+- 350e93cb65918786 bash
+tags:
+- paths: openshell
+  block: 2
+  fingerprint: 59f6239d124192b9
+  lang: bash
+  lines: ab2ec11c 718edb6b 26fffb1d 2a24ff0e 630ad4b4 b140f291 0d2fd023 2031e6f3
+  preview: helm upgrade --install openshell \
+  form:
+    attr: paths="openshell"
+    only: true
+    lead: ' '
+- paths: openshell
+  block: 4
+  fingerprint: aca6277d91007525
+  lang: bash
+  lines: 71e059c6 9dc6ae38 e0adffa5 a5c23437 4b25b23c e0adffa5 0c222eb8 4b25b23c 1aafe625 9dc6ae38 ccacebcf 9dc6ae38
+  preview: kubectl wait --for=condition=Programmed gateway/openshell-ingress \
+  form:
+    attr: paths="openshell"
+    only: true
+    lead: ' '
+- paths: openshell
+  block: 19
+  fingerprint: af5e947f31568e45
+  lang: bash
+  lines: 35c34773 2dcb0800
+  preview: helm uninstall openshell --namespace openshell --ignore-not-found
+  form:
+    attr: paths="openshell"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: b5b9224209c8dd97
+    lang: yaml
+    lines: 9a061c62 cadd137d 146e11c6 700521e2 63e25d98 ff7360cf d620c590 b0d83a7c 6e4d782c f76604cc
+    preview: 'server:'
+  content: |2-
+       {{< doc-test paths="openshell" >}}
+       # What this test covers, and what it does not:
+       # - Covered: the Helm install with the guide's development values, the Gateway
+       #   becoming Programmed, the GRPCRoute Accepted with ResolvedRefs, both workloads
+       #   rolling out, and a gRPC Health call to OpenShell through the agentgateway
+       #   proxy (the RPC behind `openshell status`).
+       # - Not covered: the port-forward and the OpenShell CLI steps (the runner forbids
+       #   port-forward, and the CLI is not installed), sandbox create/exec (needs a CNI
+       #   that enforces NetworkPolicy and a node kernel with Landlock; kind has
+       #   neither), and "Secure external access" (needs a DNS name, a trusted
+       #   certificate, and a reachable OIDC provider).
+       # The chart's preflight refuses to install without Agent Sandbox, so install
+       # the version the guide was tested with first.
+       kubectl apply --server-side -f "https://github.com/kubernetes-sigs/agent-sandbox/releases/download/v{{< reuse "agw-docs/versions/agent-sandbox.md" >}}/sandbox.yaml"
+       kubectl wait --for=condition=Established crd/sandboxes.agents.x-k8s.io --timeout=120s
+       kubectl rollout status deployment/agent-sandbox-controller -n agent-sandbox-system --timeout=300s
+       # The reader saves the block above as openshell-values.yaml; write the same file.
+       cat > openshell-values.yaml <<'EOF'
+       server:
+         disableTls: true
+         auth:
+           allowUnauthenticatedUsers: true
+
+       grpcRoute:
+         enabled: true
+         gateway:
+           create: true
+           className: agentgateway
+           name: openshell-ingress
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: aca6277d91007525
+    lang: bash
+    lines: 71e059c6 9dc6ae38 e0adffa5 a5c23437 4b25b23c e0adffa5 0c222eb8 4b25b23c 1aafe625 9dc6ae38 ccacebcf 9dc6ae38
+    preview: kubectl wait --for=condition=Programmed gateway/openshell-ingress \
+  content: |2-
+       {{< doc-test paths="openshell" >}}
+       # Instead of the port-forward and `openshell status`, call the same unauthenticated
+       # openshell.v1.OpenShell/Health RPC through the proxy's LoadBalancer address.
+       lb=""
+       for i in $(seq 1 90); do
+         lb=$(kubectl get svc openshell-ingress -n openshell -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}" 2>/dev/null || true)
+         [ -n "$lb" ] && break
+         sleep 2
+       done
+       if [ -z "$lb" ]; then
+         echo "openshell-ingress has no LoadBalancer address"
+         exit 1
+       fi
+       # An empty HealthRequest is a 5-byte gRPC frame: no compression, zero length.
+       hdrs=""
+       for i in $(seq 1 30); do
+         hdrs=$(printf '\000\000\000\000\000' | curl -sS --http2-prior-knowledge -o /dev/null -D - \
+           -H 'content-type: application/grpc' -H 'te: trailers' --data-binary @- \
+           "http://${lb}:80/openshell.v1.OpenShell/Health" 2>/dev/null || true)
+         echo "$hdrs" | grep -qi '^grpc-status: *0' && break
+         sleep 2
+       done
+       echo "$hdrs"
+       echo "$hdrs" | grep -q '^HTTP/2 200' || { echo "Health RPC through agentgateway did not return HTTP/2 200"; exit 1; }
+       echo "$hdrs" | grep -qi '^grpc-status: *0' || { echo "Health RPC through agentgateway did not return grpc-status 0"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: af5e947f31568e45
+    lang: bash
+    lines: 35c34773 2dcb0800
+    preview: helm uninstall openshell --namespace openshell --ignore-not-found
+  content: |-
+    {{< doc-test paths="openshell" >}}
+    kubectl delete -f "https://github.com/kubernetes-sigs/agent-sandbox/releases/download/v{{< reuse "agw-docs/versions/agent-sandbox.md" >}}/sandbox.yaml" --ignore-not-found --wait=false || true
+    rm -f openshell-values.yaml
+    {{< /doc-test >}}
