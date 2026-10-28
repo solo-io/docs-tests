@@ -110,7 +110,7 @@ input[type=search]{flex:1 1 220px;min-width:0}
     <h2>How to read this</h2>
     <ul>
       <li><b>Functional</b> runs the page's commands in a kind cluster (or a standalone binary) and checks real behavior. A scenario with no <code>type:</code> is functional.</li>
-      <li><b>Schema</b> compares the page's YAML against the CRD schema without running it.</li>
+      <li><b>Schema</b> checks the page's YAML against its schema without running it: custom resources and Gateway API kinds against their CRDs, core Kubernetes kinds through kubeconform, and standalone config files against agentgateway's <code>schema/config.json</code>, for the release each version tree documents. Helm values and CEL rules are not checked.</li>
       <li><b>Hidden checks</b> counts the <code>doc-test</code> assertion blocks in the page's annotation files. A functional test with 0 checks only proves the commands exit cleanly. A dash means the page rebases an upstream page, so its checks live in the upstream product's annotations.</li>
       <li><b>Live</b> and <b>credentialed</b> test types exist in the runner. They show up in the Tests column when a scenario uses them.</li>
       <li><b>Skipped on purpose</b> pages are listed under <code>skip:</code> in <code>tests.yaml</code> (indexes, concept pages, reference). The runner counts them as covered, so its coverage figure is higher than the tested count here.</li>
