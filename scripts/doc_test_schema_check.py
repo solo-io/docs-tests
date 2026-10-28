@@ -29,6 +29,8 @@ default branch. Pass `--crd-dir latest=DIR --crd-dir main=DIR` (and the same for
 import argparse
 import json
 import logging
+import multiprocessing
+import os
 import re
 import subprocess
 import sys
@@ -248,7 +250,16 @@ class Kubeconform:
     def __init__(self, binary: str, kubernetes_version: Optional[str]):
         self.binary = binary
         self.kubernetes_version = kubernetes_version
-        self.cache = tempfile.mkdtemp(prefix="kubeconform-cache-")
+        self._caches: Dict[int, str] = {}
+
+    @property
+    def cache(self) -> str:
+        """A schema cache per process: parallel workers must not read a schema
+        file another worker is still writing."""
+        pid = os.getpid()
+        if pid not in self._caches:
+            self._caches[pid] = tempfile.mkdtemp(prefix="kubeconform-cache-")
+        return self._caches[pid]
 
     def validate(self, manifests: List[dict]) -> List[Tuple[str, Optional[str]]]:
         """One (status, error) per manifest, in order. Status is "valid", "invalid"
@@ -307,6 +318,126 @@ def parse_versioned(values: List[str]) -> Dict[Optional[str], List[Path]]:
     return paths
 
 
+# Links never contribute blocks to a schema check (select_blocks takes them only
+# from a step's own pages, and read_files leaves link-only pages out), and
+# following them was over 80% of the run time.
+SCHEMA_OPTIONS = {**DEFAULT_OPTIONS, "follow_internal_links": False}
+LANGS = ("yaml", "yml", "sh", "bash", "shell")
+
+
+@dataclass
+class StepResult:
+    """One source step, checked once however many scenarios share it."""
+    errors: List[str] = field(default_factory=list)
+    checked: int = 0
+    unchecked_kinds: Set[str] = field(default_factory=set)
+    unparsed: int = 0
+    read: Set[Path] = field(default_factory=set)
+
+
+def _extractor(repo_root: Path, main_rel: str, sources: List[Dict[str, Any]], version: str, mode: str,
+               docs_tests_root: Optional[Path]) -> Extractor:
+    definition = {
+        "name": "schema-check",
+        "main_file": main_rel,
+        "context": {"version": version, "product": mode},
+        "options": SCHEMA_OPTIONS,
+        "sources": sources,
+        "output": {},
+    }
+    extractor = Extractor(repo_root=repo_root, definition=definition, docs_tests_root=docs_tests_root)
+    extractor.walk()
+    return extractor
+
+
+def check_step(repo_root: Path, file: str, path: str, schemas: Schemas, docs_tests_root: Optional[Path],
+               version: str, mode: str, page_wide: bool, kubeconform: Optional[Kubeconform] = None) -> StepResult:
+    """Check one source step: the blocks tagged `path` on `file`, plus, when
+    `page_wide`, every other visible block on that page."""
+    res = StepResult()
+    source_file = repo_root / file
+    extractor = _extractor(repo_root, file, [{"file": file, "paths": [path]}], version, mode, docs_tests_root)
+    res.read = extractor.read_files()
+    blocks = [b for b in extractor.select_blocks() if not b.hidden and b.language in LANGS]
+    # The badge says the resources and config files ON THIS PAGE were
+    # checked, so check every visible block on the page itself, not only the
+    # ones tagged for this scenario. A reader's copy is often untagged: on
+    # standalone pages the functional test runs a hidden copy of the config
+    # with --validate-only. Prerequisite pages (install, gateway setup) are
+    # left to their own scenarios, so one bad block fails one page.
+    if page_wide:
+        selected = {(b.file_path, b.start_line) for b in blocks}
+        result = extractor.file_cache.get(source_file.resolve())
+        for b in (result.code_blocks if result else []):
+            if not b.hidden and b.language in LANGS and (b.file_path, b.start_line) not in selected:
+                selected.add((b.file_path, b.start_line))
+                blocks.append(b)
+
+    core: List[Tuple[str, dict]] = []   # (location, manifest) for kubeconform
+    for block in blocks:
+        loc = f"{source_file.relative_to(repo_root).as_posix()}:{block.start_line}"
+        for doc_text in extract_yaml_documents(block.content):
+            try:
+                doc = yaml.safe_load(doc_text)
+            except yaml.YAMLError:
+                res.unparsed += 1
+                continue
+            # Only standalone pages have config files; a Helm values file on
+            # a Kubernetes page can share a top-level key such as `config`.
+            if mode == "standalone" and schemas.config is not None and is_config_file(doc, schemas.config, doc_text):
+                res.checked += 1
+                err = _first_error(schemas.config, doc)
+                if err:
+                    res.errors.append(f"{loc}: config file {err}")
+                continue
+            if not isinstance(doc, dict) or "kind" not in doc:
+                continue
+            group = str(doc.get("apiVersion", "")).rpartition("/")[0]
+            if (group, doc["kind"]) in schemas.crds:
+                res.checked += 1
+                err = check_manifest(doc, schemas.crds)
+                if err:
+                    res.errors.append(f"{loc}: {err}")
+            elif kubeconform is not None:
+                core.append((loc, doc))
+            else:
+                res.unchecked_kinds.add(str(doc["kind"]))
+
+    for (loc, doc), (status, err) in zip(core, kubeconform.validate([d for _, d in core]) if core else []):
+        if status == "skipped":
+            res.unchecked_kinds.add(str(doc["kind"]))
+            continue
+        res.checked += 1
+        if err:
+            res.errors.append(f"{loc}: {err}")
+    return res
+
+
+def page_read_files(repo_root: Path, doc_rel: str, version: str, mode: str,
+                    docs_tests_root: Optional[Path]) -> Set[Path]:
+    """The scenario's own page and whatever it reuses, for unattached_for."""
+    return _extractor(repo_root, doc_rel, [], version, mode, docs_tests_root).read_files()
+
+
+def _units(repo_root: Path, doc_file: Path, sources: List[Dict[str, str]], version: str):
+    """The cache keys of one scenario's work: its page, then each source step."""
+    doc_rel = doc_file.relative_to(repo_root).as_posix()
+    mode = _mode_segment(doc_rel) or "kubernetes"
+    yield ("page", doc_rel, version, mode)
+    for src in sources:
+        page_wide = (repo_root / src["file"]).resolve() == doc_file.resolve()
+        yield ("step", src["file"], src["path"], version, mode, page_wide)
+
+
+def _run_unit(unit, repo_root: Path, schemas: Schemas, docs_tests_root: Optional[Path],
+              kubeconform: Optional[Kubeconform]):
+    if unit[0] == "page":
+        _, doc_rel, version, mode = unit
+        return page_read_files(repo_root, doc_rel, version, mode, docs_tests_root)
+    _, file, path, version, mode, page_wide = unit
+    return check_step(repo_root, file, path, schemas, docs_tests_root, version, mode, page_wide, kubeconform)
+
+
 def check_scenario(
     repo_root: Path,
     doc_file: Path,
@@ -316,6 +447,7 @@ def check_scenario(
     read: Optional[Set[Path]] = None,
     version: str = "main",
     kubeconform: Optional[Kubeconform] = None,
+    cache: Optional[Dict[Any, Any]] = None,
 ) -> Tuple[List[str], int]:
     """Run the 'schema' check across every source step of one test scenario.
 
@@ -323,85 +455,34 @@ def check_scenario(
     `version` is the link version ("latest", "main") the extractor resolves
     version-gated content against. `read`, if given, collects every file the
     scenario's steps read, so the caller can tell whether markup that did not
-    attach belongs to it.
+    attach belongs to it. `cache` holds results of steps already checked, keyed
+    by _units(); a step shared by many scenarios (install, gateway setup) is
+    checked once. It must only ever see one set of schemas.
 
     Most steps are prerequisite pages (install, gateway setup) with nothing to
     check -- that's expected, not an error. The scenario fails if nothing
     anywhere in the chain was validated: a scenario of only kinds this run has
     no schema for would otherwise pass without checking anything.
     """
+    cache = {} if cache is None else cache
     errors: List[str] = []
     checked = 0
     unchecked_kinds: Set[str] = set()
     unparsed = 0
-    core: List[Tuple[str, dict]] = []   # (location, manifest) for kubeconform
-    mode = _mode_segment(doc_file.relative_to(repo_root).as_posix()) or "kubernetes"
-    for src in sources:
-        source_file = repo_root / src["file"]
-        definition = {
-            "name": "schema-check",
-            "main_file": doc_file.relative_to(repo_root).as_posix(),
-            "context": {"version": version, "product": mode},
-            "options": DEFAULT_OPTIONS,
-            "sources": [{"file": src["file"], "paths": [src["path"]]}],
-            "output": {},
-        }
-        extractor = Extractor(repo_root=repo_root, definition=definition, docs_tests_root=docs_tests_root)
-        extractor.walk()
-        if read is not None:
-            read |= extractor.read_files()
-        langs = ("yaml", "yml", "sh", "bash", "shell")
-        blocks = [b for b in extractor.select_blocks() if not b.hidden and b.language in langs]
-        # The badge says the resources and config files ON THIS PAGE were
-        # checked, so check every visible block on the page itself, not only the
-        # ones tagged for this scenario. A reader's copy is often untagged: on
-        # standalone pages the functional test runs a hidden copy of the config
-        # with --validate-only. Prerequisite pages (install, gateway setup) are
-        # left to their own scenarios, so one bad block fails one page.
-        if source_file.resolve() == doc_file.resolve():
-            selected = {(b.file_path, b.start_line) for b in blocks}
-            result = extractor.file_cache.get(source_file.resolve())
-            for b in (result.code_blocks if result else []):
-                if not b.hidden and b.language in langs and (b.file_path, b.start_line) not in selected:
-                    selected.add((b.file_path, b.start_line))
-                    blocks.append(b)
-
-        for block in blocks:
-            loc = f"{source_file.relative_to(repo_root).as_posix()}:{block.start_line}"
-            for doc_text in extract_yaml_documents(block.content):
-                try:
-                    doc = yaml.safe_load(doc_text)
-                except yaml.YAMLError:
-                    unparsed += 1
-                    continue
-                # Only standalone pages have config files; a Helm values file on
-                # a Kubernetes page can share a top-level key such as `config`.
-                if mode == "standalone" and schemas.config is not None and is_config_file(doc, schemas.config, doc_text):
-                    checked += 1
-                    err = _first_error(schemas.config, doc)
-                    if err:
-                        errors.append(f"{loc}: config file {err}")
-                    continue
-                if not isinstance(doc, dict) or "kind" not in doc:
-                    continue
-                group = str(doc.get("apiVersion", "")).rpartition("/")[0]
-                if (group, doc["kind"]) in schemas.crds:
-                    checked += 1
-                    err = check_manifest(doc, schemas.crds)
-                    if err:
-                        errors.append(f"{loc}: {err}")
-                elif kubeconform is not None:
-                    core.append((loc, doc))
-                else:
-                    unchecked_kinds.add(str(doc["kind"]))
-
-    for (loc, doc), (status, err) in zip(core, kubeconform.validate([d for _, d in core]) if core else []):
-        if status == "skipped":
-            unchecked_kinds.add(str(doc["kind"]))
+    for unit in _units(repo_root, doc_file, sources, version):
+        if unit not in cache:
+            cache[unit] = _run_unit(unit, repo_root, schemas, docs_tests_root, kubeconform)
+        result = cache[unit]
+        if unit[0] == "page":
+            if read is not None:
+                read |= result
             continue
-        checked += 1
-        if err:
-            errors.append(f"{loc}: {err}")
+        if read is not None:
+            read |= result.read
+        errors.extend(result.errors)
+        checked += result.checked
+        unchecked_kinds |= result.unchecked_kinds
+        unparsed += result.unparsed
 
     if unparsed:
         logger.debug("%s: %d YAML document(s) did not parse and were not checked",
@@ -443,6 +524,27 @@ def load_schemas(crd_paths: Dict[Optional[str], List[Path]],
             s.config = load_config_schema(config_paths[version][0])
         by_version[version] = s
     return by_version
+
+
+# Set in main() before the pool forks, so workers inherit the loaded
+# validators instead of pickling them.
+_POOL: Dict[str, Any] = {}
+
+
+def _pool_unit(unit):
+    version = unit[2] if unit[0] == "page" else unit[3]
+    schemas = _POOL["schemas"].get(version, _POOL["schemas"].get(None))
+    return unit, _run_unit(unit, _POOL["repo_root"], schemas, _POOL["docs_tests_root"], _POOL["kubeconform"])
+
+
+def run_units(units: List[Any], jobs: int) -> Dict[Any, Any]:
+    """Every unit's result, `jobs` at a time. Units are independent; chunksize 1
+    keeps a slow page from holding up a queue of others behind it."""
+    if jobs <= 1 or len(units) < 2:
+        return dict(_pool_unit(u) for u in units)
+    # fork: workers start with the loaded schemas, and need no __main__ guard.
+    with multiprocessing.get_context("fork").Pool(jobs) as pool:
+        return dict(pool.imap_unordered(_pool_unit, units, chunksize=1))
 
 
 def main() -> int:
@@ -506,6 +608,12 @@ def main() -> int:
              "select markup which did not attach is skipped with a warning; otherwise it would "
              "check fewer manifests than it claims, or fail for finding none.",
     )
+    parser.add_argument(
+        "--jobs",
+        type=int,
+        default=os.cpu_count() or 1,
+        help="Steps to check in parallel (default: the number of CPUs). 1 runs everything in this process.",
+    )
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -550,6 +658,20 @@ def main() -> int:
             write_report(Path(args.report_file), [], {})
         return 0
 
+    # Check every distinct step once, in parallel, then assemble each scenario
+    # from the results. Scenarios share most of their steps (install, gateway
+    # setup), so this is far less work than checking scenario by scenario.
+    units: Dict[Any, None] = {}
+    for tc in schema_cases:
+        version = infer_version_from_sources(tc.sources, "main")
+        if schemas_by_version.get(version, schemas_by_version.get(None)) is not None:
+            units.update(dict.fromkeys(_units(repo_root, tc.document, tc.sources, version)))
+    _POOL.update(repo_root=repo_root, schemas=schemas_by_version, docs_tests_root=docs_tests_root,
+                 kubeconform=kubeconform)
+    logger.info("Checking %d distinct step(s) for %d scenario(s), %d at a time",
+                len(units), len(schema_cases), max(1, args.jobs))
+    cache = run_units(list(units), args.jobs)
+
     unattached = load_annotation_reports(args.annotation_report)
     exit_code = 0
     test_results: Dict[str, Dict] = {}
@@ -568,7 +690,7 @@ def main() -> int:
             checked = 0
         else:
             errors, checked = check_scenario(repo_root, tc.document, tc.sources, schemas, docs_tests_root,
-                                             read, version, kubeconform)
+                                             read, version, kubeconform, cache)
         missing = unattached_for(tc, read, unattached)
         if missing:
             skipped[key] = {"markup": [
