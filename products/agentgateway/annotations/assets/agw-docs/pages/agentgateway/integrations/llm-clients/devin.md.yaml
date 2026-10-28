@@ -1,26 +1,94 @@
 format: 1
 source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/devin.md
 blocks:
-- f1de9e489ba88cb1
+- 90dc93d83d09bd7b sh
+- 08e1625ddc56e5b6 yaml
+- e75c69583a14c3d2 sh
+- bbe607456c831dab sh
+- 2476110bb59a2872 console
+- 3571beaa7870c38c sh
+- 92413e9787e7d079 console
+- 0398673719884a62
+- ee84b2556fd9d156 console
+- 87fe3e4ca4261df3 yaml
+tags:
+- paths: devin-egress
+  block: 0
+  fingerprint: 90dc93d83d09bd7b
+  lang: sh
+  lines: 90dc93d8
+  preview: printf 'devin:%s\n' "$(openssl passwd -apr1 'secretpw')" > htpasswd.txt
+  form:
+    attr: paths="devin-egress"
+    only: true
+    lead: ' '
+- paths: devin-egress
+  block: 1
+  fingerprint: 08e1625ddc56e5b6
+  lang: yaml
+  lines: 7ae3abc0 f4a9035a 1b6c26b3 315099db d6a0daf6 05ca4235 796eea4c c10d7538 e3c53dc8 069de162 c8f3f59a de77b3a7 80428c42 9106ce1d b0299c0e 0d241db7 b4026c96 30ff4d98 ced07ec1 06fe1038 d67b54bf a0c2f059 d72f261d 88755831 abc56510
+  preview: cat <<EOF > devin-proxy.yaml
+  form:
+    attr: paths="devin-egress"
+    only: true
+    lead: ' '
+- paths: devin-egress
+  block: 5
+  fingerprint: 3571beaa7870c38c
+  lang: sh
+  lines: 3571beaa
+  preview: curl --proxy http://127.0.0.1:3000 --proxy-user devin:secretpw --head https://ex
+  form:
+    attr: paths="devin-egress"
+    only: true
+    lead: ' '
 hidden:
 - after:
-    section: Before you begin
-    line: 4d5dfc48c995cbfa
-    occurrence: 0
-    words: d4735e3a 1e142e62 5792d298 68693d02 3e194352 28ad58ac 68693d02
-    block_before: null
+    start: true
   content: |-
-    {{< doc-test paths="devin-validate" >}}
+    {{< doc-test paths="devin-egress" >}}
     {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
     {{< /doc-test >}}
 - after:
-    section: Example agentgateway configuration
-    line: 559df0c1dd804193
-    occurrence: 1
-    words: 5ca4f385
-    block_before: null
-  content: |-
-    {{< doc-test paths="devin-validate" >}}
-    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
-    agentgateway -f /tmp/test-devin.yaml --validate-only
-    {{< /doc-test >}}
+    block: 1
+    fingerprint: 08e1625ddc56e5b6
+    lang: yaml
+    lines: 7ae3abc0 f4a9035a 1b6c26b3 315099db d6a0daf6 05ca4235 796eea4c c10d7538 e3c53dc8 069de162 c8f3f59a de77b3a7 80428c42 9106ce1d b0299c0e 0d241db7 b4026c96 30ff4d98 ced07ec1 06fe1038 d67b54bf a0c2f059 d72f261d 88755831 abc56510
+    preview: cat <<EOF > devin-proxy.yaml
+  content: |2-
+       {{< doc-test paths="devin-egress" >}}
+       # The page starts agentgateway in the foreground; start it in the background instead.
+       agentgateway -f devin-proxy.yaml --validate-only
+       agentgateway -f devin-proxy.yaml > /tmp/doc-test-devin-agw.log 2>&1 &
+       AGW_PID=$!
+       trap 'kill "$AGW_PID" 2>/dev/null || true' EXIT
+       for _ in $(seq 1 30); do
+         curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && break
+         sleep 1
+       done
+       curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready \
+         || { echo "agentgateway did not become ready"; cat /tmp/doc-test-devin-agw.log; exit 1; }
+       # Step 4: a request without credentials is challenged with 407. curl exits 56 when the
+       # proxy refuses the tunnel, so the page's command is run here with `|| true`.
+       out=$(curl --verbose --proxy http://127.0.0.1:3000 --head https://example.com/ 2>&1 || true)
+       grep -q '< HTTP/1.1 407' <<<"$out" || { echo "FAIL: expected 407 without credentials"; echo "$out"; exit 1; }
+       grep -qi '< proxy-authenticate: Basic realm="agentgateway-egress"' <<<"$out" \
+         || { echo "FAIL: expected the Basic realm challenge"; echo "$out"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 3571beaa7870c38c
+    lang: sh
+    lines: 3571beaa
+    preview: curl --proxy http://127.0.0.1:3000 --proxy-user devin:secretpw --head https://ex
+  content: |2-
+       {{< doc-test paths="devin-egress" >}}
+       # Step 5's request succeeded (curl exits non-zero otherwise). The log shows the CONNECT
+       # with its destination, as "Verify the connection" describes.
+       sleep 1
+       grep 'http.method=CONNECT' /tmp/doc-test-devin-agw.log | grep 'http.host=example.com' | grep -q 'http.status=200' \
+         || { echo "FAIL: no CONNECT example.com 200 in the log"; cat /tmp/doc-test-devin-agw.log; exit 1; }
+       kill "$AGW_PID" 2>/dev/null || true
+       wait "$AGW_PID" 2>/dev/null || true
+       rm -f htpasswd.txt devin-proxy.yaml
+       {{< /doc-test >}}
