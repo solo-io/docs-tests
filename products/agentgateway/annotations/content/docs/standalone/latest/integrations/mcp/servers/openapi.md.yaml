@@ -10,9 +10,7 @@ blocks:
 - 724cb00dd0e6631c sh
 - bd924c5a78947b1c sh
 - 2a9be9d48ba04efe sh
-- e30c95f73c22c1fb sh
-- c803bc6d053cfe79 sh
-- f1aca748dd9ef042 yaml
+- 1774fafac6326c74 yaml
 - f6931a7b2e59dbc5 sh
 - b4c997338c63b42d json
 - 21162d5dd59e0f43 json
@@ -62,10 +60,10 @@ tags:
     lead: ' '
 - paths: mcp-openapi
   block: 9
-  fingerprint: e30c95f73c22c1fb
-  lang: sh
-  lines: e30c95f7
-  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.7.0/examp
+  fingerprint: 1774fafac6326c74
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 ead663af 9d7e2b17 fd12af70 9d7e2b17 3035507a a7ec89ea 2a783db0 4f369ea9 7e743532 de164bdf abc56510
+  preview: cat <<'EOF' > config.yaml
   form:
     attr: paths="mcp-openapi"
     only: true
@@ -80,9 +78,8 @@ hidden:
     # ============================================================================
     # WHAT THIS TEST VALIDATES:
     #   * "Sample Petstore server" (AMD64 tab): the image pulls and the server runs on 8080.
-    #   * "Configure the agentgateway": the OpenAPI schema downloads; the published
-    #     mcp-openapi example config downloads; the page's local-file
-    #     config (`schema.file: openapi.json`) runs.
+    #   * "Configure the agentgateway": the OpenAPI schema downloads; the page's
+    #     config file (`schema.file: openapi.json`) is written and runs.
     #   * "Verify access to the Petstore APIs", through the MCP API rather than the UI
     #     playground: tools/list returns one tool per operation named after its
     #     `operationId` (`getPetById`, `findPetsByStatus`, `addPet`), and calling
@@ -118,11 +115,11 @@ hidden:
        curl -sf -o /dev/null http://localhost:8080/api/v3/openapi.json
        {{< /doc-test >}}
 - after:
-    block: 11
-    fingerprint: f1aca748dd9ef042
+    block: 9
+    fingerprint: 1774fafac6326c74
     lang: yaml
-    lines: a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 ead663af 9d7e2b17 fd12af70 9d7e2b17 3035507a a7ec89ea 2a783db0 4f369ea9 7e743532 de164bdf
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 2a7b4933 a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 ead663af 9d7e2b17 fd12af70 9d7e2b17 3035507a a7ec89ea 2a783db0 4f369ea9 7e743532 de164bdf abc56510
+    preview: cat <<'EOF' > config.yaml
   content: |2-
        {{< doc-test paths="mcp-openapi" >}}
        # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
@@ -185,10 +182,10 @@ hidden:
        trap 'stop_gateway; docker rm -f swaggerapi-petstore3 >/dev/null 2>&1 || true' EXIT
        jq -e '.paths | length > 0' openapi.json >/dev/null
 
-       # The downloaded example config points at ./examples/mcp-openapi/openapi.json,
-       # a path in the product repo, so it is only checked after step 2 replaces it.
+       # The page's step 1 writes config.yaml; write it again here so this block
+       # also stands on its own when it is read in isolation.
 
-       # Step 2: update config.yaml to the page's local-file config, then step 3: run it.
+       # Step 1's config, then step 2: run it.
        cat > config.yaml <<'EOF'
        # yaml-language-server: $schema=https://agentgateway.dev/schema/config
        mcp:

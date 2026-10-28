@@ -164,6 +164,8 @@ skip:
 - page: reference/api-kubespec/_index.md
 # Needs AKS, Workload Identity and Azure Monitor; the page carries test: skip.
 - page: integrations/llm/observability/azure-monitor.md
+# Devin Desktop has no custom model endpoint; the page points to the standalone egress proxy guide.
+- page: integrations/llm/clients/devin.md
 scenarios:
   access-logs:
     type:
@@ -813,15 +815,6 @@ scenarios:
       path: openai-setup
     source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/cursor.md
     path: llm-client-cursor
-  llm-client-devin:
-    needs:
-    - install-standard
-    - gateway
-    before:
-    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
-      path: openai-setup
-    source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/devin.md
-    path: llm-client-devin
   llm-client-github-copilot:
     needs:
     - install-standard
