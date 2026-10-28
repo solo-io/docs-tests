@@ -645,6 +645,24 @@ scenarios:
       path: route-delegation-prereq
     source: agw-docs/pages/traffic-management/route-delegation/label.md
     path: label
+  langfuse:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/observability/langfuse.md
+    path: langfuse
+  langsmith:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - source: agw-docs/pages/agentgateway/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/observability/langsmith.md
+    path: langsmith
   listener-mtls:
     needs:
     - install-standard

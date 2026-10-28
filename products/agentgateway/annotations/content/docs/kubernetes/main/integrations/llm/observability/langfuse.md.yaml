@@ -1,0 +1,156 @@
+format: 1
+source: content/docs/kubernetes/main/integrations/llm/observability/langfuse.md
+blocks:
+- 68974266944e264f sh
+- a2ce331545426308 sh
+- 49a3f5032c7fe48a sh
+- b3def76266d3c275 sh
+- f80fbca2383a3396 sh
+- 8940c7a81e9d0aff sh
+- 797e2020348f7ee1 sh
+tags:
+- paths: langfuse
+  block: 0
+  fingerprint: 68974266944e264f
+  lang: sh
+  lines: '68974266'
+  preview: export LANGFUSE_AUTH=$(echo -n "<public-key>:<secret-key>" | base64)
+  form:
+    attr: paths="langfuse"
+    only: true
+    lead: ' '
+- paths: langfuse
+  block: 1
+  fingerprint: a2ce331545426308
+  lang: sh
+  lines: a2ce3315
+  preview: export LANGFUSE_OTEL_ENDPOINT=https://cloud.langfuse.com/api/public/otel
+  form:
+    attr: paths="langfuse"
+    only: true
+    lead: ' '
+- paths: langfuse
+  block: 2
+  fingerprint: 49a3f5032c7fe48a
+  lang: sh
+  lines: c32f326b 908fd025 7fbf2658 76ef6b74 9e66685e 77141b8e 48c9d4da 2a24ff0e 0748bda0 2180b199 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 1c31dda0 bdecf485 23e4c81d 99526e59 91758741 3195c5f5 0caee1db c8bec08e f537dfef 38dc0152 ac8e0a97 fbb64f63 ada604fb 3897150c 1738e439 80a766f7 6f411f1c bd3874e4 9bc9d4b2 abc56510
+  preview: helm upgrade --install opentelemetry-collector-traces opentelemetry-collector \
+  form:
+    attr: paths="langfuse"
+    only: true
+    lead: ' '
+- paths: langfuse
+  block: 3
+  fingerprint: b3def76266d3c275
+  lang: sh
+  lines: b3def762
+  preview: kubectl rollout status deployment/opentelemetry-collector-traces -n telemetry
+  form:
+    attr: paths="langfuse"
+    only: true
+    lead: ' '
+- paths: langfuse
+  block: 4
+  fingerprint: f80fbca2383a3396
+  lang: sh
+  lines: adf11cef 493f47f6 e66f4a20 fc075a9d
+  preview: curl "$INGRESS_GW_ADDRESS/openai" -H content-type:application/json -d '{
+  form:
+    attr: paths="langfuse"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: a2ce331545426308
+    lang: sh
+    lines: a2ce3315
+    preview: export LANGFUSE_OTEL_ENDPOINT=https://cloud.langfuse.com/api/public/otel
+  content: |2-
+       {{< doc-test paths="langfuse" >}}
+       # Keep test traces away from Langfuse Cloud: point the exporter at an address that
+       # refuses connections. The debug exporter still prints every span.
+       export LANGFUSE_OTEL_ENDPOINT=http://127.0.0.1:1/api/public/otel
+       # Prerequisite from the OpenTelemetry stack guide: the telemetry namespace exists.
+       kubectl create namespace telemetry --dry-run=client -o yaml | kubectl apply -f -
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: b3def76266d3c275
+    lang: sh
+    lines: b3def762
+    preview: kubectl rollout status deployment/opentelemetry-collector-traces -n telemetry
+  content: |-
+    {{< doc-test paths="langfuse" >}}
+    # Prerequisite from the OpenTelemetry stack guide: the tracing policy that sends the
+    # proxy's traces to opentelemetry-collector-traces.
+    kubectl apply -f- <<'EOF'
+    apiVersion: agentgateway.dev/v1alpha1
+    kind: AgentgatewayPolicy
+    metadata:
+      name: tracing
+      namespace: agentgateway-system
+    spec:
+      targetRefs:
+        - kind: Gateway
+          name: agentgateway-proxy
+          group: gateway.networking.k8s.io
+      frontend:
+        tracing:
+          backendRef:
+            name: opentelemetry-collector-traces
+            namespace: telemetry
+            port: 4317
+          protocol: GRPC
+          randomSampling: "true"
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tracing policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: agentgateway-system
+            name: tracing
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: f80fbca2383a3396
+    lang: sh
+    lines: adf11cef 493f47f6 e66f4a20 fc075a9d
+    preview: curl "$INGRESS_GW_ADDRESS/openai" -H content-type:application/json -d '{
+  content: |2-
+       {{< doc-test paths="langfuse" >}}
+       # The page checks the vendor UI by eye. Check instead that the collector received the
+       # agentgateway LLM span: the debug exporter prints it with its gen_ai attributes. Keep
+       # sending requests until the span shows up, since tracing starts after the policy lands.
+       found=""
+       for i in $(seq 1 40); do
+         curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}/openai" -H content-type:application/json \
+           -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello!"}]}' || true
+         # Save the logs first: piping them into `grep -q` fails under pipefail when grep
+         # stops reading early.
+         kubectl logs deploy/opentelemetry-collector-traces -n telemetry --tail=-1 > /tmp/doc-test-collector.log 2>/dev/null || true
+         if grep -q 'gen_ai.request.model: Str(gpt-4o-mini)' /tmp/doc-test-collector.log; then
+           found=yes; break
+         fi
+         sleep 3
+       done
+       if [ -z "$found" ]; then
+         echo "the collector has no agentgateway span with gen_ai.request.model=gpt-4o-mini"
+         kubectl logs deploy/opentelemetry-collector-traces -n telemetry --tail=60 || true
+         exit 1
+       fi
+       helm uninstall opentelemetry-collector-traces -n telemetry || true
+       kubectl delete agentgatewaypolicy tracing -n agentgateway-system --ignore-not-found
+       kubectl delete secret langsmith-api-key -n telemetry --ignore-not-found
+       kubectl delete namespace telemetry --ignore-not-found
+       {{< /doc-test >}}
