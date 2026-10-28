@@ -1,30 +1,9 @@
 format: 1
 source: content/docs/kubernetes/latest/reference/helm/_index.md
 blocks:
-- 37b8609b79a57b1e sh
-- 2761cc0ecad145b0 sh
+- c22a826158bcdfaf sh
+- 99fff97dc5a59048 sh
 - 324263b2ee6bc2c4 sh
-tags:
-- paths: helm-reference
-  block: 0
-  fingerprint: 37b8609b79a57b1e
-  lang: sh
-  lines: 37b8609b
-  preview: helm pull {{< reuse "agw-docs/snippets/helm-path.md" >}} --version v{{< reuse "a
-  form:
-    attr: paths="helm-reference"
-    only: true
-    lead: ' '
-- paths: helm-reference
-  block: 1
-  fingerprint: 2761cc0ecad145b0
-  lang: sh
-  lines: 2761cc0e
-  preview: tar -xvf agentgateway-v{{< reuse "agw-docs/versions/n-patch.md" >}}.tgz
-  form:
-    attr: paths="helm-reference"
-    only: true
-    lead: ' '
 hidden:
 - after:
     block: 2
@@ -40,3 +19,24 @@ hidden:
        grep -q '^rbac:' agentgateway/values.yaml || { echo "agentgateway/values.yaml has no top-level rbac: key"; exit 1; }
        rm -rf agentgateway agentgateway-*.tgz
        {{< /doc-test >}}
+tags:
+- paths: helm-reference
+  block: 0
+  fingerprint: c22a826158bcdfaf
+  lang: sh
+  lines: c22a8261
+  preview: helm pull {{< reuse "agw-docs/snippets/helm-path.md" >}} --version {{< reuse "ag
+  form:
+    attr: paths="helm-reference"
+    only: true
+    lead: ' '
+- paths: helm-reference
+  block: 1
+  fingerprint: 99fff97dc5a59048
+  lang: sh
+  lines: 99fff97d
+  preview: tar -xvf agentgateway-{{< reuse "agw-docs/versions/helm-version-flag.md" >}}.tgz
+  form:
+    attr: paths="helm-reference"
+    only: true
+    lead: ' '

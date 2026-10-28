@@ -9,13 +9,25 @@ blocks:
 - 05dbdb2064278b61 sh
 - 724cb00dd0e6631c sh
 - bd924c5a78947b1c sh
-- 1f6de6ed0df0968f sh
-- c803bc6d053cfe79
+- 2a9be9d48ba04efe sh
+- e30c95f73c22c1fb sh
+- c803bc6d053cfe79 sh
 - f1aca748dd9ef042 yaml
 - f6931a7b2e59dbc5 sh
-- c2a15aa6dcb7f4bb json
+- b4c997338c63b42d json
+- 21162d5dd59e0f43 json
+- fad81fa25feda5a4 json
+- 6d903c43b5f0259d json
+- d4e8d899645ab3be json
+- 5754012cd69d3821 json
+- f83867e2a258ab33 json
+- a6cafbf8c24c34f5 json
+- 069ae198cdb60210 json
+- 1887ca9386c00f62 json
+- f3e90b0a8171c970 console
 - ca8054b6c7a9bfc1 yaml
 - f3d743856bee8bd7 yaml
+- 866997deab4c799a yaml
 - 6bbe21e7dda9de35 yaml
 tags:
 - paths: mcp-openapi
@@ -49,11 +61,11 @@ tags:
     only: true
     lead: ' '
 - paths: mcp-openapi
-  block: 8
-  fingerprint: 1f6de6ed0df0968f
+  block: 9
+  fingerprint: e30c95f73c22c1fb
   lang: sh
-  lines: 1f6de6ed
-  preview: curl -L https://agentgateway.dev/examples/mcp-openapi/config.yaml -o config.yaml
+  lines: e30c95f7
+  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.7.0/examp
   form:
     attr: paths="mcp-openapi"
     only: true
@@ -106,7 +118,7 @@ hidden:
        curl -sf -o /dev/null http://localhost:8080/api/v3/openapi.json
        {{< /doc-test >}}
 - after:
-    block: 10
+    block: 11
     fingerprint: f1aca748dd9ef042
     lang: yaml
     lines: a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 ead663af 9d7e2b17 fd12af70 9d7e2b17 3035507a a7ec89ea 2a783db0 4f369ea9 7e743532 de164bdf

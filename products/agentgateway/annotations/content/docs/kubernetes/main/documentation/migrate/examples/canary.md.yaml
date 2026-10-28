@@ -85,7 +85,7 @@ hidden:
           metadata:
             namespace: default
             name: app-canary-app-example-com
-        jsonPath: "$.spec.rules[0].backendRefs[0].weight"
+        jsonPath: "$.spec.rules[0].backendRefs[?(@.name=='app-v1')].weight"
         jsonPathExpectation:
           comparator: equals
           value: 80
@@ -99,7 +99,7 @@ hidden:
           metadata:
             namespace: default
             name: app-canary-app-example-com
-        jsonPath: "$.spec.rules[0].backendRefs[1].weight"
+        jsonPath: "$.spec.rules[0].backendRefs[?(@.name=='app-v2')].weight"
         jsonPathExpectation:
           comparator: equals
           value: 20

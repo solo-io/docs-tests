@@ -18,10 +18,16 @@ blocks:
 - 65c927085dd8873b yaml
 - efcc98bd449af77f yaml
 - e2449cacb9d262b8 sh
-- 3299df3b49418cd2
+- 7042d6a1b2bcb1e7
+- a29e6ff8768576ad yaml
+- 8cbb57d433a2972a sh
+- 473f0ad5080acd36 json
+- 1dcdb79108961014 sh
+- 8cbb57d433a2972a sh
+- c8f5c436fe60931b json
 - 0a75a3fb6611868f sh
-- e35adb6afcb1fee5 json
-- 2d02180318781628 sh
+- 7330fd65239733ec json
+- ec2763ff2fddb975 sh
 tags:
 - paths: virtual-models
   block: 3
@@ -202,11 +208,37 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
+    block: 25
+    fingerprint: 7330fd65239733ec
+    lang: json
+    lines: 021fb596 d90ae9ee 6c993a4e 73fc0dc9 95297a1b caf8053e 39d4b54e 7738d670 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="virtual-models" >}}
+    # Assert on the raw /v1/models body instead of YAMLTest bodyJsonPath: YAMLTest's
+    # "$.data[*].id" only evaluates the first array element, and the serve-model
+    # prerequisite also registers gpt-4/gpt-5-mini, so a JSONPath `contains` cannot
+    # reach the virtual model IDs. Grep the response so we can verify every virtual
+    # model is listed and that the Internal targets stay hidden.
+    for i in $(seq 1 30); do
+      models=$(curl -s "http://${INGRESS_GW_ADDRESS}/v1/models")
+      if echo "$models" | grep -q '"balanced"' && echo "$models" | grep -q '"resilient"' && echo "$models" | grep -q '"smart"'; then break; fi
+      sleep 2
+    done
+    echo "$models"
+    echo "$models" | grep -q '"balanced"'
+    echo "$models" | grep -q '"resilient"'
+    echo "$models" | grep -q '"smart"'
+    if echo "$models" | grep -qE '"(internal-fast|internal-premium|primary-down|unreachable-llm)"'; then
+      echo "ERROR: an Internal model target appeared in /v1/models"; exit 1
+    fi
+    {{< /doc-test >}}
+- after:
     block: 17
-    fingerprint: 3299df3b49418cd2
+    fingerprint: 7042d6a1b2bcb1e7
     lang: ''
-    lines: 3da162c5 c8f5c436 c8f5c436
-    preview: 'upstream call failed: Connect: Connection refused (os error 111)'
+    lines: 25a84382 c8f5c436 c8f5c436
+    preview: connection refused
   content: |2-
        {{< doc-test paths="virtual-models" >}}
        # Wait until the virtual model is served at all. The priority 0 target is
@@ -247,29 +279,5 @@ hidden:
                value: "resolved-internal-fast"
        EOF
        {{< /doc-test >}}
-- after:
-    block: 19
-    fingerprint: e35adb6afcb1fee5
-    lang: json
-    lines: 021fb596 d90ae9ee 6c993a4e 73fc0dc9 caf8053e 39d4b54e 7738d670 d10b36aa
-    preview: '{'
-  content: |-
-    {{< doc-test paths="virtual-models" >}}
-    # Assert on the raw /v1/models body instead of YAMLTest bodyJsonPath: YAMLTest's
-    # "$.data[*].id" only evaluates the first array element, and the serve-model
-    # prerequisite also registers gpt-4/gpt-5-mini, so a JSONPath `contains` cannot
-    # reach the virtual model IDs. Grep the response so we can verify every virtual
-    # model is listed and that the Internal targets stay hidden.
-    for i in $(seq 1 30); do
-      models=$(curl -s "http://${INGRESS_GW_ADDRESS}/v1/models")
-      if echo "$models" | grep -q '"balanced"' && echo "$models" | grep -q '"resilient"' && echo "$models" | grep -q '"smart"'; then break; fi
-      sleep 2
-    done
-    echo "$models"
-    echo "$models" | grep -q '"balanced"'
-    echo "$models" | grep -q '"resilient"'
-    echo "$models" | grep -q '"smart"'
-    if echo "$models" | grep -qE '"(internal-fast|internal-premium|primary-down|unreachable-llm)"'; then
-      echo "ERROR: an Internal model target appeared in /v1/models"; exit 1
-    fi
-    {{< /doc-test >}}
+  blank_before:
+  - ''

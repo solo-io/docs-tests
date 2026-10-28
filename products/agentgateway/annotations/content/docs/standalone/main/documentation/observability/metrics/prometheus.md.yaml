@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/main/documentation/observability/metrics/prometheus.md
 blocks:
 - 647ad13ed10986bf yaml
-- ed8e99a2da8db32d sh
+- c1236470656aa1c1 sh
 - b27ce406e003f10a promql
 - ddc39165ddee66ac sh
 - 07fe717edf07ed58 sh
@@ -34,9 +34,9 @@ tags:
     lead: ' '
 - paths: prometheus-standalone
   block: 1
-  fingerprint: ed8e99a2da8db32d
+  fingerprint: c1236470656aa1c1
   lang: sh
-  lines: 82f23f03 ad9fc9a2 3eb86b68 24e3746f
+  lines: 82f23f03 ad9fc9a2 9e1bb821 3eb86b68 24e3746f
   preview: docker run -d --name prometheus \
   form:
     attr: paths="prometheus-standalone"
@@ -81,9 +81,9 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: ed8e99a2da8db32d
+    fingerprint: c1236470656aa1c1
     lang: sh
-    lines: 82f23f03 ad9fc9a2 3eb86b68 24e3746f
+    lines: 82f23f03 ad9fc9a2 9e1bb821 3eb86b68 24e3746f
     preview: docker run -d --name prometheus \
   content: |2-
        {{< doc-test paths="prometheus-standalone" >}}

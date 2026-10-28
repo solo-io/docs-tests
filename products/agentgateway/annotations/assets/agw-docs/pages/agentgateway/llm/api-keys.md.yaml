@@ -4,17 +4,20 @@ blocks:
 - 4dfa950e1169e409 sh
 - afb9bd93b8237394 yaml
 - a83812e62d6a3547 yaml
-- d693ff6e7ec87311 sh
+- 8dec73a8b3d92153 sh
+- 888b6920ec480268 sh
 - 4add227ffc8cc21b json
 - c6c7a6bb8927fa0a sh
 - f64ee25a12a74cd9 yaml
 - eaf8332eef89d38b yaml
 - 5b341abadff25824 yaml
-- d693ff6e7ec87311 sh
+- 8dec73a8b3d92153 sh
+- 888b6920ec480268 sh
 - 4add227ffc8cc21b json
 - 6c1f5fa57682c75a yaml
 - 5b341abadff25824 yaml
-- 59282f62c543ad0b sh
+- 3da6805bae818a35 sh
+- f0b1c64ffe7830de sh
 - 4add227ffc8cc21b json
 - fe447698510720e1 sh
 - 865e0e271ff9196a sh
@@ -43,7 +46,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-api-keys-run
-  block: 6
+  block: 7
   fingerprint: f64ee25a12a74cd9
   lang: yaml
   lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f 8af957d1 1426decf 2f7c298d 73825423 abc56510
@@ -53,7 +56,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-api-keys,llm-api-keys-run
-  block: 7
+  block: 8
   fingerprint: eaf8332eef89d38b
   lang: yaml
   lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 eab76e7d 9d538f19 94902150 c8f3f59a 146e11c6 9ebc4789 4df4f75f abc56510
@@ -63,7 +66,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-api-keys-run
-  block: 8
+  block: 9
   fingerprint: 5b341abadff25824
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
@@ -73,7 +76,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-api-keys,llm-api-keys-run
-  block: 11
+  block: 13
   fingerprint: 6c1f5fa57682c75a
   lang: yaml
   lines: 16c71da1 fbc30693 99d7dba1 8c8c4228 6666820d 8af957d1 36184fa5 ad3afdb1 93a4b62b da4aa5f1 5b083eec c8f3f59a 146e11c6 99e5eb4e abc56510
@@ -83,7 +86,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-api-keys-run
-  block: 12
+  block: 14
   fingerprint: 5b341abadff25824
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
@@ -93,7 +96,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-api-keys-run
-  block: 16
+  block: 19
   fingerprint: 865e0e271ff9196a
   lang: sh
   lines: 9b1285aa 1d8483f5 bc73c86d
@@ -211,7 +214,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 5
+    block: 6
     fingerprint: c6c7a6bb8927fa0a
     lang: sh
     lines: c6c7a6bb
@@ -222,7 +225,7 @@ hidden:
        export OPENAI_API_KEY="${OPENAI_API_KEY:-mock-key}"
        {{< /doc-test >}}
 - after:
-    block: 8
+    block: 9
     fingerprint: 5b341abadff25824
     lang: yaml
     lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
@@ -285,7 +288,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 12
+    block: 14
     fingerprint: 5b341abadff25824
     lang: yaml
     lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d 8af957d1 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 8af957d1 b6e1c19c 99d7dba1 abc56510
@@ -350,7 +353,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 15
+    block: 18
     fingerprint: fe447698510720e1
     lang: sh
     lines: fe447698
@@ -362,7 +365,7 @@ hidden:
        export NEW_OPENAI_API_KEY="${NEW_OPENAI_API_KEY:-mock-rotated-key}"
        {{< /doc-test >}}
 - after:
-    block: 16
+    block: 19
     fingerprint: 865e0e271ff9196a
     lang: sh
     lines: 9b1285aa 1d8483f5 bc73c86d

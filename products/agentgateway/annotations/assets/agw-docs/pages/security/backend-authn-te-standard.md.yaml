@@ -16,11 +16,14 @@ blocks:
 - 7e87ac3567520942 sh
 - f6a27eb40643f214 sh
 - 96a35b743004b937
+- 93bf737be4191e96
 - 15704474dd40182d sh
 - 25c771cc4cff252a
+- 93bf737be4191e96
 - 328b497eb642d84b yaml
 - 1dc9e588907d28f3
 - cee93308e31200f1
+- 8cd43acac82160f1
 - 1b8e1e5dc7cca1ab sh
 tags:
 - paths: te-standard
@@ -74,7 +77,7 @@ tags:
     only: true
     lead: ' '
 - paths: te-standard
-  block: 20
+  block: 23
   fingerprint: 1b8e1e5dc7cca1ab
   lang: sh
   lines: 0f9ab7a4 93a14162 4330da45 fe1d1914 ff000288 5c4dda8f
@@ -216,7 +219,7 @@ hidden:
     echo "standard token exchange verified (aud=$AUD azp=$AZP)"
     {{< /doc-test >}}
 - after:
-    block: 16
+    block: 17
     fingerprint: 25c771cc4cff252a
     lang: ''
     lines: 25c771cc
@@ -241,7 +244,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 16
+    block: 17
     fingerprint: 25c771cc4cff252a
     lang: ''
     lines: 25c771cc
@@ -269,7 +272,7 @@ hidden:
     echo "edge validation verified (valid=$OK invalid=$BAD none=$NONE)"
     {{< /doc-test >}}
 - after:
-    block: 16
+    block: 17
     fingerprint: 25c771cc4cff252a
     lang: ''
     lines: 25c771cc
@@ -313,7 +316,7 @@ hidden:
     echo "preserveToken trap verified (got $TRAP without the field)"
     {{< /doc-test >}}
 - after:
-    block: 20
+    block: 23
     fingerprint: 1b8e1e5dc7cca1ab
     lang: sh
     lines: 0f9ab7a4 93a14162 4330da45 fe1d1914 ff000288 5c4dda8f
