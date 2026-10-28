@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/latest/documentation/agent/a2a.md
 blocks:
-- f41c92eb6ab8c6b0 yaml
+- 8d0170ba41c8e208 yaml
 - f6931a7b2e59dbc5 sh
 - 8411ee14cce5c685 sh
 - 5ca76e3aa1534a02 sh
@@ -58,52 +58,6 @@ hidden:
     {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: f41c92eb6ab8c6b0
-    lang: yaml
-    lines: 358c4c15 eb172b71 abc56510
-    preview: cat <<EOF > config.yaml
-  content: |2-
-       {{< doc-test paths="a2a" >}}
-       # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
-       # would be set in a subshell and the gateway would never be stopped.
-       start_gateway() {
-         agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
-         AGW_PID=$!
-       }
-       stop_gateway() {
-         [ -n "${AGW_PID:-}" ] || return 0
-         kill "$AGW_PID" 2>/dev/null || true
-         wait "$AGW_PID" 2>/dev/null || true
-         AGW_PID=""
-       }
-       # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
-       wait_http() {
-         for _ in $(seq 1 "${2:-30}"); do
-           code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
-           [ -n "$code" ] && [ "$code" != "000" ] && return 0
-           sleep 1
-         done
-         echo "$1 did not answer"; return 1
-       }
-
-       # Step 1's config.yaml embeds the published example; download the same file.
-       curl -fsSL https://agentgateway.dev/examples/traffic-a2a/config.yaml -o config.yaml
-       agentgateway -f config.yaml --validate-only
-       # Step 2 runs it in the foreground; run it in the background instead.
-       start_gateway config.yaml
-       AGW_LOG=/tmp/doc-test-agw-config.yaml.log
-       trap 'stop_gateway; kill ${A2A_AGENT_PID:-} 2>/dev/null || true' EXIT
-       wait_http http://localhost:3000/ 30
-
-       # "Before you begin" step 2 installs uv; the install snippet put ~/.local/bin on PATH.
-       if ! command -v uv >/dev/null 2>&1; then
-         curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
-       fi
-       command -v uv >/dev/null
-       rm -rf a2a-samples   # the next step clones into a fresh directory
-       {{< /doc-test >}}
-- after:
     block: 2
     fingerprint: 8411ee14cce5c685
     lang: sh
@@ -154,3 +108,49 @@ hidden:
        kill "$A2A_AGENT_PID" 2>/dev/null || true
        stop_gateway
        {{< /doc-test >}}
+- after:
+    fingerprint: f41c92eb6ab8c6b0
+    lang: yaml
+    lines: 358c4c15 eb172b71 abc56510
+    preview: cat <<EOF > config.yaml
+  content: |2-
+       {{< doc-test paths="a2a" >}}
+       # Run agentgateway in the background. Never call start_gateway inside $( ): the PID
+       # would be set in a subshell and the gateway would never be stopped.
+       start_gateway() {
+         agentgateway -f "$1" > "/tmp/doc-test-agw-$(basename "$1").log" 2>&1 &
+         AGW_PID=$!
+       }
+       stop_gateway() {
+         [ -n "${AGW_PID:-}" ] || return 0
+         kill "$AGW_PID" 2>/dev/null || true
+         wait "$AGW_PID" 2>/dev/null || true
+         AGW_PID=""
+       }
+       # wait_http URL [TRIES]: wait until URL answers with any HTTP status.
+       wait_http() {
+         for _ in $(seq 1 "${2:-30}"); do
+           code=$(curl -s -o /dev/null -w '%{http_code}' -m 3 "$1" 2>/dev/null || true)
+           [ -n "$code" ] && [ "$code" != "000" ] && return 0
+           sleep 1
+         done
+         echo "$1 did not answer"; return 1
+       }
+
+       # Step 1's config.yaml embeds the published example; download the same file.
+       curl -fsSL https://agentgateway.dev/examples/traffic-a2a/config.yaml -o config.yaml
+       agentgateway -f config.yaml --validate-only
+       # Step 2 runs it in the foreground; run it in the background instead.
+       start_gateway config.yaml
+       AGW_LOG=/tmp/doc-test-agw-config.yaml.log
+       trap 'stop_gateway; kill ${A2A_AGENT_PID:-} 2>/dev/null || true' EXIT
+       wait_http http://localhost:3000/ 30
+
+       # "Before you begin" step 2 installs uv; the install snippet put ~/.local/bin on PATH.
+       if ! command -v uv >/dev/null 2>&1; then
+         curl -LsSf https://astral.sh/uv/install.sh | sh >/dev/null 2>&1
+       fi
+       command -v uv >/dev/null
+       rm -rf a2a-samples   # the next step clones into a fresh directory
+       {{< /doc-test >}}
+  status: needs-update

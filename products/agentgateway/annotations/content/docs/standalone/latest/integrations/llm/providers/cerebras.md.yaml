@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/latest/integrations/llm/providers/cerebras.md
 blocks:
-- 83b5097d09a251d5 yaml
-- 4a93e072fdb3d6e9 bash
+- 777191e0bca81b9c sh
+- 44d604b6b2ee84a0 yaml
+- 9bc881618a2e4364 bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export CEREBRAS_API_KEY="${CEREBRAS_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: 83b5097d09a251d5
+    block: 1
+    fingerprint: 44d604b6b2ee84a0
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 89544659 009395dd b81969cc
+    lines: a7f80a73 3af99526 e01ccf75 953aed66 89544659 009395dd b81969cc 8905bcef 0929276f
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="cerebras" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 4a93e072fdb3d6e9
+    block: 2
+    fingerprint: 9bc881618a2e4364
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d b957b4d8 c34140f4 fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d c268a24b c34140f4 fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="cerebras" >}}

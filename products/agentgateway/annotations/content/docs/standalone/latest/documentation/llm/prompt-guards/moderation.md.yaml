@@ -1,27 +1,28 @@
 format: 1
 source: content/docs/standalone/latest/documentation/llm/prompt-guards/moderation.md
 blocks:
-- db055832283ccb4b yaml
+- c81a50243d32adc9 yaml
 - f6931a7b2e59dbc5 sh
 - 4731b5b8c08eeb2b sh
 - 6ea813ca55fe4df1 console
-- bb28fbb0c1f8693a yaml
+- 3e2441805c852b74 yaml
+- ca6610ceccb9aa48 yaml
 - 50fe81c20f324b07 sh
 - 90f21988593f9e43 sh
 - 726f55f1ccd9b817 json
 tags:
 - paths: prompt-guards-moderation-inline
-  block: 4
-  fingerprint: bb28fbb0c1f8693a
+  block: 5
+  fingerprint: ca6610ceccb9aa48
   lang: yaml
-  lines: ab8603bf a7f80a73 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 5b083eec 794e7c38 491a231d 1188488c 6336a21b 1fb8e337 96f1000b e20a5357 c8f3f59a 81b74571 7217bcc4 abc56510
+  lines: ab8603bf f4a9035a 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 5b083eec 794e7c38 491a231d 1188488c 6336a21b 1fb8e337 96f1000b e20a5357 c8f3f59a 81b74571 7217bcc4 abc56510
   preview: cat <<EOF > moderation-config.yaml
   form:
     attr: paths="prompt-guards-moderation-inline"
     only: true
     lead: ' '
 - paths: prompt-guards-moderation-inline
-  block: 6
+  block: 7
   fingerprint: 90f21988593f9e43
   lang: sh
   lines: f516b650 fc68f389 b0cead6d a90f7a89 4b3b16d3 021fb596 09d1b3dd 40bfa271 d10b36aa cfae0d42 fc075a9d
@@ -37,11 +38,11 @@ hidden:
     occurrence: 0
     words: 6b86b273 fa8847b0 ca978112 b7d64a92 3b9c358f 8e7fc023 e22bc966 663ea1bf 7d3194f7 6201111b 82c6db3d b9776d7d a17ba2e0 c0d2856b b8d31e85 b9776d7d 5c4c1964
     block_before:
-      block: 3
-      fingerprint: 6ea813ca55fe4df1
-      lang: console
-      lines: 8310b5e0 33ad20c3 4ed3ca5d
-      preview: HTTP/1.1 403 Forbidden
+      block: 4
+      fingerprint: 3e2441805c852b74
+      lang: yaml
+      lines: e8bd2b8e 14ddcd05 7ff23a12 5bc95fae 491a231d c8f3f59a 81b74571 7217bcc4
+      preview: 'guardrails:'
   blank_before: []
   content: |-
     {{< doc-test paths="prompt-guards-moderation-inline" >}}
@@ -114,10 +115,10 @@ hidden:
     }
     {{< /doc-test >}}
 - after:
-    block: 4
-    fingerprint: bb28fbb0c1f8693a
+    block: 5
+    fingerprint: ca6610ceccb9aa48
     lang: yaml
-    lines: ab8603bf a7f80a73 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 5b083eec 794e7c38 491a231d 1188488c 6336a21b 1fb8e337 96f1000b e20a5357 c8f3f59a 81b74571 7217bcc4 abc56510
+    lines: ab8603bf f4a9035a 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 5b083eec 794e7c38 491a231d 1188488c 6336a21b 1fb8e337 96f1000b e20a5357 c8f3f59a 81b74571 7217bcc4 abc56510
     preview: cat <<EOF > moderation-config.yaml
   content: |2-
        {{< doc-test paths="prompt-guards-moderation-inline" >}}
@@ -136,7 +137,7 @@ hidden:
        for _ in $(seq 1 30); do curl -s -o /dev/null -m 2 http://localhost:3000/ && break; sleep 1; done
        {{< /doc-test >}}
 - after:
-    block: 6
+    block: 7
     fingerprint: 90f21988593f9e43
     lang: sh
     lines: f516b650 fc68f389 b0cead6d a90f7a89 4b3b16d3 021fb596 09d1b3dd 40bfa271 d10b36aa cfae0d42 fc075a9d

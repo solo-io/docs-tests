@@ -2,14 +2,15 @@ format: 1
 source: content/docs/standalone/latest/integrations/web-uis/chatbot-ui.md
 blocks:
 - 089850e7d9ac4173
-- 12b8298a2dd4fd2e yaml
+- 6b0c8bbbd4e5d1f5 sh
+- b78f37400e816b6e yaml
 - ec31d50682bbce88 sh
 - a0217deffe6fae0d sh
 - 2206a864430de080
 hidden:
 - after:
-    block: 1
-    fingerprint: 12b8298a2dd4fd2e
+    block: 2
+    fingerprint: b78f37400e816b6e
     lang: yaml
     lines: a7f80a73 3af99526 4aee8d36 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
@@ -91,7 +92,7 @@ hidden:
     to_mock config.yaml config-mock.yaml
     {{< /doc-test >}}
 - after:
-    block: 2
+    block: 3
     fingerprint: ec31d50682bbce88
     lang: sh
     lines: 4e548af9 f6931a7b
@@ -113,7 +114,7 @@ hidden:
     echo "ok: agentgateway serves chat completions on port 3001 and logs them"
     {{< /doc-test >}}
 - after:
-    block: 3
+    block: 4
     fingerprint: a0217deffe6fae0d
     lang: sh
     lines: f2250192 a2d67bb7

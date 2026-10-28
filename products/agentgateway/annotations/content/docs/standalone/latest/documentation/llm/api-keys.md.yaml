@@ -1,36 +1,27 @@
 format: 1
 source: content/docs/standalone/latest/documentation/llm/api-keys.md
 blocks:
-- bbc0c8c3430c8a96 yaml
+- c264a9e082afc2f6 sh
+- 8998788fe5a1150d yaml
 - fa79f88dcd70aee0 sh
-- 6212e39efb2a6664 yaml
+- 12c12a2036c18ba7 yaml
 - 1ceb157e680d6839 sh
-- 9f7371489c5f09b9 yaml
-- 3dd2976b39470b5b sh
+- c818c42130d67c58 yaml
+- 9fc3ec3daa0f1d99 sh
 - bdad69bd89a9422c json
 tags:
 - paths: llm-api-keys-standalone
-  block: 0
-  fingerprint: bbc0c8c3430c8a96
+  block: 3
+  fingerprint: 12c12a2036c18ba7
   lang: yaml
-  lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd b39172da abc56510
-  preview: cat <<EOF > config.yaml
-  form:
-    attr: paths="llm-api-keys-standalone"
-    only: true
-    lead: ' '
-- paths: llm-api-keys-standalone
-  block: 2
-  fingerprint: 6212e39efb2a6664
-  lang: yaml
-  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd 4208ae28 8905bcef 901234de abc56510
   preview: cat <<'EOF' > config.yaml
   form:
     attr: paths="llm-api-keys-standalone"
     only: true
     lead: ' '
 - paths: llm-api-keys-standalone
-  block: 3
+  block: 4
   fingerprint: 1ceb157e680d6839
   lang: sh
   lines: 86de869c c96e98a8
@@ -40,17 +31,26 @@ tags:
     only: true
     lead: ' '
 - paths: llm-api-keys-standalone
-  block: 4
-  fingerprint: 9f7371489c5f09b9
+  block: 5
+  fingerprint: c818c42130d67c58
   lang: yaml
-  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 146e11c6 71338152 03a5afea ec372ba0 abc56510
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 ec4e7f27 6472803d 146e11c6 71338152 03a5afea ec372ba0 8905bcef 901234de abc56510
   preview: cat <<'EOF' > config.yaml
   form:
     attr: paths="llm-api-keys-standalone"
     only: true
     lead: ' '
 - paths: llm-api-keys-standalone
-  block: 5
+  fingerprint: bbc0c8c3430c8a96
+  lang: yaml
+  lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd b39172da abc56510
+  preview: cat <<EOF > config.yaml
+  form:
+    attr: paths="llm-api-keys-standalone"
+    only: true
+    lead: ' '
+  status: needs-update
+- paths: llm-api-keys-standalone
   fingerprint: 3dd2976b39470b5b
   lang: sh
   lines: dc872770 67c5a3ac fcbb4765
@@ -59,13 +59,19 @@ tags:
     attr: paths="llm-api-keys-standalone"
     only: true
     lead: ' '
+  status: needs-update
 hidden:
 - after:
     section: Configure your agentgateway proxy
     line: ff6c616e26133a37
     occurrence: 0
     words: 6b86b273 90d08e58 b9776d7d 56e57ada 1241936d 6201111b e08d706b 4d040d3f 2c70e12b 58296753 b9776d7d 5110c478 c0d2856b 9251036c
-    block_before: null
+    block_before:
+      block: 0
+      fingerprint: c264a9e082afc2f6
+      lang: sh
+      lines: 2a7b4933 a7f80a73 3af99526 8e026dfb abc56510 f6931a7b
+      preview: cat <<'EOF' > config.yaml
   blank_before: []
   content: |-
     {{< doc-test paths="llm-api-keys-standalone" >}}
@@ -167,20 +173,7 @@ hidden:
     schema='$schema'  # a literal, not an expansion
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: bbc0c8c3430c8a96
-    lang: yaml
-    lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd b39172da abc56510
-    preview: cat <<EOF > config.yaml
-  content: |2-
-       {{< doc-test paths="llm-api-keys-standalone" >}}
-       start_agw
-       expect_key "sk-proj...."
-       stop_agw
-       echo "inline key reaches the provider"
-       {{< /doc-test >}}
-- after:
-    block: 1
+    block: 2
     fingerprint: fa79f88dcd70aee0
     lang: sh
     lines: fa79f88d
@@ -191,10 +184,10 @@ hidden:
        export OPENAI_API_KEY="${OPENAI_API_KEY:-sk-mock-env-key}"
        {{< /doc-test >}}
 - after:
-    block: 2
-    fingerprint: 6212e39efb2a6664
+    block: 3
+    fingerprint: 12c12a2036c18ba7
     lang: yaml
-    lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 abc56510
+    lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd 4208ae28 8905bcef 901234de abc56510
     preview: cat <<'EOF' > config.yaml
   content: |2-
        {{< doc-test paths="llm-api-keys-standalone" >}}
@@ -204,10 +197,10 @@ hidden:
        echo "environment variable key reaches the provider"
        {{< /doc-test >}}
 - after:
-    block: 4
-    fingerprint: 9f7371489c5f09b9
+    block: 5
+    fingerprint: c818c42130d67c58
     lang: yaml
-    lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 146e11c6 71338152 03a5afea ec372ba0 abc56510
+    lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 ec4e7f27 6472803d 146e11c6 71338152 03a5afea ec372ba0 8905bcef 901234de abc56510
     preview: cat <<'EOF' > config.yaml
   content: |2-
        {{< doc-test paths="llm-api-keys-standalone" >}}
@@ -220,7 +213,19 @@ hidden:
        echo "a replaced key file is picked up without a restart"
        {{< /doc-test >}}
 - after:
-    block: 5
+    fingerprint: bbc0c8c3430c8a96
+    lang: yaml
+    lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd b39172da abc56510
+    preview: cat <<EOF > config.yaml
+  content: |2-
+       {{< doc-test paths="llm-api-keys-standalone" >}}
+       start_agw
+       expect_key "sk-proj...."
+       stop_agw
+       echo "inline key reaches the provider"
+       {{< /doc-test >}}
+  status: needs-update
+- after:
     fingerprint: 3dd2976b39470b5b
     lang: sh
     lines: dc872770 67c5a3ac fcbb4765
@@ -230,3 +235,4 @@ hidden:
        expect_key "sk-rotated-file-key"
        stop_agw
        {{< /doc-test >}}
+  status: needs-update

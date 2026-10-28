@@ -1,15 +1,15 @@
 format: 1
 source: content/docs/standalone/latest/integrations/llm/providers/bedrock.md
 blocks:
-- 7014ce54655ad187 yaml
+- efa75e1555de6648 yaml
 - ede7fa55b69cab42 yaml
 - 682f16a9e2dbc603 python
 - 206af87cd38ed81c python
-- 8332184c1fa2779e yaml
-- aeac243dbb0d8a1e bash
+- 7d5d58f3b85da731 yaml
+- 77ab8b74c94657bc bash
 - b7a997a3e4a887b0 json
-- 23bd0a313499cc2e sh
-- 83c3a4638fa53be9 sh
+- cbe470afbaf81c77 sh
+- e2cce7b6cb2a5cd4 sh
 hidden:
 - after:
     section: (top of page)
@@ -56,9 +56,9 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 7014ce54655ad187
+    fingerprint: efa75e1555de6648
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd 9b4ed50d
+    lines: a7f80a73 3af99526 e01ccf75 c3ca526e 2e2b598b 009395dd 9b4ed50d 8905bcef 5b169d59
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="bedrock" >}}
@@ -96,7 +96,7 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 4
-    fingerprint: 8332184c1fa2779e
+    fingerprint: 7d5d58f3b85da731
     lang: yaml
     lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd 9b4ed50d 672a2624
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
@@ -117,9 +117,9 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 8
-    fingerprint: 83c3a4638fa53be9
+    fingerprint: e2cce7b6cb2a5cd4
     lang: sh
-    lines: 6bb9ea5a 0100c022 236c401b 6d89063e d5240f8b eafd7fe9 3796b24f 028b56a6 578b7fdc 75d5a96b f04768bf dc3419e7 e52a1813 d257de3e 4fe655e1 d10b36aa d10b36aa e52a1813 4b3b16d3 021fb596 09d1b3dd fa2251f0 d10b36aa cfae0d42 c83aa0a4
+    lines: 6bb9ea5a dd9b24a2 236c401b 6d89063e d5240f8b eafd7fe9 3796b24f 028b56a6 578b7fdc 75d5a96b f04768bf dc3419e7 e52a1813 d257de3e 4fe655e1 d10b36aa d10b36aa e52a1813 4b3b16d3 021fb596 09d1b3dd fa2251f0 d10b36aa cfae0d42 c83aa0a4
     preview: curl "localhost:4000/v1/chat/completions" -H content-type:application/json -d '{
   content: |-
     {{< doc-test paths="bedrock" >}}

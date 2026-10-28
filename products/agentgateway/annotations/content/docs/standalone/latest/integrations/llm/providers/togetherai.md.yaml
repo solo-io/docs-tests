@@ -1,8 +1,9 @@
 format: 1
 source: content/docs/standalone/latest/integrations/llm/providers/togetherai.md
 blocks:
-- c622accd65f36f27 yaml
-- 1d959226702f3f4b bash
+- 078e5f6108a7e412 sh
+- b76a4e2d038d40c2 yaml
+- 9825d1c54ea1f66d bash
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +38,10 @@ hidden:
     export TOGETHER_API_KEY="${TOGETHER_API_KEY:-test}"
     {{< /doc-test >}}
 - after:
-    block: 0
-    fingerprint: c622accd65f36f27
+    block: 1
+    fingerprint: b76a4e2d038d40c2
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2c44d608 009395dd 922b6943
+    lines: a7f80a73 3af99526 e01ccf75 ddfdaa51 2c44d608 009395dd 922b6943 8905bcef 4c03c2df
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="togetherai" >}}
@@ -57,10 +58,10 @@ hidden:
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 1
-    fingerprint: 1d959226702f3f4b
+    block: 2
+    fingerprint: 9825d1c54ea1f66d
     lang: bash
-    lines: 633e696d 67c5a3ac b0cead6d 16ebf252 684064cd fc075a9d
+    lines: 633e696d 67c5a3ac b0cead6d 698289e9 684064cd fc075a9d
     preview: curl -X POST http://localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="togetherai" >}}

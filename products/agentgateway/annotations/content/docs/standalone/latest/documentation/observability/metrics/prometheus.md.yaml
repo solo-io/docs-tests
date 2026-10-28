@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/latest/documentation/observability/metrics/prometheus.md
 blocks:
 - 647ad13ed10986bf yaml
-- ed8e99a2da8db32d sh
+- c1236470656aa1c1 sh
 - b27ce406e003f10a promql
 - ddc39165ddee66ac sh
 - 07fe717edf07ed58 sh
@@ -13,6 +13,13 @@ blocks:
 - fbb9a86bcd784e52 sh
 - b27ce406e003f10a promql
 - a93537332a244fff sh
+- 3b11c6dc327bb0f8 yaml
+- 939dba42a4e400d5 sh
+- 29c60d2f9c0c5e80 promql
+- 3ebf28eadc33c9fc yaml
+- f1460e217f9af6d1 sh
+- 7433cc354cf2eb64 sh
+- 4ea0bb14eb2a8199 promql
 - 2effc50afc4401d4 yaml
 tags:
 - paths: prometheus-standalone
@@ -27,9 +34,9 @@ tags:
     lead: ' '
 - paths: prometheus-standalone
   block: 1
-  fingerprint: ed8e99a2da8db32d
+  fingerprint: c1236470656aa1c1
   lang: sh
-  lines: 82f23f03 ad9fc9a2 3eb86b68 24e3746f
+  lines: 82f23f03 ad9fc9a2 9e1bb821 3eb86b68 24e3746f
   preview: docker run -d --name prometheus \
   form:
     attr: paths="prometheus-standalone"
@@ -74,9 +81,9 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: ed8e99a2da8db32d
+    fingerprint: c1236470656aa1c1
     lang: sh
-    lines: 82f23f03 ad9fc9a2 3eb86b68 24e3746f
+    lines: 82f23f03 ad9fc9a2 9e1bb821 3eb86b68 24e3746f
     preview: docker run -d --name prometheus \
   content: |2-
        {{< doc-test paths="prometheus-standalone" >}}
