@@ -275,7 +275,7 @@ asserts on a real response, which is what `functional` means.
 
 | Type | What it checks | Needs | Blocks the PR? |
 |---|---|---|---|
-| `schema` | The doc's own example custom resource validates against the real CRD's OpenAPI schema (renamed/removed/mistyped fields, wrong types) | Nothing — no cluster, no execution (`doc_test_schema_check.py`) | Yes, in its own job |
+| `schema` | The doc's own examples validate against the real schema for the version the page documents: custom resources and Gateway API kinds against their CRDs, core Kubernetes kinds through `kubeconform`, and standalone config files against agentgateway's `schema/config.json` (renamed/removed/mistyped fields, wrong types) | Nothing — no cluster, no execution (`doc_test_schema_check.py`) | Yes, in its own job |
 | `functional` | Real behavior in a real cluster (apply config, assert on a real response) | A `kind` cluster, no vendor credentials | Yes |
 | `live` | A real external endpoint is reachable and returns the documented unauthenticated response | A real public endpoint, no credentials | Yes, alongside `functional` |
 | `credentialed` | Full behavior against a real vendor with real credentials | Named secrets, provisioned out of band | No — scheduled, non-blocking, never on a PR |
@@ -323,10 +323,12 @@ schema one. A single-type scenario is unaffected: its name, generated filenames,
 report key stay exactly as before — the `name::type` suffix only appears once a scenario
 declares more than one type.
 
-Add `schema` this way only when the scenario's final step is a recognized custom-resource
-kind with a local CRD schema (currently `AgentgatewayPolicy`/`AgentgatewayBackend`) — a
-plain Gateway API resource (`HTTPRoute`, `Gateway`) has nothing to validate against and
-would only ever pass vacuously, so `schema` is opt-in per scenario, not automatic.
+Add `schema` this way only when the scenario shows something the checker has a schema
+for: a custom resource whose CRD it was given (agentgateway's own kinds, and Gateway API
+kinds), a core Kubernetes kind (when `kubeconform` is available), or, on a standalone page,
+a whole config file. A scenario in which nothing was validated fails rather than passing
+vacuously, so `schema` stays opt-in per scenario, not automatic. Helm values and CRD CEL
+rules are not checked; see [#19](https://github.com/solo-io/docs-tests/issues/19).
 
 ---
 

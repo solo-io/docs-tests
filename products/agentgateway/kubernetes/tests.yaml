@@ -184,6 +184,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/transformations/access-logs.md
     path: access-logs-filter
   add-request-header:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -191,6 +194,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/header-control/request-header.md
     path: add-request-header
   add-response-header:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -206,6 +212,9 @@ scenarios:
     source: agw-docs/pages/integrations/kagent.md
     path: agent-runtimes-kagent
   api-types-decisions:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -219,6 +228,9 @@ scenarios:
     page: documentation/llm/api-types/decisions.md
     path: api-types-decisions
   apikey-auth:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -226,6 +238,9 @@ scenarios:
     source: agw-docs/pages/security/apikey-auth.md
     path: apikey-auth
   argo-rollouts:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -244,6 +259,9 @@ scenarios:
     source: agw-docs/pages/security/backend-authn-config-k8s.md
     path: backend-authn-config
   basic:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -310,6 +328,9 @@ scenarios:
     page: documentation/llm/cost-controls/dashboard.md
     path: cost-dashboard
   cost-tracking:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -327,6 +348,9 @@ scenarios:
     page: documentation/setup/customize/callout-proxy.md
     path: customize-callout-proxy
   customize-configs:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     page: documentation/setup/customize/configs.md
@@ -408,6 +432,9 @@ scenarios:
     page: documentation/migrate/examples/rate-limiting.md
     path: examples-rate-limiting
   extauth-basic:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -415,6 +442,9 @@ scenarios:
     source: agw-docs/pages/security/basic-auth.md
     path: extauth-basic-run
   extauth-byo-ext-auth-service:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -467,6 +497,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/providers/gemini.md
     path: gemini
   grpc:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     source: agw-docs/pages/traffic-management/grpc.md
@@ -476,6 +509,9 @@ scenarios:
     page: documentation/llm/guardrails/bedrock-guardrails.md
     path: guardrails-bedrock-guardrails
   guardrails-cel:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -490,6 +526,9 @@ scenarios:
     page: documentation/llm/guardrails/google-model-armor.md
     path: guardrails-google-model-armor
   guardrails-moderation:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -515,6 +554,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/mcp/mcp-guardrails-processors.md
     path: guardrails-processors
   guardrails-regex:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -528,6 +570,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/prompt-guards.md
     path: guardrails-regex
   header-match-exact:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -535,6 +580,9 @@ scenarios:
     page: documentation/traffic-management/match/header.md
     path: header-match-exact
   header-match-regex:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -542,6 +590,9 @@ scenarios:
     page: documentation/traffic-management/match/header.md
     path: header-match-regex
   header-query:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -554,6 +605,9 @@ scenarios:
     page: reference/helm/_index.md
     path: helm-reference
   host-match:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -561,6 +615,9 @@ scenarios:
     page: documentation/traffic-management/match/host.md
     path: host-match
   host-redirect:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -568,7 +625,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/redirect/host.md
     path: host-redirect
   host-rewrite:
-    type: functional
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -576,6 +635,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/rewrite/host.md
     path: host-rewrite
   https-redirect:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -625,11 +687,17 @@ scenarios:
     source: agw-docs/pages/integrations/istio/ambient/ambient-egress.md
     path: istio-ambient-egress
   istio-ambient-ingress:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     source: agw-docs/pages/integrations/istio/ambient/ambient-ingress.md
     path: istio-ambient-ingress
   jaeger-traces:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -637,6 +705,9 @@ scenarios:
     source: agw-docs/pages/observability/traces/configs/jaeger.md
     path: jaeger-traces
   label:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -646,6 +717,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/route-delegation/label.md
     path: label
   listener-mtls:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -665,6 +739,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/alias.md
     path: llm-alias
   llm-api-keys:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -678,6 +755,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/api-keys.md
     path: llm-api-keys
   llm-client-curl:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -687,6 +767,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/curl.md
     path: llm-client-curl
   llm-client-openai-sdk:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -696,6 +779,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/openai-sdk.md
     path: llm-client-openai-sdk
   llm-client-opencode:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -705,6 +791,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/opencode.md
     path: llm-client-opencode
   llm-functions:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -734,6 +823,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/prompt-enrichment.md
     path: llm-prompt-enrichment
   llm-prompt-templates:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -747,6 +839,9 @@ scenarios:
     page: documentation/llm/prompt-templates.md
     path: llm-prompt-templates
   llm-rbac:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -773,6 +868,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/load-balancing.md
     path: load-balancing
   locality-aware-routing:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     source: agw-docs/pages/traffic-management/locality-aware-routing.md
@@ -794,6 +892,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/mcp/tool-access.md
     path: mcp-tool-access
   method-match:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -801,26 +902,41 @@ scenarios:
     page: documentation/traffic-management/match/method.md
     path: method-match
   migrate-backend-tls:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     page: documentation/migrate/examples/backend-tls.md
     path: migrate-backend-tls
   migrate-basic:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     page: documentation/migrate/examples/basic.md
     path: migrate-basic
   migrate-canary:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     page: documentation/migrate/examples/canary.md
     path: migrate-canary
   migrate-cors:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     page: documentation/migrate/examples/cors.md
     path: migrate-cors
   migrate-external-auth:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     page: documentation/migrate/examples/external-auth.md
@@ -829,11 +945,17 @@ scenarios:
     page: documentation/migrate/install/linux/_index.md
     path: migrate-install-linux
   migrate-rate-limiting:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     page: documentation/migrate/examples/rate-limiting.md
     path: migrate-rate-limiting
   migrate-ssl-redirect:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     page: documentation/migrate/examples/ssl-redirect.md
@@ -843,6 +965,9 @@ scenarios:
     page: documentation/llm/models/about.md
     path: models-about
   multi-level:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -856,6 +981,9 @@ scenarios:
     page: documentation/llm/inference/multiple-inference-pools.md
     path: multiple-inference-pools
   native-policies:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -873,6 +1001,9 @@ scenarios:
     page: documentation/operations/debug.md
     path: operations-debug
   path-match-exact:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -880,6 +1011,9 @@ scenarios:
     page: documentation/traffic-management/match/path.md
     path: path-match-exact
   path-match-prefix:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -887,6 +1021,9 @@ scenarios:
     page: documentation/traffic-management/match/path.md
     path: path-match-prefix
   path-match-regex:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -904,6 +1041,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/transformations/path-method.md
     path: path-method
   path-redirect-full:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -911,6 +1051,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/redirect/path.md
     path: path-redirect-full
   path-redirect-prefix:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -918,7 +1061,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/redirect/path.md
     path: path-redirect-prefix
   path-rewrite-full:
-    type: functional
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -926,7 +1071,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/rewrite/path.md
     path: path-rewrite-full
   path-rewrite-prefix:
-    type: functional
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -974,6 +1121,9 @@ scenarios:
     source: agw-docs/pages/security/backend-authn-gcp.md
     path: providers-gcp
   providers-multiple-endpoints:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1005,6 +1155,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/transformations/query.md
     path: query
   query-match:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1012,6 +1165,9 @@ scenarios:
     page: documentation/traffic-management/match/query.md
     path: query-match
   quickstart-llm:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1032,6 +1188,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/transformations/remove-header.md
     path: remove-header
   remove-request-header:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1049,6 +1208,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/header-control/early-request-header-modifier.md
     path: remove-reserved-header
   remove-response-header:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1076,6 +1238,9 @@ scenarios:
     source: agw-docs/pages/security/apikey-auth.md
     path: security-apikey
   set-request-header:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1083,6 +1248,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/header-control/request-header.md
     path: set-request-header
   set-response-header:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1090,6 +1258,9 @@ scenarios:
     source: agw-docs/pages/traffic-management/header-control/response-header.md
     path: set-response-header
   tcp-listener:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     source: agw-docs/pages/setup/listeners/tcp.md
@@ -1150,6 +1321,9 @@ scenarios:
     path: validate-skip
   # --- llm (documentation/llm/) ---
   budget-limits-apikey-auth:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1168,6 +1342,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/content-routing.md
     path: content-routing
   costs:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1223,6 +1400,9 @@ scenarios:
     page: documentation/llm/transformations.md
     path: llm-model-headers
   llm-observability:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1299,6 +1479,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/shared-connection-settings.md
     path: shared-connection-settings
   streaming-openai:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1308,6 +1491,9 @@ scenarios:
     page: documentation/llm/streaming.md
     path: streaming-openai
   virtual-keys-auth:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1319,6 +1505,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/virtual-keys.md
     path: virtual-keys-httpbun-test
   virtual-keys-ratelimit:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1401,6 +1590,9 @@ scenarios:
     source: agw-docs/pages/security/cors.md
     path: cors-in-agentgatewaypolicy
   cors-in-httproute:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1594,6 +1786,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/mcp/mcp-auth-entra.md
     path: setup-entra
   setup-keycloak:
+    type:
+    - schema
+    - functional
     needs:
     - helm-experimental
     source: agw-docs/pages/agentgateway/mcp/mcp-auth-keycloak.md
@@ -1650,6 +1845,9 @@ scenarios:
     source: agw-docs/pages/resiliency/timeouts/backend.md
     path: backend-timeouts
   connection-general:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1727,6 +1925,9 @@ scenarios:
     source: agw-docs/pages/resiliency/retry/per-try-timeout.md
     path: per-try-timeout-in-gatewaylistener
   per-try-timeout-in-httproute:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1754,6 +1955,9 @@ scenarios:
     source: agw-docs/pages/resiliency/retry/retry.md
     path: retry-in-gatewaylistener
   retry-in-httproute:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1781,6 +1985,9 @@ scenarios:
     source: agw-docs/pages/resiliency/timeouts/request.md
     path: timeout-in-gatewaylistener
   timeout-in-httproute:
+    type:
+    - schema
+    - functional
     needs:
     - install-experimental
     - gateway
@@ -1819,12 +2026,18 @@ scenarios:
     source: agw-docs/pages/security/access-logging.md
     path: access-logging
   admin-ui:
+    type:
+    - schema
+    - functional
     needs:
     - helm-standard
     - gateway
     source: agw-docs/pages/observability/ui.md
     path: ui-k8s
   capture:
+    type:
+    - schema
+    - functional
     needs:
     - helm-standard
     - gateway
@@ -1836,17 +2049,26 @@ scenarios:
     source: agw-docs/pages/observability/ui.md
     path: ui-k8s-capture
   control-plane-metrics:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     page: documentation/observability/metrics/control-plane.md
     path: control-plane-metrics
   nacks:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
     source: agw-docs/pages/observability/metrics/nacks.md
     path: nacks
   otel-stack:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1866,11 +2088,17 @@ scenarios:
     path: tracing
   # --- operations (documentation/operations/) ---
   uninstall:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     source: agw-docs/pages/operations/uninstall.md
     path: uninstall
   upgrade:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     source: agw-docs/pages/operations/upgrade.md
@@ -1904,6 +2132,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/integrations/web-uis-k8s/crewai.md
     path: crewai-k8s
   mcp-clients-k8s:
+    type:
+    - schema
+    - functional
     needs:
     - helm-standard
     - gateway
@@ -1948,6 +2179,9 @@ scenarios:
     source: agw-docs/pages/agentgateway/llm/providers/httpbun.md
     path: setup-httpbun-llm
   vllm-provider-setup:
+    type:
+    - schema
+    - functional
     needs:
     - helm-standard
     - gateway
@@ -1955,11 +2189,17 @@ scenarios:
     path: vllm-provider-setup
   # --- quickstart (documentation/quickstart/) ---
   httpbin:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     source: agw-docs/pages/agentgateway/quickstart/non-agentic-http.md
     path: install-httpbin
   install:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
   mcp:
@@ -1989,6 +2229,9 @@ scenarios:
     source: agw-docs/pages/setup/customize.md
     path: customize
   http-listener:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -1996,6 +2239,9 @@ scenarios:
     source: agw-docs/pages/setup/listeners/http.md
     path: http-listener
   https-listener:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -2003,6 +2249,9 @@ scenarios:
     source: agw-docs/pages/setup/listeners/https.md
     path: https-listener
   setup-gateway:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway
@@ -2023,6 +2272,9 @@ scenarios:
     needs:
     - helm-experimental
   install-httpbin:
+    type:
+    - schema
+    - functional
     needs:
     - install-standard
     - gateway

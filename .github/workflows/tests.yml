@@ -57,6 +57,14 @@ jobs:
       - name: Install Python dependencies
         run: pip install pyyaml jsonschema
 
+      # test_schema_check.py's core-kind tests skip without kubeconform. Pinned,
+      # so a kubeconform release cannot change this job's result.
+      - name: Install kubeconform
+        run: |
+          curl -sSfL https://github.com/yannh/kubeconform/releases/download/v0.8.0/kubeconform-linux-amd64.tar.gz \
+            | tar -xz -C "$RUNNER_TEMP" kubeconform
+          echo "KUBECONFORM=$RUNNER_TEMP/kubeconform" >> "$GITHUB_ENV"
+
       - name: Run unit tests
         env:
           # The real-repository half of the suite RAISES rather than skipping
