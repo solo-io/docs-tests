@@ -41,25 +41,25 @@ tags:
     only: true
     lead: ' '
 - paths: llm-api-keys-standalone
-  fingerprint: bbc0c8c3430c8a96
+  block: 1
+  fingerprint: 8998788fe5a1150d
   lang: yaml
-  lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd b39172da abc56510
+  lines: 358c4c15 f4a9035a 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd b39172da 8905bcef 901234de abc56510
   preview: cat <<EOF > config.yaml
   form:
     attr: paths="llm-api-keys-standalone"
     only: true
     lead: ' '
-  status: needs-update
 - paths: llm-api-keys-standalone
-  fingerprint: 3dd2976b39470b5b
+  block: 6
+  fingerprint: 9fc3ec3daa0f1d99
   lang: sh
-  lines: dc872770 67c5a3ac fcbb4765
+  lines: dc872770 67c5a3ac f0a2d406
   preview: curl -s http://localhost:4000/v1/chat/completions \
   form:
     attr: paths="llm-api-keys-standalone"
     only: true
     lead: ' '
-  status: needs-update
 hidden:
 - after:
     section: Configure your agentgateway proxy
@@ -213,9 +213,10 @@ hidden:
        echo "a replaced key file is picked up without a restart"
        {{< /doc-test >}}
 - after:
-    fingerprint: bbc0c8c3430c8a96
+    block: 1
+    fingerprint: 8998788fe5a1150d
     lang: yaml
-    lines: 358c4c15 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd b39172da abc56510
+    lines: 358c4c15 f4a9035a 3af99526 e01ccf75 ec4e7f27 6472803d 009395dd b39172da 8905bcef 901234de abc56510
     preview: cat <<EOF > config.yaml
   content: |2-
        {{< doc-test paths="llm-api-keys-standalone" >}}
@@ -224,15 +225,14 @@ hidden:
        stop_agw
        echo "inline key reaches the provider"
        {{< /doc-test >}}
-  status: needs-update
 - after:
-    fingerprint: 3dd2976b39470b5b
+    block: 6
+    fingerprint: 9fc3ec3daa0f1d99
     lang: sh
-    lines: dc872770 67c5a3ac fcbb4765
+    lines: dc872770 67c5a3ac f0a2d406
     preview: curl -s http://localhost:4000/v1/chat/completions \
   content: |2-
        {{< doc-test paths="llm-api-keys-standalone" >}}
        expect_key "sk-rotated-file-key"
        stop_agw
        {{< /doc-test >}}
-  status: needs-update

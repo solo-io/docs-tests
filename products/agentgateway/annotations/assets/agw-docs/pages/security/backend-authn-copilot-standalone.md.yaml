@@ -190,7 +190,7 @@ hidden:
     CODE=$(curl -s --max-time 15 -o copilot-notoken.txt -w '%{http_code}' http://127.0.0.1:3000/get)
     stop_gateway
     [ "$CODE" = "500" ] || { echo "FAIL: expected 500 with no token, got $CODE"; cat copilot-notoken.txt; exit 1; }
-    grep -q 'backend authentication failed' copilot-notoken.txt || {
+    grep -aFq 'backend authentication failed' copilot-notoken.txt || {
       echo "FAIL: the documented error message changed"; cat copilot-notoken.txt; exit 1; }
     echo "copilot backend authentication verified"
     {{< /doc-test >}}

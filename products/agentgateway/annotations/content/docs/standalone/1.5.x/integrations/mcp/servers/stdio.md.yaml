@@ -128,23 +128,23 @@ hidden:
     esac
     {{< /doc-test >}}
 - after:
-    fingerprint: 2c420ce37ec1b118
+    block: 0
+    fingerprint: 29d039889fcecf05
     lang: yaml
-    lines: 2c420ce3
-    preview: curl -L https://agentgateway.dev/examples/mcp-basic/config.yaml -o config.yaml
+    lines: 29d03988
+    preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.5.0/examp
   content: |2-
        {{< doc-test paths="mcp-stdio" >}}
        agentgateway -f config.yaml --validate-only
        {{< /doc-test >}}
-  status: needs-update
 tags:
 - paths: mcp-stdio
-  fingerprint: 2c420ce37ec1b118
+  block: 0
+  fingerprint: 29d039889fcecf05
   lang: yaml
-  lines: 2c420ce3
-  preview: curl -L https://agentgateway.dev/examples/mcp-basic/config.yaml -o config.yaml
+  lines: 29d03988
+  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.5.0/examp
   form:
     attr: paths="mcp-stdio"
     only: true
     lead: ' '
-  status: needs-update

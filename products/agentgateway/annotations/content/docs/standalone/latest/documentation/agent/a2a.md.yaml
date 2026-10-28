@@ -109,9 +109,10 @@ hidden:
        stop_gateway
        {{< /doc-test >}}
 - after:
-    fingerprint: f41c92eb6ab8c6b0
+    block: 0
+    fingerprint: 8d0170ba41c8e208
     lang: yaml
-    lines: 358c4c15 eb172b71 abc56510
+    lines: 358c4c15 4fd1eadd abc56510
     preview: cat <<EOF > config.yaml
   content: |2-
        {{< doc-test paths="a2a" >}}
@@ -138,7 +139,7 @@ hidden:
        }
 
        # Step 1's config.yaml embeds the published example; download the same file.
-       curl -fsSL https://agentgateway.dev/examples/traffic-a2a/config.yaml -o config.yaml
+       curl -fsSL https://raw.githubusercontent.com/agentgateway/agentgateway/v1.7.0/examples/traffic-a2a/config.yaml -o config.yaml
        agentgateway -f config.yaml --validate-only
        # Step 2 runs it in the foreground; run it in the background instead.
        start_gateway config.yaml
@@ -153,4 +154,3 @@ hidden:
        command -v uv >/dev/null
        rm -rf a2a-samples   # the next step clones into a fresh directory
        {{< /doc-test >}}
-  status: needs-update

@@ -248,24 +248,24 @@ hidden:
     esac
     {{< /doc-test >}}
 - after:
-    fingerprint: 14b21062e07dae96
+    block: 2
+    fingerprint: dc0285e321cd7cc4
     lang: yaml
-    lines: 14b21062
-    preview: curl -L https://agentgateway.dev/examples/mcp-multiplex/config.yaml -o config.ya
+    lines: dc0285e3
+    preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.5.0/examp
   content: |2-
        {{< doc-test paths="mcp-virtual" >}}
        # Step 1: the documented multiplex config downloads and is accepted
        agentgateway -f config.yaml --validate-only
        {{< /doc-test >}}
-  status: needs-update
 tags:
 - paths: mcp-virtual
-  fingerprint: 14b21062e07dae96
+  block: 2
+  fingerprint: dc0285e321cd7cc4
   lang: yaml
-  lines: 14b21062
-  preview: curl -L https://agentgateway.dev/examples/mcp-multiplex/config.yaml -o config.ya
+  lines: dc0285e3
+  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.5.0/examp
   form:
     attr: paths="mcp-virtual"
     only: true
     lead: ' '
-  status: needs-update

@@ -278,10 +278,11 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    fingerprint: 6f40656ce16a45f2
+    block: 19
+    fingerprint: 433adba273ad3fdf
     lang: ''
-    lines: 6f40656c
-    preview: warn budget API key budget exceeded api_key="team-b" budget="daily-tokens" used=
+    lines: 433adba2
+    preview: warn budget API key budget exceeded api_key="team-b" budget="lifetime-tokens" us
   content: |-
     {{< doc-test paths="apikey-budgets" >}}
     sleep 2
@@ -296,7 +297,7 @@ hidden:
       expect:
         statusCode: 200
         bodyJsonPath:
-          - path: "$.budgets[?(@.name=='daily-tokens')].usage.exceeded"
+          - path: "$.budgets[?(@.name=='lifetime-tokens')].usage.exceeded"
             comparator: equals
             value: true
 
@@ -320,4 +321,3 @@ hidden:
         statusCode: 200
     EOF
     {{< /doc-test >}}
-  status: needs-update
