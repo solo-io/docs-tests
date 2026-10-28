@@ -1,0 +1,126 @@
+format: 1
+source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/continue.md
+blocks:
+- 6e34bfca60837bbb yaml
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="llm-client-continue" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Config file tab's config is accepted, and serves LLM traffic on port 3000
+    #     (run against a local mock LLM instead of OpenAI).
+    #   * The request that Continue sends when configured as the page says: Continue's
+    #     `openai` provider posts to `<apiBase>/chat/completions`
+    #     (http://localhost:3000/v1/chat/completions) with the configured `model`. It
+    #     returns 200 and a chat completion for the requested model.
+    #   * "Verify the connection": the request reaches agentgateway, shown by an
+    #     agentgateway log entry for that path with http.status=200.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Continue itself - it is a GUI app that cannot run in CI, so this test emulates
+    #     the request it sends. The settings steps are UI-only.
+    #   * Editing ~/.continue/config.yaml - it would change the runner's home directory,
+    #     and the file only matters to the Continue extension.
+    #   * Streaming replies - the local mock LLM does not stream.
+    #   * The UI tab - browser-only steps.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    AGW_LOG=/tmp/doc-test-continue-agw.log
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > "$AGW_LOG" 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat "$AGW_LOG"; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    # The Config file tab's agentgateway config (shown without a heredoc), restated.
+    cat <<'EOF' > continue-config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    llm:
+      port: 3000
+      models:
+      - name: "*"
+        provider: openAI
+        params:
+          apiKey: "$OPENAI_API_KEY"
+    EOF
+    agentgateway -f continue-config.yaml --validate-only
+    to_mock continue-config.yaml continue-config-mock.yaml
+    start_agw continue-config-mock.yaml
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 6e34bfca60837bbb
+    lang: yaml
+    lines: dfb4fab7 4b5feab8 a04604c3 e01ccf75 d3d1dcd1 91030a0b 6d88d930 d741b5c5
+    preview: 'name: agentgateway'
+  content: |-
+    {{< doc-test paths="llm-client-continue" >}}
+    # Emulates the request that Continue sends with the setting above, because Continue is
+    # a GUI app that cannot run in CI.
+    YAMLTest -f - <<'EOF'
+    - name: the request Continue sends returns a chat completion through port 3000
+      retries: 3
+      http:
+        url: "http://localhost:3000"
+        path: /v1/chat/completions
+        method: POST
+        headers:
+          content-type: application/json
+        body: |
+          {"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello from Continue"}]}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.object"
+            comparator: equals
+            value: chat.completion
+          - path: "$.model"
+            comparator: equals
+            value: gpt-4o-mini
+          - path: "$.choices[0].message.role"
+            comparator: equals
+            value: assistant
+    EOF
+    # "Verify the connection": the request went through agentgateway.
+    found=""
+    for _ in $(seq 1 10); do
+      if awk '/http.path=\/v1\/chat\/completions/ && /http.status=200/ {f=1} END {exit !f}' "$AGW_LOG"; then found=yes; break; fi
+      sleep 1
+    done
+    [ -n "$found" ] || { echo "FAIL: no http.path=/v1/chat/completions entry with http.status=200 in the agentgateway log"; tail -n 20 "$AGW_LOG"; exit 1; }
+    echo "ok: the agentgateway log shows the /v1/chat/completions request with http.status=200"
+    stop_agw
+    rm -f continue-config.yaml continue-config-mock.yaml
+    {{< /doc-test >}}

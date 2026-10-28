@@ -135,8 +135,6 @@ skip:
 - page: integrations/mcp/clients/opencode.md
 - page: integrations/mcp/clients/vscode.md
 - page: integrations/netbird.md
-- page: integrations/llm/clients/continue.md
-- page: integrations/llm/clients/cursor.md
 # Needs AKS, Workload Identity and Azure Monitor; the page carries test: skip.
 - page: integrations/llm/observability/azure-monitor.md
 scenarios:
@@ -339,12 +337,18 @@ scenarios:
     - functional
     source: agw-docs/pages/agentgateway/integrations/llm-clients/codex.md
     path: codex
+  llm-client-continue:
+    source: agw-docs/pages/agentgateway/integrations/llm-clients/continue.md
+    path: llm-client-continue
   llm-client-curl:
     type:
     - schema
     - functional
     source: agw-docs/pages/agentgateway/integrations/llm-clients/curl.md
     path: llm-client-curl
+  llm-client-cursor:
+    source: agw-docs/pages/agentgateway/integrations/llm-clients/cursor.md
+    path: llm-client-cursor
   llm-client-openai-sdk:
     type:
     - schema
