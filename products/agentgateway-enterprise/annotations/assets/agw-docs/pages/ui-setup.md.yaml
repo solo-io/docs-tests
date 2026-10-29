@@ -1,0 +1,40 @@
+format: 1
+source: assets/agw-docs/pages/ui-setup.md
+blocks:
+- 32352802a372cd3c sh
+- 5fba5f3bf561451f sh
+- 15d0eb531f2179ad
+- fc81a130b8fa922f sh
+- 5fba5f3bf561451f sh
+- d0f93d01a0df9ae9
+- 3241b92b3dbee908 yaml
+- 5fba5f3bf561451f sh
+- 544b3339c065d27a console
+- 3500bc45f649e4cb console
+- 2f6429b98181686d sh
+tags:
+- paths: install-ui
+  block: 3
+  fingerprint: fc81a130b8fa922f
+  lang: sh
+  lines: 2d065637 9d671c51 736e1ed1 f7ad5ab4 7ec6de79
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="install-ui"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: fc81a130b8fa922f
+    lang: sh
+    lines: 2d065637 9d671c51 736e1ed1 f7ad5ab4 7ec6de79
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="install-ui" >}}
+       # Wait for the UI and its ClickHouse database before a page uses the UI.
+       kubectl rollout status deployment/enterprise-agentgateway-ui -n agentgateway-system --timeout=600s
+       kubectl rollout status statefulset/enterprise-agentgateway-clickhouse-shard0 -n agentgateway-system --timeout=600s
+       kubectl rollout status deployment/enterprise-agentgateway-ui-k8sobjects-collector -n agentgateway-system --timeout=600s
+       {{< /doc-test >}}

@@ -1,0 +1,197 @@
+format: 1
+source: assets/agw-docs/pages/security/ui-access-control/about.md
+blocks:
+- 9eeaea702e7e8b47 yaml
+- 15d4f090aa06ef6a yaml
+- bf643dcbf6796a2e yaml
+- 0795d46ff84aabca yaml
+- 961098698a80cafd yaml
+hidden:
+- after:
+    block: 0
+    fingerprint: 9eeaea702e7e8b47
+    lang: yaml
+    lines: 00c69c65 d458a0a9 8c8c4228 c8287c69 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 8f1ec67d d1c8af1c 233e460f 3b5f91f3 65e8ed0b
+    preview: 'apiVersion: enterpriseagentgateway.solo.io/v1alpha1'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="ui-access-control-samples" >}}
+    # ============================================================================
+    # Doc test coverage for this page (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Each complete sample policy (Administrators, Application team, FinOps,
+    #     Team leads) applies, and the UI reports it as ACCEPTED True.
+    #   * The Principal kinds fragment is valid in a policy: the test wraps it in a
+    #     grant and checks that the policy is accepted.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The access table (what each user can do): it needs an IdP with these
+    #     groups. setup.md tests policy filtering end to end with the built-in IdP.
+    #
+    # The UI writes the ACCEPTED status only in fine-grained mode, so turn it on first.
+    helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} \
+      --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} \
+      --version {{< reuse "agw-docs/versions/helm-version-flag.md" >}} \
+      --reset-then-reuse-values \
+      --set ui.rbac.mode=fine-grained
+    kubectl rollout status deployment/enterprise-agentgateway-ui -n agentgateway-system --timeout=600s
+    # wait_accepted <name>: poll until the policy shows ACCEPTED True.
+    wait_accepted() {
+      local got=""
+      for _ in $(seq 1 60); do
+        got="$(kubectl get enterpriseagentgatewayrbacpolicy "$1" -n agentgateway-system \
+          -o jsonpath='{.status.conditions[?(@.type=="Accepted")].status} {.status.conditions[?(@.type=="Accepted")].reason}')"
+        [ "$got" = "True Accepted" ] && return 0
+        sleep 2
+      done
+      echo "timed out waiting for $1 to be accepted (last: '$got')"
+      kubectl describe enterpriseagentgatewayrbacpolicy "$1" -n agentgateway-system
+      return 1
+    }
+    kubectl apply -f- <<'EOF'
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayRBACPolicy
+    metadata:
+      name: admins
+      namespace: agentgateway-system
+    spec:
+      principals:
+      - all:
+        - attribute: groups
+          values: [platform-admins]
+      grants:
+      - name: everything
+        resource: "agentgateway:*"
+        accessLevel: manage
+    EOF
+    wait_accepted admins
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 15d4f090aa06ef6a
+    lang: yaml
+    lines: 00c69c65 d458a0a9 8c8c4228 9fece684 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb f394fda4 d1c8af1c 8e06efdc a935af65 680e93de d6212102 90efcf47 ecff1b88 f394fda4
+    preview: 'apiVersion: enterpriseagentgateway.solo.io/v1alpha1'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="ui-access-control-samples" >}}
+    kubectl apply -f- <<'EOF'
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayRBACPolicy
+    metadata:
+      name: team-a-routes
+      namespace: agentgateway-system
+    spec:
+      principals:
+      - all:
+        - attribute: groups
+          values: [team-a]
+      grants:
+      - name: routes
+        resource: agentgateway:httproutes
+        accessLevel: view
+        constraints:
+        - all:
+          - attribute: namespace
+            values: [team-a]
+    EOF
+    wait_accepted team-a-routes
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: bf643dcbf6796a2e
+    lang: yaml
+    lines: 00c69c65 d458a0a9 8c8c4228 ff755410 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 88fac4cd d1c8af1c 596dfd1d 54a2c0f3 65e8ed0b e38c5ed2 582b8461 680e93de
+    preview: 'apiVersion: enterpriseagentgateway.solo.io/v1alpha1'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="ui-access-control-samples" >}}
+    kubectl apply -f- <<'EOF'
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayRBACPolicy
+    metadata:
+      name: finops
+      namespace: agentgateway-system
+    spec:
+      principals:
+      - all:
+        - attribute: groups
+          values: [finops]
+      grants:
+      - name: budgets
+        resource: agentgateway:budgets
+        accessLevel: manage
+      - name: budget-entries
+        resource: agentgateway:budgets:entries
+        accessLevel: view
+    EOF
+    wait_accepted finops
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 0795d46ff84aabca
+    lang: yaml
+    lines: 00c69c65 d458a0a9 8c8c4228 4b022c7d 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 3e69a81c d1c8af1c 31c77ae3 7cf07a71 65e8ed0b d6212102 90efcf47 ecff1b88 f394fda4
+    preview: 'apiVersion: enterpriseagentgateway.solo.io/v1alpha1'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="ui-access-control-samples" >}}
+    kubectl apply -f- <<'EOF'
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayRBACPolicy
+    metadata:
+      name: team-a-keys
+      namespace: agentgateway-system
+    spec:
+      principals:
+      - all:
+        - attribute: groups
+          values: [team-a-leads]
+      grants:
+      - name: keys
+        resource: agentgateway:virtual-keys
+        accessLevel: manage
+        constraints:
+        - all:
+          - attribute: namespace
+            values: [team-a]
+    EOF
+    wait_accepted team-a-keys
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 961098698a80cafd
+    lang: yaml
+    lines: b430e67f 017e9d18 55399461 b0d8f8a8 ae316fc5 b820e4fb f5b0e17b 54ac8964 55399461 08332415 b820e4fb f394fda4
+    preview: 'principals:'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="ui-access-control-samples" >}}
+    # The principals fragment in a policy with one grant.
+    kubectl apply -f- <<'EOF'
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayRBACPolicy
+    metadata:
+      name: principal-kinds
+      namespace: agentgateway-system
+    spec:
+      principals:
+      - all:                  # One user.
+        - attribute: user
+          values: [alice]
+      - all:                  # A member of any listed group.
+        - attribute: groups
+          values: [team-a, team-b]
+      - all:                  # A user who is also a member of a group.
+        - attribute: user
+          values: [bob]
+        - attribute: groups
+          values: [team-a]
+      grants:
+      - name: routes
+        resource: agentgateway:httproutes
+        accessLevel: view
+    EOF
+    wait_accepted principal-kinds
+    kubectl get enterpriseagentgatewayrbacpolicies -A
+    {{< /doc-test >}}

@@ -1,0 +1,408 @@
+format: 1
+source: assets/agw-docs/pages/security/ui-access-control/setup.md
+blocks:
+- e79f54593b6790eb sh
+- d933d5cd663ba8df yaml
+- afc1921048333f93 yaml
+- 4b914202e942b161 sh
+- c2e0ae940fe197c1 yaml
+- 2655be1c7779a923 yaml
+- 6bd4429e3ebcfe40 sh
+- a5f6610832cdbdb0 sh
+- 814df3463a797227 sh
+tags:
+- paths: ui-access-control
+  block: 0
+  fingerprint: e79f54593b6790eb
+  lang: sh
+  lines: e79f5459
+  preview: kubectl get crd enterpriseagentgatewayrbacpolicies.enterpriseagentgateway.solo.i
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+- paths: ui-access-control
+  block: 3
+  fingerprint: 4b914202e942b161
+  lang: sh
+  lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 666811ac
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+- paths: ui-access-control
+  block: 4
+  fingerprint: c2e0ae940fe197c1
+  lang: yaml
+  lines: 16c71da1 00c69c65 d458a0a9 8c8c4228 c8287c69 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 8f1ec67d d1c8af1c 233e460f 3b5f91f3 65e8ed0b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+- paths: ui-access-control
+  block: 5
+  fingerprint: 2655be1c7779a923
+  lang: yaml
+  lines: 16c71da1 00c69c65 d458a0a9 8c8c4228 3fd5905a 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 31ffa78d d1c8af1c 8e06efdc a935af65 680e93de d6212102 90efcf47 ecff1b88 f394fda4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+- paths: ui-access-control
+  block: 6
+  fingerprint: 6bd4429e3ebcfe40
+  lang: sh
+  lines: 6bd4429e
+  preview: kubectl get enterpriseagentgatewayrbacpolicies -A
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+- paths: ui-access-control
+  block: 8
+  fingerprint: 814df3463a797227
+  lang: sh
+  lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 3a43a0c8
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: b638ec201705fbe5
+    occurrence: 0
+    words: 6b86b273 1e142e62 d9c0d341 eb4e3800 21a355f1 5e82ea9e 0695b563 b9776d7d 288965a1 d3ef7de5 10c22bcf b9776d7d b7595e2a aa9e9b5c 6ee0eb49 75a288c0 b9776d7d d3ef7de5 fa42bed0 a0af9f86 caf9f906 1e142e62 d3ef7de5 8fb6d5f3
+    block_before: null
+  content: |2-
+       {{< doc-test paths="ui-access-control" >}}
+       # ============================================================================
+       # Doc test coverage for this guide (these comments are not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * The EnterpriseAgentgatewayRBACPolicy CRD is installed by the install steps.
+       #   * The page's subjectMapping and roleMapping values, applied with the page's
+       #     `helm upgrade --reset-then-reuse-values` command, reach the UI: the RBAC
+       #     ConfigMap holds the roleMapper, roleMappings, and defaultRoles, the UI
+       #     container gets the user and groups claims, and the UI pod becomes ready.
+       #   * Coarse mode: a user that maps to no group gets global.Reader from
+       #     defaultRoles, sees the HTTPRoutes in every namespace, and is denied a write.
+       #   * The `admins` and `developers-routes` policies apply and show ACCEPTED True,
+       #     and a policy with a misspelled resource key shows ACCEPTED False with
+       #     REASON UnknownResource.
+       #   * Fine-grained mode: the page's `helm upgrade --set ui.rbac.mode=fine-grained`
+       #     reaches the UI, HTTPRoutes are then filtered by policy (a user that
+       #     matches no policy sees none, a namespace constraint limits the list to
+       #     team-a), and the gateways list still works under the global role.
+       #
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * A real OIDC IdP (ui.oidc.issuer) and the group-based principals of the
+       #     page's policies: CI has no IdP. The functional checks use the UI's
+       #     built-in IdP, whose token always identifies the user by `sub` ("admin")
+       #     and carries `Groups`, not `groups`, so under the page's values it maps to
+       #     defaultRoles only and matches policies only by user. A hidden policy
+       #     with the same constraint as `developers-routes` stands in for the group.
+       #   * What the UI shows (pages, buttons, warnings): the checks call the UI
+       #     backend's gRPC-Web API, which is what the UI pages read.
+       #   * Budgets and virtual keys: they need cost management and an
+       #     apiKeyAuthentication policy.
+       #
+       # The ACCEPTED column is written by the UI only in fine-grained mode, so the
+       # status checks run after the fine-grained upgrade.
+       UIRBAC_DIR="$(mktemp -d)"
+       cat > "$UIRBAC_DIR/grpcweb.py" <<'PY'
+       # grpcweb.py <full method> <token>: call the UI backend with an empty request.
+       # Prints grpc-status=<code> grpc-message=<text>, then each string in the reply.
+       import os, re, struct, sys, urllib.parse, urllib.request
+       req = urllib.request.Request(os.environ["UI_URL"] + "/" + sys.argv[1], data=b"\x00\x00\x00\x00\x00", method="POST")
+       req.add_header("Content-Type", "application/grpc-web+proto")
+       req.add_header("X-Grpc-Web", "1")
+       req.add_header("Authorization", "Bearer " + sys.argv[2])
+       resp = urllib.request.urlopen(req, timeout=30)
+       data = resp.read()
+       # An error reply carries its status in the HTTP headers (trailers-only); a
+       # normal reply carries it in a trailer frame after the message.
+       status, message, payload, i = resp.headers.get("Grpc-Status"), urllib.parse.unquote(resp.headers.get("Grpc-Message", "")), b"", 0
+       while i + 5 <= len(data):
+           n = struct.unpack(">I", data[i + 1:i + 5])[0]
+           chunk = data[i + 5:i + 5 + n]
+           if data[i] & 0x80:
+               for line in chunk.decode(errors="replace").split("\r\n"):
+                   key, _, value = line.partition(":")
+                   if key.lower() == "grpc-status":
+                       status = value.strip()
+                   if key.lower() == "grpc-message":
+                       message = urllib.parse.unquote(value.strip())
+           else:
+               payload += chunk
+           i += 5 + n
+       print(f"grpc-status={status} grpc-message={message}")
+       for s in re.findall(rb"[\x20-\x7e]{3,}", payload):
+           print(s.decode())
+       PY
+       # ui_connect: after an upgrade, wait for the UI pod, then get a built-in IdP
+       # token that the new pod accepts. The UI is reached through the
+       # agentgateway-proxy Gateway from the install steps, as on the Expose the UI page.
+       ui_connect() {
+         kubectl rollout status deployment/enterprise-agentgateway-ui -n agentgateway-system --timeout=600s
+         for _ in $(seq 1 60); do
+           UI_TOKEN="$(curl -s -X POST "$UI_URL/api/autoauth/token" -d '{"user_type":"admin"}' \
+             | python3 -c 'import json, sys; print(json.load(sys.stdin)["access_token"])' 2>/dev/null || true)"
+           if [ -n "$UI_TOKEN" ] && ui_call rpc.common.solo.io.UserService/GetCurrentUser 2>/dev/null | grep -q '^grpc-status=0 '; then
+             return 0
+           fi
+           sleep 3
+         done
+         echo "timed out waiting for the UI at $UI_URL"
+         return 1
+       }
+       ui_call() { python3 "$UIRBAC_DIR/grpcweb.py" "$1" "$UI_TOKEN"; }
+       # route_names: the test routes the caller can see in the HTTPRoutes list, sorted.
+       # Prints the error instead when the call fails, so an empty list never passes by accident.
+       route_names() {
+         local out
+         out="$(ui_call rpc.agentgateway.solo.io.GatewayAPI/ListHTTPRouteSummaries 2>&1)"
+         if ! grep -q '^grpc-status=0 ' <<<"$out"; then
+           head -1 <<<"$out"
+           return 0
+         fi
+         grep -oE 'uirbac-route-[a-z]+' <<<"$out" | sort -u | paste -sd' ' -
+       }
+       # wait_routes <want>: poll until route_names returns the list, such as "uirbac-route-a uirbac-route-b".
+       wait_routes() {
+         for _ in $(seq 1 60); do
+           [ "$(route_names)" = "$1" ] && return 0
+           sleep 3
+         done
+         echo "timed out waiting for HTTPRoutes '$1' (last: '$(route_names)')"
+         return 1
+       }
+       # Route to the UI through the agentgateway-proxy Gateway.
+       kubectl apply -f - <<EOF
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: HTTPRoute
+       metadata:
+         name: ui
+         namespace: agentgateway-system
+       spec:
+         parentRefs:
+         - name: agentgateway-proxy
+           namespace: agentgateway-system
+         rules:
+         - backendRefs:
+           - name: enterprise-agentgateway-ui
+             port: 80
+       EOF
+       export UI_URL="http://${INGRESS_GW_ADDRESS}"
+       # Two HTTPRoutes to list, one per team namespace.
+       for ns in team-a team-b; do
+         kubectl create namespace "$ns" --dry-run=client -o yaml | kubectl apply -f -
+         kubectl apply -f - <<EOF
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: HTTPRoute
+       metadata:
+         name: uirbac-route-${ns#team-}
+         namespace: $ns
+       spec:
+         rules:
+         - backendRefs:
+           - name: backend
+             port: 8080
+       EOF
+       done
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: d933d5cd663ba8df
+    lang: yaml
+    lines: 6cda733c 84c31baf d9502b78 a743b36d 7697cedf
+    preview: 'ui:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="ui-access-control" >}}
+       # The values from this step, saved for the next steps' file.
+       cat > "$UIRBAC_DIR/subject-mapping.yaml" <<'EOF'
+       ui:
+         rbac:
+           subjectMapping:
+             userClaim: email
+             groupsClaim: groups
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: afc1921048333f93
+    lang: yaml
+    lines: 6cda733c 84c31baf ab71c7b8 21c7ae94 103ed1b8 fec3eeff 5d0ec020 aaa4f050 16da5de3 6bc2d087
+    preview: 'ui:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="ui-access-control" >}}
+       # The values from this step, merged with the previous step's into ui-rbac-values.yaml.
+       cat > "$UIRBAC_DIR/role-mapping.yaml" <<'EOF'
+       ui:
+         rbac:
+           roleMapping:
+             roleMapper: "has(claims.groups) ? claims.groups.transformList(i, v, v in rolesMap, rolesMap[v]) : []"
+             roleMappings:
+               platform-admins: global.Admin
+               finops: global.Writer
+               developers: global.Reader
+             defaultRoles:
+             - global.Reader
+       EOF
+       python3 - "$UIRBAC_DIR" <<'PY'
+       import sys, yaml
+       d = sys.argv[1]
+       values = yaml.safe_load(open(d + "/subject-mapping.yaml"))
+       values["ui"]["rbac"].update(yaml.safe_load(open(d + "/role-mapping.yaml"))["ui"]["rbac"])
+       yaml.safe_dump(values, open("ui-rbac-values.yaml", "w"))
+       PY
+       cat ui-rbac-values.yaml
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 4b914202e942b161
+    lang: sh
+    lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 666811ac
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="ui-access-control" >}}
+       # The UI pod is ready, and the values reached the RBAC ConfigMap and the UI container.
+       ui_connect
+       kubectl get configmap enterprise-agentgateway-ui-rbac-config -n agentgateway-system \
+         -o jsonpath='{.data.config}' > "$UIRBAC_DIR/rbac-config.json"
+       python3 - "$UIRBAC_DIR/rbac-config.json" <<'PY'
+       import json, sys
+       c = json.load(open(sys.argv[1]))
+       assert c["roleMapper"] == "has(claims.groups) ? claims.groups.transformList(i, v, v in rolesMap, rolesMap[v]) : []", c
+       for group, role in {"platform-admins": "global.Admin", "finops": "global.Writer", "developers": "global.Reader"}.items():
+           assert c["roleMappings"].get(group) == role, c
+       assert c["defaultRoles"] == ["global.Reader"], c
+       PY
+       helm get values enterprise-agentgateway -n agentgateway-system -o json \
+         | python3 -c 'import json, sys; m = json.load(sys.stdin)["ui"]["rbac"]["subjectMapping"]; assert m == {"userClaim": "email", "groupsClaim": "groups"}, m'
+       kubectl get deployment enterprise-agentgateway-ui -n agentgateway-system -o json > "$UIRBAC_DIR/ui-deploy.json"
+       python3 - "$UIRBAC_DIR/ui-deploy.json" <<'PY'
+       import json, sys
+       env = {e["name"]: e.get("value") for c in json.load(open(sys.argv[1]))["spec"]["template"]["spec"]["containers"] for e in c.get("env", [])}
+       assert env["MANAGEMENT_RBAC_MODE"] == "coarse", env.get("MANAGEMENT_RBAC_MODE")
+       assert env["MANAGEMENT_RBAC_GROUPS_CLAIM"] == "groups", env.get("MANAGEMENT_RBAC_GROUPS_CLAIM")
+       PY
+       # Coarse mode: the built-in IdP token has no `groups` claim, so the user gets
+       # only global.Reader from defaultRoles. A reader sees the HTTPRoutes in every
+       # namespace and cannot write.
+       out="$(ui_call rpc.common.solo.io.UserService/GetCurrentUser)"
+       echo "$out"
+       grep -q '^grpc-status=0 ' <<<"$out"
+       test "$(grep -oE 'global\.[A-Za-z]+' <<<"$out" | sort -u | paste -sd' ' -)" = "global.Reader"
+       wait_routes "uirbac-route-a uirbac-route-b"
+       out="$(ui_call rpc.agentgateway.solo.io.AgentgatewayCostAPI/DeleteBudget)"
+       echo "$out"
+       grep -q '^grpc-status=7 .*not allowed to call /rpc.agentgateway.solo.io.AgentgatewayCostAPI/DeleteBudget' <<<"$out"
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: a5f6610832cdbdb0
+    lang: sh
+    lines: a5f66108
+    preview: kubectl describe enterpriseagentgatewayrbacpolicy <name> -n <namespace>
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="ui-access-control" >}}
+       # A policy with a misspelled resource key, for the REASON check after the
+       # fine-grained upgrade.
+       kubectl apply -f- <<EOF
+       apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+       kind: EnterpriseAgentgatewayRBACPolicy
+       metadata:
+         name: misspelled-resource
+         namespace: agentgateway-system
+       spec:
+         principals:
+         - all:
+           - attribute: groups
+             values: [developers]
+         grants:
+         - name: routes
+           resource: agentgateway:httproute
+           accessLevel: view
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 814df3463a797227
+    lang: sh
+    lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 3a43a0c8
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="ui-access-control" >}}
+       # The UI pod is ready in fine-grained mode, and the coarse-mode values are kept.
+       ui_connect
+       kubectl get deployment enterprise-agentgateway-ui -n agentgateway-system -o json > "$UIRBAC_DIR/ui-deploy.json"
+       python3 - "$UIRBAC_DIR/ui-deploy.json" <<'PY'
+       import json, sys
+       env = {e["name"]: e.get("value") for c in json.load(open(sys.argv[1]))["spec"]["template"]["spec"]["containers"] for e in c.get("env", [])}
+       assert env["MANAGEMENT_RBAC_MODE"] == "fine-grained", env.get("MANAGEMENT_RBAC_MODE")
+       assert env["MANAGEMENT_RBAC_GROUPS_CLAIM"] == "groups", env.get("MANAGEMENT_RBAC_GROUPS_CLAIM")
+       PY
+       kubectl get configmap enterprise-agentgateway-ui-rbac-config -n agentgateway-system -o jsonpath='{.data.config}' | grep -q '"platform-admins":"global.Admin"'
+       # policy_status <name>: the ACCEPTED and REASON columns of a policy.
+       policy_status() {
+         kubectl get enterpriseagentgatewayrbacpolicy "$1" -n agentgateway-system \
+           -o jsonpath='{.status.conditions[?(@.type=="Accepted")].status} {.status.conditions[?(@.type=="Accepted")].reason}'
+       }
+       # wait_status <name> <ACCEPTED> <REASON>
+       wait_status() {
+         for _ in $(seq 1 60); do
+           [ "$(policy_status "$1")" = "$2 $3" ] && return 0
+           sleep 2
+         done
+         echo "timed out waiting for $1 to show '$2 $3' (last: '$(policy_status "$1")')"
+         return 1
+       }
+       # Step 3: valid policies show ACCEPTED True; the misspelled one shows UnknownResource.
+       wait_status admins True Accepted
+       wait_status developers-routes True Accepted
+       wait_status misspelled-resource False UnknownResource
+       kubectl get enterpriseagentgatewayrbacpolicies -A | tee "$UIRBAC_DIR/policies.txt"
+       head -1 "$UIRBAC_DIR/policies.txt" | grep -qE '^NAMESPACE +NAME +ACCEPTED +REASON +AGE$'
+       grep -qE '^agentgateway-system +misspelled-resource +False +UnknownResource ' "$UIRBAC_DIR/policies.txt"
+       kubectl describe enterpriseagentgatewayrbacpolicy misspelled-resource -n agentgateway-system \
+         | grep -q 'references unknown resource "agentgateway:httproute"'
+       # Fine-grained mode: the built-in IdP user matches no policy, so it sees no
+       # HTTPRoutes, even though it saw both in coarse mode. The gateways list is
+       # not covered by policies, so global.Reader still allows it.
+       wait_routes ""
+       ui_call rpc.agentgateway.solo.io.GatewayAPI/ListGatewaySummaries | grep -q '^grpc-status=0 '
+       # The same grant as developers-routes, for the built-in IdP user, which a
+       # policy can match only by user (`sub`, "admin"): only the team-a HTTPRoute.
+       kubectl apply -f- <<EOF
+       apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+       kind: EnterpriseAgentgatewayRBACPolicy
+       metadata:
+         name: builtin-user-routes
+         namespace: agentgateway-system
+       spec:
+         principals:
+         - all:
+           - attribute: user
+             values: [admin]
+         grants:
+         - name: routes
+           resource: agentgateway:httproutes
+           accessLevel: view
+           constraints:
+           - all:
+             - attribute: namespace
+               values: [team-a]
+       EOF
+       wait_status builtin-user-routes True Accepted
+       wait_routes "uirbac-route-a"
+       {{< /doc-test >}}

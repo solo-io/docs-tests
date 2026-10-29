@@ -1,0 +1,320 @@
+format: 1
+source: assets/agw-docs/pages/standalone/ui-access-control/setup.md
+blocks:
+- 9426b9aa0d196592 yaml
+- ac0daf49b20f2004 sh
+- 69dfde2bf7b35179 yaml
+- a07688b113fc1021 yaml
+- 288c4af02a951261 sh
+- 90bc698625713d9f console
+- 03c7b3490eef8365 sh
+- 162ea3ca5a4a4756 json
+- 5813f3b096b61395 sh
+tags:
+- paths: ui-access-control
+  block: 1
+  fingerprint: ac0daf49b20f2004
+  lang: sh
+  lines: ac0daf49
+  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+- paths: ui-access-control
+  block: 4
+  fingerprint: 288c4af02a951261
+  lang: sh
+  lines: 288c4af0
+  preview: agentgateway --validate-only -f config.yaml
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+- paths: ui-access-control
+  block: 6
+  fingerprint: 03c7b3490eef8365
+  lang: sh
+  lines: 54e9831d 694915c0
+  preview: curl -s http://localhost:4001/api/permissions \
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+- paths: ui-access-control
+  block: 8
+  fingerprint: 5813f3b096b61395
+  lang: sh
+  lines: 99eaaa56 694915c0
+  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config \
+  form:
+    attr: paths="ui-access-control"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: a42da07e983cdbf3
+    occurrence: 0
+    words: d4735e3a d05aa2a1 c0cafcf0 8e7fc023 bb0347a4 9f584196 ed4561f6 b9776d7d d3ef7de5 b8d31e85 b9776d7d 8c6976e5 d80c9bf9 03c5f9bb 49960de5 d4c999ae a7e2d26e 37a8eec1 2552b1c0 961eb436 254bb97b 97a5e41b 663ea1bf b9776d7d 8c6976e5 d80c9bf9 a1d98908 bb0347a4 9f584196 a3b142af 2ad8a704 663ea1bf ec3915f5 a0561fd6 935f6831 ca978112 823412d1 12ea12ea e4b3e9a6 bb0347a4 762069bc
+    block_before: null
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Coarse mode with the default (optional) jwtAuth lets a request without
+    #     credentials read the raw config, and `mode: strict` blocks it.
+    #   * In coarse mode, any authenticated user can read the raw config.
+    #   * The page's `rbac` section and `config.standardAttributes.user` pass
+    #     `agentgateway --validate-only`, and the running gateway reloads them.
+    #   * In fine-grained mode, /api/permissions returns the self-service grants for
+    #     a member of `developers`, /api/config returns 403 "management access
+    #     denied" for that user, and a member of `platform-admins` keeps access.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The UI tab steps and what the UI shows (menus, buttons, labels): they need
+    #     a browser session. The REST API checks cover the same grants.
+    #   * A real IdP: the test signs its own JWTs with a local key, because the
+    #     policies only read the claims.
+    #
+    # Harness: runs the enterprise image in Docker. `agentgateway` is a wrapper
+    # around `docker run`, so the page's `agentgateway --validate-only` step runs
+    # the same binary.
+    AGW_IMAGE="${AGW_ENTERPRISE_IMAGE:-us-docker.pkg.dev/solo-public/enterprise-agentgateway/agentgateway-enterprise:2026.10.1}"
+    export ENTERPRISE_AGENTGATEWAY_LICENSE_KEY="${ENTERPRISE_AGENTGATEWAY_LICENSE_KEY:-${AGENTGATEWAY_LICENSE_KEY:-}}"
+    UIRBAC_DIR="$(mktemp -d)"
+    cd "$UIRBAC_DIR"
+    python3 -m venv .venv
+    .venv/bin/pip install -q 'pyjwt[crypto]'
+    cat > mint.py <<'PY'
+    import json, os, sys, time
+    import jwt
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import rsa
+    if not os.path.exists("key.pem"):
+        key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+        open("key.pem", "wb").write(key.private_bytes(
+            serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()))
+        jwk = json.loads(jwt.algorithms.RSAAlgorithm.to_jwk(key.public_key()))
+        jwk.update({"kid": "test", "alg": "RS256", "use": "sig"})
+        json.dump({"keys": [jwk]}, open("jwks.json", "w"))
+    if len(sys.argv) > 1:
+        email, groups = sys.argv[1], sys.argv[2:]
+        claims = {"iss": "https://idp.example.com", "aud": "agentgateway-ui",
+                  "sub": "sub-" + email.split("@")[0], "email": email, "groups": groups,
+                  "exp": int(time.time()) + 3600}
+        print(jwt.encode(claims, open("key.pem", "rb").read(), algorithm="RS256", headers={"kid": "test"}))
+    PY
+    .venv/bin/python mint.py
+    mint() { .venv/bin/python "$UIRBAC_DIR/mint.py" "$@"; }
+    agentgateway() { docker run --rm -v "$UIRBAC_DIR:$UIRBAC_DIR" -w "$UIRBAC_DIR" -e ENTERPRISE_AGENTGATEWAY_LICENSE_KEY "$AGW_IMAGE" "$@"; }
+    # write_config <jwtAuth mode> [fine-grained]: the page's settings on a minimal gateway.
+    write_config() {
+      cat > "$UIRBAC_DIR/config.yaml" <<EOF
+    config:
+      adminAddr: 0.0.0.0:15000
+    EOF
+      if [ "${2:-}" = "fine-grained" ]; then
+        cat >> "$UIRBAC_DIR/config.yaml" <<'EOF'
+      standardAttributes:
+        user: 'has(jwt.email) ? jwt.email : jwt.sub'
+    EOF
+      fi
+      cat >> "$UIRBAC_DIR/config.yaml" <<EOF
+    gateways:
+      default:
+        port: 4001
+    ui:
+      policies:
+        jwtAuth:
+          mode: $1
+          issuer: https://idp.example.com
+          audiences: [agentgateway-ui]
+          jwks:
+            file: $UIRBAC_DIR/jwks.json
+    EOF
+      if [ "${2:-}" = "fine-grained" ]; then
+        cat >> "$UIRBAC_DIR/config.yaml" <<'EOF'
+    rbac:
+      mode: fine-grained
+      policies:
+      - name: admins
+        subjects:
+        - group: platform-admins
+        preset: admin
+      - name: developers
+        subjects:
+        - group: developers
+        preset: self-service
+    EOF
+      fi
+    }
+    # code <path> [token]: the HTTP status of a UI API request.
+    code() {
+      if [ -n "${2:-}" ]; then
+        curl -s -o /dev/null -w "%{http_code}" "http://localhost:4001$1" -H "Authorization: Bearer $2"
+      else
+        curl -s -o /dev/null -w "%{http_code}" "http://localhost:4001$1"
+      fi
+    }
+    # wait_code <want> <path> [token]: poll until a request returns the status.
+    wait_code() {
+      for _ in $(seq 1 60); do
+        [ "$(code "$2" "${3:-}")" = "$1" ] && return 0
+        sleep 1
+      done
+      echo "timed out waiting for $2 to return $1 (last: $(code "$2" "${3:-}"))"
+      return 1
+    }
+    write_config optional
+    docker rm -f agw-ui-rbac >/dev/null 2>&1 || true
+    docker run -d --name agw-ui-rbac -p 4001:4001 -p 15000:15000 \
+      -v "$UIRBAC_DIR:$UIRBAC_DIR" -e ENTERPRISE_AGENTGATEWAY_LICENSE_KEY \
+      "$AGW_IMAGE" -f "$UIRBAC_DIR/config.yaml"
+    DEV_TOKEN="$(mint carol@example.com developers)"
+    ADMIN_TOKEN="$(mint dana@example.com platform-admins)"
+    # Coarse mode with the default optional jwtAuth: no credentials, full access.
+    wait_code 200 /api/config
+    {{< /doc-test >}}
+- after:
+    section: Configure coarse access
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 0
+      fingerprint: 9426b9aa0d196592
+      lang: yaml
+      lines: 6cda733c c8f3f59a e34dc3a0 b0299c0e c5781125
+      preview: 'ui:'
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # The Config file tab: jwtAuth with mode: strict.
+    write_config strict
+    wait_code 401 /api/config
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: ac0daf49b20f2004
+    lang: sh
+    lines: ac0daf49
+    preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    test "$(code /api/config)" = 401
+    {{< /doc-test >}}
+- after:
+    section: Configure coarse access
+    line: 3b8a24afc0517354
+    occurrence: 0
+    words: d4735e3a 836ff184 58296753 663ea1bf b9776d7d d3ef7de5 f4bf9f7f d6a7cd2a 04f8996d 75857a45 4d040d3f 0c1eeccc a5c935d1 f4bf9f7f ca978112 e31ab643 28391d3b ee0b1e6a 20f65c28 8e7fc023 b9776d7d 04f8996d 9f584196 2348f998 66a424a9 3660315a 031af55b d7439bee b7d64a92 6201111b 9f584196 fa8847b0 262121c5 6201111b 61975955 41d311a6
+    block_before:
+      block: 1
+      fingerprint: ac0daf49b20f2004
+      lang: sh
+      lines: ac0daf49
+      preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # In coarse mode, any authenticated user can read the raw configuration.
+    test "$(code /api/config "$DEV_TOKEN")" = 200
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: a07688b113fc1021
+    lang: yaml
+    lines: 84c31baf c719fdf4 c8f3f59a 64fd6953 46687890 55062eb7 afb2c7d0 e827fc81 46687890 b6068251 980fb345
+    preview: 'rbac:'
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # Steps 1 and 2: config.standardAttributes.user and the rbac section from this tab.
+    write_config strict fine-grained
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 90bc698625713d9f
+    lang: console
+    lines: 90bc6986
+    preview: 'Error: rbac.policies[1].grants[0]: unknown management resource "llm.models"; exp'
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # The example error: a grant with the misspelled resource llm.models.
+    python3 - <<'PY'
+    s = open("config.yaml").read()
+    bad = s.replace("    preset: self-service\n", "    preset: self-service\n    grants:\n    - resource: llm.models\n      access: view\n")
+    assert bad != s
+    open("bad-config.yaml", "w").write(bad)
+    PY
+    out="$(agentgateway --validate-only -f bad-config.yaml 2>&1 || true)"
+    echo "$out"
+    grep -q 'rbac.policies\[1\].grants\[0\]: unknown management resource "llm.models"' <<<"$out"
+    {{< /doc-test >}}
+- after:
+    section: Configure fine-grained access
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 5
+      fingerprint: 90bc698625713d9f
+      lang: console
+      lines: 90bc6986
+      preview: 'Error: rbac.policies[1].grants[0]: unknown management resource "llm.models"; exp'
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    # Wait for the gateway to reload the policies.
+    wait_code 403 /api/config "$DEV_TOKEN"
+    ID_TOKEN="$DEV_TOKEN"
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 162ea3ca5a4a4756
+    lang: json
+    lines: 021fb596 c3e0010f b8c370be 96d7eb7a 5cc4bc16 d019636d 2da66030 745d6f0d 1540e60e cfae0d42 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    curl -s http://localhost:4001/api/permissions -H "Authorization: Bearer $ID_TOKEN" > permissions.json
+    python3 - <<'PY'
+    import json
+    p = json.load(open("permissions.json"))
+    assert p["user"] == "carol@example.com", p
+    assert p["groups"] == ["developers"], p
+    assert p["adminListener"] is False, p
+    got = {(g["resource"], g["access"], json.dumps(g.get("scope"), sort_keys=True)) for g in p["permissions"]}
+    self_scope = json.dumps({"owner": "self"}, sort_keys=True)
+    want = {("llm.apiKey", "manage", self_scope), ("logs", "view", self_scope), ("analytics", "view", self_scope), ("llm.budget", "view", self_scope)}
+    assert got == want, got
+    PY
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 5813f3b096b61395
+    lang: sh
+    lines: 99eaaa56 694915c0
+    preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config \
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    test "$(code /api/config "$ID_TOKEN")" = 403
+    curl -s http://localhost:4001/api/config -H "Authorization: Bearer $ID_TOKEN" | grep -q "management access denied"
+    {{< /doc-test >}}
+- after:
+    section: Verify access
+    line: 13c3ed999782c96f
+    occurrence: 0
+    words: 4b227777 836ff184 58296753 f4bf9f7f ca978112 e31ab643 28391d3b 60bd9c9d 6201111b 20f65c28 8e7fc023 b9776d7d 04f8996d 94e8566d 9150c74c a18b869b a0561fd6
+    block_before:
+      block: 8
+      fingerprint: 5813f3b096b61395
+      lang: sh
+      lines: 99eaaa56 694915c0
+      preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config \
+  content: |-
+    {{< doc-test paths="ui-access-control" >}}
+    test "$(code /api/config "$ADMIN_TOKEN")" = 200
+    # The admin address bypasses RBAC.
+    test "$(curl -s -o /dev/null -w "%{http_code}" http://localhost:15000/api/config)" = 200
+    docker rm -f agw-ui-rbac >/dev/null
+    {{< /doc-test >}}

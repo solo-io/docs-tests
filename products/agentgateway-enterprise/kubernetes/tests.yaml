@@ -4,6 +4,15 @@
 # ../../agentgateway/kubernetes/tests.yaml, minus the schema-only ones (the
 # consuming site's workflow runs functional and live tests only).
 #
+# Also covers the enterprise-only UI access control pages
+# (documentation/security/ui-access-control/). Those pages are not rebase
+# shells: they reuse bodies from the site's own assets/, and their markup lives
+# in ../annotations/assets/agw-docs/pages/security/ui-access-control/. They
+# need the `ui` prerequisite, the Set up the UI page's Helm upgrade
+# (../annotations/assets/agw-docs/pages/ui-setup.md.yaml). CI has no IdP, so
+# those scenarios use the UI's built-in IdP; see the comment block at the top
+# of each page's markup for what they do and do not validate.
+#
 # The consuming site publishes the enterprise docs from its own repo; almost
 # every page there is a rebase shell,
 # a stub whose whole body is one {{< rebase file="agw-docs/kubernetes/..." >}}
@@ -55,9 +64,13 @@ prerequisites:
   install-standard:
     page: documentation/quickstart/install.md
     path: standard
+  ui:
+    page: documentation/install/ui/setup.md
+    path: install-ui
 # Pages with deliberately no test: section indexes and concept pages, the same
 # list as the upstream manifest's traffic-management skips.
 skip:
+- page: documentation/security/ui-access-control/_index.md
 - page: documentation/traffic-management/_index.md
 - page: documentation/traffic-management/buffer.md
 - page: documentation/traffic-management/header-control/_index.md
@@ -515,6 +528,18 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/inheritance/trafficpolicies.md
     path: trafficpolicies
+  ui-access-control:
+    needs:
+    - install-standard
+    - ui
+    page: documentation/security/ui-access-control/setup.md
+    path: ui-access-control
+  ui-access-control-samples:
+    needs:
+    - install-standard
+    - ui
+    page: documentation/security/ui-access-control/about.md
+    path: ui-access-control-samples
   validate-defaults:
     type:
     - schema
