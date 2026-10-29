@@ -1,0 +1,199 @@
+format: 1
+source: assets/agw-docs/pages/security/backend-authn-aws-chain.md
+blocks:
+- 6ffdfd3410f7bb2f yaml
+- 7c05c0d53e75a48d sh
+- 12babba332a57a15 console
+- cc8836e94190027f sh
+tags:
+- paths: aws-assume-role-chain
+  block: 0
+  fingerprint: 6ffdfd3410f7bb2f
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 01fdbf0f 0f10c5bc 36184fa5 588a5d84 e9a46ca1 f84e6062 614bd5fa bb85cefe 321bbcc0 559188c4 f2f05e49 b8eda852 5220e5d4 06b1ea3f 5268acbb d9ea9f84 23384398 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="aws-assume-role-chain"
+    only: true
+    lead: ' '
+- paths: aws-assume-role-chain
+  block: 1
+  fingerprint: 7c05c0d53e75a48d
+  lang: sh
+  lines: 7da51396 84a567e4
+  preview: kubectl get enterpriseagentgatewaypolicy aws-assume-role-chain -n httpbin \
+  form:
+    attr: paths="aws-assume-role-chain"
+    only: true
+    lead: ' '
+- paths: aws-assume-role-chain
+  block: 3
+  fingerprint: cc8836e94190027f
+  lang: sh
+  lines: cc8836e9
+  preview: kubectl delete enterpriseagentgatewaypolicy aws-assume-role-chain -n httpbin
+  form:
+    attr: paths="aws-assume-role-chain"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Assume a chain of roles
+    line: f8f9eb45a737d106
+    occurrence: 0
+    words: 6b86b273 fa8847b0 ea325d76 d9c0d341 ea62dcb6 21a355f1 bb5a0dc2 8e7fc023 82c6db3d 48fefce9 b9776d7d 823412d1 26cafb94 ea325d76 08659077 a157d36a 8e8322c9 10c22bcf b9776d7d 7d150728 9df6b026 a1d98908 7ab37787 b9776d7d 82a3537f 0695b563 b9776d7d 82a3537f 28391d3b 4d040d3f 10e08a41 b9776d7d 9414886b 58296753 b9776d7d 8d0288f4 50d858e0 9150c74c 3fc4ccfe 66cf5513 a7937b64 8462edf5 58296753 7692c3ad 9af21132 6201111b 21af6f12 46197977 58296753 ca978112 16367aac 9af21132 77bc06c5 b9014eaa ea325d76 3c462384 a5614527
+    block_before: null
+  content: |2-
+       {{< doc-test paths="aws-assume-role-chain" >}}
+       # ============================================================================
+       # Doc test coverage for "AWS AssumeRole chaining" (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * The entAws policy with a two-role chain and an external ID is accepted,
+       #     and it reports Attached=True once a route sends traffic to aws-backend.
+       #   * Each CRD validation message in the Troubleshoot table: the API server
+       #     rejects the invalid variants with that message (server-side dry run).
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The AssumeRole calls and the SigV4 signing at request time: they need
+       #     ambient AWS credentials and real IAM roles in two accounts, which CI does
+       #     not have. The role ARNs are the guide's example values.
+       # The guide expects an existing AgentgatewayBackend named aws-backend for an
+       # AWS service. Create a stand-in in the httpbin namespace, with a route to it,
+       # so the policy has a target and can attach. No request is sent through it.
+       kubectl apply -f- <<EOF
+       apiVersion: agentgateway.dev/v1alpha1
+       kind: AgentgatewayBackend
+       metadata:
+         name: aws-backend
+         namespace: httpbin
+       spec:
+         static:
+           host: execute-api.us-east-1.amazonaws.com
+           port: 443
+       ---
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: HTTPRoute
+       metadata:
+         name: aws-backend
+         namespace: httpbin
+       spec:
+         parentRefs:
+         - name: agentgateway-proxy
+           namespace: agentgateway-system
+         rules:
+         - matches:
+           - path:
+               type: PathPrefix
+               value: /aws
+           backendRefs:
+           - name: aws-backend
+             group: agentgateway.dev
+             kind: AgentgatewayBackend
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 12babba332a57a15
+    lang: console
+    lines: d7fcc72f f9bf8906
+    preview: Accepted=True
+  content: |2-
+       {{< doc-test paths="aws-assume-role-chain" >}}
+       YAMLTest -f - <<'EOF'
+       - name: aws-assume-role-chain is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: httpbin
+               name: aws-assume-role-chain
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: aws-assume-role-chain is attached through the aws-backend route
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: httpbin
+               name: aws-assume-role-chain
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    section: Troubleshoot
+    line: 0d11bd9c9416dfae
+    occurrence: 0
+    words: ec72420d 663ea1bf b9776d7d 10e08a41 51280dab f3959239 b9776d7d 823412d1 fa51fd49 55d9067e 20f65c28 b9776d7d 1241936d 98f38f12 10c22bcf b9776d7d 1e529d2f ca00fccf bec16879 4b168d88 4137b01e f796e2f2 b9776d7d 6da06335 4b168d88 58296753 b9776d7d 9414886b 6201111b b9776d7d a7937b64 4b168d88 4137b01e f796e2f2 b9776d7d 31d18c0d 689f6a62 28391d3b b9776d7d 4ea5ee68
+    block_before:
+      block: 2
+      fingerprint: 12babba332a57a15
+      lang: console
+      lines: d7fcc72f f9bf8906
+      preview: Accepted=True
+  content: |-
+    {{< doc-test paths="aws-assume-role-chain" >}}
+    # Each invalid variant from the table must be rejected with the documented message.
+    expect_rejected() {
+      local message="$1" backend="$2" out
+      if out=$(kubectl apply --dry-run=server -f - 2>&1 <<EOF
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayPolicy
+    metadata:
+      name: aws-chain-invalid
+      namespace: httpbin
+    spec:
+      targetRefs:
+      - group: agentgateway.dev
+        kind: AgentgatewayBackend
+        name: aws-backend
+      backend:
+    $backend
+    EOF
+      ); then
+        echo "expected the API server to reject the policy with: $message"; exit 1
+      fi
+      case "$out" in
+        *"$message"*) ;;
+        *) echo "rejected, but without the documented message ($message): $out"; exit 1;;
+      esac
+    }
+    expect_rejected "exactly one of the fields in [roleArn chain] must be set" '    entAws:
+          serviceName: execute-api
+          assumeRole:
+            roleArn: arn:aws:iam::111111111111:role/gateway-hop
+            chain:
+            - roleArn: arn:aws:iam::222222222222:role/target-role'
+    expect_rejected "externalId must be set on each chain hop, not on the top-level assumeRole config" '    entAws:
+          serviceName: execute-api
+          assumeRole:
+            externalId: partner-external-id
+            chain:
+            - roleArn: arn:aws:iam::222222222222:role/target-role'
+    expect_rejected "secretRef and assumeRole are mutually exclusive" '    entAws:
+          serviceName: execute-api
+          secretRef:
+            name: aws-creds
+          assumeRole:
+            chain:
+            - roleArn: arn:aws:iam::222222222222:role/target-role'
+    expect_rejected "at most one of the fields in [auth workloadIdentity tokenExchange entTokenExchange entCrossAppAccess entAws] may be set" '    auth:
+          aws:
+            secretRef:
+              name: aws-creds
+        entAws:
+          serviceName: execute-api
+          assumeRole:
+            chain:
+            - roleArn: arn:aws:iam::222222222222:role/target-role'
+    {{< /doc-test >}}

@@ -1,0 +1,206 @@
+format: 1
+source: assets/agw-docs/pages/operations/upgrade.md
+blocks:
+- e1ceb1f0fd05dd64 sh
+- 36ee2cf098f21570 sh
+- 1fb6cf26f0d31f46 sh
+- b692d08807a1dcd1 txt
+- c9e100a6e1ee7dd8 sh
+- 61f1493caddc938a txt
+- 5f25c00d94a63d8d sh
+- 708d0b9f186b8253 sh
+- 6e62e4279d8cd38e sh
+- 79f5ebc66f817002 sh
+- aa79193f65b554f2 sh
+- ebf4c0b25b8c676a sh
+- 88f573ce73abcd59 sh
+- dd327072d9a1553f sh
+- 21f9fe36a4ee9851
+- d6b994d4cd0c2d58 sh
+- c67c46ae3cf28f93 sh
+- a7b2f6826ee5015e sh
+- 9a054b5d43b0e861 sh
+- 60b6e4b5d49b5540 sh
+- d6b994d4cd0c2d58 sh
+- 550337333767360f
+- d6b994d4cd0c2d58 sh
+- d0f93d01a0df9ae9
+- 21ece5d39894329e sh
+- adeae9e0219d7f09 yaml
+- 8c84ea07fee6b69e sh
+- 4f4135de3f2bc1e5 sh
+- e4e685b81e63e5f0 yaml
+- 42d8d417feb06d4b sh
+- 760f364618296ad6 sh
+- 17ba6b9fc8870129 yaml
+- 8c84ea07fee6b69e sh
+- c697b168f95c8bae sql
+- 0ddb275bbae4c937 sql
+- 89705e7762e2ac91 sh
+- df29a96af80565a1 sh
+- 3ea8fdef600303e8 sh
+- f4d6791a02077709 sh
+- 37aef39d06b8cd27 sh
+- 5e5e9effa5e3aebe sh
+- bd912330aec35986 sh
+- a5eb7e34cf239da6 sh
+- 69809dac8477d003 sh
+- 60bd15adad388b33 sh
+- dd8e99b8a665b77c sh
+- 703a2388049cc98a sh
+tags:
+- paths: enterprise-upgrade
+  block: 0
+  fingerprint: e1ceb1f0fd05dd64
+  lang: sh
+  lines: e1ceb1f0
+  preview: export GWAPI_VERSION={{< reuse "agw-docs/versions/k8s-gw-version.md" >}}
+  form:
+    attr: paths="enterprise-upgrade"
+    only: true
+    lead: ' '
+- paths: enterprise-upgrade
+  block: 1
+  fingerprint: 36ee2cf098f21570
+  lang: sh
+  lines: 36ee2cf0
+  preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  form:
+    attr: paths="enterprise-upgrade"
+    only: true
+    lead: ' '
+- paths: enterprise-upgrade
+  block: 4
+  fingerprint: c9e100a6e1ee7dd8
+  lang: sh
+  lines: c9e100a6
+  preview: kubectl get crds -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.vers
+  form:
+    attr: paths="enterprise-upgrade"
+    only: true
+    lead: ' '
+- paths: enterprise-upgrade
+  block: 6
+  fingerprint: 5f25c00d94a63d8d
+  lang: sh
+  lines: 5f25c00d
+  preview: export NEW_VERSION={{< reuse "agw-docs/versions/n-patch.md" >}}
+  form:
+    attr: paths="enterprise-upgrade"
+    only: true
+    lead: ' '
+- paths: enterprise-upgrade
+  block: 8
+  fingerprint: 6e62e4279d8cd38e
+  lang: sh
+  lines: 6e62e427
+  preview: helm upgrade -i --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} --ver
+  form:
+    attr: paths="enterprise-upgrade"
+    only: true
+    lead: ' '
+- paths: enterprise-upgrade
+  block: 12
+  fingerprint: 88f573ce73abcd59
+  lang: sh
+  lines: ec64944c f82702aa 88364ae2
+  preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
+  form:
+    attr: paths="enterprise-upgrade"
+    only: true
+    lead: ' '
+- paths: enterprise-upgrade
+  block: 13
+  fingerprint: dd327072d9a1553f
+  lang: sh
+  lines: dd327072
+  preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get pod -l app.kuberne
+  form:
+    attr: paths="enterprise-upgrade"
+    only: true
+    lead: ' '
+- paths: enterprise-upgrade
+  block: 15
+  fingerprint: d6b994d4cd0c2d58
+  lang: sh
+  lines: d6b994d4
+  preview: kubectl get pods -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="enterprise-upgrade"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-upgrade" >}}
+    # ============================================================================
+    # Doc test coverage for "Upgrade" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * A real upgrade: the hidden start state installs the previous release
+    #     (PREVIOUS_VERSION below) with a Gateway, then the page's steps upgrade the
+    #     Gateway API CRDs, the enterprise CRDs, and the control plane to the
+    #     n-patch version with the values from `helm get values`.
+    #   * The controller image tag matches NEW_VERSION, the control plane is ready,
+    #     and the existing Gateway is still programmed after the upgrade.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * `open values.yaml` and the "Get a file with all values" tab: `open` is a
+    #     desktop command; a hidden `helm get values` runs instead.
+    #   * The 2026.9.3 extension cleanup snippet and "Migrate from the management
+    #     chart": they need WAF, PDB/HPA leftovers, or the separate management chart.
+    # Bump PREVIOUS_VERSION when n-patch moves, so the start state stays one release
+    # behind the version that the page upgrades to.
+    export PREVIOUS_VERSION=2026.9.3
+    kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< reuse "agw-docs/versions/k8s-gw-version.md" >}}/standard-install.yaml
+    helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} \
+      --create-namespace --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} --version v${PREVIOUS_VERSION}
+    helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} \
+      -n {{< reuse "agw-docs/snippets/namespace.md" >}} --version v${PREVIOUS_VERSION} \
+      --set-string licensing.licenseKey=${AGENTGATEWAY_LICENSE_KEY} --wait --timeout 5m
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: Gateway
+    metadata:
+      name: agentgateway-proxy
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      gatewayClassName: {{< reuse "agw-docs/snippets/gatewayclass.md" >}}
+      listeners:
+      - protocol: HTTP
+        port: 80
+        name: http
+        allowedRoutes:
+          namespaces:
+            from: All
+    EOF
+    kubectl wait --for=condition=Programmed gateway/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 79f5ebc66f817002
+    lang: sh
+    lines: 5703f0f2 db51caed
+    preview: helm get values {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{< re
+  content: |2-
+          {{< doc-test paths="enterprise-upgrade" >}}
+          helm get values {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o yaml > values.yaml
+          grep -q licenseKey values.yaml
+          {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: d6b994d4cd0c2d58
+    lang: sh
+    lines: d6b994d4
+    preview: kubectl get pods -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+  content: |2-
+       {{< doc-test paths="enterprise-upgrade" >}}
+       kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} --timeout=300s
+       IMAGE=$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get deploy {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -o jsonpath='{.spec.template.spec.containers[0].image}')
+       echo "controller image: ${IMAGE}"
+       case "${IMAGE}" in *":${NEW_VERSION}"|*":v${NEW_VERSION}") ;; *) echo "controller image is not ${NEW_VERSION}"; exit 1 ;; esac
+       helm list -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o json | jq -e --arg c "{{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}}-v${NEW_VERSION}" 'any(.[]; .chart == $c)'
+       kubectl wait --for=condition=Programmed gateway/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/agentgateway-proxy --timeout=300s
+       {{< /doc-test >}}

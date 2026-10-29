@@ -1,0 +1,265 @@
+format: 1
+source: assets/agw-docs/pages/security/impersonation.md
+blocks:
+- d09f73af8f30e74e mermaid
+- 263362af69c62293 json
+- bd35e55bc17822cb json
+- c7f3f171827e5fd9 yaml
+- 4a8fc24a44f204aa sh
+- 0d5c72fc59c93959 sh
+- 672cae640ab9e895 sh
+- fecd70fbd82c9d05 sh
+- 88cc9fd53566aeb1 console
+- 75685c42a413a272 sh
+- 7de300ee32b02560 console
+- 545ac8375433109c yaml
+- 11def88ed14fa465 sh
+- e15d323d12f1feea sh
+- 396ec419330664ac console
+- 4a8fc24a44f204aa sh
+- e8a7cbd1fe47572a sh
+- a917ad11b08066e9 console
+- caed9a262e4c9835 sh
+- 50e25101e043d386
+- 92fe8c2eac647cae sh
+tags:
+- paths: te-impersonation
+  block: 3
+  fingerprint: c7f3f171827e5fd9
+  lang: yaml
+  lines: 16c71da1 00c69c65 98f7f300 8c8c4228 c392654c f497f0e2 36184fa5 8db70061 dae7531a c8230f24 2e0cd96b e9f51d30 cb3f91d5 8c67597e cd44d8cd 8c8c4228 89b06424 f497f0e2 36184fa5 2f2479a1 27a69ac8 3f04fdd7 b8ac8874 98f7f300 c392654c c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-impersonation"
+    only: true
+    lead: ' '
+- paths: te-impersonation
+  block: 4
+  fingerprint: 4a8fc24a44f204aa
+  lang: sh
+  lines: c946a6ef 6850d3e9 d7651c06 ab9343d3 daad1eb2
+  preview: export USER_TOKEN=$(curl -d 'client_id=fe-client-1' \
+  form:
+    attr: paths="te-impersonation"
+    only: true
+    lead: ' '
+- paths: te-impersonation
+  block: 5
+  fingerprint: 0d5c72fc59c93959
+  lang: sh
+  lines: 7ceca36d 256f967c 8670e633 c6c27d6d 5912454d 8a331fdd
+  preview: echo "$USER_TOKEN" | python3 -c "
+  form:
+    attr: paths="te-impersonation"
+    only: true
+    lead: ' '
+- paths: te-impersonation
+  block: 9
+  fingerprint: 75685c42a413a272
+  lang: sh
+  lines: 1d4892e1 8ef40c4b 256f967c 8670e633 c6c27d6d 5912454d 8a331fdd
+  preview: export NEW_TOKEN=$(echo "$STS_RESPONSE" | jq -r '.access_token')
+  form:
+    attr: paths="te-impersonation"
+    only: true
+    lead: ' '
+- paths: te-impersonation
+  block: 11
+  fingerprint: 545ac8375433109c
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 a1942e35 0ccc8edc 36184fa5 588a5d84 b394f6ea b6e1c19c cb03a015 bb85cefe 835aaff5 88303c33 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-impersonation"
+    only: true
+    lead: ' '
+- paths: te-impersonation
+  block: 13
+  fingerprint: e15d323d12f1feea
+  lang: sh
+  lines: e15d323d
+  preview: kubectl logs deploy/enterprise-agentgateway -n agentgateway-system | tail -3
+  form:
+    attr: paths="te-impersonation"
+    only: true
+    lead: ' '
+- paths: te-impersonation
+  block: 20
+  fingerprint: 92fe8c2eac647cae
+  lang: sh
+  lines: 92fe8c2e
+  preview: kubectl delete enterpriseagentgatewaypolicy impersonation
+  form:
+    attr: paths="te-impersonation"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: c7f3f171827e5fd9
+    lang: yaml
+    lines: 16c71da1 00c69c65 98f7f300 8c8c4228 c392654c f497f0e2 36184fa5 8db70061 dae7531a c8230f24 2e0cd96b e9f51d30 cb3f91d5 8c67597e cd44d8cd 8c8c4228 89b06424 f497f0e2 36184fa5 2f2479a1 27a69ac8 3f04fdd7 b8ac8874 98f7f300 c392654c c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="te-impersonation" >}}
+    # ============================================================================
+    # Doc test coverage for "Impersonation" (these comments are not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Keycloak (in the cluster) gets the agentgateway realm, the fe-client-1
+    #     client, and user1, and the STS is enabled with Helm against that realm's
+    #     JWKS.
+    #   * The EnterpriseAgentgatewayParameters and the updated Gateway are accepted,
+    #     and the proxy rolls out with the STS_URI and STS_AUTH_TOKEN settings.
+    #   * "Test the STS server locally", run from a pod in the cluster instead of a
+    #     port-forward: the STS exchanges user1's Keycloak token for a token with the
+    #     same `sub`, the STS issuer, and no `act` claim.
+    #   * The impersonation policy on the static MCP server's backend is accepted. An
+    #     MCP initialize without a token fails, and with user1's token it succeeds,
+    #     because the gateway exchanged the token through the STS.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Open the Keycloak URL" and the debug-logging port-forward: CI has no
+    #     browser and allows no port-forward.
+    #   * That the MCP server received the STS-minted token rather than the original:
+    #     the sample MCP server does not echo request headers.
+    kubectl rollout status deployment/agentgateway-proxy -n agentgateway-system --timeout=300s
+    kubectl get deployment agentgateway-proxy -n agentgateway-system -o json \
+      | jq -e '[.spec.template.spec.containers[].env[]? | select(.name == "STS_URI")] | length > 0' >/dev/null \
+      || { echo "the proxy deployment did not pick up STS_URI from agw-params"; exit 1; }
+    YAMLTest -f - <<'EOF'
+    - name: agentgateway-proxy is programmed with agw-params
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 180
+          intervalSeconds: 3
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: fecd70fbd82c9d05
+    lang: sh
+    lines: 1a06130f e98aebec 1f456632 c225f7f4 6d3424ff fc31e6dd 8cba5e5d 5ca0b669
+    preview: export STS_RESPONSE=$(curl -s -X POST "${STS_URL}/token" \
+  content: |2-
+       {{< doc-test paths="te-impersonation" >}}
+       # The port-forward and localhost call above are not allowed in CI. Send the
+       # same token exchange request from a pod in the cluster to the STS service.
+       # The STS can answer "JWKS not available" until it has fetched Keycloak's keys
+       # after the Helm upgrade, so retry a few times.
+       for attempt in $(seq 1 10); do
+         STS_RESPONSE=$(kubectl run "sts-client-impersonation-$attempt" -n default --rm -i --quiet --restart=Never \
+           --pod-running-timeout=3m --image=curlimages/curl -- \
+           curl -s -X POST "http://enterprise-agentgateway.agentgateway-system.svc.cluster.local:7777/token" \
+             -H "Content-Type: application/x-www-form-urlencoded" \
+             -H "Accept: application/json" \
+             -H "Authorization: Bearer ${USER_TOKEN}" \
+             -d "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
+             -d "subject_token=${USER_TOKEN}" \
+             -d "subject_token_type=urn:ietf:params:oauth:token-type:jwt") || true
+         echo "$STS_RESPONSE" | jq -e '.access_token | length > 0' >/dev/null 2>&1 && break
+         sleep 5
+       done
+       export STS_RESPONSE
+       echo "$STS_RESPONSE" | jq -e '.access_token | length > 0' >/dev/null \
+         || { echo "STS token exchange failed: $STS_RESPONSE"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 7de300ee32b02560
+    lang: console
+    lines: 021fb596 f3e219ec 6faff14c db7c3e40 3ea88a2f 3861b51c acda6d92 d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="te-impersonation" >}}
+       jwt_claims() { python3 -c 'import sys,json,base64; p=sys.argv[1].split(".")[1]; p+="="*(-len(p)%4); print(json.dumps(json.loads(base64.urlsafe_b64decode(p))))' "$1"; }
+       USER_SUB=$(jwt_claims "$USER_TOKEN" | jq -r .sub)
+       jwt_claims "$NEW_TOKEN" | jq -e --arg sub "$USER_SUB" --arg iss "enterprise-agentgateway.agentgateway-system.svc.cluster.local:7777" \
+         '.sub == $sub and .iss == $iss and (has("act") | not)' >/dev/null \
+         || { echo "the STS token does not keep the user's sub, use the STS issuer, and omit act"; jwt_claims "$NEW_TOKEN"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 545ac8375433109c
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 a1942e35 0ccc8edc 36184fa5 588a5d84 b394f6ea b6e1c19c cb03a015 bb85cefe 835aaff5 88303c33 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="te-impersonation" >}}
+       YAMLTest -f - <<'EOF'
+       - name: impersonation policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: default
+               name: impersonation
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: a917ad11b08066e9
+    lang: console
+    lines: 4a6ef22b 127e737f ab5df625 dabd3aff bed133f0 9a62b093
+    preview: < HTTP/1.1 500 Internal Server Error
+  content: |2-
+       {{< doc-test paths="te-impersonation" >}}
+       # Same request through the gateway's LoadBalancer instead of localhost:8080.
+       MCP_INIT='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl-client","version":"1.0"}}}'
+       for i in $(seq 1 20); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "http://${INGRESS_GW_ADDRESS}:80/mcp" \
+           -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+           -H "mcp-protocol-version: 2025-06-18" -d "$MCP_INIT")
+         [ "$code" != "200" ] && [ "$code" != "000" ] && break; sleep 3
+       done
+       [ "$code" != "200" ] || { echo "initialize without a token succeeded, but the policy should require one"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 50e25101e043d386
+    lang: ''
+    lines: 6364ab47 92413e97 ab5df625 7fa0d0ad
+    preview: < HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="te-impersonation" >}}
+       # Same request through the gateway's LoadBalancer instead of localhost:8080.
+       # Step 5 repeats the token command from the optional section word for word, so
+       # the extractor runs it once. Get a fresh token here, because a new realm's
+       # access tokens expire after five minutes.
+       export USER_TOKEN=$(curl -fsS -d 'client_id=fe-client-1' -d 'username=user1' -d 'password=Password1!' \
+         -d 'grant_type=password' "$KEYCLOAK_URL/realms/agentgateway/protocol/openid-connect/token" | jq -r .access_token)
+       YAMLTest -f - <<EOF
+       - name: initialize with user1's token succeeds after the STS exchange
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/mcp"
+           method: POST
+           headers:
+             content-type: "application/json"
+             accept: "application/json, text/event-stream"
+             mcp-protocol-version: "2025-06-18"
+             authorization: "Bearer ${USER_TOKEN}"
+           body: '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl-client","version":"1.0"}}}'
+         source:
+           type: local
+         retries: 10
+         expect:
+           statusCode: 200
+           bodyContains: "serverInfo"
+       EOF
+       {{< /doc-test >}}

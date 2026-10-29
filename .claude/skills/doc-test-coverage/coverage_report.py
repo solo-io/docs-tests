@@ -197,8 +197,6 @@ def coverage(product: str, root: Path, manifests: list[tuple[Path, str, dict]], 
                 scenarios = by_page.get(rel, {})
                 types = set().union(*scenarios.values()) if scenarios else set()
                 if scenarios:
-                    # live and credentialed run the page too, so they count
-                    # with functional; the Tests column names them.
                     runs = bool(types - {"schema"})
                     status = "both" if runs and "schema" in types else ("func" if runs else "schema")
                 else:
@@ -223,8 +221,7 @@ def coverage(product: str, root: Path, manifests: list[tuple[Path, str, dict]], 
                 checks = None if rebased else hidden.get(rel, 0) + sum(hidden.get(s, 0) for s in sources_of.get(rel, ()))
                 rows.append([mode, version, section_of(page), page.removeprefix("documentation/"),
                              status, nightly, checks,
-                             [name + "".join(f" ({t})" for t in sorted(kinds - {"schema", "functional"}))
-                              for name, kinds in sorted(scenarios.items())]])
+                             sorted(scenarios)])
     return rows
 
 

@@ -1,0 +1,221 @@
+format: 1
+source: assets/agw-docs/pages/mcp/brokered-consent-kubernetes.md
+blocks:
+- f37130523764dc04 json
+- 077b589ca135fadd sh
+- ee6d588c8df2adef yaml
+- c5492973ddab80d1 yaml
+- 93199ce3845897bd sh
+- 58897b59ad98c443 json
+- 29ae1485ea20f4f0 yaml
+- 7062ce458e5bd66f sh
+- 6769b819f5cde9bc sh
+- 0eb5d445c5995452 yaml
+- 5f0901a7236831b7 sh
+- 15f491a8e4a580a9 sh
+tags:
+- paths: mcp-elicitation-brokered-consent
+  block: 1
+  fingerprint: 077b589ca135fadd
+  lang: sh
+  lines: 2d065637 fde80217 736e1ed1 c425caf8 05ecc375
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="mcp-elicitation-brokered-consent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-consent
+  block: 2
+  fingerprint: ee6d588c8df2adef
+  lang: yaml
+  lines: 16c71da1 263e4531 f84e6062 8c8c4228 817abb92 8af957d1 36184fa5 82726b6f 3035507a cbd1477e 2efcbf93 75ddef3b ea727880 c6ba4159 c8f3f59a e8eb2c7f 82726b6f 85380355 d3cb008e 878ce673 837dc1fd fd691cf6 44ec9b74 70c97555 56331f31 22aec9ce f84e6062 62859254 4742b74a 92db8240 2882c123 29a656a6 2a5410bc bbbf6da4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-elicitation-brokered-consent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-consent
+  block: 3
+  fingerprint: c5492973ddab80d1
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 abea0aff 8af957d1 36184fa5 588a5d84 e9a46ca1 f84e6062 817abb92 bb85cefe 7602c0a5 6f403570 4e266323 33d39895 ebeee92c 933673cc 61d9749c 369e8c71 9dcb65e5 a392ccda ed95cd9e 112b9466 6f0f0607 b4c2277e 79677ded 5614227e e8b1cb2e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-elicitation-brokered-consent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-consent
+  block: 4
+  fingerprint: 93199ce3845897bd
+  lang: sh
+  lines: f3b5c1bd 8d8cc6d5
+  preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get enterpriseagentgat
+  form:
+    attr: paths="mcp-elicitation-brokered-consent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-consent
+  block: 6
+  fingerprint: 29ae1485ea20f4f0
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 817abb92 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd bee1b144 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 497096a9 aeca2b3d bf068a96 9bba30a0 aeca2b3d bf068a96 d41a32e0 94ae491e e9a46ca1 f84e6062 817abb92 368b1051 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-elicitation-brokered-consent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-consent
+  block: 8
+  fingerprint: 6769b819f5cde9bc
+  lang: sh
+  lines: 6769b819
+  preview: echo "${GATEWAY_URL}/mcp/atlassian"
+  form:
+    attr: paths="mcp-elicitation-brokered-consent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-consent
+  block: 9
+  fingerprint: 0eb5d445c5995452
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 957ce381 8af957d1 36184fa5 588a5d84 e9a46ca1 f84e6062 e5400058 bb85cefe 7602c0a5 6f403570 24435562 33d39895 ebeee92c 5118829e 61d9749c 4112252c d8541eca 4b6ae4b4 112b9466 526018c5 79677ded 5614227e e8b1cb2e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-elicitation-brokered-consent"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: f37130523764dc04
+    lang: json
+    lines: cf9a680a afa07114 b45da64b 230de817 b45a926b f1363d5f d10b36aa
+    preview: '"consent": {'
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
+       # ============================================================================
+       # Doc test coverage for "MCP consent screen" (comments not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * Step 1: the consent settings merged into brokered-values.yaml (hidden
+       #     equivalent of the hand edit) and the Helm upgrade.
+       #   * Step 2: the Atlassian backend, policy (Accepted and Attached), and
+       #     route, and the resource's protected resource metadata.
+       #   * Step 3 up to the consent screen without a browser: registration, PKCE
+       #     authorize for /mcp/atlassian, the Keycloak login as alice, and the
+       #     redirect to the gateway's consent page, which shows the issuer's
+       #     platform name and the backend's legal text and logo overrides.
+       #   * Step 4: the opt-out policy is created.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Continue on the consent page and the Atlassian authorization: needs an
+       #     Atlassian account. MCP Inspector: no browser in CI.
+       #   * Step 4 has no mcp-internal backend, so the policy's status is not checked.
+       python3 - <<'PY'
+       import json, yaml
+       with open("brokered-values.yaml") as f:
+           values = yaml.safe_load(f)
+       env = values["controller"]["extraEnv"]
+       cfg = json.loads(env["KGW_OAUTH_ISSUER_CONFIG"])
+       cfg["consent"] = {
+           "enabled": True,
+           "force_refresh": False,
+           "platform_name": "Acme AI Gateway powered by Solo Enterprise for agentgateway",
+           "logo_url": "https://agentgateway.dev/agw-dark.svg",
+           "legal_text": "By clicking Continue, you authorize Acme AI Gateway to act on your behalf against the selected upstream service. Acme will store an access token tied to your identity until it is revoked or expires.",
+       }
+       env["KGW_OAUTH_ISSUER_CONFIG"] = json.dumps(cfg, indent=2)
+       with open("brokered-values.yaml", "w") as f:
+           yaml.safe_dump(values, f, sort_keys=False)
+       PY
+       # The visible upgrade below is textually identical to the brokered setup's,
+       # so the extractor drops it as a duplicate; this copy applies the consent values.
+       helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} \
+         -n {{< reuse "agw-docs/snippets/namespace.md" >}} --version {{< reuse "agw-docs/versions/helm-version-flag.md" >}} \
+         -f values.yaml -f brokered-values.yaml
+       kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deployment/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} --timeout=300s
+       kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get deploy {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -o json | grep 'Acme AI Gateway powered by' >/dev/null
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 29ae1485ea20f4f0
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 817abb92 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd bee1b144 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 497096a9 aeca2b3d bf068a96 9bba30a0 aeca2b3d bf068a96 d41a32e0 94ae491e e9a46ca1 f84e6062 817abb92 368b1051 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for EnterpriseAgentgatewayPolicy mcp-atlassian-elicit Accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               name: mcp-atlassian-elicit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: wait for EnterpriseAgentgatewayPolicy mcp-atlassian-elicit Attached
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               name: mcp-atlassian-elicit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: wait for HTTPRoute mcp-atlassian Accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               name: mcp-atlassian
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       for i in $(seq 1 30); do
+         [ "$(curl -s -o /dev/null -w '%{http_code}' "${GATEWAY_URL}/.well-known/oauth-protected-resource/mcp/atlassian")" = "200" ] && break
+         sleep 2
+       done
+       PRM=$(curl -fsS "${GATEWAY_URL}/.well-known/oauth-protected-resource/mcp/atlassian")
+       [ "$(jq -r .resource <<<"$PRM")" = "${GATEWAY_URL}/mcp/atlassian" ] || { echo "FAIL: resource" >&2; echo "$PRM" >&2; exit 1; }
+       JAR=$(mktemp)
+       REDIRECT_URI="http://127.0.0.1:6274/oauth/callback"
+       pkce_pair
+       AUTH_URL="${GATEWAY_URL}/oauth-issuer/authorize?client_id=${ISSUER_CLIENT_ID}&response_type=code&state=doc-test-consent&redirect_uri=$(urlenc "$REDIRECT_URI")&code_challenge=${PKCE_CHALLENGE}&code_challenge_method=S256&resource=$(urlenc "${GATEWAY_URL}/mcp/atlassian")"
+       KC_PAGE=$(follow_redirects_until "${KEYCLOAK_ISSUER}/" "$AUTH_URL" "$JAR")
+       AFTER_LOGIN=$(kc_form_login "$KC_PAGE" alice alice-password "$JAR")
+       CONSENT_URL=$(follow_redirects_until "${GATEWAY_URL}/oauth-issuer/consent" "$AFTER_LOGIN" "$JAR")
+       CONSENT_PAGE=$(curl -fsS -b "$JAR" "$CONSENT_URL")
+       for want in 'Acme AI Gateway powered by Solo Enterprise for agentgateway' \
+                   'read your Jira issues and Confluence pages on your behalf' \
+                   'Atlassian-horizontal-blue-rgb.svg' \
+                   'name="decision" value="allow"'; do
+         grep -qF "$want" <<<"$CONSENT_PAGE" || { echo "FAIL: consent page lacks: $want" >&2; echo "$CONSENT_PAGE" | head -60 >&2; exit 1; }
+       done
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 0eb5d445c5995452
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 957ce381 8af957d1 36184fa5 588a5d84 e9a46ca1 f84e6062 e5400058 bb85cefe 7602c0a5 6f403570 24435562 33d39895 ebeee92c 5118829e 61d9749c 4112252c d8541eca 4b6ae4b4 112b9466 526018c5 79677ded 5614227e e8b1cb2e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
+    kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get enterpriseagentgatewaypolicy mcp-opt-out-consent \
+      -o jsonpath='{.spec.backend.entElicitation.brokered.chainedAuth.oauth.consent.disabled}' | grep -x true >/dev/null
+    {{< /doc-test >}}

@@ -1,0 +1,260 @@
+format: 1
+source: assets/agw-docs/pages/mcp/brokered-agent-kubernetes.md
+blocks:
+- 8a4519d403da4b9c bash
+- 6b24506ae9b76251 sh
+- 5bdc52b253eea48d sh
+- 8f0b24ff56f1128a sh
+- 7d60d9e9c56a4da1 sh
+- fcfbeab465d202d9 sh
+- 829aa4bd432eb6ad sh
+- d7b74016ba8b2efd sh
+- 5b1de279d023b637 json
+- e7fb036a42f0b0cf sh
+- 9f5f3049208c82e8 console
+- 6e5fd5b4879cc537 sh
+- 36a0279dc3b141b1 sh
+- 511f880448b2819a console
+- 409bb96cfc4f2751 sh
+- b621e2072bbbe363 console
+- fd093559d9c20ed2 sh
+- 1ff9ed74a9c996e3 sh
+tags:
+- paths: mcp-elicitation-brokered-agent
+  block: 0
+  fingerprint: 8a4519d403da4b9c
+  lang: bash
+  lines: cf837a71 428d8fc1 41752bd2 9b536cf7
+  preview: echo $GATEWAY_NAME
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 1
+  fingerprint: 6b24506ae9b76251
+  lang: sh
+  lines: e48d631f 08167823 e8bb417c 96abd8de 67c5a3ac 49580305 021fb596 7ff70646 afa07114 469bd28a 4002a67b 021fb596 acac5baa c4945f11 fe4ada09 59693229 3f42e715 68ccb6f1 d10b36aa 39d4b54e 55d0c79c 021fb596 32990666 afa07114 09db9566 07f50448 e50d678d 85e448c4 2cb1ea16 a73ab379 cfae0d42 d10b36aa cfae0d42 d10b36aa abc56510
+  preview: ADMIN_TOKEN=$(curl -fsS -X POST "${KEYCLOAK_URL}/realms/master/protocol/openid-c
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 2
+  fingerprint: 5bdc52b253eea48d
+  lang: sh
+  lines: 5b0502d4 92e2bca1
+  preview: export UPSTREAM_ISSUER="${KEYCLOAK_URL}/realms/upstream-mcp"
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 3
+  fingerprint: 8f0b24ff56f1128a
+  lang: sh
+  lines: e48d631f 08167823 eba2d24f 96abd8de 67c5a3ac 391e00e8 021fb596 654a7d14 8c92794d 1ec16f50 be1075b9 a61b93ea 021fb596 f34b9f6a d15de3c7 aab74b88 6685a21a 4fe4e563 26427009 d10b36aa d10b36aa cfae0d42 d10b36aa abc56510
+  preview: ADMIN_TOKEN=$(curl -fsS -X POST "${KEYCLOAK_URL}/realms/master/protocol/openid-c
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 4
+  fingerprint: 7d60d9e9c56a4da1
+  lang: sh
+  lines: 480a6c5c c0f3d62a 1fb80000
+  preview: export AGENT_TOKEN=$(curl -fsS -X POST "${KEYCLOAK_ISSUER}/protocol/openid-conne
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 5
+  fingerprint: fcfbeab465d202d9
+  lang: sh
+  lines: 3f8df328 fde80217 67248a97
+  preview: kubectl create secret generic agent-upstream-oauth \
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 6
+  fingerprint: 829aa4bd432eb6ad
+  lang: sh
+  lines: 16c71da1 263e4531 f84e6062 8c8c4228 05b3a3d7 8af957d1 36184fa5 82726b6f 3035507a 233e460f 2efcbf93 698e6a20 4aee8d36 bc24674f 0998f548 c8f3f59a 82726b6f 85380355 d3cb008e 878ce673 b3abcad4 44ec9b74 70c97555 22aec9ce f84e6062 56331f31 aa373d0a 4742b74a cb3f91d5 00c69c65 5cad5c90 8c8c4228 15be72b3 8af957d1 36184fa5 588a5d84 e9a46ca1 f84e6062 05b3a3d7 bb85cefe 7602c0a5 6f403570 b6e7e95c 33d39895 ebeee92c 883e1a24 e73ad6de b7180a43 61d7ef05 69cc8b07 837dd2e9 79677ded 5614227e e8b1cb2e cb3f91d5 8c67597e 56bf9360 8c8c4228 05b3a3d7 8af957d1 36184fa5 d3d416e7 fbe2b50c 3de9d845 b733d726 aeca2b3d bf068a96 7138bf39 94ae491e e9a46ca1 f84e6062 05b3a3d7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 7
+  fingerprint: d7b74016ba8b2efd
+  lang: sh
+  lines: a2d0fc1a a8b29b25
+  preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get enterpriseagentgat
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 9
+  fingerprint: e7fb036a42f0b0cf
+  lang: sh
+  lines: 5440dc77 4877c191 67c5a3ac 4347ff3f af835a62
+  preview: curl -s -i -X POST "${GATEWAY_URL}/mcp/agent" \
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 11
+  fingerprint: 6e5fd5b4879cc537
+  lang: sh
+  lines: 1f2e8d8d 4877c191 67c5a3ac 4347ff3f 048a7122 22dd591a 6beaefef
+  preview: export MCP_SESSION_ID=$(curl -s -i -X POST "${GATEWAY_URL}/mcp/agent" \
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 12
+  fingerprint: 36a0279dc3b141b1
+  lang: sh
+  lines: d547d1af 4877c191 67c5a3ac 4347ff3f f852aefa 80e461be
+  preview: curl -s -X POST "${GATEWAY_URL}/mcp/agent" \
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 14
+  fingerprint: 409bb96cfc4f2751
+  lang: sh
+  lines: 7613b21c 9103ce67
+  preview: 'kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/{{< reuse '
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: 829aa4bd432eb6ad
+    lang: sh
+    lines: 16c71da1 263e4531 f84e6062 8c8c4228 05b3a3d7 8af957d1 36184fa5 82726b6f 3035507a 233e460f 2efcbf93 698e6a20 4aee8d36 bc24674f 0998f548 c8f3f59a 82726b6f 85380355 d3cb008e 878ce673 b3abcad4 44ec9b74 70c97555 22aec9ce f84e6062 56331f31 aa373d0a 4742b74a cb3f91d5 00c69c65 5cad5c90 8c8c4228 15be72b3 8af957d1 36184fa5 588a5d84 e9a46ca1 f84e6062 05b3a3d7 bb85cefe 7602c0a5 6f403570 b6e7e95c 33d39895 ebeee92c 883e1a24 e73ad6de b7180a43 61d7ef05 69cc8b07 837dd2e9 79677ded 5614227e e8b1cb2e cb3f91d5 8c67597e 56bf9360 8c8c4228 05b3a3d7 8af957d1 36184fa5 d3d416e7 fbe2b50c 3de9d845 b733d726 aeca2b3d bf068a96 7138bf39 94ae491e e9a46ca1 f84e6062 05b3a3d7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for EnterpriseAgentgatewayPolicy agent-mcp-elicit Accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               name: agent-mcp-elicit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: wait for EnterpriseAgentgatewayPolicy agent-mcp-elicit Attached
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               name: agent-mcp-elicit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: wait for HTTPRoute agent-mcp Accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               name: agent-mcp
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: e7fb036a42f0b0cf
+    lang: sh
+    lines: 5440dc77 4877c191 67c5a3ac 4347ff3f af835a62
+    preview: curl -s -i -X POST "${GATEWAY_URL}/mcp/agent" \
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
+       # ============================================================================
+       # Doc test coverage for "Agent (upstream-only)" (comments not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * The upstream-mcp realm and local-agent client through the Keycloak
+       #     admin API, the agent's password-grant token, and the backend, policy,
+       #     and route (Accepted and Attached).
+       #   * The first initialize returns 400 with an upstream-mcp authorization
+       #     URL whose redirect_uri is the issuer's upstream callback.
+       #   * The browser step without a browser: the upstream Keycloak login form is
+       #     posted with curl, and the issuer callback answers "Authorization
+       #     complete". The retry then opens a session and the Echo tool answers.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * A real browser, and the Clean up section (not needed in a fresh cluster).
+       for i in $(seq 1 30); do
+         AGENT_RESP=$(curl -s -w '\n%{http_code}' -X POST "${GATEWAY_URL}/mcp/agent" \
+           -H "Authorization: Bearer ${AGENT_TOKEN}" -H "Content-Type: application/json" \
+           -H "Accept: application/json, text/event-stream" \
+           -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"doc-test-agent","version":"1"}}}')
+         [ "$(tail -n1 <<<"$AGENT_RESP")" = "400" ] && break
+         sleep 2
+       done
+       [ "$(tail -n1 <<<"$AGENT_RESP")" = "400" ] || { echo "FAIL: expected 400" >&2; echo "$AGENT_RESP" >&2; exit 1; }
+       UPSTREAM_AUTH_URL=$(sed '$d' <<<"$AGENT_RESP" | jq -er .url)
+       case "$UPSTREAM_AUTH_URL" in
+         "${UPSTREAM_ISSUER}/protocol/openid-connect/auth?"*) ;;
+         *) echo "FAIL: URL does not point to the upstream-mcp realm: $UPSTREAM_AUTH_URL" >&2; exit 1 ;;
+       esac
+       [ "$(query_param "$UPSTREAM_AUTH_URL" redirect_uri)" = "${GATEWAY_URL}/oauth-issuer/callback/upstream" ] \
+         || [ "$(query_param "$UPSTREAM_AUTH_URL" redirect_uri)" = "${GATEWAY_URL}:80/oauth-issuer/callback/upstream" ] \
+         || { echo "FAIL: redirect_uri $(query_param "$UPSTREAM_AUTH_URL" redirect_uri)" >&2; exit 1; }
+       # Stand-in for steps 2 and 3: sign in to the upstream realm as alice.
+       JAR=$(mktemp)
+       UPSTREAM_CB=$(kc_form_login "$UPSTREAM_AUTH_URL" alice alice-upstream-password "$JAR")
+       case "$UPSTREAM_CB" in
+         *"/oauth-issuer/callback/upstream?"*) ;;
+         *) echo "FAIL: upstream login did not return to the issuer: $UPSTREAM_CB" >&2; exit 1 ;;
+       esac
+       curl -fsS -L -b "$JAR" -c "$JAR" "$UPSTREAM_CB" | grep 'Authorization complete' >/dev/null \
+         || { echo "FAIL: callback did not show Authorization complete" >&2; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 36a0279dc3b141b1
+    lang: sh
+    lines: d547d1af 4877c191 67c5a3ac 4347ff3f f852aefa 80e461be
+    preview: curl -s -X POST "${GATEWAY_URL}/mcp/agent" \
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
+       [ -n "${MCP_SESSION_ID}" ] || { echo "FAIL: empty MCP_SESSION_ID after authorization" >&2; exit 1; }
+       AGENT_ECHO=$(curl -s -X POST "${GATEWAY_URL}/mcp/agent" \
+         -H "Authorization: Bearer ${AGENT_TOKEN}" -H "Content-Type: application/json" \
+         -H "Accept: application/json, text/event-stream" -H "Mcp-Session-Id: ${MCP_SESSION_ID}" \
+         -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"echo","arguments":{"message":"doc test agent echo"}}}')
+       grep -q 'Echo: doc test agent echo' <<<"$AGENT_ECHO" || { echo "FAIL: echo result" >&2; echo "$AGENT_ECHO" >&2; exit 1; }
+       {{< /doc-test >}}

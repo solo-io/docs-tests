@@ -51,7 +51,7 @@ class ClusterNameTests(unittest.TestCase):
         """The regression itself: `name` fits, `name::type` must fit too."""
         base = "per-try-timeout-in-gatewaylistener"
         self.assertLessEqual(len(self.node_name(base)), MAX_DNS_LABEL)
-        for suffix in ("schema", "functional", "credentialed"):
+        for suffix in ("schema", "functional"):
             with self.subTest(type=suffix):
                 self.assertLessEqual(len(self.node_name(f"{base}::{suffix}")), MAX_DNS_LABEL)
 

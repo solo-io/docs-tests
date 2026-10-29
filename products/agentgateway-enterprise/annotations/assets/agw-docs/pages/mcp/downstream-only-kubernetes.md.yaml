@@ -1,0 +1,107 @@
+format: 1
+source: assets/agw-docs/pages/mcp/downstream-only-kubernetes.md
+blocks:
+- 480735dced8df534 yaml
+- d3f161f1588e3418 sh
+- e1831450241eb515 sh
+- d4354f515c911080 json
+- 9ec020c7d69f529a sh
+- 1843beef398d3e5f json
+- 21d4b7614ce596f0 sh
+tags:
+- paths: mcp-elicitation-brokered-downstream-only
+  block: 1
+  fingerprint: d3f161f1588e3418
+  lang: sh
+  lines: d3f161f1
+  preview: curl -i "${GATEWAY_URL}/mcp"
+  form:
+    attr: paths="mcp-elicitation-brokered-downstream-only"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-downstream-only
+  block: 2
+  fingerprint: e1831450241eb515
+  lang: sh
+  lines: e1831450
+  preview: curl -fsS "${GATEWAY_URL}/.well-known/oauth-protected-resource/mcp" | jq '{resou
+  form:
+    attr: paths="mcp-elicitation-brokered-downstream-only"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-downstream-only
+  block: 4
+  fingerprint: 9ec020c7d69f529a
+  lang: sh
+  lines: 9ec020c7
+  preview: curl -fsS "${GATEWAY_URL}/.well-known/oauth-authorization-server/mcp" | jq '{iss
+  form:
+    attr: paths="mcp-elicitation-brokered-downstream-only"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-downstream-only
+  block: 6
+  fingerprint: 21d4b7614ce596f0
+  lang: sh
+  lines: 21d4b761
+  preview: echo "${GATEWAY_URL}/mcp"
+  form:
+    attr: paths="mcp-elicitation-brokered-downstream-only"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: 21d4b7614ce596f0
+    lang: sh
+    lines: 21d4b761
+    preview: echo "${GATEWAY_URL}/mcp"
+  content: |-
+    {{< doc-test paths="mcp-elicitation-brokered-downstream-only" >}}
+    # ============================================================================
+    # Doc test coverage for "Set up downstream-only login" (comments not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The discovery checks on the page (chained after brokered setup).
+    #   * Step 3 without a browser: the same OAuth requests that MCP Inspector
+    #     makes (registration, PKCE authorize, Keycloak login as alice, the
+    #     issuer's downstream callback, and the token request), then an MCP
+    #     initialize and an Echo tool call with the issued token, and the STS
+    #     log line that the page quotes.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * MCP Inspector itself and its UI (no browser in CI). The Keycloak login
+    #     form is posted with curl instead.
+    JAR=$(mktemp)
+    REDIRECT_URI="http://localhost:6274/oauth/callback"
+    curl -fsS -X POST "${GATEWAY_URL}/oauth-issuer/register" -H 'Content-Type: application/json' \
+      -d "{\"client_name\":\"doc-test\",\"redirect_uris\":[\"${REDIRECT_URI}\"]}" >/dev/null
+    pkce_pair
+    AUTH_URL="${GATEWAY_URL}/oauth-issuer/authorize?client_id=${ISSUER_CLIENT_ID}&response_type=code&state=doc-test-downstream&redirect_uri=$(urlenc "$REDIRECT_URI")&code_challenge=${PKCE_CHALLENGE}&code_challenge_method=S256&resource=$(urlenc "${GATEWAY_URL}/mcp")"
+    KC_PAGE=$(follow_redirects_until "${KEYCLOAK_ISSUER}/" "$AUTH_URL" "$JAR")
+    echo "authorize redirected to Keycloak: ${KC_PAGE%%\?*}"
+    AFTER_LOGIN=$(kc_form_login "$KC_PAGE" alice alice-password "$JAR")
+    CLIENT_CB=$(follow_redirects_until "$REDIRECT_URI" "$AFTER_LOGIN" "$JAR")
+    [ "$(query_param "$CLIENT_CB" state)" = "doc-test-downstream" ] || { echo "FAIL: state mismatch in $CLIENT_CB" >&2; exit 1; }
+    CODE=$(query_param "$CLIENT_CB" code)
+    TOKEN_RESP=$(curl -fsS -X POST "${GATEWAY_URL}/oauth-issuer/token" \
+      --data-urlencode grant_type=authorization_code --data-urlencode "code=${CODE}" \
+      --data-urlencode "client_id=${ISSUER_CLIENT_ID}" --data-urlencode "redirect_uri=${REDIRECT_URI}" \
+      --data-urlencode "code_verifier=${PKCE_VERIFIER}")
+    DOWNSTREAM_TOKEN=$(jq -er .access_token <<<"$TOKEN_RESP")
+    HDRS=$(mktemp)
+    curl -fsS -D "$HDRS" -o /dev/null -X POST "${GATEWAY_URL}/mcp" \
+      -H "Authorization: Bearer ${DOWNSTREAM_TOKEN}" -H 'Content-Type: application/json' \
+      -H 'Accept: application/json, text/event-stream' \
+      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"doc-test","version":"1"}}}'
+    SID=$(awk 'tolower($1) == "mcp-session-id:" {gsub("\r", "", $2); print $2}' "$HDRS")
+    [ -n "$SID" ] || { echo "FAIL: no mcp-session-id" >&2; cat "$HDRS" >&2; exit 1; }
+    curl -fsS -o /dev/null -X POST "${GATEWAY_URL}/mcp" -H "Authorization: Bearer ${DOWNSTREAM_TOKEN}" \
+      -H "Mcp-Session-Id: ${SID}" -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+      -d '{"jsonrpc":"2.0","method":"notifications/initialized"}'
+    ECHO_OUT=$(curl -fsS -X POST "${GATEWAY_URL}/mcp" -H "Authorization: Bearer ${DOWNSTREAM_TOKEN}" \
+      -H "Mcp-Session-Id: ${SID}" -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+      -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"echo","arguments":{"message":"Hello from downstream-only login"}}}')
+    grep -q 'Echo: Hello from downstream-only login' <<<"$ECHO_OUT" || { echo "FAIL: echo result" >&2; echo "$ECHO_OUT" >&2; exit 1; }
+    kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} --since=10m | grep 'downstream callback processed, completing downstream-only flow' >/dev/null \
+      || { echo "FAIL: STS log line not found" >&2; exit 1; }
+    {{< /doc-test >}}

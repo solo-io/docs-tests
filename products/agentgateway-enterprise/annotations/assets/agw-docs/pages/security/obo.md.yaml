@@ -1,0 +1,230 @@
+format: 1
+source: assets/agw-docs/pages/security/obo.md
+blocks:
+- 9928ef33074554cf mermaid
+- 79009a18f7d450df sh
+- 6ebc17e8b7eba791 sh
+- 78c08dce451efeff
+- fc9d195d49419198 bash
+- 9b27fd32148befd5 yaml
+- a96dd6c9496e942c bash
+- 223db7a1f015fcb5 bash
+- 719fc0a94382d42e console
+- c39d09bb115ebb39 yaml
+- 77ad724c18b38649 sh
+- 5813df039601fdae bash
+- 0fddfb11ee89bb50 json
+- 378a0b8fb7f3b0af yaml
+- a6fa7d4e81826243 yaml
+- 569e3eca6942baeb bash
+- 07bfc3f026f0406a bash
+- fc1c2184e1246e6e bash
+- 70b1359d133945c3 bash
+- b4f6096c54332206 bash
+- 830f9a76ed398027 bash
+- b1ae28a410f4e05c json
+- 83fed62a2ad8f9c1 bash
+- 566ee9b52c3173cc json
+- d0e1b052969659f0 bash
+- 8e196fc17558b975 bash
+- 94a647517b220a75 yaml
+- 3f82390222036df7 bash
+tags:
+- paths: te-delegation
+  block: 4
+  fingerprint: fc9d195d49419198
+  lang: bash
+  lines: fc9d195d
+  preview: helm get values {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< r
+  form:
+    attr: paths="te-delegation"
+    only: true
+    lead: ' '
+- paths: te-delegation
+  block: 6
+  fingerprint: a96dd6c9496e942c
+  lang: bash
+  lines: ad8da71a b2b13b5a 2a24ff0e 7771d15b 0e1a9b32
+  preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
+  form:
+    attr: paths="te-delegation"
+    only: true
+    lead: ' '
+- paths: te-delegation
+  block: 7
+  fingerprint: 223db7a1f015fcb5
+  lang: bash
+  lines: 79888a7d 1d0fd62c
+  preview: 'kubectl get deploy -n {{< reuse "/agw-docs/snippets/namespace.md" >}} {{< reuse '
+  form:
+    attr: paths="te-delegation"
+    only: true
+    lead: ' '
+- paths: te-delegation
+  block: 9
+  fingerprint: c39d09bb115ebb39
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 b68b921b 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a9110e4f d3cb008e a1343bf6 ab6b78ec 44ec9b74 30ea0224 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-delegation"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 4
+    fingerprint: fc9d195d49419198
+    lang: bash
+    lines: fc9d195d
+    preview: helm get values {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< r
+  content: |2-
+       {{< doc-test paths="te-delegation" >}}
+       # ============================================================================
+       # Doc test coverage for "Delegation" (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * Step 1 with the in-cluster Keycloak from "Keycloak as an IdP" (master
+       #     realm). The Keycloak tab's JWKS URI and key commands are placeholders, so
+       #     the real values come from that guide's test steps.
+       #   * Step 2: the token exchange values are added to the Helm values, the
+       #     upgrade succeeds, and the control plane service exposes port 7777.
+       #   * Step 3.4: the JWT policy on the static MCP server's route is accepted,
+       #     and a request without a token is rejected with 401.
+       #   * The RFC 8693 delegation exchange itself, as an agent would send it: from
+       #     a pod in the cluster, user1's Keycloak token (subject) and a Kubernetes
+       #     service account token (actor) are exchanged at the STS for a token with
+       #     the user's `sub` and the service account in the `act` claim.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Steps 3.1 to 3.3 and 3.5: they need an agent built with agentsts-adk and
+       #     deployed with kagent, which the guide does not provide. The test sends the
+       #     agent's exchange request directly instead.
+       #   * A request to the MCP server with the delegated token: the JWT policy
+       #     validates the STS issuer against Keycloak's keys, which cannot verify a
+       #     token that the STS signed (see the docs bug report).
+       test -n "$KEYCLOAK_JWKS_URI" && test -n "$KEYCLOAK_CERT_KEYS" \
+         || { echo "run the Keycloak as an IdP steps first"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 9b27fd32148befd5
+    lang: yaml
+    lines: 835aaff5 ff7360cf 7230b136 0c1d87f8 214e7b96 d03df935 312e2a24 dc7eaa0a 7c4e882b e730e5c4 d60fbe86 e730e5c4
+    preview: 'tokenExchange:'
+  content: |2-
+       {{< doc-test paths="te-delegation" >}}
+       # The block above is a fragment to paste into values.yaml. Append it.
+       cat >> values.yaml <<EOF
+       tokenExchange:
+         enabled: true
+         issuer: "{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}}.{{< reuse "/agw-docs/snippets/namespace.md" >}}.svc.cluster.local:7777"
+         tokenExpiration: 24h
+         subjectValidator:
+           validatorType: remote
+           remoteConfig:
+             url: "${KEYCLOAK_JWKS_URI}"
+         actorValidator:
+           validatorType: k8s
+         apiValidator:
+           validatorType: k8s
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: a96dd6c9496e942c
+    lang: bash
+    lines: ad8da71a b2b13b5a 2a24ff0e 7771d15b 0e1a9b32
+    preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
+  content: |2-
+       {{< doc-test paths="te-delegation" >}}
+       kubectl rollout status deployment/{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 719fc0a94382d42e
+    lang: console
+    lines: 89112877 c95847bc af1d09fa ce6976d2
+    preview: NAME                                                       READY   STATUS    RES
+  content: |2-
+       {{< doc-test paths="te-delegation" >}}
+       kubectl get svc {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o json | jq -e '[.spec.ports[].port] | index(7777) != null' >/dev/null \
+         || { echo "the control plane service has no STS port 7777"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: c39d09bb115ebb39
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 b68b921b 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a9110e4f d3cb008e a1343bf6 ab6b78ec 44ec9b74 30ea0224 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="te-delegation" >}}
+       YAMLTest -f - <<'EOF'
+       - name: jwt-policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: default
+               name: jwt-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: an MCP request without a token is rejected by the JWT policy
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/mcp"
+           method: POST
+           headers:
+             content-type: "application/json"
+             accept: "application/json, text/event-stream"
+           body: '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl-client","version":"1.0"}}}'
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 401
+       EOF
+
+       # Delegation, as the agent in step 3.5 would do it. The actor is the default
+       # service account in the default namespace.
+       ACTOR_SUB="system:serviceaccount:default:default"
+       ADMIN_TOKEN=$(curl -fsS -d "client_id=admin-cli" -d "username=admin" -d "password=admin" -d "grant_type=password" \
+         "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" | jq -r .access_token)
+       KC_CLIENT_UUID=$(curl -fsS -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+         "$KEYCLOAK_URL/admin/realms/master/clients?clientId=${KEYCLOAK_CLIENT}" | jq -r '.[0].id')
+       # The STS rejects delegation unless the subject token's may_act claim names
+       # the actor, which the guide does not set up. Add the claim to the client.
+       MAY_ACT_MAPPER=$(jq -n --arg v "{\"sub\":\"${ACTOR_SUB}\"}" '{name: "may_act", protocol: "openid-connect", protocolMapper: "oidc-hardcoded-claim-mapper", config: {"claim.name": "may_act", "claim.value": $v, "jsonType.label": "JSON", "access.token.claim": "true"}}')
+       curl -fsS -H "Authorization: Bearer ${ADMIN_TOKEN}" -H "Content-Type: application/json" -X POST \
+         "$KEYCLOAK_URL/admin/realms/master/clients/${KC_CLIENT_UUID}/protocol-mappers/models" -d "$MAY_ACT_MAPPER"
+       SUBJECT_TOKEN=$(curl -fsS -d "client_id=${KEYCLOAK_CLIENT}" -d "client_secret=${KEYCLOAK_SECRET}" \
+         -d "username=user1" -d "password=password" -d "grant_type=password" \
+         "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" | jq -r .access_token)
+       ACTOR_TOKEN=$(kubectl create token default -n default)
+       jwt_claims() { python3 -c 'import sys,json,base64; p=sys.argv[1].split(".")[1]; p+="="*(-len(p)%4); print(json.dumps(json.loads(base64.urlsafe_b64decode(p))))' "$1"; }
+       jwt_claims "$SUBJECT_TOKEN" | jq -e --arg a "$ACTOR_SUB" '.may_act.sub == $a' >/dev/null \
+         || { echo "the Keycloak token has no may_act claim for the actor"; exit 1; }
+       for attempt in $(seq 1 10); do
+         DELEGATION_RESPONSE=$(kubectl run "sts-client-delegation-$attempt" -n default --rm -i --quiet --restart=Never \
+           --pod-running-timeout=3m --image=curlimages/curl -- \
+           curl -s -X POST "http://{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}}.{{< reuse "/agw-docs/snippets/namespace.md" >}}.svc.cluster.local:7777/oauth2/token" \
+             -H "Content-Type: application/x-www-form-urlencoded" \
+             -d "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
+             -d "subject_token=${SUBJECT_TOKEN}" \
+             -d "subject_token_type=urn:ietf:params:oauth:token-type:jwt" \
+             -d "actor_token=${ACTOR_TOKEN}" \
+             -d "actor_token_type=urn:ietf:params:oauth:token-type:jwt" \
+             -d "audience=my-mcp-server") || true
+         echo "$DELEGATION_RESPONSE" | jq -e '.access_token | length > 0' >/dev/null 2>&1 && break
+         sleep 5
+       done
+       DELEGATED_TOKEN=$(echo "$DELEGATION_RESPONSE" | jq -r '.access_token // empty')
+       test -n "$DELEGATED_TOKEN" || { echo "delegation exchange failed: $DELEGATION_RESPONSE"; exit 1; }
+       USER_SUB=$(jwt_claims "$SUBJECT_TOKEN" | jq -r .sub)
+       jwt_claims "$DELEGATED_TOKEN" | jq -e --arg sub "$USER_SUB" --arg a "$ACTOR_SUB" --arg iss "{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}}.{{< reuse "/agw-docs/snippets/namespace.md" >}}.svc.cluster.local:7777" \
+         '.sub == $sub and .iss == $iss and .act.sub == $a' >/dev/null \
+         || { echo "the delegated token does not carry the user's sub, the STS issuer, and the actor in act"; jwt_claims "$DELEGATED_TOKEN"; exit 1; }
+       {{< /doc-test >}}

@@ -66,6 +66,7 @@ prerequisites:
 # is skipped in ../../agentgateway/kubernetes/tests.yaml.
 skip:
 - page: _index.md
+- page: documentation/_index.md
 - page: documentation/about/_index.md
 - page: documentation/about/architecture/_index.md
 - page: documentation/about/architecture/ext-auth.md
@@ -136,6 +137,7 @@ skip:
 - page: documentation/resiliency/retry/about.md
 - page: documentation/resiliency/timeouts/_index.md
 - page: documentation/resiliency/timeouts/about.md
+- page: documentation/resiliency/timeouts/per-try-timeout.md
 - page: documentation/security/_index.md
 - page: documentation/security/backend-authn/providers/_index.md
 - page: documentation/security/backend-authn/token-exchange/_index.md
@@ -329,6 +331,16 @@ scenarios:
       path: authorization
     page: documentation/security/authorization.md
     path: backend-authorization
+  aws-assume-role-chain:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/security/backend-authn/providers/aws-assume-role-chain.md
+    path: aws-assume-role-chain
   axiom-schema:
     type: schema
     page: integrations/llm/observability/axiom.md
@@ -682,6 +694,13 @@ scenarios:
     - httpbin
     page: documentation/observability/access-logs/view.md
     path: access-logging
+  enterprise-airgap:
+    type:
+    - schema
+    - functional
+    needs: []
+    page: documentation/install/airgap.md
+    path: enterprise-airgap
   enterprise-clickhouse:
     needs:
     - install-standard
@@ -709,6 +728,20 @@ scenarios:
       path: openai-setup
     page: documentation/operations/debug.md
     path: enterprise-debug
+  enterprise-file-csi:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/security/external-secrets/file-csi.md
+    path: enterprise-file-csi
+  enterprise-licensing:
+    needs:
+    - install-standard
+    page: documentation/install/licensing.md
+    path: enterprise-licensing
   enterprise-metrics-external:
     needs:
     - install-standard
@@ -725,6 +758,18 @@ scenarios:
       path: enterprise-ui-setup
     page: documentation/observability/metrics/overview.md
     path: enterprise-metrics-overview
+  enterprise-migrate:
+    type:
+    - schema
+    - functional
+    needs: []
+    page: documentation/install/migrate.md
+    path: enterprise-migrate
+  enterprise-openshift-schema:
+    type: schema
+    needs: []
+    page: documentation/install/openshift.md
+    path: enterprise-openshift
   enterprise-otel-stack:
     needs:
     - install-standard
@@ -735,6 +780,18 @@ scenarios:
       path: enterprise-ui-setup
     page: documentation/observability/otel-stack.md
     path: enterprise-otel-stack
+  enterprise-purview-dlp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/guardrails/purview-dlp.md
+    path: enterprise-purview-dlp
   enterprise-traces-setup:
     needs:
     - install-standard
@@ -761,6 +818,10 @@ scenarios:
     - gateway
     page: documentation/install/ui/setup.md
     path: enterprise-ui-setup
+  enterprise-upgrade:
+    needs: []
+    page: documentation/operations/upgrade.md
+    path: enterprise-upgrade
   extauth-basic:
     type:
     - schema
@@ -1135,6 +1196,47 @@ scenarios:
     - gateway
     - httpbin
     page: documentation/install/sample-app.md
+  integrations-agentic-mesh-egress:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: integrations/agentic-mesh/waypoint/install.md
+      path: integrations-agentic-mesh-istio
+    page: integrations/agentic-mesh/egress.md
+    path: integrations-agentic-mesh-egress
+  integrations-agentic-mesh-ingress:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: integrations/agentic-mesh/waypoint/install.md
+      path: integrations-agentic-mesh-istio
+    page: integrations/agentic-mesh/ingress.md
+    path: integrations-agentic-mesh-ingress
+  integrations-agentic-mesh-waypoint-backends:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: integrations/agentic-mesh/waypoint/install.md
+      path: integrations-agentic-mesh-waypoint-setup
+    page: integrations/agentic-mesh/waypoint/backends.md
+    path: integrations-agentic-mesh-waypoint-backends
+  integrations-agentic-mesh-waypoint-install:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: integrations/agentic-mesh/waypoint/install.md
+    path: integrations-agentic-mesh-waypoint-install
   integrations-agentic-mesh-waypoint-policies-schema:
     type: schema
     page: integrations/agentic-mesh/waypoint/policies.md
@@ -1496,10 +1598,73 @@ scenarios:
     - gateway
     page: documentation/mcp/composable.md
     path: mcp-composable
+  mcp-elicitation-brokered-agent:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/mcp/elicitation/brokered/setup.md
+      path: mcp-elicitation-brokered-setup
+    page: documentation/mcp/elicitation/brokered/agent.md
+    path: mcp-elicitation-brokered-agent
+  mcp-elicitation-brokered-consent:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/mcp/elicitation/brokered/setup.md
+      path: mcp-elicitation-brokered-setup
+    page: documentation/mcp/elicitation/brokered/consent-screen.md
+    path: mcp-elicitation-brokered-consent
+  mcp-elicitation-brokered-downstream-only:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/mcp/elicitation/brokered/setup.md
+      path: mcp-elicitation-brokered-setup
+    page: documentation/mcp/elicitation/brokered/downstream-only/setup.md
+    path: mcp-elicitation-brokered-downstream-only
   mcp-elicitation-brokered-issuer-settings-schema:
     type: schema
     page: documentation/mcp/elicitation/brokered/issuer-settings.md
     path: mcp-elicitation-brokered-issuer-settings
+  mcp-elicitation-brokered-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/elicitation/brokered/setup.md
+    path: mcp-elicitation-brokered-setup
+  mcp-elicitation-interactive-github:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/mcp/elicitation/interactive/setup.md
+      path: mcp-elicitation-interactive-setup
+    page: documentation/mcp/elicitation/interactive/github.md
+    path: mcp-elicitation-interactive-github
+  mcp-elicitation-interactive-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/elicitation/interactive/setup.md
+    path: mcp-elicitation-interactive-setup
   mcp-guardrails:
     type:
     - schema
@@ -1600,6 +1765,52 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/inheritance/native-policies.md
     path: native-policies
+  oauth-access-token:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    - page: documentation/security/extauth/oauth/keycloak.md
+      path: oauth-keycloak-setup
+    page: documentation/security/extauth/oauth/access-token.md
+    path: oauth-access-token
+  oauth-authorization-code:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    - page: documentation/security/extauth/oauth/keycloak.md
+      path: oauth-keycloak-setup
+    page: documentation/security/extauth/oauth/authorization-code.md
+    path: oauth-authorization-code
+  oauth-entra:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/security/extauth/oauth/entra.md
+    path: oauth-entra
+  oauth-keycloak:
+    type: functional
+    needs:
+    - install-standard
+    page: documentation/security/extauth/oauth/keycloak.md
+    path: oauth-keycloak
   ollama-provider-setup:
     type:
     - schema
@@ -2058,6 +2269,41 @@ scenarios:
     - install-experimental
     page: documentation/setup/listeners/tcp.md
     path: tcp-listener
+  te-delegation:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/mcp/static-mcp.md
+      path: setup-mcp-server
+    - page: documentation/security/extauth/oauth/keycloak.md
+      path: oauth-keycloak-setup
+    page: documentation/security/backend-authn/token-exchange/sts/delegation.md
+    path: te-delegation
+  te-idps-entra:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/security/backend-authn/token-exchange/idps/entra.md
+    path: te-idps-entra
+  te-impersonation:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/mcp/static-mcp.md
+      path: setup-mcp-server
+    page: documentation/security/backend-authn/token-exchange/sts/impersonation.md
+    path: te-impersonation
   te-jwt-bearer:
     type:
     - schema

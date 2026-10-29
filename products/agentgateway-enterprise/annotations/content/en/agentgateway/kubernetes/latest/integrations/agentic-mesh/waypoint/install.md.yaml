@@ -1,0 +1,101 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/integrations/agentic-mesh/waypoint/install.md
+blocks:
+- acf87bc841d852fa sh
+- 3de1a721ed82c400 sh
+- 621dfb5ae3f51d86 sh
+- 06eeed8a31ddad4c sh
+- a731a888c16e63e9 sh
+- fcef49702f9d4921 sh
+- a96a6169be423133
+- 5f60e2d4a373d98e sh
+- 40f67c10bae85a69 sh
+- c456ee6aa535b5bf sh
+- 7d0ef461117c659f sh
+tags:
+- paths: integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup
+  block: 0
+  fingerprint: acf87bc841d852fa
+  lang: sh
+  lines: eed9279f 56636913 f82702aa 09709669 cd85f142
+  preview: helm get values enterprise-agentgateway -n agentgateway-system -o yaml > values.
+  form:
+    attr: paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-waypoint-install
+  block: 8
+  fingerprint: 40f67c10bae85a69
+  lang: sh
+  lines: 40f67c10
+  preview: kubectl label namespace ${NAMESPACE} istio.io/use-waypoint-
+  form:
+    attr: paths="integrations-agentic-mesh-waypoint-install"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-waypoint-install
+  block: 9
+  fingerprint: c456ee6aa535b5bf
+  lang: sh
+  lines: c456ee6a
+  preview: kubectl delete gateway agentgateway-waypoint -n ${NAMESPACE}
+  form:
+    attr: paths="integrations-agentic-mesh-waypoint-install"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Install a Solo Enterprise for Istio ambient mesh
+    line: 614672614ac7ed4e
+    occurrence: 0
+    words: 1e142e62 ea325d76 31d18c0d d30ca7a7 8e7fc023 1f64fff0 b9776d7d 5364f2f2 93354845 28391d3b 82d979a2 26fe8b13 7175517a 1d9283d8 0695b563 ea325d76 9b617a92 5364f2f2 9b97ac5e 10c22bcf 82d979a2 cc1d3b02 663ea1bf 6ee0eb49 75a288c0 ea325d76 31d18c0d d30ca7a7 aa9e9b5c b9776d7d 1e142e62 9893ff99 10c22bcf ca978112 947f1875 164cf1ca 3e194352 91a11fab 82d979a2 5e1e2bca 8fb6d5f3 1e142e62 7175517a 30091a80 3e194352 91a11fab 82d979a2 5e1e2bca 30091a80 1e142e62 37a8eec1 d30ca7a7
+    block_before: null
+  content: |-
+    {{< doc-test paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup,integrations-agentic-mesh-istio" >}}
+    # The page links out to the Solo Enterprise for Istio install guides. CI has no
+    # Solo Istio license, so install community Istio in ambient mode instead, the
+    # same way the open source ambient scenarios do. The enterprise waypoint e2e
+    # suite also runs against community Istio.
+    ISTIO_VERSION="${ISTIO_VERSION:-1.31.3}"
+    istio_arch=$(uname -m)
+    case "$istio_arch" in x86_64) istio_arch=amd64 ;; aarch64) istio_arch=arm64 ;; esac
+    istio_os=$(uname -s | tr '[:upper:]' '[:lower:]')
+    [ "$istio_os" = "darwin" ] && istio_os=osx
+    ISTIO_BIN="${TMPDIR:-/tmp}/doc-test-istioctl-${ISTIO_VERSION}"
+    mkdir -p "$ISTIO_BIN"
+    export PATH="$ISTIO_BIN:$PATH"
+    if [ ! -x "$ISTIO_BIN/istioctl" ]; then
+      curl -fsSL "https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istioctl-${ISTIO_VERSION}-${istio_os}-${istio_arch}.tar.gz" \
+        | tar -xz -C "$ISTIO_BIN" istioctl
+    fi
+    istioctl install --set profile=ambient --skip-confirmation
+    kubectl -n istio-system rollout status deploy/istiod --timeout=300s
+    kubectl -n istio-system rollout status ds/ztunnel --timeout=300s
+    kubectl -n istio-system rollout status ds/istio-cni-node --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: acf87bc841d852fa
+    lang: sh
+    lines: eed9279f 56636913 f82702aa 09709669 cd85f142
+    preview: helm get values enterprise-agentgateway -n agentgateway-system -o yaml > values.
+  blank_before: []
+  content: |2-
+      {{< doc-test paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup" >}}
+      # Claim: the upgrade turns on the Istio integration and the control plane comes back up.
+      kubectl -n agentgateway-system rollout status deploy/enterprise-agentgateway --timeout=300s
+      helm get values enterprise-agentgateway -n agentgateway-system -o yaml | grep -q 'autoEnabled: true' \
+        || { echo "istio.autoEnabled is not set on the release"; exit 1; }
+      {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: c456ee6aa535b5bf
+    lang: sh
+    lines: c456ee6a
+    preview: kubectl delete gateway agentgateway-waypoint -n ${NAMESPACE}
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-waypoint-install" >}}
+       # Claim: deleting the Gateway removes the waypoint.
+       kubectl -n ${NAMESPACE} wait --for=delete deploy/agentgateway-waypoint --timeout=120s
+       {{< /doc-test >}}

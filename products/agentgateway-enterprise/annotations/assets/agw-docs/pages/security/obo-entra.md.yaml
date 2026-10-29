@@ -1,0 +1,389 @@
+format: 1
+source: assets/agw-docs/pages/security/obo-entra.md
+blocks:
+- 5ba3bf57f210aebe mermaid
+- 19ca53c4c4ddc738 bash
+- 70a92650f1e1bb28
+- 1d31a712eaccf8a3 bash
+- fc9d195d49419198 bash
+- 19819c523ee39f47 yaml
+- bb80f94e1cbbe7b5 bash
+- 223db7a1f015fcb5 bash
+- 26a27dddc7486e7b console
+- cf2d6c57940f1f4d yaml
+- f4462f2cdd1ef38b yaml
+- b1fdf0811c3c4de2 yaml
+- 0b1ad4dd7bb4f586 bash
+- b82137abdd4cb391 console
+- 53581a330c872d09 yaml
+- 7143126cad53414d bash
+- ea9369e06bbed134 bash
+- 53973197a0ebe64e bash
+- 9ffd3f4f151e50f9 json
+- 737724612c146876 yaml
+- 029169028bc532a2 json
+- 6219aa5c64cce8a1 bash
+- 6cef3fc79b764919 console
+- a9cfd23eee73f9b5 console
+- 5e5a1c02ec9094e8 json
+- ea453e28b8ac737c bash
+tags:
+- paths: te-idps-entra
+  block: 1
+  fingerprint: 19ca53c4c4ddc738
+  lang: bash
+  lines: aa3faafa 2cf26013 57e3a0d5
+  preview: echo $ENTRA_TENANT_ID
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 3
+  fingerprint: 1d31a712eaccf8a3
+  lang: bash
+  lines: db575fc8 d462dca9 48889d58
+  preview: kubectl create secret generic entra-obo-client-secret \
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 4
+  fingerprint: fc9d195d49419198
+  lang: bash
+  lines: fc9d195d
+  preview: helm get values {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< r
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 6
+  fingerprint: bb80f94e1cbbe7b5
+  lang: bash
+  lines: fa055559 b2b13b5a 2a24ff0e 736e1ed1 0e1a9b32
+  preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 7
+  fingerprint: 223db7a1f015fcb5
+  lang: bash
+  lines: 79888a7d 1d0fd62c
+  preview: 'kubectl get deploy -n {{< reuse "/agw-docs/snippets/namespace.md" >}} {{< reuse '
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 9
+  fingerprint: cf2d6c57940f1f4d
+  lang: yaml
+  lines: 16c71da1 00c69c65 98f7f300 8c8c4228 161accc0 bb604ffa 36184fa5 8db70061 dae7531a 68126794 2e0cd96b e9f51d30 da3b967e dad9e804 5d28848c 2180b199 da3b967e 77493040 274fdf3f bad55260 37211890 83b9aa9c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 10
+  fingerprint: f4462f2cdd1ef38b
+  lang: yaml
+  lines: 16c71da1 263e4531 f84e6062 8c8c4228 de02dd5c bb604ffa 36184fa5 2efcbf93 ab1a39d7 c6ba4159 c8f3f59a e8eb2c7f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 11
+  fingerprint: b1fdf0811c3c4de2
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 312ace76 bb604ffa 36184fa5 8432e015 e00beaae 0ff65a1a 4fc11012 b1d5c800 56c7990c cb3f91d5 58584366 ab78925c 8c8c4228 312ace76 bb604ffa 36184fa5 97bcd5e0 8432e015 839a5cac e00beaae a58565b2 8c8c4228 fa1e8330 e00beaae 36184fa5 04968f51 621ab08c e2cc754c ff42c2c6 0ff65a1a a46d7c6d 82f2bc7e 69d7f213 9d81d15a c095a45d ce075631 79bb435b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 12
+  fingerprint: 0b1ad4dd7bb4f586
+  lang: bash
+  lines: 0b1ad4dd
+  preview: kubectl get pods -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -l app=graph
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 14
+  fingerprint: 53581a330c872d09
+  lang: yaml
+  lines: 16c71da1 00c69c65 450c56e0 8c8c4228 7274b181 bb604ffa 36184fa5 82726b6f 3035507a 1454e1b6 2efcbf93 19bf1758 c095a45d bc24674f 0998f548 cb3f91d5 8c67597e 56bf9360 8c8c4228 7274b181 bb604ffa 36184fa5 d3d416e7 2d157081 3de9d845 b733d726 aeca2b3d 6d88f925 cba5e386 94ae491e c65b9cfb b8ac8874 450c56e0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 19
+  fingerprint: 737724612c146876
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 77596d57 bb604ffa 36184fa5 588a5d84 94ae49d1 450c56e0 7274b181 bb85cefe 835aaff5 88303c33 e82d6457 08d19b62 09f5a495 a5dc7b76 e73ad6de 73d78483 9a821178 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 25
+  fingerprint: ea453e28b8ac737c
+  lang: bash
+  lines: ef9a5fcf 01a9aac0 43969357 f24c6aa1 c0e76f50 5aed277b 3362a242 33728a31
+  preview: kubectl delete enterpriseagentgatewaypolicy entra-obo-policy -n {{< reuse "/agw-
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: 'Step 1: Set up MS Entra ID'
+    line: 71c260ac02c2ca01
+    occurrence: 0
+    words: 6b86b273 87780fa5 ea325d76 a172cedc 58296753 7f3a98bc a5614527 6201111b d05aa2a1 c0cafcf0 663ea1bf fa8847b0 ca978112 948fe603 2bb80d53 edb46562 b9776d7d 8d0288f4 89445ea0
+    block_before:
+      block: 0
+      fingerprint: 5ba3bf57f210aebe
+      lang: mermaid
+      lines: 536f52ac 78f0367f 131e214d 2318a89e 8add3819 914d073c 2978f2d8 ad4762bd 32b3319d 92e479ef 8b231e1f d2593f88 ac6f6e61 07ad299a e37635ee 675ef301
+      preview: sequenceDiagram
+  content: |2-
+       {{< doc-test paths="te-idps-entra" >}}
+       # ============================================================================
+       # Doc test coverage for "Microsoft Entra ID" OBO (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * The client secret, the Helm upgrade that enables the STS with Entra
+       #     validators and binds the GatewayClass to agentgateway-params, and the
+       #     control plane service exposing port 7777.
+       #   * agentgateway-params is picked up by the proxy (STS_URI is set on it).
+       #   * The entra-jwks backend, the Graph /me MCP server, its backend and route
+       #     are accepted, and an MCP client can initialize and list the graph_me tool
+       #     through the gateway before the OBO policy is applied.
+       #   * The entra-obo-policy, with the tenant and client ID formats that the CRD
+       #     enforces, is accepted.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Steps 1, 7, and 9 with a real tenant: the app registration, consent,
+       #     `az login`, MCP Inspector, and the Graph call need an Entra tenant, a
+       #     signed-in user, and a browser. So the OBO exchange with Entra and the
+       #     Graph /me response are not checked.
+       #   * The port-forward: CI reaches the gateway through its LoadBalancer.
+       # The tenant and client IDs are placeholder GUIDs (the policy rejects the
+       # `common` alias) and the client secret is a dummy. The STS validators use
+       # Microsoft's public multi-tenant `common` JWKS, so the controller can load real
+       # keys without a tenant.
+       export ENTRA_TENANT_ID="${ENTRA_TENANT_ID:-00000000-0000-4000-8000-000000000000}"
+       export ENTRA_CLIENT_ID="${ENTRA_CLIENT_ID:-aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee}"
+       export ENTRA_CLIENT_SECRET="${ENTRA_CLIENT_SECRET:-doc-test-placeholder-secret}"
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 19819c523ee39f47
+    lang: yaml
+    lines: 820e0e8e f55378ad b8ac8874 98f7f300 161accc0 bb604ffa 835aaff5 ff7360cf 7230b136 0c1d87f8 214e7b96 d03df935 312e2a24 d2d5db22 d60fbe86 d03df935 312e2a24 d2d5db22 7c4e882b e730e5c4 750ff088 f3fdc3cc
+    preview: 'gatewayClassParametersRefs:'
+  content: |2-
+       {{< doc-test paths="te-idps-entra" >}}
+       # The block above is a fragment to paste into values.yaml. Append it, with the
+       # `common` JWKS in place of a real tenant's (see the note at the top).
+       cat >> values.yaml <<EOF
+       gatewayClassParametersRefs:
+         enterprise-agentgateway:
+           group: enterpriseagentgateway.solo.io
+           kind: EnterpriseAgentgatewayParameters
+           name: agentgateway-params
+           namespace: {{< reuse "/agw-docs/snippets/namespace.md" >}}
+       tokenExchange:
+         enabled: true
+         issuer: "{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}}.{{< reuse "/agw-docs/snippets/namespace.md" >}}.svc.cluster.local:7777"
+         tokenExpiration: 24h
+         subjectValidator:
+           validatorType: remote
+           remoteConfig:
+             url: "https://login.microsoftonline.com/common/discovery/v2.0/keys"
+         apiValidator:
+           validatorType: remote
+           remoteConfig:
+             url: "https://login.microsoftonline.com/common/discovery/v2.0/keys"
+         actorValidator:
+           validatorType: k8s
+         elicitation:
+           secretName: ""
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: bb80f94e1cbbe7b5
+    lang: bash
+    lines: fa055559 b2b13b5a 2a24ff0e 736e1ed1 0e1a9b32
+    preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
+  content: |2-
+       {{< doc-test paths="te-idps-entra" >}}
+       kubectl rollout status deployment/{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 26a27dddc7486e7b
+    lang: console
+    lines: 4610c79b 02b9691c af1d09fa 8f53813f
+    preview: NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+  content: |2-
+       {{< doc-test paths="te-idps-entra" >}}
+       kubectl get svc {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.ports[*].port}' | grep -qw 7777 \
+         || { echo "the control plane service does not list port 7777 for the STS"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: cf2d6c57940f1f4d
+    lang: yaml
+    lines: 16c71da1 00c69c65 98f7f300 8c8c4228 161accc0 bb604ffa 36184fa5 8db70061 dae7531a 68126794 2e0cd96b e9f51d30 da3b967e dad9e804 5d28848c 2180b199 da3b967e 77493040 274fdf3f bad55260 37211890 83b9aa9c abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="te-idps-entra" >}}
+    # The Helm values bind the GatewayClass to agentgateway-params, so the existing
+    # proxy picks up the STS settings once the resource exists.
+    for i in $(seq 1 60); do
+      kubectl get deployment agentgateway-proxy -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o json \
+        | jq -e '[.spec.template.spec.containers[].env[]? | select(.name == "STS_URI")] | length > 0' >/dev/null && break
+      sleep 5
+    done
+    kubectl get deployment agentgateway-proxy -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o json \
+      | jq -e '[.spec.template.spec.containers[].env[]? | select(.name == "STS_URI" and (.value | endswith("/oauth2/token")))] | length > 0' >/dev/null \
+      || { echo "the proxy did not get STS_URI from agentgateway-params"; exit 1; }
+    kubectl rollout status deployment/agentgateway-proxy -n {{< reuse "/agw-docs/snippets/namespace.md" >}} --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: f4462f2cdd1ef38b
+    lang: yaml
+    lines: 16c71da1 263e4531 f84e6062 8c8c4228 de02dd5c bb604ffa 36184fa5 2efcbf93 ab1a39d7 c6ba4159 c8f3f59a e8eb2c7f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="te-idps-entra" >}}
+    YAMLTest -f - <<'EOF'
+    - name: entra-jwks backend for OBO is accepted
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: {{< reuse "/agw-docs/snippets/namespace.md" >}}
+            name: entra-jwks
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: b1fdf0811c3c4de2
+    lang: yaml
+    lines: 16c71da1 f1540154 0d6480f0 8c8c4228 312ace76 bb604ffa 36184fa5 8432e015 e00beaae 0ff65a1a 4fc11012 b1d5c800 56c7990c cb3f91d5 58584366 ab78925c 8c8c4228 312ace76 bb604ffa 36184fa5 97bcd5e0 8432e015 839a5cac e00beaae a58565b2 8c8c4228 fa1e8330 e00beaae 36184fa5 04968f51 621ab08c e2cc754c ff42c2c6 0ff65a1a a46d7c6d 82f2bc7e 69d7f213 9d81d15a c095a45d ce075631 79bb435b abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="te-idps-entra" >}}
+       kubectl rollout status deployment/graph-me-tool -n {{< reuse "/agw-docs/snippets/namespace.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 53581a330c872d09
+    lang: yaml
+    lines: 16c71da1 00c69c65 450c56e0 8c8c4228 7274b181 bb604ffa 36184fa5 82726b6f 3035507a 1454e1b6 2efcbf93 19bf1758 c095a45d bc24674f 0998f548 cb3f91d5 8c67597e 56bf9360 8c8c4228 7274b181 bb604ffa 36184fa5 d3d416e7 2d157081 3de9d845 b733d726 aeca2b3d 6d88f925 cba5e386 94ae491e c65b9cfb b8ac8874 450c56e0 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="te-idps-entra" >}}
+       YAMLTest -f - <<'EOF'
+       - name: graph-me-mcp backend is accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayBackend
+             metadata:
+               namespace: {{< reuse "/agw-docs/snippets/namespace.md" >}}
+               name: graph-me-mcp
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: graph-me-mcp HTTPRoute is accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: {{< reuse "/agw-docs/snippets/namespace.md" >}}
+               name: graph-me-mcp
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Before the OBO policy, an MCP client reaches the server through the gateway
+       # and sees the graph_me tool (step 7's List Tools, without MCP Inspector).
+       GRAPH_HEADERS=$(mktemp)
+       for i in $(seq 1 30); do
+         curl -s -D "$GRAPH_HEADERS" -o /dev/null -X POST "http://${INGRESS_GW_ADDRESS}:80/graph-me/mcp" \
+           -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+           -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"doc-test","version":"1.0"}}}'
+         GRAPH_SESSION=$(awk 'tolower($1) == "mcp-session-id:" {print $2}' "$GRAPH_HEADERS" | tr -d '\r')
+         [ -n "$GRAPH_SESSION" ] && break; sleep 4
+       done
+       test -n "$GRAPH_SESSION" || { echo "initialize through /graph-me/mcp returned no session"; exit 1; }
+       curl -s -X POST "http://${INGRESS_GW_ADDRESS}:80/graph-me/mcp" \
+         -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+         -H "Mcp-Session-Id: $GRAPH_SESSION" \
+         -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' >/dev/null
+       GRAPH_TOOLS=$(curl -s -X POST "http://${INGRESS_GW_ADDRESS}:80/graph-me/mcp" \
+         -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+         -H "Mcp-Session-Id: $GRAPH_SESSION" \
+         -d '{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
+       case "$GRAPH_TOOLS" in
+         *'"graph_me"'*) ;;
+         *) echo "tools/list through the gateway did not list graph_me: $GRAPH_TOOLS"; exit 1;;
+       esac
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 737724612c146876
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 77596d57 bb604ffa 36184fa5 588a5d84 94ae49d1 450c56e0 7274b181 bb85cefe 835aaff5 88303c33 e82d6457 08d19b62 09f5a495 a5dc7b76 e73ad6de 73d78483 9a821178 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="te-idps-entra" >}}
+    YAMLTest -f - <<'EOF'
+    - name: entra-obo-policy is accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: {{< reuse "/agw-docs/snippets/namespace.md" >}}
+            name: entra-obo-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}

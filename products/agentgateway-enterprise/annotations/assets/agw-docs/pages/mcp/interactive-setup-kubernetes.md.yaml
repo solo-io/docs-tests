@@ -1,0 +1,197 @@
+format: 1
+source: assets/agw-docs/pages/mcp/interactive-setup-kubernetes.md
+blocks:
+- 9de97fd53852f5c0 sh
+- d763a330ba8b1ac1 sh
+- a933f1a2c8b0504b yaml
+- 04f10630082e5ac3 sh
+- e9c2ad5144146d39 sh
+- aec62a0f81b01fbc sh
+- 222af0935f1bf19a console
+- b2bac8d8a0c07f9f sh
+- c67b4d505db8f257 sh
+- c0e1c77cc1a43725 sh
+- 9e1cf563c290e7d5 sh
+- 3835e2e51194aa7f sh
+- 31ab2fcb99fbee6c yaml
+tags:
+- paths: mcp-elicitation-interactive-setup
+  block: 0
+  fingerprint: 9de97fd53852f5c0
+  lang: sh
+  lines: 4f11519f 51c2e5e2 67c5a3ac b0cead6d fbe2f741 b313585a afa07114 8c92794d 3f42e715 59693229 2aac6493 e06bb851 40b28360 0afcb7d7 d10b36aa fc075a9d b2cecc86 51c2e5e2 4f091c18 f866c17b
+  preview: curl -s -X POST "${KEYCLOAK_URL}/admin/realms/agentgateway/clients" \
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup
+  block: 1
+  fingerprint: d763a330ba8b1ac1
+  lang: sh
+  lines: 4f11519f 51c2e5e2 67c5a3ac b0cead6d f7dff094 74cb5f87 afa07114 fe4ada09 3f42e715 59693229 7d2c93a2 2aac6493 fb66e404 fc075a9d a4b48716 644f15e3 51c2e5e2 4f091c18 0f39039d ee69f64a cfaaace9 51c2e5e2 db0445bf 7f044851
+  preview: curl -s -X POST "${KEYCLOAK_URL}/admin/realms/agentgateway/clients" \
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup
+  block: 2
+  fingerprint: a933f1a2c8b0504b
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 b270ee0b f497f0e2 1426decf 2f7c298d 46a7ee9f abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup
+  block: 3
+  fingerprint: 04f10630082e5ac3
+  lang: sh
+  lines: c18b252b 6b8955bd 0a16c0cb daf1bdd0 4e755df3 fa52f7ff 51c2e5e2 67c5a3ac f4a1d13f 653f2315 904a10e1 09548c83 faf43cd6 e589adad 48a525ad 405ef2ba
+  preview: '# Get the user1 ID'
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup
+  block: 4
+  fingerprint: e9c2ad5144146d39
+  lang: sh
+  lines: bbaf0cfc 89108d3a 51c2e5e2 67c5a3ac b96eb1fb 649a226e 6f6e6094 2dab574f 80202ade 02f2496a fed438ac ae3886f8 51c2e5e2 67c5a3ac b0cead6d dfd95531 182b0e4a ad8e69d0 fc075a9d 8e65c927 a0380cd3 062bb050 2b50e956 9f5e8258 04c24103 405ef2ba a4c3ed04
+  preview: '# Creates a client scope named groups in the agentgateway realm'
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup
+  block: 5
+  fingerprint: aec62a0f81b01fbc
+  lang: sh
+  lines: 8833ad46 913aae8e 9fe3305e 6850d3e9 d7651c06 6aa5f13d 23396309 b012595c b29ed696 c6c27d6d e94b6638 8a331fdd
+  preview: curl -s -X POST "${KEYCLOAK_URL}/realms/agentgateway/protocol/openid-connect/tok
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup
+  block: 8
+  fingerprint: c67b4d505db8f257
+  lang: sh
+  lines: 9bcd405d 6cda733c ff7360cf f1ef853f 20670a86 d97d7dd2 bb85cefe f1ef853f fb923a6e 8dd3c7c0 abc56510
+  preview: cat > solo-ui-values.yaml << EOF
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup
+  block: 9
+  fingerprint: c0e1c77cc1a43725
+  lang: sh
+  lines: ad8da71a fde80217 736e1ed1 ef935d81
+  preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup
+  block: 10
+  fingerprint: 9e1cf563c290e7d5
+  lang: sh
+  lines: 387abe0f adc43cf7 6c077fe9 3789e1cb abc56510 ad8da71a fde80217 736e1ed1 a56f8751 a6146d27
+  preview: cat > callback-values.yaml <<'EOF'
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup
+  block: 12
+  fingerprint: 31ab2fcb99fbee6c
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 f497f0e2 36184fa5 2f2479a1 c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-elicitation-interactive-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 5
+    fingerprint: aec62a0f81b01fbc
+    lang: sh
+    lines: 8833ad46 913aae8e 9fe3305e 6850d3e9 d7651c06 6aa5f13d 23396309 b012595c b29ed696 c6c27d6d e94b6638 8a331fdd
+    preview: curl -s -X POST "${KEYCLOAK_URL}/realms/agentgateway/protocol/openid-connect/tok
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-interactive-setup" >}}
+       GROUPS_CLAIM=$(curl -fsS -X POST "${KEYCLOAK_URL}/realms/agentgateway/protocol/openid-connect/token" \
+         -d 'grant_type=password' -d 'client_id=fe-client-1' -d 'username=user1' -d 'password=Password1!' \
+         | jq -r '.access_token | split(".")[1] | gsub("-";"+") | gsub("_";"/") | . + ("=" * ((4 - length % 4) % 4)) | @base64d | fromjson | .Groups | join(",")')
+       [ "$GROUPS_CLAIM" = "admins" ] || { echo "FAIL: Groups claim is '$GROUPS_CLAIM', want admins" >&2; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: b2bac8d8a0c07f9f
+    lang: sh
+    lines: e33ccf77 6551bcff
+    preview: export GITHUB_CLIENT_ID='<your-oauth-app-client-id>'
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-interactive-setup" >}}
+       # Dummy stand-ins for the GitHub OAuth app; never sent to GitHub by these tests.
+       export GITHUB_CLIENT_ID='doc-test-github-client-id'
+       export GITHUB_CLIENT_SECRET='doc-test-github-client-secret'
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 9e1cf563c290e7d5
+    lang: sh
+    lines: 387abe0f adc43cf7 6c077fe9 3789e1cb abc56510 ad8da71a fde80217 736e1ed1 a56f8751 a6146d27
+    preview: cat > callback-values.yaml <<'EOF'
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-interactive-setup" >}}
+       # ============================================================================
+       # Doc test coverage for "Set up interactive elicitation" (comments not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * Keycloak, the agentgateway realm, fe-client-1, user1, the UI clients,
+       #     the admins group, and the Groups client scope, checked by decoding a
+       #     user1 token for the Groups claim.
+       #   * The STS Helm values, the UI subchart install, and CALLBACK_URL: the
+       #     controller rolls out with 7777 on its Service, CALLBACK_URL is set on
+       #     the controller, and the UI Deployment rolls out.
+       #   * Step 5: the Gateway accepts routes from all namespaces.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Registering a GitHub OAuth app (third-party SaaS; placeholders are
+       #     replaced with dummy values that the GitHub guide never sends to GitHub).
+       #   * The UI port-forward and browser login (no port-forward or browser in CI).
+       kubectl get svc -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -o jsonpath='{.spec.ports[*].port}' | tr ' ' '\n' | grep -x 7777 >/dev/null
+       kubectl get deploy -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} \
+         -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="CALLBACK_URL")].value}' | grep -x 'http://localhost:8090/elicitations' >/dev/null
+       kubectl rollout status deployment/{{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 31ab2fcb99fbee6c
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 f497f0e2 36184fa5 2f2479a1 c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mcp-elicitation-interactive-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for Gateway agentgateway-proxy Programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: agentgateway-system
+            name: agentgateway-proxy
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    kubectl get gateway agentgateway-proxy -n agentgateway-system -o jsonpath='{.spec.listeners[0].allowedRoutes.namespaces.from}' | grep -x All >/dev/null
+    {{< /doc-test >}}

@@ -1,0 +1,424 @@
+format: 1
+source: assets/agw-docs/pages/install/migrate.md
+blocks:
+- 4df27dbb87f8900d mermaid
+- 1c15c277ff6f0a07 mermaid
+- 4223710ef0e6af05 mermaid
+- 599e1f4fcff461db mermaid
+- 22b49fa1b84ec14e sh
+- e88fbbbfccb23bda console
+- 75777f23d8066e19 sh
+- 9d5822c7ff9efb47 sh
+- 7acb200b6bd730ec sh
+- 622a4cd07838f399 sh
+- 7edf1ba8847792d2 sh
+- eeed58acc79b1e2b console
+- 22b49fa1b84ec14e sh
+- a1806a44774853bd console
+- 1d804ba1d01a2627 yaml
+- 48bd8847b82243e1 yaml
+- 5594f238eaa7c096 sh
+- f6394f797e00bdd0 sh
+- 9cc9184a5cabd1a2 yaml
+- e117edd3c976e757 sh
+- 7b3a542ee42b137c sh
+- 3161220c0f9701e2 sh
+- f3622afb23f05dbc sh
+- 09eb02380e4516c4 sh
+- 67c5200b7ff9a863 console
+- 799d9b28295f0fa4 sh
+- fea12e7df0840591 console
+- efaa3bab6787cea0 sh
+- 9af9ebcd5a6f70e9 sh
+tags:
+- paths: enterprise-migrate
+  block: 4
+  fingerprint: 22b49fa1b84ec14e
+  lang: sh
+  lines: 22b49fa1
+  preview: kubectl get gatewayclass
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 7
+  fingerprint: 9d5822c7ff9efb47
+  lang: sh
+  lines: 2050015f 1b7e7fbf 1c930f61 6d57604f 7459a2d7 527b3229 eca33fde 8a63755a 527b3229 a4c3ed04
+  preview: for crd in $(kubectl get crd \
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 8
+  fingerprint: 7acb200b6bd730ec
+  lang: sh
+  lines: af1b7b6c 2a24ff0e 0d052d4a f55e216c
+  preview: 'helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} oci:'
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 9
+  fingerprint: 622a4cd07838f399
+  lang: sh
+  lines: 2d065637 0d052d4a 736e1ed1 39b68b19
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 10
+  fingerprint: 7edf1ba8847792d2
+  lang: sh
+  lines: 7edf1ba8
+  preview: kubectl get pods -n agentgateway-enterprise-system
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 12
+  fingerprint: 22b49fa1b84ec14e
+  lang: sh
+  lines: 22b49fa1
+  preview: kubectl get gatewayclass
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 14
+  fingerprint: 1d804ba1d01a2627
+  lang: yaml
+  lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 df11d16c f497f0e2 36184fa5 2fae86d3 c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 15
+  fingerprint: 48bd8847b82243e1
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 08f38251 f497f0e2 c825a8bb f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 16
+  fingerprint: 5594f238eaa7c096
+  lang: sh
+  lines: ea0c48cd 4059cfa2 02fbd77e
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system enterprise-ag
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 18
+  fingerprint: 9cc9184a5cabd1a2
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 c2cc3736 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 19
+  fingerprint: e117edd3c976e757
+  lang: sh
+  lines: e117edd3
+  preview: kubectl delete gateway agentgateway-proxy -n agentgateway-system
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 21
+  fingerprint: 3161220c0f9701e2
+  lang: sh
+  lines: 3161220c
+  preview: 'kubectl patch gateway agentgateway-proxy -n agentgateway-system --type=merge -p '
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 22
+  fingerprint: f3622afb23f05dbc
+  lang: sh
+  lines: a4b9fbb1 a7d1939f e4c83c51 444d1b8e a4c3ed04
+  preview: kubectl get gateways --all-namespaces -o json \
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 23
+  fingerprint: 09eb02380e4516c4
+  lang: sh
+  lines: 09eb0238
+  preview: kubectl get pods -n agentgateway-system
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 25
+  fingerprint: 799d9b28295f0fa4
+  lang: sh
+  lines: 799d9b28
+  preview: kubectl get gateway agentgateway-proxy -n agentgateway-system
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 27
+  fingerprint: efaa3bab6787cea0
+  lang: sh
+  lines: efaa3bab
+  preview: helm uninstall agentgateway -n agentgateway-system
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+- paths: enterprise-migrate
+  block: 28
+  fingerprint: 9af9ebcd5a6f70e9
+  lang: sh
+  lines: 9af9ebcd
+  preview: kubectl delete gatewayclass agentgateway
+  form:
+    attr: paths="enterprise-migrate"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: 4cb2860247b4a6e1
+    occurrence: 0
+    words: a12dd3a7 4d040d3f 59dbf36d 251fecd5 bb0347a4 193c45b5 ea325d76 56e57ada 83b4d270 4ea5ee68 8e7fc023 fa51fd49 7fdfda5f a7e2d26e b9776d7d 8098f357 56e57ada c1472135
+    block_before:
+      block: 3
+      fingerprint: 599e1f4fcff461db
+      lang: mermaid
+      lines: 35bb4631 95b4397d 22965568 ef3f88ad 26f0acb8 361e48d0 7b847a9a 5a27cb24 e879ba36 0104dff1 361e48d0 b9ebcef8 6459061b 37bf8d74 68d2c1f1
+      preview: flowchart LR
+  content: |-
+    {{< doc-test paths="enterprise-migrate" >}}
+    # ============================================================================
+    # Doc test coverage for "Migrate from open source" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Start state (hidden): agentgateway OSS (OSS_VERSION) in agentgateway-system,
+    #     an `agentgateway` Gateway, and httpbin that returns 200 through it.
+    #   * Step 1: CRD ownership transfer, enterprise CRDs and control plane in
+    #     agentgateway-enterprise-system, both GatewayClasses accepted.
+    #   * Step 2, Option A (canary): enterprise Gateway, dual-parent route, a 200
+    #     through the enterprise Gateway, route cut-over, OSS Gateway deleted.
+    #   * Step 2, Option B (in-place): on a hidden second OSS Gateway, both patch
+    #     commands; the Gateway is programmed by the enterprise class.
+    #   * Step 3: OSS uninstall and GatewayClass delete; traffic still returns 200.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The license export placeholder (CI provides AGENTGATEWAY_LICENSE_KEY).
+    #   * Port-forward blocks and the endless `kubectl run curl-test` loop.
+    # Bump OSS_VERSION to the open source release that the enterprise n-patch
+    # builds on when it moves.
+    export OSS_VERSION=1.7.0
+    kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< reuse "agw-docs/versions/k8s-gw-version.md" >}}/standard-install.yaml
+    helm upgrade -i agentgateway-crds oci://cr.agentgateway.dev/charts/agentgateway-crds \
+      --create-namespace -n agentgateway-system --version v${OSS_VERSION}
+    helm upgrade -i agentgateway oci://cr.agentgateway.dev/charts/agentgateway \
+      -n agentgateway-system --version v${OSS_VERSION} --wait --timeout 5m
+    kubectl wait --for=condition=Accepted gatewayclass/agentgateway --timeout=120s
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: Gateway
+    metadata:
+      name: agentgateway-proxy
+      namespace: agentgateway-system
+    spec:
+      gatewayClassName: agentgateway
+      listeners:
+      - protocol: HTTP
+        port: 80
+        name: http
+        allowedRoutes:
+          namespaces:
+            from: All
+    EOF
+    kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/heads/main/examples/httpbin.yaml
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: httpbin
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: agentgateway-proxy
+        namespace: agentgateway-system
+      hostnames:
+      - "www.example.com"
+      rules:
+      - backendRefs:
+        - name: httpbin
+          port: 8000
+    EOF
+    kubectl -n httpbin rollout status deploy/httpbin --timeout=300s
+    kubectl wait --for=condition=Programmed gateway/agentgateway-proxy -n agentgateway-system --timeout=300s
+    for i in $(seq 1 60); do
+      OSS_ADDR=$(kubectl get svc -n agentgateway-system agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+      [ -n "$OSS_ADDR" ] && [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${OSS_ADDR}/headers" -H "host: www.example.com")" = "200" ] && break
+      sleep 5
+    done
+    [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${OSS_ADDR}/headers" -H "host: www.example.com")" = "200" ]
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 7edf1ba8847792d2
+    lang: sh
+    lines: 7edf1ba8
+    preview: kubectl get pods -n agentgateway-enterprise-system
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-migrate" >}}
+       kubectl -n agentgateway-enterprise-system rollout status deploy/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 22b49fa1b84ec14e
+    lang: sh
+    lines: 22b49fa1
+    preview: kubectl get gatewayclass
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-migrate" >}}
+       kubectl wait --for=condition=Accepted gatewayclass/{{< reuse "agw-docs/snippets/gatewayclass.md" >}} --timeout=120s
+       kubectl wait --for=condition=Accepted gatewayclass/agentgateway --timeout=60s
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 48bd8847b82243e1
+    lang: yaml
+    lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 08f38251 f497f0e2 c825a8bb f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f - <<EOF
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-migrate" >}}
+       kubectl wait --for=condition=Programmed gateway/enterprise-agentgateway-proxy -n agentgateway-system --timeout=300s
+       kubectl -n agentgateway-system rollout status deploy/enterprise-agentgateway-proxy --timeout=300s
+       for i in $(seq 1 60); do
+         [ -n "$(kubectl get svc -n agentgateway-system enterprise-agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")" ] && break
+         sleep 5
+       done
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 5594f238eaa7c096
+    lang: sh
+    lines: ea0c48cd 4059cfa2 02fbd77e
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system enterprise-ag
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-migrate" >}}
+       for i in $(seq 1 60); do
+         [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}/headers" -H "host: www.example.com")" = "200" ] && break
+         sleep 2
+       done
+       YAMLTest -f - <<'EOF'
+       - name: the enterprise Gateway serves httpbin during the canary
+         retries: 3
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}/headers"
+           method: GET
+           headers:
+             host: "www.example.com"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: e117edd3c976e757
+    lang: sh
+    lines: e117edd3
+    preview: kubectl delete gateway agentgateway-proxy -n agentgateway-system
+  content: |2-
+       {{< doc-test paths="enterprise-migrate" >}}
+       # Option B needs an OSS Gateway, and Option A just deleted it. Re-create one
+       # with the OSS class so that the in-place steps have something to migrate.
+       kubectl wait --for=delete gateway/agentgateway-proxy -n agentgateway-system --timeout=120s
+       kubectl apply -f- <<EOF
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: Gateway
+       metadata:
+         name: agentgateway-proxy
+         namespace: agentgateway-system
+       spec:
+         gatewayClassName: agentgateway
+         listeners:
+         - protocol: HTTP
+           port: 80
+           name: http
+           allowedRoutes:
+             namespaces:
+               from: All
+       EOF
+       kubectl wait --for=condition=Programmed gateway/agentgateway-proxy -n agentgateway-system --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: 799d9b28295f0fa4
+    lang: sh
+    lines: 799d9b28
+    preview: kubectl get gateway agentgateway-proxy -n agentgateway-system
+  content: |2-
+       {{< doc-test paths="enterprise-migrate" >}}
+       [ "$(kubectl get gateway agentgateway-proxy -n agentgateway-system -o jsonpath='{.spec.gatewayClassName}')" = "{{< reuse "agw-docs/snippets/gatewayclass.md" >}}" ]
+       # A Programmed=True left over from the OSS controller would pass a plain
+       # wait, so require the condition for the patched generation.
+       for i in $(seq 1 60); do
+         GEN=$(kubectl get gateway agentgateway-proxy -n agentgateway-system -o jsonpath='{.metadata.generation}')
+         OG=$(kubectl get gateway agentgateway-proxy -n agentgateway-system -o jsonpath="{.status.conditions[?(@.type=='Programmed')].observedGeneration}")
+         ST=$(kubectl get gateway agentgateway-proxy -n agentgateway-system -o jsonpath="{.status.conditions[?(@.type=='Programmed')].status}")
+         [ "$OG" = "$GEN" ] && [ "$ST" = "True" ] && break
+         sleep 5
+       done
+       [ "$OG" = "$GEN" ] && [ "$ST" = "True" ]
+       kubectl -n agentgateway-system rollout status deploy/agentgateway-proxy --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 28
+    fingerprint: 9af9ebcd5a6f70e9
+    lang: sh
+    lines: 9af9ebcd
+    preview: kubectl delete gatewayclass agentgateway
+  content: |-
+    {{< doc-test paths="enterprise-migrate" >}}
+    kubectl -n agentgateway-system rollout status deploy/enterprise-agentgateway-proxy --timeout=120s
+    YAMLTest -f - <<'EOF'
+    - name: the enterprise Gateway still serves httpbin after the OSS uninstall
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

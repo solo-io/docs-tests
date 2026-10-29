@@ -1,0 +1,145 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/documentation/llm/guardrails/purview-dlp.md
+blocks:
+- 8e7cd8bb5dacfbcd sh
+- a486358e5dc40fe6 yaml
+- c535c4d61fddce25 sh
+- 5bbc58dd3cbf8ecd sh
+- a2065c0d3bd1178a sh
+- 8f27aa855f0dbdce console
+- 555a7dc0a6af921f sh
+- 7fbe3550b2a826e1 yaml
+- 3b33a49e2aa5dbe5 sh
+- f5151dbf764e521c mermaid
+- 856fc7e6201d0a0c sh
+- 7930f28e02c97140 sh
+- 4850793503f14c5e sh
+- ff6b4327766beb33 yaml
+- f96ec9823bd1d619 sh
+- 2cb723a293412c22 sh
+- 1201d4585a91c917 console
+- b2434fe4968a6186 yaml
+- 828ad12f685c6ff5 yaml
+- 8be16cdbdc4998a9 yaml
+- 83d93a5f770d5c3c sh
+- 4fa3ceadb4499f90 console
+- 16730ed5592c6703 yaml
+- 0bf6a57be71e9c7d sh
+- 5460c795872631e1 sh
+- 1fd7e5e7678db9db sh
+- 555a7dc0a6af921f sh
+- 3725a9a6e4e2e416 console
+- 6234d4f84b5b90a1 console
+- ee9a0a70334b7401 sh
+- e26b67fa2aa19fd1 sh
+tags:
+- paths: enterprise-purview-dlp
+  block: 0
+  fingerprint: 8e7cd8bb5dacfbcd
+  lang: sh
+  lines: aa77f958 fde80217 f3f31214 0fb373b1 bc73c86d
+  preview: kubectl create secret generic purview-client-secret \
+  form:
+    attr: paths="enterprise-purview-dlp"
+    only: true
+    lead: ' '
+- paths: enterprise-purview-dlp
+  block: 1
+  fingerprint: a486358e5dc40fe6
+  lang: yaml
+  lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 dc17fb20 8af957d1 36184fa5 588a5d84 94ae49d1 450c56e0 6666820d bb85cefe ad3afdb1 328d5627 14ddcd05 28932298 e1c9d648 297a0327 4d990a0a 5948ec52 254626a1 c8f3f59a 146e11c6 10f3150d 9ebc4789 53ea9032 5614ea74 3d898d54 be171b79 0df67073 99c83b01 28932298 e1c9d648 297a0327 4d990a0a 5948ec52 254626a1 c8f3f59a 146e11c6 10f3150d 9ebc4789 53ea9032 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="enterprise-purview-dlp"
+    only: true
+    lead: ' '
+- paths: enterprise-purview-dlp
+  block: 7
+  fingerprint: 7fbe3550b2a826e1
+  lang: yaml
+  lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 ef59898e 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 fc864d7c 73c054bf 274fdf3f e043fa10 293fa7c9 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="enterprise-purview-dlp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: 'Step 3: Configure the Purview DLP prompt guard'
+    line: be3e9773d71a49ee
+    occurrence: 0
+    words: 3e64cc41 4e074085 90d08e58 b9776d7d a2ce449f 62a88e9c cf07194e a9d4034d 90d08e58
+    block_before: null
+  content: |-
+    {{< doc-test paths="enterprise-purview-dlp" >}}
+    # ============================================================================
+    # Doc test coverage for "Purview DLP" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Step 3: the client secret and the EnterpriseAgentgatewayPolicy with the
+    #     purviewDlp request and response guards are accepted on the openai backend
+    #     (from the openai-setup prerequisite).
+    #   * "Log DLP interventions": the access log policy is accepted on the Gateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Steps 1-2 (Entra app, Purview DLP policy) and the Step 4 requests: the
+    #     guard calls Microsoft Entra and Microsoft Graph, which need a Microsoft 365
+    #     tenant with Purview licensing; there is no in-cluster stand-in, so the IDs
+    #     and secret below are placeholders and no request is sent.
+    #   * "Per-user attribution with Entra OBO": needs an Entra user token.
+    export TENANT_ID=00000000-0000-0000-0000-000000000001
+    export CLIENT_ID=00000000-0000-0000-0000-000000000002
+    export ENTRA_USER_OBJECT_ID=00000000-0000-0000-0000-000000000003
+    export CLIENT_SECRET=doc-test-client-secret
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: a486358e5dc40fe6
+    lang: yaml
+    lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 dc17fb20 8af957d1 36184fa5 588a5d84 94ae49d1 450c56e0 6666820d bb85cefe ad3afdb1 328d5627 14ddcd05 28932298 e1c9d648 297a0327 4d990a0a 5948ec52 254626a1 c8f3f59a 146e11c6 10f3150d 9ebc4789 53ea9032 5614ea74 3d898d54 be171b79 0df67073 99c83b01 28932298 e1c9d648 297a0327 4d990a0a 5948ec52 254626a1 c8f3f59a 146e11c6 10f3150d 9ebc4789 53ea9032 abc56510
+    preview: kubectl apply -f - <<EOF
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-purview-dlp" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the Purview DLP prompt guard policy is accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: openai-purview-dlp
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 7fbe3550b2a826e1
+    lang: yaml
+    lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 ef59898e 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 fc864d7c 73c054bf 274fdf3f e043fa10 293fa7c9 abc56510
+    preview: kubectl apply -f - <<EOF
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-purview-dlp" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the guardrail access log policy is accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: guardrail-access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}

@@ -2,7 +2,7 @@
 """'schema'-type doc test: statically validate the configuration a doc page shows
 a reader against the real schema it has to satisfy.
 
-Unlike the 'functional'/'live'/'credentialed' types, this never stands up a cluster
+Unlike the 'functional' type, this never stands up a cluster
 or executes anything. It catches renamed/removed/mistyped fields for near-zero
 cost, and runs on every PR regardless of vendor credentials or live infrastructure.
 

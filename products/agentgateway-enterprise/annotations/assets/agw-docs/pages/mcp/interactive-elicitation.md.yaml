@@ -1,0 +1,207 @@
+format: 1
+source: assets/agw-docs/pages/mcp/interactive-elicitation.md
+blocks:
+- 2b8182e77c8c2ad1 mermaid
+- b2bac8d8a0c07f9f sh
+- 866d0b8e85ca0d47 sh
+- 78bf09dcb0127952 sh
+- d1c2183595e6ccda sh
+- 33f088f56c8d4f87 sh
+- b2c398499b5769ef sh
+- 4fa0644eb9a1308e sh
+- d708e0704b8fa195 sh
+- 9eda391cbdcc937b sh
+- 8dfc40dde7afa9f7 sh
+- e47c0a069ce93758 sh
+- 5c8ec95f464ec22c text
+- c12dc41168974a66 sh
+- 6c14287a16642392 json
+- 529f6321fa2d437f sh
+- d8b1e91c2d4a35aa console
+- 96eafe671bda3401 sh
+- d05ba9830b56293d sh
+- b411b8c8c0c37132 json
+- f6255e33bf28f41e sh
+- a7833bdcf9484978 sh
+tags:
+- paths: mcp-elicitation-interactive-github
+  block: 2
+  fingerprint: 866d0b8e85ca0d47
+  lang: sh
+  lines: 2fbf146f 8a593be6 3ad6e509 dbae0426 d5630872 5abe4bdf cb36949b
+  preview: export USER_TOKEN=$(curl -fsS \
+  form:
+    attr: paths="mcp-elicitation-interactive-github"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-github
+  block: 3
+  fingerprint: 78bf09dcb0127952
+  lang: sh
+  lines: 78bf09dc
+  preview: kubectl create namespace interactive-elicitation
+  form:
+    attr: paths="mcp-elicitation-interactive-github"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-github
+  block: 4
+  fingerprint: d1c2183595e6ccda
+  lang: sh
+  lines: c0426a9d ad80fd47 4ff93c45
+  preview: kubectl create secret generic github-oauth-client \
+  form:
+    attr: paths="mcp-elicitation-interactive-github"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-github
+  block: 5
+  fingerprint: 33f088f56c8d4f87
+  lang: sh
+  lines: 1b7d1862 00c69c65 450c56e0 8c8c4228 419ce5ca c5996999 36184fa5 82726b6f 3035507a 20f681a9 2efcbf93 11cb8c68 c6ba4159 c8bef919 c8f3f59a 3195c5f5 e71db8d7 abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="mcp-elicitation-interactive-github"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-github
+  block: 6
+  fingerprint: b2c398499b5769ef
+  lang: sh
+  lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 8e73766c c5996999 36184fa5 588a5d84 94ae49d1 450c56e0 419ce5ca bb85cefe 7602c0a5 eafc7986 ebeee92c 9ecf811a e73ad6de 29d01f72 61d9749c 08be69da 26da56d3 9a305217 4b7a9e17 79677ded 5614227e e8b1cb2e abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="mcp-elicitation-interactive-github"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-github
+  block: 7
+  fingerprint: 4fa0644eb9a1308e
+  lang: sh
+  lines: 1b7d1862 8c67597e 56bf9360 8c8c4228 8e73766c c5996999 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 8d07f42c 94ae491e 94ae49d1 450c56e0 419ce5ca abc56510
+  preview: kubectl apply -f - <<'EOF'
+  form:
+    attr: paths="mcp-elicitation-interactive-github"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-github
+  block: 8
+  fingerprint: d708e0704b8fa195
+  lang: sh
+  lines: 32b78586 62e2109d 5a7cc868 43cd0bf4
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc agentgateway-proxy \
+  form:
+    attr: paths="mcp-elicitation-interactive-github"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-github
+  block: 11
+  fingerprint: e47c0a069ce93758
+  lang: sh
+  lines: f4087762 312998ff 506a4604 d9d77043 b0cead6d 362c024a d5a92ca7 9ed087af dc0575f0 8839ee90 84919319 366bb8e8 d10b36aa fc075a9d
+  preview: curl -i "$MCP_URL" \
+  form:
+    attr: paths="mcp-elicitation-interactive-github"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 7
+    fingerprint: 4fa0644eb9a1308e
+    lang: sh
+    lines: 1b7d1862 8c67597e 56bf9360 8c8c4228 8e73766c c5996999 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 8d07f42c 94ae491e 94ae49d1 450c56e0 419ce5ca abc56510
+    preview: kubectl apply -f - <<'EOF'
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-interactive-github" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for EnterpriseAgentgatewayPolicy github-interactive Accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: interactive-elicitation
+               name: github-interactive
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: wait for EnterpriseAgentgatewayPolicy github-interactive Attached
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: interactive-elicitation
+               name: github-interactive
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: wait for HTTPRoute github-interactive Accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: interactive-elicitation
+               name: github-interactive
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: wait for HTTPRoute github-interactive ResolvedRefs
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: interactive-elicitation
+               name: github-interactive
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: e47c0a069ce93758
+    lang: sh
+    lines: f4087762 312998ff 506a4604 d9d77043 b0cead6d 362c024a d5a92ca7 9ed087af dc0575f0 8839ee90 84919319 366bb8e8 d10b36aa fc075a9d
+    preview: curl -i "$MCP_URL" \
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-interactive-github" >}}
+       # ============================================================================
+       # Doc test coverage for "Elicit a GitHub credential" (comments not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * The namespace, client Secret, GitHub MCP backend, interactive policy
+       #     (Accepted and Attached), and route (Accepted, ResolvedRefs).
+       #   * The elicitation challenge: initialize with user1's token returns 400
+       #     with the CALLBACK_URL from setup, before any traffic reaches GitHub.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The UI approval, the GitHub OAuth login, and the retry with the stored
+       #     credential (initialize 200, session ID, get_me): these need a browser,
+       #     a GitHub OAuth app, and a GitHub account. The OAuth client values here
+       #     are dummies.
+       for i in $(seq 1 30); do
+         IG_RESP=$(curl -s -w '\n%{http_code}' "$MCP_URL" \
+           -H "Authorization: Bearer $USER_TOKEN" -H 'Content-Type: application/json' \
+           -H 'Accept: application/json, text/event-stream' \
+           -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"doc-test-interactive","version":"1.0"}}}')
+         [ "$(tail -n1 <<<"$IG_RESP")" = "400" ] && break
+         sleep 2
+       done
+       [ "$(tail -n1 <<<"$IG_RESP")" = "400" ] || { echo "FAIL: expected 400" >&2; echo "$IG_RESP" >&2; exit 1; }
+       [ "$(sed '$d' <<<"$IG_RESP" | jq -r .url)" = "http://localhost:8090/elicitations" ] \
+         || { echo "FAIL: challenge URL" >&2; echo "$IG_RESP" >&2; exit 1; }
+       {{< /doc-test >}}

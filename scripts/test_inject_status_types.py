@@ -45,9 +45,9 @@ class Types(unittest.TestCase):
     def test_unknown_kind_sorts_after_known(self):
         fm = _run({
             f"{DOC}::a": {"status": "passed", "type": "zeta"},
-            f"{DOC}::b": {"status": "passed", "type": "live"},
+            f"{DOC}::b": {"status": "passed", "type": "alpha"},
         })
-        self.assertEqual(fm["test_types"], ["live", "zeta"])
+        self.assertEqual(fm["test_types"], ["alpha", "zeta"])
 
     def test_failed_page_drops_a_stale_list(self):
         stale = "---\ntitle: Page\ntest_status: passed\ntest_types:\n- functional\n---\nBody\n"

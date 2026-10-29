@@ -1,0 +1,128 @@
+format: 1
+source: assets/conrefs/snippets/policies/ext_auth/keycloak-install.md
+blocks:
+- 727dcb87aa30a423 shell
+- cabd98b628658dfa shell
+- a85f8c0a99e42d0c shell
+- 0d0cbc0fb5db3fbd shell
+- 1bdf582f93325033 shell
+- b09419853bfacbfe shell
+- 8e16bae0de137d69
+tags:
+- paths: oauth-keycloak,oauth-keycloak-setup
+  block: 0
+  fingerprint: 727dcb87aa30a423
+  lang: shell
+  lines: 727dcb87
+  preview: kubectl create namespace keycloak
+  form:
+    attr: paths="oauth-keycloak,oauth-keycloak-setup"
+    only: true
+    lead: ' '
+- paths: oauth-keycloak,oauth-keycloak-setup
+  block: 1
+  fingerprint: cabd98b628658dfa
+  lang: shell
+  lines: cabd98b6
+  preview: kubectl -n keycloak apply -f https://raw.githubusercontent.com/solo-io/gloo-mesh
+  form:
+    attr: paths="oauth-keycloak,oauth-keycloak-setup"
+    only: true
+    lead: ' '
+- paths: oauth-keycloak,oauth-keycloak-setup
+  block: 2
+  fingerprint: a85f8c0a99e42d0c
+  lang: shell
+  lines: a85f8c0a
+  preview: kubectl -n keycloak rollout status deploy/keycloak
+  form:
+    attr: paths="oauth-keycloak,oauth-keycloak-setup"
+    only: true
+    lead: ' '
+- paths: oauth-keycloak,oauth-keycloak-setup
+  block: 3
+  fingerprint: 0d0cbc0fb5db3fbd
+  lang: shell
+  lines: a2888476 d595778e 8ebb163c 09c09818 41752bd2
+  preview: export ENDPOINT_KEYCLOAK=$(kubectl -n keycloak get service keycloak -o jsonpath=
+  form:
+    attr: paths="oauth-keycloak,oauth-keycloak-setup"
+    only: true
+    lead: ' '
+- paths: oauth-keycloak,oauth-keycloak-setup
+  block: 4
+  fingerprint: 1bdf582f93325033
+  lang: shell
+  lines: a3be7965 3bee196e
+  preview: export KEYCLOAK_TOKEN=$(curl -d "client_id=admin-cli" -d "username=admin" -d "pa
+  form:
+    attr: paths="oauth-keycloak,oauth-keycloak-setup"
+    only: true
+    lead: ' '
+- paths: oauth-keycloak,oauth-keycloak-setup
+  block: 5
+  fingerprint: b09419853bfacbfe
+  lang: shell
+  lines: d6d320f4 d4459aae ba006819 ddce3fc8 d1eacc41 bef1340a e3607675 ea3a0ca8 7c4446a4 e198b57b 951e49a3 80a18425 ec95d833 e5a27d25 daca6b5f 8df8a877
+  preview: '# Create initial token to register the client'
+  form:
+    attr: paths="oauth-keycloak,oauth-keycloak-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: a85f8c0a99e42d0c
+    lang: shell
+    lines: a85f8c0a
+    preview: kubectl -n keycloak rollout status deploy/keycloak
+  content: |2-
+       {{< doc-test paths="oauth-keycloak,oauth-keycloak-setup" >}}
+       # The next step reads the LoadBalancer address, which cloud-provider-kind
+       # assigns a few seconds after the Service exists.
+       for i in $(seq 1 60); do
+         ip=$(kubectl -n keycloak get service keycloak -o jsonpath='{.status.loadBalancer.ingress[0].ip}{.status.loadBalancer.ingress[0].hostname}')
+         [ -n "$ip" ] && break; sleep 5
+       done
+       test -n "$ip" || { echo "keycloak Service got no LoadBalancer address"; exit 1; }
+       # start-dev answers on the port a little after the rollout reports ready.
+       for i in $(seq 1 60); do
+         curl -fsS -o /dev/null "http://$ip:8080/realms/master/.well-known/openid-configuration" && break; sleep 5
+       done
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: b09419853bfacbfe
+    lang: shell
+    lines: d6d320f4 d4459aae ba006819 ddce3fc8 d1eacc41 bef1340a e3607675 ea3a0ca8 7c4446a4 e198b57b 951e49a3 80a18425 ec95d833 e5a27d25 daca6b5f 8df8a877
+    preview: '# Create initial token to register the client'
+  content: |2-
+       {{< doc-test paths="oauth-keycloak,oauth-keycloak-setup" >}}
+       # ============================================================================
+       # Doc test coverage for "Keycloak as an IdP" (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * Keycloak installs from the published manifest, gets a LoadBalancer
+       #     address, and the admin password grant works.
+       #   * The client registration, the redirect URI update, the `group` mapper, and
+       #     both users succeed: the client secret is set, and user1 gets an access
+       #     token through the direct access grant with that client ID and secret,
+       #     which the access token and authorization code guides rely on.
+       #   * "Configure Keycloak": TOKEN_ENDPOINT, the JWKS URI, and the JWKS keys are
+       #     set to real values.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * "Open the Keycloak frontend" and the admin console checks: they need a
+       #     browser. The Admin REST API checks below cover the same users and client.
+       #   * The developer portal steps, which do not render for agentgateway.
+       test -n "$KEYCLOAK_CLIENT" || { echo "client registration returned no client ID"; exit 1; }
+       test -n "$KEYCLOAK_SECRET" && [ "$KEYCLOAK_SECRET" != "null" ] || { echo "client registration returned no secret"; exit 1; }
+       ADMIN_TOKEN=$(curl -fsS -d "client_id=admin-cli" -d "username=admin" -d "password=admin" -d "grant_type=password" "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" | jq -r .access_token)
+       curl -fsS -H "Authorization: Bearer ${ADMIN_TOKEN}" "$KEYCLOAK_URL/admin/realms/master/users?username=user" \
+         | jq -e '[.[].username] | index("user1") != null and index("user2") != null' >/dev/null \
+         || { echo "user1 and user2 were not both created"; exit 1; }
+       curl -fsS -d "client_id=${KEYCLOAK_CLIENT}" -d "client_secret=${KEYCLOAK_SECRET}" \
+         -d "username=user1" -d "password=password" -d "grant_type=password" \
+         "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token" \
+         | jq -e '.access_token | length > 0' >/dev/null \
+         || { echo "user1 could not get a token with the registered client"; exit 1; }
+       {{< /doc-test >}}

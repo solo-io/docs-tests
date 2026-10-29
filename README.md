@@ -277,8 +277,6 @@ asserts on a real response, which is what `functional` means.
 |---|---|---|---|
 | `schema` | The doc's own examples validate against the real schema for the version the page documents: custom resources and Gateway API kinds against their CRDs, core Kubernetes kinds through `kubeconform`, and standalone config files against agentgateway's `schema/config.json` (renamed/removed/mistyped fields, wrong types) | Nothing — no cluster, no execution (`doc_test_schema_check.py`) | Yes, in its own job |
 | `functional` | Real behavior in a real cluster (apply config, assert on a real response) | A `kind` cluster, no vendor credentials | Yes |
-| `live` | A real external endpoint is reachable and returns the documented unauthenticated response | A real public endpoint, no credentials | Yes, alongside `functional` |
-| `credentialed` | Full behavior against a real vendor with real credentials | Named secrets, provisioned out of band | No — scheduled, non-blocking, never on a PR |
 
 `schema` needs no prerequisite chain — since nothing executes, only the step that shows
 the custom resource itself matters:
@@ -292,12 +290,11 @@ test:
       path: rewrite
 ```
 
-**Known gap, not a mechanism limitation:** some enterprise-only pages (Entra token
-exchange, for one) can't reach `live` today because there's no shared dev tenant to test
-against — registering a real Entra app/tenant is manual, one-time setup with no
-vendor-provided sandbox. That test stays tagged at whatever type it can actually reach,
-with the gap tracked, rather than silently passing at a narrower type than the page's own
-content would suggest.
+`schema` and `functional` are the only types; any other `type:` is an error. A page that
+depends on an external service (an LLM provider, an identity provider, a cloud account)
+is tested as `functional` against an in-cluster stand-in: the httpbun mock LLM, an
+in-cluster Keycloak, a patched provider host. What the stand-in can't reach (a real Entra
+tenant, a browser login) stays untested, and the scenario's comments say so.
 
 ### Declaring more than one type on the same scenario
 

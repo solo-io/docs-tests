@@ -5,7 +5,7 @@ Inject test status metadata into markdown front matter based on test-results.yam
 This script reads the test results file and updates the front matter of each
 tested document with a `test_status` field indicating whether all tests passed.
 A page that passed also gets `test_types`, the kinds of test that ran on it
-(schema, functional, live, credentialed), which the Verified badge's tooltip
+(schema, functional), which the Verified badge's tooltip
 lists. The kinds come from the results, never from tests.yaml: a scenario that
 declares `[schema, functional]` but ran only `functional` claims only that.
 
@@ -69,7 +69,7 @@ def compute_document_status(doc_path: str, tests: Dict, skipped: Optional[Dict] 
 # Badge order for the known kinds, cheapest check first. An unknown kind sorts
 # after these, alphabetically; the badge partial skips any kind it has no
 # wording for, so a new kind never shows its raw name to readers.
-TYPE_ORDER = ["schema", "functional", "live", "credentialed"]
+TYPE_ORDER = ["schema", "functional"]
 
 
 def compute_document_types(doc_path: str, tests: Dict) -> List[str]:
