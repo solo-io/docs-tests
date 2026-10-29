@@ -239,15 +239,18 @@ hidden:
           key: "$OPENAI_API_KEY"
     EOF
     agentgateway -f config-routes.yaml --validate-only
-    sed 's#^      name: openai$#      name: openai\n      hostOverride: localhost:3091#' config-routes.yaml > config-routes-mock.yaml
-    grep -q 'hostOverride: localhost:3091' config-routes-mock.yaml || { echo "FAIL: could not point config-routes.yaml at the mock"; exit 1; }
+    # A backend with `hostOverride` and no `pathPrefix` forwards the client path unchanged,
+    # even for translated requests, so `pathPrefix: /v1` keeps the OpenAI paths that the
+    # real OpenAI host gets.
+    sed 's#^      name: openai$#      name: openai\n      hostOverride: localhost:3091\n      pathPrefix: /v1#' config-routes.yaml > config-routes-mock.yaml
+    grep -q 'pathPrefix: /v1' config-routes-mock.yaml || { echo "FAIL: could not point config-routes.yaml at the mock"; exit 1; }
     run_agw config-routes-mock.yaml
     STATUS=$(post /v1/decisions "$DECISIONS_BODY")
     [ "$STATUS" = "200" ] || { echo "FAIL: routes config decisions request returned $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
     check 'resp["answers"][0]["probability"] == 0.64'
     STATUS=$(post /v1/systemone "$SYSTEMONE_BODY")
     [ "$STATUS" = "200" ] || { echo "FAIL: routes config systemone request returned $STATUS"; cat /tmp/decisions-resp.json; exit 1; }
-    check 'isinstance(up["body"]["questions"], list) and resp["answers"]["visible_damage"]["noul"] == 0.64'
+    check 'up["path"] == "/v1/decisions" and isinstance(up["body"]["questions"], list) and resp["answers"]["visible_damage"]["noul"] == 0.64'
     stop_agw
 
     # The requests and metrics steps below run against the `llm` config.
