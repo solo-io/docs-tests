@@ -147,10 +147,12 @@ hidden:
        kubectl rollout status deployment/decisions-mock -n default --timeout=180s
 
        # Point the documented backend at the mock. `path: null` drops the httpbun path
-       # that the openai-setup prerequisite patched in, so each route type keeps its
-       # own OpenAI path.
+       # that the openai-setup prerequisite patched in. A backend that sets `host` without
+       # `pathPrefix` forwards the client path unchanged, even for translated requests, so
+       # `pathPrefix: /v1` restores the OpenAI base path and each route type gets its own
+       # OpenAI path, the same as against the real OpenAI host.
        kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge \
-         -p '{"spec":{"ai":{"provider":{"host":"decisions-mock.default.svc.cluster.local","port":3091,"path":null}}}}'
+         -p '{"spec":{"ai":{"provider":{"host":"decisions-mock.default.svc.cluster.local","port":3091,"path":null,"pathPrefix":"/v1"}}}}'
        YAMLTest -f - <<'EOF'
        - name: the openai backend with the Decisions and SystemOne routes is accepted
          wait:
@@ -257,8 +259,9 @@ hidden:
   content: |2-
        {{< doc-test paths="api-types-decisions-run" >}}
        # OpenAI receives the SystemOne request translated to the Decisions format, and
-       # the client gets the reply back in the SystemOne format. The page promises the
-       # body format, not the upstream path, so only the body is checked.
+       # the client gets the reply back in the SystemOne format. The translated request
+       # goes to OpenAI's /v1/decisions path.
+       check 'up["path"] == "/v1/decisions"'
        check 'isinstance(up["body"]["questions"], list) and isinstance(up["body"]["input"], str)'
        check 'up["body"]["questions"][0]["type"] == "predicate" and up["body"]["questions"][0]["name"] == "visible_damage"'
        STATUS=$(post /v1/systemone "$SYSTEMONE_BODY")
