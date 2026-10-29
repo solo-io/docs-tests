@@ -272,6 +272,23 @@ scenarios:
     type: schema
     page: integrations/agent-runtimes/kagent.md
     path: agent-runtimes-kagent
+  api-types-decisions:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/api-types/decisions.md
+    path: api-types-decisions-run
+  api-types-decisions-schema:
+    type: schema
+    needs: []
+    page: documentation/llm/api-types/decisions.md
+    path: api-types-decisions
   argo-rollouts:
     type:
     - schema
@@ -332,10 +349,43 @@ scenarios:
     type: schema
     page: documentation/about/policies/conditional-policies.md
     path: conditional-policies
+  content-routing-model:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/llm/content-routing.md
+    path: content-routing
   cost-attribution-schema:
     type: schema
     page: documentation/llm/cost-controls/attribution.md
     path: cost-attribution
+  cost-tracking:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/cost-controls/cost-tracking.md
+    path: cost-tracking
+  costs:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    page: documentation/llm/cost-controls/costs.md
+    path: costs
   crewai-k8s:
     type:
     - schema
@@ -403,6 +453,18 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/extproc.md
     path: extproc
+  failover:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    page: documentation/llm/failover.md
+    path: failover
   filter-request-body:
     type:
     - schema
@@ -432,6 +494,15 @@ scenarios:
     - gateway
     page: integrations/llm/providers/gemini.md
     path: gemini
+  gemini-inbound:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/llm/api-types/gemini.md
+    path: gemini-inbound
   grpc:
     needs:
     - install-standard
@@ -445,6 +516,23 @@ scenarios:
     type: schema
     page: documentation/llm/guardrails/google-model-armor.md
     path: guardrails-google-model-armor
+  guardrails-moderation:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/guardrails/moderation.md
+    path: guardrails-moderation-inline
+  guardrails-moderation-schema:
+    type: schema
+    needs: []
+    page: documentation/llm/guardrails/moderation.md
+    path: guardrails-moderation
   guardrails-multi-layer-schema:
     type: schema
     page: documentation/llm/guardrails/multi-layer.md
@@ -457,6 +545,23 @@ scenarios:
     type: schema
     page: documentation/mcp/guardrails/processors.md
     path: guardrails-processors
+  guardrails-regex:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/guardrails/regex.md
+    path: guardrails-regex-run
+  guardrails-regex-schema:
+    type: schema
+    needs: []
+    page: documentation/llm/guardrails/regex.md
+    path: guardrails-regex
   header-match-exact:
     needs:
     - install-standard
@@ -578,6 +683,35 @@ scenarios:
       path: openai-setup
     page: integrations/llm/observability/langsmith.md
     path: langsmith
+  llm-alias:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/alias.md
+    path: llm-alias
+  llm-api-keys:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/api-keys.md
+    path: llm-api-keys-run
+  llm-api-keys-schema:
+    type: schema
+    needs: []
+    page: documentation/llm/api-keys.md
+    path: llm-api-keys
   llm-client-codex:
     needs:
     - install-standard
@@ -650,6 +784,30 @@ scenarios:
       path: openai-setup
     page: integrations/llm/clients/opencode.md
     path: llm-client-opencode
+  llm-final-transformations:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/transformations.md
+    path: llm-final-transformations
+  llm-functions:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/functions.md
+    path: llm-functions
   llm-model-exposure-schema:
     type: schema
     page: documentation/llm/about.md
@@ -666,10 +824,53 @@ scenarios:
       path: openai-setup
     page: documentation/traffic-management/transformations/llm-model-headers.md
     path: llm-model-headers
+  llm-observability:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/observability.md
+    path: llm-observability
   llm-prompt-enrichment-schema:
     type: schema
     page: documentation/llm/prompt-enrichment.md
     path: llm-prompt-enrichment
+  llm-prompt-templates:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/prompt-templates.md
+    path: llm-prompt-templates-run
+  llm-prompt-templates-schema:
+    type: schema
+    needs: []
+    page: documentation/llm/prompt-templates.md
+    path: llm-prompt-templates
+  llm-rbac:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/llm/rbac.md
+    path: llm-rbac-run
+  llm-rbac-schema:
+    type: schema
+    needs: []
+    page: documentation/llm/rbac.md
+    path: llm-rbac
   llm-transformations:
     type:
     - schema
@@ -682,6 +883,15 @@ scenarios:
       path: openai-setup
     page: documentation/traffic-management/transformations/llm-model-headers.md
     path: llm-transformations
+  load-balancing-multi-provider:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/llm/load-balancing.md
+    path: load-balancing
   locality-aware-routing:
     needs:
     - install-standard
@@ -1023,6 +1233,27 @@ scenarios:
     - gateway
     page: integrations/llm/providers/httpbun.md
     path: setup-httpbun-llm
+  shared-connection-settings:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/llm/shared-connection-settings.md
+    path: shared-connection-settings
+  streaming-openai:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/streaming.md
+    path: streaming-openai
   tracing:
     type:
     - schema
@@ -1077,6 +1308,38 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/validate.md
     path: validate-skip
+  virtual-keys-auth:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    - page: documentation/llm/cost-controls/virtual-keys.md
+      path: virtual-keys
+    page: documentation/llm/cost-controls/virtual-keys.md
+    path: virtual-keys-httpbun-test
+  virtual-keys-ratelimit:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    - page: documentation/security/rate-limit-global.md
+      path: deploy-rate-limit-server
+    - page: documentation/llm/cost-controls/virtual-keys.md
+      path: virtual-keys
+    - page: documentation/llm/cost-controls/virtual-keys.md
+      path: virtual-keys-with-ratelimit
+    page: documentation/llm/cost-controls/virtual-keys.md
+    path: virtual-keys-ratelimit-test
   vllm-provider-setup:
     type:
     - schema
