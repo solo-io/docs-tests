@@ -1,0 +1,257 @@
+format: 1
+source: assets/agw-docs/pages/global-rate-limit.md
+blocks:
+- 991d632b6d8b2fb9 yaml
+- 75b37bbe874d26a7 yaml
+- 0b26879c76445ea2 sh
+- 34631d9c1a02f4f5 sh
+- cd0dfef548da6d39 sh
+- 1ccc3354a57bb9b2
+- f5f1b728ce750271 yaml
+- 97da73ec0f2f8dca yaml
+- 995307c7dd9ca123 sh
+- 7f924fdaa91c421f sh
+- a61237b3ca707dd9
+- 94fd48bb7e641eea yaml
+- c2000aa37d574476 yaml
+- ca32cb37a33f927c sh
+tags:
+- paths: global-rate-limit-enterprise
+  block: 0
+  fingerprint: 991d632b6d8b2fb9
+  lang: yaml
+  lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 2a9ae068 0bebd850 36184fa5 aeeb33bd b7b5f484 d1d87427 a50da420 fe0213c0 6a642fca a19560f5 e50b9463 99005bf9 6e631e62 19006c37 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-enterprise
+  block: 1
+  fingerprint: 75b37bbe874d26a7
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 2a9ae068 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 065d53f7 c14c1813 2ed67d95 959a9fcb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-enterprise
+  block: 2
+  fingerprint: 0b26879c76445ea2
+  lang: sh
+  lines: 0b26879c
+  preview: 'kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} ip-rate-limit -n '
+  form:
+    attr: paths="global-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-enterprise
+  block: 6
+  fingerprint: f5f1b728ce750271
+  lang: yaml
+  lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 93c87b1b 0bebd850 36184fa5 aeeb33bd b7b5f484 eef55bb8 a50da420 ca372f46 6a642fca a19560f5 e50b9463 99005bf9 a68324b2 25a46942 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-enterprise
+  block: 7
+  fingerprint: 97da73ec0f2f8dca
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 93c87b1b 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 597ae42e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-enterprise
+  block: 11
+  fingerprint: 94fd48bb7e641eea
+  lang: yaml
+  lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 e26d8d3a 0bebd850 36184fa5 aeeb33bd b7b5f484 eef55bb8 a50da420 ca372f46 6a642fca a19560f5 e50b9463 99005bf9 a68324b2 25a46942 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-enterprise
+  block: 12
+  fingerprint: c2000aa37d574476
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 e9c383a9 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d a50da420 f971795d bafdf12e 9482fbfc cb3f91d5 88b9492f c548623c 8c8c4228 1a71044f 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 12a458d8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: global-rate-limit-enterprise
+  block: 13
+  fingerprint: ca32cb37a33f927c
+  lang: sh
+  lines: 06575f84 dc7418a7 4c584f47 0a10bab7 7efd914d a0866e61 c486f184
+  preview: kubectl delete RateLimitConfig ip-rate-limit -n {{< reuse "kgw-docs/snippets/nam
+  form:
+    attr: paths="global-rate-limit-enterprise"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 75b37bbe874d26a7
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 2a9ae068 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 065d53f7 c14c1813 2ed67d95 959a9fcb abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="global-rate-limit-enterprise" >}}
+       # ============================================================================
+       # Doc test coverage for the global rate limiting guide (not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Rate limit by client IP": the RateLimitConfig and the Gateway-wide policy are
+       #     accepted; in a fresh one-minute window, 10 requests to /openai return 200 and
+       #     the 11th returns 429.
+       #   * "Rate limit by user ID": the HTTPRoute-level policy is accepted; with
+       #     `x-user-id: alice`, 50 requests return 200 and the 51st returns 429. The IP
+       #     policy stays in place, as on the page, so this also checks that the
+       #     route-level policy takes precedence over the Gateway-wide one.
+       #   * "Combine local and global rate limiting": both policies are accepted; with
+       #     `x-user-id: bob`, 50 requests return 200 and the 51st returns 429.
+       #   * Cleanup runs.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The visible curl loops. The "Cloud Provider LoadBalancer" tabs send to port 8080,
+       #     but the agentgateway-proxy listener is on port 80, so the same requests are sent
+       #     here on port 80. The port-forward tabs need a port-forward.
+       #   * Live OpenAI completions: the openai-setup prerequisite patches the backend to the
+       #     in-cluster mock LLM.
+       #   * Global limits use fixed windows aligned to the clock minute, so each count check
+       #     starts at the beginning of a new window.
+       llm_status() {
+         curl -s -o /dev/null -w "%{http_code}" "http://${INGRESS_GW_ADDRESS}:80/openai" \
+           -H content-type:application/json "$@" \
+           -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Hi"}]}'
+       }
+       wait_enforced() {
+         for attempt in $(seq 1 150); do
+           if [ "$(llm_status "$@")" = "429" ]; then return 0; fi
+           sleep 0.3
+         done
+         echo "the rate limit was never enforced"; return 1
+       }
+       check_window() {
+         limit=$1; shift
+         sleep $((61 - 10#$(date +%S)))
+         for i in $(seq 1 "$limit"); do
+           status=$(llm_status "$@")
+           if [ "$status" != "200" ]; then echo "request $i: expected 200, got $status"; return 1; fi
+         done
+         status=$(llm_status "$@")
+         if [ "$status" != "429" ]; then echo "request $((limit + 1)): expected 429, got $status"; return 1; fi
+         echo "first $limit requests returned 200, request $((limit + 1)) returned 429"
+       }
+       YAMLTest -f - <<'EOF'
+       - name: the ip-rate-limit policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: ip-rate-limit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 1ccc3354a57bb9b2
+    lang: ''
+    lines: 1ef92b8a 70b65d9e ab5df625 950ea6a2 bff140b7 8a7b694f ab5df625 b5c48621
+    preview: 'Request 1: HTTP 200'
+  content: |2-
+       {{< doc-test paths="global-rate-limit-enterprise" >}}
+       wait_enforced
+       check_window 10
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 97da73ec0f2f8dca
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 93c87b1b 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 597ae42e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="global-rate-limit-enterprise" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the user-rate-limit policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: user-rate-limit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: a61237b3ca707dd9
+    lang: ''
+    lines: b77b3a6f 24e84fb2 0c1a5f6d 3ca1ea63 8cdb8317
+    preview: < HTTP/1.1 429 Too Many Requests
+  content: |2-
+       {{< doc-test paths="global-rate-limit-enterprise" >}}
+       wait_enforced -H "x-user-id: alice"
+       check_window 50 -H "x-user-id: alice"
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: c2000aa37d574476
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 e9c383a9 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d a50da420 f971795d bafdf12e 9482fbfc cb3f91d5 88b9492f c548623c 8c8c4228 1a71044f 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 12a458d8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="global-rate-limit-enterprise" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the combined-rate-limit-local policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: combined-rate-limit-local
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: the combined-rate-limit-global policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: combined-rate-limit-global
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       wait_enforced -H "x-user-id: bob"
+       check_window 50 -H "x-user-id: bob"
+       {{< /doc-test >}}

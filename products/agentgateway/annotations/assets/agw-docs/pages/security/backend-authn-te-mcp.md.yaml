@@ -150,7 +150,7 @@ hidden:
     - name: wait for the mcp token exchange policy to be accepted
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: httpbin
             name: mcp-token-exchange

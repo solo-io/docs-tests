@@ -99,7 +99,7 @@ hidden:
        - name: wait for failover-demo backend to be accepted
          wait:
            target:
-             kind: AgentgatewayBackend
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
              metadata:
                namespace: agentgateway-system
                name: failover-demo
@@ -163,7 +163,7 @@ hidden:
        - name: wait for failover-demo-health policy to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: failover-demo-health

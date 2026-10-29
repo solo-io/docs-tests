@@ -88,7 +88,7 @@ hidden:
     - name: wait for openai-backend to be accepted
       wait:
         target:
-          kind: AgentgatewayBackend
+          kind: {{< reuse "agw-docs/snippets/backend.md" >}}
           metadata:
             namespace: agentgateway-system
             name: openai-backend
@@ -103,7 +103,7 @@ hidden:
     - name: wait for anthropic-backend to be accepted
       wait:
         target:
-          kind: AgentgatewayBackend
+          kind: {{< reuse "agw-docs/snippets/backend.md" >}}
           metadata:
             namespace: agentgateway-system
             name: anthropic-backend
@@ -162,7 +162,7 @@ hidden:
     - name: wait for openai-backend to settle after the mock LLM patch
       wait:
         target:
-          kind: AgentgatewayBackend
+          kind: {{< reuse "agw-docs/snippets/backend.md" >}}
           metadata:
             namespace: agentgateway-system
             name: openai-backend

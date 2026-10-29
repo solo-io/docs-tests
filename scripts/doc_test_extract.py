@@ -223,6 +223,10 @@ class Extractor:
         self.skip_tabs_without_paths = bool(options.get("skip_tabs_without_paths", True))
         self.version = definition.get("context", {}).get("version")
         self.product = definition.get("context", {}).get("product")
+        # Extra names a conditional-text gate also matches, besides the product.
+        # A site whose gates name the product (include-if="agentgateway") while
+        # its tests run with the mode as the product passes the name here.
+        self.conditions = {c for c in definition.get("context", {}).get("conditions") or [] if c}
 
         # Map linkVersion tokens (e.g. "latest", "main") to canonical version
         # strings (e.g. "1.5.x", "1.4.x") as defined in hugo.yaml.  This
@@ -488,7 +492,8 @@ class Extractor:
                     "main_file": upstream_rel,
                     "sources": [],
                     "options": self.definition.get("options", {}),
-                    "context": {"product": mode, "version": self.upstream_version_for[version]},
+                    "context": {"product": mode, "version": self.upstream_version_for[version],
+                                "conditions": sorted(self.conditions)},
                 },
                 docs_tests_root=self.docs_tests_root,
                 asset_roots=[self.repo_root, self.upstream_root],
@@ -510,13 +515,11 @@ class Extractor:
             include_if = [x.strip() for x in params.get("include-if", "").split(",") if x.strip()]
             exclude_if = [x.strip() for x in params.get("exclude-if", "").split(",") if x.strip()]
 
-            if include_if:
-                if not self.product:
-                    return ""
-                if self.product not in include_if:
-                    return ""
+            names = self.conditions | ({self.product} if self.product else set())
+            if include_if and not names.intersection(include_if):
+                return ""
 
-            if exclude_if and self.product and self.product in exclude_if:
+            if exclude_if and names.intersection(exclude_if):
                 return ""
 
             return body

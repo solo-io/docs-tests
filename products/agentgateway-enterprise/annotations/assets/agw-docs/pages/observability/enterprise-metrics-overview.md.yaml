@@ -1,0 +1,74 @@
+format: 1
+source: assets/agw-docs/pages/observability/enterprise-metrics-overview.md
+blocks:
+- 5dd8b801cfba6e69 sh
+- 9d27dfef6a4f189c sh
+- 697eb961cc251eff sh
+- 3ba1eb027a24ea2f sh
+- 1262c030e90ac41d sh
+- 67b6a24692cbcf9b sh
+- 1daf17b176264fe3 sh
+- 2e740b2fd4a989b7 sql
+- ca579e0681e68979 sql
+- 70ff6ce4e4cd45b4 sql
+- 7a8de7e56597d58e sql
+tags:
+- paths: enterprise-metrics-overview
+  block: 5
+  fingerprint: 67b6a24692cbcf9b
+  lang: sh
+  lines: 03784a74 26d8a4ad
+  preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
+  form:
+    attr: paths="enterprise-metrics-overview"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: (top of page)
+    line: 419fa518af09fa71
+    occurrence: 0
+    words: ff777205 a46c629d 7187f067 177a7ea3 58296753 b9776d7d 5f199a5a 3e194352 8da729b5 e904c9cc 5ef5ef03 56e57ada 177a7ea3 a3b142af b9776d7d e4a514c0 e7a2e8b2 10c22bcf b9776d7d a18b869b a330395c 28391d3b ddd9818a 177a7ea3 aa9e9b5c 0fcd568a fad90028 177a7ea3 b1b1bdb4 a0af9f86 caf9f906 58ee0007 177a7ea3 96826665 6201111b 3a6eb079 fad90028 177a7ea3 b1b1bdb4 a0af9f86 caf9f906 58ee0007 177a7ea3 9d32cad2
+    block_before: null
+  content: |-
+    {{< doc-test paths="enterprise-metrics-overview" >}}
+    # ============================================================================
+    # Doc test coverage for "Metrics overview" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Access raw metrics": the control plane answers on 9092/metrics and the
+    #     proxy on 15020/metrics with agentgateway_ metrics. CI allows no
+    #     port-forward, so an in-cluster curl pod reads the same endpoints.
+    #   * "View metrics in the management UI": the collector scrapes the proxy, and
+    #     agentgateway_requests_total reaches otel_metrics_sum (the page's query).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The UI Dashboard panels (browser) and the interactive clickhouse-client shell.
+    PROXY_IP=$(kubectl get pods -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{range .items[*]}{.metadata.name} {.status.podIP}{"\n"}{end}' | grep '^agentgateway-proxy-' | head -1 | cut -d' ' -f2)
+    kubectl run metrics-check -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --quiet --image=curlimages/curl:8.11.1 -- \
+      sh -c "curl -sf http://enterprise-agentgateway.{{< reuse "agw-docs/snippets/namespace.md" >}}.svc.cluster.local:9092/metrics | grep -c '^agentgateway_' && curl -sf http://$PROXY_IP:15020/metrics | grep -c '^agentgateway_'"
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 67b6a24692cbcf9b
+    lang: sh
+    lines: 03784a74 26d8a4ad
+    preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
+  content: |2-
+          {{< doc-test paths="enterprise-metrics-overview" >}}
+          export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.username}' | base64 -d)
+          export CH_PASS=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.password}' | base64 -d)
+          chq() { kubectl exec -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -- clickhouse-client --user "$CH_USER" --password "$CH_PASS" --query "$1"; }
+          # Wait until a count query returns more than zero rows. Telemetry is batched, so allow a few minutes.
+          ch_wait_rows() {
+            local q="$1" n=0
+            for i in $(seq 1 36); do
+              n=$(chq "$q" 2>/dev/null || echo 0)
+              if [ "${n:-0}" -gt 0 ] 2>/dev/null; then echo "rows: $n"; return 0; fi
+              sleep 10
+            done
+            echo "no rows after 6 minutes for: $q"; return 1
+          }
+          for i in $(seq 1 10); do curl -s -o /dev/null http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com"; done
+          ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_metrics_sum WHERE MetricName = 'agentgateway_requests_total'"
+          chq "SELECT DISTINCT MetricName FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_metrics_histogram ORDER BY MetricName"
+          {{< /doc-test >}}

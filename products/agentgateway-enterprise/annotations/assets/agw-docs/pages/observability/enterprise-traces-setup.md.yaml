@@ -1,0 +1,246 @@
+format: 1
+source: assets/agw-docs/pages/observability/enterprise-traces-setup.md
+blocks:
+- 4bd0f90482dc65b5 yaml
+- 21ff649189a82fb2 sh
+- f3b36fab769f4a67 sh
+- 1262c030e90ac41d sh
+- 406c77b85324adf9 yaml
+- 053b090691ecf392 yaml
+- 48b4be80f2213782 yaml
+- db137bc929b464d9 yaml
+- fd4deab47750b4d4 sh
+tags:
+- paths: enterprise-traces-setup
+  block: 0
+  fingerprint: 4bd0f90482dc65b5
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-traces-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-traces-setup
+  block: 4
+  fingerprint: 406c77b85324adf9
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee be7234f8 57d78469 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-traces-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-traces-setup
+  block: 5
+  fingerprint: 053b090691ecf392
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 b2a76230 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-traces-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-traces-setup
+  block: 6
+  fingerprint: 48b4be80f2213782
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 cab2be2b 21be7e8f c5a9bbf9 c9a521fd a273b231 73c054bf 274fdf3f 8abece4f a68324b2 8e8f9cf8 d80f53a1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-traces-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-traces-setup
+  block: 7
+  fingerprint: db137bc929b464d9
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 73c054bf 0a282488 ed32980f f8e71c10 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-traces-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-traces-setup
+  block: 8
+  fingerprint: fd4deab47750b4d4
+  lang: sh
+  lines: fd4deab4
+  preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} tracing -n {{< reuse '
+  form:
+    attr: paths="enterprise-traces-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 4bd0f90482dc65b5
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="enterprise-traces-setup" >}}
+    # ============================================================================
+    # Doc test coverage for "Set up and customize traces" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Enable tracing": the policy is accepted, and an LLM request on the
+    #     openai route produces spans in ClickHouse.
+    #   * Every policy variant on the page (sampling, filter, add and remove
+    #     attributes) is accepted; the add-attributes variant puts the custom
+    #     service.name on new spans.
+    #   * Cleanup runs.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The page's curl to /v1/chat/completions: that is the LLM quickstart's
+    #     route. This scenario chains the OpenAI provider setup, whose route is
+    #     /openai and whose backend is patched to the in-cluster mock LLM.
+    #   * The UI Tracing view (port-forward and browser).
+    # Policy check 4
+    YAMLTest -f - <<'EOF'
+    - name: the tracing policy is accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: agentgateway-system
+            name: tracing
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    # Give the proxy a moment to load the new policy before the next request.
+    sleep 10
+    curl -s -o /dev/null -w '%{http_code}\n' "$INGRESS_GW_ADDRESS/openai" -H content-type:application/json -H "x-user-id: user-123" -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Say hello"}]}'
+    export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.username}' | base64 -d)
+    export CH_PASS=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.password}' | base64 -d)
+    chq() { kubectl exec -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -- clickhouse-client --user "$CH_USER" --password "$CH_PASS" --query "$1"; }
+    # Wait until a count query returns more than zero rows. Telemetry is batched, so allow a few minutes.
+    ch_wait_rows() {
+      local q="$1" n=0
+      for i in $(seq 1 36); do
+        n=$(chq "$q" 2>/dev/null || echo 0)
+        if [ "${n:-0}" -gt 0 ] 2>/dev/null; then echo "rows: $n"; return 0; fi
+        sleep 10
+      done
+      echo "no rows after 6 minutes for: $q"; return 1
+    }
+    ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_traces_json"
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 406c77b85324adf9
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee be7234f8 57d78469 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="enterprise-traces-setup" >}}
+    # Policy check 5
+    YAMLTest -f - <<'EOF'
+    - name: the tracing policy is accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: agentgateway-system
+            name: tracing
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    # Give the proxy a moment to load the new policy before the next request.
+    sleep 10
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 053b090691ecf392
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 b2a76230 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="enterprise-traces-setup" >}}
+    # Policy check 6
+    YAMLTest -f - <<'EOF'
+    - name: the tracing policy is accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: agentgateway-system
+            name: tracing
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    # Give the proxy a moment to load the new policy before the next request.
+    sleep 10
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 48b4be80f2213782
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 cab2be2b 21be7e8f c5a9bbf9 c9a521fd a273b231 73c054bf 274fdf3f 8abece4f a68324b2 8e8f9cf8 d80f53a1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="enterprise-traces-setup" >}}
+    # Policy check 7
+    YAMLTest -f - <<'EOF'
+    - name: the tracing policy is accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: agentgateway-system
+            name: tracing
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    # Give the proxy a moment to load the new policy before the next request.
+    sleep 10
+    curl -s -o /dev/null -w '%{http_code}\n' "$INGRESS_GW_ADDRESS/openai" -H content-type:application/json -H "x-user-id: user-123" -d '{"model": "gpt-3.5-turbo", "messages": [{"role": "user", "content": "Say hello"}]}'
+    ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_traces_json WHERE position(formatRow('JSONEachRow', *), 'my-agentgateway') > 0"
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: db137bc929b464d9
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 73c054bf 0a282488 ed32980f f8e71c10 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="enterprise-traces-setup" >}}
+    # Policy check 8
+    YAMLTest -f - <<'EOF'
+    - name: the tracing policy is accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: agentgateway-system
+            name: tracing
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    # Give the proxy a moment to load the new policy before the next request.
+    sleep 10
+    {{< /doc-test >}}

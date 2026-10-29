@@ -1,0 +1,111 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/documentation/operations/debug.md
+blocks:
+- ce9138c3299fb9e4 sh
+- 09eb02380e4516c4 sh
+- 1380755b43ef9cc5 sh
+- 2af330f4e75db088 sh
+- d338b9101c91d180 sh
+- 6a9c83afa2745949 sh
+- a6f56e8234aa1d6a sh
+- c7bd492372245a34 sh
+- bd504a1f526a5a7b sh
+- f0aee236a854f920 sh
+- 84070617664d9862 sh
+- d5632cd813331df2
+- 0907dcf6f0a85198 sh
+- e43c06a98f6f3625 sh
+- 099be4ed76c3b0e0 sh
+- 84222292666c1fb2 sh
+- 7a45495817c42cb4 sh
+- 31190f3bab416bd2
+- 2354c83ad1649cc1 sh
+- d6b41353437d3495 sh
+- 099be4ed76c3b0e0 sh
+- 84222292666c1fb2 sh
+- c5e8c6ca20c726a0 sh
+- efb55015352fd4a1 sh
+- 32d82031d9ff726f sh
+- 85482d3b548132cf sh
+tags:
+- paths: enterprise-debug
+  block: 1
+  fingerprint: 09eb02380e4516c4
+  lang: sh
+  lines: 09eb0238
+  preview: kubectl get pods -n agentgateway-system
+  form:
+    attr: paths="enterprise-debug"
+    only: true
+    lead: ' '
+- paths: enterprise-debug
+  block: 3
+  fingerprint: 2af330f4e75db088
+  lang: sh
+  lines: 2af330f4
+  preview: kubectl get gateway agentgateway-proxy -n agentgateway-system -o yaml
+  form:
+    attr: paths="enterprise-debug"
+    only: true
+    lead: ' '
+- paths: enterprise-debug
+  block: 4
+  fingerprint: d338b9101c91d180
+  lang: sh
+  lines: d338b910
+  preview: kubectl get httproute -A
+  form:
+    attr: paths="enterprise-debug"
+    only: true
+    lead: ' '
+- paths: enterprise-debug
+  block: 6
+  fingerprint: a6f56e8234aa1d6a
+  lang: sh
+  lines: a6f56e82
+  preview: kubectl get httproute openai -n agentgateway-system -o yaml
+  form:
+    attr: paths="enterprise-debug"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: aa338a96168d42cf
+    occurrence: 0
+    words: 1e142e62 3c698e2e fa42bed0 a0af9f86 caf9f906 74de07c4 3c698e2e
+    block_before: null
+  content: |-
+    {{< doc-test paths="enterprise-debug" >}}
+    # ============================================================================
+    # Doc test coverage for "Debug your setup" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Check the gateway, route, and policy status", Quickstart example tabs:
+    #     the commands run, the Gateway is Programmed, and the openai HTTPRoute
+    #     (from the OpenAI provider setup) is Accepted.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * agctl steps: agctl is not installed in CI and opens its own port-forward.
+    #   * Debug logs and profiles: they need a port-forward to the admin port 15000.
+    #   * The "Replace with your own" tabs (placeholders).
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 2af330f4e75db088
+    lang: sh
+    lines: 2af330f4
+    preview: kubectl get gateway agentgateway-proxy -n agentgateway-system -o yaml
+  content: |2-
+       {{< doc-test paths="enterprise-debug" >}}
+       test "$(kubectl get gateway agentgateway-proxy -n agentgateway-system -o jsonpath='{.status.conditions[?(@.type=="Programmed")].status}')" = "True"
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: a6f56e8234aa1d6a
+    lang: sh
+    lines: a6f56e82
+    preview: kubectl get httproute openai -n agentgateway-system -o yaml
+  content: |2-
+       {{< doc-test paths="enterprise-debug" >}}
+       test "$(kubectl get httproute openai -n agentgateway-system -o jsonpath='{.status.parents[0].conditions[?(@.type=="Accepted")].status}')" = "True"
+       {{< /doc-test >}}

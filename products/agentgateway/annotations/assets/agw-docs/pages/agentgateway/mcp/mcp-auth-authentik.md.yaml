@@ -358,7 +358,7 @@ hidden:
     - name: wait for mcp-authentik-authn policy to be accepted
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: default
             name: mcp-authentik-authn
@@ -372,7 +372,7 @@ hidden:
     - name: wait for mcp-authentik-authn policy to be attached
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: default
             name: mcp-authentik-authn

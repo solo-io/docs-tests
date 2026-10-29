@@ -125,7 +125,7 @@ hidden:
     - name: wait for loadbalanced-backend to be accepted
       wait:
         target:
-          kind: AgentgatewayBackend
+          kind: {{< reuse "agw-docs/snippets/backend.md" >}}
           metadata:
             namespace: agentgateway-system
             name: loadbalanced-backend

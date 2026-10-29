@@ -1,0 +1,149 @@
+format: 1
+source: assets/agw-docs/pages/security/waf/debug.md
+blocks:
+- 9aa2eb1f9f1a59aa bash
+- 2b8581f9e16a8579 bash
+- fda9bdf8514b80bb yaml
+- 30d4f8746e334edf bash
+- 4de1d131e03c174d yaml
+- 8af41ad92b25cdeb bash
+- d945e0fbd4d2fd8a yaml
+- 3e9931d3ea2a01f3 sh
+- 0dacacfea8dac82b sh
+- 1f33e0295b824e4e sh
+tags:
+- paths: waf-debug
+  block: 3
+  fingerprint: 30d4f8746e334edf
+  lang: bash
+  lines: 30d4f874
+  preview: kubectl logs deploy/waf-server-enterprise-agentgateway -n agentgateway-system
+  form:
+    attr: paths="waf-debug"
+    only: true
+    lead: ' '
+- paths: waf-debug
+  block: 4
+  fingerprint: 4de1d131e03c174d
+  lang: yaml
+  lines: 16c71da1 00c69c65 98f7f300 8c8c4228 3adefa17 f497f0e2 36184fa5 356067ee 9eb3a28d ff7360cf 5ceb8ec3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-debug"
+    only: true
+    lead: ' '
+- paths: waf-debug
+  block: 5
+  fingerprint: 8af41ad92b25cdeb
+  lang: bash
+  lines: 8af41ad9
+  preview: kubectl logs deploy/enterprise-agentgateway -n agentgateway-system
+  form:
+    attr: paths="waf-debug"
+    only: true
+    lead: ' '
+- paths: waf-debug
+  block: 6
+  fingerprint: d945e0fbd4d2fd8a
+  lang: yaml
+  lines: 16c71da1 00c69c65 98f7f300 8c8c4228 3adefa17 f497f0e2 36184fa5 356067ee 9eb3a28d ff7360cf 24f7c096 ff7360cf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-debug"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="waf-debug" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: waf.solo.io/v1alpha1
+    kind: WAFPolicy
+    metadata:
+      name: httpbin-waf
+      namespace: httpbin
+    spec:
+      ruleEngineSettings:
+        inline: |
+          SecRuleEngine On
+      customDirectives:
+        - inline: |
+            SecRule REQUEST_HEADERS:User-Agent "@streq scammer" "deny,status:403,id:107,phase:1,msg:'blocked scammer'"
+    ---
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayPolicy
+    metadata:
+      name: httpbin-waf
+      namespace: httpbin
+    spec:
+      targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: httpbin
+      traffic:
+        entWAF:
+          wafPolicyRef:
+            name: httpbin-waf
+    EOF
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/status/200" -H "host: www.example.com" -H "User-Agent: scammer")
+      [ "$code" = "403" ] && break
+      sleep 2
+    done
+    echo "got $code"
+    [ "$code" = "403" ]
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 9aa2eb1f9f1a59aa
+    lang: bash
+    lines: 9aa2eb1f
+    preview: kubectl describe wafpolicy <name> -n <namespace>
+  content: |-
+    {{< doc-test paths="waf-debug" >}}
+    for i in $(seq 1 60); do
+      kubectl get wafpolicy httpbin-waf -n httpbin -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' | grep True >/dev/null && break
+      sleep 2
+    done
+    kubectl describe wafpolicy httpbin-waf -n httpbin
+    kubectl get wafpolicy httpbin-waf -n httpbin -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' | grep True >/dev/null
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 2b8581f9e16a8579
+    lang: bash
+    lines: 2b8581f9
+    preview: kubectl get enterpriseagentgatewaypolicy <name> -n <namespace> -o yaml
+  content: |-
+    {{< doc-test paths="waf-debug" >}}
+    kubectl get enterpriseagentgatewaypolicy httpbin-waf -n httpbin -o yaml
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: d945e0fbd4d2fd8a
+    lang: yaml
+    lines: 16c71da1 00c69c65 98f7f300 8c8c4228 3adefa17 f497f0e2 36184fa5 356067ee 9eb3a28d ff7360cf 24f7c096 ff7360cf abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="waf-debug" >}}
+       sleep 5
+       kubectl rollout status deploy/waf-server-enterprise-agentgateway -n agentgateway-system --timeout=180s
+       for i in $(seq 1 30); do
+         POD=$(kubectl get pods -n agentgateway-system -o name | grep 'waf-server-enterprise-agentgateway' | head -1 | cut -d/ -f2)
+         kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/${POD}:9095/proxy/debug/pprof/" > /tmp/waf-out.txt 2>/dev/null && grep -q 'goroutine' /tmp/waf-out.txt && break
+         sleep 3
+       done
+       grep -c 'goroutine' /tmp/waf-out.txt
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 1f33e0295b824e4e
+    lang: sh
+    lines: 1f33e029
+    preview: go tool pprof
+  content: |-
+    {{< doc-test paths="waf-debug" >}}
+    kubectl delete enterpriseagentgatewaypolicy -n httpbin httpbin-waf --ignore-not-found
+    kubectl delete wafpolicy -n httpbin httpbin-waf --ignore-not-found
+    {{< /doc-test >}}

@@ -346,7 +346,7 @@ def _extractor(repo_root: Path, main_rel: str, sources: List[Dict[str, Any]], ve
     definition = {
         "name": "schema-check",
         "main_file": main_rel,
-        "context": {"version": version, "product": mode},
+        "context": {"version": version, "product": mode, "conditions": _UPSTREAM.get("conditions", [])},
         "options": SCHEMA_OPTIONS,
         "sources": sources,
         "output": {},
@@ -611,6 +611,13 @@ def main() -> int:
         help="Which upstream version directory feeds each of this site's versions, as in "
         "doc_test_run.py (e.g. '{\"latest\": \"main\"}'). Required with --upstream-root.",
     )
+    parser.add_argument(
+        "--condition",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="Also match conditional-text gates that name NAME, as in doc_test_run.py. Repeatable.",
+    )
     parser.add_argument("--docs-glob", default="content/docs/**/*.md", help="Glob to discover markdown docs")
     parser.add_argument("--file", nargs="+", default=None, metavar="FILE", help="Only check test scenarios declared on these file(s)")
     parser.add_argument(
@@ -649,6 +656,7 @@ def main() -> int:
     repo_root = Path(args.repo_root).resolve()
     docs_tests_root = resolve_docs_tests_root(args.docs_tests_root)
     _UPSTREAM.clear()
+    _UPSTREAM["conditions"] = args.condition
     if args.upstream_root:
         if not args.upstream_versions:
             # Same rule as doc_test_run.py: a shell with no version map expands

@@ -230,6 +230,14 @@ skip:
 - page: release-notes/release-notes.md
 - page: release-notes/versions.md
 scenarios:
+  a2a:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: documentation/agent/a2a.md
+    path: a2a
   access-logs:
     type:
     - schema
@@ -289,6 +297,16 @@ scenarios:
     needs: []
     page: documentation/llm/api-types/decisions.md
     path: api-types-decisions
+  apikey-auth:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/apikey.md
+    path: apikey-auth
   argo-rollouts:
     type:
     - schema
@@ -298,6 +316,19 @@ scenarios:
     - gateway
     page: integrations/ci-cd/argo.md
     path: argo-rollouts
+  authorization:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/security/authorization.md
+      path: authorization
+    page: documentation/security/authorization.md
+    path: backend-authorization
   axiom-schema:
     type: schema
     page: integrations/llm/observability/axiom.md
@@ -306,6 +337,45 @@ scenarios:
     type: schema
     page: documentation/security/backend-authn/_index.md
     path: backend-authn-config
+  backend-authn-key:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/security/backend-authn/key.md
+    path: backend-authn-key
+  backend-health:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/backend-health.md
+    path: backend-health
+  backend-timeouts:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/timeouts/backend.md
+    path: backend-timeouts
+  backendtls-secret-ca:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    page: documentation/security/backendtls.md
+    path: backendtls-secret-ca
   basic:
     needs:
     - install-standard
@@ -315,6 +385,15 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/basic.md
     path: basic
+  budget-limits-enterprise:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/llm/cost-controls/budget-limits.md
+    path: budget-limits-enterprise
   buffering:
     type:
     - schema
@@ -332,6 +411,25 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/status.md
     path: change-response-status
+  change-shared-extensions:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/setup/customize/extensions/change.md
+    path: change-shared-extensions
+  claim-level-rate-limit:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/security/rate-limit-http.md
+    path: claim-level-rate-limit
   claude-code-k8s:
     type:
     - schema
@@ -349,6 +447,36 @@ scenarios:
     type: schema
     page: documentation/about/policies/conditional-policies.md
     path: conditional-policies
+  connection-general:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/connection.md
+    path: connection-general
+  connection-http1:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/connection.md
+    path: connection-http1
+  connection-http2-flow:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/connection.md
+    path: connection-http2-flow
   content-routing-model:
     type:
     - schema
@@ -358,6 +486,34 @@ scenarios:
     - gateway
     page: documentation/llm/content-routing.md
     path: content-routing
+  control-plane-metrics:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: documentation/observability/metrics/control-plane.md
+    path: control-plane-metrics
+  cors-in-agentgatewaypolicy:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/cors.md
+    path: cors-in-agentgatewaypolicy
+  cors-in-httproute:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/cors.md
+    path: cors-in-httproute
   cost-attribution-schema:
     type: schema
     page: documentation/llm/cost-controls/attribution.md
@@ -395,14 +551,61 @@ scenarios:
     - gateway
     page: integrations/web-uis/crewai.md
     path: crewai-k8s
+  cross-app-access:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/backend-authn/token-exchange/cross-app-access.md
+    path: cross-app-access
+  csrf:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/csrf.md
+    path: csrf
   custom-provider-schema:
     type: schema
     page: integrations/llm/providers/custom.md
     path: custom-provider
+  customize:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/setup/customize/customize.md
+    path: customize
   customize-callout-proxy-schema:
     type: schema
     page: documentation/setup/customize/callout-proxy.md
     path: customize-callout-proxy
+  customize-configs:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: documentation/setup/customize/configs.md
+    path: customize-configs-run
+  customize-configs-2-schema:
+    type: schema
+    needs: []
+    page: documentation/setup/customize/configs.md
+    path: customize-configs-2
+  customize-configs-schema:
+    type: schema
+    needs: []
+    page: documentation/setup/customize/configs.md
+    path: customize-configs
   dataplane-metrics-schema:
     type: schema
     page: documentation/observability/metrics/dataplane.md
@@ -415,6 +618,16 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/encode.md
     path: decode
+  delay-in-trafficpolicy:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/fault-injection.md
+    path: delay-in-trafficpolicy
   dfp:
     type:
     - schema
@@ -435,6 +648,15 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/direct-response.md
     path: direct-response
+  dynamic-mcp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/dynamic-mcp.md
+    path: dynamic-mcp
   encode:
     type: functional
     needs:
@@ -443,6 +665,157 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/encode.md
     path: encode
+  enterprise-access-logs-export:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/install/ui/setup.md
+      path: enterprise-ui-setup
+    page: documentation/observability/access-logs/export.md
+    path: access-log-otlp
+  enterprise-access-logs-view:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/observability/access-logs/view.md
+    path: access-logging
+  enterprise-clickhouse:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/install/ui/setup.md
+      path: enterprise-ui-setup
+    page: documentation/observability/clickhouse.md
+    path: enterprise-clickhouse
+  enterprise-cost-dashboard:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/install/ui/setup.md
+      path: enterprise-ui-setup
+    page: documentation/llm/cost-controls/dashboard.md
+    path: enterprise-cost-dashboard
+  enterprise-debug:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/operations/debug.md
+    path: enterprise-debug
+  enterprise-metrics-external:
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/observability/metrics/external.md
+    path: enterprise-metrics-external
+  enterprise-metrics-overview:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/install/ui/setup.md
+      path: enterprise-ui-setup
+    page: documentation/observability/metrics/overview.md
+    path: enterprise-metrics-overview
+  enterprise-otel-stack:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/install/ui/setup.md
+      path: enterprise-ui-setup
+    page: documentation/observability/otel-stack.md
+    path: enterprise-otel-stack
+  enterprise-traces-setup:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/install/ui/setup.md
+      path: enterprise-ui-setup
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/observability/traces/setup.md
+    path: enterprise-traces-setup
+  enterprise-ui-https:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/install/ui/setup.md
+      path: enterprise-ui-setup
+    page: documentation/install/ui/https.md
+    path: enterprise-ui-https
+  enterprise-ui-setup:
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/install/ui/setup.md
+    path: enterprise-ui-setup
+  extauth-basic:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/extauth/basic.md
+    path: extauth-basic-run
+  extauth-byo-ext-auth-service:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/security/extauth/byo-ext-auth-service.md
+    path: extauth-byo-ext-auth-service-run
+  extauth-byo-ext-auth-service-schema:
+    type: schema
+    needs: []
+    page: documentation/security/extauth/byo-ext-auth-service.md
+    path: extauth-byo-ext-auth-service
+  extauth-opa-byo:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/security/extauth/opa/byo.md
+    path: extauth-opa-byo
+  extauth-opa-rego:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/security/extauth/opa/rego-cm.md
+    path: extauth-opa-rego
+  external-redis-enterprise:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/setup/customize/extensions/external-redis.md
+    path: external-redis-enterprise
   extproc:
     type:
     - schema
@@ -503,6 +876,18 @@ scenarios:
     - gateway
     page: documentation/llm/api-types/gemini.md
     path: gemini-inbound
+  global-rate-limit-enterprise:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/security/rate-limit-global.md
+    path: global-rate-limit-enterprise
   grpc:
     needs:
     - install-standard
@@ -512,6 +897,32 @@ scenarios:
     type: schema
     page: documentation/llm/guardrails/bedrock-guardrails.md
     path: guardrails-bedrock-guardrails
+  guardrails-cel:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    page: documentation/mcp/guardrails/cel.md
+    path: guardrails-cel-run
+  guardrails-cel-schema:
+    type: schema
+    needs: []
+    page: documentation/mcp/guardrails/cel.md
+    path: guardrails-cel
+  guardrails-conditional-reversible:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/guardrails/conditional-reversible.md
+    path: guardrails-conditional-reversible
   guardrails-google-model-armor-schema:
     type: schema
     page: documentation/llm/guardrails/google-model-armor.md
@@ -585,6 +996,14 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/header-query.md
     path: header-query
+  helm-install:
+    needs:
+    - install-standard
+    page: documentation/install/helm.md
+  helm-install-experimental:
+    needs:
+    - install-experimental
+    page: documentation/install/helm.md
   host-match:
     needs:
     - install-standard
@@ -607,6 +1026,44 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/rewrite/host.md
     path: host-rewrite
+  http-keepalive:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/keepalive.md
+    path: http-keepalive
+  http-listener:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/setup/listeners/http.md
+    path: http-listener
+  httpbin:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: documentation/quickstart/non-agentic-http.md
+    path: install-httpbin
+  https-listener:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/setup/listeners/https.md
+    path: https-listener
   https-redirect:
     needs:
     - install-standard
@@ -614,6 +1071,16 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/redirect/https.md
     path: https-redirect
+  idle-timeout:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/timeouts/idle.md
+    path: idle-timeout
   idps-google-schema:
     type: schema
     page: documentation/security/backend-authn/token-exchange/idps/google.md
@@ -652,10 +1119,49 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/inject-response-headers.md
     path: inject-response-headers
+  install:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: documentation/quickstart/install.md
+  install-httpbin:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/install/sample-app.md
   integrations-agentic-mesh-waypoint-policies-schema:
     type: schema
     page: integrations/agentic-mesh/waypoint/policies.md
     path: integrations-agentic-mesh-waypoint-policies
+  jwt-claims:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/security/jwt/setup.md
+      path: setup-keycloak
+    page: documentation/security/jwt/setup.md
+    path: jwt-claims
+  jwt-sign:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/backend-authn/jwt-sign.md
+    path: jwt-sign
   label:
     needs:
     - install-standard
@@ -683,6 +1189,16 @@ scenarios:
       path: openai-setup
     page: integrations/llm/observability/langsmith.md
     path: langsmith
+  listener-mtls:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/setup/listeners/mtls.md
+    path: listener-mtls
   llm-alias:
     type:
     - schema
@@ -857,6 +1373,18 @@ scenarios:
     needs: []
     page: documentation/llm/prompt-templates.md
     path: llm-prompt-templates
+  llm-rate-limit-enterprise:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: documentation/llm/rate-limit.md
+    path: llm-rate-limit-enterprise
   llm-rbac:
     type:
     - schema
@@ -892,11 +1420,43 @@ scenarios:
     - gateway
     page: documentation/llm/load-balancing.md
     path: load-balancing
+  local-rate-limit:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/security/rate-limit-http.md
+    path: local-rate-limit
   locality-aware-routing:
     needs:
     - install-standard
     page: documentation/traffic-management/locality-aware-routing.md
     path: locality-aware-routing
+  mcp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: documentation/quickstart/mcp.md
+    path: setup-mcp-server
+  mcp-auth-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - page: documentation/mcp/static-mcp.md
+      path: setup-mcp-server
+    - page: documentation/mcp/auth/keycloak.md
+      path: setup-keycloak
+    page: documentation/mcp/auth/setup.md
+    path: mcp-auth-setup
   mcp-clients-k8s:
     type:
     - schema
@@ -909,10 +1469,46 @@ scenarios:
       path: setup-mcp-server
     page: integrations/mcp/clients/_index.md
     path: mcp-clients-k8s
+  mcp-code-mode:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/tool-mode/code-mode.md
+    path: mcp-code-mode
+  mcp-code-search-mode:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/tool-mode/code-search-mode.md
+    path: mcp-code-search-mode
+  mcp-composable:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/composable.md
+    path: mcp-composable
   mcp-elicitation-brokered-issuer-settings-schema:
     type: schema
     page: documentation/mcp/elicitation/brokered/issuer-settings.md
     path: mcp-elicitation-brokered-issuer-settings
+  mcp-guardrails:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    page: documentation/mcp/guardrails/setup.md
+    path: mcp-guardrails
   mcp-https-schema:
     type: schema
     page: documentation/mcp/https.md
@@ -921,6 +1517,35 @@ scenarios:
     type: schema
     page: documentation/mcp/mcp-access.md
     path: mcp-mcp-access
+  mcp-openapi:
+    type:
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/openapi.md
+    path: mcp-openapi
+  mcp-rate-limit-enterprise:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/mcp/static-mcp.md
+      path: setup-mcp-server
+    page: documentation/mcp/rate-limit.md
+    path: mcp-rate-limit-enterprise
+  mcp-search-mode:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/tool-mode/search-mode.md
+    path: mcp-search-mode
   mcp-session-schema:
     type: schema
     page: documentation/mcp/session.md
@@ -957,6 +1582,15 @@ scenarios:
     type: schema
     page: documentation/llm/inference/multiple-inference-pools.md
     path: multiple-inference-pools
+  nacks:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/observability/metrics/nacks.md
+    path: nacks
   native-policies:
     needs:
     - install-standard
@@ -1058,6 +1692,36 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/rewrite/path.md
     path: path-rewrite-prefix
+  per-try-timeout-in-agentgateway:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-in-agentgateway
+  per-try-timeout-in-gatewaylistener:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-in-gatewaylistener
+  per-try-timeout-in-httproute:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-in-httproute
   providers-anthropic-schema:
     type: schema
     page: integrations/llm/providers/anthropic.md
@@ -1136,6 +1800,27 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/match/query.md
     path: query-match
+  quickstart-llm:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/quickstart/llm.md
+    path: quickstart-llm-run
+  quickstart-llm-schema:
+    type: schema
+    needs: []
+    page: documentation/quickstart/llm.md
+    path: quickstart-llm
+  rbac-hardening:
+    type: functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/security/rbac-hardening.md
+    path: rbac-hardening
   realtime:
     type:
     - schema
@@ -1186,6 +1871,36 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/header-control/response-header.md
     path: remove-response-header
+  retry-in-agentgateway:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/retry/retry.md
+    path: retry-in-agentgateway
+  retry-in-gatewaylistener:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/retry/retry.md
+    path: retry-in-gatewaylistener
+  retry-in-httproute:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/retry/retry.md
+    path: retry-in-httproute
   rewrite:
     type: functional
     needs:
@@ -1198,6 +1913,11 @@ scenarios:
     type: schema
     page: integrations/llm/routing/kserve.md
     path: routing-kserve
+  security-apikey-schema:
+    type: schema
+    needs: []
+    page: documentation/security/apikey.md
+    path: security-apikey
   security-external-secrets-schema:
     type: schema
     page: documentation/security/external-secrets/_index.md
@@ -1210,6 +1930,18 @@ scenarios:
     type: schema
     page: documentation/security/wimse.md
     path: security-wimse
+  serve-model:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - page: integrations/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    page: documentation/llm/models/serve.md
+    path: serve-model
   set-request-header:
     needs:
     - install-standard
@@ -1224,6 +1956,26 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/header-control/response-header.md
     path: set-response-header
+  setup-entra:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - page: documentation/mcp/static-mcp.md
+      path: setup-mcp-server
+    page: documentation/mcp/auth/entra.md
+    path: setup-entra
+  setup-gateway:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/setup/gateway.md
   setup-httpbun-llm:
     type:
     - schema
@@ -1233,6 +1985,23 @@ scenarios:
     - gateway
     page: integrations/llm/providers/httpbun.md
     path: setup-httpbun-llm
+  setup-keycloak:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    page: documentation/mcp/auth/keycloak.md
+    path: setup-keycloak
+  setup-mcp-server:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/static-mcp.md
+    path: setup-mcp-server
   shared-connection-settings:
     type:
     - schema
@@ -1242,6 +2011,23 @@ scenarios:
     - gateway
     page: documentation/llm/shared-connection-settings.md
     path: shared-connection-settings
+  shared-extension-selection:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/setup/customize/extensions/choose.md
+    path: shared-extension-selection
+  shared-extensions-deployer:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: documentation/setup/customize/extensions/_index.md
+    path: shared-extensions-deployer
   streaming-openai:
     type:
     - schema
@@ -1254,6 +2040,93 @@ scenarios:
       path: openai-setup
     page: documentation/llm/streaming.md
     path: streaming-openai
+  tcp-keepalive:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/keepalive.md
+    path: tcp-keepalive
+  tcp-listener:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    page: documentation/setup/listeners/tcp.md
+    path: tcp-listener
+  te-jwt-bearer:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/backend-authn/token-exchange/jwt-bearer.md
+    path: te-jwt-bearer
+  te-mcp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/backend-authn/token-exchange/mcp.md
+    path: te-mcp
+  te-standard:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/security/backend-authn/token-exchange/standard.md
+    path: te-standard
+  timeout-in-gatewaylistener:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/timeouts/request.md
+    path: timeout-in-gatewaylistener
+  timeout-in-httproute:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/timeouts/request.md
+    path: timeout-in-httproute
+  timeout-in-trafficpolicy:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/resiliency/timeouts/request.md
+    path: timeout-in-trafficpolicy
+  tls-settings:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/setup/listeners/tls-settings.md
+    path: tls-settings
   tracing:
     type:
     - schema
@@ -1288,6 +2161,14 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/inheritance/trafficpolicies.md
     path: trafficpolicies
+  uninstall:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: documentation/operations/uninstall.md
+    path: uninstall
   validate-defaults:
     type:
     - schema
@@ -1340,6 +2221,29 @@ scenarios:
       path: virtual-keys-with-ratelimit
     page: documentation/llm/cost-controls/virtual-keys.md
     path: virtual-keys-ratelimit-test
+  virtual-mcp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/mcp/virtual.md
+    path: virtual-mcp
+  virtual-models:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    before:
+    - page: integrations/llm/providers/httpbun.md
+      path: setup-httpbun-llm
+    - page: documentation/llm/models/serve.md
+      path: serve-model
+    page: documentation/llm/models/virtual.md
+    path: virtual-models
   vllm-provider-setup:
     type:
     - schema
@@ -1349,6 +2253,73 @@ scenarios:
     - gateway
     page: integrations/llm/providers/vllm.md
     path: vllm-provider-setup
+  waf-custom-rules:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/security/waf/enable.md
+      path: waf-enable
+    page: documentation/security/waf/custom-rules.md
+    path: waf-custom-rules
+  waf-custom-rules-configmap:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/security/waf/enable.md
+      path: waf-enable
+    page: documentation/security/waf/custom-rules.md
+    path: waf-custom-rules-configmap
+  waf-debug:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/security/waf/enable.md
+      path: waf-enable
+    page: documentation/security/waf/debug.md
+    path: waf-debug
+  waf-enable:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    page: documentation/security/waf/enable.md
+    path: waf-enable
+  waf-ip-filtering:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/security/waf/enable.md
+      path: waf-enable
+    page: documentation/security/waf/ip-filtering.md
+    path: waf-ip-filtering
+  waf-observability:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/security/waf/enable.md
+      path: waf-enable
+    page: documentation/security/waf/observability.md
+    path: waf-observability
+  waf-owasp-crs:
+    needs:
+    - install-standard
+    - gateway
+    - httpbin
+    before:
+    - page: documentation/security/waf/enable.md
+      path: waf-enable
+    page: documentation/security/waf/owasp-crs.md
+    path: waf-crs
   web-uis-chatbot-ui-schema:
     type: schema
     page: integrations/web-uis/chatbot-ui.md

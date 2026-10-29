@@ -42,7 +42,7 @@ hidden:
        - name: the rbac-policy policy is accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: rbac-policy

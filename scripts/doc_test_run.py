@@ -1268,6 +1268,15 @@ def main() -> int:
     parser.add_argument("--version", default="2.2.x", help="Default context.version")
     parser.add_argument("--product", default="kubernetes", help="Default context.product")
     parser.add_argument(
+        "--condition",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="Also match {{< conditional-text include-if/exclude-if >}} gates that name NAME, "
+        "besides the product (e.g. agentgateway, for a site whose gates name the product). "
+        "Repeatable.",
+    )
+    parser.add_argument(
         "--generated-dir",
         default="out/tests/generated",
         help="Directory where generated scripts/manifests are written",
@@ -1483,6 +1492,7 @@ def main() -> int:
             "context": {
                 "version": inferred_version,
                 "product": args.product,
+                "conditions": args.condition,
             },
             "options": DEFAULT_OPTIONS,
             "shell": test_case.shell,

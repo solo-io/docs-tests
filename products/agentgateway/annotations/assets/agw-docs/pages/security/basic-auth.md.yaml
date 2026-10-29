@@ -62,7 +62,7 @@ hidden:
        - name: wait for the basic-auth policy to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: basic-auth

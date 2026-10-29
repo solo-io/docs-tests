@@ -211,7 +211,7 @@ hidden:
        - name: wait for the request prompt guard to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: openai-prompt-guard
@@ -264,7 +264,7 @@ hidden:
        - name: wait for the response prompt guard to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: openai-prompt-guard

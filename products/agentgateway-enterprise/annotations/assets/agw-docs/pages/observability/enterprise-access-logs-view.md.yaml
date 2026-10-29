@@ -23,6 +23,69 @@ blocks:
 - efbdee36c24d622a console
 tags:
 - paths: access-logging
+  block: 1
+  fingerprint: 0464a7c30afbff50
+  lang: sh
+  lines: 0464a7c3
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+- paths: access-logging
+  block: 3
+  fingerprint: 693cea08fda68ae5
+  lang: sh
+  lines: 693cea08
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+- paths: access-logging
+  block: 5
+  fingerprint: 3e52c069b5c95ef5
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 b2a76230 abc56510
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+- paths: access-logging
+  block: 6
+  fingerprint: 9d386e0bb362b3c8
+  lang: sh
+  lines: 9d386e0b
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+- paths: access-logging
+  block: 8
+  fingerprint: 693cea08fda68ae5
+  lang: sh
+  lines: 693cea08
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+- paths: access-logging
+  block: 10
+  fingerprint: 0464a7c30afbff50
+  lang: sh
+  lines: 0464a7c3
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+- paths: access-logging
+  block: 12
+  fingerprint: 693cea08fda68ae5
+  lang: sh
+  lines: 693cea08
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+- paths: access-logging
   block: 14
   fingerprint: 8bd101cb0bbcc4d0
   lang: yaml
@@ -31,3 +94,172 @@ tags:
     attr: paths="access-logging"
     pos: 1
     sep: ','
+- paths: access-logging
+  block: 15
+  fingerprint: fb606a0472c82631
+  lang: sh
+  lines: fb606a04
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+- paths: access-logging
+  block: 17
+  fingerprint: 693cea08fda68ae5
+  lang: sh
+  lines: 693cea08
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: h:dc73986e356d1662
+    line: 7acf89949a30ea39
+    occurrence: 0
+    words: a0561fd6 98f38f12 ba78973d ccc0e8da 663ea1bf 63d42d26 83ccca18 10c22bcf 66a424a9 1f58b914 8e7fc023 2c28ec09 9c6725dc b9776d7d 4ea5ee68 1241936d 9390298f 823412d1 b7d64a92 fa51fd49 d0a36305 663ea1bf e97166b5 c9a8dc33
+    block_before:
+      block: 0
+      fingerprint: c3c51655074c8463
+      lang: console
+      lines: 19fbf0b8 3ba689ab b264fea4 be7fe9f1 69cdc609
+  content: |-
+    {{< doc-test paths="access-logging" >}}
+    # ============================================================================
+    # Doc test coverage for "View and customize access logs" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "View access logs": a request to httpbin shows up in the proxy's stdout log.
+    #   * "Filter requests": with the filter policy, a 400 is logged and a later 200
+    #     is not (the last log line is still the 400).
+    #   * "Add or remove log fields": the custom user_id and env fields appear and
+    #     http.host is gone.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The port-forward tabs (CI allows no port-forward; the LoadBalancer tabs run).
+    #   * The page has no cleanup section; a hidden step deletes the policy.
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 693cea08fda68ae5
+    lang: sh
+    lines: 693cea08
+  content: |2-
+       {{< doc-test paths="access-logging" >}}
+       line=""
+       for i in $(seq 1 15); do
+         line=$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agentgateway-proxy | grep 'request ' | tail -1 || true)
+         echo "$line" | grep -q -- 'http.path=/get' && break
+         sleep 2
+       done
+       echo "$line"
+       echo "$line" | grep -q -- 'http.path=/get'
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 3e52c069b5c95ef5
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 b2a76230 abc56510
+  content: |2-
+       {{< doc-test paths="access-logging" >}}
+       # Policy check 9
+       YAMLTest -f - <<'EOF'
+       - name: the access-logs policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Give the proxy a moment to load the new policy before the next request.
+       sleep 10
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 693cea08fda68ae5
+    lang: sh
+    lines: 693cea08
+  content: |2-
+       {{< doc-test paths="access-logging" >}}
+       line=""
+       for i in $(seq 1 15); do
+         line=$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agentgateway-proxy | grep 'request ' | tail -1 || true)
+         echo "$line" | grep -q -- 'http.path=/status/400' && break
+         sleep 2
+       done
+       echo "$line"
+       echo "$line" | grep -q -- 'http.path=/status/400'
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 693cea08fda68ae5
+    lang: sh
+    lines: 693cea08
+  content: |2-
+       {{< doc-test paths="access-logging" >}}
+       # Step 4 repeats an earlier identical curl, which the extractor drops, so send it here.
+       curl -s -o /dev/null http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com"
+       sleep 3
+       line=""
+       for i in $(seq 1 15); do
+         line=$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agentgateway-proxy | grep 'request ' | tail -1 || true)
+         echo "$line" | grep -q -- 'http.path=/status/400' && break
+         sleep 2
+       done
+       echo "$line"
+       echo "$line" | grep -q -- 'http.path=/status/400'
+       ! echo "$line" | grep -q -- 'http.path=/get'
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 8bd101cb0bbcc4d0
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 73c054bf 274fdf3f 87d549a0 a68324b2 f1565857 c5a9bbf9 0a282488 521b7d5f abc56510
+  content: |2-
+       {{< doc-test paths="access-logging" >}}
+       # Policy check 10
+       YAMLTest -f - <<'EOF'
+       - name: the access-logs policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Give the proxy a moment to load the new policy before the next request.
+       sleep 10
+       {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 693cea08fda68ae5
+    lang: sh
+    lines: 693cea08
+  content: |2-
+       {{< doc-test paths="access-logging" >}}
+       line=""
+       for i in $(seq 1 15); do
+         line=$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agentgateway-proxy | grep 'request ' | tail -1 || true)
+         echo "$line" | grep -q -- 'user-123' && break
+         sleep 2
+       done
+       echo "$line"
+       echo "$line" | grep -q -- 'user-123'
+       ! echo "$line" | grep -q -- 'http.host='
+       echo "$line" | grep -q 'production'
+       kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+       {{< /doc-test >}}

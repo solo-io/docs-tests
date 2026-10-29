@@ -1,0 +1,155 @@
+format: 1
+source: assets/conrefs/pages/gateway/change-shared-extensions.md
+blocks:
+- ba82a0a1a81e8150 yaml
+- 4dad403894326fd8 yaml
+- 461228f4bdc69e10 yaml
+- 6a08e821b72f840f sh
+- cd3fca2fc8dea15c console
+- d5d66f835b031562 yaml
+- 3f994b94515b910e yaml
+- 461228f4bdc69e10 yaml
+- 5a9c568f1d5a9ab9 sh
+- 5515893910087523 console
+- a0f56a841265a64d yaml
+- a157a533b6bd5f4a sh
+tags:
+- paths: change-shared-extensions
+  block: 1
+  fingerprint: 4dad403894326fd8
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 070c96c0 0bebd850 36184fa5 356067ee 3e196ba7 ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ba62cf2b ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ab89fa94 ff7360cf cab2be2b 77f1ea54 cde43a03 14551a55 2629ac0e 983d6140 0217db29 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="change-shared-extensions"
+    only: true
+    lead: ' '
+- paths: change-shared-extensions
+  block: 2
+  fingerprint: 461228f4bdc69e10
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="change-shared-extensions"
+    only: true
+    lead: ' '
+- paths: change-shared-extensions
+  block: 3
+  fingerprint: 6a08e821b72f840f
+  lang: sh
+  lines: febba5c0 ddecd44e 1bd2e2c1 2fc86175 6ff72288 847e4fda 1bd2e2c1 2fc86175 d511db66 a3762c91 1bd2e2c1 2fc86175
+  preview: echo "ext-auth-service"
+  form:
+    attr: paths="change-shared-extensions"
+    only: true
+    lead: ' '
+- paths: change-shared-extensions
+  block: 6
+  fingerprint: 3f994b94515b910e
+  lang: yaml
+  lines: 6b3c98d2 5a05cd6c 2ee1c717 8c8c4228 070c96c0 0bebd850 36184fa5 356067ee 3e196ba7 ff7360cf 18bfcf8e 8c8c4228 fa1e8330 4d9bed77 6871499b 36184fa5 a58565b2 8c8c4228 72ab0e66 78729bf3 d9b4a977 ba62cf2b ff7360cf 18bfcf8e 8c8c4228 fa1e8330 6cff7984 abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="change-shared-extensions"
+    only: true
+    lead: ' '
+- paths: change-shared-extensions
+  block: 7
+  fingerprint: 461228f4bdc69e10
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="change-shared-extensions"
+    only: true
+    lead: ' '
+- paths: change-shared-extensions
+  block: 8
+  fingerprint: 5a9c568f1d5a9ab9
+  lang: sh
+  lines: ddecd44e 1bd2e2c1 dc7de529 ddecd44e 1bd2e2c1 c5f12b8a a3762c91 1bd2e2c1 dc7de529
+  preview: kubectl get deployment -l app=ext-auth-service \
+  form:
+    attr: paths="change-shared-extensions"
+    only: true
+    lead: ' '
+- paths: change-shared-extensions
+  block: 10
+  fingerprint: a0f56a841265a64d
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="change-shared-extensions"
+    only: true
+    lead: ' '
+- paths: change-shared-extensions
+  block: 11
+  fingerprint: a157a533b6bd5f4a
+  lang: sh
+  lines: a157a533
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}} ext-params
+  form:
+    attr: paths="change-shared-extensions"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 461228f4bdc69e10
+    lang: yaml
+    lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="change-shared-extensions" >}}
+       # ============================================================================
+       # Doc test coverage for customizing shared extensions (not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Built-in customization": the parameters resource and the GatewayClass update
+       #     apply, and the ext-auth-service, rate-limiter, and ext-cache Deployments roll
+       #     out with the documented requests and limits.
+       #   * "Overlays": the overlay applies, and the Deployments get the documented labels
+       #     and pod template annotations.
+       #   * Cleanup runs.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The kgateway variants of the examples: they are not rendered for agentgateway.
+       # wait_field APP JSONPATH VALUE: poll until the Deployment with label app=APP has VALUE.
+       wait_field() {
+         for attempt in $(seq 1 60); do
+           got=$(kubectl get deployment -l app="$1" -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath="{.items[0]$2}" 2>/dev/null || true)
+           if [ "$got" = "$3" ]; then echo "$1 $2 = $3"; return 0; fi
+           sleep 3
+         done
+         echo "$1 $2: expected $3, got $got"; return 1
+       }
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 6a08e821b72f840f
+    lang: sh
+    lines: febba5c0 ddecd44e 1bd2e2c1 2fc86175 6ff72288 847e4fda 1bd2e2c1 2fc86175 d511db66 a3762c91 1bd2e2c1 2fc86175
+    preview: echo "ext-auth-service"
+  content: |2-
+       {{< doc-test paths="change-shared-extensions" >}}
+       wait_field ext-auth-service ".spec.template.spec.containers[0].resources.limits.cpu" "750m"
+       wait_field ext-auth-service ".spec.template.spec.containers[0].resources.requests.memory" "256Mi"
+       wait_field rate-limiter ".spec.template.spec.containers[0].resources.limits.memory" "512Mi"
+       wait_field rate-limiter ".spec.template.spec.containers[0].resources.requests.cpu" "200m"
+       wait_field ext-cache ".spec.template.spec.containers[0].resources.limits.memory" "2Gi"
+       wait_field ext-cache ".spec.template.spec.containers[0].resources.requests.cpu" "256m"
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 5a9c568f1d5a9ab9
+    lang: sh
+    lines: ddecd44e 1bd2e2c1 dc7de529 ddecd44e 1bd2e2c1 c5f12b8a a3762c91 1bd2e2c1 dc7de529
+    preview: kubectl get deployment -l app=ext-auth-service \
+  content: |2-
+       {{< doc-test paths="change-shared-extensions" >}}
+       wait_field ext-auth-service ".metadata.labels.team" "security"
+       wait_field ext-auth-service ".metadata.labels.environment" "production"
+       wait_field ext-auth-service ".spec.template.metadata.annotations.support-channel" "slack://security-alerts"
+       wait_field rate-limiter ".metadata.labels.team" "platform"
+       {{< /doc-test >}}

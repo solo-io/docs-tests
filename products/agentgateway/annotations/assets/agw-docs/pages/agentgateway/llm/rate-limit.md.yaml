@@ -49,7 +49,7 @@ hidden:
        - name: wait for llm-token-budget policy to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: llm-token-budget

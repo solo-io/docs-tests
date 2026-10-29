@@ -40,7 +40,7 @@ hidden:
        - name: the openai backend with aliases is accepted in full
          wait:
            target:
-             kind: AgentgatewayBackend
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
              metadata:
                namespace: agentgateway-system
                name: openai

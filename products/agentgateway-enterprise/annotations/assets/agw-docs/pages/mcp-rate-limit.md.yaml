@@ -1,0 +1,217 @@
+format: 1
+source: assets/agw-docs/pages/mcp-rate-limit.md
+blocks:
+- 242227281e2b5755 yaml
+- 07fefa5426412786 sh
+- 42f1c131a3f1bb83 sh
+- 9864d1544c36e2c0 sh
+- 4158715c672bf61e
+- d4b42d21f9eaa1ab
+- 7916b76ca46d9ce1 yaml
+- 8a3eb8001937fe69 yaml
+- 73a3b5ec3f6045c9 sh
+- eebcb83d45faaaf6 sh
+- 9683cf7199331bfc sh
+- a0ee2dbb976ad454
+- 07aa94ccbcc7ee05
+- 49282ee5aaa15478 sh
+tags:
+- paths: mcp-rate-limit-enterprise
+  block: 0
+  fingerprint: 242227281e2b5755
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 d4cf8077 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a50da420 f971795d e58a0870 9482fbfc db022252 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: mcp-rate-limit-enterprise
+  block: 1
+  fingerprint: 07fefa5426412786
+  lang: sh
+  lines: 07fefa54
+  preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-rate-limit -n
+  form:
+    attr: paths="mcp-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: mcp-rate-limit-enterprise
+  block: 6
+  fingerprint: 7916b76ca46d9ce1
+  lang: yaml
+  lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 3ee5fe1e 0bebd850 36184fa5 aeeb33bd a169cfbe b7b5f484 d0c1eaa8 7db841bc b7b5f484 03d30b36 66e392bc a50da420 c7bd68b9 6a642fca 03d30b36 f31a7efb a50da420 c7bd68b9 6a642fca 03d30b36 a50da420 fe0213c0 6a642fca a19560f5 e50b9463 99005bf9 0ab04e07 be14a85f 99005bf9 de5b1158 ae20956b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: mcp-rate-limit-enterprise
+  block: 7
+  fingerprint: 8a3eb8001937fe69
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 3ee5fe1e 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d 065d53f7 c14c1813 2ed67d95 c4fcc5d8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: mcp-rate-limit-enterprise
+  block: 8
+  fingerprint: 73a3b5ec3f6045c9
+  lang: sh
+  lines: 73a3b5ec
+  preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-tool-rate-lim
+  form:
+    attr: paths="mcp-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: mcp-rate-limit-enterprise
+  block: 13
+  fingerprint: 49282ee5aaa15478
+  lang: sh
+  lines: 7ce0b024 dc17f2f5 c007c0aa
+  preview: kubectl delete RateLimitConfig mcp-tool-rate-limit -n {{< reuse "kgw-docs/snippe
+  form:
+    attr: paths="mcp-rate-limit-enterprise"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 07fefa5426412786
+    lang: sh
+    lines: 07fefa54
+    preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-rate-limit -n
+  content: |2-
+       {{< doc-test paths="mcp-rate-limit-enterprise" >}}
+       # ============================================================================
+       # Doc test coverage for the MCP rate limiting guide (not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Local rate limiting": the local policy on the `mcp` HTTPRoute is accepted, and a
+       #     burst of 30 parallel MCP requests is rate limited (HTTP 429, or the JSON-RPC
+       #     "rate limit exceeded" response that newer versions return with HTTP 200).
+       #   * "Per-tool rate limits": the RateLimitConfig and the policy are accepted; in one
+       #     window, 3 tools/call requests for trigger-long-running-operation pass the rate
+       #     limit, the 4th is rate limited, and 5 echo calls are not rate limited.
+       #   * Cleanup runs.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The MCP Inspector loops. They need npx and the `echo` and
+       #     `trigger-long-running-operation` tools, which the prerequisite server
+       #     (mcp-website-fetcher, one `fetch` tool) does not have. The same JSON-RPC
+       #     requests are sent with curl. The rate limit runs in the gateway, before the
+       #     server sees the tool name, so the counters work the same for unknown tools.
+       #   * The tool results themselves: the server answers unknown tools with an error.
+       MCP_URL="http://${INGRESS_GW_ADDRESS}:80/mcp"
+       # mcp_post SESSION BODY: writes the body to /tmp/mcp-body, the headers to
+       # /tmp/mcp-headers, and prints the HTTP status.
+       mcp_post() {
+         curl -s -D /tmp/mcp-headers -o /tmp/mcp-body -w "%{http_code}" "$MCP_URL" \
+           -H "content-type: application/json" -H "accept: application/json, text/event-stream" \
+           ${1:+-H "mcp-session-id: $1"} -d "$2"
+       }
+       INIT='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"doc-test","version":"1.0"}}}'
+       call_body() { printf '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"%s","arguments":{}}}' "$1"; }
+       rate_limited() { [ "$1" = "429" ] || grep -qi "rate limit exceeded" /tmp/mcp-body; }
+       YAMLTest -f - <<'EOF'
+       - name: the mcp-rate-limit policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: mcp-rate-limit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: d4b42d21f9eaa1ab
+    lang: ''
+    lines: 021fb596 a63a199c d10b36aa ab5df625 021fb596 491dfbfb 4a787328 d10b36aa ab5df625 8cda5848 4da671a3 ab5df625
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="mcp-rate-limit-enterprise" >}}
+       for i in $(seq 1 30); do
+         curl -s -o /tmp/mcp-burst-$i -w "%{http_code}\n" "$MCP_URL" \
+           -H "content-type: application/json" -H "accept: application/json, text/event-stream" \
+           -d "$INIT" > /tmp/mcp-burst-status-$i &
+       done
+       wait
+       limited=0
+       for i in $(seq 1 30); do
+         if grep -q '^429$' /tmp/mcp-burst-status-$i || grep -qi "rate limit exceeded" /tmp/mcp-burst-$i; then limited=$((limited + 1)); fi
+       done
+       echo "$limited of 30 burst requests were rate limited"
+       if [ "$limited" -eq 0 ]; then echo "the local MCP rate limit was never enforced"; exit 1; fi
+       # Let the token bucket refill before the next section.
+       sleep 5
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 73a3b5ec3f6045c9
+    lang: sh
+    lines: 73a3b5ec
+    preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-tool-rate-lim
+  content: |2-
+       {{< doc-test paths="mcp-rate-limit-enterprise" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the mcp-tool-rate-limit policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: mcp-tool-rate-limit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 07aa94ccbcc7ee05
+    lang: ''
+    lines: c65b0101 021fb596 6a96e041 d10b36aa 021fb596 6a96e041 d10b36aa 021fb596 6a96e041 d10b36aa 021fb596 0d4cab13 4a787328 d10b36aa 021fb596 0d4cab13 4a787328 d10b36aa 947c5c95 021fb596 a63a199c d10b36aa 021fb596 a63a199c d10b36aa 021fb596 a63a199c d10b36aa 021fb596 a63a199c d10b36aa 021fb596 a63a199c d10b36aa
+    preview: '# trigger-long-running-operation calls (3/min limit)'
+  content: |2-
+       {{< doc-test paths="mcp-rate-limit-enterprise" >}}
+       # Open one session; initialize is not counted by the per-tool limit.
+       mcp_post "" "$INIT" > /dev/null
+       SESSION=$(grep -i '^mcp-session-id:' /tmp/mcp-headers | awk '{print $2}' | tr -d '\r' || true)
+       mcp_post "$SESSION" '{"jsonrpc":"2.0","method":"notifications/initialized"}' > /dev/null
+       # Wait until the limit is enforced, with a tool name that no other check uses.
+       enforced=""
+       for attempt in $(seq 1 45); do
+         if rate_limited "$(mcp_post "$SESSION" "$(call_body doc-test-probe)")"; then enforced=yes; break; fi
+         sleep 2
+       done
+       if [ -z "$enforced" ]; then echo "the per-tool rate limit was never enforced"; exit 1; fi
+       # Start a fresh one-minute window, then 3 calls pass and the 4th is limited.
+       sleep $((61 - 10#$(date +%S)))
+       for i in 1 2 3; do
+         if rate_limited "$(mcp_post "$SESSION" "$(call_body trigger-long-running-operation)")"; then
+           echo "trigger-long-running-operation call $i was rate limited too early"; cat /tmp/mcp-body; exit 1
+         fi
+       done
+       if ! rate_limited "$(mcp_post "$SESSION" "$(call_body trigger-long-running-operation)")"; then
+         echo "trigger-long-running-operation call 4 was not rate limited"; cat /tmp/mcp-body; exit 1
+       fi
+       for i in 1 2 3 4 5; do
+         if rate_limited "$(mcp_post "$SESSION" "$(call_body echo)")"; then
+           echo "echo call $i was rate limited, but echo has its own counter"; cat /tmp/mcp-body; exit 1
+         fi
+       done
+       echo "per-tool limits: 3 trigger-long-running-operation calls passed, the 4th was limited, 5 echo calls passed"
+       {{< /doc-test >}}

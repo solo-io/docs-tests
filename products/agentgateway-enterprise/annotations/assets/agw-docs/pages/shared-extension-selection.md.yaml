@@ -1,0 +1,109 @@
+format: 1
+source: assets/agw-docs/pages/shared-extension-selection.md
+blocks:
+- 38cc12f7ff96e0aa sh
+- 8f9a11e89357dfa1 sh
+- 1d8fa22dc02d7df1 sh
+- d86707246a693c87 sh
+- a0c377f4b4307514 sh
+tags:
+- paths: shared-extension-selection
+  block: 0
+  fingerprint: 38cc12f7ff96e0aa
+  lang: sh
+  lines: 38cc12f7
+  preview: kubectl get gatewayclass enterprise-agentgateway -o jsonpath='{.spec.parametersR
+  form:
+    attr: paths="shared-extension-selection"
+    only: true
+    lead: ' '
+- paths: shared-extension-selection
+  block: 1
+  fingerprint: 8f9a11e89357dfa1
+  lang: sh
+  lines: 7a8abba9 72acb20e
+  preview: kubectl get gateways -A \
+  form:
+    attr: paths="shared-extension-selection"
+    only: true
+    lead: ' '
+- paths: shared-extension-selection
+  block: 3
+  fingerprint: d86707246a693c87
+  lang: sh
+  lines: 16c71da1 00c69c65 cdc933a1 8c8c4228 dfad9b83 8af957d1 36184fa5 356067ee 3e196ba7 e4bc2178 ba62cf2b e4bc2178 ab89fa94 e4bc2178 9eb3a28d e4bc2178 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="shared-extension-selection"
+    only: true
+    lead: ' '
+- paths: shared-extension-selection
+  block: 4
+  fingerprint: a0c377f4b4307514
+  lang: sh
+  lines: 0fb244f9 e4330538
+  preview: kubectl get deployments -n {{< reuse "agw-docs/snippets/namespace.md" >}} \
+  form:
+    attr: paths="shared-extension-selection"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 8f9a11e89357dfa1
+    lang: sh
+    lines: 7a8abba9 72acb20e
+    preview: kubectl get gateways -A \
+  content: |-
+    {{< doc-test paths="shared-extension-selection" >}}
+    # ============================================================================
+    # Doc test coverage for choosing shared extensions (not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Before you begin": the GatewayClass and Gateway lookups run.
+    #   * "Choose the extensions": the gateway-only EnterpriseAgentgatewayParameters
+    #     resource and the GatewayClass update apply, and the controller then removes
+    #     every extension Deployment for the enterprise-agentgateway GatewayClass.
+    #   * The GatewayClass is restored afterward.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The parameters lookup with `<parameters-name>`: placeholder values. The
+    #     gateway prerequisite creates no Gateway-level parameters to inspect.
+    #   * The other rows of the table and the Helm value alternative.
+    # The extensions exist only after a Gateway uses the class. Wait for the
+    # rate limiter that the gateway prerequisite provisions, so that the removal
+    # check below starts from deployed extensions.
+    for attempt in $(seq 1 60); do
+      if [ -n "$(kubectl get deployments -n {{< reuse "agw-docs/snippets/namespace.md" >}} -l 'app in (ext-auth-service,rate-limiter,ext-cache,waf-server),gateway.solo.io/gatewayclass=enterprise-agentgateway' -o name)" ]; then break; fi
+      sleep 3
+    done
+    if [ -z "$(kubectl get deployments -n {{< reuse "agw-docs/snippets/namespace.md" >}} -l 'app in (ext-auth-service,rate-limiter,ext-cache,waf-server),gateway.solo.io/gatewayclass=enterprise-agentgateway' -o name)" ]; then
+      echo "no extension Deployments were provisioned for the GatewayClass"; exit 1
+    fi
+    kubectl get deployments -n {{< reuse "agw-docs/snippets/namespace.md" >}} -l 'app in (ext-auth-service,rate-limiter,ext-cache,waf-server),gateway.solo.io/gatewayclass=enterprise-agentgateway'
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: a0c377f4b4307514
+    lang: sh
+    lines: 0fb244f9 e4330538
+    preview: kubectl get deployments -n {{< reuse "agw-docs/snippets/namespace.md" >}} \
+  content: |2-
+       {{< doc-test paths="shared-extension-selection" >}}
+       for attempt in $(seq 1 60); do
+         if [ -z "$(kubectl get deployments -n {{< reuse "agw-docs/snippets/namespace.md" >}} -l 'app in (ext-auth-service,rate-limiter,ext-cache,waf-server),gateway.solo.io/gatewayclass=enterprise-agentgateway' -o name)" ]; then break; fi
+         sleep 3
+       done
+       remaining=$(kubectl get deployments -n {{< reuse "agw-docs/snippets/namespace.md" >}} -l 'app in (ext-auth-service,rate-limiter,ext-cache,waf-server),gateway.solo.io/gatewayclass=enterprise-agentgateway' -o name)
+       if [ -n "$remaining" ]; then echo "extension Deployments remain after the gateway-only selection: $remaining"; exit 1; fi
+       echo "no extension Deployments remain for the gateway-only selection"
+       # The page has no cleanup. Restore the default GatewayClass and remove the resource.
+       kubectl apply -f- <<EOF
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: GatewayClass
+       metadata:
+         name: enterprise-agentgateway
+       spec:
+         controllerName: solo.io/enterprise-agentgateway
+       EOF
+       kubectl delete {{< reuse "agw-docs/snippets/gatewayparameters.md" >}} network-scenario -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
+       {{< /doc-test >}}

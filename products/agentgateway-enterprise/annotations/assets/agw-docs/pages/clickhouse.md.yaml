@@ -1,0 +1,229 @@
+format: 1
+source: assets/agw-docs/pages/clickhouse.md
+blocks:
+- 068f92e37b835bbb yaml
+- 085439d6f6efc2c3 sh
+- 280927e6e9d10dfb sh
+- 1915d3d113a77ec2 sh
+- 085439d6f6efc2c3 sh
+- 9d82f2ca4face8cd sh
+- 280927e6e9d10dfb sh
+- cce2b0782ea62851 sh
+- cd255fffec0dbcc8 sh
+- fa815ee1609d6693 sh
+- 73fc90c96d2d7099 sh
+- bf725bff970f9272 sh
+- e391ad7e58a3b604 sh
+- c33b74bb92c102ca sql
+- 371a1ba879470377 sql
+- a9f78aacc31c86f5 yaml
+- dc56984d249fbe5a yaml
+- 444d99a5a9a05817 yaml
+- 59c08df4a5e8d84f sh
+- fbbe9bc596a0e4f2 sh
+- 0718c3e21b4c642c sh
+- 1ebc6d2c18541deb yaml
+- 1e3b09755d70a154 yaml
+- 59c08df4a5e8d84f sh
+- fbbe9bc596a0e4f2 sh
+- c5ccdb75bdb4a3b0 sh
+hidden:
+- after:
+    section: Enable persistent storage on an existing installation
+    line: 6bd5dbd22edee731
+    occurrence: 0
+    words: b9776d7d 3547cb11 3e64cc41 0ecbf1d2 b9776d7d 7e099f39 425c89ed 77bc06c5 6b0d1f6c b9776d7d fa2c10fb 259aa8ef 8e7fc023 b9776d7d 561f0a3d 74b01175 3b97260d 1eb79602 3a6eb079 fa51fd49 254bb97b 4e9e8bb9
+    block_before:
+      block: 2
+      fingerprint: 280927e6e9d10dfb
+      lang: sh
+      lines: 280927e6
+      preview: kubectl get pvc -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="enterprise-clickhouse" >}}
+    # ============================================================================
+    # Doc test coverage for "ClickHouse data store" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Enable persistent storage on an existing installation": orphan delete,
+    #     upgrade with persistentVolume.enabled, pod delete; the claim binds (kind's
+    #     default local-path StorageClass) and the UI re-creates the schema.
+    #   * "Data retention": dbctl retention show, set --days 90, set --unlimited.
+    #   * "Query data directly": the page's queries, run with --query.
+    #   * "Schema initialization": dbctl init and migrate-up re-run cleanly.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * "Keep the bundled data across restarts" on a first install: this cluster
+    #     already runs on ephemeral storage, which the page says the chart refuses.
+    #   * "Bring your own ClickHouse": needs an external instance.
+    # The values file from step 1 of "Keep the bundled data across restarts":
+    cat > values.yaml <<'EOF'
+    ui:
+      clickhouse:
+        persistentVolume:
+          enabled: true
+          size: 20Gi
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 1915d3d113a77ec2
+    lang: sh
+    lines: 1915d3d1
+    preview: kubectl delete statefulset {{< reuse "agw-docs/snippets/solo-ui/clickhouse-state
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       kubectl delete statefulset {{< reuse "agw-docs/snippets/solo-ui/clickhouse-statefulset.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --cascade=orphan
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 085439d6f6efc2c3
+    lang: sh
+    lines: 2d065637 9d671c51 736e1ed1 f7ad5ab4 0e1a9b32
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} \
+         --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} \
+         --version {{< reuse "agw-docs/versions/helm-version-flag.md" >}} \
+         --reset-then-reuse-values \
+         -f values.yaml
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 9d82f2ca4face8cd
+    lang: sh
+    lines: 9d82f2ca
+    preview: kubectl delete pod {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       kubectl delete pod {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 9d82f2ca4face8cd
+    lang: sh
+    lines: 9d82f2ca
+    preview: kubectl delete pod {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       kubectl rollout status statefulset/{{< reuse "agw-docs/snippets/solo-ui/clickhouse-statefulset.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
+       for i in $(seq 1 60); do
+         phase=$(kubectl get pvc -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.items[*].status.phase}')
+         echo "$phase" | grep -q Bound && break
+         sleep 5
+       done
+       echo "$phase" | grep -q Bound
+       # The UI re-creates the schema on the empty database (see the restart note above).
+       for i in $(seq 1 60); do
+         kubectl logs -l app={{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -c ui-backend --tail=-1 -n {{< reuse "agw-docs/snippets/namespace.md" >}} | grep -q "recovered successfully" && break
+         sleep 5
+       done
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 280927e6e9d10dfb
+    lang: sh
+    lines: 280927e6
+    preview: kubectl get pvc -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       kubectl get pvc -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: cce2b0782ea62851
+    lang: sh
+    lines: 94f580d1 2e0ef943 9f1e5fdd
+    preview: export IMG=us-docker.pkg.dev/solo-public/{{< reuse "agw-docs/snippets/helm-agent
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       export IMG=us-docker.pkg.dev/solo-public/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}/solo-enterprise-migrations:{{< reuse "agw-docs/versions/n-patch.md" >}}
+       export CH_PASSWORD=$(kubectl get secret {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}-clickhouse-auth -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.password}' | base64 -d)
+       export FLAGS="--host {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}-clickhouse --database agentgateway --username default --password ${CH_PASSWORD} --migrations-path /migrations"
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: cd255fffec0dbcc8
+    lang: sh
+    lines: cd255fff
+    preview: 'kubectl run retention -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --rm -i '
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       kubectl run retention -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --image=${IMG} -- retention show ${FLAGS}
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: fa815ee1609d6693
+    lang: sh
+    lines: fa815ee1
+    preview: 'kubectl run retention -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --rm -i '
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       kubectl run retention -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --image=${IMG} -- retention set --days 90 --yes ${FLAGS}
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 73fc90c96d2d7099
+    lang: sh
+    lines: 73fc90c9
+    preview: 'kubectl run retention -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --rm -i '
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       kubectl run retention -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --image=${IMG} -- retention set --unlimited ${FLAGS}
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: bf725bff970f9272
+    lang: sh
+    lines: 915cc5f0 cb5b71f0
+    preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.username}' | base64 -d)
+       export CH_PASS=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.password}' | base64 -d)
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 371a1ba879470377
+    lang: sql
+    lines: 371a1ba8
+    preview: SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.o
+  content: |2-
+       {{< doc-test paths="enterprise-clickhouse" >}}
+       chq() { kubectl exec -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -- clickhouse-client --user "$CH_USER" --password "$CH_PASS" --query "$1"; }
+       chq "SHOW TABLES FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}" | tee /tmp/ch-tables.txt
+       grep -qx otel_traces_json /tmp/ch-tables.txt
+       grep -qx otel_logs_json /tmp/ch-tables.txt
+       chq "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_traces_json"
+       {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: c5ccdb75bdb4a3b0
+    lang: sh
+    lines: 22282660 4cb4037b
+    preview: kubectl run migrate -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --rm -i --
+  content: |-
+    {{< doc-test paths="enterprise-clickhouse" >}}
+    # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+    # that the extractor renders empty unless it runs with --product agentgateway.
+    kubectl run migrate -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --image=${IMG} -- init ${FLAGS}
+    kubectl run migrate -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --image=${IMG} -- migrate-up ${FLAGS}
+    {{< /doc-test >}}

@@ -82,7 +82,7 @@ hidden:
     - name: wait for httpbin-delay AgentgatewayPolicy to be accepted
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: httpbin
             name: httpbin-delay
