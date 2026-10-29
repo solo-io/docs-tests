@@ -1,11 +1,10 @@
 # Doc-test scenario definitions for the enterprise agentgateway docs, kubernetes mode.
 #
-# Covers traffic-management: every kubernetes traffic-management scenario in
-# ../../agentgateway/kubernetes/tests.yaml. Outside traffic-management, the
-# schema-only scenarios mirror their upstream twins (same name and path) for
-# rebase shells, and enterprise-only pages get a `<page>-schema` scenario.
-# The consuming site's workflow runs functional and live tests only today, so
-# no schema scenario here runs yet.
+# A rebase shell copies its upstream twin's scenarios from
+# ../../agentgateway/kubernetes/tests.yaml (same name and path). An
+# enterprise-only page gets its own scenarios; a schema-only one is named
+# `<page>-schema`. The consuming site's workflow runs schema scenarios in their
+# own job, with no cluster, against the enterprise CRDs.
 #
 # The consuming site publishes the enterprise docs from its own repo; almost
 # every page there is a rebase shell,
@@ -39,12 +38,13 @@
 # products/agentgateway/annotations.
 #
 # Scenario names and paths are copied from the upstream manifest, so a
-# scenario here and its open source twin select the same blocks. One deliberate
-# difference: every scenario here needs install-standard, even where its twin
-# needs install-experimental. The enterprise install snippet documents one
-# channel (released build, standard Gateway API CRDs), tagged `standard`; it
-# has no experimental path, so a scenario that asked for one
-# would extract no install steps at all and fail for the wrong reason.
+# scenario here and its open source twin select the same blocks. The
+# enterprise install snippet documents only the standard Gateway API CRDs, so
+# its annotation adds the experimental path: a hidden step that applies the
+# experimental CRDs in place of the standard ones, then the same Helm install.
+# A twin that needs install-experimental (or helm-experimental) needs
+# install-experimental here; helm-standard maps to install-standard. The
+# traffic-management scenarios predate this and still use install-standard.
 version: 1
 mode: kubernetes
 content_root: content/en/agentgateway
@@ -55,6 +55,9 @@ prerequisites:
   httpbin:
     page: documentation/install/sample-app.md
     path: install-httpbin
+  install-experimental:
+    page: documentation/quickstart/install.md
+    path: experimental
   install-standard:
     page: documentation/quickstart/install.md
     path: standard
@@ -269,6 +272,15 @@ scenarios:
     type: schema
     page: integrations/agent-runtimes/kagent.md
     path: agent-runtimes-kagent
+  argo-rollouts:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: integrations/ci-cd/argo.md
+    path: argo-rollouts
   axiom-schema:
     type: schema
     page: integrations/llm/observability/axiom.md
@@ -303,6 +315,15 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/status.md
     path: change-response-status
+  claude-code-k8s:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: integrations/llm/clients/claude-code.md
+    path: claude-code-k8s
   clients-claude-desktop-schema:
     type: schema
     page: integrations/llm/clients/claude-desktop.md
@@ -315,6 +336,15 @@ scenarios:
     type: schema
     page: documentation/llm/cost-controls/attribution.md
     path: cost-attribution
+  crewai-k8s:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: integrations/web-uis/crewai.md
+    path: crewai-k8s
   custom-provider-schema:
     type: schema
     page: integrations/llm/providers/custom.md
@@ -393,6 +423,15 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/forward.md
     path: forward
+  gemini:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: integrations/llm/providers/gemini.md
+    path: gemini
   grpc:
     needs:
     - install-standard
@@ -508,6 +547,10 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/inject-response-headers.md
     path: inject-response-headers
+  integrations-agentic-mesh-waypoint-policies-schema:
+    type: schema
+    page: integrations/agentic-mesh/waypoint/policies.md
+    path: integrations-agentic-mesh-waypoint-policies
   label:
     needs:
     - install-standard
@@ -517,10 +560,96 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/label.md
     path: label
-  integrations-agentic-mesh-waypoint-policies-schema:
-    type: schema
-    page: integrations/agentic-mesh/waypoint/policies.md
-    path: integrations-agentic-mesh-waypoint-policies
+  langfuse:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/observability/langfuse.md
+    path: langfuse
+  langsmith:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/observability/langsmith.md
+    path: langsmith
+  llm-client-codex:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/clients/codex.md
+    path: llm-client-codex
+  llm-client-continue:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/clients/continue.md
+    path: llm-client-continue
+  llm-client-curl:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/clients/curl.md
+    path: llm-client-curl
+  llm-client-cursor:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/clients/cursor.md
+    path: llm-client-cursor
+  llm-client-github-copilot:
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/clients/github-copilot.md
+    path: llm-client-github-copilot
+  llm-client-openai-sdk:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/clients/openai-sdk.md
+    path: llm-client-openai-sdk
+  llm-client-opencode:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/clients/opencode.md
+    path: llm-client-opencode
   llm-model-exposure-schema:
     type: schema
     page: documentation/llm/about.md
@@ -558,6 +687,18 @@ scenarios:
     - install-standard
     page: documentation/traffic-management/locality-aware-routing.md
     path: locality-aware-routing
+  mcp-clients-k8s:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/mcp/static-mcp.md
+      path: setup-mcp-server
+    page: integrations/mcp/clients/_index.md
+    path: mcp-clients-k8s
   mcp-elicitation-brokered-issuer-settings-schema:
     type: schema
     page: documentation/mcp/elicitation/brokered/issuer-settings.md
@@ -615,6 +756,37 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/inheritance/native-policies.md
     path: native-policies
+  ollama-provider-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: integrations/llm/providers/ollama.md
+    path: ollama-provider-setup
+  openai-compatible-validate:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: integrations/llm/providers/openai-compatible.md
+    path: openai-compatible-validate
+  openai-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: integrations/llm/providers/openai.md
+    path: openai-setup
+  openshell:
+    needs:
+    - install-standard
+    page: integrations/agent-runtimes/openshell.md
+    path: openshell
   path-match-exact:
     needs:
     - install-standard
@@ -712,6 +884,23 @@ scenarios:
     type: schema
     page: documentation/security/backend-authn/providers/gcp.md
     path: providers-gcp
+  providers-multiple-endpoints:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/providers/multiple-endpoints.md
+    path: providers-multiple-endpoints-run
+  providers-multiple-endpoints-schema:
+    type: schema
+    needs: []
+    page: integrations/llm/providers/multiple-endpoints.md
+    path: providers-multiple-endpoints
   providers-typesafe-schema:
     type: schema
     page: integrations/llm/providers/typesafe.md
@@ -737,6 +926,18 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/match/query.md
     path: query-match
+  realtime:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: integrations/llm/providers/openai.md
+      path: openai-setup
+    page: integrations/llm/providers/realtime.md
+    path: realtime
   reference-helm-agentgateway-ui-schema:
     type: schema
     page: reference/helm/agentgateway-ui.md
@@ -813,6 +1014,15 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/header-control/response-header.md
     path: set-response-header
+  setup-httpbun-llm:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: integrations/llm/providers/httpbun.md
+    path: setup-httpbun-llm
   tracing:
     type:
     - schema
@@ -867,6 +1077,15 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/validate.md
     path: validate-skip
+  vllm-provider-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    page: integrations/llm/providers/vllm.md
+    path: vllm-provider-setup
   web-uis-chatbot-ui-schema:
     type: schema
     page: integrations/web-uis/chatbot-ui.md
