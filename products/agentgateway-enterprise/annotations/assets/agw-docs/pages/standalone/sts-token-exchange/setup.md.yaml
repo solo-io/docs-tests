@@ -1,0 +1,326 @@
+format: 1
+source: assets/agw-docs/pages/standalone/sts-token-exchange/setup.md
+blocks:
+- 02b2261822ccec6d sh
+- b8804d0d31088fb9 sh
+- afdf617346cd6fa5 yaml
+- 3f035084d701e24c yaml
+- 25e2a9879142bff2 yaml
+- 2bf48270d6b89294 sh
+- c7653de32e8e2515 console
+- d7c9254defab9ea8 sh
+- a999bb7f92156fe2 sh
+- 704c99ef0ceb7390 yaml
+- ab57b27f1b33a9e6 sh
+- 3224a76ec61747d1 sh
+- a3e227f3407d5e6b sh
+- ecbd08ad6b03045e json
+- 76acc311d01e6d2d sh
+- 0707e250aee1690d json
+- c9b5b9916d4ef05f sh
+- 04d981db12fb8f4a json
+- 16d0ed81987470bc sh
+- 240b6fcfb16228a3 sh
+- 65cc293f697bac7c json
+- 2eef79f2b6e7dbea sh
+- d3510c508852b2e0 json
+tags:
+- paths: sts-setup
+  block: 0
+  fingerprint: 02b2261822ccec6d
+  lang: sh
+  lines: 0fd06783 02da8d8d
+  preview: openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out sts-jwt.pem
+  form:
+    attr: paths="sts-setup"
+    only: true
+    lead: ' '
+- paths: sts-setup
+  block: 12
+  fingerprint: a3e227f3407d5e6b
+  lang: sh
+  lines: a3e227f3
+  preview: curl -s http://127.0.0.1:7777/healthz
+  form:
+    attr: paths="sts-setup"
+    only: true
+    lead: ' '
+- paths: sts-setup
+  block: 14
+  fingerprint: 76acc311d01e6d2d
+  lang: sh
+  lines: 76acc311
+  preview: curl -s http://127.0.0.1:7777/.well-known/oauth-authorization-server
+  form:
+    attr: paths="sts-setup"
+    only: true
+    lead: ' '
+- paths: sts-setup
+  block: 16
+  fingerprint: c9b5b9916d4ef05f
+  lang: sh
+  lines: c9b5b991
+  preview: curl -s http://127.0.0.1:7777/.well-known/jwks.json
+  form:
+    attr: paths="sts-setup"
+    only: true
+    lead: ' '
+- paths: sts-setup
+  block: 19
+  fingerprint: 240b6fcfb16228a3
+  lang: sh
+  lines: 5f8a4a59 e98aebec 1f456632 6d3424ff fc31e6dd ceeccd72
+  preview: curl -s -X POST http://127.0.0.1:7777/token \
+  form:
+    attr: paths="sts-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: c4ff93c5789ff6f0
+    occurrence: 0
+    words: ab14d3fa b9776d7d 1e6ed65d 6105d6cc f4bf9f7f ca978112 94abcb2d aee50b18 ab14d3fa 561f0a3d fa42bed0 a0af9f86 caf9f906 8fb6d5f3 1e142e62 ab14d3fa
+    block_before: null
+  content: |-
+    {{< doc-test paths="sts-setup" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES (Binaries method):
+    #   * Step 1: the documented openssl command produces a key the STS loads
+    #     (the startup log reports minting_enabled true).
+    #   * Steps 2-4: an entSts section with the documented fields, three remote
+    #     validators, and the Step 3 oauthTokenExchange policy on a route, all in
+    #     one file: agentgateway --validate-only accepts it, agentgateway-sts starts
+    #     from it on 127.0.0.1:7777, and the proxy starts from the same file.
+    #   * Step 5: /healthz, the authorization server metadata (issuer, grant type),
+    #     and a non-empty /.well-known/jwks.json; a direct RFC 8693 exchange of an
+    #     IdP token returns an STS-signed JWT whose iss is entSts.issuer and whose
+    #     sub is the IdP user's sub; and the same exchange through the proxy.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The IdP. Keycloak in docker dev mode stands in for idp.example.com, so
+    #     the hidden config swaps in its issuer and JWKS URL.
+    #   * The Docker container and Helm tabs, the chown step, and the launcher
+    #     settings: the run uses the installed binaries only.
+    #   * The tokenExchange / config.stsUri variant (services and workloads
+    #     entries); only oauthTokenExchange, which the page recommends, is run.
+    #   * Step 6, trusting the STS at a downstream service (no downstream here).
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    trap 'rc=$?; kill ${AGW_PID:-} ${STS_PID:-} ${ECHO_PID:-} ${MCP_PID:-} 2>/dev/null || true; if [ $rc -ne 0 ]; then echo "--- sts.log"; tail -n 50 sts.log 2>/dev/null; echo "--- agw.log"; tail -n 50 agw.log 2>/dev/null; fi; docker rm -f keycloak-sts >/dev/null 2>&1 || true' EXIT
+    # IdP stand-in: Keycloak in docker dev mode. Realm "sts" with:
+    #   user-client  public client, password grant; adds aud=agentgateway and a
+    #                hardcoded may_act.sub claim naming agent-1's service account
+    #   agent-1      confidential client whose service account is the agent
+    #   user1        test user
+    docker rm -f keycloak-sts >/dev/null 2>&1 || true
+    docker run -d --name keycloak-sts -p 8080:8080 \
+      -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
+      quay.io/keycloak/keycloak:26.4 start-dev >/dev/null
+    KEYCLOAK_URL=http://localhost:8080
+    for i in $(seq 1 90); do
+      curl -fsS -o /dev/null "${KEYCLOAK_URL}/realms/master/.well-known/openid-configuration" 2>/dev/null && break
+      sleep 2
+    done
+    KC_ADMIN=$(curl -fsS "${KEYCLOAK_URL}/realms/master/protocol/openid-connect/token" \
+      -d client_id=admin-cli -d username=admin -d password=admin -d grant_type=password | jq -r .access_token)
+    test -n "$KC_ADMIN" && test "$KC_ADMIN" != null || { echo "Keycloak admin login failed"; exit 1; }
+    kc() { curl -fsS -H "Authorization: Bearer ${KC_ADMIN}" -H 'Content-Type: application/json' "$@"; }
+    kc -X POST "${KEYCLOAK_URL}/admin/realms" -d '{"realm":"sts","enabled":true}'
+    kc -X POST "${KEYCLOAK_URL}/admin/realms/sts/clients" \
+      -d '{"clientId":"agent-1","enabled":true,"publicClient":false,"secret":"agent-1-secret","serviceAccountsEnabled":true,"standardFlowEnabled":false,"directAccessGrantsEnabled":false}'
+    AGENT_CLIENT_UUID=$(kc "${KEYCLOAK_URL}/admin/realms/sts/clients?clientId=agent-1" | jq -r '.[0].id')
+    AGENT_SUB=$(kc "${KEYCLOAK_URL}/admin/realms/sts/clients/${AGENT_CLIENT_UUID}/service-account-user" | jq -r .id)
+    kc -X POST "${KEYCLOAK_URL}/admin/realms/sts/clients" -d @- <<KCEOF
+    {"clientId":"user-client","enabled":true,"publicClient":true,"directAccessGrantsEnabled":true,"standardFlowEnabled":false,
+     "protocolMappers":[
+      {"name":"aud-agentgateway","protocol":"openid-connect","protocolMapper":"oidc-audience-mapper",
+       "config":{"included.custom.audience":"agentgateway","access.token.claim":"true","id.token.claim":"false"}},
+      {"name":"may-act","protocol":"openid-connect","protocolMapper":"oidc-hardcoded-claim-mapper",
+       "config":{"claim.name":"may_act.sub","claim.value":"${AGENT_SUB}","jsonType.label":"String","access.token.claim":"true","id.token.claim":"false","userinfo.token.claim":"false"}}]}
+    KCEOF
+    kc -X POST "${KEYCLOAK_URL}/admin/realms/sts/users" \
+      -d '{"username":"user1","enabled":true,"email":"user1@example.com","emailVerified":true,"firstName":"User","lastName":"One","credentials":[{"type":"password","value":"Password1!","temporary":false}]}'
+    KEYCLOAK_ISSUER=${KEYCLOAK_URL}/realms/sts
+    KEYCLOAK_JWKS=${KEYCLOAK_ISSUER}/protocol/openid-connect/certs
+    get_user_token() {
+      curl -fsS "${KEYCLOAK_ISSUER}/protocol/openid-connect/token" -d grant_type=password \
+        -d client_id=user-client -d username=user1 -d 'password=Password1!' | jq -r .access_token
+    }
+    get_agent_token() {
+      curl -fsS "${KEYCLOAK_ISSUER}/protocol/openid-connect/token" -d grant_type=client_credentials \
+        -d client_id=agent-1 -d client_secret=agent-1-secret | jq -r .access_token
+    }
+    jwt_claims() { python3 -c 'import sys,json,base64; p=sys.argv[1].split(".")[1]; p+="="*(-len(p)%4); print(json.dumps(json.loads(base64.urlsafe_b64decode(p))))' "$1"; }
+    test -n "$(get_user_token)" || { echo "user1 cannot get a token from Keycloak"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    section: Reach the STS with `config.stsUri`
+    line: f90162c19e507469
+    occurrence: 0
+    words: bb0347a4 9f584196 6ee0eb49 89ab3ee9 6201111b d6d09ad0 f4bf9f7f ba528516 7af0b3e4 99262a02 b9776d7d ba528516 7af0b3e4 d1905cf9 c1cc0ecc 5fb6a47e b9776d7d 3b9c358f
+    block_before:
+      block: 4
+      fingerprint: 25e2a9879142bff2
+      lang: yaml
+      lines: a7f80a73 2180b199 0ccc8edc cf080f56 449ac08a 23f9b930 0ccc8edc c9b52ea5 7114ef12 0ff65a1a 10145d22 a9b7fdf5 23f9b930 0ccc8edc 5c83871e 1deaefd3 3635d60a 449ac08a 2de4881e 10145d22
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="sts-setup" >}}
+    # The page's entSts section (Step 2) and oauthTokenExchange policy (Step 3) in
+    # one file, with the Keycloak stand-in for idp.example.com, the key from Step 1,
+    # and a route whose backend echoes the forwarded Authorization header.
+    # Backend stand-in for internal-api.example.com: echoes the Authorization
+    # header that it receives, so the test can decode the token the proxy forwarded.
+    cat > sts-echo.py <<'PYEOF'
+    import http.server, json
+    class H(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            b = json.dumps({"authorization": self.headers.get("Authorization", "")}).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(b)))
+            self.end_headers()
+            self.wfile.write(b)
+        def log_message(self, *a):
+            pass
+    http.server.HTTPServer(("127.0.0.1", 8081), H).serve_forever()
+    PYEOF
+    python3 sts-echo.py &
+    ECHO_PID=$!
+    cat > config.yaml <<EOF
+    entSts:
+      enabled: true
+      issuer: https://sts.example.com
+      tokenExpiration: 1h
+      requireAudience: false
+      privateKeyPath: ${PWD}/sts-jwt.pem
+      subjectValidators:
+      - validatorType: remote
+        issuer: ${KEYCLOAK_ISSUER}
+        remoteConfig:
+          url: ${KEYCLOAK_JWKS}
+      actorValidators:
+      - validatorType: remote
+        issuer: ${KEYCLOAK_ISSUER}
+        remoteConfig:
+          url: ${KEYCLOAK_JWKS}
+      apiValidators:
+      - validatorType: remote
+        issuer: ${KEYCLOAK_ISSUER}
+        remoteConfig:
+          url: ${KEYCLOAK_JWKS}
+    binds:
+    - port: 3000
+      listeners:
+      - name: default
+        routes:
+        - name: internal-api
+          backends:
+          - host: 127.0.0.1:8081
+            policies:
+              backendAuth:
+                oauthTokenExchange:
+                  host: 127.0.0.1:7777
+                  path: /token
+                  audiences: ["internal-api"]
+                  subjectToken:
+                    tokenType: "urn:ietf:params:oauth:token-type:jwt"
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Launcher settings
+    line: 5a8ffa68c17dfc55
+    occurrence: 0
+    words: 9aa6a80b 7a746420 5bcaffed b9776d7d ec9a6e9f 504dbd7e 663ea1bf b9776d7d 3fc4ccfe fd647ce1
+    block_before:
+      block: 11
+      fingerprint: 3224a76ec61747d1
+      lang: sh
+      lines: 3224a76e
+      preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/
+  content: |-
+    {{< doc-test paths="sts-setup" >}}
+    # Step 4, Binaries tab: the page's commands, run in the background. The
+    # license key comes from the environment (the page's export is a placeholder).
+    agentgateway-sts sts --config-file config.yaml --address 127.0.0.1:7777 > sts.log 2>&1 &
+    STS_PID=$!
+    for i in $(seq 1 30); do curl -fsS -o /dev/null http://127.0.0.1:7777/healthz 2>/dev/null && break; sleep 1; done
+    curl -fsS -o /dev/null http://127.0.0.1:7777/healthz || { echo "STS did not become healthy"; exit 1; }
+    grep -q '"minting_enabled":true' sts.log || { echo "STS log does not report minting_enabled true"; exit 1; }
+    agentgateway -f config.yaml --validate-only
+    agentgateway -f config.yaml > agw.log 2>&1 &
+    AGW_PID=$!
+    for i in $(seq 1 30); do curl -fsS -o /dev/null http://localhost:15021/healthz/ready 2>/dev/null && break; sleep 1; done
+    curl -fsS -o /dev/null http://localhost:15021/healthz/ready || { echo "proxy did not become ready"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: a3e227f3407d5e6b
+    lang: sh
+    lines: a3e227f3
+    preview: curl -s http://127.0.0.1:7777/healthz
+  content: |2-
+       {{< doc-test paths="sts-setup" >}}
+       curl -fsS http://127.0.0.1:7777/healthz | jq -e '.status == "healthy"' >/dev/null \
+         || { echo "STS /healthz is not healthy"; exit 1; }
+       curl -fsS -o /dev/null http://127.0.0.1:7777/health || { echo "STS /health does not answer"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 76acc311d01e6d2d
+    lang: sh
+    lines: 76acc311
+    preview: curl -s http://127.0.0.1:7777/.well-known/oauth-authorization-server
+  content: |2-
+       {{< doc-test paths="sts-setup" >}}
+       curl -fsS http://127.0.0.1:7777/.well-known/oauth-authorization-server \
+         | jq -e '.issuer == "https://sts.example.com" and (.grant_types_supported | index("urn:ietf:params:oauth:grant-type:token-exchange"))' >/dev/null \
+         || { echo "authorization server metadata does not match the page"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: c9b5b9916d4ef05f
+    lang: sh
+    lines: c9b5b991
+    preview: curl -s http://127.0.0.1:7777/.well-known/jwks.json
+  content: |2-
+       {{< doc-test paths="sts-setup" >}}
+       curl -fsS http://127.0.0.1:7777/.well-known/jwks.json | jq -e '.keys | length > 0' >/dev/null \
+         || { echo "STS publishes no signing key"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 16d0ed81987470bc
+    lang: sh
+    lines: 16d0ed81
+    preview: export USER_TOKEN=<your-idp-jwt>
+  content: |2-
+       {{< doc-test paths="sts-setup" >}}
+       # Step 4: a real IdP token from the Keycloak stand-in, in place of the placeholder.
+       export USER_TOKEN=$(get_user_token)
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 240b6fcfb16228a3
+    lang: sh
+    lines: 5f8a4a59 e98aebec 1f456632 6d3424ff fc31e6dd ceeccd72
+    preview: curl -s -X POST http://127.0.0.1:7777/token \
+  content: |2-
+       {{< doc-test paths="sts-setup" >}}
+       # Step 5 and 6: exchange, decode, and compare with the page's claims.
+       STS_RESP=$(curl -fsS -X POST http://127.0.0.1:7777/token \
+         -H "Content-Type: application/x-www-form-urlencoded" -H "Accept: application/json" \
+         -d "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
+         -d "subject_token=${USER_TOKEN}" -d "subject_token_type=urn:ietf:params:oauth:token-type:jwt")
+       echo "$STS_RESP" | jq -e '.issued_token_type == "urn:ietf:params:oauth:token-type:jwt" and .token_type == "Bearer" and (.access_token | length > 0)' >/dev/null \
+         || { echo "unexpected exchange response: $STS_RESP"; exit 1; }
+       USER_SUB=$(jwt_claims "$USER_TOKEN" | jq -r .sub)
+       jwt_claims "$(echo "$STS_RESP" | jq -r .access_token)" \
+         | jq -e --arg sub "$USER_SUB" '.iss == "https://sts.example.com" and .sub == $sub' >/dev/null \
+         || { echo "issued token iss/sub do not match"; exit 1; }
+       # Through the proxy: the backend receives the STS token, not the IdP token.
+       FWD=$(curl -fsS http://localhost:3000/ -H "Authorization: Bearer ${USER_TOKEN}" | jq -r .authorization)
+       jwt_claims "${FWD#Bearer }" | jq -e --arg sub "$USER_SUB" '.iss == "https://sts.example.com" and .sub == $sub' >/dev/null \
+         || { echo "backend did not receive an STS-signed token: $FWD"; exit 1; }
+       {{< /doc-test >}}

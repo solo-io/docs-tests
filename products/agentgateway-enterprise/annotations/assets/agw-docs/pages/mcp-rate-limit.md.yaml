@@ -1,26 +1,26 @@
 format: 1
 source: assets/agw-docs/pages/mcp-rate-limit.md
 blocks:
-- 242227281e2b5755 yaml
-- 07fefa5426412786 sh
+- 4f94bbc7ad74f113 yaml
+- 0360ec4c49c7f844 sh
 - 42f1c131a3f1bb83 sh
 - 9864d1544c36e2c0 sh
 - 4158715c672bf61e
 - d4b42d21f9eaa1ab
-- 7916b76ca46d9ce1 yaml
-- 8a3eb8001937fe69 yaml
-- 73a3b5ec3f6045c9 sh
+- d4225dc8037b90f0 yaml
+- ed15ae6a5e378895 yaml
+- f7ef726e941cb21f sh
 - eebcb83d45faaaf6 sh
 - 9683cf7199331bfc sh
 - a0ee2dbb976ad454
 - 07aa94ccbcc7ee05
-- 49282ee5aaa15478 sh
+- b3ae18bdfa785683 sh
 tags:
 - paths: mcp-rate-limit-enterprise
   block: 0
-  fingerprint: 242227281e2b5755
+  fingerprint: 4f94bbc7ad74f113
   lang: yaml
-  lines: 16c71da1 88b9492f c548623c 8c8c4228 d4cf8077 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a50da420 f971795d e58a0870 9482fbfc db022252 abc56510
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 d4cf8077 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a50da420 f971795d e58a0870 9482fbfc db022252 abc56510
   preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-rate-limit-enterprise"
@@ -28,9 +28,9 @@ tags:
     lead: ' '
 - paths: mcp-rate-limit-enterprise
   block: 1
-  fingerprint: 07fefa5426412786
+  fingerprint: 0360ec4c49c7f844
   lang: sh
-  lines: 07fefa54
+  lines: 0360ec4c
   preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-rate-limit -n
   form:
     attr: paths="mcp-rate-limit-enterprise"
@@ -38,9 +38,9 @@ tags:
     lead: ' '
 - paths: mcp-rate-limit-enterprise
   block: 6
-  fingerprint: 7916b76ca46d9ce1
+  fingerprint: d4225dc8037b90f0
   lang: yaml
-  lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 3ee5fe1e 0bebd850 36184fa5 aeeb33bd a169cfbe b7b5f484 d0c1eaa8 7db841bc b7b5f484 03d30b36 66e392bc a50da420 c7bd68b9 6a642fca 03d30b36 f31a7efb a50da420 c7bd68b9 6a642fca 03d30b36 a50da420 fe0213c0 6a642fca a19560f5 e50b9463 99005bf9 0ab04e07 be14a85f 99005bf9 de5b1158 ae20956b abc56510
+  lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 3ee5fe1e 0ccc8edc 36184fa5 aeeb33bd a169cfbe b7b5f484 d0c1eaa8 7db841bc b7b5f484 03d30b36 66e392bc a50da420 c7bd68b9 6a642fca 03d30b36 f31a7efb a50da420 c7bd68b9 6a642fca 03d30b36 a50da420 fe0213c0 6a642fca a19560f5 e50b9463 99005bf9 0ab04e07 be14a85f 99005bf9 de5b1158 ae20956b abc56510
   preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-rate-limit-enterprise"
@@ -48,9 +48,9 @@ tags:
     lead: ' '
 - paths: mcp-rate-limit-enterprise
   block: 7
-  fingerprint: 8a3eb8001937fe69
+  fingerprint: ed15ae6a5e378895
   lang: yaml
-  lines: 16c71da1 88b9492f c548623c 8c8c4228 3ee5fe1e 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d 065d53f7 c14c1813 2ed67d95 c4fcc5d8 abc56510
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 3ee5fe1e 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d 065d53f7 c14c1813 2ed67d95 c4fcc5d8 abc56510
   preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-rate-limit-enterprise"
@@ -58,9 +58,9 @@ tags:
     lead: ' '
 - paths: mcp-rate-limit-enterprise
   block: 8
-  fingerprint: 73a3b5ec3f6045c9
+  fingerprint: f7ef726e941cb21f
   lang: sh
-  lines: 73a3b5ec
+  lines: f7ef726e
   preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-tool-rate-lim
   form:
     attr: paths="mcp-rate-limit-enterprise"
@@ -68,10 +68,10 @@ tags:
     lead: ' '
 - paths: mcp-rate-limit-enterprise
   block: 13
-  fingerprint: 49282ee5aaa15478
+  fingerprint: b3ae18bdfa785683
   lang: sh
-  lines: 7ce0b024 dc17f2f5 c007c0aa
-  preview: kubectl delete RateLimitConfig mcp-tool-rate-limit -n {{< reuse "kgw-docs/snippe
+  lines: 21aabf51 e2b55b81 9c093642
+  preview: kubectl delete RateLimitConfig mcp-tool-rate-limit -n default
   form:
     attr: paths="mcp-rate-limit-enterprise"
     only: true
@@ -79,9 +79,9 @@ tags:
 hidden:
 - after:
     block: 1
-    fingerprint: 07fefa5426412786
+    fingerprint: 0360ec4c49c7f844
     lang: sh
-    lines: 07fefa54
+    lines: 0360ec4c
     preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-rate-limit -n
   content: |2-
        {{< doc-test paths="mcp-rate-limit-enterprise" >}}
@@ -120,7 +120,7 @@ hidden:
            target:
              kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
-               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               namespace: default
                name: mcp-rate-limit
            jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
            jsonPathExpectation:
@@ -156,9 +156,9 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 8
-    fingerprint: 73a3b5ec3f6045c9
+    fingerprint: f7ef726e941cb21f
     lang: sh
-    lines: 73a3b5ec
+    lines: f7ef726e
     preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-tool-rate-lim
   content: |2-
        {{< doc-test paths="mcp-rate-limit-enterprise" >}}
@@ -168,7 +168,7 @@ hidden:
            target:
              kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
-               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               namespace: default
                name: mcp-tool-rate-limit
            jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
            jsonPathExpectation:

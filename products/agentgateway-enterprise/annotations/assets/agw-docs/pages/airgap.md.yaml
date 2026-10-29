@@ -222,6 +222,14 @@ hidden:
        # The visible exports are placeholders; use the test registry.
        export PRIVATE_REGISTRY="localhost:${REG_PORT}"
        export PRIVATE_REPOSITORY=enterprise-agentgateway
+       # The test registry serves plain HTTP. Docker treats localhost as insecure,
+       # but Helm does not, so add --plain-http to Helm OCI calls that use it.
+       helm() {
+         case " $* " in
+           *" oci://localhost:"*) command helm "$@" --plain-http ;;
+           *) command helm "$@" ;;
+         esac
+       }
        {{< /doc-test >}}
 - after:
     block: 7

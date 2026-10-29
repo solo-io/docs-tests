@@ -1,0 +1,206 @@
+format: 1
+source: assets/agw-docs/pages/standalone/guardrails-conditional-reversible.md
+blocks:
+- 34a2928bfb57e015 yaml
+- 05991aa55ecbe989 sh
+- b6934f81b99b2389 console
+- f6931a7b2e59dbc5 sh
+- e0408129f9f6f748 sh
+- 92413e9787e7d079 console
+- 03efc2c9aaea474e sh
+- 8310b5e00816dd33 console
+- 0e4cb888bb3588e1 yaml
+- f6931a7b2e59dbc5 sh
+- fa3463cbf602846a sh
+tags:
+- paths: conditional-reversible
+  block: 0
+  fingerprint: 34a2928bfb57e015
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 6d88d930 4208ae28 e8bd2b8e 14ddcd05 47639ec2 eeb7e2a3 665793a0 3de9d845 bb492b20 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="conditional-reversible"
+    only: true
+    lead: ' '
+- paths: conditional-reversible
+  block: 1
+  fingerprint: 05991aa55ecbe989
+  lang: sh
+  lines: 05991aa5
+  preview: agentgateway -f config.yaml --validate-only
+  form:
+    attr: paths="conditional-reversible"
+    only: true
+    lead: ' '
+- paths: conditional-reversible
+  block: 4
+  fingerprint: e0408129f9f6f748
+  lang: sh
+  lines: 0bfab602 fc68f389 eb2638bc
+  preview: curl -i localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="conditional-reversible"
+    only: true
+    lead: ' '
+- paths: conditional-reversible
+  block: 6
+  fingerprint: 03efc2c9aaea474e
+  lang: sh
+  lines: 0bfab602 fc68f389 e3c45d9b eb2638bc
+  preview: curl -i localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="conditional-reversible"
+    only: true
+    lead: ' '
+- paths: conditional-reversible
+  block: 8
+  fingerprint: 0e4cb888bb3588e1
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 6d88d930 4208ae28 e8bd2b8e 14ddcd05 f47484a5 eeb7e2a3 90afc833 3de9d845 79720b31 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="conditional-reversible"
+    only: true
+    lead: ' '
+- paths: conditional-reversible
+  block: 10
+  fingerprint: fa3463cbf602846a
+  lang: sh
+  lines: 5052bef9 fc68f389 8c8fb8e2
+  preview: curl localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="conditional-reversible"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="conditional-reversible" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Run a guard conditionally": the config validates; without the
+    #     x-guardrail header the request reaches the LLM (200), with
+    #     x-guardrail: strict the regex guard rejects it (403).
+    #   * "Restore masked values": the LLM receives a unique placeholder instead
+    #     of the email address, and the client gets the original address back.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Real OpenAI: a local echo LLM stands in, which repeats the placeholder
+    #     exactly (a real model might not).
+    #   * The Troubleshoot table's error messages.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+
+    # Test-only stand-in for the LLM: echoes the last user message back as the
+    # completion and logs each request body, so the test can check both what the
+    # LLM received (placeholders) and what the client got back (restored values).
+    cat > echo-llm.py <<'PY'
+    import json
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    class Handler(BaseHTTPRequestHandler):
+        def do_POST(self):
+            raw = self.rfile.read(int(self.headers.get("content-length") or 0)) or b"{}"
+            with open("echo-llm-requests.log", "ab") as f:
+                f.write(raw + b"\n")
+            req = json.loads(raw)
+            text = next((m.get("content") for m in reversed(req.get("messages", [])) if m.get("role") == "user"), "")
+            if not isinstance(text, str):
+                text = json.dumps(text)
+            body = json.dumps({"id": "chatcmpl-echo", "object": "chat.completion", "created": 0,
+                "model": req.get("model", "mock"),
+                "choices": [{"index": 0, "finish_reason": "stop", "message": {"role": "assistant", "content": text}}],
+                "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2}}).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        def log_message(self, *args):
+            pass
+    HTTPServer(("127.0.0.1", 3091), Handler).serve_forever()
+    PY
+    python3 echo-llm.py &
+    MOCK_LLM_PID=$!
+    for _ in $(seq 1 20); do curl -sf -o /dev/null -m 2 -X POST http://localhost:3091 -d '{}' && break; sleep 1; done \
+      || { echo "echo LLM did not start within 20 s"; exit 1; }
+
+    export OPENAI_API_KEY=mock-key
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="conditional-reversible" >}}
+    {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+    agentgateway -f config-mock.yaml > agw.log 2>&1 &
+    AGW_PID=$!
+    trap 'kill $AGW_PID $MOCK_LLM_PID 2>/dev/null' EXIT
+    for _ in $(seq 1 30); do curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && break; sleep 1; done
+    curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready || { echo "agentgateway did not become ready within 30 s"; cat agw.log; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: e0408129f9f6f748
+    lang: sh
+    lines: 0bfab602 fc68f389 eb2638bc
+    preview: curl -i localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="conditional-reversible" >}}
+    code=$(curl -s -o /dev/null -w '%{http_code}' localhost:4000/v1/chat/completions \
+      -H "content-type: application/json" \
+      -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Tell me about the secret project"}]}')
+    [ "$code" = "200" ] || { echo "without the header: expected 200, got $code"; cat agw.log; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 03efc2c9aaea474e
+    lang: sh
+    lines: 0bfab602 fc68f389 e3c45d9b eb2638bc
+    preview: curl -i localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="conditional-reversible" >}}
+    code=$(curl -s -o /dev/null -w '%{http_code}' localhost:4000/v1/chat/completions \
+      -H "x-guardrail: strict" \
+      -H "content-type: application/json" \
+      -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Tell me about the secret project"}]}')
+    [ "$code" = "403" ] || { echo "with x-guardrail: strict: expected 403, got $code"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="conditional-reversible" >}}
+    kill $AGW_PID; wait $AGW_PID 2>/dev/null || true
+    {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+    : > echo-llm-requests.log
+    agentgateway -f config-mock.yaml > agw.log 2>&1 &
+    AGW_PID=$!
+    for _ in $(seq 1 30); do curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && break; sleep 1; done
+    curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready || { echo "agentgateway did not become ready within 30 s"; cat agw.log; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: fa3463cbf602846a
+    lang: sh
+    lines: 5052bef9 fc68f389 8c8fb8e2
+    preview: curl localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="conditional-reversible" >}}
+    resp=$(curl -s localhost:4000/v1/chat/completions \
+      -H "content-type: application/json" \
+      -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Repeat this address: jane.doe@example.com"}]}')
+    echo "$resp"
+    grep -q 'jane.doe@example.com' <<<"$resp" || { echo "client did not get the original address back"; exit 1; }
+    grep -q '<agw_' <<<"$resp" && { echo "placeholder leaked to the client"; exit 1; }
+    grep -q 'jane.doe@example.com' echo-llm-requests.log && { echo "the LLM received the original address"; exit 1; }
+    grep -q '<agw_[0-9a-f]*_EMAIL_ADDRESS0>' echo-llm-requests.log || { echo "the LLM did not receive a reversible placeholder"; cat echo-llm-requests.log; exit 1; }
+    {{< /doc-test >}}

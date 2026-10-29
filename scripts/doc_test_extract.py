@@ -195,7 +195,13 @@ class Extractor:
         # case that prompted this is an install snippet whose consumer copy adds
         # the enterprise license steps and whose upstream copy has none, so the
         # test would have installed the wrong build and passed.
-        self.asset_roots: List[Path] = [r.resolve() for r in (asset_roots or [repo_root])]
+        # A consuming site's own (non-rebased) pages can also reuse a snippet that
+        # only the upstream has, for example a version file such as
+        # agw-docs/versions/keycloak.md. Hugo finds it through the module union,
+        # so the upstream checkout is the fallback root here too. Without it the
+        # reuse rendered empty, and an image tag came out as "keycloak:".
+        default_roots = [repo_root] + ([upstream_root] if upstream_root else [])
+        self.asset_roots: List[Path] = [r.resolve() for r in (asset_roots or default_roots)]
         # A consuming site may REBASE a whole upstream page rather than reuse a
         # snippet: the page's entire body is `{{< rebase file="..." >}}`, and the
         # upstream content is unioned in when the site builds. Without these two,
@@ -376,7 +382,12 @@ class Extractor:
                 break
         if candidate is None:
             return ""
-        self.recursion_edges.append((source_file.as_posix(), candidate.as_posix(), "reuse"))
+        if candidate.is_relative_to(Path(self.repo_root).resolve()):
+            self.recursion_edges.append((source_file.as_posix(), candidate.as_posix(), "reuse"))
+        else:
+            # An upstream fallback file (see asset_roots). The manifest makes edge
+            # paths relative to repo_root, so track it with the rebased files.
+            self.rebased_files.add(candidate)
         return self._expand_text(candidate, self._read_file(candidate), depth + 1).rstrip("\n")
 
     def _resolve_include(self, source_file: Path, include_path: str, depth: int) -> str:

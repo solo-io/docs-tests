@@ -68,7 +68,14 @@ hidden:
       curl -fsSL "https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istioctl-${ISTIO_VERSION}-${istio_os}-${istio_arch}.tar.gz" \
         | tar -xz -C "$ISTIO_BIN" istioctl
     fi
-    istioctl install --set profile=ambient --skip-confirmation
+    # The CI kind node has 2 CPUs, and the enterprise control plane and its
+    # extensions already request most of them, so istiod (500m by default)
+    # could not be scheduled. Lower the Istio CPU requests for the test.
+    istioctl install --set profile=ambient --skip-confirmation \
+      --set values.pilot.resources.requests.cpu=50m \
+      --set values.pilot.resources.requests.memory=256Mi \
+      --set values.ztunnel.resources.requests.cpu=50m \
+      --set values.cni.resources.requests.cpu=50m
     kubectl -n istio-system rollout status deploy/istiod --timeout=300s
     kubectl -n istio-system rollout status ds/ztunnel --timeout=300s
     kubectl -n istio-system rollout status ds/istio-cni-node --timeout=300s
@@ -84,7 +91,7 @@ hidden:
       {{< doc-test paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup" >}}
       # Claim: the upgrade turns on the Istio integration and the control plane comes back up.
       kubectl -n agentgateway-system rollout status deploy/enterprise-agentgateway --timeout=300s
-      helm get values enterprise-agentgateway -n agentgateway-system -o yaml | grep -q 'autoEnabled: true' \
+      helm get values enterprise-agentgateway -n agentgateway-system -o yaml | grep 'autoEnabled: true' >/dev/null \
         || { echo "istio.autoEnabled is not set on the release"; exit 1; }
       {{< /doc-test >}}
 - after:

@@ -76,6 +76,6 @@ hidden:
     preview: NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
   content: |2-
        {{< doc-test paths="te-impersonation" >}}
-       kubectl get svc {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.ports[*].port}' | tr ' ' '\n' | grep -qx 7777 \
+       kubectl get svc {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.ports[*].port}' | tr ' ' '\n' | grep -x 7777 >/dev/null \
          || { echo "the control plane service does not expose the STS port 7777"; exit 1; }
        {{< /doc-test >}}

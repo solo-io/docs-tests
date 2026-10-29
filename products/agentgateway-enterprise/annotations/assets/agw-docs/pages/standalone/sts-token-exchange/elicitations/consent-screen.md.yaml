@@ -1,0 +1,201 @@
+format: 1
+source: assets/agw-docs/pages/standalone/sts-token-exchange/elicitations/consent-screen.md
+blocks:
+- da3f97f72b0a4198 console
+- 6aeb87fac1f9b6de yaml
+- 425d04ba9847426c sh
+- 631087398930897a yaml
+- 759f7d7e5fd6581b yaml
+- df29423b7e63fddc sh
+- 9994b1c413069915 console
+- 429df50ee2ae0a03 console
+hidden:
+- after:
+    block: 2
+    fingerprint: 425d04ba9847426c
+    lang: sh
+    lines: 425d04ba
+    preview: agentgateway-sts sts --config-file config.yaml --address 127.0.0.1:7777
+  content: |-
+    {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
+    # ============================================================================
+    # Doc test coverage for "Consent screen" (standalone; comments not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The issuer-level consent block from "Turn on consent", with the page's
+    #     values, merged into the brokered setup's config.yaml, and the STS restart.
+    #   * An upstream OAuth resource with clientName (the page's example points at
+    #     GitHub; this test uses a second Keycloak realm, upstream-mcp, as the
+    #     upstream provider, the same stand-in as the agent guide), its
+    #     oauthTokenExchange backend policy, and its issuer-proxy route.
+    #   * "Verify consent" without a browser: registration, PKCE authorize, the
+    #     downstream Keycloak login, and the redirect to the consent page, which
+    #     shows the platform name, legal text, logo, and clientName, and carries a
+    #     form with state and decision. The STS log lines that the page quotes.
+    #   * Submitting decision=allow returns 302 to the upstream provider. The
+    #     upstream login completes, the client gets a code and a token, and an MCP
+    #     initialize and Echo call through the resource succeed.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The page's example URLs (gateway.example.com, GitHub): not reachable in
+    #     CI. The per-resource override and opt-out examples are checked by the
+    #     schema test only.
+    ADMIN_TOKEN=$(curl -fsS -X POST http://localhost:8080/realms/master/protocol/openid-connect/token \
+      -d grant_type=password -d client_id=admin-cli -d username=admin -d password=admin | jq -r .access_token)
+    curl -fsS -X POST http://localhost:8080/admin/realms \
+      -H "Authorization: Bearer ${ADMIN_TOKEN}" -H "Content-Type: application/json" -d @- <<'JSON'
+    {
+      "realm": "upstream-mcp",
+      "enabled": true,
+      "sslRequired": "none",
+      "clients": [{"clientId": "agw-upstream", "secret": "local-upstream-secret", "publicClient": false,
+        "standardFlowEnabled": true, "directAccessGrantsEnabled": false,
+        "redirectUris": ["http://localhost:3000/oauth-issuer/callback/upstream"]}],
+      "users": [{"username": "alice", "enabled": true, "email": "alice@example.com", "emailVerified": true,
+        "firstName": "Alice", "lastName": "Upstream",
+        "credentials": [{"type": "password", "value": "alice-upstream-password", "temporary": false}]}]
+    }
+    JSON
+    printf 'local-upstream-secret' > upstream-client-secret.txt
+    chmod 600 upstream-client-secret.txt
+    python3 - <<'PY'
+    import yaml
+    with open("config.yaml") as f:
+        cfg = yaml.safe_load(f)
+    # The issuer-level block from "Turn on consent", as the page shows it.
+    cfg["entSts"]["oauthIssuer"]["consent"] = {
+        "enabled": True,
+        "platformName": "Example Platform",
+        "legalText": "Example Corp will access your GitHub account on your behalf.",
+        "logoUrl": "https://example.com/logo.svg",
+    }
+    cfg["entSts"]["entElicitations"]["resources"]["consent-mcp"] = yaml.safe_load("""
+    brokered:
+      mcpResourcePath: /mcp/consent
+      chainedAuth:
+        oauth:
+          clientId: agw-upstream
+          clientSecret: {file: ./upstream-client-secret.txt}
+          authorizeUrl: http://localhost:8080/realms/upstream-mcp/protocol/openid-connect/auth
+          accessTokenUrl: http://localhost:8080/realms/upstream-mcp/protocol/openid-connect/token
+          scopes: [openid, profile]
+          clientName: Upstream Example
+    """)
+    cfg["routes"].insert(0, yaml.safe_load("""
+    name: consent-mcp
+    gateways: [default]
+    matches:
+    - path: {pathPrefix: /mcp/consent}
+    - path: {exact: /.well-known/oauth-protected-resource/mcp/consent}
+    - path: {exact: /.well-known/oauth-authorization-server/mcp/consent}
+    policies:
+      mcpAuthentication:
+        issuer: http://localhost:8080/realms/downstream-mcp
+        audiences: [agw-issuer]
+        jwks:
+          url: http://localhost:8080/realms/downstream-mcp/protocol/openid-connect/certs
+        resourceMetadata:
+          agentgateway.dev/issuer-proxy: http://localhost:3000/oauth-issuer
+          resource: http://localhost:3000/mcp/consent
+          authorizationServers: [http://localhost:3000/mcp/consent]
+      backendAuth:
+        oauthTokenExchange:
+          host: 127.0.0.1:7777
+          path: /elicitations/oauth2/token
+          allowSubjectTokenFromClaims: true
+          subjectToken:
+            tokenType: "urn:ietf:params:oauth:token-type:jwt"
+          resources:
+          - consent-mcp
+    backends:
+    - mcp:
+        targets:
+        - name: everything
+          mcp:
+            host: 127.0.0.1
+            port: 3001
+            path: /mcp
+    """))
+    with open("config.yaml", "w") as f:
+        yaml.safe_dump(cfg, f, sort_keys=False)
+    PY
+    # Hidden equivalent of the restart above: issuer-level consent needs a restart.
+    start_sts
+    grep -F 'MCP resource paths declared as issuer-proxy handled' "$DT_LOGS/sts.log" | grep -F '"/mcp/consent"' >/dev/null \
+      || { echo "FAIL: STS did not declare /mcp/consent" >&2; tail -n 40 "$DT_LOGS/sts.log" >&2; exit 1; }
+    for i in $(seq 1 30); do
+      [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/.well-known/oauth-protected-resource/mcp/consent)" = "200" ] && break
+      sleep 2
+    done
+    PRM=$(curl -fsS http://localhost:3000/.well-known/oauth-protected-resource/mcp/consent)
+    [ "$(jq -r .resource <<<"$PRM")" = "http://localhost:3000/mcp/consent" ] || { echo "FAIL: resource" >&2; echo "$PRM" >&2; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 429df50ee2ae0a03
+    lang: console
+    lines: 1dfbe0d4 a2338ea5
+    preview: '{"level":"info","msg":"request","method":"POST","path":"/oauth-issuer/consent","'
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
+       # "Verify consent" against the local stand-ins, with curl in place of the browser.
+       JAR=$(mktemp)
+       REDIRECT_URI="http://localhost:6274/oauth/callback"
+       curl -fsS -X POST http://localhost:3000/oauth-issuer/register -H 'Content-Type: application/json' \
+         -d "{\"client_name\":\"doc-test\",\"redirect_uris\":[\"${REDIRECT_URI}\"]}" >/dev/null
+       pkce_pair
+       AUTH_URL="http://localhost:3000/oauth-issuer/authorize?client_id=agw-issuer&response_type=code&state=doc-test-consent&redirect_uri=$(urlenc "$REDIRECT_URI")&code_challenge=${PKCE_CHALLENGE}&code_challenge_method=S256&resource=$(urlenc http://localhost:3000/mcp/consent)"
+       KC_PAGE=$(follow_redirects_until "http://localhost:8080/realms/downstream-mcp/" "$AUTH_URL" "$JAR")
+       AFTER_LOGIN=$(kc_form_login "$KC_PAGE" alice alice-password "$JAR")
+       # 1-2. The issuer redirects to its consent screen, not to the upstream provider.
+       CONSENT_URL=$(follow_redirects_until "http://localhost:3000/oauth-issuer/consent" "$AFTER_LOGIN" "$JAR")
+       CONSENT_PAGE=$(curl -fsS -b "$JAR" -c "$JAR" "$CONSENT_URL")
+       for want in 'Example Platform' \
+                   'Example Corp will access your GitHub account on your behalf.' \
+                   'https://example.com/logo.svg' \
+                   'Upstream Example' \
+                   'name="state"' \
+                   'name="decision" value="allow"'; do
+         grep -qF "$want" <<<"$CONSENT_PAGE" || { echo "FAIL: consent page lacks: $want" >&2; echo "$CONSENT_PAGE" | grep -v '^\s*$' | tail -60 >&2; exit 1; }
+       done
+       for want in '"msg":"downstream callback processed, redirecting to consent"' '"has_consent_url":true'; do
+         grep -F "$want" "$DT_LOGS/sts.log" >/dev/null || { echo "FAIL: STS log lacks $want" >&2; tail -n 40 "$DT_LOGS/sts.log" >&2; exit 1; }
+       done
+       grep -F '"path":"/oauth-issuer/consent"' "$DT_LOGS/sts.log" | grep -F '"method":"GET"' | grep -F '"status_code":200' >/dev/null \
+         || { echo "FAIL: no GET /oauth-issuer/consent 200 in the STS log" >&2; exit 1; }
+       # 3-4. Post the form's state with decision=allow; a 302 to the upstream provider follows.
+       FORM_STATE=$(grep -o 'name="state" value="[^"]*"' <<<"$CONSENT_PAGE" | head -1 | sed -e 's/.*value="//' -e 's/"$//' -e 's/&amp;/\&/g')
+       [ -n "$FORM_STATE" ] || { echo "FAIL: no state in the consent form" >&2; exit 1; }
+       POST_OUT=$(curl -sS -o /dev/null -w '%{http_code} %{redirect_url}' -b "$JAR" -c "$JAR" \
+         --data-urlencode "state=${FORM_STATE}" --data-urlencode decision=allow "$CONSENT_URL")
+       [ "${POST_OUT%% *}" = "302" ] || { echo "FAIL: consent POST returned ${POST_OUT}" >&2; exit 1; }
+       UPSTREAM_AUTH_URL=${POST_OUT#* }
+       case "$UPSTREAM_AUTH_URL" in
+         "http://localhost:8080/realms/upstream-mcp/protocol/openid-connect/auth?"*) ;;
+         *) echo "FAIL: consent did not redirect to the upstream provider: $UPSTREAM_AUTH_URL" >&2; exit 1 ;;
+       esac
+       grep -F '"path":"/oauth-issuer/consent"' "$DT_LOGS/sts.log" | grep -F '"method":"POST"' | grep -F '"status_code":302' >/dev/null \
+         || { echo "FAIL: no POST /oauth-issuer/consent 302 in the STS log" >&2; exit 1; }
+       # The upstream leg, followed with GET as a browser does.
+       UPSTREAM_CB=$(kc_form_login "$UPSTREAM_AUTH_URL" alice alice-upstream-password "$JAR")
+       CLIENT_CB=$(follow_redirects_until "$REDIRECT_URI" "$UPSTREAM_CB" "$JAR")
+       [ "$(query_param "$CLIENT_CB" state)" = "doc-test-consent" ] || { echo "FAIL: state mismatch in $CLIENT_CB" >&2; exit 1; }
+       grep -F '"msg":"code exchange succeeded"' "$DT_LOGS/sts.log" | grep -F '"resource":"consent-mcp"' >/dev/null \
+         || { echo "FAIL: no code exchange for consent-mcp in the STS log" >&2; tail -n 40 "$DT_LOGS/sts.log" >&2; exit 1; }
+       CODE=$(query_param "$CLIENT_CB" code)
+       TOKEN_RESP=$(curl -fsS -X POST http://localhost:3000/oauth-issuer/token \
+         --data-urlencode grant_type=authorization_code --data-urlencode "code=${CODE}" \
+         --data-urlencode client_id=agw-issuer --data-urlencode "redirect_uri=${REDIRECT_URI}" \
+         --data-urlencode "code_verifier=${PKCE_VERIFIER}")
+       DOWNSTREAM_TOKEN=$(jq -er .access_token <<<"$TOKEN_RESP")
+       HDRS=$(mktemp)
+       curl -fsS -D "$HDRS" -o /dev/null -X POST http://localhost:3000/mcp/consent \
+         -H "Authorization: Bearer ${DOWNSTREAM_TOKEN}" -H 'Content-Type: application/json' \
+         -H 'Accept: application/json, text/event-stream' \
+         -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"doc-test","version":"1"}}}'
+       SID=$(awk 'tolower($1) == "mcp-session-id:" {gsub("\r", "", $2); print $2}' "$HDRS")
+       [ -n "$SID" ] || { echo "FAIL: no mcp-session-id" >&2; cat "$HDRS" >&2; exit 1; }
+       ECHO_OUT=$(curl -fsS -X POST http://localhost:3000/mcp/consent -H "Authorization: Bearer ${DOWNSTREAM_TOKEN}" \
+         -H "Mcp-Session-Id: ${SID}" -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+         -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"echo","arguments":{"message":"after consent"}}}')
+       grep -q 'Echo: after consent' <<<"$ECHO_OUT" || { echo "FAIL: echo result" >&2; echo "$ECHO_OUT" >&2; exit 1; }
+       {{< /doc-test >}}

@@ -1,0 +1,195 @@
+format: 1
+source: assets/agw-docs/pages/standalone/sts-token-exchange/delegation.md
+blocks:
+- a9a28385591f44d0 json
+- 305fac9b81f87db5 json
+- e913fbad89f1bb72 json
+- 74b43fa3bd1892d2 yaml
+- 9941e2ec1df73787 sh
+- 8e07f597f83be057 sh
+- e3dc1ac5667d79c0 sh
+- ecbd08ad6b03045e json
+- 54a9ed9ecb14eedf yaml
+- f3e8db964cc32a2d yaml
+- 064d0cac407c33ba sh
+- ecbd08ad6b03045e json
+- 52152e8eb0c53b77 sh
+- 707d7dd35c512e45 sh
+- 65cc293f697bac7c json
+- 2eef79f2b6e7dbea sh
+- 221bafca101e53bb json
+tags:
+- paths: sts-delegation
+  block: 13
+  fingerprint: 707d7dd35c512e45
+  lang: sh
+  lines: e02cc0ad e98aebec 1f456632 6d3424ff fc31e6dd df60e4fe 45d715c0 0343c6ba
+  preview: curl -s -X POST http://localhost:7777/token \
+  form:
+    attr: paths="sts-delegation"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: cda76d51cab55c2a
+    occurrence: 0
+    words: 4e074085 90d08e58 4d040d3f 0c1eeccc 663ea1bf 7e9e5ac3 ca978112 a60bf7f5 dd1b3c31 663ea1bf 04f8996d c51e455b f4bf9f7f 4249a1a0 58296753 b9776d7d a60bf7f5 dd1b3c31 b567d8e7
+    block_before:
+      block: 2
+      fingerprint: e913fbad89f1bb72
+      lang: json
+      lines: 021fb596 91309804 8f063bdd d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="sts-delegation" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Step 1: an entSts section with actorValidators starts the STS.
+    #   * Step 3: the documented delegation exchange (subject_token + actor_token)
+    #     returns an STS-signed JWT.
+    #   * Step 4: the issued token's sub is the user, act.sub and may_act.sub are
+    #     the agent, act.iss is the agent's issuer, and iss is entSts.issuer.
+    #   * The may_act claim section: a subject token with no may_act claim is
+    #     refused with unauthorized_client and the documented description.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The IdP. Keycloak in docker dev mode stands in for both idp.example.com
+    #     and agents.example.com: the agent is a client-credentials service account,
+    #     and a hardcoded claim mapper adds may_act.sub to user tokens. The sub
+    #     values are Keycloak IDs rather than user1 and agent-1.
+    #   * Step 2's Docker and Helm tabs; the STS runs from the binary on a
+    #     loopback address because the test calls it from the same host.
+    #   * Step 5, using the token at a downstream service.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    trap 'rc=$?; kill ${AGW_PID:-} ${STS_PID:-} ${ECHO_PID:-} ${MCP_PID:-} 2>/dev/null || true; if [ $rc -ne 0 ]; then echo "--- sts.log"; tail -n 50 sts.log 2>/dev/null; echo "--- agw.log"; tail -n 50 agw.log 2>/dev/null; fi; docker rm -f keycloak-sts >/dev/null 2>&1 || true' EXIT
+    # IdP stand-in: Keycloak in docker dev mode. Realm "sts" with:
+    #   user-client  public client, password grant; adds aud=agentgateway and a
+    #                hardcoded may_act.sub claim naming agent-1's service account
+    #   agent-1      confidential client whose service account is the agent
+    #   user1        test user
+    docker rm -f keycloak-sts >/dev/null 2>&1 || true
+    docker run -d --name keycloak-sts -p 8080:8080 \
+      -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
+      quay.io/keycloak/keycloak:26.4 start-dev >/dev/null
+    KEYCLOAK_URL=http://localhost:8080
+    for i in $(seq 1 90); do
+      curl -fsS -o /dev/null "${KEYCLOAK_URL}/realms/master/.well-known/openid-configuration" 2>/dev/null && break
+      sleep 2
+    done
+    KC_ADMIN=$(curl -fsS "${KEYCLOAK_URL}/realms/master/protocol/openid-connect/token" \
+      -d client_id=admin-cli -d username=admin -d password=admin -d grant_type=password | jq -r .access_token)
+    test -n "$KC_ADMIN" && test "$KC_ADMIN" != null || { echo "Keycloak admin login failed"; exit 1; }
+    kc() { curl -fsS -H "Authorization: Bearer ${KC_ADMIN}" -H 'Content-Type: application/json' "$@"; }
+    kc -X POST "${KEYCLOAK_URL}/admin/realms" -d '{"realm":"sts","enabled":true}'
+    kc -X POST "${KEYCLOAK_URL}/admin/realms/sts/clients" \
+      -d '{"clientId":"agent-1","enabled":true,"publicClient":false,"secret":"agent-1-secret","serviceAccountsEnabled":true,"standardFlowEnabled":false,"directAccessGrantsEnabled":false}'
+    AGENT_CLIENT_UUID=$(kc "${KEYCLOAK_URL}/admin/realms/sts/clients?clientId=agent-1" | jq -r '.[0].id')
+    AGENT_SUB=$(kc "${KEYCLOAK_URL}/admin/realms/sts/clients/${AGENT_CLIENT_UUID}/service-account-user" | jq -r .id)
+    kc -X POST "${KEYCLOAK_URL}/admin/realms/sts/clients" -d @- <<KCEOF
+    {"clientId":"user-client","enabled":true,"publicClient":true,"directAccessGrantsEnabled":true,"standardFlowEnabled":false,
+     "protocolMappers":[
+      {"name":"aud-agentgateway","protocol":"openid-connect","protocolMapper":"oidc-audience-mapper",
+       "config":{"included.custom.audience":"agentgateway","access.token.claim":"true","id.token.claim":"false"}},
+      {"name":"may-act","protocol":"openid-connect","protocolMapper":"oidc-hardcoded-claim-mapper",
+       "config":{"claim.name":"may_act.sub","claim.value":"${AGENT_SUB}","jsonType.label":"String","access.token.claim":"true","id.token.claim":"false","userinfo.token.claim":"false"}}]}
+    KCEOF
+    kc -X POST "${KEYCLOAK_URL}/admin/realms/sts/users" \
+      -d '{"username":"user1","enabled":true,"email":"user1@example.com","emailVerified":true,"firstName":"User","lastName":"One","credentials":[{"type":"password","value":"Password1!","temporary":false}]}'
+    KEYCLOAK_ISSUER=${KEYCLOAK_URL}/realms/sts
+    KEYCLOAK_JWKS=${KEYCLOAK_ISSUER}/protocol/openid-connect/certs
+    get_user_token() {
+      curl -fsS "${KEYCLOAK_ISSUER}/protocol/openid-connect/token" -d grant_type=password \
+        -d client_id=user-client -d username=user1 -d 'password=Password1!' | jq -r .access_token
+    }
+    get_agent_token() {
+      curl -fsS "${KEYCLOAK_ISSUER}/protocol/openid-connect/token" -d grant_type=client_credentials \
+        -d client_id=agent-1 -d client_secret=agent-1-secret | jq -r .access_token
+    }
+    jwt_claims() { python3 -c 'import sys,json,base64; p=sys.argv[1].split(".")[1]; p+="="*(-len(p)%4); print(json.dumps(json.loads(base64.urlsafe_b64decode(p))))' "$1"; }
+    test -n "$(get_user_token)" || { echo "user1 cannot get a token from Keycloak"; exit 1; }
+    openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out sts-jwt.pem
+    chmod 600 sts-jwt.pem
+    cat > config.yaml <<EOF
+    entSts:
+      enabled: true
+      issuer: https://sts.example.com
+      tokenExpiration: 1h
+      requireAudience: false
+      privateKeyPath: ${PWD}/sts-jwt.pem
+      subjectValidators:
+      - validatorType: remote
+        issuer: ${KEYCLOAK_ISSUER}
+        remoteConfig:
+          url: ${KEYCLOAK_JWKS}
+      actorValidators:
+      # agents.example.com on the page; the Keycloak realm issues agent tokens here.
+      - validatorType: remote
+        issuer: ${KEYCLOAK_ISSUER}
+        remoteConfig:
+          url: ${KEYCLOAK_JWKS}
+      apiValidators:
+      - validatorType: remote
+        issuer: ${KEYCLOAK_ISSUER}
+        remoteConfig:
+          url: ${KEYCLOAK_JWKS}
+    EOF
+    agentgateway-sts sts --config-file config.yaml --address 127.0.0.1:7777 > sts.log 2>&1 &
+    STS_PID=$!
+    for i in $(seq 1 30); do curl -fsS -o /dev/null http://127.0.0.1:7777/healthz 2>/dev/null && break; sleep 1; done
+    curl -fsS -o /dev/null http://127.0.0.1:7777/healthz || { echo "STS did not become healthy"; exit 1; }
+    grep -q '"minting_enabled":true' sts.log || { echo "STS log does not report minting_enabled true"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 52152e8eb0c53b77
+    lang: sh
+    lines: 561f1bee dbbd6ee4
+    preview: export USER_TOKEN=<user-idp-jwt-with-may-act>
+  content: |2-
+       {{< doc-test paths="sts-delegation" >}}
+       export USER_TOKEN=$(get_user_token)
+       export AGENT_TOKEN=$(get_agent_token)
+       jwt_claims "$USER_TOKEN" | jq -e --arg a "$AGENT_SUB" '.may_act.sub == $a' >/dev/null \
+         || { echo "user token from the stand-in has no may_act claim for the agent"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 707d7dd35c512e45
+    lang: sh
+    lines: e02cc0ad e98aebec 1f456632 6d3424ff fc31e6dd df60e4fe 45d715c0 0343c6ba
+    preview: curl -s -X POST http://localhost:7777/token \
+  content: |2-
+       {{< doc-test paths="sts-delegation" >}}
+       DELEGATED=$(curl -fsS -X POST http://localhost:7777/token \
+         -H "Content-Type: application/x-www-form-urlencoded" -H "Accept: application/json" \
+         -d "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
+         -d "subject_token=${USER_TOKEN}" -d "subject_token_type=urn:ietf:params:oauth:token-type:jwt" \
+         -d "actor_token=${AGENT_TOKEN}" -d "actor_token_type=urn:ietf:params:oauth:token-type:jwt")
+       echo "$DELEGATED" | jq -e '.issued_token_type == "urn:ietf:params:oauth:token-type:jwt" and .token_type == "Bearer"' >/dev/null \
+         || { echo "unexpected delegation response: $DELEGATED"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 221bafca101e53bb
+    lang: json
+    lines: 021fb596 295ea2be 0849a390 bf619f17 51b06a59 e52a1813 746faf32 51b06a59 e52a1813 3112e925 1dd9e76b 4929ac3e 17efc7f7 eda7ed3d d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="sts-delegation" >}}
+    # Step 4: the delegated claims.
+    USER_SUB=$(jwt_claims "$USER_TOKEN" | jq -r .sub)
+    jwt_claims "$(echo "$DELEGATED" | jq -r .access_token)" \
+      | jq -e --arg u "$USER_SUB" --arg a "$AGENT_SUB" --arg kc "$KEYCLOAK_ISSUER" \
+        '.iss == "https://sts.example.com" and .sub == $u and .act.sub == $a and .act.iss == $kc and .may_act.sub == $a' >/dev/null \
+      || { echo "delegated token claims do not match the page: $(jwt_claims "$(echo "$DELEGATED" | jq -r .access_token)")"; exit 1; }
+    # The may_act section: a subject token without may_act is refused.
+    NO_MAY_ACT=$(curl -s -X POST http://localhost:7777/token \
+      -H "Content-Type: application/x-www-form-urlencoded" -H "Accept: application/json" \
+      -d "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
+      -d "subject_token=${AGENT_TOKEN}" -d "subject_token_type=urn:ietf:params:oauth:token-type:jwt" \
+      -d "actor_token=${AGENT_TOKEN}" -d "actor_token_type=urn:ietf:params:oauth:token-type:jwt")
+    echo "$NO_MAY_ACT" | jq -e '.error == "unauthorized_client" and (.error_description | contains("may_act"))' >/dev/null \
+      || { echo "expected unauthorized_client for a subject token with no may_act: $NO_MAY_ACT"; exit 1; }
+    {{< /doc-test >}}

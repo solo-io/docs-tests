@@ -184,7 +184,8 @@ hidden:
        CALLBACK=$(curl -s -o /dev/null -w '%{redirect_url}' -c "$KC_JAR" -b "$KC_JAR" \
          --data-urlencode username=user1 --data-urlencode password=password "$LOGIN_ACTION")
        case "$CALLBACK" in
-         "http://${INGRESS_GW_ADDRESS}:80/openai?"*code=*) ;;
+         # Keycloak drops the default :80 port from the redirect URI it sends back.
+         "http://${INGRESS_GW_ADDRESS}:80/openai?"*code=*|"http://${INGRESS_GW_ADDRESS}/openai?"*code=*) ;;
          *) echo "Keycloak did not redirect to the callback with a code: $CALLBACK"; exit 1;;
        esac
        curl -s -o /dev/null -c "$AUTHZ_JAR" -b "$AUTHZ_JAR" "$CALLBACK"

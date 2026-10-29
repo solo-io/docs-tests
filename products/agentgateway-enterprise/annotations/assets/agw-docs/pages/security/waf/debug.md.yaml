@@ -129,11 +129,20 @@ hidden:
        {{< doc-test paths="waf-debug" >}}
        sleep 5
        kubectl rollout status deploy/waf-server-enterprise-agentgateway -n agentgateway-system --timeout=180s
+       # The admin server listens on localhost in the pod, which the API server pod
+       # proxy cannot reach, so use the same port-forward as the page.
+       : > /tmp/waf-out.txt
        for i in $(seq 1 30); do
-         POD=$(kubectl get pods -n agentgateway-system -o name | grep 'waf-server-enterprise-agentgateway' | head -1 | cut -d/ -f2)
-         kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/${POD}:9095/proxy/debug/pprof/" > /tmp/waf-out.txt 2>/dev/null && grep -q 'goroutine' /tmp/waf-out.txt && break
+         kubectl port-forward -n agentgateway-system deploy/waf-server-enterprise-agentgateway 9095:9095 >/tmp/waf-pf.log 2>&1 &
+         PF_PID=$!
          sleep 3
+         curl -s http://127.0.0.1:9095/debug/pprof/ > /tmp/waf-out.txt || true
+         kill "$PF_PID" 2>/dev/null || true
+         wait "$PF_PID" 2>/dev/null || true
+         grep 'goroutine' /tmp/waf-out.txt >/dev/null && break
+         sleep 2
        done
+       cat /tmp/waf-pf.log
        grep -c 'goroutine' /tmp/waf-out.txt
        {{< /doc-test >}}
 - after:

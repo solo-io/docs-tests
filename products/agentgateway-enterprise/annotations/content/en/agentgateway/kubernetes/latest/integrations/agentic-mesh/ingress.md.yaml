@@ -80,7 +80,7 @@ hidden:
   content: |2-
       {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
       kubectl -n agentgateway-system rollout status deploy/enterprise-agentgateway --timeout=300s
-      helm get values enterprise-agentgateway -n agentgateway-system -o yaml | grep -q 'autoEnabled: true' \
+      helm get values enterprise-agentgateway -n agentgateway-system -o yaml | grep 'autoEnabled: true' >/dev/null \
         || { echo "istio.autoEnabled is not set on the release (ingress)"; exit 1; }
       {{< /doc-test >}}
 - after:

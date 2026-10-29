@@ -134,11 +134,20 @@ hidden:
     preview: curl -s http://localhost:15000/config_dump | jq '[.policies[] | select(.policy.t
   content: |2-
        {{< doc-test paths="waf-observability" >}}
+       # The proxy admin port listens on localhost in the pod, which the API server
+       # pod proxy cannot reach, so use the same port-forward as the page.
+       : > /tmp/waf-out.txt
        for i in $(seq 1 30); do
-         POD=$(kubectl get pods -n agentgateway-system -o name | grep 'agentgateway-proxy' | head -1 | cut -d/ -f2)
-         kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/${POD}:15000/proxy/config_dump" > /tmp/waf-out.txt 2>/dev/null && grep -q 'waf-server-enterprise-agentgateway' /tmp/waf-out.txt && break
+         kubectl -n agentgateway-system port-forward deployment/agentgateway-proxy 15000 >/tmp/waf-pf.log 2>&1 &
+         PF_PID=$!
          sleep 3
+         curl -s http://localhost:15000/config_dump > /tmp/waf-out.txt || true
+         kill "$PF_PID" 2>/dev/null || true
+         wait "$PF_PID" 2>/dev/null || true
+         grep 'waf-server-enterprise-agentgateway' /tmp/waf-out.txt >/dev/null && break
+         sleep 2
        done
+       cat /tmp/waf-pf.log
        grep -c 'waf-server-enterprise-agentgateway' /tmp/waf-out.txt
        {{< /doc-test >}}
 - after:

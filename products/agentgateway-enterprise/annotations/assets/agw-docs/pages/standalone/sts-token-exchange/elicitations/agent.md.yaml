@@ -1,0 +1,279 @@
+format: 1
+source: assets/agw-docs/pages/standalone/sts-token-exchange/elicitations/agent.md
+blocks:
+- 972baa580ddf0a61 sh
+- 8fe8a9aa19d3407c sh
+- dde0eba159f243fe sh
+- 2cc93fffdec67b88 console
+- a4b0bf2a81885dd2 sh
+- 28d29fed0c0f1bb3 sh
+- 810658432d1132d9 sh
+- d2f2aace362e82aa
+- 41f1559bc8062246 yaml
+- f93d0f96fc8d42e3 yaml
+- 97de6e9d5f7e34f0 console
+- 4e835ac68958197c sh
+- 3e094aa174e046b4 console
+- fd540d594328e17b sh
+- 6771c0b154221007 sh
+- 511f880448b2819a console
+- 07be22437a9310df console
+- 607044ba76285479 sh
+- cc308ce3f2451d79 sh
+tags:
+- paths: mcp-elicitation-brokered-agent
+  block: 0
+  fingerprint: 972baa580ddf0a61
+  lang: sh
+  lines: 62892a1d 3db7a8c9
+  preview: cd "$HOME/agentgateway-brokered-elicitation"
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 1
+  fingerprint: 8fe8a9aa19d3407c
+  lang: sh
+  lines: 49d727d1 08167823 8ce5be2f 96abd8de 67c5a3ac 391e00e8 021fb596 7ff70646 afa07114 469bd28a 4002a67b 021fb596 acac5baa c4945f11 fe4ada09 59693229 3f42e715 2bd9c71c d10b36aa 39d4b54e 55d0c79c 021fb596 32990666 afa07114 09db9566 07f50448 e50d678d 85e448c4 2cb1ea16 a73ab379 cfae0d42 d10b36aa cfae0d42 d10b36aa abc56510
+  preview: ADMIN_TOKEN=$(curl -fsS -X POST http://localhost:8080/realms/master/protocol/ope
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 2
+  fingerprint: dde0eba159f243fe
+  lang: sh
+  lines: dde0eba1
+  preview: curl -s http://localhost:8080/realms/upstream-mcp/.well-known/openid-configurati
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 4
+  fingerprint: a4b0bf2a81885dd2
+  lang: sh
+  lines: 49d727d1 08167823 830f9f3a 96abd8de 67c5a3ac 391e00e8 021fb596 654a7d14 8c92794d 1ec16f50 be1075b9 a61b93ea 021fb596 f34b9f6a d15de3c7 aab74b88 6685a21a 4fe4e563 26427009 d10b36aa d10b36aa cfae0d42 d10b36aa abc56510
+  preview: ADMIN_TOKEN=$(curl -fsS -X POST http://localhost:8080/realms/master/protocol/ope
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 5
+  fingerprint: 28d29fed0c0f1bb3
+  lang: sh
+  lines: 45677844 c0f3d62a 1fb80000
+  preview: export AGENT_TOKEN=$(curl -fsS -X POST http://localhost:8080/realms/downstream-m
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 6
+  fingerprint: 810658432d1132d9
+  lang: sh
+  lines: 62892a1d 78b513fe 620c682b
+  preview: cd "$HOME/agentgateway-brokered-elicitation"
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 11
+  fingerprint: 4e835ac68958197c
+  lang: sh
+  lines: be262e4c 4877c191 67c5a3ac 4347ff3f af835a62
+  preview: curl -s -i -X POST http://localhost:3000/mcp/agent \
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 13
+  fingerprint: fd540d594328e17b
+  lang: sh
+  lines: bcbf316b 4877c191 67c5a3ac 4347ff3f 048a7122 22dd591a 6beaefef
+  preview: export MCP_SESSION_ID=$(curl -s -i -X POST http://localhost:3000/mcp/agent \
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 14
+  fingerprint: 6771c0b154221007
+  lang: sh
+  lines: fabb3891 4877c191 67c5a3ac 4347ff3f f852aefa 80e461be
+  preview: curl -s -X POST http://localhost:3000/mcp/agent \
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 17
+  fingerprint: 607044ba76285479
+  lang: sh
+  lines: 607044ba
+  preview: rm upstream-client-secret.txt
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-agent
+  block: 18
+  fingerprint: cc308ce3f2451d79
+  lang: sh
+  lines: 49d727d1 08167823 d2735be6 ebdfbb59 9b2c3af7 8d80fca4
+  preview: ADMIN_TOKEN=$(curl -fsS -X POST http://localhost:8080/realms/master/protocol/ope
+  form:
+    attr: paths="mcp-elicitation-brokered-agent"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 972baa580ddf0a61
+    lang: sh
+    lines: 62892a1d 3db7a8c9
+    preview: cd "$HOME/agentgateway-brokered-elicitation"
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
+       # ============================================================================
+       # Doc test coverage for "Agent (upstream-only)" (standalone; comments not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * The upstream-mcp realm and local-agent client through the Keycloak
+       #     admin API, the agent's password-grant token, and the secret file.
+       #   * The agent-mcp route and elicitation resource from Step 3, merged into
+       #     config.yaml (hidden equivalent of the hand edit), and the STS reload.
+       #   * The first initialize returns 400 with an upstream-mcp authorization URL
+       #     whose redirect_uri is the issuer's upstream callback.
+       #   * The browser step without a browser: the upstream Keycloak login form is
+       #     posted with curl, and the issuer callback answers "Authorization
+       #     complete". The retry opens a session, the Echo tool answers, and the STS
+       #     logs the agent flow lines that the page quotes.
+       #   * Clean up: the secret file and the Keycloak realm and client are removed.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * A real browser, and the `code config.yaml` editor step.
+       [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/mcp)" = "401" ] || { echo "FAIL: proxy is not answering 401" >&2; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: f93d0f96fc8d42e3
+    lang: yaml
+    lines: a7f80a73 7b1fc5bd e68ca7ba cab2be2b 234dc542 6f403570 b6e7e95c 33d39895 ebeee92c 883e1a24 b1a50bad 8281707a 501fffc8 837dd2e9
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
+       # Hidden equivalent of the hand edit in Step 3: the same route and resource.
+       python3 - <<'PY'
+       import yaml
+       with open("config.yaml") as f:
+           cfg = yaml.safe_load(f)
+       cfg["routes"].insert(0, yaml.safe_load("""
+       name: agent-mcp
+       gateways: [default]
+       matches:
+       - path: {pathPrefix: /mcp/agent}
+       policies:
+         mcpAuthentication:
+           issuer: http://localhost:8080/realms/downstream-mcp
+           audiences: [agw-issuer]
+           jwks:
+             url: http://localhost:8080/realms/downstream-mcp/protocol/openid-connect/certs
+           resourceMetadata:
+             agentgateway.dev/issuer-proxy: http://localhost:3000/oauth-issuer
+             resource: http://localhost:3000/mcp/agent
+             authorizationServers: [http://localhost:3000/mcp/agent]
+         backendAuth:
+           oauthTokenExchange:
+             host: 127.0.0.1:7777
+             path: /elicitations/oauth2/token
+             allowSubjectTokenFromClaims: true
+             subjectToken:
+               tokenType: "urn:ietf:params:oauth:token-type:jwt"
+             resources:
+             - agent-mcp
+       backends:
+       - mcp:
+           targets:
+           - name: everything
+             mcp:
+               host: 127.0.0.1
+               port: 3001
+               path: /mcp
+       """))
+       cfg["entSts"]["entElicitations"]["resources"]["agent-mcp"] = yaml.safe_load("""
+       brokered:
+         mcpResourcePath: /mcp/agent
+         chainedAuth:
+           oauth:
+             clientId: agw-upstream
+             clientSecret: {file: ./upstream-client-secret.txt}
+             authorizeUrl: http://localhost:8080/realms/upstream-mcp/protocol/openid-connect/auth
+             accessTokenUrl: http://localhost:8080/realms/upstream-mcp/protocol/openid-connect/token
+             scopes: [openid, profile]
+       """)
+       with open("config.yaml", "w") as f:
+           yaml.safe_dump(cfg, f, sort_keys=False)
+       PY
+       wait_for_log "$DT_LOGS/sts.log" '"msg":"reloaded elicitation config"'
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 4e835ac68958197c
+    lang: sh
+    lines: be262e4c 4877c191 67c5a3ac 4347ff3f af835a62
+    preview: curl -s -i -X POST http://localhost:3000/mcp/agent \
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
+       # The proxy reloads on its own schedule: retry until the new route answers 400.
+       for i in $(seq 1 30); do
+         AGENT_RESP=$(curl -s -w '\n%{http_code}' -X POST http://localhost:3000/mcp/agent \
+           -H "Authorization: Bearer ${AGENT_TOKEN}" -H "Content-Type: application/json" \
+           -H "Accept: application/json, text/event-stream" \
+           -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"local-agent","version":"1"}}}')
+         [ "$(tail -n1 <<<"$AGENT_RESP")" = "400" ] && break
+         sleep 2
+       done
+       [ "$(tail -n1 <<<"$AGENT_RESP")" = "400" ] || { echo "FAIL: expected 400" >&2; echo "$AGENT_RESP" >&2; exit 1; }
+       UPSTREAM_AUTH_URL=$(sed '$d' <<<"$AGENT_RESP" | jq -er .url)
+       case "$UPSTREAM_AUTH_URL" in
+         "http://localhost:8080/realms/upstream-mcp/protocol/openid-connect/auth?"*) ;;
+         *) echo "FAIL: URL does not point to the upstream-mcp realm: $UPSTREAM_AUTH_URL" >&2; exit 1 ;;
+       esac
+       [ "$(query_param "$UPSTREAM_AUTH_URL" redirect_uri)" = "http://localhost:3000/oauth-issuer/callback/upstream" ] \
+         || { echo "FAIL: redirect_uri $(query_param "$UPSTREAM_AUTH_URL" redirect_uri)" >&2; exit 1; }
+       # Stand-in for steps 2 and 3: sign in to the upstream realm as alice.
+       JAR=$(mktemp)
+       UPSTREAM_CB=$(kc_form_login "$UPSTREAM_AUTH_URL" alice alice-upstream-password "$JAR")
+       case "$UPSTREAM_CB" in
+         "http://localhost:3000/oauth-issuer/callback/upstream?"*) ;;
+         *) echo "FAIL: upstream login did not return to the issuer: $UPSTREAM_CB" >&2; exit 1 ;;
+       esac
+       curl -fsS -L -b "$JAR" -c "$JAR" "$UPSTREAM_CB" | grep 'Authorization complete' >/dev/null \
+         || { echo "FAIL: callback did not show Authorization complete" >&2; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 6771c0b154221007
+    lang: sh
+    lines: fabb3891 4877c191 67c5a3ac 4347ff3f f852aefa 80e461be
+    preview: curl -s -X POST http://localhost:3000/mcp/agent \
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
+       [ -n "${MCP_SESSION_ID}" ] || { echo "FAIL: empty MCP_SESSION_ID after authorization" >&2; exit 1; }
+       AGENT_ECHO=$(curl -s -X POST http://localhost:3000/mcp/agent \
+         -H "Authorization: Bearer ${AGENT_TOKEN}" -H "Content-Type: application/json" \
+         -H "Accept: application/json, text/event-stream" -H "Mcp-Session-Id: ${MCP_SESSION_ID}" \
+         -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"echo","arguments":{"message":"doc test agent echo"}}}')
+       grep -q 'Echo: doc test agent echo' <<<"$AGENT_ECHO" || { echo "FAIL: echo result" >&2; echo "$AGENT_ECHO" >&2; exit 1; }
+       for want in '"msg":"no usable credential for user; starting agent elicitation"' \
+                   '"msg":"code exchange succeeded"' \
+                   '"msg":"upstream callback processed for agent elicitation flow"' \
+                   '"msg":"served elicitation token"'; do
+         grep -F "$want" "$DT_LOGS/sts.log" >/dev/null || { echo "FAIL: STS log lacks $want" >&2; tail -n 60 "$DT_LOGS/sts.log" >&2; exit 1; }
+       done
+       {{< /doc-test >}}

@@ -434,8 +434,8 @@ hidden:
   content: |2-
        {{< doc-test paths="budget-limits-enterprise" >}}
        # Both budgets compile into controller-managed RateLimitConfigs.
-       kubectl get ratelimitconfig -n agentgateway-system -o name | grep -q 'agw-budget-global-'
-       kubectl get ratelimitconfig -n agentgateway-system -o name | grep -q 'agw-budget-per-key-budgets-'
+       kubectl get ratelimitconfig -n agentgateway-system -o name | grep 'agw-budget-global-' >/dev/null
+       kubectl get ratelimitconfig -n agentgateway-system -o name | grep 'agw-budget-per-key-budgets-' >/dev/null
        # Probe the route WITHOUT an API key: the policy answers 401 once the route,
        # the policy, and the proxy are programmed, and the probe spends no budget.
        YAMLTest -f - <<'EOF'

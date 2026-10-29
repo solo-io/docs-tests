@@ -298,12 +298,16 @@ TESTED_VERSIONS = ("latest", "main")
 
 
 def _mode_segment(doc_path: str) -> str:
-    """Extract the deployment mode ('kubernetes', 'standalone') from a doc path."""
+    """Extract the deployment mode ('kubernetes', 'standalone') from a doc path.
+
+    A site with its own content_root (content/en/agentgateway/<mode>/...) has
+    no `docs` segment, so the mode is the first segment that names one.
+    """
     parts = doc_path.replace("\\", "/").split("/")
     try:
         idx = parts.index("docs")
     except ValueError:
-        return ""
+        return next((p for p in parts if p in ("kubernetes", "standalone")), "")
     return parts[idx + 1] if len(parts) > idx + 1 else ""
 
 

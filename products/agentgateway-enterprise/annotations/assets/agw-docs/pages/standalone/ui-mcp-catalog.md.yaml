@@ -1,0 +1,71 @@
+format: 1
+source: assets/agw-docs/pages/standalone/ui-mcp-catalog.md
+blocks:
+- b47957fafb4d4edb sh
+- bc017ffae3aa5144 sh
+- b0a83b7e5a95aacb sh
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="ui-mcp-catalog" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Turn on the catalog": AGENTGATEWAY_UI_MCP_CATALOG_ENABLED=true turns the
+    #     catalog on (the UI index carries mcpCatalog: true), the alternate value
+    #     "on" does too, and without the variable the catalog is off.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The wizard steps: they are browser interactions with hosted third-party
+    #     MCP providers that need accounts and tokens.
+    #   * Docker and Helm tabs: the standalone binary test env has neither.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    mcp:
+      port: 3000
+      targets: []
+    EOF
+    catalog_flag() {
+      for _ in $(seq 1 30); do
+        body=$(curl -sf -m 2 http://localhost:15000/ui/) && break || true
+        sleep 1
+      done
+      printf '%s' "${body:-}" | grep -o 'mcpCatalog: [a-z]*' || true
+    }
+    run_with() {
+      env "$@" agentgateway -f config.yaml > agw.log 2>&1 &
+      AGW_PID=$!
+    }
+    trap 'kill $AGW_PID 2>/dev/null' EXIT
+    {{< /doc-test >}}
+- after:
+    section: Turn on the catalog
+    line: 876678adff81e391
+    occurrence: 0
+    words: 4e074085 4cd0e21a 663ea1bf 10182ab8 8e3dc1af 6201111b a12dd3a7 8e7fc023 b9776d7d 3660315a c093955c b9776d7d 7e9e5ac3 75857a45 652f5501 c3e2d78f
+    block_before:
+      block: 2
+      fingerprint: b0a83b7e5a95aacb
+      lang: sh
+      lines: d161b8e5 75e40a19 3a26b6d2 736e1ed1 b73ad32a b1113a44
+      preview: helm upgrade -i {{< reuse "agw-docs/standalone/helm-standalone-release.md" >}} \
+  content: |-
+    {{< doc-test paths="ui-mcp-catalog" >}}
+    # Catalog on with =true, as the Binary tab shows.
+    run_with AGENTGATEWAY_UI_MCP_CATALOG_ENABLED=true
+    flag=$(catalog_flag); echo "$flag"
+    [ "$flag" = "mcpCatalog: true" ] || { echo "catalog not enabled"; cat agw.log; exit 1; }
+    kill $AGW_PID; wait $AGW_PID 2>/dev/null || true
+    # "on" is also accepted.
+    run_with AGENTGATEWAY_UI_MCP_CATALOG_ENABLED=on
+    flag=$(catalog_flag); echo "$flag"
+    [ "$flag" = "mcpCatalog: true" ] || { echo "catalog not enabled by 'on'"; exit 1; }
+    kill $AGW_PID; wait $AGW_PID 2>/dev/null || true
+    # Off by default.
+    run_with -u AGENTGATEWAY_UI_MCP_CATALOG_ENABLED
+    flag=$(catalog_flag); echo "$flag"
+    [ "$flag" = "mcpCatalog: false" ] || { echo "catalog should be off by default"; exit 1; }
+    {{< /doc-test >}}

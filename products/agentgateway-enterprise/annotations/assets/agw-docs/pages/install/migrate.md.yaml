@@ -321,6 +321,13 @@ hidden:
          [ -n "$(kubectl get svc -n agentgateway-system enterprise-agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")" ] && break
          sleep 5
        done
+       # The visible curl in the next step has no retry, and the new proxy reset the
+       # first connection in CI. Wait until it serves the route.
+       ENT_ADDR=$(kubectl get svc -n agentgateway-system enterprise-agentgateway-proxy -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+       for i in $(seq 1 60); do
+         [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${ENT_ADDR}/headers" -H "host: www.example.com")" = "200" ] && break
+         sleep 2
+       done
        {{< /doc-test >}}
 - after:
     block: 16

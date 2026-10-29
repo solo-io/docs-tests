@@ -23,11 +23,19 @@ hidden:
        {{< doc-test paths="enterprise-ui-setup" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
        # that the extractor renders empty unless it runs with --product agentgateway.
+       # The CPU request overrides are test-only. The CI kind node has 2 CPUs and is
+       # already full, and ClickHouse alone requests 2 CPUs by default, so the
+       # ClickHouse and telemetry collector pods could not be scheduled.
        helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} \
          --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} \
          --version {{< reuse "agw-docs/versions/helm-version-flag.md" >}} \
          --reset-then-reuse-values \
-         --set ui.enabled=true
+         --set ui.enabled=true \
+         --set ui.clickhouse.resources.requests.cpu=100m \
+         --set ui.clickhouse.resources.requests.memory=1Gi \
+         --set ui.backend.resources.requests.cpu=50m \
+         --set ui.telemetry.k8sobjects.resources.requests.cpu=50m \
+         --set ui.telemetry.collector.resources.requests.cpu=50m
        # ============================================================================
        # Doc test coverage for "Set up the UI" (these comments are not rendered)
        # ============================================================================

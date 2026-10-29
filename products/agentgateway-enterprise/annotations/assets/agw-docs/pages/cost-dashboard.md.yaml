@@ -39,7 +39,7 @@ hidden:
        # WHAT THIS TEST DOES NOT VALIDATE (and why):
        #   * The Helm values file tab (`open` is macOS-only) and every UI tab on the
        #     page (port-forward and browser).
-       helm get values enterprise-agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o yaml | grep -q 'costManagement: true'
+       helm get values enterprise-agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o yaml | grep 'costManagement: true' >/dev/null
        kubectl rollout status deployment/{{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
        code=""
        for i in $(seq 1 30); do

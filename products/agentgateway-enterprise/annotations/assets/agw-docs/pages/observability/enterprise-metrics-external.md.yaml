@@ -110,7 +110,8 @@ hidden:
     kubectl rollout status deployment/agentgateway-metrics-opentelemetry-collector -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
     helm uninstall agentgateway-metrics -n {{< reuse "agw-docs/snippets/namespace.md" >}}
     # Option 2 needs the Prometheus Operator CRDs; no Prometheus instance is installed.
-    kubectl apply --server-side -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.81.0/stripped-down-crds.yaml
+    # v0.88.0 or later: the chart sets PodMonitor spec.scrapeNativeHistograms.
+    kubectl apply --server-side -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.94.2/stripped-down-crds.yaml
     {{< /doc-test >}}
 - after:
     block: 2

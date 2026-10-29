@@ -179,7 +179,8 @@ hidden:
        # WHAT THIS TEST VALIDATES:
        #   * "Shared setup": creating the `http` Gateway provisions the ext-auth-service,
        #     rate-limiter, and ext-cache Deployments for the default GatewayClass, and
-       #     deleting the Gateway removes them.
+       #     deleting the Gateway leaves them for the prerequisite agentgateway-proxy
+       #     Gateway, which uses the same class.
        #   * "Dedicated setup": a Gateway on a custom GatewayClass gets its own set of the
        #     three Deployments, and deleting the Gateway and class removes them.
        #   * "Update resource requests and limits": the parameters resource and GatewayClass
@@ -223,7 +224,11 @@ hidden:
     preview: kubectl delete Gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
   content: |2-
        {{< doc-test paths="shared-extensions-deployer" >}}
-       wait_count {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} 0
+       # The prerequisite agentgateway-proxy Gateway uses the same GatewayClass, so
+       # the shared Deployments stay after the http Gateway is deleted. They are
+       # removed only with the last Gateway of the class.
+       sleep 15
+       wait_count {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} 3
        {{< /doc-test >}}
 - after:
     block: 10

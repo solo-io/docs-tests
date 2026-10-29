@@ -1,0 +1,119 @@
+format: 1
+source: assets/agw-docs/pages/standalone/attribute-budgets.md
+blocks:
+- 9ad6e47e82157724 yaml
+- 288c4af02a951261 sh
+- f6931a7b2e59dbc5 sh
+- b2d189535ca1c739 sh
+- 5f9b7223a8932f7f yaml
+- 07506ca86d039dcf sh
+tags:
+- paths: attribute-budgets
+  block: 0
+  fingerprint: 9ad6e47e82157724
+  lang: yaml
+  lines: 2a7b4933 a7f80a73 2180b199 19bcae4b be9145ed 3af99526 e01ccf75 51d42664 6472803d 009395dd 6d88d930 4208ae28 bf75dafc 42464cd7 1e9034cc 9f3bc06f dc36242a 1891bc00 215d8789 1fe164f7 3f1bb532 5aea7895 abc56510
+  preview: cat <<'EOF' > config.yaml
+  form:
+    attr: paths="attribute-budgets"
+    only: true
+    lead: ' '
+- paths: attribute-budgets
+  block: 1
+  fingerprint: 288c4af02a951261
+  lang: sh
+  lines: 288c4af0
+  preview: agentgateway --validate-only -f config.yaml
+  form:
+    attr: paths="attribute-budgets"
+    only: true
+    lead: ' '
+- paths: attribute-budgets
+  block: 3
+  fingerprint: b2d189535ca1c739
+  lang: sh
+  lines: 1f8361ca fc68f389 0e152d5a
+  preview: curl -s localhost:4000/v1/chat/completions \
+  form:
+    attr: paths="attribute-budgets"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="attribute-budgets" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Set a token budget per model": the config (SQLite database + per-model
+    #     Tokens budget) passes --validate-only and serves a request (200).
+    #   * onBudgetExceeded: Block: a copy of the same config with the limit lowered
+    #     to 1 token lets the first request through, charges it after the response,
+    #     and rejects the next matching request with 429.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Real OpenAI usage: a local mock LLM stands in (no provider key or spend).
+    #   * "Set a budget per group": it needs API keys or JWTs with groups; its
+    #     config is covered by the schema check only.
+    #   * The UI Budgets page: browser only.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    export OPENAI_API_KEY=mock-key
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f6931a7b2e59dbc5
+    lang: sh
+    lines: f6931a7b
+    preview: agentgateway -f config.yaml
+  content: |-
+    {{< doc-test paths="attribute-budgets" >}}
+    {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
+    agentgateway -f config-mock.yaml > agw.log 2>&1 &
+    AGW_PID=$!
+    trap 'kill $AGW_PID $MOCK_LLM_PID 2>/dev/null' EXIT
+    for _ in $(seq 1 30); do curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && break; sleep 1; done
+    curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready || { echo "agentgateway did not become ready within 30 s"; cat agw.log; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: b2d189535ca1c739
+    lang: sh
+    lines: 1f8361ca fc68f389 0e152d5a
+    preview: curl -s localhost:4000/v1/chat/completions \
+  content: |-
+    {{< doc-test paths="attribute-budgets" >}}
+    code=$(curl -s -o /dev/null -w '%{http_code}' localhost:4000/v1/chat/completions \
+      -H "content-type: application/json" \
+      -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Hello"}]}')
+    [ "$code" = "200" ] || { echo "expected 200, got $code"; cat agw.log; exit 1; }
+    # Block: same config with a 1-token limit and a fresh database.
+    kill $AGW_PID; wait $AGW_PID 2>/dev/null || true
+    python3 - <<'PY'
+    import pathlib
+    src = pathlib.Path("config-mock.yaml").read_text()
+    assert "amount: 100000" in src and "sqlite://./data.db" in src
+    src = src.replace("amount: 100000", "amount: 1").replace("sqlite://./data.db", "sqlite://./data-block.db")
+    pathlib.Path("config-block.yaml").write_text(src)
+    PY
+    rm -f data-block.db
+    agentgateway -f config-block.yaml > agw.log 2>&1 &
+    AGW_PID=$!
+    for _ in $(seq 1 30); do curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && break; sleep 1; done
+    curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready || { echo "agentgateway did not become ready within 30 s"; cat agw.log; exit 1; }
+    # max_tokens makes the mock LLM report 5 completion tokens, well over the 1-token limit.
+    send() {
+      curl -s -o /dev/null -w '%{http_code}' localhost:4000/v1/chat/completions \
+        -H "content-type: application/json" \
+        -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Hello"}],"max_tokens":5}'
+    }
+    first=$(send)
+    [ "$first" = "200" ] || { echo "first request under the budget: expected 200, got $first"; exit 1; }
+    # Usage is charged after the response, so poll for the rejection.
+    for _ in $(seq 1 10); do
+      code=$(send); [ "$code" = "429" ] && break; sleep 1
+    done
+    [ "$code" = "429" ] || { echo "expected 429 once the token budget is used up, got $code"; cat agw.log; exit 1; }
+    {{< /doc-test >}}

@@ -242,7 +242,7 @@ hidden:
     preview: NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
   content: |2-
        {{< doc-test paths="te-idps-entra" >}}
-       kubectl get svc {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.ports[*].port}' | grep -qw 7777 \
+       kubectl get svc {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.ports[*].port}' | grep -w 7777 >/dev/null \
          || { echo "the control plane service does not list port 7777 for the STS"; exit 1; }
        {{< /doc-test >}}
 - after:
