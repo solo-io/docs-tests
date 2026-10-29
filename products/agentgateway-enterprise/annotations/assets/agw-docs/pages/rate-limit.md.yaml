@@ -3,39 +3,42 @@ source: assets/agw-docs/pages/rate-limit.md
 blocks:
 - a24448cbc7fb1791 yaml
 - 02e1b4e88350f307 yaml
-- 0100ff97136d67dc sh
+- c1a80078d07dc75f sh
 - 1b1498b64589e299 sh
-- 1a4a974e864b7bd8 sh
+- bb8645151b0bc39d sh
 - 5aab2f34f30ef40d sh
 - a61237b3ca707dd9
+- 31da87eac8f4138c sh
 - ad90452e755527c8 yaml
 - 0d3ec9a3f32a5046 yaml
-- 0100ff97136d67dc sh
+- c1a80078d07dc75f sh
 - 1b1498b64589e299 sh
 - 2396e117a4ad3651 json
-- 9026fbb71302c6e2 sh
+- 15ee7eaac47d3d54 sh
 - 6d2fe4bd29eb792e sh
 - a61237b3ca707dd9
 - 0b6bb47947df532f yaml
 - c51e42f5f91525e3 sh
 - 9c6fffd45ee71d8e yaml
-- 698ae95e0545ba46 sh
+- b28ec1e3dd3b97c2 sh
 - 2c6ea3032c973182 sh
 - e42f459cb3854f34 json
-- 582f61c7217eace8 sh
+- 25fccbd186c9e690 sh
 - 922710e6145259e7 sh
 - a61237b3ca707dd9
+- 4f9f38184acd563f sh
 - 9e592dc62f32c988 yaml
 - 48f7813d4c745618 txt
-- b676e3e580dd6c02 yaml
-- cb1024dcfb7091d5 txt
-- b1b75c8943e4e66a sh
+- 5b1a48b04c60fafe yaml
+- 46e25bf73c03d6fa txt
+- e4a72fa88ae2a22c sh
 - be698798c9ac8abe sh
 - 2396e117a4ad3651 json
-- ea99f6539c003662 sh
+- cbbc6d7863b2a6c0 sh
 - 71038a1d199f03cc sh
 - 19781dd14d67d6f7
-- 5139ec3e7efc6df1 sh
+- b0be814d9bc62a19 sh
+- 2458d0299373b002 sh
 tags:
 - paths: llm-rate-limit-enterprise
   block: 0
@@ -59,6 +62,16 @@ tags:
     lead: ' '
 - paths: llm-rate-limit-enterprise
   block: 7
+  fingerprint: 31da87eac8f4138c
+  lang: sh
+  lines: 52e57744 dc7b7b14
+  preview: kubectl delete RateLimitConfig global-rate-limit -n {{< reuse "kgw-docs/snippets
+  form:
+    attr: paths="llm-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: llm-rate-limit-enterprise
+  block: 8
   fingerprint: ad90452e755527c8
   lang: yaml
   lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 45df516f 0bebd850 36184fa5 aeeb33bd b7b5f484 c53abb73 334a1b95 a50da420 62bcae83 6a642fca a19560f5 e50b9463 0f7744e8 628e69e1 c050ac0e abc56510
@@ -68,7 +81,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-rate-limit-enterprise
-  block: 8
+  block: 9
   fingerprint: 0d3ec9a3f32a5046
   lang: yaml
   lines: 16c71da1 88b9492f c548623c 8c8c4228 45df516f 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 ceb3eed1 abc56510
@@ -78,7 +91,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-rate-limit-enterprise
-  block: 15
+  block: 16
   fingerprint: 0b6bb47947df532f
   lang: yaml
   lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 45df516f 0bebd850 36184fa5 aeeb33bd b7b5f484 3f76e9e0 a50da420 6a642fca 465f10b7 a19560f5 e50b9463 1b9c27b5 9145b974 a7eb90e4 14b0f910 abc56510
@@ -88,7 +101,7 @@ tags:
     only: true
     lead: ' '
 - paths: llm-rate-limit-enterprise
-  block: 16
+  block: 17
   fingerprint: c51e42f5f91525e3
   lang: sh
   lines: c51e42f5
@@ -98,7 +111,17 @@ tags:
     only: true
     lead: ' '
 - paths: llm-rate-limit-enterprise
-  block: 24
+  block: 25
+  fingerprint: 4f9f38184acd563f
+  lang: sh
+  lines: 194146bf 71e20567
+  preview: kubectl delete RateLimitConfig openai-rate-limit -n {{< reuse "kgw-docs/snippets
+  form:
+    attr: paths="llm-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: llm-rate-limit-enterprise
+  block: 26
   fingerprint: 9e592dc62f32c988
   lang: yaml
   lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 9568d15f 0bebd850 36184fa5 aeeb33bd 20b9a99a b7b5f484 650abc2f a50da420 58b39bf8 6a642fca a19560f5 e50b9463 99005bf9 6973c6c4 c5aa7519 abc56510
@@ -108,20 +131,30 @@ tags:
     only: true
     lead: ' '
 - paths: llm-rate-limit-enterprise
-  block: 26
-  fingerprint: b676e3e580dd6c02
+  block: 28
+  fingerprint: 5b1a48b04c60fafe
   lang: yaml
-  lines: 16c71da1 88b9492f c548623c 8c8c4228 a82014b5 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 5842c931 0bebd850 abc56510
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 f8345dc7 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 5842c931 0bebd850 abc56510
   preview: kubectl apply -f- <<EOF
   form:
     attr: paths="llm-rate-limit-enterprise"
     only: true
     lead: ' '
 - paths: llm-rate-limit-enterprise
-  block: 34
-  fingerprint: 5139ec3e7efc6df1
+  block: 36
+  fingerprint: b0be814d9bc62a19
   lang: sh
-  lines: 52e57744 194146bf dc7b7b14 71e20567
+  lines: 653c3009 88c7630a
+  preview: kubectl delete RateLimitConfig cel-rate-limit-config -n {{< reuse "kgw-docs/snip
+  form:
+    attr: paths="llm-rate-limit-enterprise"
+    only: true
+    lead: ' '
+- paths: llm-rate-limit-enterprise
+  block: 37
+  fingerprint: 2458d0299373b002
+  lang: sh
+  lines: 76976d3a 7ce96654 99f9d449 fc5b95fe 202bc0f3 34db4c18
   preview: kubectl delete RateLimitConfig global-rate-limit -n {{< reuse "kgw-docs/snippets
   form:
     attr: paths="llm-rate-limit-enterprise"
@@ -217,7 +250,7 @@ hidden:
        check_window 5
        {{< /doc-test >}}
 - after:
-    block: 8
+    block: 9
     fingerprint: 0d3ec9a3f32a5046
     lang: yaml
     lines: 16c71da1 88b9492f c548623c 8c8c4228 45df516f 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 ceb3eed1 abc56510
@@ -242,7 +275,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 14
+    block: 15
     fingerprint: a61237b3ca707dd9
     lang: ''
     lines: b77b3a6f 24e84fb2 0c1a5f6d 3ca1ea63 8cdb8317
@@ -253,7 +286,7 @@ hidden:
        check_window 2
        {{< /doc-test >}}
 - after:
-    block: 17
+    block: 18
     fingerprint: 9c6fffd45ee71d8e
     lang: yaml
     lines: e92e1c51 e52d9488 bb732336 350955ef 56bf9360 6666820d 0bebd850 c8986449 1d7e94a3 f310cef1 a5e84374 dcfcd85d a4a39e6e 1d7e94a3 3a9ba5dd 69b834a6 dcfcd85d b8724bb7 4fb4bc4f bb732336 350955ef 56bf9360 6666820d 0bebd850 c8986449 1d7e94a3 f310cef1 69a91118 dcfcd85d a4a39e6e 4fb4bc4f
@@ -278,7 +311,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 23
+    block: 24
     fingerprint: a61237b3ca707dd9
     lang: ''
     lines: b77b3a6f 24e84fb2 0c1a5f6d 3ca1ea63 8cdb8317
@@ -297,21 +330,21 @@ hidden:
        if [ -z "$limited" ]; then echo "the token rate limit was never enforced"; exit 1; fi
        {{< /doc-test >}}
 - after:
-    block: 26
-    fingerprint: b676e3e580dd6c02
+    block: 28
+    fingerprint: 5b1a48b04c60fafe
     lang: yaml
-    lines: 16c71da1 88b9492f c548623c 8c8c4228 a82014b5 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 5842c931 0bebd850 abc56510
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 f8345dc7 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 5842c931 0bebd850 abc56510
     preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="llm-rate-limit-enterprise" >}}
        YAMLTest -f - <<'EOF'
-       - name: the mcp-echo-cel-rate-limit policy is accepted
+       - name: the openai-cel-rate-limit policy is accepted
          wait:
            target:
              kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
-               name: mcp-echo-cel-rate-limit
+               name: openai-cel-rate-limit
            jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
            jsonPathExpectation:
              comparator: equals
@@ -322,7 +355,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 33
+    block: 35
     fingerprint: 19781dd14d67d6f7
     lang: ''
     lines: b77b3a6f 24e84fb2 e86620e8 3ca1ea63 8cdb8317
@@ -333,14 +366,14 @@ hidden:
        check_window 1 -H "x-user: me"
        {{< /doc-test >}}
 - after:
-    block: 34
-    fingerprint: 5139ec3e7efc6df1
+    block: 37
+    fingerprint: 2458d0299373b002
     lang: sh
-    lines: 52e57744 194146bf dc7b7b14 71e20567
+    lines: 76976d3a 7ce96654 99f9d449 fc5b95fe 202bc0f3 34db4c18
     preview: kubectl delete RateLimitConfig global-rate-limit -n {{< reuse "kgw-docs/snippets
   content: |-
     {{< doc-test paths="llm-rate-limit-enterprise" >}}
     # The cleanup on the page does not remove the CEL example resources.
     kubectl delete RateLimitConfig cel-rate-limit-config -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found
-    kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-echo-cel-rate-limit -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found
+    kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} openai-cel-rate-limit -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found
     {{< /doc-test >}}
