@@ -54,7 +54,6 @@ from doc_test_run import (
     DEFAULT_OPTIONS,
     _mode_segment,
     build_test_cases,
-    build_test_cases_from_file,
     infer_version_from_sources,
     load_annotation_reports,
     parse_front_matter,
@@ -680,17 +679,16 @@ def main() -> int:
                     "yes" if s.config is not None else "no")
     kubeconform = Kubeconform(args.kubeconform, args.kubernetes_version) if args.kubeconform else None
 
+    test_cases, _, _, _ = build_test_cases(
+        repo_root, args.docs_glob, generated_dir=repo_root / "out/tests/generated",
+        docs_tests_root=docs_tests_root,
+    )
     if args.file:
-        test_cases = []
-        for f in args.file:
-            md_file = repo_root / f if not Path(f).is_absolute() else Path(f)
-            cases, _ = build_test_cases_from_file(repo_root, md_file, generated_dir=repo_root / "out/tests/generated")
-            test_cases.extend(cases)
-    else:
-        test_cases, _, _, _ = build_test_cases(
-            repo_root, args.docs_glob, generated_dir=repo_root / "out/tests/generated",
-            docs_tests_root=docs_tests_root,
-        )
+        # Filter the full discovery rather than reading each file's front
+        # matter: most scenarios are declared in the manifests, and reading
+        # only front matter found none of them.
+        wanted = {(repo_root / f if not Path(f).is_absolute() else Path(f)).resolve() for f in args.file}
+        test_cases = [tc for tc in test_cases if Path(tc.document).resolve() in wanted]
 
     schema_cases = [tc for tc in test_cases if tc.type == "schema"]
     if not schema_cases:
