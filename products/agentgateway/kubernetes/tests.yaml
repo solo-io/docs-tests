@@ -1013,6 +1013,11 @@ scenarios:
     shell: pwsh
     page: documentation/migrate/install/windows/_index.md
     path: migrate-install-windows
+  migrate-install-windows-bash:
+    # The page's Git Bash tab, on a Windows runner with no cluster.
+    runner: windows
+    page: documentation/migrate/install/windows/_index.md
+    path: migrate-install-windows-bash
   migrate-rate-limiting:
     type:
     - schema

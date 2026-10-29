@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/kubernetes/main/documentation/migrate/install/windows/_index.md
 blocks:
-- 7d1f4166080aa1b2 powershell
+- 041aa87c874c6725 powershell
 - f775ad895f10e053 powershell
 - f9a528261aaf6a10 powershell
 - f38ed0a8045f69e8 powershell
@@ -9,12 +9,20 @@ blocks:
 - 66a80fd2c6ca0c67 powershell
 - 6df0329fa4d4723b powershell
 - 896b20f5145ad524 powershell
+- ddc74fa3518d7b50 bash
+- 35f210ebea383d78 bash
+- c2131c477b0b71de bash
+- 2afd674343fdfe5d bash
+- 8717cb3ca5cb7d02 console
+- e6f742a2871a50f3 bash
+- 09a2afb0e299be2e bash
+- 896b20f5145ad524 bash
 tags:
 - paths: migrate-install-windows
   block: 0
-  fingerprint: 7d1f4166080aa1b2
+  fingerprint: 041aa87c874c6725
   lang: powershell
-  lines: 8e144a24 ce04b7e7 2c36c94d e88038ba
+  lines: 8e144a24 ce04b7e7 2c36c94d e88038ba 8e19ab6a 3e5e53d3
   preview: $VERSION = "v0.5.0"
   form:
     attr: paths="migrate-install-windows"
@@ -80,12 +88,82 @@ tags:
     attr: paths="migrate-install-windows"
     only: true
     lead: ' '
+- paths: migrate-install-windows-bash
+  block: 8
+  fingerprint: ddc74fa3518d7b50
+  lang: bash
+  lines: 67d16d56 c9de6754 2c36c94d 0373c729
+  preview: VERSION=v0.5.0
+  form:
+    attr: paths="migrate-install-windows-bash"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows-bash
+  block: 9
+  fingerprint: 35f210ebea383d78
+  lang: bash
+  lines: 35f210eb
+  preview: curl -LO "https://github.com/kgateway-dev/ingress2gateway/releases/download/${VE
+  form:
+    attr: paths="migrate-install-windows-bash"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows-bash
+  block: 10
+  fingerprint: c2131c477b0b71de
+  lang: bash
+  lines: c2131c47
+  preview: curl -LO "https://github.com/kgateway-dev/ingress2gateway/releases/download/${VE
+  form:
+    attr: paths="migrate-install-windows-bash"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows-bash
+  block: 11
+  fingerprint: 2afd674343fdfe5d
+  lang: bash
+  lines: 2afd6743
+  preview: grep -F "  ingress2gateway_${OS}_${ARCH}.zip" checksums.txt | sha256sum --check
+  form:
+    attr: paths="migrate-install-windows-bash"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows-bash
+  block: 13
+  fingerprint: e6f742a2871a50f3
+  lang: bash
+  lines: e6f742a2
+  preview: unzip -o "ingress2gateway_${OS}_${ARCH}.zip" -d ingress2gateway
+  form:
+    attr: paths="migrate-install-windows-bash"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows-bash
+  block: 14
+  fingerprint: 09a2afb0e299be2e
+  lang: bash
+  lines: 09a2afb0
+  preview: export PATH="$PWD/ingress2gateway:$PATH"
+  form:
+    attr: paths="migrate-install-windows-bash"
+    only: true
+    lead: ' '
+- paths: migrate-install-windows-bash
+  block: 15
+  fingerprint: 896b20f5145ad524
+  lang: bash
+  lines: 896b20f5
+  preview: ingress2gateway version
+  form:
+    attr: paths="migrate-install-windows-bash"
+    only: true
+    lead: ' '
 hidden:
 - after:
     block: 0
-    fingerprint: 7d1f4166080aa1b2
+    fingerprint: 041aa87c874c6725
     lang: powershell
-    lines: 8e144a24 ce04b7e7 2c36c94d e88038ba
+    lines: 8e144a24 ce04b7e7 2c36c94d e88038ba 8e19ab6a 3e5e53d3
     preview: $VERSION = "v0.5.0"
   content: |2-
         {{< doc-test paths="migrate-install-windows" >}}
@@ -121,4 +199,31 @@ hidden:
         if ($out -notmatch [regex]::Escape($VERSION.TrimStart("v"))) { throw "version output does not mention $VERSION" }
         Set-Location ([System.IO.Path]::GetTempPath())
         Remove-Item -Recurse -Force $DocTestDir
+        {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: ddc74fa3518d7b50
+    lang: bash
+    lines: 67d16d56 c9de6754 2c36c94d 0373c729
+    preview: VERSION=v0.5.0
+  content: |2-
+        {{< doc-test paths="migrate-install-windows-bash" >}}
+        # Runs on a Windows runner in Git Bash (runner: windows in tests.yaml). Use this
+        # machine's architecture instead of the page's x86_64 example, and work in a temp folder.
+        case "$(uname -m)" in aarch64|arm64) ARCH=arm64 ;; i686|i386) ARCH=i386 ;; *) ARCH=x86_64 ;; esac
+        DOC_TEST_DIR=$(mktemp -d)
+        cd "$DOC_TEST_DIR"
+        {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 896b20f5145ad524
+    lang: bash
+    lines: 896b20f5
+    preview: ingress2gateway version
+  content: |2-
+        {{< doc-test paths="migrate-install-windows-bash" >}}
+        ingress2gateway version 2>&1 | tee version.txt
+        grep -qF "${VERSION#v}" version.txt || { echo "version output does not mention $VERSION"; exit 1; }
+        cd /
+        rm -rf "$DOC_TEST_DIR"
         {{< /doc-test >}}
