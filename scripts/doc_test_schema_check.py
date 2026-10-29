@@ -335,6 +335,12 @@ class StepResult:
     read: Set[Path] = field(default_factory=set)
 
 
+# Set in main(), before the pool forks, from --upstream-root and
+# --upstream-versions: where a {{< rebase >}} shell's content comes from. Empty
+# for a site with no shells.
+_UPSTREAM: Dict[str, Any] = {}
+
+
 def _extractor(repo_root: Path, main_rel: str, sources: List[Dict[str, Any]], version: str, mode: str,
                docs_tests_root: Optional[Path]) -> Extractor:
     definition = {
@@ -345,7 +351,8 @@ def _extractor(repo_root: Path, main_rel: str, sources: List[Dict[str, Any]], ve
         "sources": sources,
         "output": {},
     }
-    extractor = Extractor(repo_root=repo_root, definition=definition, docs_tests_root=docs_tests_root)
+    extractor = Extractor(repo_root=repo_root, definition=definition, docs_tests_root=docs_tests_root,
+                          upstream_root=_UPSTREAM.get("root"), upstream_version_for=_UPSTREAM.get("versions"))
     extractor.walk()
     return extractor
 
@@ -591,6 +598,19 @@ def main() -> int:
         default=None,
         help="Path to a docs-tests checkout, for {{< doc-test file=\"...\" >}} external content.",
     )
+    parser.add_argument(
+        "--upstream-root",
+        default=None,
+        help="Checkout of the repo this site rebases its content from, as in doc_test_run.py. "
+        "Without it a {{< rebase >}} shell has nothing to check.",
+    )
+    parser.add_argument(
+        "--upstream-versions",
+        default=None,
+        metavar="JSON",
+        help="Which upstream version directory feeds each of this site's versions, as in "
+        "doc_test_run.py (e.g. '{\"latest\": \"main\"}'). Required with --upstream-root.",
+    )
     parser.add_argument("--docs-glob", default="content/docs/**/*.md", help="Glob to discover markdown docs")
     parser.add_argument("--file", nargs="+", default=None, metavar="FILE", help="Only check test scenarios declared on these file(s)")
     parser.add_argument(
@@ -628,6 +648,19 @@ def main() -> int:
 
     repo_root = Path(args.repo_root).resolve()
     docs_tests_root = resolve_docs_tests_root(args.docs_tests_root)
+    _UPSTREAM.clear()
+    if args.upstream_root:
+        if not args.upstream_versions:
+            # Same rule as doc_test_run.py: a shell with no version map expands
+            # to nothing, and would fail for the wrong reason.
+            logger.error("--upstream-root was given without --upstream-versions.")
+            return 1
+        try:
+            _UPSTREAM["versions"] = json.loads(args.upstream_versions)
+        except json.JSONDecodeError as exc:
+            logger.error("--upstream-versions is not valid JSON: %s", exc)
+            return 1
+        _UPSTREAM["root"] = Path(args.upstream_root).resolve()
     try:
         schemas_by_version = load_schemas(parse_versioned(args.crd_dir), parse_versioned(args.config_schema))
     except ValueError as exc:

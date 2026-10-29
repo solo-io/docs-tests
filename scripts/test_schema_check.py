@@ -240,6 +240,38 @@ agentgateway -f config.yaml
 
 
 @unittest.skipUnless(importlib.util.find_spec("jsonschema"), "jsonschema is not installed")
+@unittest.skipUnless(importlib.util.find_spec("jsonschema"), "jsonschema is not installed")
+class RebaseShellTests(Base):
+    """A site whose pages are {{< rebase >}} shells has its blocks in another
+    repo. Without --upstream-root the shell has nothing to check."""
+
+    def setUp(self):
+        super().setUp()
+        self.upstream = pathlib.Path(tempfile.mkdtemp())
+        up = self.upstream / "content/docs/kubernetes/main/policy.md"
+        up.parent.mkdir(parents=True)
+        up.write_text("---\ntitle: Policy\n---\n\n" + policy_block("bogus: 1"))
+        self.key = self.write("latest", page('{{< rebase file="agw-docs/kubernetes/policy.md" >}}'))
+
+    def test_without_upstream_the_shell_has_nothing_to_check(self):
+        code, tests = self.run_check(str(self.new))
+        self.assertEqual(code, 1)
+        self.assertIn("found no recognizable", tests[self.key]["error"])
+
+    def test_with_upstream_the_upstream_blocks_are_checked(self):
+        code, tests = self.run_check(str(self.new), f"--upstream-root={self.upstream}",
+                                     '--upstream-versions={"latest": "main"}')
+        self.assertEqual(code, 1)
+        self.assertIn("bogus", tests[self.key]["error"])
+
+    def test_upstream_root_needs_a_version_map(self):
+        import doc_test_schema_check
+        argv = ["x", "--repo-root", str(self.repo), "--crd-dir", str(self.new),
+                f"--upstream-root={self.upstream}"]
+        with mock.patch.object(sys, "argv", argv):
+            self.assertEqual(quiet(doc_test_schema_check.main), 1)
+
+
 class MoreKindsTests(Base):
     """Gateway API kinds, core kinds, and standalone config files."""
 

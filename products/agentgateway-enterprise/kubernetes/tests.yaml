@@ -1,8 +1,11 @@
 # Doc-test scenario definitions for the enterprise agentgateway docs, kubernetes mode.
 #
 # Covers traffic-management: every kubernetes traffic-management scenario in
-# ../../agentgateway/kubernetes/tests.yaml, minus the schema-only ones (the
-# consuming site's workflow runs functional and live tests only).
+# ../../agentgateway/kubernetes/tests.yaml. Outside traffic-management, the
+# schema-only scenarios mirror their upstream twins (same name and path) for
+# rebase shells, and enterprise-only pages get a `<page>-schema` scenario.
+# The consuming site's workflow runs functional and live tests only today, so
+# no schema scenario here runs yet.
 #
 # The consuming site publishes the enterprise docs from its own repo; almost
 # every page there is a rebase shell,
@@ -55,9 +58,105 @@ prerequisites:
   install-standard:
     page: documentation/quickstart/install.md
     path: standard
-# Pages with deliberately no test: section indexes and concept pages, the same
-# list as the upstream manifest's traffic-management skips.
+# Pages with deliberately no test: section indexes, concept pages, release
+# notes, and reference pages. A rebase shell is skipped when its upstream twin
+# is skipped in ../../agentgateway/kubernetes/tests.yaml.
 skip:
+- page: _index.md
+- page: documentation/about/_index.md
+- page: documentation/about/architecture/_index.md
+- page: documentation/about/architecture/ext-auth.md
+- page: documentation/about/architecture/gateway-only.md
+- page: documentation/about/architecture/network.md
+- page: documentation/about/architecture/rate-limiting.md
+- page: documentation/about/architecture/token-exchange.md
+- page: documentation/about/architecture/ui-observability.md
+- page: documentation/about/architecture/waf.md
+- page: documentation/about/overview.md
+- page: documentation/about/policies/_index.md
+- page: documentation/about/policies/filter-order.md
+- page: documentation/about/policies/overview.md
+- page: documentation/about/policies/target-merge.md
+- page: documentation/agent/_index.md
+- page: documentation/agent/about.md
+- page: documentation/install/_index.md
+- page: documentation/install/advanced.md
+- page: documentation/install/argocd.md
+- page: documentation/install/tls.md
+- page: documentation/install/ui/_index.md
+- page: documentation/install/ui/explore.md
+- page: documentation/llm/_index.md
+- page: documentation/llm/api-types/_index.md
+- page: documentation/llm/cost-controls/_index.md
+- page: documentation/llm/guardrails/_index.md
+- page: documentation/llm/guardrails/webhook/_index.md
+- page: documentation/llm/guardrails/webhook/openapi-spec.md
+- page: documentation/llm/inference/_index.md
+- page: documentation/llm/models/_index.md
+- page: documentation/llm/providers.md
+- page: documentation/mcp/_index.md
+- page: documentation/mcp/about.md
+- page: documentation/mcp/apps.md
+- page: documentation/mcp/auth/_index.md
+- page: documentation/mcp/auth/about.md
+- page: documentation/mcp/elicitation/_index.md
+- page: documentation/mcp/elicitation/brokered/_index.md
+- page: documentation/mcp/elicitation/brokered/about.md
+- page: documentation/mcp/elicitation/brokered/downstream-only/_index.md
+- page: documentation/mcp/elicitation/brokered/downstream-only/overview.md
+- page: documentation/mcp/elicitation/interactive/_index.md
+- page: documentation/mcp/elicitation/overview.md
+- page: documentation/mcp/guardrails/_index.md
+- page: documentation/mcp/guardrails/about.md
+- page: documentation/mcp/spec-compatibility.md
+- page: documentation/migrate.md
+- page: documentation/observability/_index.md
+- page: documentation/observability/access-logs/_index.md
+- page: documentation/observability/metrics/_index.md
+- page: documentation/observability/traces/_index.md
+- page: documentation/observability/traces/attribute-reference.md
+- page: documentation/observability/traces/configs/_index.md
+- page: documentation/observability/traces/configs/datadog.md
+- page: documentation/observability/traces/configs/grafana-cloud.md
+- page: documentation/observability/traces/configs/honeycomb.md
+- page: documentation/observability/traces/configs/jaeger.md
+- page: documentation/observability/traces/configs/otel.md
+- page: documentation/observability/ui.md
+- page: documentation/operations/_index.md
+- page: documentation/operations/agctl.md
+- page: documentation/operations/inspect-config.md
+- page: documentation/operations/trace-requests.md
+- page: documentation/quickstart/_index.md
+- page: documentation/registry.md
+- page: documentation/resiliency/_index.md
+- page: documentation/resiliency/retry/_index.md
+- page: documentation/resiliency/retry/about.md
+- page: documentation/resiliency/timeouts/_index.md
+- page: documentation/resiliency/timeouts/about.md
+- page: documentation/security/_index.md
+- page: documentation/security/backend-authn/providers/_index.md
+- page: documentation/security/backend-authn/token-exchange/_index.md
+- page: documentation/security/backend-authn/token-exchange/idps/_index.md
+- page: documentation/security/backend-authn/token-exchange/sts/_index.md
+- page: documentation/security/backend-authn/token-exchange/sts/about.md
+- page: documentation/security/backend-authn/token-exchange/sts/elicitation.md
+- page: documentation/security/extauth/_index.md
+- page: documentation/security/extauth/oauth/_index.md
+- page: documentation/security/extauth/oauth/about.md
+- page: documentation/security/extauth/opa/_index.md
+- page: documentation/security/extauth/opa/about.md
+- page: documentation/security/jwt/_index.md
+- page: documentation/security/jwt/about.md
+- page: documentation/security/jwt/mcp.md
+- page: documentation/security/waf/_index.md
+- page: documentation/setup/_index.md
+- page: documentation/setup/customize/_index.md
+- page: documentation/setup/customize/options.md
+- page: documentation/setup/listeners/_index.md
+- page: documentation/setup/listeners/overview.md
+- page: documentation/support/_index.md
+- page: documentation/support/about.md
+- page: documentation/support/support-ticket.md
 - page: documentation/traffic-management/_index.md
 - page: documentation/traffic-management/buffer.md
 - page: documentation/traffic-management/header-control/_index.md
@@ -70,6 +169,63 @@ skip:
 - page: documentation/traffic-management/route-delegation/overview.md
 - page: documentation/traffic-management/transformations/_index.md
 - page: documentation/traffic-management/transformations/templating-language.md
+- page: integrations/_index.md
+- page: integrations/agent-runtimes/_index.md
+- page: integrations/agentic-mesh/_index.md
+- page: integrations/agentic-mesh/about.md
+- page: integrations/agentic-mesh/waypoint/_index.md
+- page: integrations/ci-cd/_index.md
+- page: integrations/llm/_index.md
+- page: integrations/llm/clients/_index.md
+- page: integrations/llm/clients/devin.md
+- page: integrations/llm/clients/microsoft-intune.md
+- page: integrations/llm/observability/_index.md
+- page: integrations/llm/observability/azure-monitor.md
+- page: integrations/llm/providers/_index.md
+- page: integrations/llm/providers/copilot.md
+- page: integrations/llm/routing/_index.md
+- page: integrations/llm/routing/vllm-semantic-router.md
+- page: integrations/mcp/_index.md
+- page: integrations/mcp/clients/claude-code.md
+- page: integrations/mcp/clients/claude-desktop.md
+- page: integrations/mcp/clients/cursor.md
+- page: integrations/mcp/clients/devin.md
+- page: integrations/mcp/clients/vscode.md
+- page: integrations/mcp/servers.md
+- page: integrations/web-uis/_index.md
+- page: not-in-version.md
+- page: reference/_index.md
+- page: reference/agctl/_index.md
+- page: reference/agctl/agctl-bug-report.md
+- page: reference/agctl/agctl-catalog-import.md
+- page: reference/agctl/agctl-catalog.md
+- page: reference/agctl/agctl-controller-log.md
+- page: reference/agctl/agctl-controller.md
+- page: reference/agctl/agctl-migrate.md
+- page: reference/agctl/agctl-proxy-config-all.md
+- page: reference/agctl/agctl-proxy-config-backends.md
+- page: reference/agctl/agctl-proxy-config.md
+- page: reference/agctl/agctl-proxy-log.md
+- page: reference/agctl/agctl-proxy-profile-cpu.md
+- page: reference/agctl/agctl-proxy-profile-heap.md
+- page: reference/agctl/agctl-proxy-profile.md
+- page: reference/agctl/agctl-proxy-trace.md
+- page: reference/agctl/agctl-proxy.md
+- page: reference/agctl/agctl-version.md
+- page: reference/agctl/agctl.md
+- page: reference/api/_index.md
+- page: reference/api/api.md
+- page: reference/api/kubernetes-gateway-api.md
+- page: reference/api/solo.md
+- page: reference/cel.md
+- page: reference/helm/_index.md
+- page: reference/helm/agentgateway-crds.md
+- page: reference/helm/agentgateway.md
+- page: reference/sbom.md
+- page: release-notes/_index.md
+- page: release-notes/changelog.md
+- page: release-notes/release-notes.md
+- page: release-notes/versions.md
 scenarios:
   access-logs:
     type:
@@ -105,6 +261,22 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/header-control/response-header.md
     path: add-response-header
+  agent-agentcore-schema:
+    type: schema
+    page: documentation/agent/agentcore.md
+    path: agent-agentcore
+  agent-runtimes-kagent-schema:
+    type: schema
+    page: integrations/agent-runtimes/kagent.md
+    path: agent-runtimes-kagent
+  axiom-schema:
+    type: schema
+    page: integrations/llm/observability/axiom.md
+    path: axiom
+  backend-authn-config-schema:
+    type: schema
+    page: documentation/security/backend-authn/_index.md
+    path: backend-authn-config
   basic:
     needs:
     - install-standard
@@ -131,6 +303,30 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/status.md
     path: change-response-status
+  clients-claude-desktop-schema:
+    type: schema
+    page: integrations/llm/clients/claude-desktop.md
+    path: clients-claude-desktop
+  conditional-policies-schema:
+    type: schema
+    page: documentation/about/policies/conditional-policies.md
+    path: conditional-policies
+  cost-attribution-schema:
+    type: schema
+    page: documentation/llm/cost-controls/attribution.md
+    path: cost-attribution
+  custom-provider-schema:
+    type: schema
+    page: integrations/llm/providers/custom.md
+    path: custom-provider
+  customize-callout-proxy-schema:
+    type: schema
+    page: documentation/setup/customize/callout-proxy.md
+    path: customize-callout-proxy
+  dataplane-metrics-schema:
+    type: schema
+    page: documentation/observability/metrics/dataplane.md
+    path: dataplane-metrics
   decode:
     type: functional
     needs:
@@ -202,6 +398,26 @@ scenarios:
     - install-standard
     page: documentation/traffic-management/grpc.md
     path: grpc
+  guardrails-bedrock-guardrails-schema:
+    type: schema
+    page: documentation/llm/guardrails/bedrock-guardrails.md
+    path: guardrails-bedrock-guardrails
+  guardrails-google-model-armor-schema:
+    type: schema
+    page: documentation/llm/guardrails/google-model-armor.md
+    path: guardrails-google-model-armor
+  guardrails-multi-layer-schema:
+    type: schema
+    page: documentation/llm/guardrails/multi-layer.md
+    path: guardrails-multi-layer
+  guardrails-overview-schema:
+    type: schema
+    page: documentation/llm/guardrails/overview.md
+    path: guardrails-overview
+  guardrails-processors-schema:
+    type: schema
+    page: documentation/mcp/guardrails/processors.md
+    path: guardrails-processors
   header-match-exact:
     needs:
     - install-standard
@@ -254,6 +470,14 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/redirect/https.md
     path: https-redirect
+  idps-google-schema:
+    type: schema
+    page: documentation/security/backend-authn/token-exchange/idps/google.md
+    path: idps-google
+  inference-routing-schema:
+    type: schema
+    page: documentation/llm/inference/inference-routing.md
+    path: inference-routing
   inject-body-field-into-body:
     type:
     - schema
@@ -293,6 +517,14 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/label.md
     path: label
+  integrations-agentic-mesh-waypoint-policies-schema:
+    type: schema
+    page: integrations/agentic-mesh/waypoint/policies.md
+    path: integrations-agentic-mesh-waypoint-policies
+  llm-model-exposure-schema:
+    type: schema
+    page: documentation/llm/about.md
+    path: llm-model-exposure
   llm-model-headers:
     type:
     - schema
@@ -305,6 +537,10 @@ scenarios:
       path: openai-setup
     page: documentation/traffic-management/transformations/llm-model-headers.md
     path: llm-model-headers
+  llm-prompt-enrichment-schema:
+    type: schema
+    page: documentation/llm/prompt-enrichment.md
+    path: llm-prompt-enrichment
   llm-transformations:
     type:
     - schema
@@ -322,6 +558,30 @@ scenarios:
     - install-standard
     page: documentation/traffic-management/locality-aware-routing.md
     path: locality-aware-routing
+  mcp-elicitation-brokered-issuer-settings-schema:
+    type: schema
+    page: documentation/mcp/elicitation/brokered/issuer-settings.md
+    path: mcp-elicitation-brokered-issuer-settings
+  mcp-https-schema:
+    type: schema
+    page: documentation/mcp/https.md
+    path: mcp-https
+  mcp-mcp-access-schema:
+    type: schema
+    page: documentation/mcp/mcp-access.md
+    path: mcp-mcp-access
+  mcp-session-schema:
+    type: schema
+    page: documentation/mcp/session.md
+    path: mcp-session
+  mcp-tool-access-schema:
+    type: schema
+    page: documentation/mcp/tool-access.md
+    path: mcp-tool-access
+  mcp-tool-mode-schema:
+    type: schema
+    page: documentation/mcp/tool-mode/_index.md
+    path: mcp-tool-mode
   method-match:
     needs:
     - install-standard
@@ -329,6 +589,10 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/match/method.md
     path: method-match
+  models-about-schema:
+    type: schema
+    page: documentation/llm/models/about.md
+    path: models-about
   multi-level:
     needs:
     - install-standard
@@ -338,6 +602,10 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/multi-level-delegation.md
     path: multi-level
+  multiple-inference-pools-schema:
+    type: schema
+    page: documentation/llm/inference/multiple-inference-pools.md
+    path: multiple-inference-pools
   native-policies:
     needs:
     - install-standard
@@ -408,6 +676,50 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/rewrite/path.md
     path: path-rewrite-prefix
+  providers-anthropic-schema:
+    type: schema
+    page: integrations/llm/providers/anthropic.md
+    path: providers-anthropic
+  providers-audio-main-schema:
+    type: schema
+    page: integrations/llm/providers/audio.md
+    path: providers-audio
+  providers-aws-schema:
+    type: schema
+    page: documentation/security/backend-authn/providers/aws.md
+    path: providers-aws
+  providers-azure-2-schema:
+    type: schema
+    page: integrations/llm/providers/azure.md
+    path: providers-azure-2
+  providers-azure-schema:
+    type: schema
+    page: documentation/security/backend-authn/providers/azure.md
+    path: providers-azure
+  providers-backend-tunnel-proxy-schema:
+    type: schema
+    page: integrations/llm/providers/backend-tunnel-proxy.md
+    path: providers-backend-tunnel-proxy
+  providers-bedrock-schema:
+    type: schema
+    page: integrations/llm/providers/bedrock.md
+    path: providers-bedrock
+  providers-copilot-schema:
+    type: schema
+    page: documentation/security/backend-authn/providers/copilot.md
+    path: providers-copilot
+  providers-gcp-schema:
+    type: schema
+    page: documentation/security/backend-authn/providers/gcp.md
+    path: providers-gcp
+  providers-typesafe-schema:
+    type: schema
+    page: integrations/llm/providers/typesafe.md
+    path: providers-typesafe
+  providers-vertex-schema:
+    type: schema
+    page: integrations/llm/providers/vertex.md
+    path: providers-vertex
   query:
     type:
     - schema
@@ -425,6 +737,10 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/match/query.md
     path: query-match
+  reference-helm-agentgateway-ui-schema:
+    type: schema
+    page: reference/helm/agentgateway-ui.md
+    path: reference-helm-agentgateway-ui
   remove-header:
     type:
     - schema
@@ -467,6 +783,22 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/rewrite.md
     path: rewrite
+  routing-kserve-schema:
+    type: schema
+    page: integrations/llm/routing/kserve.md
+    path: routing-kserve
+  security-external-secrets-schema:
+    type: schema
+    page: documentation/security/external-secrets/_index.md
+    path: security-external-secrets
+  security-waf-overview-schema:
+    type: schema
+    page: documentation/security/waf/overview.md
+    path: security-waf-overview
+  security-wimse-schema:
+    type: schema
+    page: documentation/security/wimse.md
+    path: security-wimse
   set-request-header:
     needs:
     - install-standard
@@ -535,3 +867,23 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/validate.md
     path: validate-skip
+  web-uis-chatbot-ui-schema:
+    type: schema
+    page: integrations/web-uis/chatbot-ui.md
+    path: web-uis-chatbot-ui
+  web-uis-goose-schema:
+    type: schema
+    page: integrations/web-uis/goose.md
+    path: web-uis-goose
+  web-uis-librechat-schema:
+    type: schema
+    page: integrations/web-uis/librechat.md
+    path: web-uis-librechat
+  web-uis-open-webui-schema:
+    type: schema
+    page: integrations/web-uis/open-webui.md
+    path: web-uis-open-webui
+  webhook-guardrails-schema:
+    type: schema
+    page: documentation/llm/guardrails/webhook/guardrails.md
+    path: webhook-guardrails
