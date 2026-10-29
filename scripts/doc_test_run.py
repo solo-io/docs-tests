@@ -1461,10 +1461,13 @@ def main() -> int:
 
     if args.types:
         allowed_types = {t.strip() for t in args.types.split(",") if t.strip()}
+        # A warning, not an error: a content repo's workflow can still pass a
+        # removed type (`functional,live`) for as long as it takes to update it,
+        # and no scenario can declare one, so ignoring it changes nothing.
         unknown_types = sorted(allowed_types - set(TEST_TYPES))
         if unknown_types:
-            logger.error("--types names %s; use %s.", ", ".join(unknown_types), " or ".join(TEST_TYPES))
-            return 1
+            logger.warning("--types names %s, which no scenario can have; ignoring. Use %s.",
+                           ", ".join(unknown_types), " or ".join(TEST_TYPES))
         skipped = [tc for tc in test_cases if tc.type not in allowed_types]
         test_cases = [tc for tc in test_cases if tc.type in allowed_types]
         for tc in skipped:
