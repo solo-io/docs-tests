@@ -167,5 +167,22 @@ class Baseline(unittest.TestCase):
             self.assertEqual(tc.load_baseline(path), {tc.finding_key(fs[0])})
 
 
+class UpstreamVersions(unittest.TestCase):
+    def test_only_versions_in_the_upstream_map_are_checked(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for v in ("latest", "main"):
+                (root / f"content/docs/kubernetes/{v}").mkdir(parents=True)
+                (root / f"content/docs/kubernetes/{v}/p.md").write_text("---\ntitle: t\n---\n")
+            args = (root, root / "tests.yaml", "kubernetes", "content/docs", {"page": "p.md"}, None, {}, root,
+                    None, {})
+            try:
+                tc.doc_test_schema_check._UPSTREAM["versions"] = {"latest": "main"}
+                self.assertEqual(list(tc._facts_by_version(*args)), ["latest"])
+            finally:
+                tc.doc_test_schema_check._UPSTREAM.pop("versions", None)
+            self.assertEqual(sorted(tc._facts_by_version(*args)), ["latest", "main"])
+
+
 if __name__ == "__main__":
     unittest.main()
