@@ -46,7 +46,7 @@ hidden:
     AGW_LOG=/tmp/doc-test-phoenix-agw.log
     trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true; docker rm -f doc-test-phoenix >/dev/null 2>&1 || true' EXIT
     docker rm -f doc-test-phoenix >/dev/null 2>&1 || true
-    docker run -d --name doc-test-phoenix -p 6006:6006 -p 4317:4317 arizephoenix/phoenix:latest
+    docker run -d --name doc-test-phoenix -e PHOENIX_ENABLE_AUTH=false -p 6006:6006 -p 4317:4317 arizephoenix/phoenix:latest
     for _ in $(seq 1 90); do
       curl -sf -o /dev/null -m 3 http://localhost:6006/v1/projects && break
       sleep 2
