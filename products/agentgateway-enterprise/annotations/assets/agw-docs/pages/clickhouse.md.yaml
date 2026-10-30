@@ -8,7 +8,7 @@ blocks:
 - 085439d6f6efc2c3 sh
 - 9d82f2ca4face8cd sh
 - 280927e6e9d10dfb sh
-- cce2b0782ea62851 sh
+- 61b4caa9f9906407 sh
 - cd255fffec0dbcc8 sh
 - fa815ee1609d6693 sh
 - 73fc90c96d2d7099 sh
@@ -139,15 +139,16 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 7
-    fingerprint: cce2b0782ea62851
+    fingerprint: 61b4caa9f9906407
     lang: sh
-    lines: 94f580d1 2e0ef943 9f1e5fdd
-    preview: export IMG=us-docker.pkg.dev/solo-public/{{< reuse "agw-docs/snippets/helm-agent
+    lines: 503cab20 2e0ef943 9f1e5fdd
+    preview: export IMG=us-docker.pkg.dev/solo-public/solo-enterprise/solo-enterprise-migrati
+  blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
        # that the extractor renders empty unless it runs with --product agentgateway.
-       export IMG=us-docker.pkg.dev/solo-public/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}/solo-enterprise-migrations:{{< reuse "agw-docs/versions/n-patch.md" >}}
+       export IMG=us-docker.pkg.dev/solo-public/solo-enterprise/solo-enterprise-migrations:{{< reuse "conrefs/versions/mgmt-ui.md" >}}
        export CH_PASSWORD=$(kubectl get secret {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}-clickhouse-auth -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.password}' | base64 -d)
        export FLAGS="--host {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}-clickhouse --database agentgateway --username default --password ${CH_PASSWORD} --migrations-path /migrations"
        {{< /doc-test >}}
