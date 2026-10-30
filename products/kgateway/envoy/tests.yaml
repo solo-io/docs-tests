@@ -524,9 +524,7 @@ scenarios:
   control-plane-metrics:
     # Reads the control plane /metrics endpoint through the API server's
     # service proxy instead of port-forwarding.
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - httpbin
@@ -2138,9 +2136,7 @@ scenarios:
     # httpbin sample, with the placeholder delete commands filled in, and checks
     # that the routes, Gateways, control plane, CRDs, namespaces, Gateway API
     # CRDs, and httpbin are gone.
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - httpbin
@@ -2150,10 +2146,9 @@ scenarios:
     # Starts from the previous minor release (a hidden step installs it and
     # the httpbin sample), then follows the page's upgrade steps on the
     # standard channel and checks the new control plane and proxy versions
-    # and that routing still works.
-    type:
-    - schema
-    - functional
+    # and that routing still works. Functional only: the page has no custom
+    # resources for a schema check.
+    type: functional
     source: kgw-docs/pages/operations/upgrade.md
     path: upgrade
   upgrade-experimental:
