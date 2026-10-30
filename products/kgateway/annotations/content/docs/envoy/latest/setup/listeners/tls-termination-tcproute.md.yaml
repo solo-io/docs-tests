@@ -1,0 +1,526 @@
+format: 1
+source: content/docs/envoy/latest/setup/listeners/tls-termination-tcproute.md
+blocks:
+- 364f4c60ae2e6d8f sh
+- f2145954c53295ce sh
+- d4b0fcee86300f76 sh
+- d5135328a89775f6 sh
+- 230d6872c3d5d807 sh
+- 593bef8a01c13b2c yaml
+- 6bb8ca45dd18dcd9 yaml
+- 3a218803423c59bc yaml
+- d2d84c023adc5980 sh
+- d183370d227f27da yaml
+- b788689c48ab173c yaml
+- cb12ad227b94bb49 sh
+- c437588093661e86 sh
+- 5c7661fe45219da1 sh
+- 633f4bc8741c4326 console
+- c6e56407f9677df8 sh
+- a9aeae221e2dee5d sh
+- 633f4bc8741c4326 console
+- 18573d7bc98be922 sh
+- 111b4376da465d9f sh
+tags:
+- paths: tls-termination-tcproute,tls-termination-tcproute-listenerset
+  block: 0
+  fingerprint: 364f4c60ae2e6d8f
+  lang: sh
+  lines: 364f4c60
+  preview: mkdir example_certs
+  form:
+    attr: paths="tls-termination-tcproute,tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute,tls-termination-tcproute-listenerset
+  block: 1
+  fingerprint: f2145954c53295ce
+  lang: sh
+  lines: eccec4f8 e89c1db5 fbe800f1
+  preview: openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 \
+  form:
+    attr: paths="tls-termination-tcproute,tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute,tls-termination-tcproute-listenerset
+  block: 2
+  fingerprint: d4b0fcee86300f76
+  lang: sh
+  lines: a22e047b ec8675ee 91fd91f7 fb111352 4413c7e9 3ae939d2 936175d9 d43df850 d64f2f49 3f9613a1 31fe2619 60a9b85b b318e09b 8c70d593 8c2e6043 abc56510
+  preview: cat <<'EOF' > example_certs/gateway.cnf
+  form:
+    attr: paths="tls-termination-tcproute,tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute,tls-termination-tcproute-listenerset
+  block: 3
+  fingerprint: d5135328a89775f6
+  lang: sh
+  lines: 93b03da8 4463fab5 51539cf6 73dbd25f cfc18677 0b0bd3da e5b521a4 a92bf41b
+  preview: openssl req -new -nodes \
+  form:
+    attr: paths="tls-termination-tcproute,tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute,tls-termination-tcproute-listenerset
+  block: 4
+  fingerprint: 230d6872c3d5d807
+  lang: sh
+  lines: 2337fa50 1bd2e2c1 d4aa484c 68382244
+  preview: kubectl create secret tls tls-terminate-tcp \
+  form:
+    attr: paths="tls-termination-tcproute,tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute
+  block: 5
+  fingerprint: 593bef8a01c13b2c
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 4a4b84c6 0bebd850 fa1e8330 f6da4fb9 36184fa5 c281d1bb c10d7538 f582457e 93a32401 f51d9754 3195c5f5 f7446fcf bc611839 0d98be35 a67acb0a 5f37c61e d94df5c7 cda3fdb3 c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-termination-tcproute"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute-listenerset
+  block: 6
+  fingerprint: 6bb8ca45dd18dcd9
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 4a4b84c6 0bebd850 fa1e8330 f6da4fb9 36184fa5 c281d1bb 14fc2dbb c3201545 e83d405d c10d7538 594e2089 da480536 ad36ba0b 3195c5f5 f7446fcf bc611839 0d98be35 a67acb0a 5f37c61e d94df5c7 cda3fdb3 c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute-listenerset
+  block: 7
+  fingerprint: 3a218803423c59bc
+  lang: yaml
+  lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 e09115ff 0bebd850 fa1e8330 f6da4fb9 36184fa5 0b7ce857 4a4b84c6 0bebd850 cd44d8cd 350955ef c10d7538 594e2089 f51d9754 a2059365 3195c5f5 f7446fcf bc611839 0d98be35 a67acb0a 5f37c61e d94df5c7 cda3fdb3 c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute,tls-termination-tcproute-listenerset
+  block: 8
+  fingerprint: d2d84c023adc5980
+  lang: sh
+  lines: d2d84c02
+  preview: kubectl get gateway tls-terminate-tcp -n {{< reuse "kgw-docs/snippets/namespace.
+  form:
+    attr: paths="tls-termination-tcproute,tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute
+  block: 9
+  fingerprint: d183370d227f27da
+  lang: yaml
+  lines: 16c71da1 8c67597e 53721f39 8c8c4228 936728d5 0f10c5bc fa1e8330 f6da4fb9 36184fa5 d3d416e7 0d98be35 0bebd850 9653e285 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-termination-tcproute"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute-listenerset
+  block: 10
+  fingerprint: b788689c48ab173c
+  lang: yaml
+  lines: 16c71da1 8c67597e 53721f39 8c8c4228 936728d5 0f10c5bc fa1e8330 f6da4fb9 36184fa5 d3d416e7 1eac5da9 0bebd850 a8f2cfa5 350955ef fbd9507b 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute,tls-termination-tcproute-listenerset
+  block: 11
+  fingerprint: cb12ad227b94bb49
+  lang: sh
+  lines: 6a06b25f 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="tls-termination-tcproute,tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute,tls-termination-tcproute-listenerset
+  block: 12
+  fingerprint: c437588093661e86
+  lang: sh
+  lines: 0b151530 0069269e 8c7b4acf
+  preview: curl -vi --resolve "app.example.com:8443:${INGRESS_GW_ADDRESS}" \
+  form:
+    attr: paths="tls-termination-tcproute,tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute
+  block: 18
+  fingerprint: 18573d7bc98be922
+  lang: sh
+  lines: ea5edd3f 61a141e5 9c0792a6
+  preview: kubectl delete -A gateways,tcproutes -l example=tls-terminate-tcp
+  form:
+    attr: paths="tls-termination-tcproute"
+    only: true
+    lead: ' '
+- paths: tls-termination-tcproute-listenerset
+  block: 19
+  fingerprint: 111b4376da465d9f
+  lang: sh
+  lines: 6cddb0ee 61a141e5 9c0792a6
+  preview: kubectl delete -A gateways,tcproutes,listenersets -l example=tls-terminate-tcp
+  form:
+    attr: paths="tls-termination-tcproute-listenerset"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Create a TLS certificate
+    line: b430921dd1a14615
+    occurrence: 0
+    words: 6b86b273 fa8847b0 ca978112 33317878 663ea1bf 824d80d7 4d040d3f b7e651cb 631aada4 58296753
+    block_before: null
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="tls-termination-tcproute,tls-termination-tcproute-listenerset" >}}
+       # Scenarios share the runner's working directory, and the next step's
+       # `mkdir example_certs` fails if an earlier scenario left the folder behind.
+       rm -rf example_certs
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 3a218803423c59bc
+    lang: yaml
+    lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 e09115ff 0bebd850 fa1e8330 f6da4fb9 36184fa5 0b7ce857 4a4b84c6 0bebd850 cd44d8cd 350955ef c10d7538 594e2089 f51d9754 a2059365 3195c5f5 f7446fcf bc611839 0d98be35 a67acb0a 5f37c61e d94df5c7 cda3fdb3 c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |2-
+          {{< doc-test paths="tls-termination-tcproute-listenerset" >}}
+          YAMLTest -f - <<'EOF'
+          - name: wait for the my-tls-terminate-tcp-listenerset ListenerSet to be accepted
+            wait:
+              target:
+                kind: ListenerSet
+                metadata:
+                  namespace: kgateway-system
+                  name: my-tls-terminate-tcp-listenerset
+              jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: d2d84c023adc5980
+    lang: sh
+    lines: d2d84c02
+    preview: kubectl get gateway tls-terminate-tcp -n {{< reuse "kgw-docs/snippets/namespace.
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="tls-termination-tcproute" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the tls-terminate-tcp Gateway to be accepted
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: tls-terminate-tcp
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: d2d84c023adc5980
+    lang: sh
+    lines: d2d84c02
+    preview: kubectl get gateway tls-terminate-tcp -n {{< reuse "kgw-docs/snippets/namespace.
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="tls-termination-tcproute-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the tls-terminate-tcp Gateway to be accepted with a ListenerSet
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: tls-terminate-tcp
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: the tls-terminate-tcp Gateway reports one attached ListenerSet
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: tls-terminate-tcp
+           jsonPath: "$.status.attachedListenerSets"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: d183370d227f27da
+    lang: yaml
+    lines: 16c71da1 8c67597e 53721f39 8c8c4228 936728d5 0f10c5bc fa1e8330 f6da4fb9 36184fa5 d3d416e7 0d98be35 0bebd850 9653e285 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |-
+    {{< doc-test paths="tls-termination-tcproute" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tls-terminate-tcp Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: tls-terminate-tcp
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls listener on the tls-terminate-tcp Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: tls-terminate-tcp
+        jsonPath: "$.status.listeners[?(@.name=='tls')].conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls-terminate-tcp-route TCPRoute to be accepted
+      wait:
+        target:
+          kind: TCPRoute
+          metadata:
+            namespace: httpbin
+            name: tls-terminate-tcp-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls-terminate-tcp-route TCPRoute backend refs to be resolved
+      wait:
+        target:
+          kind: TCPRoute
+          metadata:
+            namespace: httpbin
+            name: tls-terminate-tcp-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: the tls listener on the tls-terminate-tcp Gateway has 1 attached route
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: tls-terminate-tcp
+        jsonPath: "$.status.listeners[?(@.name=='tls')].attachedRoutes"
+        jsonPathExpectation:
+          comparator: equals
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls-terminate-tcp gateway service to get a load balancer address (Gateway listeners)
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: tls-terminate-tcp
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: b788689c48ab173c
+    lang: yaml
+    lines: 16c71da1 8c67597e 53721f39 8c8c4228 936728d5 0f10c5bc fa1e8330 f6da4fb9 36184fa5 d3d416e7 1eac5da9 0bebd850 a8f2cfa5 350955ef fbd9507b 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |-
+    {{< doc-test paths="tls-termination-tcproute-listenerset" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the my-tls-terminate-tcp-listenerset ListenerSet to be programmed
+      wait:
+        target:
+          kind: ListenerSet
+          metadata:
+            namespace: kgateway-system
+            name: my-tls-terminate-tcp-listenerset
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls-listener-set listener on the my-tls-terminate-tcp-listenerset ListenerSet to be programmed
+      wait:
+        target:
+          kind: ListenerSet
+          metadata:
+            namespace: kgateway-system
+            name: my-tls-terminate-tcp-listenerset
+        jsonPath: "$.status.listeners[?(@.name=='tls-listener-set')].conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls-terminate-tcp-route TCPRoute to be accepted
+      wait:
+        target:
+          kind: TCPRoute
+          metadata:
+            namespace: httpbin
+            name: tls-terminate-tcp-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls-terminate-tcp-route TCPRoute backend refs to be resolved
+      wait:
+        target:
+          kind: TCPRoute
+          metadata:
+            namespace: httpbin
+            name: tls-terminate-tcp-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: the tls-terminate-tcp-route TCPRoute reports the ListenerSet as its parent
+      wait:
+        target:
+          kind: TCPRoute
+          metadata:
+            namespace: httpbin
+            name: tls-terminate-tcp-route
+        jsonPath: "$.status.parents[0].parentRef.kind"
+        jsonPathExpectation:
+          comparator: equals
+          value: "ListenerSet"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    - name: the tls-listener-set listener on the my-tls-terminate-tcp-listenerset ListenerSet has 1 attached route
+      wait:
+        target:
+          kind: ListenerSet
+          metadata:
+            namespace: kgateway-system
+            name: my-tls-terminate-tcp-listenerset
+        jsonPath: "$.status.listeners[?(@.name=='tls-listener-set')].attachedRoutes"
+        jsonPathExpectation:
+          comparator: equals
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls-terminate-tcp gateway service to get a load balancer address (ListenerSet)
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: tls-terminate-tcp
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: cb12ad227b94bb49
+    lang: sh
+    lines: 6a06b25f 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="tls-termination-tcproute,tls-termination-tcproute-listenerset" >}}
+       # Terminate: the gateway presents its own certificate (CN=*.example.com).
+       # s_client verifies the chain against the page's root CA and the name, so a
+       # wrong certificate fails here; the subject proves which certificate it was.
+       subject=""
+       for i in $(seq 1 60); do
+         subject=$(openssl s_client -connect "${INGRESS_GW_ADDRESS}:8443" -servername app.example.com \
+           -CAfile example_certs/root.crt -verify_hostname app.example.com -verify_return_error </dev/null 2>/dev/null \
+           | openssl x509 -noout -subject -nameopt RFC2253 2>/dev/null) && [ -n "$subject" ] && break
+         echo "attempt $i: no verified certificate for app.example.com yet, retrying"
+         sleep 2
+       done
+       echo "app.example.com: $subject"
+       [[ "$subject" == *"CN=*.example.com"* && "$subject" == *"O=any domain"* ]] || { echo "app.example.com did not get the certificate with CN=*.example.com, O=any domain"; exit 1; }
+       # The request verifies the certificate against the root CA (no -k).
+       code=""
+       for i in $(seq 1 60); do
+         code=$(curl -sS -o /tmp/doc-test-body -D /tmp/doc-test-headers -w '%{http_code}' --cacert example_certs/root.crt \
+           --resolve "app.example.com:8443:${INGRESS_GW_ADDRESS}" https://app.example.com:8443/status/200) && [ "$code" = "200" ] && break
+         echo "attempt $i: got '${code:-no response}' from app.example.com, retrying"
+         sleep 2
+       done
+       [ "$code" = "200" ] || { echo "HTTPS request to app.example.com/status/200 with certificate verification did not return 200"; exit 1; }
+       # The request verifies the certificate against the root CA (no -k).
+       code=""
+       for i in $(seq 1 60); do
+         code=$(curl -sS -o /tmp/doc-test-body -D /tmp/doc-test-headers -w '%{http_code}' --cacert example_certs/root.crt \
+           --resolve "app.example.com:8443:${INGRESS_GW_ADDRESS}" https://app.example.com:8443/headers) && [ "$code" = "200" ] && break
+         echo "attempt $i: got '${code:-no response}' from app.example.com, retrying"
+         sleep 2
+       done
+       [ "$code" = "200" ] || { echo "HTTPS request to app.example.com/headers with certificate verification did not return 200"; exit 1; }
+       grep -q 'app.example.com' /tmp/doc-test-body || { echo "response from app.example.com/headers does not contain app.example.com"; cat /tmp/doc-test-body; exit 1; }
+       {{< /doc-test >}}

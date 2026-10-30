@@ -1,0 +1,196 @@
+format: 1
+source: assets/kgw-docs/pages/security/oauth/two-backends.md
+blocks:
+- 67473add3b6262cd sh
+- 359e3a28f8424e7e yaml
+- 838c45d0b70585d9 yaml
+- b8e6cb750369a5c3 sh
+- 6c50f43a6f42c191 yaml
+- bfa5795dac738138 yaml
+- 0cb8123ebc5e6901 sh
+- b41221bb568c5b0a sh
+- 6364ab47a888e2d8 text
+- 0fe7492dd40b4966 sh
+tags:
+- paths: two-backends
+  block: 0
+  fingerprint: 67473add3b6262cd
+  lang: sh
+  lines: 67473add
+  preview: kubectl get gatewayextension keycloak-oauth2 -n {{< reuse "kgw-docs/snippets/nam
+  form:
+    attr: paths="two-backends"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 67473add3b6262cd
+    lang: sh
+    lines: 67473add
+    preview: kubectl get gatewayextension keycloak-oauth2 -n {{< reuse "kgw-docs/snippets/nam
+  content: |-
+    {{< doc-test paths="two-backends" >}}
+    if ! grep -q 'name: keycloak-oauth2' gatewayextension-oauth2.yaml; then
+      echo "FAIL: gatewayextension-oauth2.yaml does not hold the keycloak-oauth2 GatewayExtension"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 838c45d0b70585d9
+    lang: yaml
+    lines: 5a05cd6c 20ed7317 8c8c4228 27d1d7e9 0bebd850 36184fa5 c582fe46 2efcbf93 bfce7f60 f5a5d203 c6ba4159
+    preview: 'apiVersion: {{< reuse "kgw-docs/snippets/gatewayparam-apiversion.md" >}}'
+  content: |-
+    {{< doc-test paths="two-backends" >}}
+    # Test-only Keycloak stand-in for steps 2 to 4. The Cognito Backend above is
+    # not reachable from the test, and step 4 applies a cognito-jwks-backend.yaml
+    # file that the page never creates. Instead, create a second Backend for the
+    # in-cluster Keycloak, used only for JWKS, and add jwt.jwksURI,
+    # jwt.jwksBackendRef, and jwt.accessToken to the keycloak-oauth2
+    # GatewayExtension. jwksURI is set explicitly so that no OIDC discovery runs.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: Backend
+    metadata:
+      name: keycloak-jwks
+      namespace: kgateway-system
+    spec:
+      type: Static
+      static:
+        hosts:
+        - host: keycloak.keycloak.svc.cluster.local
+          port: 8443
+    ---
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: BackendConfigPolicy
+    metadata:
+      name: keycloak-jwks-tls
+      namespace: kgateway-system
+    spec:
+      targetRefs:
+        - group: gateway.kgateway.dev
+          kind: Backend
+          name: keycloak-jwks
+      tls:
+        insecureSkipVerify: true
+    EOF
+    kubectl patch gatewayextension keycloak-oauth2 -n kgateway-system --type=merge -p '{"spec":{"oauth2":{"jwt":{"jwksURI":"https://keycloak.example.com/realms/myrealm/protocol/openid-connect/certs","jwksBackendRef":{"group":"gateway.kgateway.dev","kind":"Backend","name":"keycloak-jwks"},"accessToken":{"audiences":["kgateway-client"]}}}}}'
+    YAMLTest -f - <<'EOF'
+    - name: the keycloak-oauth2 GatewayExtension fetches JWKS through the keycloak-jwks Backend
+      wait:
+        target:
+          kind: GatewayExtension
+          metadata:
+            namespace: kgateway-system
+            name: keycloak-oauth2
+        jsonPath: "$.spec.oauth2.jwt.jwksBackendRef.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: keycloak-jwks
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: the keycloak-oauth2 TrafficPolicy is still accepted after the GatewayExtension change
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: keycloak-oauth2
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 180
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Verify the configuration
+    line: 546718fed01d1a74
+    occurrence: 0
+    words: 935f6831 b9776d7d 78236fd5 fa51fd49 0c7fcf41 88d4230f bb0347a4 f86b1f62 aa9e9b5c ca978112 27badc98 2689367b a9f4b3d2
+    block_before:
+      block: 8
+      fingerprint: 6364ab47a888e2d8
+      lang: text
+      lines: 6364ab47
+      preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="two-backends" >}}
+    # With jwt.accessToken set, the gateway validates the access token from the
+    # code exchange against the JWKS that it fetches through keycloak-jwks. Log in
+    # headless (cookie jar, Keycloak login form, gateway callback) over the HTTPS
+    # listener; a 200 from httpbin at the end means the JWKS fetch through the
+    # separate Backend worked.
+    jar=$(mktemp); body=$(mktemp); hdr=$(mktemp)
+    kc() {
+      curl -sk --max-time 20 \
+        --connect-to "www.example.com:443:${INGRESS_GW_ADDRESS}:8443" \
+        --connect-to "keycloak.example.com:443:${KEYCLOAK_ADDRESS}:443" \
+        -b "$jar" -c "$jar" -D "$hdr" -o "$body" -w '%{http_code}' "$@" || true
+    }
+    location() { grep -i '^location:' "$hdr" | head -1 | cut -d' ' -f2- | tr -d '\r' || true; }
+    fail() { echo "FAIL: $1"; echo "--- headers"; cat "$hdr"; echo "--- body (first 40 lines)"; head -40 "$body"; exit 1; }
+    code=000
+    for i in $(seq 1 30); do
+      code=$(kc "https://www.example.com/headers")
+      [ "$code" = "302" ] && break
+      sleep 5
+    done
+    [ "$code" = "302" ] || fail "GET https://www.example.com/headers without a session returned ${code}, want 302"
+    code=$(kc "$(location)")
+    [ "$code" = "200" ] || fail "the Keycloak login page returned ${code}, want 200"
+    action=$(python3 -c 'import html, re, sys; t = open(sys.argv[1]).read(); m = re.search(r"<form[^>]*id=\"kc-form-login\"[^>]*>", t, re.S); a = re.search(r"action=\"([^\"]+)\"", m.group(0)) if m else None; print(html.unescape(a.group(1)) if a else "")' "$body")
+    [ -n "$action" ] || fail "no kc-form-login form on the Keycloak login page"
+    code=$(kc --data-urlencode "username=testuser" --data-urlencode "password=password" --data-urlencode "credentialId=" "$action")
+    [ "$code" = "302" ] || fail "posting testuser/password to the Keycloak login form returned ${code}, want 302"
+    code=$(kc "$(location)")
+    [ "$code" = "302" ] || fail "the gateway callback returned ${code}, want 302 back to the original URL"
+    code=$(kc "https://www.example.com/headers")
+    [ "$code" = "200" ] || fail "with jwksBackendRef, GET https://www.example.com/headers after login returned ${code}, want 200 (JWKS fetch or token validation failed)"
+    echo "login through the gateway works with JWKS from the keycloak-jwks Backend"
+    {{< /doc-test >}}
+- after:
+    section: Verify the configuration
+    line: 546718fed01d1a74
+    occurrence: 0
+    words: 935f6831 b9776d7d 78236fd5 fa51fd49 0c7fcf41 88d4230f bb0347a4 f86b1f62 aa9e9b5c ca978112 27badc98 2689367b a9f4b3d2
+    block_before:
+      block: 8
+      fingerprint: 6364ab47a888e2d8
+      lang: text
+      lines: 6364ab47
+      preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="two-backends" >}}
+    # The page's own check: a request over HTTP with a Bearer token gets 200.
+    # TOKEN is not set anywhere on the page, so fetch one from Keycloak.
+    TOKEN=$(curl -sk --max-time 10 --connect-to "keycloak.example.com:443:${KEYCLOAK_ADDRESS}:443" \
+      -d "client_id=kgateway-client" -d "client_secret=kgateway-client-secret" \
+      -d "username=testuser" -d "password=password" -d "grant_type=password" \
+      "https://keycloak.example.com/realms/myrealm/protocol/openid-connect/token" | jq -r '.access_token // empty' || true)
+    if [ -z "$TOKEN" ]; then
+      echo "FAIL: Keycloak returned no access token for testuser"
+      exit 1
+    fi
+    export TOKEN
+    YAMLTest -f - <<'EOF'
+    - name: two-backends - a request with a Bearer token gets 200, as the Verify section says
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Bearer ${TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

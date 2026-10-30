@@ -1,0 +1,546 @@
+format: 1
+source: assets/kgw-docs/pages/security/ratelimit/global.md
+blocks:
+- ede47d51505a72a7 mermaid
+- 7278a49ced7749ca sh
+- 560ee20623f7a7f7 bash
+- 077c6c15923b0e18 sh
+- b9cf2b250dac167d console
+- 7492d5f28f143c29 yaml
+- 83ccb7192c38ffa0 sh
+- 3fdf59472cd0dfbe yaml
+- dedbe332d4c4555f yaml
+- e3b0b389dacb39b6 yaml
+- ae6c2cab1d5e33f0 yaml
+- 495e7513e700cdf0 yaml
+- 0df07caf855f8cbb yaml
+- e2de0a3649dcfbfa yaml
+- 203d0729f7bae309 sh
+- 1a1d7641506a4ebb sh
+- 4259049d37c460ce txt
+- 203d0729f7bae309 sh
+- 1a1d7641506a4ebb sh
+- bcf79b5f37aaa15d txt
+- 3ee1a1831badd813 sh
+tags:
+- paths: global,global-path,global-user,global-nested,global-local-global,global-shadow
+  block: 1
+  fingerprint: 7278a49ced7749ca
+  lang: sh
+  lines: 7278a49c
+  preview: kubectl create namespace kgateway-test-extensions
+  form:
+    attr: paths="global,global-path,global-user,global-nested,global-local-global,global-shadow"
+    only: true
+    lead: ' '
+- paths: global,global-path,global-user,global-nested,global-local-global,global-shadow
+  block: 2
+  fingerprint: 560ee20623f7a7f7
+  lang: bash
+  lines: 560ee206
+  preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  form:
+    attr: paths="global,global-path,global-user,global-nested,global-local-global,global-shadow"
+    only: true
+    lead: ' '
+- paths: global
+  block: 3
+  fingerprint: 077c6c15923b0e18
+  lang: sh
+  lines: 077c6c15
+  preview: kubectl describe configmap ratelimit-config -n kgateway-test-extensions
+  form:
+    attr: paths="global"
+    only: true
+    lead: ' '
+- paths: global,global-path,global-user,global-nested,global-local-global,global-shadow
+  block: 5
+  fingerprint: 7492d5f28f143c29
+  lang: yaml
+  lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 0bebd850 79f52d9b 36184fa5 39626be5 a50da420 6d0a9a1d 70c97555 02bf0210 9c67d045 dfb1a8e0 c20b0b5c 5cdc9001 97cf0346 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="global,global-path,global-user,global-nested,global-local-global,global-shadow"
+    only: true
+    lead: ' '
+- paths: global-shadow
+  block: 6
+  fingerprint: 83ccb7192c38ffa0
+  lang: sh
+  lines: 68916c54 1bd2e2c1 f0b866cc 5b41e409
+  preview: kubectl patch gatewayextension global-ratelimit \
+  form:
+    attr: paths="global-shadow"
+    only: true
+    lead: ' '
+- paths: global,global-path,global-user,global-nested,global-local-global,global-shadow
+  block: 7
+  fingerprint: 3fdf59472cd0dfbe
+  lang: yaml
+  lines: abbd1bdc 979905a0 e47a48f5 8c8c4228 79f52d9b 9c67d045 36184fa5 0e20b496 71ab14c2 5ee5f7dc 0bebd850 55708cb7 e6365cc1 0d6480f0 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="global,global-path,global-user,global-nested,global-local-global,global-shadow"
+    only: true
+    lead: ' '
+- paths: global,global-shadow
+  block: 8
+  fingerprint: dedbe332d4c4555f
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 2a9ae068 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 c14c1813 b7b5f484 8902dc3d 8db35126 248578da 79f52d9b abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="global,global-shadow"
+    only: true
+    lead: ' '
+- paths: global-path
+  block: 9
+  fingerprint: e3b0b389dacb39b6
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 1464284d 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 c14c1813 b7b5f484 8902dc3d ff6404fa 248578da 79f52d9b abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="global-path"
+    only: true
+    lead: ' '
+- paths: global-user
+  block: 10
+  fingerprint: ae6c2cab1d5e33f0
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 93c87b1b 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 c14c1813 b7b5f484 8902dc3d 838bc2d2 efb90286 248578da 79f52d9b abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="global-user"
+    only: true
+    lead: ' '
+- paths: global-nested
+  block: 11
+  fingerprint: 495e7513e700cdf0
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 38d26e6e 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 c14c1813 b7b5f484 8902dc3d ff6404fa 838bc2d2 efb90286 248578da 79f52d9b abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="global-nested"
+    only: true
+    lead: ' '
+- paths: global-local-global
+  block: 13
+  fingerprint: e2de0a3649dcfbfa
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 5f58b71f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 f971795d 47117d8d 8e3f0c21 54ea4e89 a9a54165 c14c1813 b7b5f484 8902dc3d 0634a855 9b2fe03e c83f2c76 d42e9c95 248578da 79f52d9b abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="global-local-global"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 560ee20623f7a7f7
+    lang: bash
+    lines: 560ee206
+    preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  content: |2-
+       {{< doc-test paths="global,global-path,global-user,global-nested,global-local-global,global-shadow" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the redis Deployment of the demo rate limit service to be available
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: kgateway-test-extensions
+               name: redis
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the ratelimit Deployment (envoyproxy/ratelimit) to be available
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: kgateway-test-extensions
+               name: ratelimit
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: b9cf2b250dac167d
+    lang: console
+    lines: cec3a9b8 cd406436 d2e36045 bd64bb8e 81884aba b7b5f484 d1d87427 5d74f63c 69d5a543 a9ad64c8 782c2d4b 2a2c13b3 5d74f63c 69d5a543 a9ad64c8 782c2d4b d521d746 5d74f63c 69d5a543 a9ad64c8 3f76e9e0 5d74f63c 69d5a543 a9ad64c8 3f76e9e0 37c365bc 5d74f63c 69d5a543 a9ad64c8 a0517c7b 08d27bb3 5d74f63c 69d5a543 a9ad64c8 ca141e03 cd406436
+    preview: Data
+  content: |-
+    {{< doc-test paths="global" >}}
+    # Test-only: the demo config has the descriptor keys and values that the
+    # TrafficPolicy examples on this page send, in the api-gateway domain.
+    cfg=$(kubectl get configmap ratelimit-config -n kgateway-test-extensions -o jsonpath='{.data.config\.yaml}')
+    for want in "domain: api-gateway" "key: remote_address" 'value: "/path1"' 'value: "/path2"' "key: X-User-ID" "value: user1" "key: service" "value: premium-api"; do
+      case "$cfg" in
+        *"$want"*) ;;
+        *) echo "global: the ratelimit-config ConfigMap has no '${want}'"; echo "$cfg"; exit 1 ;;
+      esac
+    done
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 7492d5f28f143c29
+    lang: yaml
+    lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 0bebd850 79f52d9b 36184fa5 39626be5 a50da420 6d0a9a1d 70c97555 02bf0210 9c67d045 dfb1a8e0 c20b0b5c 5cdc9001 97cf0346 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="global,global-path,global-user,global-nested,global-local-global,global-shadow" >}}
+       # GatewayExtension has no Accepted condition to wait on, so check that it
+       # exists with the api-gateway domain of the rate limit service config.
+       YAMLTest -f - <<'EOF'
+       - name: the global-ratelimit GatewayExtension uses the api-gateway domain
+         wait:
+           target:
+             kind: GatewayExtension
+             metadata:
+               namespace: kgateway-system
+               name: global-ratelimit
+           jsonPath: "$.spec.rateLimit.domain"
+           jsonPathExpectation:
+             comparator: equals
+             value: api-gateway
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: dedbe332d4c4555f
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 2a9ae068 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 c14c1813 b7b5f484 8902dc3d 8db35126 248578da 79f52d9b abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="global,global-shadow" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the ip-rate-limit TrafficPolicy to be accepted (RemoteAddress descriptor)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: ip-rate-limit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: e3b0b389dacb39b6
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 1464284d 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 c14c1813 b7b5f484 8902dc3d ff6404fa 248578da 79f52d9b abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="global-path" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the request-path TrafficPolicy to be accepted (Path descriptor)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: request-path
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: /path1 matches the path=/path1 descriptor (1 request per minute).
+    c=""
+    for i in $(seq 1 90); do
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/path1" -H "host: www.example.com:8080" || true)
+      [ "$c" = "429" ] && break
+      sleep 1
+    done
+    if [ "$c" != "429" ]; then
+      echo "global-path: /path1 was never rate limited after 90 requests (last status: ${c})"; exit 1
+    fi
+    # /headers matches no path value in the rate limit service, so it is never limited.
+    for i in 1 2 3; do
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+      if [ "$c" = "429" ]; then echo "global-path: /headers got 429 on request $i, but no descriptor in the rate limit service matches it"; exit 1; fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: ae6c2cab1d5e33f0
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 93c87b1b 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 c14c1813 b7b5f484 8902dc3d 838bc2d2 efb90286 248578da 79f52d9b abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="global-user" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the user-rate-limit TrafficPolicy to be accepted (Header X-User-ID descriptor)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: user-rate-limit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: user1 gets 1 request per minute.
+    c=""
+    for i in $(seq 1 90); do
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" -H "X-User-ID: user1" || true)
+      [ "$c" = "429" ] && break
+      sleep 1
+    done
+    if [ "$c" != "429" ]; then
+      echo "global-user: X-User-ID user1 was never rate limited after 90 requests (last status: ${c})"; exit 1
+    fi
+    # Without the X-User-ID header, no descriptor is sent, so requests are not limited.
+    for i in 1 2 3; do
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+      if [ "$c" = "429" ]; then echo "global-user: a request without X-User-ID got 429 on request $i, but no descriptor in the rate limit service matches it"; exit 1; fi
+    done
+    # Each user ID has its own counter: user2's first request succeeds while user1 is limited.
+    c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" -H "X-User-ID: user2" || true)
+    if [ "$c" != "200" ]; then echo "global-user: the first request for X-User-ID user2 returned ${c}, not 200"; exit 1; fi
+    u2=""
+    for i in $(seq 1 90); do
+      u2=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" -H "X-User-ID: user2" || true)
+      [ "$u2" = "429" ] && break
+      sleep 1
+    done
+    if [ "$u2" != "429" ]; then
+      echo "global-user: X-User-ID user2 was never rate limited after 90 requests (last status: ${u2})"; exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 0df07caf855f8cbb
+    lang: yaml
+    lines: b7b5f484 73337fec 782c2d4b 2a2c13b3 b7b5f484 f2d31f6e 3f76e9e0 021c9cbc 5d74f63c 69d5a543 92fbe26d
+    preview: 'descriptors:'
+  content: |-
+    {{< doc-test paths="global-nested" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the combined-rate-limit TrafficPolicy to be accepted (nested Path and Header descriptors)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: combined-rate-limit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the demo ConfigMap is immutable and has no nested descriptors, so
+    # replace it with the nested descriptors that this tab shows, in the
+    # api-gateway domain, and restart the rate limit service to load them.
+    cfg=$(mktemp)
+    cat > "$cfg" <<'EOF'
+    domain: api-gateway
+    descriptors:
+      - key: path
+        value: "/path1"
+        descriptors:
+          - key: X-User-ID
+            value: "user1"
+            rate_limit:
+              unit: minute
+              requests_per_unit: 2
+    EOF
+    kubectl delete configmap ratelimit-config -n kgateway-test-extensions
+    kubectl create configmap ratelimit-config -n kgateway-test-extensions --from-file=config.yaml="$cfg"
+    kubectl rollout restart deployment/ratelimit -n kgateway-test-extensions
+    kubectl rollout status deployment/ratelimit -n kgateway-test-extensions --timeout=180s
+    c=""
+    for i in $(seq 1 90); do
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/path1" -H "host: www.example.com:8080" -H "X-User-ID: user1" || true)
+      [ "$c" = "429" ] && break
+      sleep 1
+    done
+    if [ "$c" != "429" ]; then
+      echo "global-nested: /path1 with X-User-ID user1 was never rate limited after 90 requests (last status: ${c})"; exit 1
+    fi
+    # Test-only: the rate limit service counts per clock minute. Wait for the next
+    # minute: the first request in it is allowed again.
+    ok=""
+    for i in $(seq 1 45); do
+      sleep 2
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/path1" -H "host: www.example.com:8080" -H "X-User-ID: user1" || true)
+      if [ "$c" != "429" ]; then ok=1; break; fi
+    done
+    if [ -z "$ok" ]; then echo "global-nested: /path1 with X-User-ID user1 stayed rate limited for 90s, past the 1-minute window"; exit 1; fi
+    # The first request of the new minute was allowed; the limit is 2, so the second
+    # is allowed too and the third gets 429.
+    c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/path1" -H "host: www.example.com:8080" -H "X-User-ID: user1" || true)
+    if [ "$c" = "429" ]; then echo "global-nested: the 2nd request in the minute was limited, but the nested descriptor allows 2 per minute"; exit 1; fi
+    c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/path1" -H "host: www.example.com:8080" -H "X-User-ID: user1" || true)
+    if [ "$c" != "429" ]; then echo "global-nested: the 3rd request in the minute returned ${c}, not 429"; exit 1; fi
+    # Only the path and user pair is limited: user2 on /path1 and user1 on /headers are not.
+    for i in 1 2 3; do
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/path1" -H "host: www.example.com:8080" -H "X-User-ID: user2" || true)
+      if [ "$c" = "429" ]; then echo "global-nested: /path1 with X-User-ID user2 got 429 on request $i, but no descriptor in the rate limit service matches it"; exit 1; fi
+    done
+    for i in 1 2 3; do
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" -H "X-User-ID: user1" || true)
+      if [ "$c" = "429" ]; then echo "global-nested: /headers with X-User-ID user1 got 429 on request $i, but no descriptor in the rate limit service matches it"; exit 1; fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: e2de0a3649dcfbfa
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 5f58b71f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 f971795d 47117d8d 8e3f0c21 54ea4e89 a9a54165 c14c1813 b7b5f484 8902dc3d 0634a855 9b2fe03e c83f2c76 d42e9c95 248578da 79f52d9b abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="global-local-global" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the local-global-rate-limit TrafficPolicy to be accepted (local token bucket and Generic service=premium-api descriptor)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: local-global-rate-limit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: every request carries the service=premium-api descriptor.
+    c=""
+    for i in $(seq 1 90); do
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+      [ "$c" = "429" ] && break
+      sleep 1
+    done
+    if [ "$c" != "429" ]; then
+      echo "global-local-global: /headers was never rate limited after 90 requests (last status: ${c})"; exit 1
+    fi
+    # Test-only: the rate limit service counts per clock minute. Wait for the next
+    # minute: the first request in it is allowed again.
+    ok=""
+    for i in $(seq 1 45); do
+      sleep 2
+      c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+      if [ "$c" != "429" ]; then ok=1; break; fi
+    done
+    if [ -z "$ok" ]; then echo "global-local-global: /headers stayed rate limited for 90s, past the 1-minute window"; exit 1; fi
+    # The page says the global limit is 1 request per minute: the first request of
+    # the minute was allowed, so the second gets 429.
+    resp=$(curl -s -i --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+    status=${resp%%$'\n'*}
+    case "$status" in
+      *" 429"*) ;;
+      *) echo "global-local-global: the 2nd request in the minute was not rate limited: ${status}"; exit 1 ;;
+    esac
+    # A global-limit 429 has no local_rate_limited body; 2 requests are within the local bucket of 5.
+    case "$resp" in
+      *local_rate_limited*) echo "global-local-global: the 429 came from the local limit, not the global one"; echo "$resp"; exit 1 ;;
+    esac
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 4259049d37c460ce
+    lang: txt
+    lines: 92413e97 ab5df625
+    preview: HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="global-shadow" >}}
+       # Test-only: shadow mode exists only where the page shows the percentEnforced
+       # patch. In other version trees, nothing here is documented, so skip.
+       pe=$(kubectl get gatewayextension global-ratelimit -n kgateway-system -o jsonpath='{.spec.rateLimit.percentEnforced}')
+       if [ -z "$pe" ]; then
+         echo "global-shadow: no percentEnforced on the GatewayExtension in this version tree; nothing to check"
+       else
+         # Wait until the filter calls the rate limit service (its debug log shows the
+         # remote_address descriptor), while no request is denied.
+         seen=""
+         for i in $(seq 1 60); do
+           c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+           if [ "$c" = "429" ]; then echo "global-shadow: got 429 with percentEnforced 0"; exit 1; fi
+           logs=$(kubectl logs deployment/ratelimit -n kgateway-test-extensions --tail=-1 2>/dev/null || true)
+           case "$logs" in *remote_address*) seen=1; break ;; esac
+           sleep 2
+         done
+         if [ -z "$seen" ]; then echo "global-shadow: the rate limit service never got a remote_address lookup, so the filter did not call it"; exit 1; fi
+         # The limit is 1 request per minute per client IP, so at least two of these
+         # three would be denied if the decision were enforced.
+         for i in 1 2 3; do
+           c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+           if [ "$c" != "200" ]; then echo "global-shadow: request $i returned ${c}; in shadow mode every request should pass"; exit 1; fi
+         done
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: bcf79b5f37aaa15d
+    lang: txt
+    lines: 66a378bb ab5df625
+    preview: HTTP/1.1 429 Too Many Requests
+  content: |2-
+       {{< doc-test paths="global" >}}
+       # Test-only: the client IP gets 1 request per minute. Send requests until one
+       # gets 429, wait for the next minute, then show that the first request in it
+       # succeeds and the one right after it gets 429.
+       c=""
+       for i in $(seq 1 90); do
+         c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+         [ "$c" = "429" ] && break
+         sleep 1
+       done
+       if [ "$c" != "429" ]; then echo "global: the client IP was never rate limited after 90 requests (last status: ${c})"; exit 1; fi
+       ok=""
+       for i in $(seq 1 45); do
+         sleep 2
+         c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+         if [ "$c" = "200" ]; then ok=1; break; fi
+         if [ "$c" != "429" ]; then echo "global: unexpected status ${c} while waiting for the next minute"; exit 1; fi
+       done
+       if [ -z "$ok" ]; then echo "global: no request succeeded within 90s, past the 1-minute window"; exit 1; fi
+       resp=$(curl -s -i --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+       status=${resp%%$'\n'*}
+       case "$status" in
+         *" 429"*) ;;
+         *) echo "global: the second request in the minute was not rate limited: ${status}"; exit 1 ;;
+       esac
+       # The Response headers table: x-envoy-ratelimited is always set on a global
+       # 429; the x-ratelimit-* headers need xRateLimitHeaders, which the page does not set.
+       lc=$(printf '%s' "$resp" | tr 'A-Z' 'a-z')
+       for h in "x-envoy-ratelimited: true"; do
+         case "$lc" in
+           *"$h"*) ;;
+           *) echo "global: the 429 response has no '${h}' header, which the Response headers table lists"; echo "$resp"; exit 1 ;;
+         esac
+       done
+       {{< /doc-test >}}

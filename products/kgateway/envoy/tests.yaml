@@ -52,6 +52,21 @@ prerequisites:
   grpc-routing:
     page: traffic-management/grpc.md
     path: grpc
+  # Keycloak in the keycloak namespace from the setup page's ConfigMap path
+  # (realm myrealm, client kgateway-client with secret kgateway-client-secret,
+  # user testuser/password, audience mapper), the keycloak Backend and its
+  # insecureSkipVerify BackendConfigPolicy in kgateway-system, plus a test-only
+  # keycloak-lb LoadBalancer Service on port 443 whose address is exported as
+  # KEYCLOAK_ADDRESS (the test reaches https://keycloak.example.com with
+  # curl --connect-to). Needs `install-standard` first.
+  keycloak:
+    source: kgw-docs/pages/security/keycloak/setup.md
+    path: keycloak
+  # The ingress2gateway CLI, installed from the Linux install page (the test
+  # sets ARCH to the runner's architecture). Converting needs no cluster.
+  install-ingress2gateway:
+    page: migrate/install/linux/_index.md
+    path: install-ingress2gateway
 # Pages with deliberately no test: section indexes, concept and reference
 # pages, and stubs that point to a guide elsewhere. They count as covered.
 skip:
@@ -153,8 +168,16 @@ scenarios:
     type: schema
     source: kgw-docs/pages/security/access-logging2.2.md
     path: access-logging
-  acl-schema:
-    type: schema
+  acl:
+    # Expected outcomes are computed from the client IP that the proxy sees (read
+    # from X-Forwarded-For before any policy), because cloud-provider-kind and
+    # kube-proxy rewrite the runner's IP.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/acl.md
     path: acl
   add-request-header:
@@ -175,8 +198,13 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/response-header.md
     path: add-response-header
-  advanced-schema:
-    type: schema
+  advanced:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/install/advanced.md
     path: advanced
   affinity-consistent-hashing-maglev:
@@ -237,18 +265,74 @@ scenarios:
     type: schema
     source: kgw-docs/pages/integrations/aws-elb/alb.md
     path: alb
-  api-key-auth-schema:
-    type: schema
-    page: migrate/examples/api-key-auth.md
-    path: api-key-auth
-  apikey-schema:
-    type: schema
+  apikey-client-id:
+    # Other configuration examples: clientIdHeader. The client id is the entry
+    # name in the apikey secret (api-key), checked in httpbin's /headers echo.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/apikey-auth.md
+    path: apikey-client-id
+  apikey-custom-header:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/apikey-auth.md
+    path: apikey-custom-header
+  apikey-disable:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/apikey-auth.md
+    path: apikey-disable
+  apikey-forward-credential:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/apikey-auth.md
+    path: apikey-forward-credential
+  apikey-label-selector:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/apikey-auth.md
+    path: apikey-label-selector
+  apikey-multiple-sources:
+    # Header, query, and cookie each work alone; a wrong header key with a right
+    # query key is denied, which shows the header wins.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/apikey-auth.md
+    path: apikey-multiple-sources
+  apikey:
+    # Gateway-level policy with secretRef and the default api-key header: no key
+    # and a wrong key get 401, the page's key gets 200 and is not forwarded.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/apikey-auth.md
     path: apikey
   argo-schema:
     type: schema
     source: kgw-docs/pages/integrations/argo.md
     path: argo
+  argocd:
+    # Installs Argo CD in the kind cluster from the page's Before you begin,
+    # then the Gateway API CRDs and the two Argo CD Applications. The page's
+    # port-forward and UI steps are replaced by Application status checks.
+    type: functional
+    source: kgw-docs/pages/install/argocd.md
+    path: argocd
   auth0-access-token-schema:
     type: schema
     source: kgw-docs/pages/security/auth0/access-token.md
@@ -257,26 +341,34 @@ scenarios:
     type: schema
     source: kgw-docs/pages/security/auth0/setup.md
     path: auth0-setup
-  authorization-code-schema:
-    type: schema
-    source: kgw-docs/pages/security/keycloak/authorization-code.md
-    path: authorization-code
   backend-schema:
     type: schema
     source: kgw-docs/pages/traffic-management/health-checks/backend.md
     path: backend
-  backend-tls-schema:
-    type: schema
+  backend-tls-bcp:
+    # The BackendConfigPolicy tabs, plus the TLS parameters snippet.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/backend-tls.md
+    path: backend-tls-bcp
+  backend-tls:
+    # In-cluster nginx that accepts only TLS, with the BackendTLSPolicy tabs. The
+    # external section uses the real https://httpbin.org (skipped with a warning
+    # if the runner cannot reach it).
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/backend-tls.md
     path: backend-tls
   backendconfigpolicy-schema:
     type: schema
     source: kgw-docs/pages/about/backendconfigpolicy.md
     path: backendconfigpolicy
-  basic-auth-schema:
-    type: schema
-    page: migrate/examples/basic-auth.md
-    path: basic-auth
   buffering-filter-stage:
     # Needs kgateway 2.4.5 or later (buffer.filterStage).
     type: functional
@@ -294,18 +386,24 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/buffering2.2-body.md
     path: buffering
-  byo-ext-auth-service-grpc-schema:
-    type: schema
+  byo-ext-auth-service-grpc:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/external-auth.md
     path: byo-ext-auth-service-grpc
-  byo-ext-auth-service-http-schema:
-    type: schema
+  byo-ext-auth-service-http:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/external-auth-http.md
     path: byo-ext-auth-service-http
-  canary-schema:
-    type: schema
-    page: migrate/examples/canary.md
-    path: canary
   circuit-breakers:
     type:
     - schema
@@ -315,6 +413,8 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/resiliency/circuit-breakers.md
     path: circuit-breakers
+  # Schema only until the page has tokens that verify against the basic JWT
+  # guide's JWKS (its tokens are signed with a key that is not in these docs).
   claim-based-rbac-schema:
     type: schema
     source: kgw-docs/pages/security/jwt/claim-based-rbac.md
@@ -328,10 +428,43 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/compression.md
     path: compression
-  configs-schema:
-    type: schema
+  # Gateway customization examples, grouped so that each group uses one apply
+  # style. configs: HPA and PDB. configs-deployment: replicas, max downstream
+  # connections and drain flags (main only), image pull secrets, scheduling,
+  # pod security context, infrastructure labels, ConfigMap volume.
+  # configs-overlays: init container, sidecar, hostNetwork (main only).
+  # configs-service: Service annotations, load balancer source ranges,
+  # ServiceAccount annotations. Not run: VPA (no VPA CRDs), OpenShift, the SDS
+  # overlay (needs Istio integration), replacing all volumes, static IP, IP
+  # families, and the AWS, GKE, and Azure annotations.
+  configs:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     source: kgw-docs/pages/setup/customize/configs.md
     path: configs
+  configs-deployment:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/setup/customize/configs.md
+    path: configs-deployment
+  configs-overlays:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/setup/customize/configs.md
+    path: configs-overlays
+  configs-service:
+    type: functional
+    needs:
+    - install-standard
+    source: kgw-docs/pages/setup/customize/configs.md
+    path: configs-service
   connection:
     type:
     - schema
@@ -341,32 +474,87 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/resiliency/connection.md
     path: connection
-  cors-schema:
-    type: schema
+  control-plane-metrics:
+    # Reads the control plane /metrics endpoint through the API server's
+    # service proxy instead of port-forwarding.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/observability/control-plane-metrics.md
+    path: control-plane-metrics
+  cors-trafficpolicy:
+    # CORS in a TrafficPolicy attached through ExtensionRef.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/cors.md
+    path: cors-trafficpolicy
+  cors:
+    # CORS filter in the HTTPRoute; standard channel since Gateway API 1.5.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/cors.md
     path: cors
   creds-secret-schema:
     type: schema
     source: kgw-docs/pages/traffic-management/destination-types/backends/lambda/creds-secret.md
     path: creds-secret
-  csrf-schema:
-    type: schema
+  csrf:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/csrf.md
     path: csrf
-  custom-bootstrap-schema:
-    type: schema
+  custom-bootstrap:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/setup/customize/custom-bootstrap.md
     path: custom-bootstrap
-  customize-gateway-schema:
-    type: schema
+  # Built-in customization (NodePort, JSON logs, extra args) and the
+  # minReadySeconds overlay on Gateway custom. No traffic is sent.
+  customize-gateway:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     source: kgw-docs/pages/setup/customize/gateway.md
     path: customize-gateway
-  debug-schema:
-    type: schema
+  debug:
+    # Reads the control plane admin server (from a debug container in the
+    # controller pod) and the Envoy admin interface (from inside the proxy pod)
+    # instead of port-forwarding, then sets up the debug-gateway with debug
+    # logging and checks the debug log lines.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/operations/debug.md
     path: debug
-  default-schema:
-    type: schema
+  default:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/setup/default.md
     path: default
   delegation-basic:
@@ -503,16 +691,56 @@ scenarios:
     type: schema
     source: kgw-docs/pages/traffic-management/destination-types/backends/ec2.md
     path: ec2
-  envoy-image-schema:
-    type: schema
+  envoy-image:
+    # The test cannot build and push the wrapper image, so a hidden step gives
+    # the stock envoy-wrapper image the page's custom name in the kind node's
+    # image store; the page's GatewayParameters and Gateway then run as written.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/setup/customize/envoy-image.md
     path: envoy-image
-  examples-basic-schema:
-    type: schema
-    page: migrate/examples/basic.md
-    path: examples-basic
-  extauth-basic-schema:
-    type: schema
+  extauth-basic-disable:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/basic-auth.md
+    path: extauth-basic-disable
+  extauth-basic-multiple-users:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/basic-auth.md
+    path: extauth-basic-multiple-users
+  extauth-basic-secret-key:
+    # The page has no step that creates a secret with a passwords.htpasswd key,
+    # so a hidden step creates one before the policy.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/basic-auth.md
+    path: extauth-basic-secret-key
+  extauth-basic-secret:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/basic-auth.md
+    path: extauth-basic-secret
+  extauth-basic:
+    # Inline {SHA} users, the only hash format kgateway accepts.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/basic-auth.md
     path: extauth-basic
   external-dns-cert-manager-schema:
@@ -535,8 +763,15 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/resiliency/fault-injection.md
     path: fault-injection
-  filter-stages-schema:
-    type: schema
+  filter-stages:
+    # Builds the ExtProc server image from kgateway v2.4.7 and loads it into kind,
+    # as the page tells readers to do.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/extproc-filter-stages.md
     path: filter-stages
   forward-xfcc:
@@ -548,20 +783,97 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/forward-xfcc.md
     path: forward-xfcc
-  gateway-metrics-schema:
-    type: schema
+  gateway-metrics-exclusion:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/observability/gateway-metrics.md
+    path: gateway-metrics-exclusion
+  gateway-metrics-inclusion:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/observability/gateway-metrics.md
+    path: gateway-metrics-inclusion
+  gateway-metrics:
+    # Reads the proxy stats from inside the pod. The inclusion and exclusion
+    # examples re-apply the http Gateway, so they run as their own scenarios.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/observability/gateway-metrics.md
     path: gateway-metrics
-  global-attachment-schema:
-    type: schema
+  global-attachment:
+    # Upgrades the kgateway Helm release with KGW_GLOBAL_POLICY_NAMESPACE.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: about/policies/global-attachment.md
     path: global-attachment
-  global-schema:
-    type: schema
+  global-local-global:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/ratelimit/global.md
+    path: global-local-global
+  global-nested:
+    # The demo ConfigMap has no nested descriptors, so a test-only step loads the
+    # tab nested config and restarts the rate limit service.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/ratelimit/global.md
+    path: global-nested
+  global-path:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/ratelimit/global.md
+    path: global-path
+  global-shadow:
+    # Shadow mode is shown in main only; in latest the check skips.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/ratelimit/global.md
+    path: global-shadow
+  global-user:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/ratelimit/global.md
+    path: global-user
+  global:
+    # Envoy ratelimit + Redis from the kgateway e2e testdata (GitHub main).
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/ratelimit/global.md
     path: global
-  grpc-services-schema:
-    type: schema
+  grpc-services:
+    # The page deploys its own echo server, grpcurl client pod, HTTPS Gateway,
+    # and GRPCRoute; the checks run grpcurl from that pod.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     source: kgw-docs/pages/traffic-management/destination-types/kube-services/grpc-services.md
     path: grpc-services
   grpc-statistics:
@@ -590,18 +902,41 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/request-header.md
     path: header-from-secret
-  header-manipulation-schema:
-    type: schema
+  header-manipulation:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/extproc.md
     path: header-manipulation
-  header-modifiers-schema:
-    type: schema
-    page: migrate/examples/header-modifiers.md
-    path: header-modifiers
   health-checks-gateway-schema:
     type: schema
     source: kgw-docs/pages/traffic-management/health-checks/gateway.md
     path: health-checks-gateway
+  helm:
+    # The page installs the Gateway API CRDs and kgateway itself, so no
+    # install prerequisite. Standard CRDs tab and Basic installation tab.
+    type: functional
+    source: kgw-docs/pages/install/helm.md
+    path: helm
+  helm-custom-values:
+    # Custom values file tab, with the chart pulled and unpacked in a hidden
+    # step (the page's pull block also runs macOS-only `open`).
+    type: functional
+    source: kgw-docs/pages/install/helm.md
+    path: helm-custom-values
+  helm-development:
+    # Development tab: the development build on both trees.
+    type: functional
+    source: kgw-docs/pages/install/helm.md
+    path: helm-development
+  helm-experimental:
+    # Experimental CRDs tab, then Basic installation.
+    type: functional
+    source: kgw-docs/pages/install/helm.md
+    path: helm-experimental
   http-connect-tunnels:
     type:
     - schema
@@ -624,8 +959,13 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/http-upgrades.md
     path: http-upgrades
-  http10-schema:
-    type: schema
+  http10:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/setup/http10.md
     path: http10
   http2-downstream:
@@ -650,8 +990,29 @@ scenarios:
     type: schema
     source: kgw-docs/pages/integrations/istio/sidecar/ingress.md
     path: ingress
-  jwt-claim-extraction-schema:
-    type: schema
+  ingress2gateway-install-linux:
+    type: functional
+    page: migrate/install/linux/_index.md
+    path: install-ingress2gateway
+  install-tls:
+    # cert-manager, the xDS CA and server certificate, and a helm upgrade with
+    # controller.xds.tls.enabled. The page's port-forward checks run from pods
+    # in the cluster instead.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/install/tls.md
+    path: install-tls
+  jwt-claim-extraction:
+    # auth.example.com is a placeholder, so a hidden step runs a test-only JWKS
+    # server over TLS with a CoreDNS rewrite and tokens signed with its key.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/jwt/jwt-claim-extraction.md
     path: jwt-claim-extraction
   keepalive-http2:
@@ -672,30 +1033,108 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/resiliency/keepalive/tcp.md
     path: keepalive-tcp
-  keycloak-access-token-schema:
-    type: schema
+  keycloak-access-token:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    - keycloak
     source: kgw-docs/pages/security/keycloak/access-token.md
     path: keycloak-access-token
-  keycloak-setup-schema:
-    type: schema
+  keycloak-authorization-code:
+    # Test-only HTTPS listener on port 8443 of the `http` Gateway. The browser
+    # login is scripted with curl and a cookie jar.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    - keycloak
+    source: kgw-docs/pages/security/keycloak/authorization-code.md
+    path: keycloak-authorization-code
+  keycloak-authorization-code-deny-redirect:
+    # The full GatewayExtension with denyRedirect, and Verify step 5.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - keycloak
+    source: kgw-docs/pages/security/keycloak/authorization-code.md
+    path: keycloak-authorization-code-deny-redirect
+  keycloak-setup:
+    # ConfigMap path only; the admin-console steps are covered by headless
+    # checks (admin login lists myrealm, password grant, aud claim). A
+    # temporary HTTPRoute proves the gateway reaches Keycloak through the
+    # Backend and BackendConfigPolicy.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/keycloak/setup.md
     path: keycloak-setup
-  listenerpolicy-schema:
-    type: schema
+  listenerpolicy:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: about/policies/listenerpolicy.md
     path: listenerpolicy
-  listeners-http-schema:
-    type: schema
+  listeners-http:
+    # ListenerSet, TLSRoute, and TCPRoute are gateway.networking.k8s.io/v1 in the
+    # standard channel of Gateway API 1.6.1 (latest) and 1.7.0 (main), and kgateway
+    # 2.4.7 and main watch them without a feature flag, so install-standard is enough.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/http.md
     path: listeners-http
-  listeners-https-schema:
-    type: schema
+  listeners-http-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/http.md
+    path: listeners-http-listenerset
+  listeners-https:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/https.md
     path: listeners-https
-  listeners-tcp-schema:
-    type: schema
+  listeners-https-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/https.md
+    path: listeners-https-listenerset
+  listeners-tcp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: setup/listeners/tcp.md
     path: listeners-tcp
+  listeners-tcp-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    page: setup/listeners/tcp.md
+    path: listeners-tcp-listenerset
   local-replies:
     type:
     - schema
@@ -705,8 +1144,28 @@ scenarios:
     - httpbin
     page: traffic-management/local-replies.md
     path: local-replies
-  local-schema:
-    type: schema
+  local-disable:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/ratelimit/local.md
+    path: local-disable
+  local-gateway:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/ratelimit/local.md
+    path: local-gateway
+  local:
+    # 1-token bucket refilled every 100s; the checks wait for the refill.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/ratelimit/local.md
     path: local
   match-header-exact:
@@ -772,30 +1231,168 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/max-headers-count.md
     path: max-headers-count
-  migrate-backend-tls-schema:
-    type: schema
+  migrate-api-key-auth:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/api-key-auth.md
+    path: migrate-api-key-auth
+  migrate-backend-tls:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
     page: migrate/examples/backend-tls.md
     path: migrate-backend-tls
-  migrate-client-tls-schema:
-    type: schema
+  migrate-basic-auth:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/basic-auth.md
+    path: migrate-basic-auth
+  migrate-basic:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/basic.md
+    path: migrate-basic
+  migrate-canary:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/canary.md
+    path: migrate-canary
+  migrate-client-tls:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
     page: migrate/examples/client-tls.md
     path: migrate-client-tls
-  migrate-cors-schema:
-    type: schema
+  migrate-cors:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
     page: migrate/examples/cors.md
     path: migrate-cors
-  migrate-external-auth-schema:
-    type: schema
+  migrate-external-auth:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
     page: migrate/examples/external-auth.md
     path: migrate-external-auth
-  migrate-jwt-auth-schema:
-    type: schema
+  migrate-header-modifiers:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/header-modifiers.md
+    path: migrate-header-modifiers
+  migrate-jwt-auth:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
     page: migrate/examples/jwt-auth.md
     path: migrate-jwt-auth
-  migrate-oidc-auth-schema:
-    type: schema
+  migrate-oidc-auth:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
     page: migrate/examples/oidc-auth.md
     path: migrate-oidc-auth
+  migrate-rate-limiting:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/rate-limiting.md
+    path: migrate-rate-limiting
+  migrate-request-buffering:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/request-buffering.md
+    path: migrate-request-buffering
+  migrate-session-affinity:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/session-affinity.md
+    path: migrate-session-affinity
+  migrate-ssl-redirect:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/ssl-redirect.md
+    path: migrate-ssl-redirect
+  migrate-timeouts:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/timeouts.md
+    path: migrate-timeouts
+  migrate-traffic-mirroring:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/traffic-mirroring.md
+    path: migrate-traffic-mirroring
+  migrate-url-rewriting:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - install-ingress2gateway
+    page: migrate/examples/url-rewriting.md
+    path: migrate-url-rewriting
   mirroring:
     type:
     - schema
@@ -805,10 +1402,24 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/resiliency/mirroring.md
     path: mirroring
-  mtls-schema:
-    type: schema
+  mtls:
+    # Follows the page from top to bottom. mtls-per-listener goes from the
+    # certificates straight to the per listener section, as step 7 allows.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/setup/listeners/mtls.md
     path: mtls
+  mtls-per-listener:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/setup/listeners/mtls.md
+    path: mtls-per-listener
   nlb-schema:
     type: schema
     source: kgw-docs/pages/integrations/aws-elb/nlb.md
@@ -821,8 +1432,16 @@ scenarios:
     type: schema
     source: kgw-docs/pages/security/okta/setup.md
     path: okta-setup
-  otel-stack-schema:
-    type: schema
+  otel-stack:
+    # Loki, Tempo, three OTel collectors, and kube-prometheus-stack; checks query
+    # Prometheus, Grafana, Loki, and Tempo from a curl pod. Steps 4 and 5 are on
+    # the per-tree wrapper page, so their markup is under annotations/content/.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/observability/otel-stack.md
     path: otel-stack
   outlier-detection:
@@ -869,8 +1488,15 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/preserve-request-paths.md
     path: preserve-request-paths
-  priority-groups-schema:
-    type: schema
+  priority-groups:
+    # Scales httpbin to zero to fail over to the hello-world app
+    # (nginxdemos/hello:plain-text from Docker Hub), then back up.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/priority-groups.md
     path: priority-groups
   proxy-100-continue:
@@ -907,10 +1533,14 @@ scenarios:
     - httpbin
     page: traffic-management/proxy-protocol.md
     path: proxy-protocol
-  rate-limiting-schema:
-    type: schema
-    page: migrate/examples/rate-limiting.md
-    path: rate-limiting
+  quickstart:
+    # install-standard runs the page's Standard tab and Helm steps; this adds
+    # the control plane check (step 4) and the Cleanup uninstall.
+    type: functional
+    needs:
+    - install-standard
+    page: quickstart.md
+    path: quickstart
   redirect-custom:
     type:
     - schema
@@ -974,10 +1604,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/response-header.md
     path: remove-response-header
-  request-buffering-schema:
-    type: schema
-    page: migrate/examples/request-buffering.md
-    path: request-buffering
   response-header-from-secret:
     type:
     - schema
@@ -1089,22 +1715,26 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/match/route-ordering.md
     path: route-ordering
-  sample-app-schema:
-    type: schema
+  sample-app:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: install/sample-app.md
     path: sample-app
-  selfmanaged-schema:
-    type: schema
+  selfmanaged:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     source: kgw-docs/pages/setup/selfmanaged.md
     path: selfmanaged
   service-accounts-schema:
     type: schema
     page: traffic-management/destination-types/backends/lambda/service-accounts.md
     path: service-accounts
-  session-affinity-schema:
-    type: schema
-    page: migrate/examples/session-affinity.md
-    path: session-affinity
   set-request-header:
     type:
     - schema
@@ -1123,26 +1753,76 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/response-header.md
     path: set-response-header
-  setup-gateway-schema:
-    type: schema
+  setup-gateway-static-ip:
+    type: functional
+    needs:
+    - install-standard
+    page: setup/gateway.md
+    path: setup-gateway-static-ip
+  setup-gateway:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: setup/gateway.md
     path: setup-gateway
-  simple-basic-schema:
-    type: schema
+  simple-basic-disable:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/jwt/basic.md
+    path: simple-basic-disable
+  simple-basic:
+    # Inline JWKS and the page sample token (valid until 2035). Remote JWKS
+    # (Keycloak) is not run.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/jwt/basic.md
     path: simple-basic
-  sni-schema:
-    type: schema
+  sni:
+    # Petstore comes from the page's gloo v1.16.x manifest (amd64 image only).
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/sni.md
     path: sni
-  ssl-redirect-schema:
-    type: schema
-    page: migrate/examples/ssl-redirect.md
-    path: ssl-redirect
-  static-schema:
-    type: schema
+  sni-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/sni.md
+    path: sni-listenerset
+  static:
+    # Routes to the public jsonplaceholder.typicode.com service over HTTP and
+    # HTTPS, so the runner needs internet access. The HTTPS section uses the
+    # BackendConfigPolicy tab; static-backendtlspolicy runs the other tab.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/static.md
     path: static
+  static-backendtlspolicy:
+    # The HTTPS section with the BackendTLSPolicy tab. BackendTLSPolicy v1 is
+    # in the Gateway API standard channel since v1.4. Needs internet access.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/static.md
+    path: static-backendtlspolicy
   strip-port-host:
     type:
     - schema
@@ -1214,34 +1894,77 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/resiliency/timeouts/tls-handshake.md
     path: timeout-tls-handshake
-  timeouts-schema:
-    type: schema
-    page: migrate/examples/timeouts.md
-    path: timeouts
-  tls-passthrough-schema:
-    type: schema
+  tls-passthrough:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/tls-passthrough.md
     path: tls-passthrough
+  tls-passthrough-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/tls-passthrough.md
+    path: tls-passthrough-listenerset
   tls-settings-schema:
     type: schema
     page: setup/listeners/tls-settings.md
     path: tls-settings
-  tls-termination-schema:
-    type: schema
+  tls-termination:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/tls-termination.md
     path: tls-termination
-  tls-termination-tcproute-schema:
-    type: schema
+  tls-termination-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/tls-termination.md
+    path: tls-termination-listenerset
+  tls-termination-tcproute:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/tls-termination-tcproute.md
     path: tls-termination-tcproute
-  tracing-schema:
-    type: schema
+  tls-termination-tcproute-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/tls-termination-tcproute.md
+    path: tls-termination-tcproute-listenerset
+  tracing-disable:
+    # Disable tracing per route, on top of listener-level tracing only.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/observability/tracing.md
+    path: tracing-disable
+  tracing:
+    # In-namespace OTel collector with the debug exporter; checks read spans
+    # from the collector logs.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/observability/tracing.md
     path: tracing
-  traffic-mirroring-schema:
-    type: schema
-    page: migrate/examples/traffic-mirroring.md
-    path: traffic-mirroring
   traffic-split:
     type:
     - schema
@@ -1251,8 +1974,15 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/traffic-split.md
     path: traffic-split
-  trafficpolicy-schema:
-    type: schema
+  trafficpolicy:
+    # HTTPRoute rule names (targetRefs.sectionName on a rule) are standard since
+    # Gateway API 1.4.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/about/trafficpolicy.md
     path: trafficpolicy
   transform-change-response-status:
@@ -1309,14 +2039,51 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/transformations/update-response-body.md
     path: transform-update-response-body
-  two-backends-schema:
-    type: schema
+  two-backends:
+    # Keycloak stand-in for the Cognito example: a second Backend for JWKS
+    # only, added to the keycloak-oauth2 GatewayExtension from the
+    # authorization code page.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    - keycloak
+    before:
+    - source: kgw-docs/pages/security/keycloak/authorization-code.md
+      path: keycloak-oauth2-config
     source: kgw-docs/pages/security/oauth/two-backends.md
     path: two-backends
-  url-rewriting-schema:
-    type: schema
-    page: migrate/examples/url-rewriting.md
-    path: url-rewriting
+  uninstall:
+    # Follows the Helm uninstall steps against the quick start install and the
+    # httpbin sample, with the placeholder delete commands filled in, and checks
+    # that the routes, Gateways, control plane, CRDs, namespaces, Gateway API
+    # CRDs, and httpbin are gone.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/operations/uninstall.md
+    path: uninstall
+  upgrade:
+    # Starts from the previous minor release (a hidden step installs it and
+    # the httpbin sample), then follows the page's upgrade steps on the
+    # standard channel and checks the new control plane and proxy versions
+    # and that routing still works.
+    type:
+    - schema
+    - functional
+    source: kgw-docs/pages/operations/upgrade.md
+    path: upgrade
+  upgrade-experimental:
+    # Same upgrade, starting from and upgrading the Gateway API experimental
+    # channel with the page's experimental-channel command.
+    type: functional
+    source: kgw-docs/pages/operations/upgrade.md
+    path: upgrade-experimental
   weighted-routes:
     type:
     - schema

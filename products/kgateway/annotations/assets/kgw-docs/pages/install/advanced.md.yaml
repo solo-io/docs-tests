@@ -1,0 +1,1055 @@
+format: 1
+source: assets/kgw-docs/pages/install/advanced.md
+blocks:
+- 4d4bf0365995dd24 sh
+- ff716e503be821df sh
+- adaecfb55a637023 sh
+- 91625d90190c8ea6 yaml
+- 8d6805e959edf3f7 yaml
+- 0303628224039517 yaml
+- 14e505781d4dc015 yaml
+- c0b0d8285c92a094 yaml
+- a9eada0775586632 yaml
+- 21e2e4400b01708a sh
+- 78b3cdfd5b572fb9 sh
+- 835ddfaed1c71aeb console
+- 674d11f5bf55ea75 yaml
+- 0c4d76c57607f30a sh
+- 5cfb737529f1cb56 yaml
+- 9b7754df70ac386d yaml
+- 676c185b6579b961 sh
+- 9a5df46d7afe8526 sh
+- f02fbeec6958bfa3 yaml
+- 21e2e4400b01708a sh
+- 5fba5f3bf561451f sh
+- 676c185b6579b961 sh
+- 6400e2ef481e8d6e yaml
+tags:
+- paths: advanced
+  block: 0
+  fingerprint: 4d4bf0365995dd24
+  lang: sh
+  lines: 4d4bf036
+  preview: export NEW_VERSION={{< reuse "kgw-docs/versions/n-patch.md" >}}
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
+  block: 1
+  fingerprint: ff716e503be821df
+  lang: sh
+  lines: ff716e50
+  preview: helm show values oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
+  block: 9
+  fingerprint: 21e2e4400b01708a
+  lang: sh
+  lines: fae8c8b8 8e85cac6 39fd077a 0e1a9b32
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
+  block: 10
+  fingerprint: 78b3cdfd5b572fb9
+  lang: sh
+  lines: 78538e31 d4694eb4 500f4d62
+  preview: kubectl get --raw \
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
+  block: 13
+  fingerprint: 0c4d76c57607f30a
+  lang: sh
+  lines: b4095574 8f16bc27
+  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment kgatewa
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
+  block: 15
+  fingerprint: 9b7754df70ac386d
+  lang: yaml
+  lines: 16c71da1 979905a0 e47a48f5 8c8c4228 d0db9645 617053e6 c137289d 36184fa5 0e20b496 47f31603 55024e6a 82f215b9 0f10c5bc 55708cb7 e6365cc1 a67acb0a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
+  block: 16
+  fingerprint: 676c185b6579b961
+  lang: sh
+  lines: 968e6966 459cb237
+  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment {{< reu
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
+  block: 19
+  fingerprint: 21e2e4400b01708a
+  lang: sh
+  lines: fae8c8b8 8e85cac6 39fd077a 0e1a9b32
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
+  block: 20
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
+  block: 21
+  fingerprint: 676c185b6579b961
+  lang: sh
+  lines: 968e6966 459cb237
+  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment {{< reu
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: ff716e503be821df
+    lang: sh
+    lines: ff716e50
+    preview: helm show values oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # The chart values for the version in NEW_VERSION include the settings that this page changes.
+    values=$(helm show values oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-upgrade.md" >}})
+    for key in '^controller:' '^discoveryNamespaceSelectors:' '^validation:' '^rbac:'; do
+      if ! grep -q "$key" <<<"$values"; then
+        echo "FAIL: helm show values for v$NEW_VERSION has no top-level key matching $key"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 8d6805e959edf3f7
+    lang: yaml
+    lines: adc43cf7 6c077fe9 80df063b
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # Default: the chart does not set the variable to false, so the controller default (true) applies.
+    current=$(kubectl get deployment kgateway -n kgateway-system \
+      -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_ENABLE_EXPERIMENTAL_GATEWAY_API_FEATURES")].value}')
+    if [ -n "$current" ] && [ "$current" != "true" ]; then
+      echo "FAIL: before any change, KGW_ENABLE_EXPERIMENTAL_GATEWAY_API_FEATURES is '$current', want unset or true"
+      exit 1
+    fi
+    cat > advanced-experimental.yaml <<'EOF'
+    controller:
+      extraEnv:
+        KGW_ENABLE_EXPERIMENTAL_GATEWAY_API_FEATURES: "false"
+    EOF
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      --reuse-values -f advanced-experimental.yaml
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: advanced - the experimental Gateway API features gate is set to false on the controller
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_ENABLE_EXPERIMENTAL_GATEWAY_API_FEATURES')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "false"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com") || true
+      [ "$code" = "200" ] && break
+      echo "experimental features disabled: httpbin returned '$code', want 200, retrying ($i/60)"; sleep 3
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: experimental features disabled: the httpbin route returned $code, want 200"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 0303628224039517
+    lang: yaml
+    lines: adc43cf7 6c077fe9 b2fe58af
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # Leader election is on by default: the controller holds the kgateway-envoy Lease.
+    holder=""
+    for i in $(seq 1 30); do
+      holder=$(kubectl get lease kgateway-envoy -n kgateway-system -o jsonpath='{.spec.holderIdentity}' 2>/dev/null) || true
+      [ -n "$holder" ] && break
+      echo "no holder on the kgateway-envoy Lease yet ($i/30)"; sleep 5
+    done
+    if [ -z "$holder" ]; then
+      echo "FAIL: leader election is not active by default: the kgateway-envoy Lease has no holder"
+      exit 1
+    fi
+    cat > advanced-leader-election.yaml <<'EOF'
+    controller:
+      extraEnv:
+        KGW_DISABLE_LEADER_ELECTION: "true"
+    EOF
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      --reuse-values -f advanced-leader-election.yaml
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: advanced - leader election is disabled on the controller
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_DISABLE_LEADER_ELECTION')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "true"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com") || true
+      [ "$code" = "200" ] && break
+      echo "leader election disabled: httpbin returned '$code', want 200, retrying ($i/60)"; sleep 3
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: leader election disabled: the httpbin route returned $code, want 200"
+      exit 1
+    fi
+    # Turn leader election back on for the rest of the page.
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      --reuse-values \
+      --set-string controller.extraEnv.KGW_DISABLE_LEADER_ELECTION=false
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 14e505781d4dc015
+    lang: yaml
+    lines: adc43cf7 9ede2713 7b518ee6 872c291b 16bbc546
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    cat > advanced-leader-timings.yaml <<'EOF'
+    controller:
+      leaderElection:
+        leaseDuration: 30s
+        renewDeadline: 20s
+        retryPeriod: 5s
+    EOF
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      --reuse-values -f advanced-leader-timings.yaml
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: advanced - leaseDuration sets KGW_LEADER_ELECTION_LEASE_DURATION
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_LEADER_ELECTION_LEASE_DURATION')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "30s"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: advanced - renewDeadline sets KGW_LEADER_ELECTION_RENEW_DEADLINE
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_LEADER_ELECTION_RENEW_DEADLINE')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "20s"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: advanced - retryPeriod sets KGW_LEADER_ELECTION_RETRY_PERIOD
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_LEADER_ELECTION_RETRY_PERIOD')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "5s"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: advanced - the new leader writes the 30s lease duration to the kgateway-envoy Lease
+      wait:
+        target:
+          kind: Lease
+          metadata:
+            namespace: kgateway-system
+            name: kgateway-envoy
+        jsonPath: "$.spec.leaseDurationSeconds"
+        jsonPathExpectation:
+          comparator: equals
+          value: 30
+        polling:
+          timeoutSeconds: 180
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: c0b0d8285c92a094
+    lang: yaml
+    lines: 5ca4dd17 66e29763 fa0b3e8e 4e3231ff db95f873 e11e2379 839a5cac c8a4ac81 617a04c7 1060ea7b
+    preview: 'discoveryNamespaceSelectors:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # Apply the example selectors, then check which namespaces the controller watches:
+    # environment=prod plus version=v2 is selected, version=v3 is selected, and
+    # environment=prod alone is not (the two labels in one entry are ANDed).
+    cat > advanced-discovery.yaml <<'EOF'
+    discoveryNamespaceSelectors:
+    - matchExpressions:
+      - key: environment
+        operator: In
+        values:
+        - prod
+      matchLabels:
+        version: v2
+    - matchLabels:
+        version: v3
+    EOF
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      --reuse-values -f advanced-discovery.yaml
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    selectors=$(kubectl get deployment kgateway -n kgateway-system \
+      -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_DISCOVERY_NAMESPACE_SELECTORS")].value}')
+    echo "KGW_DISCOVERY_NAMESPACE_SELECTORS=$selectors"
+    if ! grep -q '"v3"' <<<"$selectors" || ! grep -q '"prod"' <<<"$selectors"; then
+      echo "FAIL: the discoveryNamespaceSelectors value did not reach KGW_DISCOVERY_NAMESPACE_SELECTORS"
+      exit 1
+    fi
+    for ns in discovery-prod-v2:environment=prod,version=v2 discovery-v3:version=v3 discovery-prod-only:environment=prod; do
+      name=${ns%%:*}; labels=${ns#*:}
+      kubectl create namespace "$name" --dry-run=client -o yaml | kubectl apply -f -
+      kubectl label namespace "$name" ${labels//,/ } --overwrite
+      kubectl apply -f- <<EOF
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1
+    metadata:
+      name: discovery-check
+      namespace: $name
+    spec:
+      gatewayClassName: {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}
+      listeners:
+      - protocol: HTTP
+        port: 8080
+        name: http
+    EOF
+    done
+    YAMLTest -f - <<'EOF'
+    - name: advanced - a Gateway in a namespace with environment=prod and version=v2 is accepted
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: discovery-prod-v2
+            name: discovery-check
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: advanced - a Gateway in a namespace with version=v3 is accepted
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: discovery-v3
+            name: discovery-check
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    sleep 30
+    accepted=$(kubectl get gateway discovery-check -n discovery-prod-only \
+      -o jsonpath='{.status.conditions[?(@.type=="Accepted")].status}')
+    if [ "$accepted" = "True" ]; then
+      echo "FAIL: a Gateway in a namespace with only environment=prod was accepted, so the namespace was not filtered out"
+      exit 1
+    fi
+    # Put back the default (watch all namespaces) so the http Gateway in kgateway-system works again.
+    kubectl delete namespace discovery-prod-v2 discovery-v3 discovery-prod-only --wait=false
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      --reuse-values \
+      --set-json 'discoveryNamespaceSelectors=[]'
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com") || true
+      [ "$code" = "200" ] && break
+      echo "discovery selectors reset: httpbin returned '$code', want 200, retrying ($i/60)"; sleep 3
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: discovery selectors reset: the httpbin route returned $code, want 200"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: a9eada0775586632
+    lang: yaml
+    lines: adc43cf7 2b0bceee 127528d0 2ec2fa21
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    cat > values.yaml <<'EOF'
+    controller:
+      xds:
+        scoping:
+          mode: REFERENCED
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 21e2e4400b01708a
+    lang: sh
+    lines: fae8c8b8 8e85cac6 39fd077a 0e1a9b32
+    preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: advanced - the scoping mode Helm value sets KGW_XDS_SCOPING_MODE
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_XDS_SCOPING_MODE')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "REFERENCED"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com") || true
+      [ "$code" = "200" ] && break
+      echo "xDS scoping REFERENCED: httpbin returned '$code', want 200, retrying ($i/60)"; sleep 3
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: xDS scoping REFERENCED: the httpbin route returned $code, want 200"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    section: Monitor xDS scoping
+    line: b8d0dda74f34a8f9
+    occurrence: 0
+    words: bb0347a4 9f584196 a0561fd6 0843b0f8 177a7ea3 a7e2d26e bf12a6d9 b9776d7d c1472135 043a7187 177a7ea3 b6bf7bc8
+    block_before:
+      block: 9
+      fingerprint: 21e2e4400b01708a
+      lang: sh
+      lines: fae8c8b8 8e85cac6 39fd077a 0e1a9b32
+      preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # In REFERENCED mode the controller reports the scoping metrics for the http Gateway,
+    # and the http Gateway is scoped (disabled_gateways is 0).
+    metrics=""
+    for i in $(seq 1 40); do
+      metrics=$(kubectl get --raw "/api/v1/namespaces/kgateway-system/services/kgateway:9092/proxy/metrics" 2>/dev/null) || true
+      if grep -Eq '^kgateway_xds_scoping_disabled_gateways\{[^}]*gateway="http"[^}]*\} 0$' <<<"$metrics" \
+        && grep -Eq '^kgateway_xds_snapshot_resources\{[^}]*gateway="http"[^}]*resource="Cluster"[^}]*\} [0-9]+' <<<"$metrics"; then
+        break
+      fi
+      echo "xDS scoping metrics for the http Gateway not reported yet ($i/40)"; sleep 5
+    done
+    grep -E 'kgateway_xds_scoping|kgateway_xds_snapshot_resources.*Cluster' <<<"$metrics" || true
+    if ! grep -Eq '^kgateway_xds_scoping_disabled_gateways\{[^}]*gateway="http"[^}]*\} 0$' <<<"$metrics"; then
+      echo "FAIL: no kgateway_xds_scoping_disabled_gateways 0 for the http Gateway"
+      exit 1
+    fi
+    if ! grep -Eq '^kgateway_xds_snapshot_resources\{[^}]*gateway="http"[^}]*resource="Cluster"[^}]*\} [0-9]+' <<<"$metrics"; then
+      echo "FAIL: no kgateway_xds_snapshot_resources Cluster count for the http Gateway"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 674d11f5bf55ea75
+    lang: yaml
+    lines: d2ba729d 5fb3655e
+    preview: 'validation:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # Any value other than standard or strict (in any case) fails the Helm install.
+    if helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --set validation.level=lenient >/dev/null 2>&1; then
+      echo "FAIL: helm accepted validation.level=lenient, want a failure"
+      exit 1
+    fi
+    helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --set validation.level=STRICT >/dev/null
+    cat > advanced-validation.yaml <<'EOF'
+    validation:
+      level: strict
+    EOF
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      --reuse-values -f advanced-validation.yaml
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 0c4d76c57607f30a
+    lang: sh
+    lines: b4095574 8f16bc27
+    preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment kgatewa
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    YAMLTest -f - <<'EOF'
+    - name: advanced - validation.level strict sets KGW_VALIDATION_MODE to strict
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_VALIDATION_MODE')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "strict"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    # The page's strict-mode example: a route rule with an invalid RE2 regular expression
+    # is dropped and reported as RouteRuleDropped, the other rule of that route and the
+    # other routes on the listener keep serving traffic.
+    kubectl apply -f- <<'EOF'
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: strict-check
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - "strict.example.com"
+      rules:
+      - matches:
+        - path:
+            type: RegularExpression
+            value: "/strict-check/(unclosed"
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /status
+        backendRefs:
+        - name: httpbin
+          port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: advanced - strict mode drops the rule with the invalid regular expression
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: strict-check
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='kgateway.dev/Programmed')].reason"
+        jsonPathExpectation:
+          comparator: equals
+          value: "RouteRuleDropped"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: advanced - the dropped rule's route reports kgateway.dev/Programmed False
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: strict-check
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='kgateway.dev/Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "False"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: advanced - the valid rule of the same route still serves traffic
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /status/200
+        method: GET
+        headers:
+          host: "strict.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: advanced - a request that only the dropped rule matched gets 404
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /strict-check/x
+        method: GET
+        headers:
+          host: "strict.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    - name: advanced - the other route on the listener keeps serving traffic
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    kubectl delete httproute strict-check -n httpbin
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 5cfb737529f1cb56
+    lang: yaml
+    lines: adc43cf7 a1f4619b
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # goMemLimitPercent and extraEnv.GOMEMLIMIT together fail the Helm install.
+    if helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+      --set controller.goMemLimitPercent=90 --set-string controller.extraEnv.GOMEMLIMIT=1GiB >/dev/null 2>&1; then
+      echo "FAIL: helm accepted controller.goMemLimitPercent together with controller.extraEnv.GOMEMLIMIT"
+      exit 1
+    fi
+    cat > advanced-gomemlimit.yaml <<'EOF'
+    controller:
+      goMemLimitPercent: 90
+    EOF
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      --reuse-values -f advanced-gomemlimit.yaml
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: advanced - goMemLimitPercent 90 sets the live memory limit ratio to 0.90
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='AUTOMEMLIMIT')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "0.90"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    gml=$(kubectl get deployment kgateway -n kgateway-system \
+      -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="GOMEMLIMIT")].name}')
+    if [ -n "$gml" ]; then
+      echo "FAIL: with goMemLimitPercent set, the chart still sets the fixed GOMEMLIMIT variable"
+      exit 1
+    fi
+    # The test cluster sets no memory limit on the controller, so the controller logs a warning.
+    found=""
+    for i in $(seq 1 30); do
+      logs=$(kubectl logs deployment/kgateway -n kgateway-system 2>/dev/null) || true
+      if grep -q 'no finite memory limit' <<<"$logs"; then found=1; break; fi
+      echo "no 'no finite memory limit' warning in the controller logs yet ($i/30)"; sleep 5
+    done
+    if [ -z "$found" ]; then
+      echo "FAIL: the controller has no memory limit but did not log a warning about it"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    section: ReferenceGrant example
+    line: f7c52c001fe045ef
+    occurrence: 0
+    words: b9776d7d 8d0288f4 50d858e0 77f6a166 ca978112 823412d1 58296753 b9776d7d abbea20e 9359f3bb 663ea1bf 3316348d 20e8cdb5 58296753 b9776d7d bcb3caf1 9359f3bb
+    block_before:
+      block: 14
+      fingerprint: 5cfb737529f1cb56
+      lang: yaml
+      lines: adc43cf7 a1f4619b
+      preview: 'controller:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # Set up what the example grant is for: an API key Secret in team-secrets, and a policy
+    # in httpbin that reads it, on its own route. Without the grant the reference is denied.
+    kubectl create namespace team-secrets --dry-run=client -o yaml | kubectl apply -f -
+    kubectl apply -f- <<'EOF'
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: apikey
+      namespace: team-secrets
+    type: Opaque
+    stringData:
+      api-key: refgrant-test-key
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: refgrant-check
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - "refgrant.example.com"
+      rules:
+      - backendRefs:
+        - name: httpbin
+          port: 8000
+    ---
+    apiVersion: {{< reuse "kgw-docs/snippets/trafficpolicy-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+    metadata:
+      name: refgrant-apikey
+      namespace: httpbin
+    spec:
+      targetRefs:
+      - group: gateway.networking.k8s.io
+        kind: HTTPRoute
+        name: refgrant-check
+      apiKeyAuth:
+        secretRef:
+          name: apikey
+          namespace: team-secrets
+    EOF
+    status=""
+    for i in $(seq 1 60); do
+      status=$(kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} refgrant-apikey -n httpbin -o jsonpath='{.status.ancestors[*].conditions[*].message}')
+      grep -qi 'reference grant' <<<"$status" && break
+      echo "refgrant-apikey status does not report the missing reference grant yet: '$status' ($i/60)"; sleep 5
+    done
+    if ! grep -qi 'reference grant' <<<"$status"; then
+      echo "FAIL: without a ReferenceGrant, the policy that reads a Secret in team-secrets does not report a missing reference grant"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 9b7754df70ac386d
+    lang: yaml
+    lines: 16c71da1 979905a0 e47a48f5 8c8c4228 d0db9645 617053e6 c137289d 36184fa5 0e20b496 47f31603 55024e6a 82f215b9 0f10c5bc 55708cb7 e6365cc1 a67acb0a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    YAMLTest -f - <<'EOF'
+    - name: advanced - with the ReferenceGrant, the policy that reads the team-secrets Secret is accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: refgrant-apikey
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: advanced - a request without the API key from team-secrets is denied
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "refgrant.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: advanced - a request with the API key from team-secrets is allowed
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "refgrant.example.com"
+          api-key: "refgrant-test-key"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 676c185b6579b961
+    lang: sh
+    lines: 968e6966 459cb237
+    preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment {{< reu
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    mode=$(kubectl get deployment kgateway -n kgateway-system \
+      -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_REFERENCE_GRANT_MODE")].value}')
+    if [ -n "$mode" ]; then
+      echo "FAIL: KGW_REFERENCE_GRANT_MODE is '$mode' before the change, want unset (PERMISSIVE)"
+      exit 1
+    fi
+    # PERMISSIVE: a policy in httpbin may use a GatewayExtension in another namespace
+    # without a ReferenceGrant.
+    kubectl create namespace team-ext --dry-run=client -o yaml | kubectl apply -f -
+    kubectl apply -f- <<'EOF'
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: ext-authz
+      namespace: team-ext
+    spec:
+      selector:
+        app: ext-authz
+      ports:
+      - port: 4444
+        targetPort: 9000
+        protocol: TCP
+        appProtocol: kubernetes.io/h2c
+    ---
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: GatewayExtension
+    metadata:
+      name: team-ext-auth
+      namespace: team-ext
+    spec:
+      type: ExtAuth
+      extAuth:
+        grpcService:
+          backendRef:
+            name: ext-authz
+            port: 4444
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: refgrant-ext
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - "refgrant-ext.example.com"
+      rules:
+      - backendRefs:
+        - name: httpbin
+          port: 8000
+    ---
+    apiVersion: {{< reuse "kgw-docs/snippets/trafficpolicy-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+    metadata:
+      name: refgrant-extauth
+      namespace: httpbin
+    spec:
+      targetRefs:
+      - group: gateway.networking.k8s.io
+        kind: HTTPRoute
+        name: refgrant-ext
+      extAuth:
+        extensionRef:
+          name: team-ext-auth
+          namespace: team-ext
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: advanced - PERMISSIVE accepts a cross-namespace GatewayExtension reference without a ReferenceGrant
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: refgrant-extauth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 9a5df46d7afe8526
+    lang: sh
+    lines: 1a5d2257 db51caed
+    preview: helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # The step above without `open`, which is not available on the test runner.
+    helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yaml > values.yaml
+    cat values.yaml
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: f02fbeec6958bfa3
+    lang: yaml
+    lines: adc43cf7 6c077fe9 0ef0dcb8
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # Add the values above to values.yaml, keeping the values that are already there.
+    python3 - <<'PY'
+    import yaml
+    with open("values.yaml") as f:
+        values = yaml.safe_load(f) or {}
+    values.setdefault("controller", {}).setdefault("extraEnv", {})["KGW_REFERENCE_GRANT_MODE"] = "STRICT"
+    with open("values.yaml", "w") as f:
+        yaml.safe_dump(values, f)
+    PY
+    cat values.yaml
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 21e2e4400b01708a
+    lang: sh
+    lines: fae8c8b8 8e85cac6 39fd077a 0e1a9b32
+    preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 676c185b6579b961
+    lang: sh
+    lines: 968e6966 459cb237
+    preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment {{< reu
+  content: |2-
+       {{< doc-test paths="advanced" >}}
+       YAMLTest -f - <<'EOF'
+       - name: advanced - the active ReferenceGrant mode is STRICT
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: kgateway-system
+               name: kgateway
+           jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_REFERENCE_GRANT_MODE')].value"
+           jsonPathExpectation:
+             comparator: equals
+             value: "STRICT"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       EOF
+       # STRICT: the cross-namespace GatewayExtension reference now needs a ReferenceGrant.
+       status=""
+       for i in $(seq 1 60); do
+         status=$(kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} refgrant-extauth -n httpbin -o jsonpath='{.status.ancestors[*].conditions[*].message}')
+         grep -qi 'reference grant' <<<"$status" && break
+         echo "refgrant-extauth status does not report the missing reference grant yet: '$status' ($i/60)"; sleep 5
+       done
+       if ! grep -qi 'reference grant' <<<"$status"; then
+         echo "FAIL: in STRICT mode, the policy with a cross-namespace extensionRef and no ReferenceGrant does not report a missing reference grant"
+         exit 1
+       fi
+       # The Secret reference that has a ReferenceGrant still works.
+       YAMLTest -f - <<'EOF'
+       - name: advanced - STRICT keeps the policy whose Secret reference has a ReferenceGrant accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: refgrant-apikey
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 22
+    fingerprint: 6400e2ef481e8d6e
+    lang: yaml
+    lines: 84c31baf 524a8194
+    preview: 'rbac:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # Render the chart instead of upgrading: without the ClusterRole the controller would stop working.
+    default_count=$(helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} | grep -cE '^kind: ClusterRole(Binding)?$' || true)
+    off_count=$(helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --set rbac.create=false | grep -cE '^kind: ClusterRole(Binding)?$' || true)
+    echo "ClusterRole and ClusterRoleBinding objects: default $default_count, rbac.create=false $off_count"
+    if [ "$default_count" -lt 2 ]; then
+      echo "FAIL: by default the chart does not render a ClusterRole and a ClusterRoleBinding"
+      exit 1
+    fi
+    if [ "$off_count" -ne 0 ]; then
+      echo "FAIL: with rbac.create=false the chart still renders ClusterRole or ClusterRoleBinding objects"
+      exit 1
+    fi
+    {{< /doc-test >}}

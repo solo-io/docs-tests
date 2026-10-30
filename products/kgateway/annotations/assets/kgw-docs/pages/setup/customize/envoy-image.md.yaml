@@ -1,0 +1,223 @@
+format: 1
+source: assets/kgw-docs/pages/setup/customize/envoy-image.md
+blocks:
+- 195f2498e72a654c sh
+- 8ffd0bb64ffe783f sh
+- bb70ad19ea78b281 sh
+- 0f9ebca90b8c4131 sh
+- 3bcc147575a2faf7 sh
+- 7d2226c2506217bd sh
+- f18e09892723030b
+- d8f13c64e99da47b sh
+- 768ba4c912ae212d yaml
+- e124629fef412a88 yaml
+- 1a5d22570841002c sh
+- 7e32769c4781a166 yaml
+- 10dc68f0e7c338bf sh
+- 7d7d31b80dd75ff0 sh
+- d5cca8fb930a2efe
+- b124899cf32388cb sh
+tags:
+- paths: envoy-image
+  block: 8
+  fingerprint: 768ba4c912ae212d
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 94655cdc 0bebd850 36184fa5 9cc14d83 9287e3e4 a08a3033 208a8890 bff4cbc1 8a47c089 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="envoy-image"
+    only: true
+    lead: ' '
+- paths: envoy-image
+  block: 9
+  fingerprint: e124629fef412a88
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c9f536d5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 94655cdc c10d7538 82601aaa 069de162 da480536 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="envoy-image"
+    only: true
+    lead: ' '
+- paths: envoy-image
+  block: 13
+  fingerprint: 7d7d31b80dd75ff0
+  lang: sh
+  lines: 89856e21 0338efea
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l gateway.ne
+  form:
+    attr: paths="envoy-image"
+    only: true
+    lead: ' '
+- paths: envoy-image
+  block: 15
+  fingerprint: b124899cf32388cb
+  lang: sh
+  lines: 3c3ae9de c9aca376
+  preview: 'kubectl delete gateway my-gateway -n {{< reuse "kgw-docs/snippets/namespace.md" '
+  form:
+    attr: paths="envoy-image"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 7
+    fingerprint: d8f13c64e99da47b
+    lang: sh
+    lines: d8f13c64
+    preview: docker push registry.example.com/myorg/envoy-wrapper:v2.3.0-custom
+  content: |-
+    {{< doc-test paths="envoy-image" >}}
+    # Test-only: the test cannot compile the Rust module and push to a registry,
+    # so it stands in for steps 1 and 2. It gives the stock envoy-wrapper image
+    # that the installed kgateway already runs (the image of the httpbin sample's
+    # http proxy) the name the page pushes,
+    # registry.example.com/myorg/envoy-wrapper:v2.3.0-custom, in the kind node's
+    # image store. The default pullPolicy is IfNotPresent, so the proxy pod starts
+    # from that local copy and never contacts registry.example.com.
+    ei_src=$(kubectl get deployment http -n kgateway-system -o jsonpath='{.spec.template.spec.containers[?(@.name=="kgateway-proxy")].image}')
+    ei_dst=registry.example.com/myorg/envoy-wrapper:v2.3.0-custom
+    case "$ei_src" in
+      */envoy-wrapper:*) ;;
+      *) echo "FAIL: the http proxy runs '${ei_src}', not an envoy-wrapper image"; exit 1 ;;
+    esac
+    ei_node=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
+    echo "tagging ${ei_src} as ${ei_dst} on kind node ${ei_node}"
+    docker exec "$ei_node" crictl inspecti "$ei_src" >/dev/null 2>&1 || docker exec "$ei_node" crictl pull "$ei_src"
+    docker exec "$ei_node" ctr -n k8s.io images tag --force "$ei_src" "$ei_dst"
+    ei_seen=0
+    for attempt in $(seq 1 15); do
+      if docker exec "$ei_node" crictl inspecti "$ei_dst" >/dev/null 2>&1; then ei_seen=1; break; fi
+      echo "kubelet image store does not list ${ei_dst} yet, retrying ($attempt/15)"; sleep 2
+    done
+    if [ "$ei_seen" -ne 1 ]; then
+      echo "FAIL: ${ei_dst} is not in the kind node's image store"
+      docker exec "$ei_node" crictl images
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: e124629fef412a88
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c9f536d5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 94655cdc c10d7538 82601aaa 069de162 da480536 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="envoy-image" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the my-gateway Gateway with custom-envoy-image to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: my-gateway
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    ei_img=""
+    for attempt in $(seq 1 60); do
+      ei_img=$(kubectl get deployment my-gateway -n kgateway-system -o jsonpath='{.spec.template.spec.containers[?(@.name=="kgateway-proxy")].image}' 2>/dev/null || true)
+      [ "$ei_img" = "registry.example.com/myorg/envoy-wrapper:v2.3.0-custom" ] && break
+      echo "deployment/my-gateway proxy image is '${ei_img}', want the custom wrapper image, retrying ($attempt/60)"; sleep 2
+    done
+    if [ "$ei_img" != "registry.example.com/myorg/envoy-wrapper:v2.3.0-custom" ]; then
+      echo "FAIL: deployment/my-gateway runs '${ei_img}', want registry.example.com/myorg/envoy-wrapper:v2.3.0-custom"
+      exit 1
+    fi
+    if ! kubectl rollout status deployment/my-gateway -n kgateway-system --timeout=300s; then
+      kubectl get pods -n kgateway-system -l gateway.networking.k8s.io/gateway-name=my-gateway -o wide
+      kubectl describe pods -n kgateway-system -l gateway.networking.k8s.io/gateway-name=my-gateway | tail -n 30
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: d5cca8fb930a2efe
+    lang: ''
+    lines: d5cca8fb
+    preview: registry.example.com/myorg/envoy-wrapper:v2.3.0-custom
+  content: |-
+    {{< doc-test paths="envoy-image" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the my-gateway Service to get a load balancer address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: my-gateway
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # The running proxy pod uses the custom image, and the proxy connects to the
+    # control plane and serves traffic. Test-only: route envoy-image.example.com
+    # on my-gateway to httpbin and send a request through the Gateway's load
+    # balancer address on port 80.
+    ei_pod_img=$(kubectl get pods -n kgateway-system -l gateway.networking.k8s.io/gateway-name=my-gateway --field-selector=status.phase=Running -o jsonpath='{.items[*].spec.containers[?(@.name=="kgateway-proxy")].image}')
+    case " $ei_pod_img " in
+      *" registry.example.com/myorg/envoy-wrapper:v2.3.0-custom "*) ;;
+      *) echo "FAIL: running my-gateway proxy pods use '${ei_pod_img}', want the custom wrapper image"; exit 1 ;;
+    esac
+    kubectl apply -f- <<'EOF'
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: envoy-image-httpbin
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: my-gateway
+        namespace: kgateway-system
+      hostnames:
+      - envoy-image.example.com
+      rules:
+      - backendRefs:
+        - name: httpbin
+          port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the envoy-image-httpbin HTTPRoute to be accepted by my-gateway
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: envoy-image-httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    ei_addr=""
+    for attempt in $(seq 1 60); do
+      ei_addr=$(kubectl get svc my-gateway -n kgateway-system -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}" 2>/dev/null || true)
+      [ -n "$ei_addr" ] && break
+      echo "Service my-gateway has no load balancer address yet, retrying ($attempt/60)"; sleep 5
+    done
+    if [ -z "$ei_addr" ]; then
+      echo "FAIL: Service my-gateway in kgateway-system got no load balancer address"
+      exit 1
+    fi
+    ei_code=""
+    for attempt in $(seq 1 30); do
+      ei_code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "http://${ei_addr}:80/headers" -H "host: envoy-image.example.com") || true
+      [ "$ei_code" = "200" ] && break
+      echo "request through my-gateway returned '$ei_code', want 200, retrying ($attempt/30)"; sleep 2
+    done
+    if [ "$ei_code" != "200" ]; then
+      echo "FAIL: request to envoy-image.example.com through my-gateway returned '$ei_code', want 200"
+      exit 1
+    fi
+    {{< /doc-test >}}

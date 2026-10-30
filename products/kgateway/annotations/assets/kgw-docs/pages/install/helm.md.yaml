@@ -1,0 +1,262 @@
+format: 1
+source: assets/kgw-docs/pages/install/helm.md
+blocks:
+- 189bf76bb4d0140a sh
+- 09cea3396998dcf6 sh
+- b692d08807a1dcd1 console
+- 2ccaec033f3f4c5c sh
+- 5efca42d766c73b0 sh
+- 25e0fe07ac02572a sh
+- a0f9d3e47bc9a5b0 sh
+- 0e8b49e6c10a2c9c sh
+- 6a24786ed0b25d17 sh
+- 08deff5bad4cdff9 txt
+- 5fba5f3bf561451f sh
+- 616e4c879f50db3f txt
+- dab8cceea145f56c sh
+- 7bb5fb08492dd721 txt
+tags:
+- paths: helm,helm-custom-values,helm-development
+  block: 0
+  fingerprint: 189bf76bb4d0140a
+  lang: sh
+  lines: 189bf76b
+  preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  form:
+    attr: paths="helm,helm-custom-values,helm-development"
+    only: true
+    lead: ' '
+- paths: helm-experimental
+  block: 1
+  fingerprint: 09cea3396998dcf6
+  lang: sh
+  lines: 09cea339
+  preview: kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
+  form:
+    attr: paths="helm-experimental"
+    only: true
+    lead: ' '
+- paths: helm
+  block: 3
+  fingerprint: 2ccaec033f3f4c5c
+  lang: sh
+  lines: 2ccaec03
+  preview: helm template --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} {
+  form:
+    attr: paths="helm"
+    only: true
+    lead: ' '
+- paths: helm,helm-experimental,helm-custom-values,helm-development
+  block: 4
+  fingerprint: 5efca42d766c73b0
+  lang: sh
+  lines: f40bdd3c 9d671c51 e04cd23e
+  preview: helm upgrade -i --create-namespace \
+  form:
+    attr: paths="helm,helm-experimental,helm-custom-values,helm-development"
+    only: true
+    lead: ' '
+- paths: helm,helm-experimental
+  block: 6
+  fingerprint: a0f9d3e47bc9a5b0
+  lang: sh
+  lines: 87ff5769 0713159a
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="helm,helm-experimental"
+    only: true
+    lead: ' '
+- paths: helm-custom-values
+  block: 7
+  fingerprint: 0e8b49e6c10a2c9c
+  lang: sh
+  lines: 87ff5769 39fd077a 44d44036
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="helm-custom-values"
+    only: true
+    lead: ' '
+- paths: helm-development
+  block: 8
+  fingerprint: 6a24786ed0b25d17
+  lang: sh
+  lines: 87ff5769 34234f1a 844f31fe
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="helm-development"
+    only: true
+    lead: ' '
+- paths: helm,helm-experimental,helm-custom-values,helm-development
+  block: 10
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="helm,helm-experimental,helm-custom-values,helm-development"
+    only: true
+    lead: ' '
+- paths: helm,helm-experimental,helm-custom-values,helm-development
+  block: 12
+  fingerprint: dab8cceea145f56c
+  lang: sh
+  lines: dab8ccee
+  preview: kubectl get gatewayclass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}
+  form:
+    attr: paths="helm,helm-experimental,helm-custom-values,helm-development"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 2ccaec033f3f4c5c
+    lang: sh
+    lines: 2ccaec03
+    preview: helm template --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} {
+  content: |-
+    {{< doc-test paths="helm" >}}
+    # helm template rendered the CRD chart into ./helm.
+    if ! grep -rqs "kind: CustomResourceDefinition" ./helm; then
+      echo "FAIL: helm template did not write any CustomResourceDefinition into ./helm"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 5efca42d766c73b0
+    lang: sh
+    lines: f40bdd3c 9d671c51 e04cd23e
+    preview: helm upgrade -i --create-namespace \
+  content: |-
+    {{< doc-test paths="helm,helm-experimental,helm-custom-values,helm-development" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the kgateway TrafficPolicy CRD from the kgateway-crds chart to be established
+      wait:
+        target:
+          kind: CustomResourceDefinition
+          metadata:
+            name: trafficpolicies.gateway.kgateway.dev
+        jsonPath: "$.status.conditions[?(@.type=='Established')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 25e0fe07ac02572a
+    lang: sh
+    lines: cdb043c5 55b1821e 58c210ab
+    preview: helm pull oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse
+  content: |-
+    {{< doc-test paths="helm-custom-values" >}}
+    # The page's block above also runs `open`, which is macOS only, so the test
+    # pulls and unpacks the chart with the same commands and skips `open`.
+    helm pull oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}}
+    tar -xvf {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}-{{< reuse "kgw-docs/versions/helm-version-flag.md" >}}.tgz
+    test -s {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}/values.yaml || { echo "FAIL: the pulled chart has no values.yaml"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 08deff5bad4cdff9
+    lang: txt
+    lines: 009af775 88c9fc88 172dcd28 b65d4106 be32aa3e a9efee14
+    preview: 'NAME: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}'
+  content: |-
+    {{< doc-test paths="helm,helm-experimental,helm-custom-values,helm-development" >}}
+    helm_status=$(helm status {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o json | jq -r '.info.status')
+    if [ "$helm_status" != "deployed" ]; then
+      echo "FAIL: the {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} Helm release is '$helm_status', not deployed"
+      exit 1
+    fi
+    YAMLTest -f - <<'EOF'
+    - name: wait for the kgateway control plane deployment from the Helm install to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 5fba5f3bf561451f
+    lang: sh
+    lines: 5fba5f3b
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="helm,helm-experimental,helm-custom-values,helm-development" >}}
+    # The controller creates the GatewayClass shortly after it starts, so wait for
+    # it before the next step reads it.
+    YAMLTest -f - <<'EOF'
+    - name: wait for the controller to create and accept the kgateway GatewayClass
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: kgateway
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 7bb5fb08492dd721
+    lang: txt
+    lines: 0889e5c0 f3a242c5
+    preview: NAME         CONTROLLER               ACCEPTED   AGE
+  content: |-
+    {{< doc-test paths="helm,helm-experimental,helm-custom-values,helm-development" >}}
+    controller=$(kubectl get gatewayclass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} -o jsonpath='{.spec.controllerName}')
+    if [ "$controller" != "kgateway.dev/{{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}" ]; then
+      echo "FAIL: GatewayClass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} has controller '$controller', not kgateway.dev/{{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 7bb5fb08492dd721
+    lang: txt
+    lines: 0889e5c0 f3a242c5
+    preview: NAME         CONTROLLER               ACCEPTED   AGE
+  content: |-
+    {{< doc-test paths="helm-experimental" >}}
+    # The Experimental tab installed the experimental channel of the Gateway API CRDs.
+    channel=$(kubectl get crd gateways.gateway.networking.k8s.io -o jsonpath='{.metadata.annotations.gateway\.networking\.k8s\.io/channel}')
+    if [ "$channel" != "experimental" ]; then
+      echo "FAIL: the Gateway API CRDs are from the '$channel' channel, not experimental"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 7bb5fb08492dd721
+    lang: txt
+    lines: 0889e5c0 f3a242c5
+    preview: NAME         CONTROLLER               ACCEPTED   AGE
+  content: |-
+    {{< doc-test paths="helm-development" >}}
+    # The Development tab installed the development build v{{< reuse "kgw-docs/versions/patch-dev.md" >}} with pullPolicy Always.
+    policy=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[0].imagePullPolicy}')
+    chart=$(helm list -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f '^{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}$' -o json | jq -r '.[0].chart')
+    if [ "$policy" != "Always" ] || [ "$chart" != "{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}-v{{< reuse "kgw-docs/versions/patch-dev.md" >}}" ]; then
+      echo "FAIL: expected chart {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}-v{{< reuse "kgw-docs/versions/patch-dev.md" >}} with imagePullPolicy Always, got chart '$chart' and imagePullPolicy '$policy'"
+      exit 1
+    fi
+    {{< /doc-test >}}

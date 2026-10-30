@@ -1,0 +1,260 @@
+format: 1
+source: assets/kgw-docs/pages/operations/uninstall.md
+blocks:
+- 06feb5e661c3754e sh
+- e769dacf6f2919da sh
+- 283442435d1d85cb sh
+- d3bd32755798c70b sh
+- 60c23f9753dc252a sh
+- 5c8e6c7ba97e0b0c sh
+- 16f87fa35975e171 sh
+- 772243ad5c852532 sh
+- 05ae3c47b1c4cd58 sh
+- eef583acc00c5d2c sh
+- 3d16e407f0aa4adc sh
+- 47a49d1ba2c456ba sh
+- 5fba5f3bf561451f sh
+- 52548d6901016f8a txt
+- 05ae3c47b1c4cd58 sh
+- 971bfe13fc1e0891 sh
+- 47a49d1ba2c456ba sh
+- 367461b902e4622f sh
+- 28f6a07a212844e4 sh
+- 22a993f544aed450 txt
+- eee25d60dfdf7f62 sh
+- 05bc1ca08a37cc00 txt
+- 5fba5f3bf561451f sh
+- 52548d6901016f8a txt
+- 05ae3c47b1c4cd58 sh
+- 971bfe13fc1e0891 sh
+- a93537332a244fff sh
+- cd5b8b47e383d41e sh
+tags:
+- paths: uninstall
+  block: 0
+  fingerprint: 06feb5e661c3754e
+  lang: sh
+  lines: 06feb5e6
+  preview: kubectl get httproutes -A
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 2
+  fingerprint: 283442435d1d85cb
+  lang: sh
+  lines: '28344243'
+  preview: kubectl get referencegrants -A
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 4
+  fingerprint: 60c23f9753dc252a
+  lang: sh
+  lines: 60c23f97
+  preview: kubectl get gateways -A | grep {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 6
+  fingerprint: 16f87fa35975e171
+  lang: sh
+  lines: 16f87fa3
+  preview: 'helm uninstall {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse '
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 7
+  fingerprint: 772243ad5c852532
+  lang: sh
+  lines: 772243ad
+  preview: helm uninstall {{< reuse "/kgw-docs/snippets/helm-kgateway-crds.md" >}} -n {{< r
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 8
+  fingerprint: 05ae3c47b1c4cd58
+  lang: sh
+  lines: 05ae3c47
+  preview: kubectl delete namespace {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 10
+  fingerprint: 3d16e407f0aa4adc
+  lang: sh
+  lines: 3d16e407
+  preview: kubectl delete -f https://github.com/kubernetes-sigs/gateway-api/releases/downlo
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+- paths: uninstall
+  block: 27
+  fingerprint: cd5b8b47e383d41e
+  lang: sh
+  lines: cd5b8b47
+  preview: kubectl delete -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/h
+  form:
+    attr: paths="uninstall"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: e769dacf6f2919da
+    lang: sh
+    lines: e769dacf
+    preview: kubectl delete -n <namespace> httproute <httproute-name>
+  content: |-
+    {{< doc-test paths="uninstall" >}}
+    # Test-only: the page's command has placeholders. The httpbin sample has one
+    # HTTPRoute, httpbin in the httpbin namespace.
+    kubectl delete -n httpbin httproute httpbin
+    for i in $(seq 1 30); do
+      [ -z "$(kubectl get httproutes -A -o name)" ] && break
+      echo "waiting for the HTTPRoutes to be deleted ($i/30)"; sleep 2
+    done
+    if [ -n "$(kubectl get httproutes -A -o name)" ]; then
+      echo "FAIL: HTTPRoutes are left after step 2: $(kubectl get httproutes -A -o name | tr '\n' ' ')"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: d3bd32755798c70b
+    lang: sh
+    lines: d3bd3275
+    preview: kubectl delete -n <namespace> referencegrant <referencegrant-name>
+  content: |-
+    {{< doc-test paths="uninstall" >}}
+    # Test-only: the httpbin sample creates no ReferenceGrant, so there is none to delete.
+    if [ -n "$(kubectl get referencegrants -A -o name)" ]; then
+      echo "FAIL: ReferenceGrants are left after step 4: $(kubectl get referencegrants -A -o name | tr '\n' ' ')"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 5c8e6c7ba97e0b0c
+    lang: sh
+    lines: 5c8e6c7b
+    preview: kubectl delete -n <namespace> gateway <gateway-name>
+  content: |-
+    {{< doc-test paths="uninstall" >}}
+    # Test-only: the page's command has placeholders. The httpbin sample has one
+    # kgateway Gateway, http in the kgateway-system namespace. Deleting it removes
+    # its gateway proxy deployment.
+    kubectl delete -n kgateway-system gateway http
+    for i in $(seq 1 60); do
+      if [ -z "$(kubectl get gateways -A -o name)" ] && ! kubectl get deployment http -n kgateway-system >/dev/null 2>&1; then break; fi
+      echo "waiting for the Gateways and the http proxy deployment to be deleted ($i/60)"; sleep 5
+    done
+    if [ -n "$(kubectl get gateways -A -o name)" ]; then
+      echo "FAIL: Gateways are left after step 6: $(kubectl get gateways -A -o name | tr '\n' ' ')"
+      exit 1
+    fi
+    if kubectl get deployment http -n kgateway-system >/dev/null 2>&1; then
+      echo "FAIL: the http gateway proxy deployment still exists after its Gateway was deleted"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 16f87fa35975e171
+    lang: sh
+    lines: 16f87fa3
+    preview: 'helm uninstall {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse '
+  content: |-
+    {{< doc-test paths="uninstall" >}}
+    # The kgateway release and its control plane deployment are gone.
+    for i in $(seq 1 60); do
+      ! kubectl get deployment kgateway -n kgateway-system >/dev/null 2>&1 && break
+      echo "waiting for the kgateway control plane deployment to be deleted ($i/60)"; sleep 5
+    done
+    if helm status kgateway -n kgateway-system >/dev/null 2>&1; then
+      echo "FAIL: the kgateway Helm release still exists"
+      exit 1
+    fi
+    if kubectl get deployment kgateway -n kgateway-system >/dev/null 2>&1; then
+      echo "FAIL: the kgateway control plane deployment still exists"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: eef583acc00c5d2c
+    lang: sh
+    lines: eef583ac
+    preview: kubectl get crds | grep {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
+  content: |-
+    {{< doc-test paths="uninstall" >}}
+    # Test-only: the page's grep exits 1 when nothing matches, which is the
+    # expected result, so check the same thing without failing the script.
+    for i in $(seq 1 60); do
+      left=$(kubectl get crds -o name | grep kgateway || true)
+      [ -z "$left" ] && ! kubectl get namespace kgateway-system >/dev/null 2>&1 && break
+      echo "waiting for the kgateway CRDs and the kgateway-system namespace to be deleted ($i/60)"; sleep 5
+    done
+    left=$(kubectl get crds -o name | grep kgateway || true)
+    if [ -n "$left" ]; then
+      echo "FAIL: kgateway CRDs are left after uninstalling the kgateway-crds release: $(tr '\n' ' ' <<<"$left")"
+      exit 1
+    fi
+    if helm status kgateway-crds -n kgateway-system >/dev/null 2>&1; then
+      echo "FAIL: the kgateway-crds Helm release still exists"
+      exit 1
+    fi
+    if kubectl get namespace kgateway-system >/dev/null 2>&1; then
+      echo "FAIL: the kgateway-system namespace still exists"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 3d16e407f0aa4adc
+    lang: sh
+    lines: 3d16e407
+    preview: kubectl delete -f https://github.com/kubernetes-sigs/gateway-api/releases/downlo
+  content: |-
+    {{< doc-test paths="uninstall" >}}
+    # The standard Gateway API CRDs are gone.
+    for i in $(seq 1 30); do
+      left=$(kubectl get crds -o name | grep 'gateway.networking.k8s.io' || true)
+      [ -z "$left" ] && break
+      echo "waiting for the Gateway API CRDs to be deleted ($i/30)"; sleep 2
+    done
+    if [ -n "$left" ]; then
+      echo "FAIL: Gateway API CRDs are left: $(tr '\n' ' ' <<<"$left")"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 27
+    fingerprint: cd5b8b47e383d41e
+    lang: sh
+    lines: cd5b8b47
+    preview: kubectl delete -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/h
+  content: |-
+    {{< doc-test paths="uninstall" >}}
+    # The httpbin sample app and its namespace are gone.
+    for i in $(seq 1 60); do
+      ! kubectl get namespace httpbin >/dev/null 2>&1 && break
+      echo "waiting for the httpbin namespace to be deleted ($i/60)"; sleep 5
+    done
+    if kubectl get namespace httpbin >/dev/null 2>&1; then
+      echo "FAIL: the httpbin namespace still exists"
+      exit 1
+    fi
+    {{< /doc-test >}}

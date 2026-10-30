@@ -13,7 +13,7 @@ blocks:
 - 2619c526b6d2e29a
 - 3ed4774e8365d0f8 yaml
 - a9c5bfdff5db5680 yaml
-- 904b9421a08776e5 sh
+- 8984fca17ad69a2d sh
 tags:
 - paths: mirroring
   block: 0
@@ -67,10 +67,10 @@ tags:
     lead: ' '
 - paths: mirroring
   block: 12
-  fingerprint: 904b9421a08776e5
+  fingerprint: 8984fca17ad69a2d
   lang: sh
-  lines: 86d88893 da5c6096 835a8eef
-  preview: kubectl delete service httpbin2 -n httpbin
+  lines: 3c6b4ca5 86d88893 da5c6096 835a8eef
+  preview: kubectl delete trafficpolicy httpbin-mirror -n httpbin --ignore-not-found
   form:
     attr: paths="mirroring"
     only: true

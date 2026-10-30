@@ -1,0 +1,313 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/destination-types/kube-services/grpc-services.md
+blocks:
+- 43b507e862b90199 yaml
+- bd269e5af3ab962b yaml
+- adcb8ec760adccb2 txt
+- 366a19c105ae997f bash
+- a4053c7891648e42 yaml
+- 0872ce72721a651c yaml
+- fe2bedd1835fe5ee bash
+- 5435e8459a3cc53a yaml
+- 7858b0e17e00a07b yaml
+- 54b57eb59a9b81b3 bash
+- 35dbb07c2e0c86a6 yaml
+- 381d32a82038fbf5 bash
+- 9d1dc53a7f52ffff bash
+- 381d32a82038fbf5 bash
+- 01b006afcf2c4cb1 bash
+- 12fca4a76470771e bash
+- d3235f6235a723a1 bash
+- 21dd0b1a75040d48 bash
+- 72adb679c13a8bfd bash
+- 0146cfadef3b7313
+- e423f3157d1adbbf bash
+- 18ee1011b7566e84 bash
+- ed044f39e2f73938 bash
+- b4e4e28e5af8d600 bash
+- 91c7326bb093ebc5 json
+- eadd04d4f2aa36f5 bash
+tags:
+- paths: grpc-services
+  block: 0
+  fingerprint: 43b507e862b90199
+  lang: yaml
+  lines: abbd1bdc 58584366 ab78925c 8c8c4228 167a6906 36184fa5 8432e015 839a5cac b98dc78e 97bcd5e0 a58565b2 8c8c4228 fa1e8330 b98dc78e 36184fa5 04968f51 5ed9d638 97f2e789 0ff65a1a 088263b2 9693ecf1 8db70061 63862108 516ef5ea f7d23240 c5d509f1 b1f3f283 516ef5ea f7d23240 ede66692 8e799ec0 162b7570 25e2e45f 61eae934 cb3f91d5 f1540154 0d6480f0 8c8c4228 a4394357 36184fa5 08a3b86e 0ff65a1a 796eea4c 9693ecf1 7811827d 7d42f305 8432e015 b98dc78e cb3f91d5 f1540154 7963e6b7 8c8c4228 2c6d5d22 36184fa5 04968f51 dcd91ba7 2d3c53f5 8ff7327f 25997bea e5eedb00 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc-services"
+    only: true
+    lead: ' '
+- paths: grpc-services
+  block: 1
+  fingerprint: bd269e5af3ab962b
+  lang: yaml
+  lines: abbd1bdc 979905a0 e47a48f5 8c8c4228 c7e7fb4b 0ccc8edc 36184fa5 0e20b496 b5a028c9 61a8be06 0bebd850 55708cb7 e6365cc1 0d6480f0 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc-services"
+    only: true
+    lead: ' '
+- paths: grpc-services
+  block: 3
+  fingerprint: 366a19c105ae997f
+  lang: bash
+  lines: 4e13145e a38ebc14 5561f332 d37d9479 e7e8abc5 1bd2e2c1 630eb0d0 91688572
+  preview: openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  form:
+    attr: paths="grpc-services"
+    only: true
+    lead: ' '
+- paths: grpc-services
+  block: 4
+  fingerprint: a4053c7891648e42
+  lang: yaml
+  lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 d47a8183 0bebd850 fa1e8330 b98dc78e 36184fa5 39325db0 c10d7538 2407cef5 c6ba4159 c8857053 69c1825f 3195c5f5 f7446fcf bc611839 c3ba9d74 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc-services"
+    only: true
+    lead: ' '
+- paths: grpc-services
+  block: 8
+  fingerprint: 7858b0e17e00a07b
+  lang: yaml
+  lines: abbd1bdc 8c67597e 61a8be06 8c8c4228 b5902fe6 0bebd850 fa1e8330 b98dc78e 36184fa5 d3d416e7 990c1682 0bebd850 e970223a 301e1bfa fdefee39 3de9d845 b733d726 8d9978c8 e5988ec6 94ae491e 2b5155a3 0ccc8edc 2b6bc07a a3b86ab6 2b5155a3 0ccc8edc 2b6bc07a abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc-services"
+    only: true
+    lead: ' '
+- paths: grpc-services
+  block: 11
+  fingerprint: 381d32a82038fbf5
+  lang: bash
+  lines: c469f3ac eef87314
+  preview: export GATEWAY_IP=$(kubectl get gateway grpc-gateway -n {{< reuse "kgw-docs/snip
+  form:
+    attr: paths="grpc-services"
+    only: true
+    lead: ' '
+- paths: grpc-services
+  block: 25
+  fingerprint: eadd04d4f2aa36f5
+  lang: bash
+  lines: 872e6a61 d2e720da de88e37b 7d25ecc1 09168d3e dab1ecee 8b9a992b
+  preview: kubectl delete -A gateways,grpcroutes -l app=grpc-echo
+  form:
+    attr: paths="grpc-services"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 43b507e862b90199
+    lang: yaml
+    lines: abbd1bdc 58584366 ab78925c 8c8c4228 167a6906 36184fa5 8432e015 839a5cac b98dc78e 97bcd5e0 a58565b2 8c8c4228 fa1e8330 b98dc78e 36184fa5 04968f51 5ed9d638 97f2e789 0ff65a1a 088263b2 9693ecf1 8db70061 63862108 516ef5ea f7d23240 c5d509f1 b1f3f283 516ef5ea f7d23240 ede66692 8e799ec0 162b7570 25e2e45f 61eae934 cb3f91d5 f1540154 0d6480f0 8c8c4228 a4394357 36184fa5 08a3b86e 0ff65a1a 796eea4c 9693ecf1 7811827d 7d42f305 8432e015 b98dc78e cb3f91d5 f1540154 7963e6b7 8c8c4228 2c6d5d22 36184fa5 04968f51 dcd91ba7 2d3c53f5 8ff7327f 25997bea e5eedb00 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="grpc-services" >}}
+       YAMLTest -f - <<'EOF'
+       - name: grpc-services - wait for the grpc-echo Deployment to be available
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: default
+               name: grpc-echo
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: grpc-services - wait for the grpcurl-client Pod to be Ready
+         wait:
+           target:
+             kind: Pod
+             metadata:
+               namespace: default
+               name: grpcurl-client
+           jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: a4053c7891648e42
+    lang: yaml
+    lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 d47a8183 0bebd850 fa1e8330 b98dc78e 36184fa5 39325db0 c10d7538 2407cef5 c6ba4159 c8857053 69c1825f 3195c5f5 f7446fcf bc611839 c3ba9d74 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="grpc-services" >}}
+       YAMLTest -f - <<'EOF'
+       - name: grpc-services - wait for the grpc-gateway Gateway to be accepted
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: grpc-gateway
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: grpc-services - wait for the grpc-gateway Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: grpc-gateway
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: grpc-services - wait for the grpc-gateway proxy Deployment to be available
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: kgateway-system
+               name: grpc-gateway
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: grpc-services - wait for the grpc-gateway Gateway to report an address
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: grpc-gateway
+           jsonPath: "$.status.addresses[0].value"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 7858b0e17e00a07b
+    lang: yaml
+    lines: abbd1bdc 8c67597e 61a8be06 8c8c4228 b5902fe6 0bebd850 fa1e8330 b98dc78e 36184fa5 d3d416e7 990c1682 0bebd850 e970223a 301e1bfa fdefee39 3de9d845 b733d726 8d9978c8 e5988ec6 94ae491e 2b5155a3 0ccc8edc 2b6bc07a a3b86ab6 2b5155a3 0ccc8edc 2b6bc07a abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="grpc-services" >}}
+       YAMLTest -f - <<'EOF'
+       - name: grpc-services - wait for the grpc-echo-route GRPCRoute to be accepted
+         wait:
+           target:
+             kind: GRPCRoute
+             metadata:
+               namespace: kgateway-system
+               name: grpc-echo-route
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: grpc-services - wait for the grpc-echo-route GRPCRoute to resolve its references
+         wait:
+           target:
+             kind: GRPCRoute
+             metadata:
+               namespace: kgateway-system
+               name: grpc-echo-route
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    section: Verify the gRPC route
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 16
+      fingerprint: d3235f6235a723a1
+      lang: bash
+      lines: 0b763a0e 0e93116c
+      preview: grpcurl -insecure -authority grpc.example.com localhost:8443 list
+  content: |2-
+       {{< doc-test paths="grpc-services" >}}
+       YAMLTest -f - <<'EOF'
+       # The runner has no grpcurl, so these checks run the page's grpcurl commands
+       # from the grpcurl-client Pod that the page deploys, against the same GATEWAY_IP:443.
+       - name: grpc-services - reflection list through grpc-gateway over TLS shows the Echo, health, and reflection services
+         retries: 60
+         command:
+           command: "kubectl exec -n default grpcurl-client -c grpcurl -- grpcurl -insecure -authority grpc.example.com ${GATEWAY_IP}:443 list"
+         source:
+           type: local
+         expect:
+           exitCode: 0
+           stdout:
+           - contains: 'yages.Echo'
+           - contains: 'grpc.health.v1.Health'
+           - contains: 'grpc.reflection.v1alpha.ServerReflection'
+       - name: grpc-services - describe yages.Echo through grpc-gateway over TLS shows the Ping and Reverse methods
+         retries: 10
+         command:
+           command: "kubectl exec -n default grpcurl-client -c grpcurl -- grpcurl -insecure -authority grpc.example.com ${GATEWAY_IP}:443 describe yages.Echo"
+         source:
+           type: local
+         expect:
+           exitCode: 0
+           stdout:
+           - contains: 'yages.Echo is a service:'
+           - contains: 'rpc Ping ( .yages.Empty ) returns ( .yages.Content );'
+           - contains: 'rpc Reverse ( .yages.Content ) returns ( .yages.Content );'
+       EOF
+       {{< /doc-test >}}
+- after:
+    section: Verify the gRPC route
+    line: 600fe1bb59e46b50
+    occurrence: 4
+    words: 32d3feda
+    block_before:
+      block: 21
+      fingerprint: 18ee1011b7566e84
+      lang: bash
+      lines: 06f22a13 3c31fa4e 6e963592 5d8837a5
+      preview: grpcurl -insecure \
+  content: |2-
+       {{< doc-test paths="grpc-services" >}}
+       YAMLTest -f - <<'EOF'
+       - name: grpc-services - yages.Echo/Ping through grpc-gateway over TLS returns pong
+         retries: 10
+         command:
+           command: "kubectl exec -n default grpcurl-client -c grpcurl -- grpcurl -insecure -authority grpc.example.com ${GATEWAY_IP}:443 yages.Echo/Ping"
+         source:
+           type: local
+         expect:
+           exitCode: 0
+           stdout:
+           - contains: '"text": "pong"'
+       EOF
+       {{< /doc-test >}}

@@ -1,0 +1,273 @@
+format: 1
+source: assets/kgw-docs/pages/security/cors.md
+blocks:
+- 7e727fcb259d307f yaml
+- 43cbcae0d70383e8 yaml
+- 08a80a1cabd4cca7 yaml
+- 7e727fcb259d307f yaml
+- 43ac2712dfb841ad sh
+- 449861a82d5b8abb sh
+- c2933af2378d3c82 console
+- f135059ceb374d76 console
+- c2933af2378d3c82 console
+- 93e2872baf6ea91d sh
+- 05b7f06ab82e070b sh
+- e486a84a06bc6ead console
+- bc26218b4e67991a sh
+- 25d86d1c753cafda sh
+- bc26218b4e67991a sh
+tags:
+- paths: cors
+  block: 0
+  fingerprint: 7e727fcb259d307f
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6c74551b 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 976b01f0 3de9d845 6e95318c a602752c 19c2fa74 6def2dca fd12af70 6bacf137 afd95d43 be536e21 25d8505d 08e0e4bc ead663af 5b742131 0f27179b 6bacf137 d5908f8d d4f669b2 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cors"
+    only: true
+    lead: ' '
+- paths: cors-trafficpolicy
+  block: 1
+  fingerprint: 43cbcae0d70383e8
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 6c74551b 0f10c5bc 36184fa5 19c2fa74 6def2dca fd12af70 d070d137 f5e36e99 1a4c11df afd95d43 d31e88e1 7556d13d 3d5ef289 ead663af 5b742131 0f27179b d070d137 961d261d d4f669b2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cors-trafficpolicy"
+    only: true
+    lead: ' '
+- paths: cors-trafficpolicy
+  block: 2
+  fingerprint: 08a80a1cabd4cca7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6c74551b 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 976b01f0 3de9d845 6e95318c 90922aeb 248578da 06b13f44 c548623c 6c74551b 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="cors-trafficpolicy"
+    only: true
+    lead: ' '
+- paths: cors
+  block: 12
+  fingerprint: bc26218b4e67991a
+  lang: sh
+  lines: bc26218b
+  preview: kubectl delete httproute httpbin-cors -n httpbin
+  form:
+    attr: paths="cors"
+    only: true
+    lead: ' '
+- paths: cors-trafficpolicy
+  block: 13
+  fingerprint: 25d86d1c753cafda
+  lang: sh
+  lines: bc26218b c4857696
+  preview: kubectl delete httproute httpbin-cors -n httpbin
+  form:
+    attr: paths="cors-trafficpolicy"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 7e727fcb259d307f
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6c74551b 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 976b01f0 3de9d845 6e95318c a602752c 19c2fa74 6def2dca fd12af70 6bacf137 afd95d43 be536e21 25d8505d 08e0e4bc ead663af 5b742131 0f27179b 6bacf137 d5908f8d d4f669b2 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="cors" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-cors HTTPRoute to be accepted (CORS filter)
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-cors
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin-cors HTTPRoute references to resolve (CORS filter)
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-cors
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 08a80a1cabd4cca7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6c74551b 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 976b01f0 3de9d845 6e95318c 90922aeb 248578da 06b13f44 c548623c 6c74551b 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="cors-trafficpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-cors HTTPRoute to be accepted (ExtensionRef to the httpbin-cors TrafficPolicy)
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-cors
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin-cors HTTPRoute references to resolve (ExtensionRef to the httpbin-cors TrafficPolicy)
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-cors
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: f135059ceb374d76
+    lang: console
+    lines: 92413e97 9bb623b1 7f5457da 15357256 92413e97 912f4a8b a152bc23 bbe83b1b 125e992f 92aab6c2 8ecd52aa 7f5457da 5f7c6523 15357256
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="cors" >}}
+    YAMLTest -f - <<'EOF'
+    - name: cors - a preflight from the allowed origin https://example.com gets the configured CORS headers
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /get
+        method: OPTIONS
+        headers:
+          host: "cors.example:8080"
+          Origin: "https://example.com"
+          Access-Control-Request-Method: "POST"
+          Access-Control-Request-Headers: "Origin"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+        - name: access-control-allow-origin
+          comparator: equals
+          value: "https://example.com"
+        - name: access-control-allow-credentials
+          comparator: equals
+          value: "true"
+        - name: access-control-allow-methods
+          comparator: equals
+          value: "GET, POST, OPTIONS"
+        - name: access-control-allow-headers
+          comparator: equals
+          value: "Origin"
+        - name: access-control-max-age
+          comparator: equals
+          value: "86400"
+        - name: access-control-expose-headers
+          comparator: equals
+          value: "Origin, X-HTTPRoute-Header"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: f135059ceb374d76
+    lang: console
+    lines: 92413e97 9bb623b1 7f5457da 15357256 92413e97 912f4a8b a152bc23 bbe83b1b 125e992f 92aab6c2 8ecd52aa 7f5457da 5f7c6523 15357256
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="cors-trafficpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: cors-trafficpolicy - a preflight from the allowed origin https://example.com gets the configured CORS headers
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /get
+        method: OPTIONS
+        headers:
+          host: "cors.example:8080"
+          Origin: "https://example.com"
+          Access-Control-Request-Method: "POST"
+          Access-Control-Request-Headers: "Origin"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+        - name: access-control-allow-origin
+          comparator: equals
+          value: "https://example.com"
+        - name: access-control-allow-credentials
+          comparator: equals
+          value: "true"
+        - name: access-control-allow-methods
+          comparator: equals
+          value: "GET, POST, OPTIONS"
+        - name: access-control-allow-headers
+          comparator: equals
+          value: "Origin, Authorization, Content-Type"
+        - name: access-control-max-age
+          comparator: equals
+          value: "86400"
+        - name: access-control-expose-headers
+          comparator: equals
+          value: "Origin, X-TrafficPolicy-Header"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: e486a84a06bc6ead
+    lang: console
+    lines: 92413e97 9bb623b1 3201f37c 15357256 92413e97 a152bc23 5a8507b6 3e670794 befea1e7 18e0a468 3201f37c 15357256 cd8a298e 5f7c6523
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="cors,cors-trafficpolicy" >}}
+    # The gateway does not answer a preflight from an origin that is not allowed, so
+    # the request reaches httpbin, which adds its own generic CORS headers. None of
+    # the policy's values (max age 86400, methods GET, POST, OPTIONS, the expose
+    # headers) are in the response.
+    cors_bad=""
+    for i in $(seq 1 30); do
+      cors_resp=$(curl -s -o /dev/null -D - --max-time 5 -X OPTIONS "http://${INGRESS_GW_ADDRESS}:8080/get" -H "host: cors.example:8080" \
+        -H "Origin: https://notallowed.com" \
+        -H "Access-Control-Request-Method: POST" \
+        -H "Access-Control-Request-Headers: Origin" 2>/dev/null | tr -d '\r' | tr 'A-Z' 'a-z') || true
+      cors_code=$(awk 'NR==1{print $2}' <<<"$cors_resp")
+      cors_bad=""
+      if [ "$cors_code" != 200 ]; then cors_bad="status is '${cors_code}', expected 200"; fi
+      if grep -qx 'access-control-max-age: 86400' <<<"$cors_resp"; then cors_bad="${cors_bad} max-age is the policy's 86400;"; fi
+      if grep -qx 'access-control-allow-methods: get, post, options' <<<"$cors_resp"; then cors_bad="${cors_bad} allow-methods are the policy's;"; fi
+      if grep -q '^access-control-expose-headers:.*x-\(httproute\|trafficpolicy\)-header' <<<"$cors_resp"; then cors_bad="${cors_bad} expose-headers are the policy's;"; fi
+      if grep -qx 'access-control-allow-origin: https://example.com' <<<"$cors_resp"; then cors_bad="${cors_bad} allow-origin is the allowed origin;"; fi
+      if [ -z "$cors_bad" ]; then break; fi
+      sleep 2
+    done
+    if [ -n "$cors_bad" ]; then
+      echo "cors: a preflight from https://notallowed.com got the policy's CORS headers or failed: ${cors_bad}"
+      echo "$cors_resp"
+      exit 1
+    fi
+    echo "cors: a preflight from https://notallowed.com gets HTTP 200 without the policy's CORS headers"
+    {{< /doc-test >}}

@@ -1,0 +1,498 @@
+format: 1
+source: assets/kgw-docs/pages/security/okta/setup.md
+blocks:
+- 2701ee8c9ccd069a yaml
+- c9482d8e6de104cc yaml
+- b906dd5931cb02bf sh
+tags:
+- paths: okta-setup,okta-idp
+  block: 0
+  fingerprint: 2701ee8c9ccd069a
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 75021e46 0bebd850 36184fa5 c582fe46 2efcbf93 bfce7f60 a6c4e650 c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="okta-setup,okta-idp"
+    only: true
+    lead: ' '
+- paths: okta-setup,okta-idp
+  block: 1
+  fingerprint: c9482d8e6de104cc
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 7c6a134c 0bebd850 36184fa5 588a5d84 71ab14c2 ad65deb7 75021e46 3195c5f5 8b1785b2 9efe4f94 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="okta-setup,okta-idp"
+    only: true
+    lead: ' '
+- paths: okta-setup
+  block: 2
+  fingerprint: b906dd5931cb02bf
+  lang: sh
+  lines: 8eb6bf5c 51d8de52
+  preview: kubectl delete BackendConfigPolicy okta-tls -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="okta-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Connect kgateway to Okta
+    line: e949015f544be84d
+    occurrence: 0
+    words: ff777205 b9d90628 2e9ecdb7 be8dff00 ca978112 3009be76 a0af9f86 75857a45 b9776d7d 4ea5ee68 663ea1bf 65819e19 fa8847b0 b808e156 3fc4ccfe 41d311a6 6db7d803 f0619c64 94f106e0 3b212781 5ef5ef03 2c195230 58296753 1eb79602 3fb45623 6201111b b9776d7d 3b212781 9893ff99 fdf09cdf d767748a d8ad572d 37a8eec1 b8d31e85 4d040d3f 65819e19 f2ff8386
+    block_before: null
+  content: |-
+    {{< doc-test paths="okta-setup,okta-idp" >}}
+    # ============================================================================
+    # Test-only sign-in provider stand-in (these comments are not rendered)
+    # ============================================================================
+    # CI has no Okta account, so this block runs a small OIDC server in the cluster
+    # that answers on the same paths, with the same issuer format, as Okta:
+    #   issuer https://IDP_HOST/oauth2/default, /oauth2/default/.well-known/openid-configuration,
+    #   /oauth2/default/v1/keys, /oauth2/default/v1/authorize, /oauth2/default/v1/token,
+    #   /oauth2/default/v1/logout
+    # It signs RS256 tokens with a key from this block, and supports the grants the
+    # guides use: client credentials and authorization code with PKCE.
+    # The client is YOUR_CLIENT_ID / YOUR_CLIENT_SECRET, the user is
+    # testuser@example.com / YOUR_PASSWORD, and the registered callback is
+    # https://www.example.com/oauth2/redirect, so the guides' placeholders work as typed.
+    #
+    # How the page's own YAML reaches the stand-in, unchanged:
+    #   * The tenant host is IDP_HOST (under the reserved .test domain, never public).
+    #     The kubectl function below replaces YOUR_OKTA_DOMAIN with IDP_HOST in every
+    #     manifest that kubectl reads from stdin, so the page's `kubectl apply -f-`
+    #     blocks run as written. Nothing else on the command line changes.
+    #   * A CoreDNS rewrite resolves IDP_HOST in the cluster to the stand-in Service.
+    #   * HTTPS: the stand-in's certificate comes from a test CA. The page's
+    #     BackendConfigPolicy trusts the proxy's system CA file
+    #     (`wellKnownCACertificates: System`, which the proxy reads from
+    #     /etc/ssl/certs/ca-certificates.crt). A GatewayParameters on the `http` Gateway
+    #     mounts a copy of the runner's CA bundle plus the test CA over that file.
+    #     The page does not show this step; a real tenant has a public certificate.
+    #   * The stand-in Service is a LoadBalancer, so curl on the runner reaches it with
+    #     --resolve "${IDP_HOST}:443:${IDP_ADDRESS}" --cacert "${IDP_DIR}/ca.crt".
+    export IDP_PROVIDER=okta
+    export IDP_PLACEHOLDER=YOUR_OKTA_DOMAIN
+    export IDP_HOST=okta.idp-standin.test
+    export IDP_AUTHORIZE_URL="https://${IDP_HOST}/oauth2/default/v1/authorize"
+    IDP_DIR="$(mktemp -d)"
+    export IDP_DIR
+    kubectl() {
+      local arg prev="" from_stdin=false
+      for arg in "$@"; do
+        case "$arg" in -f-|--filename=-) from_stdin=true ;; esac
+        case "$prev $arg" in "-f -"|"--filename -") from_stdin=true ;; esac
+        prev=$arg
+      done
+      if [ "$from_stdin" = true ]; then
+        sed "s/${IDP_PLACEHOLDER}/${IDP_HOST}/g" | command kubectl "$@"
+      else
+        command kubectl "$@"
+      fi
+    }
+
+    # Test CA, the stand-in's server certificate, and the token signing key.
+    cat > "$IDP_DIR/ca.cnf" <<'CNF'
+    [req]
+    distinguished_name = dn
+    prompt = no
+    x509_extensions = v3
+    [dn]
+    O = kgateway doc tests
+    CN = IdP stand-in test CA
+    [v3]
+    basicConstraints = critical,CA:TRUE
+    keyUsage = critical,keyCertSign,cRLSign
+    subjectKeyIdentifier = hash
+    CNF
+    openssl req -x509 -sha256 -nodes -days 7 -newkey rsa:2048 -config "$IDP_DIR/ca.cnf" \
+      -keyout "$IDP_DIR/ca.key" -out "$IDP_DIR/ca.crt"
+    openssl req -new -nodes -newkey rsa:2048 -subj "/CN=${IDP_HOST}" \
+      -keyout "$IDP_DIR/tls.key" -out "$IDP_DIR/tls.csr"
+    printf 'subjectAltName=DNS:%s\nextendedKeyUsage=serverAuth\nbasicConstraints=CA:FALSE\n' "$IDP_HOST" > "$IDP_DIR/tls.ext"
+    openssl x509 -req -sha256 -days 7 -in "$IDP_DIR/tls.csr" -CA "$IDP_DIR/ca.crt" -CAkey "$IDP_DIR/ca.key" \
+      -CAcreateserial -out "$IDP_DIR/tls.crt" -extfile "$IDP_DIR/tls.ext"
+    openssl verify -CAfile "$IDP_DIR/ca.crt" "$IDP_DIR/tls.crt"
+    openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out "$IDP_DIR/signing.key"
+
+    cat > "$IDP_DIR/server.js" <<'JS'
+    // Test-only OIDC stand-in for Auth0 or Okta. Node.js standard library only.
+    'use strict';
+    const https = require('https');
+    const crypto = require('crypto');
+    const fs = require('fs');
+
+    const env = process.env;
+    const PROVIDER = env.PROVIDER;
+    const BASE = 'https://' + env.IDP_HOST;
+    const REDIRECT_URIS = env.REDIRECT_URIS.split(',');
+    const P = PROVIDER === 'okta' ? {
+      issuer: BASE + '/oauth2/default', prefix: '/oauth2/default',
+      jwks: '/oauth2/default/v1/keys', authorize: '/oauth2/default/v1/authorize',
+      token: '/oauth2/default/v1/token', logout: '/oauth2/default/v1/logout',
+      userinfo: '/oauth2/default/v1/userinfo',
+      grants: ['authorization_code', 'client_credentials'],
+      badRedirect: "The 'redirect_uri' parameter must be a Login redirect URI in the client app settings",
+    } : {
+      issuer: BASE + '/', prefix: '',
+      jwks: '/.well-known/jwks.json', authorize: '/authorize',
+      token: '/oauth/token', logout: '/v2/logout', userinfo: '/userinfo',
+      grants: ['authorization_code', 'client_credentials', 'password'],
+      badRedirect: 'Callback URL mismatch',
+    };
+    const DISCOVERY = P.prefix + '/.well-known/openid-configuration';
+
+    const signingKey = crypto.createPrivateKey(fs.readFileSync(env.SIGNING_KEY || '/keys/signing.key'));
+    const pub = crypto.createPublicKey(signingKey).export({ format: 'jwk' });
+    const KID = crypto.createHash('sha256').update(pub.n).digest('base64url').slice(0, 16);
+    const JWKS = { keys: [{ kty: 'RSA', use: 'sig', alg: 'RS256', kid: KID, n: pub.n, e: pub.e }] };
+
+    const b64 = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url');
+    function jwt(claims) {
+      const now = Math.floor(Date.now() / 1000);
+      const body = Object.assign({ iss: P.issuer, iat: now, exp: now + 3600, jti: crypto.randomUUID() }, claims);
+      const data = b64({ alg: 'RS256', typ: 'JWT', kid: KID }) + '.' + b64(body);
+      return data + '.' + crypto.sign('sha256', Buffer.from(data), signingKey).toString('base64url');
+    }
+
+    const USER = { sub: PROVIDER === 'okta' ? '00u1standin' : 'auth0|standin', email: env.IDP_USERNAME, name: 'Test User' };
+    const transactions = new Map();
+    const codes = new Map();
+
+    function send(res, status, body, headers) {
+      const json = typeof body !== 'string';
+      res.writeHead(status, Object.assign({ 'content-type': json ? 'application/json' : 'text/html; charset=utf-8', 'cache-control': 'no-store' }, headers || {}));
+      res.end(json ? JSON.stringify(body) : body);
+    }
+    const oauthError = (res, status, error, description) => send(res, status, { error, error_description: description });
+    const cookies = (req) => Object.fromEntries((req.headers.cookie || '').split(/;\s*/).filter(Boolean).map((c) => [c.split('=')[0], c.split('=').slice(1).join('=')]));
+
+    function clientAuth(req, form) {
+      let id = form.get('client_id');
+      let secret = form.get('client_secret');
+      const basic = /^Basic (.+)$/i.exec(req.headers.authorization || '');
+      if (basic) {
+        const pair = Buffer.from(basic[1], 'base64').toString();
+        id = decodeURIComponent(pair.split(':')[0]);
+        secret = decodeURIComponent(pair.split(':').slice(1).join(':'));
+      }
+      return id === env.CLIENT_ID && secret === env.CLIENT_SECRET;
+    }
+
+    function accessClaims(scope, audience, subject) {
+      if (PROVIDER === 'okta') {
+        return { ver: 1, aud: 'api://default', cid: env.CLIENT_ID, sub: subject, scp: scope ? scope.split(' ') : [] };
+      }
+      return { sub: subject, aud: audience || BASE + '/userinfo', azp: env.CLIENT_ID, scope: scope || '' };
+    }
+
+    function tokenEndpoint(req, res, form) {
+      const grant = form.get('grant_type');
+      if (!P.grants.includes(grant)) return oauthError(res, 400, 'unsupported_grant_type', 'Unsupported grant type: ' + grant);
+      if (!clientAuth(req, form)) return oauthError(res, 401, 'invalid_client', 'Client authentication failed.');
+      const scope = form.get('scope') || '';
+      if (grant === 'client_credentials') {
+        const reserved = scope.split(' ').filter((s) => ['openid', 'profile', 'email', 'address', 'phone', 'offline_access'].includes(s));
+        if (PROVIDER === 'okta' && reserved.length) return oauthError(res, 400, 'invalid_scope', 'Client Credentials requests cannot contain scopes: ' + reserved.join(', '));
+        return send(res, 200, { token_type: 'Bearer', expires_in: 3600, scope, access_token: jwt(Object.assign(accessClaims(scope, form.get('audience'), env.CLIENT_ID), { gty: PROVIDER === 'okta' ? undefined : 'client-credentials' })) });
+      }
+      if (grant === 'password') {
+        if (form.get('username') !== env.IDP_USERNAME || form.get('password') !== env.IDP_PASSWORD) return oauthError(res, 403, 'invalid_grant', 'Wrong email or password.');
+        return send(res, 200, { token_type: 'Bearer', expires_in: 3600, scope, access_token: jwt(Object.assign(accessClaims(scope, form.get('audience'), USER.sub), { gty: 'password' })) });
+      }
+      const entry = codes.get(form.get('code'));
+      codes.delete(form.get('code'));
+      if (!entry) return oauthError(res, 400, 'invalid_grant', 'Invalid authorization code');
+      if (form.get('redirect_uri') !== entry.redirectUri) return oauthError(res, 400, 'invalid_grant', 'redirect_uri does not match the authorization request');
+      if (entry.challenge) {
+        const verifier = form.get('code_verifier') || '';
+        const computed = entry.method === 'S256' ? crypto.createHash('sha256').update(verifier).digest('base64url') : verifier;
+        if (computed !== entry.challenge) return oauthError(res, 400, 'invalid_grant', 'PKCE verification failed');
+      }
+      const idToken = jwt(Object.assign({ aud: env.CLIENT_ID, email: USER.email, email_verified: true, name: USER.name, sub: USER.sub }, entry.nonce ? { nonce: entry.nonce } : {}));
+      return send(res, 200, { token_type: 'Bearer', expires_in: 3600, scope: entry.scope, access_token: jwt(accessClaims(entry.scope, null, USER.sub)), id_token: idToken });
+    }
+
+    const loginPage = (tx, message) => '<!doctype html><title>Sign in (test stand-in)</title><p>' + (message || 'Sign in') + '</p>' +
+      '<form method="post" action="' + P.authorize + '"><input type="hidden" name="tx" value="' + tx + '">' +
+      '<input name="username"><input name="password" type="password"><button type="submit">Continue</button></form>';
+
+    function authorizeGet(res, q) {
+      if (q.get('client_id') !== env.CLIENT_ID) return send(res, 400, '<p>Unknown client: ' + q.get('client_id') + '</p>');
+      if (!REDIRECT_URIS.includes(q.get('redirect_uri'))) return send(res, 400, '<p>' + P.badRedirect + '</p>');
+      if (q.get('response_type') !== 'code') return send(res, 400, '<p>Unsupported response_type</p>');
+      const tx = crypto.randomUUID();
+      transactions.set(tx, { redirectUri: q.get('redirect_uri'), state: q.get('state'), nonce: q.get('nonce'), scope: q.get('scope') || '', challenge: q.get('code_challenge'), method: q.get('code_challenge_method') || 'plain' });
+      return send(res, 200, loginPage(tx), { 'set-cookie': 'idp_tx=' + tx + '; Path=/; Secure; HttpOnly; SameSite=None' });
+    }
+
+    function authorizePost(req, res, form) {
+      const tx = form.get('tx');
+      const entry = transactions.get(tx);
+      if (!entry || cookies(req).idp_tx !== tx) return send(res, 400, '<p>Login session not found. Start again from the application.</p>');
+      if (form.get('username') !== env.IDP_USERNAME || form.get('password') !== env.IDP_PASSWORD) return send(res, 401, loginPage(tx, 'Wrong email or password.'));
+      transactions.delete(tx);
+      const code = crypto.randomBytes(24).toString('base64url');
+      codes.set(code, entry);
+      const location = new URL(entry.redirectUri);
+      location.searchParams.set('code', code);
+      if (entry.state) location.searchParams.set('state', entry.state);
+      res.writeHead(302, { location: location.toString(), 'set-cookie': 'idp_tx=; Path=/; Max-Age=0; Secure' });
+      return res.end();
+    }
+
+    const server = https.createServer({ key: fs.readFileSync((env.TLS_DIR || '/tls') + '/tls.key'), cert: fs.readFileSync((env.TLS_DIR || '/tls') + '/tls.crt') }, (req, res) => {
+      const url = new URL(req.url, BASE);
+      let raw = '';
+      req.on('data', (d) => { raw += d; });
+      req.on('end', () => {
+        console.log(new Date().toISOString(), req.method, url.pathname, req.headers.host);
+        const ctype = req.headers['content-type'] || '';
+        const form = ctype.includes('application/json') ? new URLSearchParams(JSON.parse(raw || '{}')) : new URLSearchParams(raw);
+        const path = url.pathname;
+        if (path === '/healthz') return send(res, 200, { ok: true });
+        if (req.method === 'GET' && path === DISCOVERY) {
+          return send(res, 200, {
+            issuer: P.issuer, authorization_endpoint: BASE + P.authorize, token_endpoint: BASE + P.token,
+            end_session_endpoint: BASE + P.logout, jwks_uri: BASE + P.jwks, userinfo_endpoint: BASE + P.userinfo,
+            response_types_supported: ['code'], grant_types_supported: P.grants, subject_types_supported: ['public'],
+            id_token_signing_alg_values_supported: ['RS256'], code_challenge_methods_supported: ['S256', 'plain'],
+            token_endpoint_auth_methods_supported: ['client_secret_post', 'client_secret_basic'],
+          });
+        }
+        if (req.method === 'GET' && path === P.jwks) return send(res, 200, JWKS);
+        if (req.method === 'GET' && path === P.authorize) return authorizeGet(res, url.searchParams);
+        if (req.method === 'POST' && path === P.authorize) return authorizePost(req, res, form);
+        if (req.method === 'POST' && path === P.token) return tokenEndpoint(req, res, form);
+        if (path === P.logout) {
+          const back = url.searchParams.get('returnTo') || url.searchParams.get('post_logout_redirect_uri');
+          if (back) { res.writeHead(302, { location: back }); return res.end(); }
+          return send(res, 200, '<p>Signed out</p>');
+        }
+        return send(res, 404, { error: 'not_found', path });
+      });
+    });
+    server.listen(Number(env.PORT || 8443), () => console.log('IdP stand-in for ' + PROVIDER + ' at ' + P.issuer));
+    JS
+
+    kubectl create namespace idp-standin
+    kubectl create secret tls idp-standin-tls -n idp-standin --cert="$IDP_DIR/tls.crt" --key="$IDP_DIR/tls.key"
+    kubectl create secret generic idp-standin-signing-key -n idp-standin --from-file=signing.key="$IDP_DIR/signing.key"
+    kubectl create configmap idp-standin-server -n idp-standin --from-file=server.js="$IDP_DIR/server.js"
+    kubectl apply -f- <<EOF
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: idp-standin
+      namespace: idp-standin
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: idp-standin
+      template:
+        metadata:
+          labels:
+            app: idp-standin
+        spec:
+          containers:
+          - name: server
+            image: node:22-alpine
+            command: ["node", "/app/server.js"]
+            env:
+            - {name: PROVIDER, value: "${IDP_PROVIDER}"}
+            - {name: IDP_HOST, value: "${IDP_HOST}"}
+            - {name: PORT, value: "8443"}
+            - {name: REDIRECT_URIS, value: "https://www.example.com/oauth2/redirect"}
+            - {name: CLIENT_ID, value: "YOUR_CLIENT_ID"}
+            - {name: CLIENT_SECRET, value: "YOUR_CLIENT_SECRET"}
+            - {name: IDP_USERNAME, value: "testuser@example.com"}
+            - {name: IDP_PASSWORD, value: "YOUR_PASSWORD"}
+            ports:
+            - containerPort: 8443
+            readinessProbe:
+              httpGet: {path: /healthz, port: 8443, scheme: HTTPS}
+              periodSeconds: 2
+            volumeMounts:
+            - {name: app, mountPath: /app}
+            - {name: tls, mountPath: /tls}
+            - {name: keys, mountPath: /keys}
+          volumes:
+          - name: app
+            configMap: {name: idp-standin-server}
+          - name: tls
+            secret: {secretName: idp-standin-tls}
+          - name: keys
+            secret: {secretName: idp-standin-signing-key}
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: idp-standin
+      namespace: idp-standin
+    spec:
+      type: LoadBalancer
+      selector:
+        app: idp-standin
+      ports:
+      - name: https
+        port: 443
+        targetPort: 8443
+    EOF
+    kubectl rollout status deployment/idp-standin -n idp-standin --timeout=300s
+    IDP_ADDRESS=""
+    for i in $(seq 1 60); do
+      IDP_ADDRESS=$(command kubectl get svc idp-standin -n idp-standin -o jsonpath="{.status.loadBalancer.ingress[0]['ip','hostname']}")
+      [ -n "$IDP_ADDRESS" ] && break
+      echo "waiting for the stand-in LoadBalancer address ($i/60)"; sleep 5
+    done
+    test -n "$IDP_ADDRESS" || { echo "the idp-standin Service got no LoadBalancer address"; exit 1; }
+    export IDP_ADDRESS
+    ok=false
+    for i in $(seq 1 30); do
+      doc=$(command curl -sS --max-time 5 --cacert "$IDP_DIR/ca.crt" --resolve "${IDP_HOST}:443:${IDP_ADDRESS}" \
+        "https://${IDP_HOST}/oauth2/default/.well-known/openid-configuration" || true)
+      if grep -qF '"issuer":"https://okta.idp-standin.test/oauth2/default"' <<<"$doc"; then ok=true; break; fi
+      echo "stand-in discovery document not served yet ($i/30)"; sleep 2
+    done
+    [ "$ok" = true ] || { echo "the stand-in does not serve its discovery document with issuer https://okta.idp-standin.test/oauth2/default"; command kubectl logs -n idp-standin deploy/idp-standin --tail=30 || true; exit 1; }
+
+    # DNS: in the cluster, IDP_HOST resolves to the stand-in Service.
+    command kubectl get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' > "$IDP_DIR/Corefile"
+    python3 - "$IDP_DIR/Corefile" "$IDP_HOST" <<'PY'
+    import re, sys
+    path, host = sys.argv[1], sys.argv[2]
+    svc = "idp-standin.idp-standin.svc.cluster.local"
+    corefile = open(path).read()
+    rule = ("    rewrite stop {\n"
+            "        name exact " + host + " " + svc + "\n"
+            "        answer name " + svc + " " + host + "\n"
+            "    }\n")
+    corefile, n = re.subn(r"^(\.:53 \{\n)", lambda m: m.group(1) + rule, corefile, count=1, flags=re.M)
+    assert n == 1, "no .:53 server block in the CoreDNS Corefile"
+    open(path, "w").write(corefile)
+    PY
+    command kubectl create configmap coredns -n kube-system --from-file=Corefile="$IDP_DIR/Corefile" --dry-run=client -o yaml | command kubectl apply -f -
+    command kubectl rollout restart deployment coredns -n kube-system
+    command kubectl rollout status deployment coredns -n kube-system --timeout=180s
+    ok=false
+    for i in $(seq 1 30); do
+      out=$(command kubectl run "idp-dns-check-$i" --rm -i --restart=Never -n idp-standin --image=curlimages/curl:8.10.1 -- \
+        curl -sk -o /dev/null -w '%{http_code}' "https://${IDP_HOST}/healthz" 2>/dev/null || true)
+      if grep -q 200 <<<"$out"; then ok=true; break; fi
+      echo "${IDP_HOST} does not resolve to the stand-in in the cluster yet ($i/30)"; sleep 5
+    done
+    [ "$ok" = true ] || { echo "the CoreDNS rewrite for ${IDP_HOST} does not work"; exit 1; }
+
+    # Trust: the proxy's system CA file gets the test CA.
+    { cat /etc/ssl/certs/ca-certificates.crt 2>/dev/null || true; cat "$IDP_DIR/ca.crt"; } > "$IDP_DIR/ca-certificates.crt"
+    command kubectl create configmap idp-standin-ca-bundle -n kgateway-system --from-file=ca-certificates.crt="$IDP_DIR/ca-certificates.crt"
+    kubectl apply -f- <<'EOF'
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: GatewayParameters
+    metadata:
+      name: idp-standin-ca
+      namespace: kgateway-system
+    spec:
+      kube:
+        podTemplate:
+          extraVolumes:
+          - name: idp-standin-ca
+            configMap:
+              name: idp-standin-ca-bundle
+        envoyContainer:
+          extraVolumeMounts:
+          - name: idp-standin-ca
+            mountPath: /etc/ssl/certs/ca-certificates.crt
+            subPath: ca-certificates.crt
+            readOnly: true
+    EOF
+    command kubectl patch gateway http -n kgateway-system --type=merge \
+      -p '{"spec":{"infrastructure":{"parametersRef":{"group":"gateway.kgateway.dev","kind":"GatewayParameters","name":"idp-standin-ca"}}}}'
+    ok=false
+    for i in $(seq 1 60); do
+      vols=$(command kubectl get deployment http -n kgateway-system -o jsonpath='{.spec.template.spec.volumes[*].name}' || true)
+      if grep -qw idp-standin-ca <<<"$vols"; then ok=true; break; fi
+      echo "waiting for the http proxy Deployment to mount the test CA ($i/60)"; sleep 3
+    done
+    [ "$ok" = true ] || { echo "the http proxy Deployment never got the idp-standin-ca volume"; command kubectl get gateway http -n kgateway-system -o yaml; exit 1; }
+    command kubectl rollout status deployment/http -n kgateway-system --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: c9482d8e6de104cc
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 7c6a134c 0bebd850 36184fa5 588a5d84 71ab14c2 ad65deb7 75021e46 3195c5f5 8b1785b2 9efe4f94 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="okta-setup,okta-idp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the okta-tls BackendConfigPolicy to be accepted (TLS to okta.idp-standin.test, system CA)
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: kgateway-system
+            name: okta-tls
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Configure TLS for the Okta Backend
+    line: 5a4b698f06e0d68b
+    occurrence: 0
+    words: 7ab37787 99a65ad7 0695b563 4d040d3f 65819e19 f2ff8386 a5c935d1 f4bf9f7f 44d9d053 b9776d7d f37437fb bbc5e661 ec72b956 d9403e3c 84532b30 663ea1bf a3b142af b9776d7d bbc5e661 043a7187 a9a08919 69590970 f78c06aa
+    block_before:
+      block: 1
+      fingerprint: c9482d8e6de104cc
+      lang: yaml
+      lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 7c6a134c 0bebd850 36184fa5 588a5d84 71ab14c2 ad65deb7 75021e46 3195c5f5 8b1785b2 9efe4f94 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="okta-setup" >}}
+    # Test-only check of "the gateway can reach Okta": a temporary route sends
+    # requests through the okta Backend, over TLS with the page's BackendConfigPolicy
+    # (system CA file, SNI okta.idp-standin.test), to the discovery document. The route is
+    # removed right after, so the page's cleanup stays the same.
+    kubectl apply -f- <<'EOF'
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: idp-standin-check
+      namespace: kgateway-system
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - idp-check.example.com
+      rules:
+      - backendRefs:
+        - name: okta
+          kind: Backend
+          group: gateway.kgateway.dev
+        filters:
+        - type: URLRewrite
+          urlRewrite:
+            hostname: okta.idp-standin.test
+    EOF
+    code=""; body=""
+    for i in $(seq 1 60); do
+      body=$(curl -s --max-time 5 -w '\n%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/oauth2/default/.well-known/openid-configuration" -H "host: idp-check.example.com" || true)
+      code=${body##*$'\n'}
+      if [ "$code" = 200 ] && grep -qF '"issuer":"https://okta.idp-standin.test/oauth2/default"' <<<"$body"; then break; fi
+      echo "GET /oauth2/default/.well-known/openid-configuration through the okta Backend returned '$code', want 200 with issuer https://okta.idp-standin.test/oauth2/default ($i/60)"; sleep 2
+    done
+    if [ "$code" != 200 ]; then
+      echo "FAIL: the gateway did not reach the Okta stand-in through the okta Backend and the okta-tls BackendConfigPolicy"
+      echo "$body"; exit 1
+    fi
+    kubectl delete httproute idp-standin-check -n kgateway-system
+    {{< /doc-test >}}

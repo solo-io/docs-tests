@@ -1,0 +1,221 @@
+format: 1
+source: content/docs/envoy/latest/migrate/examples/external-auth.md
+blocks:
+- 725479adbb820f12 bash
+- 29b9d121e34e058f bash
+- a998cbec10ccc7a8 yaml
+- a66fba29c27240d7 bash
+- fe424b68b434b4d9 bash
+- 0049539a140adf25 yaml
+- 2234cb72581a8c34 bash
+tags:
+- paths: migrate-external-auth
+  block: 0
+  fingerprint: 725479adbb820f12
+  lang: bash
+  lines: 14f11ea1 4912a691 f1089fb2 8c8c4228 0baa2076 72ab0e66 aa6538db d1d83b08 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c a5cb33ee f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > external-auth-ingress.yaml
+  form:
+    attr: paths="migrate-external-auth"
+    only: true
+    lead: ' '
+- paths: migrate-external-auth
+  block: 1
+  fingerprint: 29b9d121e34e058f
+  lang: bash
+  lines: 675e6290 1caed50b
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=kgateway \
+  form:
+    attr: paths="migrate-external-auth"
+    only: true
+    lead: ' '
+- paths: migrate-external-auth
+  block: 3
+  fingerprint: a66fba29c27240d7
+  lang: bash
+  lines: a66fba29
+  preview: 'sed -i.bak ''/namespace: ""/d'' external-auth-kgateway.yaml'
+  form:
+    attr: paths="migrate-external-auth"
+    only: true
+    lead: ' '
+- paths: migrate-external-auth
+  block: 6
+  fingerprint: 2234cb72581a8c34
+  lang: bash
+  lines: 2234cb72
+  preview: kubectl apply -f external-auth-kgateway.yaml
+  form:
+    attr: paths="migrate-external-auth"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 29b9d121e34e058f
+    lang: bash
+    lines: 675e6290 1caed50b
+    preview: ingress2gateway print --providers=ingress-nginx --emitter=kgateway \
+  content: |-
+    {{< doc-test paths="migrate-external-auth" >}}
+    # Test-only: the converted file has what the "After" section on this page shows.
+    python3 - <<'PY'
+    import sys
+    import yaml
+
+    FILE = "external-auth-kgateway.yaml"
+    with open(FILE) as f:
+        docs = [d for d in yaml.safe_load_all(f) if d]
+
+
+    def find(kind, name):
+        for d in docs:
+            if d.get("kind") == kind and (d.get("metadata") or {}).get("name") == name:
+                return d
+        found = ", ".join(f"{d.get('kind')}/{(d.get('metadata') or {}).get('name')}" for d in docs)
+        sys.exit(f"FAIL: {FILE} has no {kind} named {name}. Found: {found}")
+
+
+    def expect(what, got, want):
+        if got != want:
+            sys.exit(f"FAIL: {what} is {got!r}, expected {want!r}")
+
+
+    def kinds():
+        return sorted(f"{d.get('kind')}/{(d.get('metadata') or {}).get('name')}" for d in docs)
+
+    expect("resources", kinds(), ["Gateway/nginx", "GatewayExtension/ext-auth-demo-extauth", "HTTPRoute/ext-auth-demo-app-example-com", "TrafficPolicy/ext-auth-demo"])
+    gw = find("Gateway", "nginx")
+    gspec = gw.get("spec") or {}
+    expect("Gateway nginx gatewayClassName", gspec.get("gatewayClassName"), "kgateway")
+    expect("Gateway nginx listeners", gspec.get("listeners"),
+           [{"hostname": "app.example.com", "name": "app-example-com-http", "port": 80, "protocol": "HTTP"}])
+    if "tls" in gspec:
+        sys.exit("FAIL: Gateway nginx has spec.tls; the page shows none")
+    route = find("HTTPRoute", "ext-auth-demo-app-example-com")
+    rspec = route.get("spec") or {}
+    expect("HTTPRoute hostnames", rspec.get("hostnames"), ["app.example.com"])
+    expect("HTTPRoute parentRefs", rspec.get("parentRefs"), [{"name": "nginx"}])
+    rules = rspec.get("rules") or []
+    expect("HTTPRoute rule count", len(rules), 1)
+    rule = rules[0]
+    expect("HTTPRoute rules[0].name", rule.get("name"), "rule-0")
+    expect("HTTPRoute rules[0].backendRefs", rule.get("backendRefs"), [{"name": "protected-app", "port": 8080}])
+    expect("HTTPRoute rules[0].matches", rule.get("matches"), [{"path": {"type": "PathPrefix", "value": "/"}}])
+    ext = find("GatewayExtension", "ext-auth-demo-extauth")
+    expect("GatewayExtension spec", ext.get("spec"), {"extAuth": {"httpService": {
+        "authorizationResponse": {"headersToBackend": ["X-User-ID", "X-User-Email"]},
+        "backendRef": {"name": "auth-service", "namespace": "auth", "port": 80},
+        "pathPrefix": "/verify"}}})
+    tp = find("TrafficPolicy", "ext-auth-demo")
+    spec = tp.get("spec") or {}
+    expect("TrafficPolicy targetRefs", spec.get("targetRefs"), [{
+        "group": "gateway.networking.k8s.io", "kind": "HTTPRoute", "name": "ext-auth-demo-app-example-com"}])
+    # The page says v0.5.0 writes an empty namespace here, which the CRD rejects.
+    expect("TrafficPolicy extAuth.extensionRef", (spec.get("extAuth") or {}).get("extensionRef"),
+           {"name": "ext-auth-demo-extauth", "namespace": ""})
+    print("OK: Gateway, HTTPRoute, GatewayExtension, and TrafficPolicy match the page, with the empty namespace")
+    PY
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: a66fba29c27240d7
+    lang: bash
+    lines: a66fba29
+    preview: 'sed -i.bak ''/namespace: ""/d'' external-auth-kgateway.yaml'
+  content: |-
+    {{< doc-test paths="migrate-external-auth" >}}
+    # Test-only: the sed command removed only the empty namespace line.
+    python3 - <<'PY'
+    import sys
+    import yaml
+
+    with open("external-auth-kgateway.yaml") as f:
+        docs = [d for d in yaml.safe_load_all(f) if d]
+    if len(docs) != 4:
+        sys.exit(f"FAIL: expected 4 resources after the sed command, found {len(docs)}")
+    tp = [d for d in docs if d.get("kind") == "TrafficPolicy"][0]
+    ref = tp["spec"]["extAuth"]["extensionRef"]
+    if ref != {"name": "ext-auth-demo-extauth"}:
+        sys.exit(f"FAIL: TrafficPolicy extAuth.extensionRef is {ref!r} after the sed command")
+    ext = [d for d in docs if d.get("kind") == "GatewayExtension"][0]
+    if ext["spec"]["extAuth"]["httpService"]["backendRef"].get("namespace") != "auth":
+        sys.exit("FAIL: the sed command changed the GatewayExtension backendRef namespace")
+    print("OK: the empty namespace line is gone and nothing else changed")
+    PY
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 2234cb72581a8c34
+    lang: bash
+    lines: 2234cb72
+    preview: kubectl apply -f external-auth-kgateway.yaml
+  content: |-
+    {{< doc-test paths="migrate-external-auth" >}}
+    # Test-only: every resource that the page applies exists, and the HTTPRoute
+    # is Accepted.
+    # The auth-service backend in the auth namespace is not deployed. kgateway
+    # cannot resolve the ext auth backend, so the TrafficPolicy cannot be
+    # Accepted and only needs to exist.
+    python3 - <<'PY'
+    import json
+    import subprocess
+    import sys
+    import time
+
+    import yaml
+
+    FILES = ['external-auth-kgateway.yaml']
+    docs = []
+    for name in FILES:
+        with open(name) as f:
+            docs += [d for d in yaml.safe_load_all(f) if d]
+    # Kind/name pairs that only need to exist, not be Accepted. See the comment above.
+    EXIST_ONLY = ['TrafficPolicy/ext-auth-demo']
+
+
+    def accepted(conditions):
+        for c in conditions or []:
+            if c.get("type") == "Accepted":
+                return c.get("status")
+        return None
+
+
+    def get(kind, name, api_version):
+        group = api_version.rsplit("/", 1)[0] if "/" in api_version else ""
+        resource = f"{kind.lower()}.{group}" if group else kind.lower()
+        out = subprocess.run(["kubectl", "get", resource, name, "-n", "default", "-o", "json"],
+                             capture_output=True, text=True)
+        if out.returncode != 0:
+            return None, out.stderr.strip()
+        return json.loads(out.stdout), None
+
+
+    def problem(d):
+        kind, name = d["kind"], d["metadata"]["name"]
+        obj, err = get(kind, name, d["apiVersion"])
+        if obj is None:
+            return f"{kind}/{name} not found: {err}"
+        if f"{kind}/{name}" in EXIST_ONLY:
+            return None
+        status = obj.get("status") or {}
+        if kind == "HTTPRoute":
+            parents = status.get("parents") or [{}]
+            if accepted(parents[0].get("conditions")) != "True":
+                return f"HTTPRoute/{name} is not Accepted yet: {parents[0].get('conditions')}"
+        if kind == "TrafficPolicy":
+            ancestors = status.get("ancestors") or [{}]
+            if accepted(ancestors[0].get("conditions")) != "True":
+                return f"TrafficPolicy/{name} is not Accepted yet: {ancestors[0].get('conditions')}"
+        return None
+
+
+    for attempt in range(60):
+        problems = [p for p in map(problem, docs) if p]
+        if not problems:
+            print(f"OK: all {len(docs)} resources from {', '.join(FILES)} exist and have the expected status")
+            sys.exit(0)
+        time.sleep(5)
+    sys.exit("FAIL: " + "; ".join(problems))
+    PY
+    {{< /doc-test >}}

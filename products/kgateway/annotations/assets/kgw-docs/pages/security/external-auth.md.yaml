@@ -1,0 +1,313 @@
+format: 1
+source: assets/kgw-docs/pages/security/external-auth.md
+blocks:
+- 03fbf6fbf0f00bf5 mermaid
+- 18ef6371b2d67e87 yaml
+- 279c3031da3b86cd yaml
+- ec5a2eb93b7679e6 yaml
+- 203d0729f7bae309 sh
+- 1a1d7641506a4ebb sh
+- 4259049d37c460ce txt
+- 90d44516cc3cc633 yaml
+- 203d0729f7bae309 sh
+- 1a1d7641506a4ebb sh
+- 7412aae65d80d6d0 txt
+- 57ebb43da3c3cc4d sh
+- f966b3985f033583 sh
+- 4259049d37c460ce txt
+- ebce4166d27578b8 json
+- cc53acd9a6783aee yaml
+- 203d0729f7bae309 sh
+- 1a1d7641506a4ebb sh
+- 4259049d37c460ce txt
+- 4174ba7e92f1423b sh
+- b3e4972a3db78ad5 sh
+tags:
+- paths: byo-ext-auth-service-grpc
+  block: 1
+  fingerprint: 18ef6371b2d67e87
+  lang: yaml
+  lines: abbd1bdc 58584366 ab78925c 8c8c4228 0bebd850 852ae295 fa1e8330 23cc601c 36184fa5 97bcd5e0 8432e015 839a5cac 23cc601c a58565b2 8c8c4228 fa1e8330 23cc601c 73ca09d5 36184fa5 04968f51 92abaa1b 852ae295 0ff65a1a 088263b2 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="byo-ext-auth-service-grpc"
+    only: true
+    lead: ' '
+- paths: byo-ext-auth-service-grpc
+  block: 2
+  fingerprint: 279c3031da3b86cd
+  lang: yaml
+  lines: abbd1bdc f1540154 0d6480f0 8c8c4228 0bebd850 852ae295 fa1e8330 23cc601c 36184fa5 0ff65a1a d8212fc2 7811827d 9693ecf1 7d42f305 8432e015 23cc601c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="byo-ext-auth-service-grpc"
+    only: true
+    lead: ' '
+- paths: byo-ext-auth-service-grpc
+  block: 3
+  fingerprint: ec5a2eb93b7679e6
+  lang: yaml
+  lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 0bebd850 9a372bfe fa1e8330 23cc601c 36184fa5 9e973d21 e833744f 6d0a9a1d 70c97555 852ae295 b8eebd11 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="byo-ext-auth-service-grpc"
+    only: true
+    lead: ' '
+- paths: byo-ext-auth-service-grpc
+  block: 7
+  fingerprint: 90d44516cc3cc633
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 0bebd850 ca1d7a94 fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e833744f 248578da 9a372bfe abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="byo-ext-auth-service-grpc"
+    only: true
+    lead: ' '
+- paths: byo-ext-auth-service-grpc
+  block: 15
+  fingerprint: cc53acd9a6783aee
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 0f10c5bc 215af578 fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e833744f cfd701cc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="byo-ext-auth-service-grpc"
+    only: true
+    lead: ' '
+- paths: byo-ext-auth-service-grpc
+  block: 19
+  fingerprint: 4174ba7e92f1423b
+  lang: sh
+  lines: 4174ba7e
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} -A -l app=ext-
+  form:
+    attr: paths="byo-ext-auth-service-grpc"
+    only: true
+    lead: ' '
+- paths: byo-ext-auth-service-grpc
+  block: 20
+  fingerprint: b3e4972a3db78ad5
+  lang: sh
+  lines: b3e4972a
+  preview: kubectl delete gatewayextension,deployment,service -n {{< reuse "kgw-docs/snippe
+  form:
+    attr: paths="byo-ext-auth-service-grpc"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 279c3031da3b86cd
+    lang: yaml
+    lines: abbd1bdc f1540154 0d6480f0 8c8c4228 0bebd850 852ae295 fa1e8330 23cc601c 36184fa5 0ff65a1a d8212fc2 7811827d 9693ecf1 7d42f305 8432e015 23cc601c abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="byo-ext-auth-service-grpc" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the ext-authz Deployment (gRPC port 9000) to be available
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: kgateway-system
+               name: ext-authz
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: ec5a2eb93b7679e6
+    lang: yaml
+    lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 0bebd850 9a372bfe fa1e8330 23cc601c 36184fa5 9e973d21 e833744f 6d0a9a1d 70c97555 852ae295 b8eebd11 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="byo-ext-auth-service-grpc" >}}
+       # GatewayExtension has no Accepted condition to wait on, so check that the
+       # grpc GatewayExtension exists and points to the ext-authz Service.
+       YAMLTest -f - <<'EOF'
+       - name: the basic-ext-auth GatewayExtension uses the ext-authz grpc backend
+         wait:
+           target:
+             kind: GatewayExtension
+             metadata:
+               namespace: kgateway-system
+               name: basic-ext-auth
+           jsonPath: "$.spec.extAuth.grpcService.backendRef.name"
+           jsonPathExpectation:
+             comparator: equals
+             value: ext-authz
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 4259049d37c460ce
+    lang: txt
+    lines: 92413e97 ab5df625
+    preview: HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="byo-ext-auth-service-grpc" >}}
+       YAMLTest -f - <<'EOF'
+       - name: byo-ext-auth-service-grpc - before any ext auth policy, a request without the x-ext-authz header returns 200
+         retries: 30
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 90d44516cc3cc633
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 0bebd850 ca1d7a94 fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e833744f 248578da 9a372bfe abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="byo-ext-auth-service-grpc" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the gateway-ext-auth-policy TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: kgateway-system
+               name: gateway-ext-auth-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 7412aae65d80d6d0
+    lang: txt
+    lines: 8310b5e0 f325e073 dfd3941e 40bba255 860a6431 fa948eea baf4d4d0 5f7c6523 71a34bdd
+    preview: HTTP/1.1 403 Forbidden
+  content: |2-
+       {{< doc-test paths="byo-ext-auth-service-grpc" >}}
+       YAMLTest -f - <<'EOF'
+       - name: byo-ext-auth-service-grpc - with the Gateway policy, a request without the x-ext-authz header is denied with 403
+         retries: 30
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 403
+           bodyContains:
+           - "denied by ext_authz for not found header `x-ext-authz: allow` in the request"
+           headers:
+           - name: x-ext-authz-check-result
+             comparator: equals
+             value: denied
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: ebce4166d27578b8
+    lang: json
+    lines: 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a 6ef1e4db 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e 45bf2c44 88270499 39d4b54e fcc4cb14 58d46b62 39d4b54e 543bd9cf 682e1bdd 39d4b54e 1b586b24 bbe31d75 39d4b54e f92de7d7 54fe4749 39d4b54e 59bc501f 70635b0e 39d4b54e cfa27b48 a321f717 39d4b54e b467788d d22d3d02 cfae0d42 d10b36aa d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="byo-ext-auth-service-grpc" >}}
+       YAMLTest -f - <<'EOF'
+       - name: byo-ext-auth-service-grpc - a request with x-ext-authz allow returns 200 and the backend gets the ext auth headers
+         retries: 10
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+             x-ext-authz: allow
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['X-Ext-Authz'][0]"
+             comparator: equals
+             value: allow
+           - path: "$.headers['X-Ext-Authz-Check-Result'][0]"
+             comparator: equals
+             value: allowed
+           - path: "$.headers['X-Ext-Authz-Additional-Header-Override'][0]"
+             comparator: equals
+             value: grpc-additional-header-override-value
+           - path: "$.headers['X-Ext-Authz-Check-Received'][0]"
+             comparator: exists
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: cc53acd9a6783aee
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 0f10c5bc 215af578 fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e833744f cfd701cc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="byo-ext-auth-service-grpc" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the route-ext-auth-policy TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: route-ext-auth-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 240
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 4259049d37c460ce
+    lang: txt
+    lines: 92413e97 ab5df625
+    preview: HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="byo-ext-auth-service-grpc" >}}
+       YAMLTest -f - <<'EOF'
+       - name: byo-ext-auth-service-grpc - with ext auth disabled on the httpbin route, a request without the x-ext-authz header returns 200
+         retries: 30
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['X-Ext-Authz-Check-Result']"
+             comparator: exists
+             negate: true
+       EOF
+       {{< /doc-test >}}

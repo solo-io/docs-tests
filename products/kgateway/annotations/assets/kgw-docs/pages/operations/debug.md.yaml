@@ -1,0 +1,278 @@
+format: 1
+source: assets/kgw-docs/pages/operations/debug.md
+blocks:
+- 4589b84d12b619c2 sh
+- e0efc864c41025c5 yaml
+- 6c1971e3ccdc1a35 yaml
+- 7f4b46cafd7d1d0e sh
+- 10b5ba93995b384f yaml
+- 5210a893155146af sh
+- 96f49b2f44c13034 sh
+- aba7345e2b6b08af sh
+- 58a081202c11734d sh
+- 3d746476c9939aa5 sh
+- 9cdc626f15c44f43 console
+- 450458c26c64fedd yaml
+- c45d2f069b81a480 sh
+- abf53b3a4c8bce03 sh
+- 92253ea2f2ec62e6 bash
+- fb7f2fd6d63b1a64 bash
+- 3b09a4524869c36f bash
+tags:
+- paths: debug
+  block: 1
+  fingerprint: e0efc864c41025c5
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 ab52a81f 0bebd850 36184fa5 9cc14d83 9287e3e4 d208b044 5ceb8ec3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="debug"
+    only: true
+    lead: ' '
+- paths: debug
+  block: 2
+  fingerprint: 6c1971e3ccdc1a35
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 ab52a81f 0bebd850 36184fa5 39325db0 27a69ac8 3f04fdd7 ab52a81f 4a23a5a4 2ee1c717 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="debug"
+    only: true
+    lead: ' '
+- paths: debug
+  block: 3
+  fingerprint: 7f4b46cafd7d1d0e
+  lang: sh
+  lines: 7f4b46ca
+  preview: kubectl get pods -l app.kubernetes.io/name=debug-gateway -n {{< reuse "kgw-docs/
+  form:
+    attr: paths="debug"
+    only: true
+    lead: ' '
+- paths: debug
+  block: 4
+  fingerprint: 10b5ba93995b384f
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 3b9179af 0bebd850 301e1bfa 07d38795 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="debug"
+    only: true
+    lead: ' '
+- paths: debug
+  block: 5
+  fingerprint: 5210a893155146af
+  lang: sh
+  lines: 13f14fe1 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="debug"
+    only: true
+    lead: ' '
+- paths: debug
+  block: 9
+  fingerprint: 3d746476c9939aa5
+  lang: sh
+  lines: 3d746476
+  preview: kubectl logs -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app.kubernetes
+  form:
+    attr: paths="debug"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Debug the control plane
+    line: 56f4d2449756091c
+    occurrence: 0
+    words: 2b36a6e6 3e2ef762 2bcb43cb b9776d7d 97b05602 3e2ef762 16a0eeb0 7175517a b9776d7d acb25c3f b7d64a92 a5c935d1 f4bf9f7f 0353e1fb e22bc966 d8f9b68a 6201111b 02200ad6 8e7fc023 fa51fd49 85574fa0 7afbb334 663ea1bf 6201111b b4267ce9 a7e2d26e 84532b30 4ea5ee68 a04c3b82 b808e156 2b36a6e6 1c633350 b9776d7d 2443630b 2e9d1823 b7d64a92 8e7fc023 84532b30 4ea5ee68 a04c3b82 a3b142af 10c22bcf fc6672ad 3183d37b 10c22bcf 2b36a6e6 663ea1bf 46599c5b 4d4c7eee bb0347a4 4137b01e 193c45b5 ca978112 4ea5ee68 5de95319 8e7fc023 75dd3da2 ca978112 12a7bd86 6131a8b3 670b310e 1241936d
+    block_before:
+      block: 0
+      fingerprint: 4589b84d12b619c2
+      lang: sh
+      lines: 4589b84d
+      preview: 'kubectl port-forward deploy/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} '
+  content: |-
+    {{< doc-test paths="debug" >}}
+    # Test-only: the CI runner cannot forward ports, and the admin server listens
+    # on localhost:9095 inside the control plane pod. Add a debug container with
+    # curl to the pod (it shares the pod's network) and read the endpoints from it.
+    cp_pod=$(kubectl get pod -n kgateway-system -l app.kubernetes.io/name=kgateway -o jsonpath='{.items[0].metadata.name}')
+    kubectl debug -n kgateway-system "$cp_pod" --image=curlimages/curl:8.10.1 --container=doctest-admin -- sleep 3600
+    for i in $(seq 1 60); do
+      [ -n "$(kubectl get pod -n kgateway-system "$cp_pod" -o jsonpath='{.status.ephemeralContainerStatuses[?(@.name=="doctest-admin")].state.running}')" ] && break
+      echo "waiting for the doctest-admin debug container to run ($i/60)"; sleep 2
+    done
+    cp_admin() { kubectl exec -n kgateway-system "$cp_pod" -c doctest-admin -- curl -sS -L --max-time 30 "http://localhost:9095$1"; }
+    index=$(cp_admin /)
+    for want in 'Admin Server' '/debug/pprof/' '/logging' '/snapshots/krt' '/snapshots/xds' 'Current Levels:'; do
+      if ! grep -qF "$want" <<<"$index"; then
+        echo "FAIL: the admin server index page does not show $want"
+        exit 1
+      fi
+    done
+    pprof=$(cp_admin /debug/pprof)
+    for want in goroutine heap; do
+      if ! grep -q "$want" <<<"$pprof"; then
+        echo "FAIL: /debug/pprof does not list the $want profile"
+        exit 1
+      fi
+    done
+    cp_admin /snapshots/krt > krt.json
+    if ! python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d else 1)' krt.json; then
+      echo "FAIL: /snapshots/krt did not return a non-empty JSON snapshot"
+      head -c 500 krt.json; exit 1
+    fi
+    xds_ok=""
+    for i in $(seq 1 30); do
+      cp_admin /snapshots/xds > xds.json
+      if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if d.get("data") and any("http" in k for k in d["data"]) else 1)' xds.json && grep -q 'www.example.com' xds.json; then
+        xds_ok=1; break
+      fi
+      echo "waiting for /snapshots/xds to hold the http Gateway snapshot with the www.example.com route ($i/30)"; sleep 5
+    done
+    if [ -z "$xds_ok" ]; then
+      echo "FAIL: /snapshots/xds has no snapshot for the http Gateway that holds the www.example.com route"
+      head -c 1000 xds.json; exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 6c1971e3ccdc1a35
+    lang: yaml
+    lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 ab52a81f 0bebd850 36184fa5 39325db0 27a69ac8 3f04fdd7 ab52a81f 4a23a5a4 2ee1c717 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="debug" >}}
+    YAMLTest -f - <<'EOF'
+    - name: debug - wait for the debug-gateway Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: debug-gateway
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: debug - wait for the debug-gateway proxy deployment to be ready
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: debug-gateway
+        jsonPath: "$.status.readyReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 7f4b46cafd7d1d0e
+    lang: sh
+    lines: 7f4b46ca
+    preview: kubectl get pods -l app.kubernetes.io/name=debug-gateway -n {{< reuse "kgw-docs/
+  content: |-
+    {{< doc-test paths="debug" >}}
+    # The proxy container starts Envoy with the debug log level from the GatewayParameters.
+    args=$(kubectl get pods -l app.kubernetes.io/name=debug-gateway -n kgateway-system -o jsonpath='{.items[0].spec.containers[0].args}')
+    echo "debug-gateway proxy args: $args"
+    if ! python3 -c 'import json,sys; a=json.loads(sys.argv[1]); i=a.index("--log-level"); sys.exit(0 if a[i+1]=="debug" else 1)' "$args"; then
+      echo "FAIL: the debug-gateway proxy container is not started with --log-level debug"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 10b5ba93995b384f
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 3b9179af 0bebd850 301e1bfa 07d38795 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="debug" >}}
+    YAMLTest -f - <<'EOF'
+    - name: debug - wait for the httpbin HTTPRoute to be accepted by the debug-gateway
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[?(@.parentRef.name=='debug-gateway')].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: debug - wait for the debug-gateway service to get a load balancer address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: debug-gateway
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 58a081202c11734d
+    lang: sh
+    lines: 58a08120
+    preview: 'curl -i localhost:8080/headers -H "host: debug.com"'
+  content: |-
+    {{< doc-test paths="debug" >}}
+    # Step 6, Cloud Provider LoadBalancer: a request for debug.com through the
+    # debug gateway proxy reaches httpbin.
+    YAMLTest -f - <<'EOF'
+    - name: debug - a request for debug.com through the debug-gateway returns 200 from httpbin
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "debug.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: "debug.com:8080"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 9cdc626f15c44f43
+    lang: console
+    lines: 3094470e 93cc6324 9d73f342 56ec079e f24a67e1 5337bad9 acf17eb3 9162960c 98726ccd 3a4a24f4
+    preview: '[2025-07-08 18:59:13.234][34][debug][pool] [external/envoy/source/common/conn_po'
+  content: |-
+    {{< doc-test paths="debug" >}}
+    # The debug gateway proxy writes debug-level Envoy log lines, as in the example output.
+    logs=$(kubectl logs -n kgateway-system -l app.kubernetes.io/name=debug-gateway --tail=-1)
+    if ! grep -q '\]\[debug\]\[' <<<"$logs"; then
+      echo "FAIL: the debug-gateway proxy logs have no [debug] lines"
+      tail -20 <<<"$logs"; exit 1
+    fi
+    if ! grep -q '\]\[debug\]\[\(connection\|http\|pool\|router\)\]' <<<"$logs"; then
+      echo "FAIL: the debug-gateway proxy logs have no debug lines for the request (connection, http, pool, or router)"
+      tail -20 <<<"$logs"; exit 1
+    fi
+    {{< /doc-test >}}

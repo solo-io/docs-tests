@@ -1,0 +1,36 @@
+format: 1
+source: assets/kgw-docs/pages/envoy/quickstart.md
+blocks:
+- 0dc9efe81dca6dd3 sh
+- 16f87fa35975e171 sh
+tags:
+- paths: quickstart
+  block: 1
+  fingerprint: 16f87fa35975e171
+  lang: sh
+  lines: 16f87fa3
+  preview: 'helm uninstall {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse '
+  form:
+    attr: paths="quickstart"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 16f87fa35975e171
+    lang: sh
+    lines: 16f87fa3
+    preview: 'helm uninstall {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse '
+  content: |-
+    {{< doc-test paths="quickstart" >}}
+    # Cleanup: the helm uninstall removes the control plane deployment.
+    for i in $(seq 1 60); do
+      kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} >/dev/null 2>&1 || break
+      echo "attempt $i: the kgateway deployment still exists, retrying"
+      sleep 2
+    done
+    if kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} >/dev/null 2>&1; then
+      echo "FAIL: the kgateway deployment still exists after helm uninstall"
+      exit 1
+    fi
+    {{< /doc-test >}}

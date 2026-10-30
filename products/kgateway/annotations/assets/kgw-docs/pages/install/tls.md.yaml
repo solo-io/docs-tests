@@ -1,0 +1,355 @@
+format: 1
+source: assets/kgw-docs/pages/install/tls.md
+blocks:
+- 53323ae46a9ffa2f sh
+- d7955dab47422ccc sh
+- 61214736bf2a9784 yaml
+- 33984aae0263a0dc yaml
+- 4d4bf0365995dd24 sh
+- 9a5df46d7afe8526 sh
+- 17599b0de8969f4c yaml
+- b47f9628f81808f1 sh
+- 5fba5f3bf561451f sh
+- 3d5e27b9ad918364 sh
+- c198b55f8964d8d3 sh
+- adf8589304aeaafd sh
+- 30683bcd576f8a7c sh
+- 0c69dc0ab95caed7
+- d5732960e5bfcebb sh
+- 2efce2d0d65c8402 sh
+- 5a42b00730200e1e
+tags:
+- paths: install-tls
+  block: 0
+  fingerprint: 53323ae46a9ffa2f
+  lang: sh
+  lines: 53323ae4
+  preview: helm repo add jetstack https://charts.jetstack.io --force-update
+  form:
+    attr: paths="install-tls"
+    only: true
+    lead: ' '
+- paths: install-tls
+  block: 1
+  fingerprint: d7955dab47422ccc
+  lang: sh
+  lines: b48210e8 6c6b6080
+  preview: helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manag
+  form:
+    attr: paths="install-tls"
+    only: true
+    lead: ' '
+- paths: install-tls
+  block: 2
+  fingerprint: 61214736bf2a9784
+  lang: yaml
+  lines: abbd1bdc 7e79416a 34abc438 8c8c4228 98df4b50 0bebd850 36184fa5 cf8693a2 cb3f91d5 7e79416a 28bd637f 8c8c4228 ee5f24d1 0bebd850 36184fa5 47613571 6f39a955 98df4b50 34abc438 2364987e 96b34b81 df044c35 5814ff51 7803b568 74ec4cce 0c309d3c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="install-tls"
+    only: true
+    lead: ' '
+- paths: install-tls
+  block: 3
+  fingerprint: 33984aae0263a0dc
+  lang: yaml
+  lines: abbd1bdc 7e79416a 34abc438 8c8c4228 248cdade 0bebd850 36184fa5 7db5a37a 47613571 cb3f91d5 7e79416a 28bd637f 8c8c4228 8b9c4e01 0bebd850 36184fa5 6ce578f9 6f39a955 248cdade 34abc438 a9845910 f119e361 5ff691ef 0b3c3754 466cc9f4 a39fcfbd df044c35 5814ff51 7803b568 74ec4cce 0c309d3c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="install-tls"
+    only: true
+    lead: ' '
+- paths: install-tls
+  block: 4
+  fingerprint: 4d4bf0365995dd24
+  lang: sh
+  lines: 4d4bf036
+  preview: export NEW_VERSION={{< reuse "kgw-docs/versions/n-patch.md" >}}
+  form:
+    attr: paths="install-tls"
+    only: true
+    lead: ' '
+- paths: install-tls
+  block: 7
+  fingerprint: b47f9628f81808f1
+  lang: sh
+  lines: 87ff5769 f82702aa ad51e346
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="install-tls"
+    only: true
+    lead: ' '
+- paths: install-tls
+  block: 8
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="install-tls"
+    only: true
+    lead: ' '
+- paths: install-tls
+  block: 9
+  fingerprint: 3d5e27b9ad918364
+  lang: sh
+  lines: 4038a6e1 dde2d046
+  preview: kubectl rollout restart deployment/http -n {{< reuse "kgw-docs/snippets/namespac
+  form:
+    attr: paths="install-tls"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: 'Step 1: Set up cert-manager'
+    line: 60e34638cc5e3afc
+    occurrence: 0
+    words: 663ea1bf 41008373 e6bb20df 663ea1bf a3b142af b9776d7d d9c0d341 9edd6d99 21a355f1 adc00e37 bb0347a4 4137b01e 6ee0eb49 3b8bd72c d788a287 b5bea41b 58296753 b9776d7d e6bb20df ab14d3fa 561f0a3d
+    block_before:
+      block: 1
+      fingerprint: d7955dab47422ccc
+      lang: sh
+      lines: b48210e8 6c6b6080
+      preview: helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manag
+  content: |-
+    {{< doc-test paths="install-tls" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the cert-manager controller to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: cert-manager
+            name: cert-manager
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the cert-manager webhook to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: cert-manager
+            name: cert-manager-webhook
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # The webhook starts serving a few seconds after its pod is available. Wait until
+    # it admits an Issuer, so that the next step's apply does not fail on a webhook error.
+    webhook_ready=false
+    for i in $(seq 1 60); do
+      if kubectl apply --dry-run=server -f - >/dev/null 2>&1 <<'ISSUER'
+    apiVersion: cert-manager.io/v1
+    kind: Issuer
+    metadata:
+      name: webhook-ready-probe
+      namespace: kgateway-system
+    spec:
+      selfSigned: {}
+    ISSUER
+      then webhook_ready=true; break; fi
+      echo "attempt $i: cert-manager webhook not ready yet, retrying"
+      sleep 3
+    done
+    [ "$webhook_ready" = "true" ] || { echo "FAIL: the cert-manager webhook did not admit an Issuer"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 61214736bf2a9784
+    lang: yaml
+    lines: abbd1bdc 7e79416a 34abc438 8c8c4228 98df4b50 0bebd850 36184fa5 cf8693a2 cb3f91d5 7e79416a 28bd637f 8c8c4228 ee5f24d1 0bebd850 36184fa5 47613571 6f39a955 98df4b50 34abc438 2364987e 96b34b81 df044c35 5814ff51 7803b568 74ec4cce 0c309d3c abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="install-tls" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the kgateway-xds-ca root CA certificate to be issued
+      wait:
+        target:
+          kind: Certificate
+          metadata:
+            namespace: kgateway-system
+            name: kgateway-xds-ca
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 180
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 33984aae0263a0dc
+    lang: yaml
+    lines: abbd1bdc 7e79416a 34abc438 8c8c4228 248cdade 0bebd850 36184fa5 7db5a37a 47613571 cb3f91d5 7e79416a 28bd637f 8c8c4228 8b9c4e01 0bebd850 36184fa5 6ce578f9 6f39a955 248cdade 34abc438 a9845910 f119e361 5ff691ef 0b3c3754 466cc9f4 a39fcfbd df044c35 5814ff51 7803b568 74ec4cce 0c309d3c abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="install-tls" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the kgateway-xds-cert server certificate to be issued
+      wait:
+        target:
+          kind: Certificate
+          metadata:
+            namespace: kgateway-system
+            name: kgateway-xds-cert
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 180
+          intervalSeconds: 5
+    EOF
+    # The control plane needs a kubernetes.io/tls secret named kgateway-xds-cert
+    # with tls.crt, tls.key, and ca.crt. The server certificate must chain to ca.crt
+    # and cover the control plane service name.
+    secret_type=$(kubectl get secret kgateway-xds-cert -n kgateway-system -o jsonpath='{.type}')
+    [ "$secret_type" = "kubernetes.io/tls" ] || { echo "FAIL: secret kgateway-xds-cert has type '$secret_type', not kubernetes.io/tls"; exit 1; }
+    for key in tls.crt tls.key ca.crt; do
+      kubectl get secret kgateway-xds-cert -n kgateway-system -o json | jq -r --arg k "$key" '.data[$k] // ""' | base64 -d > "xds-$key"
+      [ -s "xds-$key" ] || { echo "FAIL: secret kgateway-xds-cert has no $key"; exit 1; }
+    done
+    openssl verify -CAfile xds-ca.crt xds-tls.crt || { echo "FAIL: tls.crt in kgateway-xds-cert does not chain to its ca.crt"; exit 1; }
+    if ! openssl x509 -in xds-tls.crt -noout -ext subjectAltName | grep -q "DNS:kgateway.kgateway-system.svc.cluster.local"; then
+      echo "FAIL: the server certificate does not cover kgateway.kgateway-system.svc.cluster.local"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 17599b0de8969f4c
+    lang: yaml
+    lines: adc43cf7 2b0bceee 3195c5f5 ff7360cf
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="install-tls" >}}
+    # Steps 2 and 3: the page's commands use `open` (macOS only) and a manual edit,
+    # so the test gets the current values and sets controller.xds.tls.enabled with jq.
+    # JSON is valid YAML, so helm reads the result as a values file.
+    helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o json \
+      | jq '(. // {}) | .controller.xds.tls.enabled = true' > values.yaml
+    cat values.yaml
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 5fba5f3bf561451f
+    lang: sh
+    lines: 5fba5f3b
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="install-tls" >}}
+    # The upgraded control plane runs with xDS TLS on and the kgateway-xds-cert secret mounted.
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=300s
+    tls_env=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_XDS_TLS")].value}')
+    tls_secret=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.volumes[?(@.name=="xds-tls")].secret.secretName}')
+    if [ "$tls_env" != "true" ] || [ "$tls_secret" != "kgateway-xds-cert" ]; then
+      echo "FAIL: control plane has KGW_XDS_TLS='$tls_env' and xds-tls volume secret '$tls_secret'; want true and kgateway-xds-cert"
+      exit 1
+    fi
+    YAMLTest -f - <<'EOF'
+    - name: wait for the TLS-enabled kgateway control plane to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 5fba5f3bf561451f
+    lang: sh
+    lines: 5fba5f3b
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="install-tls" >}}
+    # The upgraded control plane adds the xDS CA bundle to each proxy's ConfigMap.
+    # Wait for it before the page restarts the http proxy.
+    ca_bundle=""
+    for i in $(seq 1 60); do
+      ca_bundle=$(kubectl get configmap http -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o json | jq -r '.data["ca.crt"] // ""')
+      grep -q "BEGIN CERTIFICATE" <<<"$ca_bundle" && break
+      echo "attempt $i: the http proxy ConfigMap has no xDS CA bundle yet, retrying"
+      sleep 3
+    done
+    grep -q "BEGIN CERTIFICATE" <<<"$ca_bundle" || { echo "FAIL: the control plane did not add the xDS CA bundle to the http proxy ConfigMap"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 5a42b00730200e1e
+    lang: ''
+    lines: 6f2aa5f0 8c915d42 ddcb10b4 c3269a9b eb921e1a 8df9da24 7d9c921f 6d56ac79 b2d68270
+    preview: '# HELP kgateway_xds_auth_rq_failure_total Total number of failed xDS auth reques'
+  content: |-
+    {{< doc-test paths="install-tls" >}}
+    # The page checks the server through port-forwards. The test checks it from
+    # pods in the cluster instead.
+    # 1. Port 9977 serves TLS with a certificate that chains to the kgateway-xds-ca CA.
+    rm -f xds-served.crt
+    for i in $(seq 1 30); do
+      kubectl run xds-tls-probe --rm -i --restart=Never -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --image=alpine/openssl:3.3.2 --command -- \
+        sh -c 'openssl s_client -connect {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc:9977 -servername {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc </dev/null 2>/dev/null' \
+        > xds-s-client.txt 2>/dev/null || true
+      openssl x509 -in xds-s-client.txt -out xds-served.crt 2>/dev/null && break
+      echo "attempt $i: no TLS certificate from port 9977 yet, retrying"
+      sleep 3
+    done
+    [ -s xds-served.crt ] || { echo "FAIL: port 9977 on the control plane did not complete a TLS handshake"; cat xds-s-client.txt; exit 1; }
+    openssl verify -CAfile xds-ca.crt xds-served.crt || { echo "FAIL: the certificate on port 9977 does not chain to the kgateway-xds-ca CA"; exit 1; }
+    # 2. A plaintext gRPC request fails before it reaches authentication, because the
+    #    server now requires TLS. Without TLS, the same request returns "authentication failed".
+    plain=$(kubectl run xds-plaintext-probe --rm -i --restart=Never -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --image=fullstorydev/grpcurl:v1.9.1 -- \
+      -plaintext -max-time 10 {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc:9977 list 2>&1 || true)
+    echo "$plain"
+    if grep -q "authentication failed" <<<"$plain" || ! grep -qi "fail" <<<"$plain"; then
+      echo "FAIL: a plaintext gRPC request to port 9977 was not rejected at the TLS layer"
+      exit 1
+    fi
+    # 3. Over TLS, the same request reaches the server and fails authentication,
+    #    because it carries no service account token.
+    tlsout=$(kubectl run xds-tls-grpc-probe --rm -i --restart=Never -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --image=fullstorydev/grpcurl:v1.9.1 -- \
+      -insecure -max-time 10 {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc:9977 list 2>&1 || true)
+    echo "$tlsout"
+    grep -q "authentication failed" <<<"$tlsout" || { echo "FAIL: a gRPC request over TLS to port 9977 did not return 'authentication failed'"; exit 1; }
+    # 4. The http proxy, restarted on the page, serves traffic with configuration
+    #    from the TLS-enabled control plane.
+    for i in $(seq 1 60); do
+      code=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080") && [ "$code" = "200" ] && break
+      echo "attempt $i: got '${code:-no response}' from the restarted http proxy, retrying"
+      sleep 3
+    done
+    [ "$code" = "200" ] || { echo "FAIL: the http proxy did not serve httpbin after it reconnected to the TLS-enabled control plane"; exit 1; }
+    # 5. The control plane metrics have the xds_auth counters, with at least one success.
+    for i in $(seq 1 30); do
+      metrics=$(kubectl run xds-metrics-probe --rm -i --restart=Never -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --image=curlimages/curl:8.10.1 -- \
+        -s --max-time 10 http://{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc:9092/metrics 2>/dev/null || true)
+      success=$(awk '$1=="kgateway_xds_auth_rq_success_total"{print int($2)}' <<<"$metrics")
+      [ "${success:-0}" -ge 1 ] && break
+      echo "attempt $i: kgateway_xds_auth_rq_success_total is '${success:-missing}', retrying"
+      sleep 3
+    done
+    grep xds_auth <<<"$metrics" || true
+    for m in kgateway_xds_auth_rq_total kgateway_xds_auth_rq_success_total kgateway_xds_auth_rq_failure_total; do
+      grep -q "^$m " <<<"$metrics" || { echo "FAIL: control plane metrics have no $m"; exit 1; }
+    done
+    [ "${success:-0}" -ge 1 ] || { echo "FAIL: no successful xDS auth request after the proxy reconnected over TLS"; exit 1; }
+    {{< /doc-test >}}

@@ -1,0 +1,108 @@
+format: 1
+source: assets/kgw-docs/snippets/setup-gateway.md
+blocks:
+- 6d3547628678cfdf yaml
+- 35725c3f076be331 sh
+- 2edbb639cba842ca txt
+- f42e9099bd1ef95c sh
+- 412eddc4816f0a98 txt
+tags:
+- paths: setup-gateway
+  block: 0
+  fingerprint: 6d3547628678cfdf
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 9278ed91 0bebd850 36184fa5 39325db0 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="setup-gateway"
+    only: true
+    lead: ' '
+- paths: setup-gateway
+  block: 1
+  fingerprint: 35725c3f076be331
+  lang: sh
+  lines: 35725c3f
+  preview: kubectl get gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="setup-gateway"
+    only: true
+    lead: ' '
+- paths: setup-gateway
+  block: 3
+  fingerprint: f42e9099bd1ef95c
+  lang: sh
+  lines: f42e9099
+  preview: kubectl get po -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l gateway.netw
+  form:
+    attr: paths="setup-gateway"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 6d3547628678cfdf
+    lang: yaml
+    lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 9278ed91 0bebd850 36184fa5 39325db0 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="setup-gateway" >}}
+    YAMLTest -f - <<'EOF'
+    - name: setup-gateway - wait for the http Gateway to be accepted and programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: setup-gateway - wait for the http gateway proxy deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 412eddc4816f0a98
+    lang: txt
+    lines: 1175d919 6ce8857a
+    preview: NAME                  READY   STATUS    RESTARTS   AGE
+  content: |-
+    {{< doc-test paths="setup-gateway" >}}
+    # Step 2 and 3 claims: the Gateway gets an external address from the LoadBalancer
+    # service (cloud-provider-kind in the test cluster) and one proxy pod runs 1/1.
+    addr=""; ready=""
+    for i in $(seq 1 60); do
+      addr=$(kubectl get gateway http -n kgateway-system -o jsonpath='{.status.addresses[0].value}')
+      ready=$(kubectl get po -n kgateway-system -l gateway.networking.k8s.io/gateway-name=http \
+        -o jsonpath='{range .items[*]}{.status.phase}{" "}{.status.containerStatuses[*].ready}{"\n"}{end}')
+      if [ -n "$addr" ] && grep -q '^Running true$' <<<"$ready"; then break; fi
+      echo "http Gateway address '$addr', proxy pods '$ready'; retrying ($i/60)"; sleep 5
+    done
+    kubectl get gateway http -n kgateway-system
+    kubectl get po -n kgateway-system -l gateway.networking.k8s.io/gateway-name=http
+    if [ -z "$addr" ]; then
+      echo "FAIL: the http Gateway has no address in status.addresses"
+      exit 1
+    fi
+    if ! grep -q '^Running true$' <<<"$ready"; then
+      echo "FAIL: no http gateway proxy pod is Running with its container ready (1/1)"
+      exit 1
+    fi
+    {{< /doc-test >}}

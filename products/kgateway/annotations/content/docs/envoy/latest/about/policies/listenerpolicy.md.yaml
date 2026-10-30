@@ -1,0 +1,76 @@
+format: 1
+source: content/docs/envoy/latest/about/policies/listenerpolicy.md
+blocks:
+- 23c2c620e39cf5e1 yaml
+- 94a6e723bf7aa78b yaml
+- 964ebbdae96844c8 yaml
+tags:
+- paths: listenerpolicy
+  block: 0
+  fingerprint: 23c2c620e39cf5e1
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 51aa56eb 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 283ff893 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listenerpolicy"
+    pos: 4
+    sep: ', '
+hidden:
+- after:
+    block: 0
+    fingerprint: 23c2c620e39cf5e1
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 51aa56eb 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 283ff893 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="listenerpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the bufferlimits ListenerPolicy on the http Gateway to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: bufferlimits
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 23c2c620e39cf5e1
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 51aa56eb 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 283ff893 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="listenerpolicy" >}}
+    # The policy's `default` section applies to every listener on the http Gateway,
+    # so each dynamic listener in the proxy's config dump carries the 1024-byte
+    # per-connection buffer limit.
+    limits=""
+    for i in $(seq 1 30); do
+      limits=$(kubectl exec deploy/http -n kgateway-system -- wget -qO- 127.0.0.1:19000/config_dump \
+        | jq -r '.configs[] | select(.["@type"] == "type.googleapis.com/envoy.admin.v3.ListenersConfigDump")
+            | .dynamic_listeners[]? | "\(.name)=\(.active_state.listener.per_connection_buffer_limit_bytes // "unset")"') || true
+      echo "listener buffer limits: ${limits:-none}"
+      if [ -n "$limits" ] && ! grep -qv '=1024$' <<<"$limits"; then break; fi
+      echo "not every Gateway listener has per_connection_buffer_limit_bytes 1024 yet, retrying ($i/30)"; sleep 2
+    done
+    if [ -z "$limits" ] || grep -qv '=1024$' <<<"$limits"; then
+      echo "FAIL: the bufferlimits ListenerPolicy did not set per_connection_buffer_limit_bytes to 1024 on every listener of the http Gateway"
+      exit 1
+    fi
+    # Traffic still flows through the listener with the smaller buffer.
+    code=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080") || true
+      [ "$code" = "200" ] && break
+      echo "request through the http listener returned '${code}', want 200, retrying ($i/30)"; sleep 2
+    done
+    [ "$code" = "200" ] || { echo "FAIL: requests through the http Gateway listener do not return 200 after the ListenerPolicy"; exit 1; }
+    {{< /doc-test >}}

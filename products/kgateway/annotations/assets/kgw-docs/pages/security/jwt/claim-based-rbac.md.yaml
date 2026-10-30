@@ -1,0 +1,199 @@
+format: 1
+source: assets/kgw-docs/pages/security/jwt/claim-based-rbac.md
+blocks:
+- 1342d83536e6b311 sh
+- 05a4db747459fa95 yaml
+- 0cb8123ebc5e6901 sh
+- b41221bb568c5b0a sh
+- fc7bf5dcb037b697 sh
+- d925d91a5b67ee6e sh
+- 9a41adc75652537c sh
+- 9d0765d28fbf996a
+- ebe9007e51667a6b yaml
+- 4fc0a5f2710e96a8 yaml
+- ccbc7de4b3394a70 yaml
+- 6a794673f6521d24 sh
+tags:
+- paths: claim-based-rbac
+  block: 0
+  fingerprint: 1342d83536e6b311
+  lang: sh
+  lines: 1342d835
+  preview: export TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNvbG8tcHVibGljLWtleS0
+  form:
+    attr: paths="claim-based-rbac"
+    only: true
+    lead: ' '
+- paths: claim-based-rbac
+  block: 1
+  fingerprint: 05a4db747459fa95
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 b68b921b 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e34dc3a0 248578da 8603b88d 84c31baf d25a61e1 1188488c 0a06a173 8d3a11ee abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="claim-based-rbac"
+    only: true
+    lead: ' '
+- paths: claim-based-rbac
+  block: 4
+  fingerprint: fc7bf5dcb037b697
+  lang: sh
+  lines: fc7bf5dc
+  preview: export BOB_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNvbG8tcHVibGljLWt
+  form:
+    attr: paths="claim-based-rbac"
+    only: true
+    lead: ' '
+- paths: claim-based-rbac
+  block: 11
+  fingerprint: 6a794673f6521d24
+  lang: sh
+  lines: 3dc6e74f 0fbf3ab9
+  preview: 'kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} jwt-policy -n '
+  form:
+    attr: paths="claim-based-rbac"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 1342d83536e6b311
+    lang: sh
+    lines: 1342d835
+    preview: export TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNvbG8tcHVibGljLWtleS0
+  content: |-
+    {{< doc-test paths="claim-based-rbac" >}}
+    # Test-only: the setup from the Basic JWT policy guide that this guide builds on,
+    # the selfminted-jwt GatewayExtension with the inline JWKS (issuer kgateway.dev).
+    kubectl apply -f- <<'EOF'
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: GatewayExtension
+    metadata:
+      name: selfminted-jwt
+      namespace: kgateway-system
+    spec:
+      jwt:
+        providers:
+          - name: selfminted
+            issuer: kgateway.dev
+            jwks:
+              local:
+                inline: '{"keys":[{"kty":"RSA","kid":"kgateway-public-key-001","use":"sig","alg":"RS256","n":"tNxnW0ZghyIUdfRc97EuZ6Hii0z4AucJrbOCT8MxKznlnV9Z-OrOYMf_hyjiD2Q_qyGrv-sRhinKOjokr-cbLKhHlAlEkEW1ah4wQ-zzO3DT0SdAKX_7RkMkl5Sba443vfDlDmuVSBeyHQr6cKZZGBIe8TlzcKR0xYlop13p1DYAHsIiX8A_q2CmsRlnV4CbneNMGZOmHuBiFG3DJ2lc1ZgvKc8SN1gt3oEujRqxy4yPLHVJ3wQ58ezYtgV2gzbyllzJdi1DSoPtnCFFGvfDqmAcDdmfVtHUHqagCF0ivEQsrxt7PYKqxuCbkaSY1_ef7ub01_5KF1GhlA9y5XSqJQ","e":"AQAB"}]}'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 05a4db747459fa95
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 b68b921b 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e34dc3a0 248578da 8603b88d 84c31baf d25a61e1 1188488c 0a06a173 8d3a11ee abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="claim-based-rbac" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the jwt-policy TrafficPolicy to be accepted (jwtAuth and rbac team == dev)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: jwt-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Allow access based on a claim
+    line: 4a38cb3c2de0ee11
+    occurrence: 0
+    words: a12dd3a7 8e7fc023 bb0347a4 2998b323 ca978112 27badc98 2689367b a9f4b3d2
+    block_before:
+      block: 3
+      fingerprint: b41221bb568c5b0a
+      lang: sh
+      lines: 6c9c6978 34ced9d9 ba4bfbcb
+      preview: curl -vik localhost:8080/headers \
+  content: |-
+    {{< doc-test paths="claim-based-rbac" >}}
+    YAMLTest -f - <<'EOF'
+    - name: claim-based-rbac - a request with the sample JWT (team dev) is allowed
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: claim-based-rbac - a request without a JWT is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 9d0765d28fbf996a
+    lang: ''
+    lines: 8310b5e0 b5865d15
+    preview: HTTP/1.1 403 Forbidden
+  content: |-
+    {{< doc-test paths="claim-based-rbac" >}}
+    YAMLTest -f - <<'EOF'
+    - name: claim-based-rbac - a request with Bob's JWT (team ops) is denied with 403
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${BOB_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains:
+        - 'RBAC: access denied'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 6a794673f6521d24
+    lang: sh
+    lines: 3dc6e74f 0fbf3ab9
+    preview: 'kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} jwt-policy -n '
+  content: |-
+    {{< doc-test paths="claim-based-rbac" >}}
+    # Test-only: the cleanup removed the policy, so the route is open again.
+    YAMLTest -f - <<'EOF'
+    - name: claim-based-rbac - after cleanup, a request without a JWT succeeds again
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

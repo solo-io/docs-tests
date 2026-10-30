@@ -1,0 +1,358 @@
+format: 1
+source: assets/kgw-docs/pages/security/jwt/jwt-claim-extraction.md
+blocks:
+- 02db072acc18011c mermaid
+- ea2e4cb02b565925 yaml
+- 3b2c9d6935b12b91 yaml
+- 9fdafbf557e7b263 yaml
+- cd20a851d314e6f6 sh
+- aa2dc216efc52572 json
+- ff10239f7177e794 sh
+- d1d0c0178d3ae607 yaml
+tags:
+- paths: jwt-claim-extraction
+  block: 1
+  fingerprint: ea2e4cb02b565925
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 3f5b0335 0bebd850 36184fa5 c582fe46 2efcbf93 bfce7f60 7811f28b c6ba4159 cb3f91d5 d664f32c 3f173fd2 8c8c4228 843e80ae 0bebd850 36184fa5 588a5d84 71ab14c2 ad65deb7 3f5b0335 3195c5f5 192b2d39 9efe4f94 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-claim-extraction"
+    only: true
+    lead: ' '
+- paths: jwt-claim-extraction
+  block: 2
+  fingerprint: 3b2c9d6935b12b91
+  lang: yaml
+  lines: 16c71da1 88b9492f 5ee5f7dc 8c8c4228 46731bc6 0bebd850 36184fa5 9b9d0530 a1343bf6 195ba571 5ad36ce4 837dc1fd 1e4dbf3c 44ec9b74 b93c9907 bdcd101b 70c97555 69f54740 ad65deb7 3f5b0335 15b03c81 d7f1d0ba efb90286 900d90ee a0ca173f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-claim-extraction"
+    only: true
+    lead: ' '
+- paths: jwt-claim-extraction
+  block: 3
+  fingerprint: 9fdafbf557e7b263
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 0e1d25e1 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e34dc3a0 248578da 46731bc6 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-claim-extraction"
+    only: true
+    lead: ' '
+- paths: jwt-claim-extraction
+  block: 6
+  fingerprint: ff10239f7177e794
+  lang: sh
+  lines: a480bf8c 42dd0b27 32ac6bab 5da31028
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} jwt-auth-polic
+  form:
+    attr: paths="jwt-claim-extraction"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: ea2e4cb02b565925
+    lang: yaml
+    lines: 16c71da1 d664f32c ad65deb7 8c8c4228 3f5b0335 0bebd850 36184fa5 c582fe46 2efcbf93 bfce7f60 7811f28b c6ba4159 cb3f91d5 d664f32c 3f173fd2 8c8c4228 843e80ae 0bebd850 36184fa5 588a5d84 71ab14c2 ad65deb7 3f5b0335 3195c5f5 192b2d39 9efe4f94 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jwt-claim-extraction" >}}
+    # Test-only stand-in for the identity provider at auth.example.com. The page
+    # uses auth.example.com as a placeholder, so the test runs its own provider:
+    #  - an nginx server in the auth-idp-standin namespace that serves a JWKS at
+    #    https://auth.example.com/.well-known/jwks.json with a self-signed
+    #    certificate for auth.example.com,
+    #  - a CoreDNS rewrite so that auth.example.com resolves to that server,
+    #  - a JWT signing key, and tokens with the page's issuer and audience.
+    # The page's BackendConfigPolicy trusts the system CA certificates, which cannot
+    # trust a test certificate, so the test swaps wellKnownCACertificates: System
+    # for a secretRef to the stand-in's certificate. Everything else (the Backend,
+    # the SNI, the JWKS URL, the issuer, the audience, claimsToHeaders) is the page's.
+    JCE_DIR=$(mktemp -d)
+    cat > "$JCE_DIR/cert.cnf" <<'CNF'
+    [dn]
+    CN=auth.example.com
+    [req]
+    distinguished_name = dn
+    [EXT]
+    subjectAltName=DNS:auth.example.com
+    keyUsage=digitalSignature
+    extendedKeyUsage=serverAuth
+    CNF
+    openssl req -x509 -out "$JCE_DIR/tls.crt" -keyout "$JCE_DIR/tls.key" -newkey rsa:2048 -nodes -sha256 -days 7 \
+      -subj '/CN=auth.example.com' -extensions EXT -config "$JCE_DIR/cert.cnf" 2>/dev/null
+    openssl genrsa -out "$JCE_DIR/jwt.key" 2048 2>/dev/null
+    modulus=$(openssl rsa -in "$JCE_DIR/jwt.key" -noout -modulus | cut -d= -f2)
+    python3 - "$modulus" > "$JCE_DIR/jwks.json" <<'PY'
+    import base64, json, sys
+    n = bytes.fromhex(sys.argv[1])
+    b64 = lambda b: base64.urlsafe_b64encode(b).rstrip(b"=").decode()
+    print(json.dumps({"keys": [{"kty": "RSA", "kid": "standin-key-001", "use": "sig", "alg": "RS256",
+                                "n": b64(n), "e": b64((65537).to_bytes(3, "big"))}]}))
+    PY
+    cat > "$JCE_DIR/default.conf" <<'NGINX'
+    server {
+      listen 443 ssl;
+      listen [::]:443 ssl;
+      server_name auth.example.com;
+      ssl_certificate /etc/nginx/tls/tls.crt;
+      ssl_certificate_key /etc/nginx/tls/tls.key;
+      location = /.well-known/jwks.json {
+        default_type application/json;
+        alias /etc/nginx/jwks/jwks.json;
+      }
+    }
+    NGINX
+    kubectl create namespace auth-idp-standin --dry-run=client -o yaml | kubectl apply -f -
+    kubectl create secret tls auth-idp-standin-tls -n auth-idp-standin --cert="$JCE_DIR/tls.crt" --key="$JCE_DIR/tls.key" --dry-run=client -o yaml | kubectl apply -f -
+    kubectl create configmap auth-idp-standin -n auth-idp-standin --from-file=default.conf="$JCE_DIR/default.conf" --from-file=jwks.json="$JCE_DIR/jwks.json" --dry-run=client -o yaml | kubectl apply -f -
+    kubectl apply -f- <<'EOF'
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: auth-idp-standin
+      namespace: auth-idp-standin
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: auth-idp-standin
+      template:
+        metadata:
+          labels:
+            app: auth-idp-standin
+        spec:
+          containers:
+          - name: nginx
+            image: nginx:1.28.0
+            ports:
+            - containerPort: 443
+            volumeMounts:
+            - name: conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+            - name: conf
+              mountPath: /etc/nginx/jwks/jwks.json
+              subPath: jwks.json
+            - name: tls
+              mountPath: /etc/nginx/tls
+              readOnly: true
+          volumes:
+          - name: conf
+            configMap:
+              name: auth-idp-standin
+          - name: tls
+            secret:
+              secretName: auth-idp-standin-tls
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: auth-idp-standin
+      namespace: auth-idp-standin
+    spec:
+      selector:
+        app: auth-idp-standin
+      ports:
+      - name: https
+        port: 443
+        targetPort: 443
+    EOF
+    kubectl rollout status deployment/auth-idp-standin -n auth-idp-standin --timeout=300s
+    kubectl get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' > "$JCE_DIR/Corefile"
+    if ! grep -q 'auth-idp-standin.auth-idp-standin.svc.cluster.local' "$JCE_DIR/Corefile"; then
+      python3 - "$JCE_DIR/Corefile" <<'PY'
+    import re, sys
+    path = sys.argv[1]
+    corefile = open(path).read()
+    rule = """    rewrite stop {
+            name exact auth.example.com auth-idp-standin.auth-idp-standin.svc.cluster.local
+            answer name auth-idp-standin.auth-idp-standin.svc.cluster.local auth.example.com
+        }
+    """
+    corefile, n = re.subn(r"^(\.:53 \{\n)", r"\1" + rule, corefile, count=1, flags=re.M)
+    assert n == 1, "no .:53 server block in the CoreDNS Corefile"
+    open(path, "w").write(corefile)
+    PY
+      kubectl create configmap coredns -n kube-system --from-file=Corefile="$JCE_DIR/Corefile" --dry-run=client -o yaml | kubectl apply -f -
+      kubectl rollout restart deployment coredns -n kube-system
+      kubectl rollout status deployment coredns -n kube-system --timeout=180s
+    fi
+    reachable=""
+    for i in $(seq 1 30); do
+      out=$(kubectl run auth-idp-check --rm -i --restart=Never -n auth-idp-standin --image=curlimages/curl:8.10.1 -- \
+        curl -sSk https://auth.example.com/.well-known/jwks.json 2>/dev/null || true)
+      if grep -q standin-key-001 <<<"$out"; then reachable=1; break; fi
+      echo "auth.example.com stand-in not reachable yet (attempt $i)"; sleep 5
+    done
+    [ -n "$reachable" ] || { echo "FAIL: the auth.example.com stand-in JWKS is not reachable in the cluster"; exit 1; }
+    # Trust the stand-in certificate instead of the system CA certificates.
+    kubectl create secret generic auth-idp-ca -n kgateway-system --from-file=ca.crt="$JCE_DIR/tls.crt" --dry-run=client -o yaml | kubectl apply -f -
+    kubectl patch backendconfigpolicy auth-idp-tls -n kgateway-system --type=json \
+      -p='[{"op":"remove","path":"/spec/tls/wellKnownCACertificates"},{"op":"add","path":"/spec/tls/secretRef","value":{"name":"auth-idp-ca"}}]'
+    # Tokens signed by the stand-in key, with the page's issuer and audience.
+    jce_token() {
+      local payload="$1" header body sig
+      b64url() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
+      header=$(printf '%s' '{"alg":"RS256","typ":"JWT","kid":"standin-key-001"}' | b64url)
+      body=$(printf '%s' "$payload" | b64url)
+      sig=$(printf '%s' "$header.$body" | openssl dgst -sha256 -sign "$JCE_DIR/jwt.key" -binary | b64url)
+      printf '%s.%s.%s' "$header" "$body" "$sig"
+    }
+    exp=$(( $(date +%s) + 7200 ))
+    export JCE_TOKEN=$(jce_token "{\"iss\":\"https://auth.example.com/\",\"aud\":\"my-app-audience\",\"sub\":\"user-12345\",\"email\":\"alice@example.com\",\"exp\":$exp}")
+    export JCE_TOKEN_NO_EMAIL=$(jce_token "{\"iss\":\"https://auth.example.com/\",\"aud\":\"my-app-audience\",\"sub\":\"user-67890\",\"exp\":$exp}")
+    export JCE_TOKEN_OTHER_AUD=$(jce_token "{\"iss\":\"https://auth.example.com/\",\"aud\":\"another-app\",\"sub\":\"user-12345\",\"email\":\"alice@example.com\",\"exp\":$exp}")
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 9fdafbf557e7b263
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 0e1d25e1 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e34dc3a0 248578da 46731bc6 0bebd850 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jwt-claim-extraction" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the jwt-auth-policy TrafficPolicy to be accepted (jwtAuth with the jwt-provider GatewayExtension)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: jwt-auth-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: aa2dc216efc52572
+    lang: json
+    lines: 021fb596 2e253c22 ab5df625 d682877e b595101a 39d4b54e 71bdd366 3ed20cf8 39d4b54e ab5df625 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="jwt-claim-extraction" >}}
+    # Test-only: the gateway fetches the JWKS from the auth.example.com stand-in
+    # through the auth-idp Backend over TLS, verifies the token, and copies the sub
+    # and email claims into X-User-ID and X-User-Email (httpbin shows them as
+    # X-User-Id and X-User-Email).
+    YAMLTest -f - <<'EOF'
+    - name: jwt-claim-extraction - a valid JWT is accepted and the sub and email claims reach the backend as headers
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${JCE_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-User-Id'][0]"
+          comparator: equals
+          value: user-12345
+        - path: "$.headers['X-User-Email'][0]"
+          comparator: equals
+          value: alice@example.com
+    - name: jwt-claim-extraction - a JWT without an email claim gets X-User-ID but no X-User-Email header
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${JCE_TOKEN_NO_EMAIL}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-User-Id'][0]"
+          comparator: equals
+          value: user-67890
+        - path: "$.headers['X-User-Email']"
+          comparator: exists
+          negate: true
+    - name: jwt-claim-extraction - an X-User-ID header from the client is overwritten with the verified sub claim
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${JCE_TOKEN}"
+          X-User-ID: "attacker"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-User-Id'][0]"
+          comparator: equals
+          value: user-12345
+        - path: "$.headers['X-User-Id'][1]"
+          comparator: exists
+          negate: true
+    - name: jwt-claim-extraction - a request without a JWT is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: jwt-claim-extraction - a JWT for another audience is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${JCE_TOKEN_OTHER_AUD}"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: ff10239f7177e794
+    lang: sh
+    lines: a480bf8c 42dd0b27 32ac6bab 5da31028
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} jwt-auth-polic
+  content: |-
+    {{< doc-test paths="jwt-claim-extraction" >}}
+    # Test-only: the cleanup removed the policy, so the route is open again.
+    YAMLTest -f - <<'EOF'
+    - name: jwt-claim-extraction - after cleanup, a request without a JWT succeeds again
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

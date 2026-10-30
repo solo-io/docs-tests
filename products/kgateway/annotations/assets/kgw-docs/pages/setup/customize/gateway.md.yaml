@@ -1,0 +1,223 @@
+format: 1
+source: assets/kgw-docs/pages/setup/customize/gateway.md
+blocks:
+- 2137793be03c9533 yaml
+- 8f623de748cc0c39 yaml
+- 7a96f6d0e49fd53a sh
+- 4057c19b66c5b096
+- ab879b002d2b8bb2 sh
+- 783eefb25aa88f2e json
+- b32333c85a63b51c sh
+- 1585476b268c4ffa console
+- 4ca96942c1117fbf yaml
+- 8f623de748cc0c39 yaml
+- b8d4b887a6faf8e8 sh
+- 4a44dc15364204a8
+- 67c9a98f9f215ccf sh
+tags:
+- paths: customize-gateway
+  block: 0
+  fingerprint: 2137793be03c9533
+  lang: yaml
+  lines: 16c71da1 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 3897150c c7e9a573 9287e3e4 d208b044 135e3f32 bc3511de 062aee6c 8a8c6b59 7e49b7d8 e4e6253c 687277da 1bd6754a 6b13e8c6 d8e3127c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="customize-gateway"
+    only: true
+    lead: ' '
+- paths: customize-gateway
+  block: 1
+  fingerprint: 8f623de748cc0c39
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 1ecdac76 06b13f44 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="customize-gateway"
+    only: true
+    lead: ' '
+- paths: customize-gateway
+  block: 2
+  fingerprint: 7a96f6d0e49fd53a
+  lang: sh
+  lines: 7a96f6d0
+  preview: kubectl get svc custom -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="customize-gateway"
+    only: true
+    lead: ' '
+- paths: customize-gateway
+  block: 4
+  fingerprint: ab879b002d2b8bb2
+  lang: sh
+  lines: ab879b00
+  preview: kubectl logs -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app.kubernetes
+  form:
+    attr: paths="customize-gateway"
+    only: true
+    lead: ' '
+- paths: customize-gateway
+  block: 6
+  fingerprint: b32333c85a63b51c
+  lang: sh
+  lines: b32333c8
+  preview: kubectl get deploy/custom -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o y
+  form:
+    attr: paths="customize-gateway"
+    only: true
+    lead: ' '
+- paths: customize-gateway
+  block: 8
+  fingerprint: 4ca96942c1117fbf
+  lang: yaml
+  lines: 16c71da1 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 be80440e 36184fa5 38f11594 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="customize-gateway"
+    only: true
+    lead: ' '
+- paths: customize-gateway
+  block: 9
+  fingerprint: 8f623de748cc0c39
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 1ecdac76 06b13f44 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="customize-gateway"
+    only: true
+    lead: ' '
+- paths: customize-gateway
+  block: 10
+  fingerprint: b8d4b887a6faf8e8
+  lang: sh
+  lines: b8d4b887
+  preview: 'kubectl get deployment custom -n {{< reuse "kgw-docs/snippets/namespace.md" >}} '
+  form:
+    attr: paths="customize-gateway"
+    only: true
+    lead: ' '
+- paths: customize-gateway
+  block: 12
+  fingerprint: 67c9a98f9f215ccf
+  lang: sh
+  lines: d14976e4 0462678b
+  preview: kubectl delete gateway custom -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="customize-gateway"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 8f623de748cc0c39
+    lang: yaml
+    lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 1ecdac76 06b13f44 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="customize-gateway" >}}
+    # The custom proxy must start with the JSON log format and the extra args
+    # (--base-id 7, --cpuset-threads); a bootstrap or flag Envoy rejects keeps the
+    # pod from becoming ready.
+    YAMLTest -f - <<'EOF'
+    - name: wait for the custom proxy with the built-in gw-params to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: custom
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    cg_svc=""
+    for attempt in $(seq 1 60); do
+      cg_svc=$(kubectl get svc custom -n kgateway-system -o jsonpath='{.spec.type}' 2>/dev/null || true)
+      [ "$cg_svc" = "NodePort" ] && break
+      sleep 2
+    done
+    if [ "$cg_svc" != "NodePort" ]; then
+      echo "customize-gateway built-in: expected svc/custom of type NodePort, got '${cg_svc}'"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: ab879b002d2b8bb2
+    lang: sh
+    lines: ab879b00
+    preview: kubectl logs -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app.kubernetes
+  content: |-
+    {{< doc-test paths="customize-gateway" >}}
+    # A recent application log line of the custom proxy parses as JSON and carries
+    # the four fields that the logFormat.json example defines.
+    cg_json=0
+    cg_logs=""
+    for attempt in $(seq 1 30); do
+      cg_logs=$(kubectl logs -n kgateway-system -l app.kubernetes.io/name=custom -c kgateway-proxy --tail=20 2>/dev/null || true)
+      if python3 -c '
+    import json, sys
+    for line in sys.stdin:
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue
+        if all(k in entry for k in ("message", "level", "scope", "timestamp")):
+            sys.exit(0)
+    sys.exit(1)
+    ' <<<"$cg_logs"; then
+        cg_json=1
+        break
+      fi
+      sleep 2
+    done
+    if [ "$cg_json" -ne 1 ]; then
+      echo "customize-gateway built-in: no JSON log line with message, level, scope, and timestamp in the custom proxy logs:"
+      printf '%s\n' "$cg_logs"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: b32333c85a63b51c
+    lang: sh
+    lines: b32333c8
+    preview: kubectl get deploy/custom -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o y
+  content: |2-
+       {{< doc-test paths="customize-gateway" >}}
+       cg_args=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.containers[?(@.name=="kgateway-proxy")].args}')
+       case "$cg_args" in
+         *'"--base-id","7","--cpuset-threads"'*) ;;
+         *) echo "customize-gateway built-in: expected --base-id 7 --cpuset-threads in the kgateway-proxy args, got '${cg_args}'"; exit 1 ;;
+       esac
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 8f623de748cc0c39
+    lang: yaml
+    lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 1ecdac76 06b13f44 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="customize-gateway" >}}
+    # The Gateway is unchanged from the built-in example (the script runs that
+    # identical block once), so the overlay reaches the Deployment through the
+    # GatewayParameters update alone.
+    cg_mrs=""
+    for attempt in $(seq 1 60); do
+      cg_mrs=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.minReadySeconds}' 2>/dev/null || true)
+      [ "$cg_mrs" = "10" ] && break
+      sleep 2
+    done
+    if [ "$cg_mrs" != "10" ]; then
+      echo "customize-gateway overlay: expected minReadySeconds 10 on deployment/custom, got '${cg_mrs}'"
+      exit 1
+    fi
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    {{< /doc-test >}}

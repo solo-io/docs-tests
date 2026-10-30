@@ -1,0 +1,965 @@
+format: 1
+source: assets/kgw-docs/pages/setup/customize/configs.md
+blocks:
+- ef9eef0145c75d46 sh
+- 11adb95b0c9bfafe yaml
+- 8f623de748cc0c39 yaml
+- 14c7202164322666 sh
+- 77cdc491bdaca2ff
+- 4b0158e77e0fb12a yaml
+- 8f623de748cc0c39 yaml
+- 4966a1e4069cb4e2 sh
+- ac2dcb5496840427
+- fde3ffce166a9449 yaml
+- f1009cd65a7337a3 yaml
+- 01219d37217a6588 yaml
+- 3b5a48720b15e9cd yaml
+- d7037fde20e11556 yaml
+- dc7c79ae5acfe452 yaml
+- a95fdd0281c78fe6 yaml
+- b32c916f74f3fc93 yaml
+- b1cdc6f4c9f1c9fc yaml
+- 550baaa57ef2c1b9 yaml
+- e642c97501bff91d yaml
+- fb54f1b557ccb09d yaml
+- d3f1b77ab1143899 yaml
+- c9878f1e70bd1335 yaml
+- ec7b26b7d7b40e8f yaml
+- 657daf23e3186943 yaml
+- eecca1deda2dcd2a yaml
+- bc822f769b5c0984 yaml
+- a8e1290baa02f72b yaml
+- e2de0119f4b030ff yaml
+- ae37136a223821c8 yaml
+- 9608c64caeda6ad3 yaml
+- 922b598ac473b5a2 yaml
+tags:
+- paths: configs
+  block: 0
+  fingerprint: ef9eef0145c75d46
+  lang: sh
+  lines: ef9eef01
+  preview: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/late
+  form:
+    attr: paths="configs"
+    only: true
+    lead: ' '
+- paths: configs
+  block: 1
+  fingerprint: 11adb95b0c9bfafe
+  lang: yaml
+  lines: 6b3c98d2 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 899d43de 8c8c4228 fa1e8330 0117c13b 36184fa5 015e38b1 10589a3a 540f5e28 e66d2e96 0ffaabeb ac6a97c5 dc7109a4 68a2e3df 3cf87412 abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="configs"
+    only: true
+    lead: ' '
+- paths: configs
+  block: 2
+  fingerprint: 8f623de748cc0c39
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 1ecdac76 06b13f44 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="configs"
+    only: true
+    lead: ' '
+- paths: configs
+  block: 3
+  fingerprint: 14c7202164322666
+  lang: sh
+  lines: 14c72021
+  preview: kubectl get hpa -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="configs"
+    only: true
+    lead: ' '
+- paths: configs
+  block: 9
+  fingerprint: fde3ffce166a9449
+  lang: yaml
+  lines: 6b3c98d2 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 6988ebce 8c8c4228 fa1e8330 0117c13b 36184fa5 85f2ac89 abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="configs"
+    only: true
+    lead: ' '
+- paths: configs-deployment
+  block: 10
+  fingerprint: f1009cd65a7337a3
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 18bfcf8e 776530bb abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-deployment"
+    only: true
+    lead: ' '
+- paths: configs-deployment
+  block: 11
+  fingerprint: 01219d37217a6588
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 9287e3e4 d208b044 732141b3 abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-deployment"
+    only: true
+    lead: ' '
+- paths: configs-deployment
+  block: 12
+  fingerprint: 3b5a48720b15e9cd
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 9287e3e4 687277da a5547eb7 d7d33908 7c131629 e247ae32 abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-deployment"
+    only: true
+    lead: ' '
+- paths: configs-deployment
+  block: 13
+  fingerprint: d7037fde20e11556
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 e8215d3e 2d0a637c 98bb9740 abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-deployment"
+    only: true
+    lead: ' '
+- paths: configs-deployment
+  block: 14
+  fingerprint: dc7c79ae5acfe452
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 e8215d3e 9dd296fc ab45e73e fe4b9505 e9371eff 161c8106 36cd8b2c f542fd33 66e29763 bd2652cc 4e3231ff db95f873 5519c784 651d2595 e0e21277 e4985fd0 13f0439b 35622617 1a22c025 6df294c2 5ef58090 ed43a0d3 f24ec6e7 8647a760 839a5cac 3d46412d abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-deployment"
+    only: true
+    lead: ' '
+- paths: configs-deployment
+  block: 15
+  fingerprint: a95fdd0281c78fe6
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 e8215d3e 1dbe8698 58df2d4c 073ccb34 e52917ad abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-deployment"
+    only: true
+    lead: ' '
+- paths: configs-deployment
+  block: 17
+  fingerprint: b1cdc6f4c9f1c9fc
+  lang: yaml
+  lines: fa03f663 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 fa1e8330 6871499b 6cff7984 72ab0e66 b24bff43 3f04fdd7 1ecdac76 06b13f44 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-deployment"
+    only: true
+    lead: ' '
+- paths: configs-deployment
+  block: 18
+  fingerprint: 550baaa57ef2c1b9
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 e8215d3e 93273aa3 f45bc6f5 889016e3 7d4d302b 9287e3e4 c079e389 f45bc6f5 238363f8 4fb8b4ed abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-deployment"
+    only: true
+    lead: ' '
+- paths: configs-overlays
+  block: 19
+  fingerprint: e642c97501bff91d
+  lang: yaml
+  lines: 6b3c98d2 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 be80440e 36184fa5 a58565b2 36184fa5 e6e9aeaa f4ef4370 bcef429c 9e477ff8 abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="configs-overlays"
+    only: true
+    lead: ' '
+- paths: configs-overlays
+  block: 20
+  fingerprint: fb54f1b557ccb09d
+  lang: yaml
+  lines: 6b3c98d2 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 be80440e 36184fa5 a58565b2 36184fa5 04968f51 c5e20d15 bcef429c 65fda1f9 abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="configs-overlays"
+    only: true
+    lead: ' '
+- paths: configs-overlays
+  block: 22
+  fingerprint: c9878f1e70bd1335
+  lang: yaml
+  lines: 6b3c98d2 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 be80440e 36184fa5 a58565b2 36184fa5 bef6f702 6638cda1 04968f51 d1699b6e 0ff65a1a a46d7c6d 9693ecf1 abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="configs-overlays"
+    only: true
+    lead: ' '
+- paths: configs-service
+  block: 24
+  fingerprint: 657daf23e3186943
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 3897150c 497accad ac6cb2e8 abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-service"
+    only: true
+    lead: ' '
+- paths: configs-service
+  block: 27
+  fingerprint: a8e1290baa02f72b
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 3897150c e6d673c3 814a455f ca6c547b 8548c32f abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-service"
+    only: true
+    lead: ' '
+- paths: configs-service
+  block: 31
+  fingerprint: 922b598ac473b5a2
+  lang: yaml
+  lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 061e3faa 497accad fc1c56ef d8c6fbf6 28b3e4f1 c1b8aff8 abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="configs-service"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 8f623de748cc0c39
+    lang: yaml
+    lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 1ecdac76 06b13f44 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="configs" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the custom Gateway with the HPA gw-params to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: custom
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # The HPA is named after the Gateway, targets its Deployment, and carries the
+    # label from the GatewayParameters metadata. Metrics are not checked: on kind
+    # the metrics-server has no kubelet TLS, so the HPA never reads CPU usage.
+    cfg_hpa=""
+    for attempt in $(seq 1 60); do
+      cfg_hpa=$(kubectl get hpa custom -n kgateway-system -o jsonpath='{.spec.minReplicas}/{.spec.maxReplicas}/{.spec.scaleTargetRef.kind}/{.spec.scaleTargetRef.name}/{.spec.metrics[0].resource.name}/{.spec.metrics[0].resource.target.averageUtilization}/{.metadata.labels.app\.kubernetes\.io/name}' 2>/dev/null || true)
+      [ "$cfg_hpa" = "2/10/Deployment/custom/cpu/80/gw-params" ] && break
+      sleep 2
+    done
+    if [ "$cfg_hpa" != "2/10/Deployment/custom/cpu/80/gw-params" ]; then
+      echo "configs hpa: expected hpa/custom 2/10/Deployment/custom/cpu/80/gw-params, got '${cfg_hpa}'"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: fde3ffce166a9449
+    lang: yaml
+    lines: 6b3c98d2 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 6988ebce 8c8c4228 fa1e8330 0117c13b 36184fa5 85f2ac89 abc56510
+    preview: kubectl apply --server-side -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs" >}}
+    # The PDB is named after the Gateway and its selector matches the proxy pods
+    # of the custom Gateway.
+    cfg_pdb=""
+    for attempt in $(seq 1 60); do
+      cfg_pdb=$(kubectl get pdb custom -n kgateway-system -o jsonpath='{.spec.minAvailable}/{.spec.selector.matchLabels.app\.kubernetes\.io/name}/{.metadata.labels.app\.kubernetes\.io/name}' 2>/dev/null || true)
+      [ "$cfg_pdb" = "1/custom/gw-params" ] && break
+      sleep 2
+    done
+    if [ "$cfg_pdb" != "1/custom/gw-params" ]; then
+      echo "configs pdb: expected pdb/custom 1/custom/gw-params, got '${cfg_pdb}'"
+      exit 1
+    fi
+    cfg_pdb_pods=$(kubectl get pods -n kgateway-system -l app.kubernetes.io/name=custom -o name | wc -l)
+    if [ "$cfg_pdb_pods" -lt 1 ]; then
+      echo "configs pdb: the PDB selector app.kubernetes.io/name=custom matches no proxy pod"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: f1009cd65a7337a3
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 18bfcf8e 776530bb abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-deployment" >}}
+    # Test-only: the page applies each example to an existing GatewayParameters
+    # and points to the Change proxy settings page for the Gateway that uses it.
+    # Create that Gateway, custom, the same as the HPA example on this page, plus
+    # an HTTPRoute to httpbin so that each change can be checked with traffic.
+    kubectl apply -f- <<EOF
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1
+    metadata:
+      name: custom
+      namespace: kgateway-system
+    spec:
+      gatewayClassName: kgateway
+      infrastructure:
+        parametersRef:
+          name: gw-params
+          group: gateway.kgateway.dev
+          kind: GatewayParameters
+      listeners:
+      - protocol: HTTP
+        port: 80
+        name: http
+        allowedRoutes:
+          namespaces:
+            from: All
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: custom-httpbin
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: custom
+        namespace: kgateway-system
+      hostnames:
+      - custom.example.com
+      rules:
+      - backendRefs:
+        - name: httpbin
+          port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the custom Gateway of the deployment examples to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: custom
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    CUSTOM_GW_ADDRESS=""
+    for attempt in $(seq 1 90); do
+      CUSTOM_GW_ADDRESS=$(kubectl get svc custom -n kgateway-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)
+      [ -n "$CUSTOM_GW_ADDRESS" ] && break
+      sleep 2
+    done
+    if [ -z "$CUSTOM_GW_ADDRESS" ]; then
+      echo "configs-deployment: svc/custom got no load balancer address"
+      exit 1
+    fi
+    export CUSTOM_GW_ADDRESS
+    cfg_rep=""
+    for attempt in $(seq 1 90); do
+      cfg_rep=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.replicas}/{.status.readyReplicas}' 2>/dev/null || true)
+      [ "$cfg_rep" = "3/3" ] && break
+      sleep 2
+    done
+    if [ "$cfg_rep" != "3/3" ]; then
+      echo "configs-deployment replicas: expected deployment/custom 3 replicas, 3 ready, got '${cfg_rep}'"
+      exit 1
+    fi
+    YAMLTest -f - <<'EOF'
+    - name: configs-deployment replicas - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 01219d37217a6588
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 9287e3e4 d208b044 732141b3 abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-deployment" >}}
+    # The limit is rendered into the Envoy bootstrap in the custom ConfigMap as a
+    # global downstream connections resource monitor.
+    cfg_mdc=0
+    for attempt in $(seq 1 60); do
+      cfg_bs=$(kubectl get configmap custom -n kgateway-system -o jsonpath='{.data.envoy\.yaml}' 2>/dev/null || true)
+      if grep -q 'max_active_downstream_connections: 5000' <<<"$cfg_bs"; then
+        cfg_mdc=1
+        break
+      fi
+      sleep 2
+    done
+    if [ "$cfg_mdc" -ne 1 ]; then
+      echo "configs-deployment max downstream: configmap/custom envoy.yaml has no max_active_downstream_connections: 5000"
+      grep -n -A6 'overload_manager' <<<"${cfg_bs:-}" || true
+      exit 1
+    fi
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: configs-deployment max downstream connections - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 3b5a48720b15e9cd
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 9287e3e4 687277da a5547eb7 d7d33908 7c131629 e247ae32 abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-deployment" >}}
+    # The flags replace the defaults: the proxy args carry 600 and gradual once,
+    # and no longer carry the default 60 and immediate.
+    cfg_args=""
+    for attempt in $(seq 1 60); do
+      cfg_args=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.containers[?(@.name=="kgateway-proxy")].args}' 2>/dev/null || true)
+      case "$cfg_args" in
+        *'"--drain-time-s","600"'*'"--drain-strategy","gradual"'*) break ;;
+      esac
+      sleep 2
+    done
+    case "$cfg_args" in
+      *'"--drain-time-s","600"'*'"--drain-strategy","gradual"'*) ;;
+      *) echo "configs-deployment drain: expected --drain-time-s 600 and --drain-strategy gradual in the kgateway-proxy args, got '${cfg_args}'"; exit 1 ;;
+    esac
+    case "$cfg_args" in
+      *'"immediate"'*|*'"60"'*) echo "configs-deployment drain: the default drain flags are still set: '${cfg_args}'"; exit 1 ;;
+    esac
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: configs-deployment drain settings - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: d7037fde20e11556
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 e8215d3e 2d0a637c 98bb9740 abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-deployment" >}}
+    # Only the pod spec is checked. The test has no private registry, and the
+    # kubelet ignores a missing pull secret when it pulls the public proxy image.
+    cfg_ips=""
+    for attempt in $(seq 1 60); do
+      cfg_ips=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.imagePullSecrets[*].name}' 2>/dev/null || true)
+      [ "$cfg_ips" = "my-registry-secret" ] && break
+      sleep 2
+    done
+    if [ "$cfg_ips" != "my-registry-secret" ]; then
+      echo "configs-deployment image pull secrets: expected my-registry-secret on deployment/custom, got '${cfg_ips}'"
+      exit 1
+    fi
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: dc7c79ae5acfe452
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 e8215d3e 9dd296fc ab45e73e fe4b9505 e9371eff 161c8106 36cd8b2c f542fd33 66e29763 bd2652cc 4e3231ff db95f873 5519c784 651d2595 e0e21277 e4985fd0 13f0439b 35622617 1a22c025 6df294c2 5ef58090 ed43a0d3 f24ec6e7 8647a760 839a5cac 3d46412d abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-deployment" >}}
+    # Test-only: kind nodes have no node-type or zone label, so the nodeSelector
+    # matches no node and the proxy pod stays Pending. Label every node with the
+    # values that the example uses.
+    kubectl label nodes --all node-type=gateway zone=us-west-1a --overwrite
+    cfg_sched=""
+    for attempt in $(seq 1 60); do
+      cfg_sched=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.nodeSelector.node-type}/{.spec.template.spec.nodeSelector.zone}/{.spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key}/{.spec.template.spec.tolerations[0].key}/{.spec.template.spec.topologySpreadConstraints[0].topologyKey}' 2>/dev/null || true)
+      [ "$cfg_sched" = "gateway/us-west-1a/kubernetes.io/arch/dedicated/kubernetes.io/hostname" ] && break
+      sleep 2
+    done
+    if [ "$cfg_sched" != "gateway/us-west-1a/kubernetes.io/arch/dedicated/kubernetes.io/hostname" ]; then
+      echo "configs-deployment scheduling: expected nodeSelector, node affinity, toleration, and topology spread on deployment/custom, got '${cfg_sched}'"
+      exit 1
+    fi
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: configs-deployment pod scheduling - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: a95fdd0281c78fe6
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 e8215d3e 1dbe8698 58df2d4c 073ccb34 e52917ad abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-deployment" >}}
+    cfg_psc=""
+    for attempt in $(seq 1 60); do
+      cfg_psc=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.securityContext.runAsUser}/{.spec.template.spec.securityContext.runAsGroup}/{.spec.template.spec.securityContext.fsGroup}' 2>/dev/null || true)
+      [ "$cfg_psc" = "1000/2000/3000" ] && break
+      sleep 2
+    done
+    if [ "$cfg_psc" != "1000/2000/3000" ]; then
+      echo "configs-deployment security context: expected pod securityContext 1000/2000/3000 on deployment/custom, got '${cfg_psc}'"
+      exit 1
+    fi
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: configs-deployment pod security context - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: b1cdc6f4c9f1c9fc
+    lang: yaml
+    lines: fa03f663 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 fa1e8330 6871499b 6cff7984 72ab0e66 b24bff43 3f04fdd7 1ecdac76 06b13f44 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-deployment" >}}
+    # Gateway infrastructure labels and annotations go on the managed resources,
+    # including the Deployment and its pods.
+    cfg_meta=""
+    for attempt in $(seq 1 60); do
+      cfg_meta=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.metadata.labels.environment}/{.metadata.labels.team}/{.metadata.annotations.description}/{.spec.template.metadata.labels.environment}/{.spec.template.metadata.labels.team}' 2>/dev/null || true)
+      [ "$cfg_meta" = "production/platform/Production gateway proxy/production/platform" ] && break
+      sleep 2
+    done
+    if [ "$cfg_meta" != "production/platform/Production gateway proxy/production/platform" ]; then
+      echo "configs-deployment labels: expected the Gateway infrastructure labels and annotation on deployment/custom and its pod template, got '${cfg_meta}'"
+      exit 1
+    fi
+    cfg_svc_meta=$(kubectl get svc custom -n kgateway-system -o jsonpath='{.metadata.labels.environment}/{.metadata.labels.team}')
+    if [ "$cfg_svc_meta" != "production/platform" ]; then
+      echo "configs-deployment labels: expected the Gateway infrastructure labels on svc/custom, got '${cfg_svc_meta}'"
+      exit 1
+    fi
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: configs-deployment infrastructure labels - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 550baaa57ef2c1b9
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 e8215d3e 93273aa3 f45bc6f5 889016e3 7d4d302b 9287e3e4 c079e389 f45bc6f5 238363f8 4fb8b4ed abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-deployment" >}}
+    # Test-only: the example mounts a ConfigMap named my-custom-config, which the
+    # page assumes already exists. Create it with one key, so that the new proxy
+    # pod can start and the file can be read from the proxy container.
+    kubectl create configmap my-custom-config -n kgateway-system --from-literal=greeting=hello-from-configmap --dry-run=client -o yaml | kubectl apply -f-
+    cfg_vol=""
+    for attempt in $(seq 1 60); do
+      cfg_vol=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.volumes[?(@.name=="custom-config")].configMap.name}/{.spec.template.spec.containers[?(@.name=="kgateway-proxy")].volumeMounts[?(@.name=="custom-config")].mountPath}' 2>/dev/null || true)
+      [ "$cfg_vol" = "my-custom-config//etc/custom-config" ] && break
+      sleep 2
+    done
+    if [ "$cfg_vol" != "my-custom-config//etc/custom-config" ]; then
+      echo "configs-deployment configmap volume: expected volume my-custom-config mounted at /etc/custom-config on deployment/custom, got '${cfg_vol}'"
+      exit 1
+    fi
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    cfg_file=""
+    for attempt in $(seq 1 30); do
+      cfg_file=$(kubectl exec -n kgateway-system deploy/custom -c kgateway-proxy -- cat /etc/custom-config/greeting 2>/dev/null || true)
+      [ "$cfg_file" = "hello-from-configmap" ] && break
+      sleep 2
+    done
+    if [ "$cfg_file" != "hello-from-configmap" ]; then
+      echo "configs-deployment configmap volume: expected /etc/custom-config/greeting to read hello-from-configmap, got '${cfg_file}'"
+      exit 1
+    fi
+    YAMLTest -f - <<'EOF'
+    - name: configs-deployment configmap volume - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: e642c97501bff91d
+    lang: yaml
+    lines: 6b3c98d2 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 be80440e 36184fa5 a58565b2 36184fa5 e6e9aeaa f4ef4370 bcef429c 9e477ff8 abc56510
+    preview: kubectl apply --server-side -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-overlays" >}}
+    # Test-only: the page applies each overlay to an existing GatewayParameters
+    # and points to the Change proxy settings page for the Gateway that uses it.
+    # Create that Gateway, custom, plus an HTTPRoute to httpbin so that each
+    # overlay can be checked with traffic.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: Gateway
+    metadata:
+      name: custom
+      namespace: kgateway-system
+    spec:
+      gatewayClassName: kgateway
+      infrastructure:
+        parametersRef:
+          name: gw-params
+          group: gateway.kgateway.dev
+          kind: GatewayParameters
+      listeners:
+      - protocol: HTTP
+        port: 80
+        name: http
+        allowedRoutes:
+          namespaces:
+            from: All
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: custom-httpbin
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: custom
+        namespace: kgateway-system
+      hostnames:
+      - custom.example.com
+      rules:
+      - backendRefs:
+        - name: httpbin
+          port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the custom Gateway of the overlay examples to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: custom
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    CUSTOM_GW_ADDRESS=""
+    for attempt in $(seq 1 90); do
+      CUSTOM_GW_ADDRESS=$(kubectl get svc custom -n kgateway-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)
+      [ -n "$CUSTOM_GW_ADDRESS" ] && break
+      sleep 2
+    done
+    if [ -z "$CUSTOM_GW_ADDRESS" ]; then
+      echo "configs-overlays: svc/custom got no load balancer address"
+      exit 1
+    fi
+    export CUSTOM_GW_ADDRESS
+    # The init container is added next to the generated pod spec, and the pod
+    # starts once it has run.
+    cfg_init=""
+    for attempt in $(seq 1 60); do
+      cfg_init=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.initContainers[*].name}' 2>/dev/null || true)
+      [ "$cfg_init" = "initialize-gateway" ] && break
+      sleep 2
+    done
+    if [ "$cfg_init" != "initialize-gateway" ]; then
+      echo "configs-overlays init containers: expected init container initialize-gateway on deployment/custom, got '${cfg_init}'"
+      exit 1
+    fi
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    cfg_init_log=$(kubectl logs -n kgateway-system deploy/custom -c initialize-gateway 2>/dev/null || true)
+    if [ "$cfg_init_log" != "initialization complete" ]; then
+      echo "configs-overlays init containers: expected the init container to log 'initialization complete', got '${cfg_init_log}'"
+      exit 1
+    fi
+    YAMLTest -f - <<'EOF'
+    - name: configs-overlays init container - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: fb54f1b557ccb09d
+    lang: yaml
+    lines: 6b3c98d2 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 be80440e 36184fa5 a58565b2 36184fa5 04968f51 c5e20d15 bcef429c 65fda1f9 abc56510
+    preview: kubectl apply --server-side -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-overlays" >}}
+    # The sidecar is added next to the generated kgateway-proxy container, which
+    # keeps its own settings.
+    cfg_side=""
+    for attempt in $(seq 1 60); do
+      cfg_side=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.containers[*].name}' 2>/dev/null || true)
+      case " $cfg_side " in
+        *" kgateway-proxy "*) case " $cfg_side " in *" custom-sidecar "*) break ;; esac ;;
+      esac
+      sleep 2
+    done
+    case " $cfg_side " in
+      *" kgateway-proxy "*) ;;
+      *) echo "configs-overlays sidecar: the kgateway-proxy container is gone from deployment/custom: '${cfg_side}'"; exit 1 ;;
+    esac
+    case " $cfg_side " in
+      *" custom-sidecar "*) ;;
+      *) echo "configs-overlays sidecar: expected container custom-sidecar on deployment/custom, got '${cfg_side}'"; exit 1 ;;
+    esac
+    cfg_side_img=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.containers[?(@.name=="kgateway-proxy")].image}')
+    if [ -z "$cfg_side_img" ]; then
+      echo "configs-overlays sidecar: the kgateway-proxy container lost its image"
+      exit 1
+    fi
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: configs-overlays sidecar container - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 22
+    fingerprint: c9878f1e70bd1335
+    lang: yaml
+    lines: 6b3c98d2 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 be80440e 36184fa5 a58565b2 36184fa5 bef6f702 6638cda1 04968f51 d1699b6e 0ff65a1a a46d7c6d 9693ecf1 abc56510
+    preview: kubectl apply --server-side -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-overlays" >}}
+    # hostNetwork and the cluster DNS policy are set on the pod, port 8080 is added
+    # to the kgateway-proxy container, and http-monitoring (9091) is kept. The pod
+    # only becomes ready if it can still reach the control plane by its
+    # in-cluster DNS name.
+    cfg_hn=""
+    for attempt in $(seq 1 60); do
+      cfg_hn=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.hostNetwork}/{.spec.template.spec.dnsPolicy}/{.spec.template.spec.containers[?(@.name=="kgateway-proxy")].ports[*].containerPort}' 2>/dev/null || true)
+      case "$cfg_hn" in
+        "true/ClusterFirstWithHostNet/"*8080*) case "$cfg_hn" in *9091*) break ;; esac ;;
+      esac
+      sleep 2
+    done
+    case "$cfg_hn" in
+      "true/ClusterFirstWithHostNet/"*8080*) ;;
+      *) echo "configs-overlays hostNetwork: expected hostNetwork true, ClusterFirstWithHostNet, and container port 8080 on deployment/custom, got '${cfg_hn}'"; exit 1 ;;
+    esac
+    case "$cfg_hn" in
+      *9091*) ;;
+      *) echo "configs-overlays hostNetwork: the http-monitoring port 9091 is gone from deployment/custom: '${cfg_hn}'"; exit 1 ;;
+    esac
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: configs-overlays hostNetwork - httpbin answers through the custom Gateway
+      retries: 30
+      http:
+        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        path: /headers
+        method: GET
+        headers:
+          host: "custom.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: 657daf23e3186943
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 3897150c 497accad ac6cb2e8 abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-service" >}}
+    # Test-only: the page applies each example to an existing GatewayParameters
+    # and points to the Change proxy settings page for the Gateway that uses it.
+    # Create that Gateway, custom. Only the Service and ServiceAccount metadata
+    # and spec are checked: kind has no AWS load balancer to act on the
+    # annotation.
+    kubectl apply -f- <<EOF
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1
+    metadata:
+      name: custom
+      namespace: kgateway-system
+    spec:
+      gatewayClassName: kgateway
+      infrastructure:
+        parametersRef:
+          name: gw-params
+          group: gateway.kgateway.dev
+          kind: GatewayParameters
+      listeners:
+      - protocol: HTTP
+        port: 80
+        name: http
+        allowedRoutes:
+          namespaces:
+            from: All
+    EOF
+    cfg_sann=""
+    for attempt in $(seq 1 90); do
+      cfg_sann=$(kubectl get svc custom -n kgateway-system -o jsonpath='{.metadata.annotations.service\.beta\.kubernetes\.io/aws-load-balancer-type}' 2>/dev/null || true)
+      [ "$cfg_sann" = "nlb" ] && break
+      sleep 2
+    done
+    if [ "$cfg_sann" != "nlb" ]; then
+      echo "configs-service annotations: expected aws-load-balancer-type nlb on svc/custom, got '${cfg_sann}'"
+      exit 1
+    fi
+    YAMLTest -f - <<'EOF'
+    - name: wait for the custom proxy of the service examples to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: custom
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 27
+    fingerprint: a8e1290baa02f72b
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 3897150c e6d673c3 814a455f ca6c547b 8548c32f abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-service" >}}
+    # Only the Service spec is checked. Whether cloud-provider-kind enforces the
+    # allowlist is not part of this page, and the test runner's address is in
+    # neither range.
+    cfg_lbsr=""
+    for attempt in $(seq 1 60); do
+      cfg_lbsr=$(kubectl get svc custom -n kgateway-system -o jsonpath='{.spec.type}/{.spec.loadBalancerSourceRanges[*]}' 2>/dev/null || true)
+      [ "$cfg_lbsr" = "LoadBalancer/10.0.0.0/8 192.168.0.0/16" ] && break
+      sleep 2
+    done
+    if [ "$cfg_lbsr" != "LoadBalancer/10.0.0.0/8 192.168.0.0/16" ]; then
+      echo "configs-service source ranges: expected LoadBalancer with 10.0.0.0/8 and 192.168.0.0/16 on svc/custom, got '${cfg_lbsr}'"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 31
+    fingerprint: 922b598ac473b5a2
+    lang: yaml
+    lines: fa03f663 88b9492f 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 061e3faa 497accad fc1c56ef d8c6fbf6 28b3e4f1 c1b8aff8 abc56510
+    preview: kubectl apply -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="configs-service" >}}
+    # Only the ServiceAccount annotation is checked. kind has no AWS IAM, so the
+    # role is never assumed.
+    cfg_saann=""
+    for attempt in $(seq 1 60); do
+      cfg_saann=$(kubectl get serviceaccount custom -n kgateway-system -o jsonpath='{.metadata.annotations.eks\.amazonaws\.com/role-arn}' 2>/dev/null || true)
+      [ "$cfg_saann" = "arn:aws:iam::123456789012:role/gateway-role" ] && break
+      sleep 2
+    done
+    if [ "$cfg_saann" != "arn:aws:iam::123456789012:role/gateway-role" ]; then
+      echo "configs-service serviceaccount: expected the IRSA role-arn annotation on serviceaccount/custom, got '${cfg_saann}'"
+      exit 1
+    fi
+    cfg_sa_used=$(kubectl get deployment custom -n kgateway-system -o jsonpath='{.spec.template.spec.serviceAccountName}')
+    if [ "$cfg_sa_used" != "custom" ]; then
+      echo "configs-service serviceaccount: expected deployment/custom to use serviceaccount custom, got '${cfg_sa_used}'"
+      exit 1
+    fi
+    {{< /doc-test >}}

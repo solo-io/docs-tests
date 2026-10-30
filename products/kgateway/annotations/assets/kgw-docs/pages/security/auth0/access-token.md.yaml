@@ -1,0 +1,256 @@
+format: 1
+source: assets/kgw-docs/pages/security/auth0/access-token.md
+blocks:
+- 068ef466ffb71151 yaml
+- b26fa9a1da9121a5 yaml
+- 4890ab983bd201e4 sh
+- 8378444c9c09cbaf yaml
+- c25f613bf31c5b84 text
+- 31e5ed974a729adf sh
+- b400881cfa58d562 sh
+- 983e7192e5ed9e8e text
+- 4d760bc6f76f5705 sh
+- 1be0fff3c8f96471 sh
+- dbafce82d490e922 json
+- 8f8f96692a0bbfa7 sh
+- 7cba6b68350d576b sh
+- 6364ab47a888e2d8 text
+- 1957df0af1769696 sh
+tags:
+- paths: auth0-access-token
+  block: 0
+  fingerprint: 068ef466ffb71151
+  lang: yaml
+  lines: 16c71da1 d664f32c 5ee5f7dc 8c8c4228 1402aca2 0bebd850 36184fa5 9b9d0530 a1343bf6 5d88edae 4f8d33cf 44ec9b74 b93c9907 70c97555 69f54740 ad65deb7 89dec96f 0bebd850 b3757ae5 837dc1fd f4da6d40 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="auth0-access-token"
+    only: true
+    lead: ' '
+- paths: auth0-access-token
+  block: 1
+  fingerprint: b26fa9a1da9121a5
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 84db89ea 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e34dc3a0 248578da 1402aca2 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="auth0-access-token"
+    only: true
+    lead: ' '
+- paths: auth0-access-token
+  block: 2
+  fingerprint: 4890ab983bd201e4
+  lang: sh
+  lines: 4890ab98
+  preview: 'kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} auth0-jwt-policy '
+  form:
+    attr: paths="auth0-access-token"
+    only: true
+    lead: ' '
+- paths: auth0-access-token
+  block: 8
+  fingerprint: 4d760bc6f76f5705
+  lang: sh
+  lines: 2211e62b a61d4fd8 e007e721 5eda3a01 e9c78e7a 64825780 a4caa3ed 11638fb5
+  preview: export TOKEN=$(curl -s -X POST "https://YOUR_AUTH0_DOMAIN/oauth/token" \
+  form:
+    attr: paths="auth0-access-token"
+    only: true
+    lead: ' '
+- paths: auth0-access-token
+  block: 14
+  fingerprint: 1957df0af1769696
+  lang: sh
+  lines: ded2d3b6 5fecd02d
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} auth0-jwt-poli
+  form:
+    attr: paths="auth0-access-token"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 8378444c9c09cbaf
+    lang: yaml
+    lines: f2decc81 a5e84374 dcfcd85d a4a39e6e 165305ea 69b834a6 dcfcd85d b8724bb7
+    preview: '- message: Policy accepted'
+  content: |-
+    {{< doc-test paths="auth0-access-token" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the auth0-jwt-policy TrafficPolicy to be accepted (jwtAuth with the auth0-jwt GatewayExtension)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: auth0-jwt-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the auth0-jwt-policy TrafficPolicy to be attached (jwtAuth with the auth0-jwt GatewayExtension)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: auth0-jwt-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 983e7192e5ed9e8e
+    lang: text
+    lines: 983e7192
+    preview: < HTTP/1.1 401 Unauthorized
+  content: |-
+    {{< doc-test paths="auth0-access-token" >}}
+    YAMLTest -f - <<'EOF'
+    - name: auth0-access-token - a request without a token is rejected with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    # Test-only: the next step requests the token from https://YOUR_AUTH0_DOMAIN.
+    # This curl function swaps in the stand-in host, sends it to the stand-in's
+    # LoadBalancer address, and trusts the test CA. It is removed after the step.
+    curl() {
+      local a args=()
+      for a in "$@"; do args+=("${a//${IDP_PLACEHOLDER}/${IDP_HOST}}"); done
+      command curl --cacert "$IDP_DIR/ca.crt" --resolve "${IDP_HOST}:443:${IDP_ADDRESS}" "${args[@]}"
+    }
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 4d760bc6f76f5705
+    lang: sh
+    lines: 2211e62b a61d4fd8 e007e721 5eda3a01 e9c78e7a 64825780 a4caa3ed 11638fb5
+    preview: export TOKEN=$(curl -s -X POST "https://YOUR_AUTH0_DOMAIN/oauth/token" \
+  content: |-
+    {{< doc-test paths="auth0-access-token" >}}
+    unset -f curl
+    # The page's token request must have returned a JWT (three dot-separated parts).
+    if [ "$(tr -cd '.' <<<"$TOKEN" | wc -c | tr -d ' ')" != 2 ]; then
+      echo "FAIL: the password grant request did not return a JWT access token: '$TOKEN'"
+      command kubectl logs -n idp-standin deploy/idp-standin --tail=20 || true
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: dbafce82d490e922
+    lang: json
+    lines: 021fb596 d850ebc4 b720c94b d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="auth0-access-token" >}}
+    # Step 4 decodes the token. The page's jq command reads base64, not base64url,
+    # so it fails on tokens whose payload contains - or _; decode with python3 here.
+    python3 - "$TOKEN" <<'PY'
+    import base64, json, sys
+    part = sys.argv[1].split(".")[1]
+    claims = json.loads(base64.urlsafe_b64decode(part + "=" * (-len(part) % 4)))
+    aud = claims.get("aud")
+    auds = aud if isinstance(aud, list) else [aud]
+    print({"iss": claims.get("iss"), "aud": aud})
+    assert claims.get("iss") == "https://auth0.idp-standin.test/", "iss is %r, want https://auth0.idp-standin.test/" % claims.get("iss")
+    assert "YOUR_API_AUDIENCE" in auds, "aud %r does not include YOUR_API_AUDIENCE" % aud
+    PY
+    {{< /doc-test >}}
+- after:
+    section: Verify
+    line: d9d42de925af1dda
+    occurrence: 0
+    words: ca978112 d26eae87 a9f4b3d2 70332d55 8e7fc023 b9776d7d 3c469e9d fa51fd49 ec654fac cdc29937 ea103d6c 4275d71e dd1b3c31 961eb436 254bb97b 4945a70f b9776d7d 4f0da948 a330395c ca978112 dcaadad1 a9f4b3d2 70332d55 8e7fc023 b9776d7d 3c469e9d fa51fd49 ffa63583 fa64ea1e 7175517a 4a3cdfae a7e2d26e ea325d76 535c6f8e 8e7fc023 961eb436 254bb97b 4945a70f 535c6f8e
+    block_before:
+      block: 13
+      fingerprint: 6364ab47a888e2d8
+      lang: text
+      lines: 6364ab47
+      preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="auth0-access-token" >}}
+    YAMLTest -f - <<'EOF'
+    - name: auth0-access-token - a request with the token reaches httpbin
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: www.example.com
+    EOF
+    # "A 403 response means that the token is valid but its aud claim does not match":
+    # a token for another API identifier is rejected with 403.
+    OTHER_AUD_TOKEN=$(command curl -s --cacert "$IDP_DIR/ca.crt" --resolve "${IDP_HOST}:443:${IDP_ADDRESS}" \
+      -X POST "https://${IDP_HOST}/oauth/token" \
+      -d "client_id=YOUR_CLIENT_ID" -d "client_secret=YOUR_CLIENT_SECRET" \
+      -d "username=testuser@example.com" -d "password=YOUR_PASSWORD" \
+      -d "grant_type=password" -d "audience=https://other-api.example.com" | jq -r .access_token)
+    export OTHER_AUD_TOKEN
+    YAMLTest -f - <<'EOF'
+    - name: auth0-access-token - a valid token for another audience is rejected with 403
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${OTHER_AUD_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 1957df0af1769696
+    lang: sh
+    lines: ded2d3b6 5fecd02d
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} auth0-jwt-poli
+  content: |-
+    {{< doc-test paths="auth0-access-token" >}}
+    YAMLTest -f - <<'EOF'
+    - name: auth0-access-token - after cleanup, a request without a token reaches httpbin again
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

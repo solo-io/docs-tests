@@ -1,0 +1,729 @@
+format: 1
+source: assets/kgw-docs/pages/setup/listeners/mtls.md
+blocks:
+- 034878730cd4b5aa sh
+- 08fbe5b4587144a1 sh
+- ffaf497d34db2574 sh
+- 982a9e4a387cd62a sh
+- 5970788788adad1c sh
+- c2227f0e058dacea sh
+- fda2a1c29ca96a28 yaml
+- f73de38fc37d278e yaml
+- d5a0958bbb34dd82 sh
+- 253c579bc142900d sh
+- eb2a332059b7eda4 sh
+- 7db94417626be4bf sh
+- 6c87263837f14bee sh
+- 1481521c804b0e17 console
+- 635f8981e4051264 sh
+- c98340a199814b13 sh
+- 000756557c458bf9 sh
+- 34c02c9d637c6a61 console
+- 9137e0257b8b2d96 yaml
+- d5a0958bbb34dd82 sh
+- 253c579bc142900d sh
+- eb2a332059b7eda4 sh
+- 7db94417626be4bf sh
+- 6c87263837f14bee sh
+- 1481521c804b0e17 console
+- a580a03f9c6be3f8 console
+- 635f8981e4051264 sh
+- c98340a199814b13 sh
+- 000756557c458bf9 sh
+- fffa0bf0630b1df0 sh
+- c6e72729de847e2d sh
+- 61760e9d7b63354e yaml
+- 2a11c3c0711cbf8c yaml
+- 97ec6d816c089c98 yaml
+- d5a0958bbb34dd82 sh
+- a8e709a91697970f sh
+- 75752103b844caa2 sh
+- e94ef66e22136e73 sh
+- f34b9ca8c5b2a347 sh
+- a580a03f9c6be3f8 console
+- dc3d332a161af1dc sh
+- d95c161ef8884757 sh
+- 326987c0f9a0e3f1 sh
+- d5d894df3f7e1ac5 console
+- 967b634a75eeb120 sh
+- dc91c5810b0c61cf sh
+- c3ad1eea3bf6f177 sh
+- a580a03f9c6be3f8 console
+- b68dadc78fdbad19 sh
+- 116ad59cc4e2d420 console
+- 1d54b9828d70bfab yaml
+- 1091be5402312369 sh
+- 0cf91aa20eee14ea sh
+- 304063d19a80adef sh
+- 211738e0ddab28a9 console
+- 15daffe5376f1d8e yaml
+- 1091be5402312369 sh
+- 0cf91aa20eee14ea sh
+- 304063d19a80adef sh
+- 1481521c804b0e17 console
+- e0bc3d5648c1c8cb sh
+tags:
+- paths: mtls,mtls-per-listener
+  block: 0
+  fingerprint: 034878730cd4b5aa
+  lang: sh
+  lines: 03487873
+  preview: mkdir example_certs && cd example_certs
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 1
+  fingerprint: 08fbe5b4587144a1
+  lang: sh
+  lines: f2b75097 826f64e0 fa85157e 35d13870 10ddfb05
+  preview: '# Create CA private key'
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 2
+  fingerprint: ffaf497d34db2574
+  lang: sh
+  lines: f1b2aa31 232a2f56 8ffb77aa 567b5017 b0eaee76 a8d785ad db25a23f 1cf7f729 4fbc4590
+  preview: '# Create server private key'
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 3
+  fingerprint: 982a9e4a387cd62a
+  lang: sh
+  lines: 0e8aee8d ee808175 79697b0a 81d7cf7a
+  preview: kubectl create secret tls https-cert \
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 4
+  fingerprint: 5970788788adad1c
+  lang: sh
+  lines: 3e8ce05e ee418ed4 81d7cf7a
+  preview: kubectl create configmap ca-cert \
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 5
+  fingerprint: c2227f0e058dacea
+  lang: sh
+  lines: 70151b0a 20f22b3d ecee38dc efb2c070 cc82e1bf bcc4b01a 140707db b9795aa6 4fbc4590
+  preview: '# Create client private key'
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls
+  block: 6
+  fingerprint: fda2a1c29ca96a28
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7c2b2ea8 0bebd850 36184fa5 c281d1bb 3195c5f5 30901338 0b02fb9c d2ba729d d7997e43 0389f557 4a5d732f 033792b5 9d5a3bb5 c10d7538 3a56cbd3 53aa10f9 f51d9754 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a 5f37c61e c3201545 e83d405d 3471e900 53aa10f9 e4c48549 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mtls"
+    only: true
+    lead: ' '
+- paths: mtls
+  block: 7
+  fingerprint: f73de38fc37d278e
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 3f4e7687 36184fa5 301e1bfa c4280beb d3d416e7 e0bb23e9 0bebd850 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mtls"
+    only: true
+    lead: ' '
+- paths: mtls
+  block: 8
+  fingerprint: d5a0958bbb34dd82
+  lang: sh
+  lines: 734b8018 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="mtls"
+    only: true
+    lead: ' '
+- paths: mtls
+  block: 18
+  fingerprint: 9137e0257b8b2d96
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7c2b2ea8 0bebd850 36184fa5 c281d1bb 3195c5f5 30901338 0b02fb9c d2ba729d d7997e43 0389f557 4a5d732f 033792b5 9d5a3bb5 e20a37ad ba3215d4 3195c5f5 d2ba729d af59594a 0389f557 4a5d732f 033792b5 9d5a3bb5 c10d7538 3a56cbd3 53aa10f9 f51d9754 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a 5f37c61e c3201545 e83d405d 3471e900 53aa10f9 e4c48549 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mtls"
+    pos: 9
+    sep: ', '
+- paths: mtls
+  block: 19
+  fingerprint: d5a0958bbb34dd82
+  lang: sh
+  lines: 734b8018 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="mtls"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 29
+  fingerprint: fffa0bf0630b1df0
+  lang: sh
+  lines: 6ce15241 353136b3 70be9ca6 b43a199b 709fd152 1921612e e9279d5e 61feded3 8d34e8f6 be6580fc f2158ec5 82ffb0d0 c96e944e b5a66e7a a5f3d331 5a48ff3e 18bfdd4b c5b38a15 d2dac801 69e6ec09
+  preview: '# Create the CA and client certificate for tenant A'
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 30
+  fingerprint: c6e72729de847e2d
+  lang: sh
+  lines: e840bdd0 e9fc596a 81d7cf7a 71ec0133 c3f3bb91 81d7cf7a
+  preview: kubectl create configmap tenant-a-ca-cert \
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 31
+  fingerprint: 61760e9d7b63354e
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7c2b2ea8 0bebd850 36184fa5 c281d1bb 3195c5f5 30901338 0b02fb9c d2ba729d d7997e43 0389f557 4a5d732f 033792b5 9d5a3bb5 c10d7538 33f14700 53aa10f9 f51d9754 a60040ee 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a 5f37c61e c3201545 e83d405d f677e1ef 53aa10f9 f51d9754 aded5e38 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 32
+  fingerprint: 2a11c3c0711cbf8c
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d8289177 0f10c5bc fa1e8330 3f4e7687 36184fa5 301e1bfa 8cc058ab d3d416e7 e0bb23e9 0bebd850 6cbe6f80 3de9d845 a3b86ab6 80e9487c bca8e5f7 cb3f91d5 8c67597e 56bf9360 8c8c4228 636a4913 0f10c5bc fa1e8330 3f4e7687 36184fa5 301e1bfa b9beacbe d3d416e7 e0bb23e9 0bebd850 25a9a665 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 33
+  fingerprint: 97ec6d816c089c98
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 1b2027b5 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 7c2b2ea8 6cbe6f80 0b02fb9c 0f8b0993 f7a66c52 0389f557 538e51b8 033792b5 9d5a3bb5 cb3f91d5 d664f32c 9144003f 8c8c4228 021552a2 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 7c2b2ea8 25a9a665 0b02fb9c 0f8b0993 f7a66c52 0389f557 2c8bbec8 033792b5 9d5a3bb5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls,mtls-per-listener
+  block: 34
+  fingerprint: d5a0958bbb34dd82
+  lang: sh
+  lines: 734b8018 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="mtls,mtls-per-listener"
+    only: true
+    lead: ' '
+- paths: mtls
+  block: 48
+  fingerprint: b68dadc78fdbad19
+  lang: sh
+  lines: 083767e2 ba68ceb7
+  preview: export CLIENT_CERT_HASH=$(openssl x509 -in client-cert.pem -noout -fingerprint -
+  form:
+    attr: paths="mtls"
+    only: true
+    lead: ' '
+- paths: mtls
+  block: 50
+  fingerprint: 1d54b9828d70bfab
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7c2b2ea8 0bebd850 36184fa5 c281d1bb 3195c5f5 30901338 0b02fb9c d2ba729d d7997e43 0389f557 4a5d732f 033792b5 9d5a3bb5 c10d7538 3a56cbd3 53aa10f9 f51d9754 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a fa579f78 84b34aa9 8b9d387c 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mtls"
+    only: true
+    lead: ' '
+- paths: mtls
+  block: 55
+  fingerprint: 15daffe5376f1d8e
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7c2b2ea8 0bebd850 36184fa5 c281d1bb 3195c5f5 30901338 0b02fb9c d2ba729d d7997e43 0389f557 4a5d732f 033792b5 9d5a3bb5 c10d7538 3a56cbd3 53aa10f9 f51d9754 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a fa579f78 668d1e65 8b9d387c 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mtls"
+    only: true
+    lead: ' '
+- paths: mtls
+  block: 60
+  fingerprint: e0bc3d5648c1c8cb
+  lang: sh
+  lines: 79100bbf aa568e3a 9e4c30c9 f07050ba aaa59747 67b4b174 aac011f6
+  preview: kubectl delete httproute httpbin-https httpbin-tenant-a httpbin-tenant-b -n http
+  form:
+    attr: paths="mtls"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 7
+    fingerprint: f73de38fc37d278e
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 3f4e7687 36184fa5 301e1bfa c4280beb d3d416e7 e0bb23e9 0bebd850 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the https-8443 listener on the mtls Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: mtls
+        jsonPath: "$.status.listeners[?(@.name=='https-8443')].conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the https-8444 listener on the mtls Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: mtls
+        jsonPath: "$.status.listeners[?(@.name=='https-8444')].conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin-https HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-https
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: f73de38fc37d278e
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 3f4e7687 36184fa5 301e1bfa c4280beb d3d416e7 e0bb23e9 0bebd850 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    # The mtls Gateway gets its own LoadBalancer Service. Wait for its external
+    # address before the next step reads it into INGRESS_GW_ADDRESS.
+    addr=""
+    for i in $(seq 1 60); do
+      addr=$(kubectl get svc mtls -n kgateway-system -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}") || true
+      [ -n "$addr" ] && break
+      echo "the mtls Service has no external address yet, retrying ($i/60)"; sleep 5
+    done
+    if [ -z "$addr" ]; then
+      echo "FAIL: the mtls Service never got an external address"
+      kubectl get svc mtls -n kgateway-system -o yaml
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 1481521c804b0e17
+    lang: console
+    lines: 448780c1 d6cb56f9 bed133f0 d101fdb8
+    preview: '* LibreSSL SSL_read: LibreSSL/3.3.6: error:1404C45C:SSL routines:ST_OK:reason(11'
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    # First wait until both mTLS ports serve a client that presents the right
+    # certificate, so that the failures below come from the missing certificate
+    # and not from a listener that is still starting.
+    for port in 8443 8444; do
+      code=""
+      for i in $(seq 1 60); do
+        code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+          --cert client-cert.pem --key client-key.pem \
+          --resolve "example.com:${port}:${INGRESS_GW_ADDRESS}" "https://example.com:${port}/get") || true
+        [ "$code" = "200" ] && break
+        echo "port $port with a client certificate returned '$code', want 200, retrying ($i/60)"; sleep 5
+      done
+      if [ "$code" != "200" ]; then
+        echo "FAIL: port $port did not return 200 for a request with a valid client certificate"
+        exit 1
+      fi
+    done
+    # Without a client certificate the TLS handshake fails: curl gets no HTTP
+    # status and exits with an SSL connect error (35) or a receive error (56).
+    for port in 8443 8444; do
+      rc=0
+      code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+        --resolve "example.com:${port}:${INGRESS_GW_ADDRESS}" "https://example.com:${port}/get") || rc=$?
+      if [ "$code" != "000" ] || { [ "$rc" != "35" ] && [ "$rc" != "56" ]; }; then
+        echo "FAIL: port $port without a client certificate returned '$code' (curl exit $rc), want a failed TLS handshake (curl exit 35 or 56)"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 34c02c9d637c6a61
+    lang: console
+    lines: bed133f0 96b30285 b362c49f fa747a77 003417bb 62dc94d1 31d8ed6e b7d0c99e edbf342c 24d920e3 a7e7ba83 04dd70a5 2a7b465c f1901ba0 5a4b1a12 8bc6ffdc cd71a786 756e5458 f32c91a7 5c04127f e6f992f5 8b751176 d4b10a19 3a247e4e be6dc7df ffaf83a5 dd63b141 08185097 54bca37c 3b7bf5b0 8569685e 5b4a0f22 0b855d59 9bbff627 c41fafec d9458dc5 50fc9288 317b9438 5b07bb0e ffc72578 32cf5997 b8fcb227 5ea21550 0172341f 3fe75f9c 1aecfa01 3ca1ea63 ab5df625
+    preview: '* Connection #0 to host localhost left intact'
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    # With the client certificate, the requests on both ports succeed.
+    for port in 8443 8444; do
+      code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+        --cert client-cert.pem --key client-key.pem \
+        --resolve "example.com:${port}:${INGRESS_GW_ADDRESS}" "https://example.com:${port}/get") || true
+      if [ "$code" != "200" ]; then
+        echo "FAIL: default configuration, port $port with a valid client certificate returned '$code', want 200"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: a580a03f9c6be3f8
+    lang: console
+    lines: ab5df625 5b07bb0e ffc72578 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    # perPort: port 8444 now uses AllowInsecureFallback, so a request without a
+    # client certificate succeeds. Retry until the new configuration is in place.
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+        --resolve "example.com:8444:${INGRESS_GW_ADDRESS}" https://example.com:8444/get) || true
+      [ "$code" = "200" ] && break
+      echo "port 8444 without a client certificate returned '$code', want 200, retrying ($i/60)"; sleep 5
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: AllowInsecureFallback on port 8444 did not accept a request without a client certificate"
+      exit 1
+    fi
+    # Port 8443 keeps the default AllowValidOnly mode, so the handshake still fails.
+    rc=0
+    code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+      --resolve "example.com:8443:${INGRESS_GW_ADDRESS}" https://example.com:8443/get) || rc=$?
+    if [ "$code" != "000" ] || { [ "$rc" != "35" ] && [ "$rc" != "56" ]; }; then
+      echo "FAIL: AllowValidOnly on port 8443 returned '$code' (curl exit $rc) without a client certificate, want a failed TLS handshake (curl exit 35 or 56)"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    section: Per port configuration
+    line: 600fe1bb59e46b50
+    occurrence: 5
+    words: 32d3feda
+    block_before:
+      block: 28
+      fingerprint: 000756557c458bf9
+      lang: sh
+      lines: 39809923 4315c914 726dab44 fa623421 c72026df c37c5ecd fbf99e95 726dab44 fa623421 c72026df
+      preview: curl -v https://example.com:8443/get \
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    # perPort: with a valid client certificate, both ports accept the request.
+    for port in 8443 8444; do
+      code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+        --cert client-cert.pem --key client-key.pem \
+        --resolve "example.com:${port}:${INGRESS_GW_ADDRESS}" "https://example.com:${port}/get") || true
+      if [ "$code" != "200" ]; then
+        echo "FAIL: perPort configuration, port $port with a valid client certificate returned '$code', want 200"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 33
+    fingerprint: 97ec6d816c089c98
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 1b2027b5 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 7c2b2ea8 6cbe6f80 0b02fb9c 0f8b0993 f7a66c52 0389f557 538e51b8 033792b5 9d5a3bb5 cb3f91d5 d664f32c 9144003f 8c8c4228 021552a2 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 7c2b2ea8 25a9a665 0b02fb9c 0f8b0993 f7a66c52 0389f557 2c8bbec8 033792b5 9d5a3bb5 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mtls,mtls-per-listener" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tenant-a listener on the mtls Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: mtls
+        jsonPath: "$.status.listeners[?(@.name=='tenant-a')].conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tenant-b listener on the mtls Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: mtls
+        jsonPath: "$.status.listeners[?(@.name=='tenant-b')].conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin-tenant-a HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-tenant-a
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin-tenant-b HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-tenant-b
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tenant-a-mtls ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: tenant-a-mtls
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tenant-b-mtls ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: tenant-b-mtls
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 33
+    fingerprint: 97ec6d816c089c98
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 1b2027b5 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 7c2b2ea8 6cbe6f80 0b02fb9c 0f8b0993 f7a66c52 0389f557 538e51b8 033792b5 9d5a3bb5 cb3f91d5 d664f32c 9144003f 8c8c4228 021552a2 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 7c2b2ea8 25a9a665 0b02fb9c 0f8b0993 f7a66c52 0389f557 2c8bbec8 033792b5 9d5a3bb5 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mtls,mtls-per-listener" >}}
+    # Per-listener setup: wait for the external address of the mtls Service,
+    # for readers who start with this section after creating the certificates.
+    lbaddr=""
+    for i in $(seq 1 60); do
+      lbaddr=$(kubectl get svc mtls -n kgateway-system -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}") || true
+      [ -n "$lbaddr" ] && break
+      echo "the mtls Service has no external address yet (per-listener setup), retrying ($i/60)"; sleep 5
+    done
+    if [ -z "$lbaddr" ]; then
+      echo "FAIL: the mtls Service never got an external address (per-listener setup)"
+      kubectl get svc mtls -n kgateway-system -o yaml
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 39
+    fingerprint: a580a03f9c6be3f8
+    lang: console
+    lines: ab5df625 5b07bb0e ffc72578 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="mtls,mtls-per-listener" >}}
+    # Tenant A's listener trusts tenant A's CA through its ListenerPolicy. Retry
+    # until the policy reaches the gateway proxy.
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+        --cert tenant-a-client-cert.pem --key tenant-a-client-key.pem \
+        --resolve "tenant-a.example.com:8443:${INGRESS_GW_ADDRESS}" https://tenant-a.example.com:8443/get) || true
+      [ "$code" = "200" ] && break
+      echo "tenant A listener with the tenant A certificate returned '$code', want 200, retrying ($i/60)"; sleep 5
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: the tenant A listener did not accept the tenant A client certificate"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 43
+    fingerprint: d5d894df3f7e1ac5
+    lang: console
+    lines: 3c137099 d6cb56f9 8db46631 21f55c7d
+    preview: '* LibreSSL SSL_read: LibreSSL/3.3.6: error:1404C418:SSL routines:ST_OK:tlsv1 ale'
+  content: |-
+    {{< doc-test paths="mtls,mtls-per-listener" >}}
+    # Tenant B's listener does not trust tenant A's CA: the TLS handshake fails
+    # (curl exit 35 or 56) and no HTTP status comes back.
+    rc=0
+    code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+      --cert tenant-a-client-cert.pem --key tenant-a-client-key.pem \
+      --resolve "tenant-b.example.com:8443:${INGRESS_GW_ADDRESS}" https://tenant-b.example.com:8443/get) || rc=$?
+    if [ "$code" != "000" ] || { [ "$rc" != "35" ] && [ "$rc" != "56" ]; }; then
+      echo "FAIL: the tenant B listener returned '$code' (curl exit $rc) for the tenant A certificate, want a failed TLS handshake (curl exit 35 or 56)"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 47
+    fingerprint: a580a03f9c6be3f8
+    lang: console
+    lines: ab5df625 5b07bb0e ffc72578 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="mtls,mtls-per-listener" >}}
+    # Tenant B's listener accepts the certificate that tenant B's CA signed.
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+        --cert tenant-b-client-cert.pem --key tenant-b-client-key.pem \
+        --resolve "tenant-b.example.com:8443:${INGRESS_GW_ADDRESS}" https://tenant-b.example.com:8443/get) || true
+      [ "$code" = "200" ] && break
+      echo "tenant B listener with the tenant B certificate returned '$code', want 200, retrying ($i/60)"; sleep 5
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: the tenant B listener did not accept the tenant B client certificate"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 50
+    fingerprint: 1d54b9828d70bfab
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7c2b2ea8 0bebd850 36184fa5 c281d1bb 3195c5f5 30901338 0b02fb9c d2ba729d d7997e43 0389f557 4a5d732f 033792b5 9d5a3bb5 c10d7538 3a56cbd3 53aa10f9 f51d9754 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a fa579f78 84b34aa9 8b9d387c 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    # The page's hash belongs to the author's client certificate. Put in the hash
+    # of the certificate that this run created, as a reader does.
+    HASH=$(openssl x509 -in client-cert.pem -noout -fingerprint -sha256 | cut -d= -f2)
+    kubectl patch gateway mtls -n kgateway-system --type=json \
+      -p "[{\"op\":\"replace\",\"path\":\"/spec/listeners/0/tls/options/kgateway.dev~1verify-certificate-hash\",\"value\":\"${HASH}\"}]"
+    # Wait until the gateway proxy configuration carries this hash, so that the
+    # next request is checked against it.
+    dump=""
+    for i in $(seq 1 60); do
+      dump=$(kubectl exec deploy/mtls -n kgateway-system -- wget -qO- 127.0.0.1:19000/config_dump 2>/dev/null) || true
+      grep -qi -e "$HASH" -e "${HASH//:/}" <<<"$dump" && break
+      echo "the client certificate hash is not in the gateway proxy configuration yet, retrying ($i/60)"; sleep 5
+    done
+    if ! grep -qi -e "$HASH" -e "${HASH//:/}" <<<"$dump"; then
+      echo "FAIL: the verify-certificate-hash option never reached the gateway proxy configuration"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 54
+    fingerprint: 211738e0ddab28a9
+    lang: console
+    lines: e3afbac0 640fedef d9fd5b7f cc0973e1 b7d0c99e edbf342c 24d920e3 a7e7ba83 04dd70a5 2a7b465c f1901ba0 5a4b1a12 8bc6ffdc cd71a786 756e5458 f32c91a7 5c04127f e6f992f5 8b751176 3608c017 4076e8cf be6dc7df ffaf83a5 dd63b141 81934185 54bca37c 3b7bf5b0 762ca465 5b4a0f22 0b855d59 9bbff627 c41fafec 74e2def5 50fc9288 317b9438 62b67e1f 5b07bb0e ffc72578 ab5df625
+    preview: '* Added example.com:8443:172.18.0.10 to DNS cache'
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    # The client certificate has the example.com SAN and the configured hash, so
+    # the request succeeds.
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+        --cert client-cert.pem --key client-key.pem \
+        --resolve "example.com:8443:${INGRESS_GW_ADDRESS}" https://example.com:8443/get) || true
+      [ "$code" = "200" ] && break
+      echo "SAN and hash check: request with the client certificate returned '$code', want 200, retrying ($i/60)"; sleep 5
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: with verify-subject-alt-names and verify-certificate-hash set, the matching client certificate did not get 200"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 55
+    fingerprint: 15daffe5376f1d8e
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7c2b2ea8 0bebd850 36184fa5 c281d1bb 3195c5f5 30901338 0b02fb9c d2ba729d d7997e43 0389f557 4a5d732f 033792b5 9d5a3bb5 c10d7538 3a56cbd3 53aa10f9 f51d9754 3195c5f5 f7446fcf bc611839 bcb338e5 a67acb0a fa579f78 668d1e65 8b9d387c 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    # Keep the hash of this run's client certificate, so that only the
+    # mtls.com Subject Alt Name makes the next request fail.
+    HASH=$(openssl x509 -in client-cert.pem -noout -fingerprint -sha256 | cut -d= -f2)
+    kubectl patch gateway mtls -n kgateway-system --type=json \
+      -p "[{\"op\":\"replace\",\"path\":\"/spec/listeners/0/tls/options/kgateway.dev~1verify-certificate-hash\",\"value\":\"${HASH}\"}]"
+    {{< /doc-test >}}
+- after:
+    block: 59
+    fingerprint: 1481521c804b0e17
+    lang: console
+    lines: 448780c1 d6cb56f9 bed133f0 d101fdb8
+    preview: '* LibreSSL SSL_read: LibreSSL/3.3.6: error:1404C45C:SSL routines:ST_OK:reason(11'
+  content: |-
+    {{< doc-test paths="mtls" >}}
+    # The client certificate has no mtls.com SAN, so the TLS handshake fails
+    # (curl exit 35 or 56). Retry until the new configuration is in place.
+    rc=0; code=""; ok=""
+    for i in $(seq 1 60); do
+      rc=0
+      code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
+        --cert client-cert.pem --key client-key.pem \
+        --resolve "example.com:8443:${INGRESS_GW_ADDRESS}" https://example.com:8443/get) || rc=$?
+      if [ "$code" = "000" ] && { [ "$rc" = "35" ] || [ "$rc" = "56" ]; }; then ok=1; break; fi
+      echo "request with a certificate that lacks the mtls.com SAN returned '$code' (curl exit $rc), want a failed TLS handshake, retrying ($i/60)"; sleep 5
+    done
+    if [ -z "$ok" ]; then
+      echo "FAIL: the request with a certificate that lacks the mtls.com SAN returned '$code' (curl exit $rc), want a failed TLS handshake (curl exit 35 or 56)"
+      exit 1
+    fi
+    {{< /doc-test >}}

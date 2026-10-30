@@ -48,6 +48,16 @@ tags:
     attr: paths="standard,experimental"
     only: true
     lead: ' '
+- paths: quickstart
+  block: 4
+  fingerprint: 20d80a7e59d7e936
+  lang: sh
+  lines: 20d80a7e
+  preview: kubectl get pods -n kgateway-system
+  form:
+    attr: paths="quickstart"
+    only: true
+    lead: ' '
 hidden:
 - after:
     block: 3
@@ -71,6 +81,35 @@ hidden:
           value: 0
         polling:
           timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 20d80a7e59d7e936
+    lang: sh
+    lines: 20d80a7e
+    preview: kubectl get pods -n kgateway-system
+  content: |-
+    {{< doc-test paths="quickstart" >}}
+    # Step 4: the kgateway control plane pod is Running and Ready, and the
+    # controller accepted the kgateway GatewayClass.
+    kubectl wait pod -n kgateway-system -l app.kubernetes.io/name=kgateway --for=condition=Ready --timeout=300s
+    phase=$(kubectl get pods -n kgateway-system -l app.kubernetes.io/name=kgateway -o jsonpath='{.items[0].status.phase}')
+    [ "$phase" = "Running" ] || { echo "FAIL: the kgateway control plane pod is '$phase', not Running"; exit 1; }
+    YAMLTest -f - <<'EOF'
+    - name: the kgateway GatewayClass from the quick start install is accepted
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: kgateway
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
           intervalSeconds: 5
     EOF
     {{< /doc-test >}}

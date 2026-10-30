@@ -1,0 +1,382 @@
+format: 1
+source: assets/kgw-docs/pages/security/backend-tls.md
+blocks:
+- 4f9af36be22b3ebf shell
+- 606a547467a7dc3f shell
+- 34342cdea7125763 shell
+- 0e395cd35fc8ba4d
+- 56a0ac7d15cc3cc9 yaml
+- 116f9ec225832b03 yaml
+- c0095bd6cd64a7d3 shell
+- a34e8bf70a289114 yaml
+- b72d3805496053e8 yaml
+- 834e4dea94a13bff sh
+- 4cc8da5698fdb63f sh
+- feb8eb4d6fc904c9
+- 586057866d9f8958 sh
+- 2ebecbb01b9fb0f2 yaml
+- f3374c72b64daaea yaml
+- b8f76771cb68df51 yaml
+- 83328e19316ab629 yaml
+- 0dc4fea0918d7406 sh
+- c4196575bad914f7 sh
+- a02ace750c6a8af8 console
+- 1ef761a2a734c06b yaml
+- 0dce855f5a8ec6db sh
+- 3db1d7c859b80f15 yaml
+- 1a32c97b5375a00f sh
+- 3db1d7c859b80f15 yaml
+- 6f540a20d7496025 sh
+- 4d14c958ef78b46c sh
+- 4e289a3674608cff sh
+- 5f99b46b6d0a4072 sh
+tags:
+- paths: backend-tls,backend-tls-bcp
+  block: 0
+  fingerprint: 4f9af36be22b3ebf
+  lang: shell
+  lines: 4f9af36b
+  preview: kubectl create namespace kgateway-base
+  form:
+    attr: paths="backend-tls,backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls,backend-tls-bcp
+  block: 1
+  fingerprint: 606a547467a7dc3f
+  lang: shell
+  lines: 606a5474
+  preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  form:
+    attr: paths="backend-tls,backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls-bcp
+  block: 4
+  fingerprint: 56a0ac7d15cc3cc9
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 8e88db43 654d5ac2 fa1e8330 734e8faf 1426decf 2f7c298d dd010ac4 ddddb6cb f6317100 79ae3551 570a8d2a 528943b6 9de66596 48f118a8 3218704c 75bee89b bcf97927 6a17efa7 ed7e3367 f93edb2c 22af13c9 c05f26dc 08d17168 728660e9 850027b9 73822058 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls-bcp
+  block: 5
+  fingerprint: 116f9ec225832b03
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 8e88db43 d6487d81 fa1e8330 734e8faf 36184fa5 588a5d84 e6365cc1 0d6480f0 f7734d83 3195c5f5 2ec5f19d 9ebc4789 654d5ac2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls
+  block: 6
+  fingerprint: c0095bd6cd64a7d3
+  lang: shell
+  lines: c0095bd6
+  preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  form:
+    attr: paths="backend-tls"
+    only: true
+    lead: ' '
+- paths: backend-tls
+  block: 7
+  fingerprint: a34e8bf70a289114
+  lang: yaml
+  lines: abbd1bdc 8c67597e cf153f9d 8c8c4228 8e88db43 d6487d81 fa1e8330 734e8faf 36184fa5 588a5d84 e6365cc1 0d6480f0 f7734d83 d2ba729d 71e0d00c 0389f557 e6365cc1 033792b5 654d5ac2 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="backend-tls"
+    only: true
+    lead: ' '
+- paths: backend-tls,backend-tls-bcp
+  block: 8
+  fingerprint: b72d3805496053e8
+  lang: yaml
+  lines: abbd1bdc 979905a0 56bf9360 8c8c4228 8e88db43 80e375f8 fa1e8330 734e8faf 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c4280beb 3de9d845 a3b86ab6 57249e4b f51d9754 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="backend-tls,backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls,backend-tls-bcp
+  block: 13
+  fingerprint: 2ebecbb01b9fb0f2
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 a6105595 0ccc8edc 36184fa5 c582fe46 2efcbf93 bfce7f60 032b9b98 c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-tls,backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls-bcp
+  block: 14
+  fingerprint: f3374c72b64daaea
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 a6105595 0ccc8edc 36184fa5 588a5d84 965d9c36 ad65deb7 69f54740 3195c5f5 a20fa9ee 9efe4f94 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls
+  block: 15
+  fingerprint: b8f76771cb68df51
+  lang: yaml
+  lines: 16c71da1 8c67597e cf153f9d 8c8c4228 a6105595 0ccc8edc 36184fa5 588a5d84 965d9c36 ad65deb7 69f54740 d2ba729d 791b74c4 9efe4f94 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-tls"
+    only: true
+    lead: ' '
+- paths: backend-tls,backend-tls-bcp
+  block: 16
+  fingerprint: 83328e19316ab629
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 a6105595 0ccc8edc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 598a2c60 3de9d845 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e 965d9c36 ad65deb7 69f54740 ae6b70e3 555016a6 7471bbd1 791b74c4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="backend-tls,backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls,backend-tls-bcp
+  block: 21
+  fingerprint: 0dce855f5a8ec6db
+  lang: sh
+  lines: a5a17bcd 7f5fe761
+  preview: kubectl patch service nginx -n kgateway-base --type='json' \
+  form:
+    attr: paths="backend-tls,backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls-bcp
+  block: 22
+  fingerprint: 3db1d7c859b80f15
+  lang: yaml
+  lines: 3db1d7c8
+  preview: kubectl delete -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/h
+  form:
+    attr: paths="backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls-bcp
+  block: 23
+  fingerprint: 1a32c97b5375a00f
+  lang: sh
+  lines: 1a32c97b
+  preview: kubectl -n kgateway-base delete backendconfigpolicy,secret,httproute -A -l app=n
+  form:
+    attr: paths="backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls
+  block: 24
+  fingerprint: 3db1d7c859b80f15
+  lang: yaml
+  lines: 3db1d7c8
+  preview: kubectl delete -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/h
+  form:
+    attr: paths="backend-tls"
+    only: true
+    lead: ' '
+- paths: backend-tls
+  block: 25
+  fingerprint: 6f540a20d7496025
+  lang: sh
+  lines: cbd51285 0596605a
+  preview: kubectl -n kgateway-base delete backendtlspolicy,configmap,httproute -A -l app=n
+  form:
+    attr: paths="backend-tls"
+    only: true
+    lead: ' '
+- paths: backend-tls
+  block: 26
+  fingerprint: 4d14c958ef78b46c
+  lang: sh
+  lines: 4d14c958
+  preview: kubectl rollout restart -n kgateway-system deployment/{{< reuse "kgw-docs/snippe
+  form:
+    attr: paths="backend-tls"
+    only: true
+    lead: ' '
+- paths: backend-tls-bcp
+  block: 27
+  fingerprint: 4e289a3674608cff
+  lang: sh
+  lines: 29cb9579 38a5e019 8817c9cd
+  preview: kubectl delete httproute httpbin-org
+  form:
+    attr: paths="backend-tls-bcp"
+    only: true
+    lead: ' '
+- paths: backend-tls
+  block: 28
+  fingerprint: 5f99b46b6d0a4072
+  lang: sh
+  lines: 29cb9579 2f9dcdc3 8817c9cd
+  preview: kubectl delete httproute httpbin-org
+  form:
+    attr: paths="backend-tls"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 0e395cd35fc8ba4d
+    lang: ''
+    lines: 017075c2 7a6a0367
+    preview: NAME    READY   STATUS    RESTARTS   AGE
+  content: |-
+    {{< doc-test paths="backend-tls,backend-tls-bcp" >}}
+    kubectl wait --for=condition=Ready pod/nginx -n kgateway-base --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: b72d3805496053e8
+    lang: yaml
+    lines: abbd1bdc 979905a0 56bf9360 8c8c4228 8e88db43 80e375f8 fa1e8330 734e8faf 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c4280beb 3de9d845 a3b86ab6 57249e4b f51d9754 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="backend-tls,backend-tls-bcp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the nginx-route HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: kgateway-base
+            name: nginx-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: feb8eb4d6fc904c9
+    lang: ''
+    lines: 855fa086 fa747a77 003417bb 8c0fa4e4 0426a6dd ddf600a3 f817aa39 50fc9288 317b9438 62b67e1f 5b07bb0e 6364ab47 92413e97
+    preview: '* Host localhost:8080 was resolved.'
+  content: |-
+    {{< doc-test paths="backend-tls,backend-tls-bcp" >}}
+    # Test-only: nginx accepts only TLS on the Service's 8443 port, so a 200 with
+    # the nginx welcome page means that the gateway originated TLS to nginx and
+    # trusted its certificate. A plain HTTP request to that port gets a 400 instead.
+    YAMLTest -f - <<'EOF'
+    - name: backend-tls - a request to example.com reaches the TLS-only nginx port through the gateway
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /
+        method: GET
+        headers:
+          host: "example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains:
+        - Welcome to nginx!
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Verify the TLS connection
+    line: 8a4b2c837dbcb907
+    occurrence: 0
+    words: 9bd02c0d b9776d7d 12886f9d 28391d3b 2430e09e b7e651cb 11102734 fbb27fbd b9776d7d 84532b30 4ea5ee68 1241936d 6201111b b9776d7d 5be1ecc7 b3eacd33
+    block_before:
+      block: 12
+      fingerprint: 586057866d9f8958
+      lang: sh
+      lines: '58605786'
+      preview: kubectl port-forward deploy/http -n kgateway-system 19000
+  content: |-
+    {{< doc-test paths="backend-tls,backend-tls-bcp" >}}
+    # Test-only: read the same stats inside the gateway pod instead of a port-forward.
+    # The cluster for the nginx Service is named kube_<namespace>_<service>_<port>,
+    # so in this guide it is kube_kgateway-base_nginx_8443.
+    handshakes=0
+    stats=""
+    for i in $(seq 1 30); do
+      stats=$(kubectl exec deploy/http -n kgateway-system -- wget -qO- "http://127.0.0.1:19000/stats?filter=kube_kgateway-base_nginx_8443.ssl" 2>/dev/null || true)
+      handshakes=$(awk -F': ' '$1 == "cluster.kube_kgateway-base_nginx_8443.ssl.handshake" {print $2}' <<<"$stats")
+      if [ "${handshakes:-0}" -gt 0 ] 2>/dev/null; then break; fi
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/" -H "host: example.com:8080" || true
+      sleep 2
+    done
+    echo "$stats"
+    if ! [ "${handshakes:-0}" -gt 0 ] 2>/dev/null; then
+      echo "FAIL: no successful TLS handshakes from the gateway to nginx (cluster.kube_kgateway-base_nginx_8443.ssl.handshake)"
+      exit 1
+    fi
+    echo "OK: ${handshakes} TLS handshakes from the gateway to the nginx backend"
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: a02ace750c6a8af8
+    lang: console
+    lines: 6364ab47 92413e97 ab5df625 021fb596 1efe1dd8 66e083c5 03ee0faf 1b4d8aee 2e253c22 e0f8c8b3 c9d9a58e 0dc14315 a55e3e20 3d4fb558 72a074dd e52a1813 a8640350 82c9ab0f 425e33ce 7ce82d83 d10b36aa
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="backend-tls,backend-tls-bcp" >}}
+    # Test-only: this section uses the real public httpbin.org service over TLS, so
+    # the in-cluster httpbin.org stand-in cannot replace it. If the runner cannot
+    # reach httpbin.org at all, the check is skipped with a warning. Otherwise a 200
+    # with "url": "https://httpbin.org/anything" and "Host": "httpbin.org" shows the
+    # host rewrite and the TLS connection on port 443 (plain HTTP there gets a 400).
+    if ! curl -sS -o /dev/null --max-time 15 https://httpbin.org/get; then
+      echo "WARNING: httpbin.org is not reachable from the runner; skipping the external service check"
+    else
+      ok=""
+      for i in $(seq 1 40); do
+        resp=$(curl -sS --max-time 20 -w '\n%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/anything" -H "host: httpbin-external.example" 2>/dev/null || true)
+        code=$(tail -n1 <<<"$resp")
+        body=$(sed '$d' <<<"$resp")
+        url=$(jq -r '.url // empty' <<<"$body" 2>/dev/null || true)
+        host=$(jq -r '.headers.Host // empty' <<<"$body" 2>/dev/null || true)
+        if [ "$code" = "200" ] && [ "$url" = "https://httpbin.org/anything" ] && [ "$host" = "httpbin.org" ]; then ok=1; break; fi
+        echo "attempt $i: HTTP $code url=$url host=$host"
+        sleep 5
+      done
+      if [ -z "$ok" ]; then
+        echo "FAIL: no 200 from https://httpbin.org/anything through the gateway"
+        exit 1
+      fi
+      echo "OK: the gateway rewrote the host to httpbin.org and reached it over TLS"
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 0dce855f5a8ec6db
+    lang: sh
+    lines: a5a17bcd 7f5fe761
+    preview: kubectl patch service nginx -n kgateway-base --type='json' \
+  content: |-
+    {{< doc-test paths="backend-tls,backend-tls-bcp" >}}
+    # Test-only: the https port of the Service now has appProtocol http, and the
+    # nginx backend still answers over TLS.
+    proto=$(kubectl get service nginx -n kgateway-base -o jsonpath='{.spec.ports[1].appProtocol}')
+    if [ "$proto" != "http" ]; then echo "FAIL: appProtocol on the https port is '$proto', not http"; exit 1; fi
+    YAMLTest -f - <<'EOF'
+    - name: backend-tls - after the appProtocol http patch, the nginx backend still answers over TLS
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /
+        method: GET
+        headers:
+          host: "example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains:
+        - Welcome to nginx!
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,519 @@
+format: 1
+source: content/docs/envoy/main/setup/listeners/http.md
+blocks:
+- 697dfe18b9914abc yaml
+- 2c3cf647f718ac72 yaml
+- e3af78502572c979 yaml
+- 7de724485d76b042 sh
+- be2adde163f5b516 yaml
+- 95d927ae62e762bd yaml
+- bb3ff29909733d67 sh
+- 3ed8c3aca119986d yaml
+- 91f987201a6733d4 sh
+- 9981856a377c6b7a yaml
+- 792452d1695e12b6 sh
+- 9981856a377c6b7a yaml
+- 91f987201a6733d4 sh
+- 8591879c45b8c04b yaml
+- 24ff0382450ba683 sh
+- ea8b49222b1c4a4b sh
+- 14c24e5e5227555b sh
+- 8d9ec2a0e152c17c sh
+- 91d86bdf61c8d914 console
+- 71c8ea333d50c706 sh
+- f2dfe9753fe03b80 sh
+tags:
+- paths: listeners-http
+  block: 0
+  fingerprint: 697dfe18b9914abc
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 d2ab972d 0bebd850 fa1e8330 0cf3909f 36184fa5 c281d1bb c10d7538 fe67aa7e c095a45d 5e19f9d7 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-http"
+    only: true
+    lead: ' '
+- paths: listeners-http-listenerset
+  block: 1
+  fingerprint: 2c3cf647f718ac72
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 d2ab972d 0bebd850 fa1e8330 0cf3909f 36184fa5 c281d1bb 14fc2dbb c3201545 e83d405d c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-http-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-http-listenerset
+  block: 2
+  fingerprint: e3af78502572c979
+  lang: yaml
+  lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 3804cf41 0f10c5bc fa1e8330 0cf3909f 36184fa5 0b7ce857 d2ab972d 0bebd850 cd44d8cd 350955ef c10d7538 fe67aa7e c095a45d 5e19f9d7 b233c2b3 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-http-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-http,listeners-http-listenerset
+  block: 3
+  fingerprint: 7de724485d76b042
+  lang: sh
+  lines: 7de72448
+  preview: kubectl get gateway my-http-gateway -n {{< reuse "kgw-docs/snippets/namespace.md
+  form:
+    attr: paths="listeners-http,listeners-http-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-http
+  block: 4
+  fingerprint: be2adde163f5b516
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 ad71c567 0f10c5bc fa1e8330 0cf3909f 36184fa5 d3d416e7 2325af3e 0bebd850 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-http"
+    only: true
+    lead: ' '
+- paths: listeners-http-listenerset
+  block: 5
+  fingerprint: 95d927ae62e762bd
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 ad71c567 0f10c5bc fa1e8330 0cf3909f 36184fa5 d3d416e7 c9584ef2 0f10c5bc a8f2cfa5 350955ef 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-http-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-http,listeners-http-listenerset
+  block: 6
+  fingerprint: bb3ff29909733d67
+  lang: sh
+  lines: bb3ff299
+  preview: kubectl get httproute/httpbin-mydomain -n httpbin -o yaml
+  form:
+    attr: paths="listeners-http,listeners-http-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-http
+  block: 8
+  fingerprint: 91f987201a6733d4
+  lang: sh
+  lines: 91f98720
+  preview: kubectl get gateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} my-http-ga
+  form:
+    attr: paths="listeners-http"
+    only: true
+    lead: ' '
+- paths: listeners-http-listenerset
+  block: 10
+  fingerprint: 792452d1695e12b6
+  lang: sh
+  lines: 792452d1
+  preview: kubectl get listenerset -n httpbin my-http-listenerset -o yaml
+  form:
+    attr: paths="listeners-http-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-http-listenerset
+  block: 12
+  fingerprint: 91f987201a6733d4
+  lang: sh
+  lines: 91f98720
+  preview: kubectl get gateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} my-http-ga
+  form:
+    attr: paths="listeners-http-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-http,listeners-http-listenerset
+  block: 14
+  fingerprint: 24ff0382450ba683
+  lang: sh
+  lines: 34a6ec5e 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="listeners-http,listeners-http-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-http
+  block: 19
+  fingerprint: 71c8ea333d50c706
+  lang: sh
+  lines: 71c8ea33
+  preview: kubectl delete -A gateways,httproutes -l example=httpbin-mydomain
+  form:
+    attr: paths="listeners-http"
+    only: true
+    lead: ' '
+- paths: listeners-http-listenerset
+  block: 20
+  fingerprint: f2dfe9753fe03b80
+  lang: sh
+  lines: f2dfe975
+  preview: kubectl delete -A gateways,httproutes,listenersets -l example=httpbin-mydomain
+  form:
+    attr: paths="listeners-http-listenerset"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 697dfe18b9914abc
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 d2ab972d 0bebd850 fa1e8330 0cf3909f 36184fa5 c281d1bb c10d7538 fe67aa7e c095a45d 5e19f9d7 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="listeners-http" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-http - wait for the my-http-gateway Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: my-http-gateway
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-http - wait for the http listener of my-http-gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: my-http-gateway
+           jsonPath: "$.status.listeners[?(@.name=='http')].conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: e3af78502572c979
+    lang: yaml
+    lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 3804cf41 0f10c5bc fa1e8330 0cf3909f 36184fa5 0b7ce857 d2ab972d 0bebd850 cd44d8cd 350955ef c10d7538 fe67aa7e c095a45d 5e19f9d7 b233c2b3 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="listeners-http-listenerset" >}}
+          YAMLTest -f - <<'EOF'
+          - name: listeners-http-listenerset - wait for the my-http-listenerset ListenerSet to be accepted
+            wait:
+              target:
+                kind: ListenerSet
+                metadata:
+                  namespace: httpbin
+                  name: my-http-listenerset
+              jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          - name: listeners-http-listenerset - wait for the http-listener-set listener to be programmed
+            wait:
+              target:
+                kind: ListenerSet
+                metadata:
+                  namespace: httpbin
+                  name: my-http-listenerset
+              jsonPath: "$.status.listeners[?(@.name=='http-listener-set')].conditions[?(@.type=='Programmed')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          - name: listeners-http-listenerset - wait for the my-http-gateway Gateway to be programmed
+            wait:
+              target:
+                kind: Gateway
+                metadata:
+                  namespace: kgateway-system
+                  name: my-http-gateway
+              jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 3ed8c3aca119986d
+    lang: yaml
+    lines: ab5df625 e92e1c51 4b47a249 a98ddb59 9fc63faa 01da8ea3 9caa108c 69a91118 dcfcd85d a4a39e6e 9fc63faa 01da8ea3 9caa108c 91ecf445 dcfcd85d 9a38716e c8772def 0b7ce857 350955ef cd44d8cd d2ab972d 0bebd850
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-http-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-http-listenerset - httpbin-mydomain HTTPRoute is accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-mydomain
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-http-listenerset - httpbin-mydomain HTTPRoute refs are resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-mydomain
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-http-listenerset - httpbin-mydomain HTTPRoute status names the ListenerSet as its parent
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-mydomain
+           jsonPath: "$.status.parents[0].parentRef.kind"
+           jsonPathExpectation:
+             comparator: equals
+             value: "ListenerSet"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-http-listenerset - httpbin-mydomain HTTPRoute parent is my-http-listenerset
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-mydomain
+           jsonPath: "$.status.parents[0].parentRef.name"
+           jsonPathExpectation:
+             comparator: equals
+             value: "my-http-listenerset"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 3ed8c3aca119986d
+    lang: yaml
+    lines: ab5df625 e92e1c51 4b47a249 a98ddb59 9fc63faa 01da8ea3 9caa108c 69a91118 dcfcd85d a4a39e6e 9fc63faa 01da8ea3 9caa108c 91ecf445 dcfcd85d 9a38716e c8772def 0b7ce857 350955ef cd44d8cd d2ab972d 0bebd850
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-http" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-http - httpbin-mydomain HTTPRoute is accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-mydomain
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-http - httpbin-mydomain HTTPRoute refs are resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-mydomain
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-http - httpbin-mydomain HTTPRoute status names the Gateway as its parent
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-mydomain
+           jsonPath: "$.status.parents[0].parentRef.kind"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Gateway"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-http - httpbin-mydomain HTTPRoute parent is my-http-gateway
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-mydomain
+           jsonPath: "$.status.parents[0].parentRef.name"
+           jsonPathExpectation:
+             comparator: equals
+             value: "my-http-gateway"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 9981856a377c6b7a
+    lang: yaml
+    lines: ab5df625 c10d7538 3db56982
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-http" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-http - the http listener of my-http-gateway has 1 attached route
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: my-http-gateway
+           jsonPath: "$.status.listeners[?(@.name=='http')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 9981856a377c6b7a
+    lang: yaml
+    lines: ab5df625 c10d7538 3db56982
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-http-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-http-listenerset - the http-listener-set listener has 1 attached route
+         wait:
+           target:
+             kind: ListenerSet
+             metadata:
+               namespace: httpbin
+               name: my-http-listenerset
+           jsonPath: "$.status.listeners[?(@.name=='http-listener-set')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 8591879c45b8c04b
+    lang: yaml
+    lines: ab5df625 c10d7538 bf778232
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-http-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-http-listenerset - the generic http listener of my-http-gateway has 0 attached routes
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: my-http-gateway
+           jsonPath: "$.status.listeners[?(@.name=='http')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    section: Set up an HTTP listener
+    line: a051464ba993ed1e
+    occurrence: 0
+    words: e7f6c011 2998b323 b9776d7d 3c462384 d80c9bf9 28391d3b b9776d7d 4ea5ee68 6201111b 157dca92 2ad8a704 58296753 ea325d76 ba528516 3b325109
+    block_before:
+      block: 13
+      fingerprint: 8591879c45b8c04b
+      lang: yaml
+      lines: ab5df625 c10d7538 bf778232
+      preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-http,listeners-http-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-http - wait for the my-http-gateway Gateway to report an address
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: my-http-gateway
+           jsonPath: "$.status.addresses[0].value"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-http - wait for the my-http-gateway service load balancer address
+         wait:
+           target:
+             kind: Service
+             metadata:
+               namespace: kgateway-system
+               name: my-http-gateway
+           jsonPath: "$.status.loadBalancer.ingress[0].ip"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 91d86bdf61c8d914
+    lang: console
+    lines: e7f783c5 6364ab47 92413e97 32cf5997 a152bc23 b8fcb227 c441a9d6 48e04560 bceb9ad2 8cdb8317 15357256 1aecfa01 cd8a298e 3ca1ea63 5f7c6523
+    preview: '* Mark bundle as not supporting multiuse'
+  content: |2-
+       {{< doc-test paths="listeners-http,listeners-http-listenerset" >}}
+       # The request goes to port 8080 of the my-http-gateway address with the
+       # mydomain.com host that the listener serves.
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
+           "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: mydomain.com:8080" || true)
+         [ "$code" = "200" ] && break
+         echo "listeners-http attempt $i: got '${code:-no response}', retrying"
+         sleep 2
+       done
+       [ "$code" = "200" ] || { echo "request to mydomain.com on my-http-gateway did not return 200"; exit 1; }
+       echo "listeners-http: httpbin returned 200 through my-http-gateway"
+       {{< /doc-test >}}

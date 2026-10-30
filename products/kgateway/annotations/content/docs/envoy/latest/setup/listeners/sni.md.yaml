@@ -1,0 +1,672 @@
+format: 1
+source: content/docs/envoy/latest/setup/listeners/sni.md
+blocks:
+- 9ce685ffe71ebabe sh
+- 62dfb3131216792f console
+- 65fc12be8f0f47e2 sh
+- bc6aa0d9c704475c
+- bdbcc2362e6e075f shell
+- 3f5cc089ff592a1f shell
+- bde5dbc7c57aa3b7 shell
+- 014e87e2834d62a0 shell
+- 1f243d5be6ae4df7
+- 954e956ebff29def shell
+- 627a322e44b7ff1e shell
+- 5d9d73167a5163b8 yaml
+- 81cc5bcf044ff233 yaml
+- 17e3c93fb9d2d1f9 yaml
+- 09f97f901d6246f4 yaml
+- 9008eda1afe2b1a8 yaml
+- e7fd239252f7f487 yaml
+- d5cadca414ab2d0d yaml
+- 05040e6f8f1c0c38 sh
+- 2236ba6327965669 sh
+- b4a39962f3c8a4e1 sh
+- cebdfae5a970b75a sh
+- 7a76f178c0fb2e27 sh
+- 4d68acf3e14b71ff
+- 4011b5dba00f3354 sh
+- 82a496a85d43aa49 sh
+- 1b86986c434e1cb4 sh
+- 61a244be93b303d6
+- 539838ef5d2f2902 sh
+- ae71240dec82b0cc sh
+- 9c0792a663fc47c9 sh
+tags:
+- paths: sni,sni-listenerset
+  block: 0
+  fingerprint: 9ce685ffe71ebabe
+  lang: sh
+  lines: 9ce685ff
+  preview: kubectl apply -f https://raw.githubusercontent.com/solo-io/gloo/v1.16.x/example/
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 2
+  fingerprint: 65fc12be8f0f47e2
+  lang: sh
+  lines: 65fc12be
+  preview: kubectl get pods
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 4
+  fingerprint: bdbcc2362e6e075f
+  lang: shell
+  lines: 4b736df4 23acda14
+  preview: cd ~ && mkdir -p example_certs
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 5
+  fingerprint: 3f5cc089ff592a1f
+  lang: shell
+  lines: 8c37e9d1 c7ec09ef
+  preview: openssl req -out example_certs/httpbin.example.com.csr -newkey rsa:2048 -nodes -
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 6
+  fingerprint: bde5dbc7c57aa3b7
+  lang: shell
+  lines: 434c78af 64285ea3
+  preview: 'openssl req -out example_certs/petstore.example.com.csr -newkey rsa:2048 -nodes '
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 7
+  fingerprint: 014e87e2834d62a0
+  lang: shell
+  lines: 014e87e2
+  preview: ls example_cert*
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 9
+  fingerprint: 954e956ebff29def
+  lang: shell
+  lines: 382e353e 10e862d8 9a8566d5
+  preview: kubectl create -n {{< reuse "kgw-docs/snippets/namespace.md" >}} secret tls http
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 10
+  fingerprint: 627a322e44b7ff1e
+  lang: shell
+  lines: 918f1261 7a79b3ec 9616cd80
+  preview: kubectl create -n {{< reuse "kgw-docs/snippets/namespace.md" >}} secret tls pets
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni
+  block: 11
+  fingerprint: 5d9d73167a5163b8
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 5f1190b0 0bebd850 36184fa5 c281d1bb c10d7538 2407cef5 c6ba4159 d217c891 7974ca4a 3195c5f5 f7446fcf bc611839 013abee6 a67acb0a 5f37c61e c3201545 e83d405d 2407cef5 c6ba4159 1c1f9d26 6d83697f 3195c5f5 f7446fcf bc611839 ec7b321f a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="sni"
+    only: true
+    lead: ' '
+- paths: sni-listenerset
+  block: 12
+  fingerprint: 81cc5bcf044ff233
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 5f1190b0 0bebd850 36184fa5 c281d1bb 14fc2dbb c3201545 e83d405d c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni-listenerset
+  block: 13
+  fingerprint: 17e3c93fb9d2d1f9
+  lang: yaml
+  lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 e8a99920 0bebd850 36184fa5 0b7ce857 5f1190b0 0bebd850 cd44d8cd 350955ef c10d7538 2407cef5 c6ba4159 d217c891 7974ca4a 3195c5f5 f7446fcf bc611839 013abee6 a67acb0a 5f37c61e c3201545 e83d405d 2407cef5 c6ba4159 1c1f9d26 6d83697f 3195c5f5 f7446fcf bc611839 ec7b321f a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni
+  block: 14
+  fingerprint: 09f97f901d6246f4
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc 36184fa5 d3d416e7 17c452f8 0bebd850 301e1bfa 13c65293 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="sni"
+    only: true
+    lead: ' '
+- paths: sni-listenerset
+  block: 15
+  fingerprint: 9008eda1afe2b1a8
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc 36184fa5 d3d416e7 89729b81 0bebd850 a8f2cfa5 350955ef 301e1bfa 13c65293 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni
+  block: 16
+  fingerprint: e7fd239252f7f487
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 a687fd63 0ccc8edc 36184fa5 d3d416e7 17c452f8 0bebd850 301e1bfa a5da0395 3de9d845 a3b86ab6 67f91a16 c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="sni"
+    only: true
+    lead: ' '
+- paths: sni-listenerset
+  block: 17
+  fingerprint: d5cadca414ab2d0d
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 a687fd63 0ccc8edc 36184fa5 d3d416e7 89729b81 0bebd850 a8f2cfa5 350955ef 301e1bfa a5da0395 3de9d845 a3b86ab6 67f91a16 c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 18
+  fingerprint: 05040e6f8f1c0c38
+  lang: sh
+  lines: aac9a9c8 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 20
+  fingerprint: b4a39962f3c8a4e1
+  lang: sh
+  lines: b4a39962
+  preview: curl -vik --resolve "httpbin.example.com:443:${INGRESS_GW_ADDRESS}"  https://htt
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 24
+  fingerprint: 4011b5dba00f3354
+  lang: sh
+  lines: 4011b5db
+  preview: curl -vik --resolve "petstore.example.com:443:${INGRESS_GW_ADDRESS}" https://pet
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni
+  block: 28
+  fingerprint: 539838ef5d2f2902
+  lang: sh
+  lines: 466bea3e 7933dcc4 cf5390c8 9f329a97 64401a5c 48aa1080 0c3c66b2
+  preview: kubectl delete secret httpbin-credential -n {{< reuse "kgw-docs/snippets/namespa
+  form:
+    attr: paths="sni"
+    only: true
+    lead: ' '
+- paths: sni-listenerset
+  block: 29
+  fingerprint: ae71240dec82b0cc
+  lang: sh
+  lines: 466bea3e 7933dcc4 cf5390c8 6e822921 9f329a97 64401a5c 48aa1080 0c3c66b2
+  preview: kubectl delete secret httpbin-credential -n {{< reuse "kgw-docs/snippets/namespa
+  form:
+    attr: paths="sni-listenerset"
+    only: true
+    lead: ' '
+- paths: sni,sni-listenerset
+  block: 30
+  fingerprint: 9c0792a663fc47c9
+  lang: sh
+  lines: 9c0792a6
+  preview: rm -rf example_certs
+  form:
+    attr: paths="sni,sni-listenerset"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 9ce685ffe71ebabe
+    lang: sh
+    lines: 9ce685ff
+    preview: kubectl apply -f https://raw.githubusercontent.com/solo-io/gloo/v1.16.x/example/
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="sni,sni-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the petstore deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: default
+               name: petstore
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: e7fd239252f7f487
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 a687fd63 0ccc8edc 36184fa5 d3d416e7 17c452f8 0bebd850 301e1bfa a5da0395 3de9d845 a3b86ab6 67f91a16 c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="sni" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the sni Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: sni
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the httpbin listener on the sni Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: sni
+           jsonPath: "$.status.listeners[?(@.name=='httpbin')].conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the petstore listener on the sni Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: sni
+           jsonPath: "$.status.listeners[?(@.name=='petstore')].conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the httpbin-https HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the httpbin-https HTTPRoute backend refs to be resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the petstore-https HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: petstore-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the petstore-https HTTPRoute backend refs to be resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: petstore-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: the httpbin listener on the sni Gateway has 1 attached route
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: sni
+           jsonPath: "$.status.listeners[?(@.name=='httpbin')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: the petstore listener on the sni Gateway has 1 attached route
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: sni
+           jsonPath: "$.status.listeners[?(@.name=='petstore')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the sni gateway service to get a load balancer address (Gateway listeners)
+         wait:
+           target:
+             kind: Service
+             metadata:
+               namespace: kgateway-system
+               name: sni
+           jsonPath: "$.status.loadBalancer.ingress[0].ip"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: d5cadca414ab2d0d
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 a687fd63 0ccc8edc 36184fa5 d3d416e7 89729b81 0bebd850 a8f2cfa5 350955ef 301e1bfa a5da0395 3de9d845 a3b86ab6 67f91a16 c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="sni-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the sni Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: sni
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the sni-listenerset ListenerSet to be accepted
+         wait:
+           target:
+             kind: ListenerSet
+             metadata:
+               namespace: kgateway-system
+               name: sni-listenerset
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the sni-listenerset ListenerSet to be programmed
+         wait:
+           target:
+             kind: ListenerSet
+             metadata:
+               namespace: kgateway-system
+               name: sni-listenerset
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: the sni Gateway reports one attached ListenerSet
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: sni
+           jsonPath: "$.status.attachedListenerSets"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the httpbin-https HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the httpbin-https HTTPRoute backend refs to be resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the petstore-https HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: petstore-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the petstore-https HTTPRoute backend refs to be resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: petstore-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: the httpbin-https HTTPRoute reports the ListenerSet as its parent
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].parentRef.kind"
+           jsonPathExpectation:
+             comparator: equals
+             value: "ListenerSet"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 5
+       - name: the petstore-https HTTPRoute reports the ListenerSet as its parent
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: default
+               name: petstore-https
+           jsonPath: "$.status.parents[0].parentRef.kind"
+           jsonPathExpectation:
+             comparator: equals
+             value: "ListenerSet"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 5
+       - name: the httpbin listener on the sni-listenerset ListenerSet has 1 attached route
+         wait:
+           target:
+             kind: ListenerSet
+             metadata:
+               namespace: kgateway-system
+               name: sni-listenerset
+           jsonPath: "$.status.listeners[?(@.name=='httpbin')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: the petstore listener on the sni-listenerset ListenerSet has 1 attached route
+         wait:
+           target:
+             kind: ListenerSet
+             metadata:
+               namespace: kgateway-system
+               name: sni-listenerset
+           jsonPath: "$.status.listeners[?(@.name=='petstore')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the sni gateway service to get a load balancer address (ListenerSet)
+         wait:
+           target:
+             kind: Service
+             metadata:
+               namespace: kgateway-system
+               name: sni
+           jsonPath: "$.status.loadBalancer.ingress[0].ip"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 05040e6f8f1c0c38
+    lang: sh
+    lines: aac9a9c8 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="sni,sni-listenerset" >}}
+       # SNI httpbin.example.com must select the httpbin certificate.
+       # s_client verifies the chain against the page's root CA and the name, so a
+       # wrong certificate fails here; the subject proves which certificate it was.
+       subject=""
+       for i in $(seq 1 60); do
+         subject=$(openssl s_client -connect "${INGRESS_GW_ADDRESS}:443" -servername httpbin.example.com \
+           -CAfile example_certs/example.com.crt -verify_hostname httpbin.example.com -verify_return_error </dev/null 2>/dev/null \
+           | openssl x509 -noout -subject -nameopt RFC2253 2>/dev/null) && [ -n "$subject" ] && break
+         echo "attempt $i: no verified certificate for httpbin.example.com yet, retrying"
+         sleep 2
+       done
+       echo "httpbin.example.com: $subject"
+       [[ "$subject" == *"CN=httpbin.example.com"* && "$subject" == *"O=httpbin organization"* ]] || { echo "httpbin.example.com did not get the certificate with CN=httpbin.example.com, O=httpbin organization"; exit 1; }
+       # SNI petstore.example.com must select the petstore certificate.
+       # s_client verifies the chain against the page's root CA and the name, so a
+       # wrong certificate fails here; the subject proves which certificate it was.
+       subject=""
+       for i in $(seq 1 60); do
+         subject=$(openssl s_client -connect "${INGRESS_GW_ADDRESS}:443" -servername petstore.example.com \
+           -CAfile example_certs/example.com.crt -verify_hostname petstore.example.com -verify_return_error </dev/null 2>/dev/null \
+           | openssl x509 -noout -subject -nameopt RFC2253 2>/dev/null) && [ -n "$subject" ] && break
+         echo "attempt $i: no verified certificate for petstore.example.com yet, retrying"
+         sleep 2
+       done
+       echo "petstore.example.com: $subject"
+       [[ "$subject" == *"CN=petstore.example.com"* && "$subject" == *"O=petstore organization"* ]] || { echo "petstore.example.com did not get the certificate with CN=petstore.example.com, O=petstore organization"; exit 1; }
+       # The request verifies the certificate against the root CA (no -k).
+       code=""
+       for i in $(seq 1 60); do
+         code=$(curl -sS -o /tmp/doc-test-body -D /tmp/doc-test-headers -w '%{http_code}' --cacert example_certs/example.com.crt \
+           --resolve "httpbin.example.com:443:${INGRESS_GW_ADDRESS}" https://httpbin.example.com:443/anything) && [ "$code" = "200" ] && break
+         echo "attempt $i: got '${code:-no response}' from httpbin.example.com, retrying"
+         sleep 2
+       done
+       [ "$code" = "200" ] || { echo "HTTPS request to httpbin.example.com/anything with certificate verification did not return 200"; exit 1; }
+       grep -q 'httpbin.example.com' /tmp/doc-test-body || { echo "response from httpbin.example.com/anything does not contain httpbin.example.com"; cat /tmp/doc-test-body; exit 1; }
+       # The request verifies the certificate against the root CA (no -k).
+       code=""
+       for i in $(seq 1 60); do
+         code=$(curl -sS -o /tmp/doc-test-body -D /tmp/doc-test-headers -w '%{http_code}' --cacert example_certs/example.com.crt \
+           --resolve "petstore.example.com:443:${INGRESS_GW_ADDRESS}" https://petstore.example.com:443/api/pets) && [ "$code" = "200" ] && break
+         echo "attempt $i: got '${code:-no response}' from petstore.example.com, retrying"
+         sleep 2
+       done
+       [ "$code" = "200" ] || { echo "HTTPS request to petstore.example.com/api/pets with certificate verification did not return 200"; exit 1; }
+       grep -q '"name":"Dog"' /tmp/doc-test-body || { echo "response from petstore.example.com/api/pets does not contain "name":"Dog""; cat /tmp/doc-test-body; exit 1; }
+       {{< /doc-test >}}

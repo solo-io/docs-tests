@@ -1,0 +1,247 @@
+format: 1
+source: assets/kgw-docs/pages/observability/tracing.md
+blocks:
+- 397ee489ac9d0cca yaml
+- 1ead56870526d1a1 sh
+- 2ed833e41de444db
+- 2a823aabdcce99bb yaml
+- 18d377743a2b3212 sh
+- 9e5c5c83ce40c20e sh
+- b88f4721297c2c8f sh
+- d70896b051a86557
+- 2e37c800a001d5d1 sh
+- 33568c13cac4dd5a yaml
+- 7f5f86136131147c yaml
+- 897722b268d28b4d yaml
+tags:
+- paths: tracing,tracing-disable
+  block: 0
+  fingerprint: 397ee489ac9d0cca
+  lang: yaml
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 28fdc746 0bebd850 ff72caa3 63881b3f aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 23e4c81d fbb64f63 ada604fb 3897150c 1738e439 80a766f7 6f411f1c 91ef1ed6 cb3f91d5 f1540154 7963e6b7 8c8c4228 054fe91a 0bebd850 fa1e8330 f5a87e4b 36184fa5 04968f51 f61b1e44 0aaff6fa 8ff7327f 8a675a0e 299f52e5 262ad185 0ff65a1a a4b2309d fcd8c64a d9a30bca 9dbfe420 c5d7714b d9a30bca 889016e3 28fdc746 d04b512d 382790df f4a9f936 cb3f91d5 f1540154 0d6480f0 8c8c4228 054fe91a 0bebd850 36184fa5 0ff65a1a 1a2fa668 5a41b93f 9693ecf1 871a00c5 dcb2f145 8432e015 f5a87e4b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tracing,tracing-disable"
+    only: true
+    lead: ' '
+- paths: tracing,tracing-disable
+  block: 1
+  fingerprint: 1ead56870526d1a1
+  lang: sh
+  lines: 1ead5687
+  preview: kubectl get pod otel-collector -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="tracing,tracing-disable"
+    only: true
+    lead: ' '
+- paths: tracing,tracing-disable
+  block: 3
+  fingerprint: 2a823aabdcce99bb
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 eb97063c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 390f7e12 856ccf31 652db56e d6d1ccab 93a4b62b 532a06d9 6d0a9a1d 70c97555 054fe91a 0bebd850 5a41b93f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tracing,tracing-disable"
+    only: true
+    lead: ' '
+- paths: tracing
+  block: 9
+  fingerprint: 33568c13cac4dd5a
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 eb97063c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 390f7e12 856ccf31 652db56e d6d1ccab 93a4b62b 532a06d9 6d0a9a1d 70c97555 054fe91a 0bebd850 5a41b93f 73c054bf 0f064b34 0daeca0d 4c3092de 6621e7a9 f17c2467 4c3baf11 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tracing"
+    only: true
+    lead: ' '
+- paths: tracing
+  block: 10
+  fingerprint: 7f5f86136131147c
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 26ae780e 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 390f7e12 7746b2ad 3ea7cd11 73c054bf 7bca3935 0daeca0d c3a0d14b 8f10ace7 f17c2467 9edb6dcd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tracing"
+    only: true
+    lead: ' '
+- paths: tracing-disable
+  block: 11
+  fingerprint: 897722b268d28b4d
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 9687521b 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 390f7e12 cfd701cc abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tracing-disable"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 397ee489ac9d0cca
+    lang: yaml
+    lines: 16c71da1 f1540154 033792b5 8c8c4228 28fdc746 0bebd850 ff72caa3 63881b3f aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 23e4c81d fbb64f63 ada604fb 3897150c 1738e439 80a766f7 6f411f1c 91ef1ed6 cb3f91d5 f1540154 7963e6b7 8c8c4228 054fe91a 0bebd850 fa1e8330 f5a87e4b 36184fa5 04968f51 f61b1e44 0aaff6fa 8ff7327f 8a675a0e 299f52e5 262ad185 0ff65a1a a4b2309d fcd8c64a d9a30bca 9dbfe420 c5d7714b d9a30bca 889016e3 28fdc746 d04b512d 382790df f4a9f936 cb3f91d5 f1540154 0d6480f0 8c8c4228 054fe91a 0bebd850 36184fa5 0ff65a1a 1a2fa668 5a41b93f 9693ecf1 871a00c5 dcb2f145 8432e015 f5a87e4b abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="tracing,tracing-disable" >}}
+    kubectl -n kgateway-system wait pod/otel-collector --for=condition=Ready --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 2a823aabdcce99bb
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 eb97063c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 390f7e12 856ccf31 652db56e d6d1ccab 93a4b62b 532a06d9 6d0a9a1d 70c97555 054fe91a 0bebd850 5a41b93f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="tracing,tracing-disable" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tracing ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: tracing
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: d70896b051a86557
+    lang: ''
+    lines: fb2ff192 3ccf2f95 5fd9e455 8ebd0527 846cdb42 1c2372a7 6cf90050 f4897e01 d085641a 74c233b8 85366d84
+    preview: 'ScopeSpans #0'
+  content: |-
+    {{< doc-test paths="tracing,tracing-disable" >}}
+    # Send requests until the collector's debug exporter prints gateway spans with
+    # the auto-populated resource attributes from the example output.
+    ok=""
+    for i in $(seq 1 40); do
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/get" -H "host: www.example.com:8080" || true
+      sleep 3
+      out=$(kubectl -n kgateway-system logs otel-collector 2>/dev/null || true)
+      if [[ "$out" == *'Span #'* && "$out" == *'service.name: Str(http.kgateway-system)'* && "$out" == *'service.namespace: Str(kgateway-system)'* && "$out" == *'k8s.pod.name: Str(http-'* && "$out" == *'k8s.namespace.name: Str(kgateway-system)'* ]]; then ok=1; break; fi
+      echo "attempt $i: no gateway spans with the expected resource attributes yet"
+    done
+    [ -n "$ok" ] || { echo "the OTel collector did not receive gateway spans with the expected resource attributes"; kubectl -n kgateway-system logs otel-collector --tail=60 || true; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 33568c13cac4dd5a
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 eb97063c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 390f7e12 856ccf31 652db56e d6d1ccab 93a4b62b 532a06d9 6d0a9a1d 70c97555 054fe91a 0bebd850 5a41b93f 73c054bf 0f064b34 0daeca0d 4c3092de 6621e7a9 f17c2467 4c3baf11 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="tracing" >}}
+    # The spans carry the literal environment attribute and the request-id
+    # attribute from the x-request-id header.
+    ok=""
+    for i in $(seq 1 40); do
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/get" -H "host: www.example.com:8080" || true
+      sleep 3
+      out=$(kubectl -n kgateway-system logs otel-collector --since=2m 2>/dev/null || true)
+      if [[ "$out" == *'environment: Str(production)'* && "$out" == *'request-id: Str('* ]]; then ok=1; break; fi
+      echo "attempt $i: no spans with the environment and request-id attributes yet"
+    done
+    [ -n "$ok" ] || { echo "the gateway spans do not carry the custom environment and request-id attributes"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 7f5f86136131147c
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 26ae780e 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 390f7e12 7746b2ad 3ea7cd11 73c054bf 7bca3935 0daeca0d c3a0d14b 8f10ace7 f17c2467 9edb6dcd abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="tracing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tracing-route TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: tracing-route
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 7f5f86136131147c
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 26ae780e 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 390f7e12 7746b2ad 3ea7cd11 73c054bf 7bca3935 0daeca0d c3a0d14b 8f10ace7 f17c2467 9edb6dcd abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="tracing" >}}
+    # The route samples about half of the requests, so send several per attempt.
+    # The sampled spans carry the route-level attributes.
+    ok=""
+    for i in $(seq 1 40); do
+      for j in 1 2 3 4 5; do
+        curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/get" -H "host: www.example.com:8080" -H "x-custom-header: doc-test-route" || true
+      done
+      sleep 3
+      out=$(kubectl -n kgateway-system logs otel-collector --since=2m 2>/dev/null || true)
+      if [[ "$out" == *'route-tag: Str(httpbin-route)'* && "$out" == *'x-custom-header: Str(doc-test-route)'* ]]; then ok=1; break; fi
+      echo "attempt $i: no spans with the route-tag and x-custom-header attributes yet"
+    done
+    [ -n "$ok" ] || { echo "the gateway spans do not carry the route-level route-tag and x-custom-header attributes"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 897722b268d28b4d
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 9687521b 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 390f7e12 cfd701cc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="tracing-disable" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tracing-disable TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: tracing-disable
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 897722b268d28b4d
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 9687521b 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 390f7e12 cfd701cc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="tracing-disable" >}}
+    # Requests on the httpbin route stop producing spans. Each attempt sends a
+    # request with a unique path and checks the collector for it. Envoy flushes
+    # spans every few seconds, so wait before checking, and pass after two
+    # attempts in a row whose path never shows up.
+    quiet=0
+    for i in $(seq 1 15); do
+      marker="doc-test-disable-$i-$RANDOM"
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/anything/$marker" -H "host: www.example.com:8080" || true
+      sleep 12
+      out=$(kubectl -n kgateway-system logs otel-collector --since=1m 2>/dev/null || true)
+      if [[ "$out" == *"$marker"* ]]; then quiet=0; echo "attempt $i: the request to /anything/$marker was still traced"; else quiet=$((quiet + 1)); echo "attempt $i: no span for /anything/$marker"; fi
+      [ "$quiet" -ge 2 ] && break
+    done
+    [ "$quiet" -ge 2 ] || { echo "requests on the httpbin route are still traced after tracing was disabled for the route"; exit 1; }
+    {{< /doc-test >}}

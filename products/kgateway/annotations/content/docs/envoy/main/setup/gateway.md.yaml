@@ -1,0 +1,64 @@
+format: 1
+source: content/docs/envoy/main/setup/gateway.md
+blocks:
+- a19a089b392e02f4 yaml
+hidden:
+- after:
+    block: 0
+    fingerprint: a19a089b392e02f4
+    lang: yaml
+    lines: cd44d8cd 8c67597e 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 14eebc40 c9979b93 0018f239 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 a9279f6d
+    preview: 'kind: Gateway'
+  content: |-
+    {{< doc-test paths="setup-gateway-static-ip" >}}
+    # The example above is a manifest, not a command, so apply it as written.
+    kubectl apply -f- <<'EOF'
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1
+    metadata:
+      name: http
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      gatewayClassName: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+      addresses:
+        - type: IPAddress
+          value: 203.0.113.11
+      listeners:
+        - protocol: HTTP
+          port: 80
+          name: http
+          allowedRoutes:
+            namespaces:
+              from: Same
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: setup-gateway-static-ip - wait for the http Gateway with a static address to be accepted
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: setup-gateway-static-ip - the gateway proxy service requests the static IP address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.spec.loadBalancerIP"
+        jsonPathExpectation:
+          comparator: equals
+          value: "203.0.113.11"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

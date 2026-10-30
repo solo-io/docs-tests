@@ -1,0 +1,65 @@
+format: 1
+source: assets/kgw-docs/pages/observability/control-plane-metrics.md
+blocks:
+- 31702fa5f32b8068 sh
+- 7e5e363b3faadd25 console
+- a954bcd25a5d43de sh
+- 926d32b089f8d742 console
+hidden:
+- after:
+    block: 1
+    fingerprint: 7e5e363b3faadd25
+    lang: console
+    lines: 95ccc768 3628eb03 436c2b28 112e7436 13cc37cd
+    preview: '# HELP kgateway_controller_reconciliations_total Total controller reconciliation'
+  content: |-
+    {{< doc-test paths="control-plane-metrics" >}}
+    # Test-only: the CI runner cannot forward ports, so read the control plane's
+    # metrics endpoint on port 9092 through the Kubernetes API server's service
+    # proxy instead. Check the metric in the example output and a few metrics
+    # from the reference table that every install with a Gateway reports.
+    metrics=""
+    for i in $(seq 1 30); do
+      metrics=$(kubectl get --raw "/api/v1/namespaces/kgateway-system/services/kgateway:9092/proxy/metrics" 2>/dev/null || true)
+      grep -q '^kgateway_controller_reconciliations_total{.*controller="gateway".*result="success".*}' <<<"$metrics" && break
+      echo "waiting for the control plane to report gateway reconciliations ($i/30)"; sleep 5
+    done
+    if ! grep -q '^# TYPE kgateway_controller_reconciliations_total counter' <<<"$metrics"; then
+      echo "FAIL: /metrics has no kgateway_controller_reconciliations_total counter"
+      head -40 <<<"$metrics"; exit 1
+    fi
+    if ! grep -q '^kgateway_controller_reconciliations_total{.*controller="gateway".*result="success".*}' <<<"$metrics"; then
+      echo "FAIL: /metrics has no successful gateway reconciliation in kgateway_controller_reconciliations_total"
+      grep '^kgateway_controller_reconciliations_total' <<<"$metrics"; exit 1
+    fi
+    if ! grep -q '^kgateway_controller_reconciliations_total{.*controller="gatewayclass".*result="success".*}' <<<"$metrics"; then
+      echo "FAIL: /metrics has no successful gatewayclass reconciliation in kgateway_controller_reconciliations_total"
+      grep '^kgateway_controller_reconciliations_total' <<<"$metrics"; exit 1
+    fi
+    for m in kgateway_controller_reconcile_duration_seconds kgateway_translator_translations_total kgateway_xds_snapshot_transforms_total kgateway_resources_managed; do
+      if ! grep -q "^# TYPE ${m} " <<<"$metrics"; then
+        echo "FAIL: /metrics has no ${m} metric from the reference table"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 926d32b089f8d742
+    lang: console
+    lines: be5f1b0e 7e328242 3a3dbc00 42835884 7613e5e0 10d4e491
+    preview: '# HELP kgateway_envoy_xds_rejects_total Total number of xDS responses rejected b'
+  content: |-
+    {{< doc-test paths="control-plane-metrics" >}}
+    # The note says the NACK metrics appear only after a NACK. The httpbin setup
+    # sends only valid configuration, so the metrics have no samples yet.
+    metrics=$(kubectl get --raw "/api/v1/namespaces/kgateway-system/services/kgateway:9092/proxy/metrics")
+    if ! grep -q '^kgateway_controller_reconciliations_total' <<<"$metrics"; then
+      echo "FAIL: could not read the control plane metrics endpoint"
+      exit 1
+    fi
+    if grep -q '^kgateway_envoy_xds_rejects_\(total\|active\){' <<<"$metrics"; then
+      echo "FAIL: NACK metrics are present although the proxy accepted all configuration:"
+      grep '^kgateway_envoy_xds_rejects_' <<<"$metrics"; exit 1
+    fi
+    {{< /doc-test >}}

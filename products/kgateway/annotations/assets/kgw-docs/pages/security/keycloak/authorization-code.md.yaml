@@ -1,0 +1,338 @@
+format: 1
+source: assets/kgw-docs/pages/security/keycloak/authorization-code.md
+blocks:
+- e422e8e046ca4841 sh
+- eacc2af5d8aff368 yaml
+- ee0c2f218c231936 yaml
+- 5307692e4107fdcb sh
+- 8378444c9c09cbaf yaml
+- 2476c2ff8f56e735 sh
+- aa2758b552164624 sh
+- 78322d6ee60ce1f4 text
+- ef4bafb65fd2b7ff sh
+- f263e2a9807f007e sh
+- 912c80ff543e3684 text
+- 35739e07beac18a2 sh
+- ec8d2e382021cbe2 yaml
+- 5efc1c0033749367 yaml
+- 099890bfff63a818 yaml
+- cd6e305864ee2632 yaml
+- a029656f5621a2a9 yaml
+- d43f2c16b5bf259d yaml
+- 6d588cf1b59c5af2 yaml
+tags:
+- paths: keycloak-authorization-code,keycloak-authorization-code-deny-redirect,keycloak-oauth2-config
+  block: 1
+  fingerprint: eacc2af5d8aff368
+  lang: yaml
+  lines: 16c71da1 88b9492f 5ee5f7dc 8c8c4228 b47cba1f 0bebd850 36184fa5 2ef15a78 70c97555 69f54740 ad65deb7 28101486 0bebd850 b05639a2 8862cb58 5d278fb1 c7e9851b 551ea4dd 61d9749c 4112252c 9519f874 d8541eca 545c1d9d 94fd3d95 e73ad6de ebf1a7ae abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak-authorization-code,keycloak-authorization-code-deny-redirect,keycloak-oauth2-config"
+    only: true
+    lead: ' '
+- paths: keycloak-authorization-code,keycloak-authorization-code-deny-redirect,keycloak-oauth2-config
+  block: 2
+  fingerprint: ee0c2f218c231936
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 b47cba1f 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 2ef15a78 248578da b47cba1f 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak-authorization-code,keycloak-authorization-code-deny-redirect,keycloak-oauth2-config"
+    only: true
+    lead: ' '
+- paths: keycloak-authorization-code
+  block: 3
+  fingerprint: 5307692e4107fdcb
+  lang: sh
+  lines: 5307692e
+  preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} keycloak-oauth2 -
+  form:
+    attr: paths="keycloak-authorization-code"
+    only: true
+    lead: ' '
+- paths: keycloak-authorization-code
+  block: 11
+  fingerprint: 35739e07beac18a2
+  lang: sh
+  lines: 0387a89d 3bde8886 0969a7bb
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} keycloak-oauth
+  form:
+    attr: paths="keycloak-authorization-code"
+    only: true
+    lead: ' '
+- paths: keycloak-authorization-code-deny-redirect
+  block: 18
+  fingerprint: 6d588cf1b59c5af2
+  lang: yaml
+  lines: 16c71da1 88b9492f 5ee5f7dc 8c8c4228 b47cba1f 0bebd850 36184fa5 2ef15a78 70c97555 69f54740 ad65deb7 28101486 0bebd850 b05639a2 8862cb58 5d278fb1 c7e9851b 551ea4dd 61d9749c 4112252c 9519f874 d8541eca 545c1d9d 94fd3d95 e73ad6de ebf1a7ae 9f792a8e 38dc0152 03775600 6d88f925 eaa459c8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak-authorization-code-deny-redirect"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: e422e8e046ca4841
+    lang: sh
+    lines: 8a816e59 f1846705 81d7cf7a
+    preview: kubectl create secret generic keycloak-client-secret \
+  content: |2-
+       {{< doc-test paths="keycloak-authorization-code,keycloak-authorization-code-deny-redirect,keycloak-oauth2-config" >}}
+       # Test-only: the page's command has a YOUR_CLIENT_SECRET placeholder. The
+       # realm ConfigMap on the Keycloak setup page sets the client secret to
+       # kgateway-client-secret, so create the Secret with that value.
+       kubectl create secret generic keycloak-client-secret \
+         --from-literal=client-secret=kgateway-client-secret \
+         -n kgateway-system
+       {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: e422e8e046ca4841
+    lang: sh
+    lines: 8a816e59 f1846705 81d7cf7a
+    preview: kubectl create secret generic keycloak-client-secret \
+  content: |2-
+       {{< doc-test paths="keycloak-authorization-code,keycloak-authorization-code-deny-redirect,keycloak-oauth2-config" >}}
+       # Test-only: Before you begin asks for an HTTPS listener, and the Verify
+       # steps send requests to port 8443 of the same gateway with host
+       # www.example.com. Add a self-signed HTTPS listener on port 8443 to the
+       # sample `http` Gateway, which the httpbin HTTPRoute attaches to.
+       openssl req -x509 -newkey rsa:2048 -nodes -days 2 -subj "/CN=www.example.com" \
+         -addext "subjectAltName=DNS:www.example.com" -keyout gw-https.key -out gw-https.crt
+       kubectl create secret tls keycloak-test-https -n kgateway-system --cert=gw-https.crt --key=gw-https.key
+       kubectl patch gateway http -n kgateway-system --type=json -p '[{"op":"add","path":"/spec/listeners/-","value":{"name":"https","protocol":"HTTPS","port":8443,"tls":{"mode":"Terminate","certificateRefs":[{"kind":"Secret","name":"keycloak-test-https"}]},"allowedRoutes":{"namespaces":{"from":"All"}}}}]'
+       code=000
+       for i in $(seq 1 60); do
+         code=$(curl -sk --max-time 5 -o /dev/null -w '%{http_code}' "https://${INGRESS_GW_ADDRESS}:8443/headers" -H "host: www.example.com" || true)
+         [ "$code" = "200" ] && break
+         sleep 5
+       done
+       if [ "$code" != "200" ]; then
+         echo "FAIL: the test HTTPS listener on ${INGRESS_GW_ADDRESS}:8443 returned ${code} for httpbin, want 200 before the OAuth2 policy"
+         kubectl get gateway http -n kgateway-system -o yaml
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: eacc2af5d8aff368
+    lang: yaml
+    lines: 16c71da1 88b9492f 5ee5f7dc 8c8c4228 b47cba1f 0bebd850 36184fa5 2ef15a78 70c97555 69f54740 ad65deb7 28101486 0bebd850 b05639a2 8862cb58 5d278fb1 c7e9851b 551ea4dd 61d9749c 4112252c 9519f874 d8541eca 545c1d9d 94fd3d95 e73ad6de ebf1a7ae abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="keycloak-authorization-code,keycloak-authorization-code-deny-redirect,keycloak-oauth2-config" >}}
+       # GatewayExtension has no Accepted condition to wait on, so check that the
+       # keycloak-oauth2 provider exists with the page's redirect URI.
+       YAMLTest -f - <<'EOF'
+       - name: the keycloak-oauth2 GatewayExtension sends the registered redirect URI
+         wait:
+           target:
+             kind: GatewayExtension
+             metadata:
+               namespace: kgateway-system
+               name: keycloak-oauth2
+           jsonPath: "$.spec.oauth2.redirectURI"
+           jsonPathExpectation:
+             comparator: equals
+             value: https://www.example.com/oauth2/redirect
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 8378444c9c09cbaf
+    lang: yaml
+    lines: f2decc81 a5e84374 dcfcd85d a4a39e6e 165305ea 69b834a6 dcfcd85d b8724bb7
+    preview: '- message: Policy accepted'
+  content: |2-
+       {{< doc-test paths="keycloak-authorization-code,keycloak-authorization-code-deny-redirect,keycloak-oauth2-config" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the keycloak-oauth2 TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: keycloak-oauth2
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: the keycloak-oauth2 TrafficPolicy is attached to its target
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: keycloak-oauth2
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 78322d6ee60ce1f4
+    lang: text
+    lines: bd9ba729 053998a9 e3b4bdb8
+    preview: < HTTP/2 302
+  content: |2-
+       {{< doc-test paths="keycloak-authorization-code" >}}
+       # Step 1: a request without a session cookie is redirected to Keycloak with
+       # the registered redirect_uri, and the nonce cookie is Secure and HttpOnly.
+       hdr=$(mktemp)
+       code=000
+       for i in $(seq 1 60); do
+         code=$(curl -sk --max-time 10 -D "$hdr" -o /dev/null -w '%{http_code}' \
+           "https://${INGRESS_GW_ADDRESS}:8443/headers" -H "host: www.example.com" || true)
+         [ "$code" = "302" ] && break
+         sleep 5
+       done
+       location=$(grep -i '^location:' "$hdr" | head -1 | cut -d' ' -f2- | tr -d '\r' || true)
+       nonce=$(grep -i '^set-cookie: OauthNonce-' "$hdr" | head -1 | tr -d '\r' || true)
+       if [ "$code" != "302" ]; then
+         echo "FAIL: an unauthenticated request to https://${INGRESS_GW_ADDRESS}:8443/headers returned ${code}, want 302"
+         cat "$hdr"
+         exit 1
+       fi
+       case "$location" in
+         "https://keycloak.example.com/realms/myrealm/protocol/openid-connect/auth?"*) ;;
+         *) echo "FAIL: the redirect goes to '${location}', want the Keycloak authorization endpoint"; exit 1 ;;
+       esac
+       for want in "client_id=kgateway-client" "redirect_uri=https%3A%2F%2Fwww.example.com%2Foauth2%2Fredirect"; do
+         if ! grep -qF "$want" <<<"$location"; then
+           echo "FAIL: the redirect location does not contain ${want}: ${location}"
+           exit 1
+         fi
+       done
+       if [ -z "$nonce" ] || ! grep -qi 'secure' <<<"$nonce" || ! grep -qi 'httponly' <<<"$nonce"; then
+         echo "FAIL: want a Secure, HttpOnly OauthNonce cookie, got: ${nonce:-none}"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 78322d6ee60ce1f4
+    lang: text
+    lines: bd9ba729 053998a9 e3b4bdb8
+    preview: < HTTP/2 302
+  content: |2-
+       {{< doc-test paths="keycloak-authorization-code" >}}
+       # Steps 2 to 4 without a browser: curl with a cookie jar follows the gateway
+       # redirect to Keycloak, posts the test user's credentials to the login form,
+       # follows the redirect back to the gateway callback, and then loads the app.
+       # --connect-to sends www.example.com to the gateway's HTTPS listener and
+       # keycloak.example.com to the keycloak-lb Service, so the hosts and cookies
+       # match what a browser sees.
+       jar=$(mktemp); body=$(mktemp); hdr=$(mktemp)
+       kc() {
+         curl -sk --max-time 20 \
+           --connect-to "www.example.com:443:${INGRESS_GW_ADDRESS}:8443" \
+           --connect-to "keycloak.example.com:443:${KEYCLOAK_ADDRESS}:443" \
+           -b "$jar" -c "$jar" -D "$hdr" -o "$body" -w '%{http_code}' "$@" || true
+       }
+       location() { grep -i '^location:' "$hdr" | head -1 | cut -d' ' -f2- | tr -d '\r' || true; }
+       fail() { echo "FAIL: $1"; echo "--- headers"; cat "$hdr"; echo "--- body (first 40 lines)"; head -40 "$body"; exit 1; }
+
+       code=$(kc "https://www.example.com/headers")
+       [ "$code" = "302" ] || fail "GET https://www.example.com/headers without a session returned ${code}, want 302"
+       auth_url=$(location)
+
+       code=$(kc "$auth_url")
+       [ "$code" = "200" ] || fail "the Keycloak login page returned ${code}, want 200"
+       action=$(python3 -c 'import html, re, sys; t = open(sys.argv[1]).read(); m = re.search(r"<form[^>]*id=\"kc-form-login\"[^>]*>", t, re.S); a = re.search(r"action=\"([^\"]+)\"", m.group(0)) if m else None; print(html.unescape(a.group(1)) if a else "")' "$body")
+       [ -n "$action" ] || fail "no kc-form-login form on the Keycloak login page"
+
+       code=$(kc --data-urlencode "username=testuser" --data-urlencode "password=password" --data-urlencode "credentialId=" "$action")
+       [ "$code" = "302" ] || fail "posting testuser/password to the Keycloak login form returned ${code}, want 302"
+       callback=$(location)
+       case "$callback" in
+         "https://www.example.com/oauth2/redirect?"*code=*) ;;
+         *) fail "Keycloak redirected to '${callback}', want https://www.example.com/oauth2/redirect with a code" ;;
+       esac
+
+       code=$(kc "$callback")
+       [ "$code" = "302" ] || fail "the gateway callback returned ${code}, want 302 back to the original URL (CSRF check or code exchange failed)"
+       original=$(location)
+       [ "$original" = "https://www.example.com/headers" ] || fail "the callback redirected to '${original}', want https://www.example.com/headers"
+       jar_text=$(cat "$jar")
+       grep -q 'IdToken-' <<<"$jar_text" || fail "the gateway set no IdToken session cookie after the code exchange"
+
+       code=$(kc "$original")
+       [ "$code" = "200" ] || fail "GET https://www.example.com/headers with the session cookies returned ${code}, want 200 from httpbin"
+       body_text=$(cat "$body")
+       grep -q '"headers"' <<<"$body_text" || fail "the response is not the httpbin headers output"
+
+       # A second request reuses the session cookies without another login.
+       code=$(kc "https://www.example.com/headers")
+       [ "$code" = "200" ] || fail "a second request with the session cookies returned ${code}, want 200"
+       # The same request without the cookies is still redirected to Keycloak.
+       code=$(curl -sk --max-time 10 -o /dev/null -w '%{http_code}' \
+         --connect-to "www.example.com:443:${INGRESS_GW_ADDRESS}:8443" "https://www.example.com/headers" || true)
+       [ "$code" = "302" ] || fail "a request without the session cookies returned ${code}, want 302"
+       echo "authorization code flow: login, callback, and session cookies work"
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 35739e07beac18a2
+    lang: sh
+    lines: 0387a89d 3bde8886 0969a7bb
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} keycloak-oauth
+  content: |-
+    {{< doc-test paths="keycloak-authorization-code" >}}
+    # Test-only: the cleanup removed the policy, so the route is open again.
+    YAMLTest -f - <<'EOF'
+    - name: keycloak-authorization-code - after cleanup, a request without a session is not redirected
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 6d588cf1b59c5af2
+    lang: yaml
+    lines: 16c71da1 88b9492f 5ee5f7dc 8c8c4228 b47cba1f 0bebd850 36184fa5 2ef15a78 70c97555 69f54740 ad65deb7 28101486 0bebd850 b05639a2 8862cb58 5d278fb1 c7e9851b 551ea4dd 61d9749c 4112252c 9519f874 d8541eca 545c1d9d 94fd3d95 e73ad6de ebf1a7ae 9f792a8e 38dc0152 03775600 6d88f925 eaa459c8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="keycloak-authorization-code-deny-redirect" >}}
+    # Verify step 5: with denyRedirect, a request that sends
+    # Accept: application/json gets 401 instead of a redirect, and a request
+    # without that header is still redirected to Keycloak.
+    code=000
+    for i in $(seq 1 60); do
+      code=$(curl -sk --max-time 10 -o /dev/null -w '%{http_code}' "https://${INGRESS_GW_ADDRESS}:8443/headers" \
+        -H "host: www.example.com" -H "Accept: application/json" || true)
+      [ "$code" = "401" ] && break
+      sleep 5
+    done
+    if [ "$code" != "401" ]; then
+      echo "FAIL: with denyRedirect, a request with Accept: application/json returned ${code}, want 401"
+      exit 1
+    fi
+    code=$(curl -sk --max-time 10 -o /dev/null -w '%{http_code}' "https://${INGRESS_GW_ADDRESS}:8443/headers" \
+      -H "host: www.example.com" || true)
+    if [ "$code" != "302" ]; then
+      echo "FAIL: with denyRedirect, a request without Accept: application/json returned ${code}, want 302"
+      exit 1
+    fi
+    {{< /doc-test >}}

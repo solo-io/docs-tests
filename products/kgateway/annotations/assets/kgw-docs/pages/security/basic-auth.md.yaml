@@ -1,0 +1,533 @@
+format: 1
+source: assets/kgw-docs/pages/security/basic-auth.md
+blocks:
+- b630153ac6477e83 mermaid
+- 4788605929f4e3a6 shell
+- cb0272e44cee5d9b
+- 1d18706b8c336b2d yaml
+- 9b553224e67c9367 sh
+- 86e869390b17f47b sh
+- 54948563f5f061fd
+- 691ee609dbcfc053 sh
+- bdfeaef44475711c
+- 14e8f29358dcee59 sh
+- e178d6aca9673dca sh
+- f883f2bf46355c39
+- e2bc1015b7395198 sh
+- 01f37c82538fac09 yaml
+- 1a19db9f92923167 sh
+- faf45e1b24f002fb yaml
+- a32892733cd54ba7 yaml
+- 36c11ff575ee7c7b yaml
+tags:
+- paths: extauth-basic
+  block: 1
+  fingerprint: 4788605929f4e3a6
+  lang: shell
+  lines: '47886059'
+  preview: htpasswd -nbs user password
+  form:
+    attr: paths="extauth-basic"
+    only: true
+    lead: ' '
+- paths: extauth-basic,extauth-basic-disable
+  block: 3
+  fingerprint: 1d18706b8c336b2d
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 de77b3a7 c9888a7d a1bf21d1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-basic,extauth-basic-disable"
+    only: true
+    lead: ' '
+- paths: extauth-basic
+  block: 7
+  fingerprint: 691ee609dbcfc053
+  lang: sh
+  lines: 691ee609
+  preview: echo -n "user:password" | base64
+  form:
+    attr: paths="extauth-basic"
+    only: true
+    lead: ' '
+- paths: extauth-basic
+  block: 12
+  fingerprint: e2bc1015b7395198
+  lang: sh
+  lines: e2bc1015
+  preview: 'kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} basic-auth -n '
+  form:
+    attr: paths="extauth-basic"
+    only: true
+    lead: ' '
+- paths: extauth-basic-multiple-users
+  block: 13
+  fingerprint: 01f37c82538fac09
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 de77b3a7 c9888a7d f214b01f d6a96537 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-basic-multiple-users"
+    only: true
+    lead: ' '
+- paths: extauth-basic-secret
+  block: 14
+  fingerprint: 1a19db9f92923167
+  lang: sh
+  lines: 24f44bc6 aa52025b 81d7cf7a
+  preview: kubectl create secret generic basic-auth-users \
+  form:
+    attr: paths="extauth-basic-secret"
+    only: true
+    lead: ' '
+- paths: extauth-basic-secret
+  block: 15
+  fingerprint: faf45e1b24f002fb
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 de77b3a7 9ebc4789 2f5ad6e3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-basic-secret"
+    only: true
+    lead: ' '
+- paths: extauth-basic-secret-key
+  block: 16
+  fingerprint: a32892733cd54ba7
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 de77b3a7 9ebc4789 2f5ad6e3 794a797c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-basic-secret-key"
+    only: true
+    lead: ' '
+- paths: extauth-basic-disable
+  block: 17
+  fingerprint: 36c11ff575ee7c7b
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 2242babd 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 de77b3a7 cfd701cc abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-basic-disable"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Set up basic auth
+    line: 2cbcc057d5e75d32
+    occurrence: 0
+    words: 6b86b273 24cacf50 ca978112 1a06df82 5e884898 10c22bcf 4d040d3f 04f8996d 631aada4 b9776d7d 8d0288f4 50d858e0 f480ffb2 b9776d7d feb2ebf8 7c9bbe5e 10c22bcf ca978112 04f8996d a157d36a 04f8996d
+    block_before:
+      block: 0
+      fingerprint: b630153ac6477e83
+      lang: mermaid
+      lines: 536f52ac fd100b97 dc737877 5b3b2641 d3511670 2299b819 d85d0c09 353d66a1 b4d3513d 05e1c19a d4eac20c 2ab01129 26ad68f3 c4570bdf f6349ffc df5acd85 a8fb2a71 4fd26fa0 361e48d0
+      preview: sequenceDiagram
+  content: |-
+    {{< doc-test paths="extauth-basic" >}}
+    # Test-only: the next step runs htpasswd. macOS ships it; on Linux it comes with apache2-utils.
+    command -v htpasswd >/dev/null 2>&1 || { sudo apt-get update -qq && sudo apt-get install -y -qq apache2-utils; }
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: cb0272e44cee5d9b
+    lang: ''
+    lines: cb0272e4
+    preview: user:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=
+  content: |-
+    {{< doc-test paths="extauth-basic" >}}
+    # Test-only: htpasswd -s is unsalted SHA-1, so its output must match the page's example output
+    # and the hash in the policy that follows.
+    got=$(htpasswd -nbs user password)
+    [ "$got" = 'user:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=' ] || { echo "htpasswd printed '$got', not the page's example output"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 1d18706b8c336b2d
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 de77b3a7 c9888a7d a1bf21d1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-basic" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the basic-auth TrafficPolicy to be accepted (inline users list)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: basic-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 54948563f5f061fd
+    lang: ''
+    lines: ab5df625 983e7192 63282280 379451ff ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="extauth-basic" >}}
+    YAMLTest -f - <<'EOF'
+    - name: extauth-basic - a request without credentials is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        bodyContains:
+        - Missing username and password
+    - name: extauth-basic - a request with a wrong password is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic dXNlcjp3cm9uZy1wYXNzd29yZA=="
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: f883f2bf46355c39
+    lang: ''
+    lines: ab5df625 5b07bb0e 6364ab47 92413e97 32cf5997 a152bc23 b8fcb227 c441a9d6 5ea21550 706d2426 6abd3586 1c32df2a 4f4edc3b 71b9dd8a 3ca1ea63 5f7c6523 dabd3aff 021fb596 2e253c22 c7197869 817ad316 39d4b54e e19c1993 99c3077e 39d4b54e 6056662a 6ef1e4db 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e 45bf2c44 88270499 39d4b54e 59bc501f 27662806 39d4b54e cfa27b48 a321f717 39d4b54e b467788d a938098a cfae0d42 d10b36aa d10b36aa ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="extauth-basic" >}}
+    YAMLTest -f - <<'EOF'
+    - name: extauth-basic - a request with the user credentials succeeds and the Authorization header reaches the backend
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic dXNlcjpwYXNzd29yZA=="
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Authorization[0]"
+          comparator: equals
+          value: "Basic dXNlcjpwYXNzd29yZA=="
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: e2bc1015b7395198
+    lang: sh
+    lines: e2bc1015
+    preview: 'kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} basic-auth -n '
+  content: |-
+    {{< doc-test paths="extauth-basic" >}}
+    # Test-only: the cleanup removed the policy, so the route is open again.
+    YAMLTest -f - <<'EOF'
+    - name: extauth-basic - after cleanup, a request without credentials succeeds again
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 01f37c82538fac09
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 de77b3a7 c9888a7d f214b01f d6a96537 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-basic-multiple-users" >}}
+    # Test-only: the developer hash on the page is the SHA-1 of 123; the page does not name that password.
+    YAMLTest -f - <<'EOF'
+    - name: wait for the basic-auth TrafficPolicy to be accepted (admin and developer users)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: basic-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: extauth-basic-multiple-users - a request without credentials is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: extauth-basic-multiple-users - admin with password succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic YWRtaW46cGFzc3dvcmQ="
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: extauth-basic-multiple-users - developer with 123 succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic ZGV2ZWxvcGVyOjEyMw=="
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: extauth-basic-multiple-users - admin with a wrong password is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic YWRtaW46d3JvbmctcGFzc3dvcmQ="
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: faf45e1b24f002fb
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 de77b3a7 9ebc4789 2f5ad6e3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-basic-secret" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the basic-auth TrafficPolicy to be accepted (secretRef basic-auth-users, default .htpasswd key)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: basic-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: extauth-basic-secret - a request without credentials is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: extauth-basic-secret - admin with password from the secret succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic YWRtaW46cGFzc3dvcmQ="
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: extauth-basic-secret - admin with a wrong password is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic YWRtaW46d3JvbmctcGFzc3dvcmQ="
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Custom secret key
+    line: 68a2536a475e479b
+    occurrence: 0
+    words: 935f6831 4d040d3f feb2ebf8 3a6eb079 fa51fd49 87b04e58 d767748a ca978112 2c70e12b d9298a10 7383711c feb2ebf8 a0aa99c8 2ad8a704 0695b563 9213eefc
+    block_before:
+      block: 15
+      fingerprint: faf45e1b24f002fb
+      lang: yaml
+      lines: 16c71da1 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 de77b3a7 9ebc4789 2f5ad6e3 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-basic-secret-key" >}}
+    # Test-only: the page does not create a secret with a passwords.htpasswd key, so make one
+    # with the same admin entry as the Secret reference example.
+    kubectl create secret generic basic-auth-users \
+      --from-literal=passwords.htpasswd="admin:{SHA}W6ph5Mm5Pz8GgiULbPgzG37mj9g=" \
+      -n kgateway-system
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: a32892733cd54ba7
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 de77b3a7 9ebc4789 2f5ad6e3 794a797c abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-basic-secret-key" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the basic-auth TrafficPolicy to be accepted (secretRef key passwords.htpasswd)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: basic-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: extauth-basic-secret-key - a request without credentials is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: extauth-basic-secret-key - admin with password from the passwords.htpasswd key succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic YWRtaW46cGFzc3dvcmQ="
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 36c11ff575ee7c7b
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 2242babd 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 de77b3a7 cfd701cc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-basic-disable" >}}
+    # Test-only: the Gateway-level basic-auth policy stays in place; the route-level
+    # disable policy turns basic auth off for the httpbin route only.
+    YAMLTest -f - <<'EOF'
+    - name: wait for the basic-auth TrafficPolicy to be accepted (gateway-level policy that the route overrides)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: basic-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the basic-auth-disable TrafficPolicy to be accepted (route-level disable)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: basic-auth-disable
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: extauth-basic-disable - the httpbin route accepts a request without credentials
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

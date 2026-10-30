@@ -1,0 +1,498 @@
+format: 1
+source: content/docs/envoy/main/setup/listeners/tls-passthrough.md
+blocks:
+- dcbfaa8da79ebf02 shell
+- 43f19571cfed86d5 shell
+- 231fcc774f060ba1 shell
+- df9e7044c25dfca7 shell
+- ccf04624e1b6c37e shell
+- ac08575fbd88038a yaml
+- eca63ad0444ece4b sh
+- 755f17f8d60063ea
+- aa73998921789e59 yaml
+- aed9538bc5d15da2 yaml
+- 8c0ded2c3ba3ea3a yaml
+- 0af9990cf5f0a3d3 yaml
+- 946287beabf48cd4 yaml
+- 688c6bc0ec0fa484 sh
+- 2b285b1e8c117c8c shell
+- ca86caa816f4442f shell
+- a67c5a6aa3fe3948 console
+- 3b9593b509b9a78c sh
+- 815b88128c72eab9 sh
+- a67c5a6aa3fe3948 console
+- be2bbdf0c2364f51 sh
+- 772930460023ffc1 sh
+tags:
+- paths: tls-passthrough,tls-passthrough-listenerset
+  block: 0
+  fingerprint: dcbfaa8da79ebf02
+  lang: shell
+  lines: 364f4c60 23acda14
+  preview: mkdir example_certs
+  form:
+    attr: paths="tls-passthrough,tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough,tls-passthrough-listenerset
+  block: 2
+  fingerprint: 231fcc774f060ba1
+  lang: shell
+  lines: 7218c946 dcc84299 129bfdf6
+  preview: kubectl create secret tls nginx-server-certs \
+  form:
+    attr: paths="tls-passthrough,tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough,tls-passthrough-listenerset
+  block: 3
+  fingerprint: df9e7044c25dfca7
+  lang: shell
+  lines: fd9363dd ea58f9c5 d10b36aa 9df10491 f9c9b671 39e4cef8 0a913684 fca92421 43bea3a9 0310a8b5 df602be5 91a67241 be4a2f6e 17965980 5de80e61 8a2a45ca d10b36aa d10b36aa abc56510
+  preview: cat <<\EOF > ./nginx.conf
+  form:
+    attr: paths="tls-passthrough,tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough,tls-passthrough-listenerset
+  block: 4
+  fingerprint: ccf04624e1b6c37e
+  lang: shell
+  lines: ccf04624
+  preview: kubectl create configmap nginx-configmap --from-file=nginx.conf=./nginx.conf
+  form:
+    attr: paths="tls-passthrough,tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough,tls-passthrough-listenerset
+  block: 5
+  fingerprint: ac08575fbd88038a
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 a84d9312 fa1e8330 7961b4b4 36184fa5 0ff65a1a 02286607 9693ecf1 8432e015 7961b4b4 cb3f91d5 58584366 ab78925c 8c8c4228 a84d9312 36184fa5 8432e015 839a5cac 7961b4b4 97bcd5e0 a58565b2 8c8c4228 fa1e8330 7961b4b4 36184fa5 04968f51 28f5ced4 76c4056a 0ff65a1a 451cb444 fcd8c64a d886a70a c0cb47dc 4fb8b4ed 8c04eab8 9eced44c 4fb8b4ed c5d7714b d886a70a 889016e3 5583ba54 8c04eab8 035b1576 0da88b46 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-passthrough,tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough,tls-passthrough-listenerset
+  block: 6
+  fingerprint: eca63ad0444ece4b
+  lang: sh
+  lines: eca63ad0
+  preview: kubectl get pods | grep nginx
+  form:
+    attr: paths="tls-passthrough,tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough
+  block: 8
+  fingerprint: aa73998921789e59
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c2ba8101 0bebd850 36184fa5 c281d1bb c10d7538 f582457e 93a32401 3522ce54 3195c5f5 5a23f9e6 f51d9754 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-passthrough"
+    only: true
+    lead: ' '
+- paths: tls-passthrough-listenerset
+  block: 9
+  fingerprint: aed9538bc5d15da2
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c2ba8101 0bebd850 36184fa5 c281d1bb 14fc2dbb c3201545 e83d405d c10d7538 594e2089 da480536 ad36ba0b 3195c5f5 5a23f9e6 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough-listenerset
+  block: 10
+  fingerprint: 8c0ded2c3ba3ea3a
+  lang: yaml
+  lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 7c3cbe02 0bebd850 36184fa5 0b7ce857 c2ba8101 0bebd850 cd44d8cd 350955ef c10d7538 594e2089 f51d9754 1876e40d a2059365 3195c5f5 5a23f9e6 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough
+  block: 11
+  fingerprint: 0af9990cf5f0a3d3
+  lang: yaml
+  lines: 16c71da1 8c67597e 4b08c199 8c8c4228 56af0408 0ccc8edc 36184fa5 301e1bfa bfbc7f90 d3d416e7 18dde8a1 0bebd850 3de9d845 a3b86ab6 e6365cc1 0d6480f0 a84d9312 c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-passthrough"
+    only: true
+    lead: ' '
+- paths: tls-passthrough-listenerset
+  block: 12
+  fingerprint: 946287beabf48cd4
+  lang: yaml
+  lines: 16c71da1 8c67597e 4b08c199 8c8c4228 56af0408 0ccc8edc 36184fa5 301e1bfa bfbc7f90 d3d416e7 74cd659a 0bebd850 a8f2cfa5 350955ef 3de9d845 a3b86ab6 e6365cc1 0d6480f0 a84d9312 c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough,tls-passthrough-listenerset
+  block: 13
+  fingerprint: 688c6bc0ec0fa484
+  lang: sh
+  lines: c0bf5426 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="tls-passthrough,tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+    tail: ' '
+- paths: tls-passthrough,tls-passthrough-listenerset
+  block: 14
+  fingerprint: 2b285b1e8c117c8c
+  lang: shell
+  lines: 2b285b1e
+  preview: curl -vik --resolve "nginx.example.com:8443:${INGRESS_GW_ADDRESS}" --cacert exam
+  form:
+    attr: paths="tls-passthrough,tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+- paths: tls-passthrough
+  block: 20
+  fingerprint: be2bbdf0c2364f51
+  lang: sh
+  lines: 5f5a4742 59013db2 673d345d a1d1943c f4767ecb 2a2c308c 18a1d99b 6b8bb46e
+  preview: rm -r example_certs
+  form:
+    attr: paths="tls-passthrough"
+    only: true
+    lead: ' '
+- paths: tls-passthrough-listenerset
+  block: 21
+  fingerprint: 772930460023ffc1
+  lang: sh
+  lines: 5f5a4742 59013db2 673d345d a1d1943c 45bce06a f4767ecb 2a2c308c 18a1d99b 6b8bb46e
+  preview: rm -r example_certs
+  form:
+    attr: paths="tls-passthrough-listenerset"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Deploy an nginx server that is configured for HTTPS traffic
+    line: 8dbd44078edf5e41
+    occurrence: 0
+    words: b7bd55c1 ca978112 af2bdbe1 5be1ecc7 b3eacd33 6201111b 90d08e58 b9776d7d b3eacd33 10c22bcf 3e194352 075f4ab8
+    block_before: null
+  blank_before: []
+  content: |-
+    {{< doc-test paths="tls-passthrough,tls-passthrough-listenerset" >}}
+    # Scenarios share the runner's working directory, and the next step's
+    # `mkdir example_certs` fails if an earlier scenario left the folder behind.
+    rm -rf example_certs
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 43f19571cfed86d5
+    lang: shell
+    lines: 3c7087ca a8f1ee92
+    preview: openssl req -out example_certs/nginx.example.com.csr -newkey rsa:2048 -nodes -ke
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="tls-passthrough,tls-passthrough-listenerset" >}}
+       # The page shows these two commands in a code block without a language,
+       # which the extractor skips, so they are repeated here unchanged.
+       openssl req -out example_certs/nginx.example.com.csr -newkey rsa:2048 -nodes -keyout example_certs/nginx.example.com.key -subj "/CN=nginx.example.com/O=some organization"
+       openssl x509 -req -sha256 -days 365 -CA example_certs/example.com.crt -CAkey example_certs/example.com.key -set_serial 0 -in example_certs/nginx.example.com.csr -out example_certs/nginx.example.com.crt
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: ac08575fbd88038a
+    lang: yaml
+    lines: 16c71da1 f1540154 0d6480f0 8c8c4228 a84d9312 fa1e8330 7961b4b4 36184fa5 0ff65a1a 02286607 9693ecf1 8432e015 7961b4b4 cb3f91d5 58584366 ab78925c 8c8c4228 a84d9312 36184fa5 8432e015 839a5cac 7961b4b4 97bcd5e0 a58565b2 8c8c4228 fa1e8330 7961b4b4 36184fa5 04968f51 28f5ced4 76c4056a 0ff65a1a 451cb444 fcd8c64a d886a70a c0cb47dc 4fb8b4ed 8c04eab8 9eced44c 4fb8b4ed c5d7714b d886a70a 889016e3 5583ba54 8c04eab8 035b1576 0da88b46 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="tls-passthrough,tls-passthrough-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the my-nginx deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: default
+               name: my-nginx
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 0af9990cf5f0a3d3
+    lang: yaml
+    lines: 16c71da1 8c67597e 4b08c199 8c8c4228 56af0408 0ccc8edc 36184fa5 301e1bfa bfbc7f90 d3d416e7 18dde8a1 0bebd850 3de9d845 a3b86ab6 e6365cc1 0d6480f0 a84d9312 c6ba4159 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |-
+    {{< doc-test paths="tls-passthrough" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tls-passthrough Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: tls-passthrough
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls listener on the tls-passthrough Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: tls-passthrough
+        jsonPath: "$.status.listeners[?(@.name=='tls')].conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tlsroute TLSRoute to be accepted
+      wait:
+        target:
+          kind: TLSRoute
+          metadata:
+            namespace: default
+            name: tlsroute
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tlsroute TLSRoute backend refs to be resolved
+      wait:
+        target:
+          kind: TLSRoute
+          metadata:
+            namespace: default
+            name: tlsroute
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: the tls listener on the tls-passthrough Gateway has 1 attached route
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: tls-passthrough
+        jsonPath: "$.status.listeners[?(@.name=='tls')].attachedRoutes"
+        jsonPathExpectation:
+          comparator: equals
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls-passthrough gateway service to get a load balancer address (Gateway listeners)
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: tls-passthrough
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 946287beabf48cd4
+    lang: yaml
+    lines: 16c71da1 8c67597e 4b08c199 8c8c4228 56af0408 0ccc8edc 36184fa5 301e1bfa bfbc7f90 d3d416e7 74cd659a 0bebd850 a8f2cfa5 350955ef 3de9d845 a3b86ab6 e6365cc1 0d6480f0 a84d9312 c6ba4159 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |-
+    {{< doc-test paths="tls-passthrough-listenerset" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tls-passthrough Gateway to be accepted
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: tls-passthrough
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the my-tls-listenerset ListenerSet to be accepted
+      wait:
+        target:
+          kind: ListenerSet
+          metadata:
+            namespace: kgateway-system
+            name: my-tls-listenerset
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the my-tls-listenerset ListenerSet to be programmed
+      wait:
+        target:
+          kind: ListenerSet
+          metadata:
+            namespace: kgateway-system
+            name: my-tls-listenerset
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: the tls-passthrough Gateway reports one attached ListenerSet
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: tls-passthrough
+        jsonPath: "$.status.attachedListenerSets"
+        jsonPathExpectation:
+          comparator: equals
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tlsroute TLSRoute to be accepted
+      wait:
+        target:
+          kind: TLSRoute
+          metadata:
+            namespace: default
+            name: tlsroute
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tlsroute TLSRoute backend refs to be resolved
+      wait:
+        target:
+          kind: TLSRoute
+          metadata:
+            namespace: default
+            name: tlsroute
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: the tlsroute TLSRoute reports the ListenerSet as its parent
+      wait:
+        target:
+          kind: TLSRoute
+          metadata:
+            namespace: default
+            name: tlsroute
+        jsonPath: "$.status.parents[0].parentRef.kind"
+        jsonPathExpectation:
+          comparator: equals
+          value: "ListenerSet"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    - name: the tls-listener-set listener on the my-tls-listenerset ListenerSet has 1 attached route
+      wait:
+        target:
+          kind: ListenerSet
+          metadata:
+            namespace: kgateway-system
+            name: my-tls-listenerset
+        jsonPath: "$.status.listeners[?(@.name=='tls-listener-set')].attachedRoutes"
+        jsonPathExpectation:
+          comparator: equals
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tls-passthrough gateway service to get a load balancer address (ListenerSet)
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: tls-passthrough
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 688c6bc0ec0fa484
+    lang: sh
+    lines: c0bf5426 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="tls-passthrough,tls-passthrough-listenerset" >}}
+       # Passthrough: the gateway holds no certificate for this listener, so a certificate
+       # for nginx.example.com signed by the page's root CA can only come from nginx.
+       # s_client verifies the chain against the page's root CA and the name, so a
+       # wrong certificate fails here; the subject proves which certificate it was.
+       subject=""
+       for i in $(seq 1 60); do
+         subject=$(openssl s_client -connect "${INGRESS_GW_ADDRESS}:8443" -servername nginx.example.com \
+           -CAfile example_certs/example.com.crt -verify_hostname nginx.example.com -verify_return_error </dev/null 2>/dev/null \
+           | openssl x509 -noout -subject -nameopt RFC2253 2>/dev/null) && [ -n "$subject" ] && break
+         echo "attempt $i: no verified certificate for nginx.example.com yet, retrying"
+         sleep 2
+       done
+       echo "nginx.example.com: $subject"
+       [[ "$subject" == *"CN=nginx.example.com"* && "$subject" == *"O=some organization"* ]] || { echo "nginx.example.com did not get the certificate with CN=nginx.example.com, O=some organization"; exit 1; }
+       # The request verifies the certificate against the root CA (no -k).
+       code=""
+       for i in $(seq 1 60); do
+         code=$(curl -sS -o /tmp/doc-test-body -D /tmp/doc-test-headers -w '%{http_code}' --cacert example_certs/example.com.crt \
+           --resolve "nginx.example.com:8443:${INGRESS_GW_ADDRESS}" https://nginx.example.com:8443/) && [ "$code" = "200" ] && break
+         echo "attempt $i: got '${code:-no response}' from nginx.example.com, retrying"
+         sleep 2
+       done
+       [ "$code" = "200" ] || { echo "HTTPS request to nginx.example.com/ with certificate verification did not return 200"; exit 1; }
+       grep -q 'Welcome to nginx' /tmp/doc-test-body || { echo "response from nginx.example.com/ does not contain Welcome to nginx"; cat /tmp/doc-test-body; exit 1; }
+       grep -qi '^server: nginx' /tmp/doc-test-headers || { echo "response from nginx.example.com/ has no '^server: nginx' header"; cat /tmp/doc-test-headers; exit 1; }
+       {{< /doc-test >}}

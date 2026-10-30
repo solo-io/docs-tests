@@ -1,0 +1,190 @@
+format: 1
+source: content/docs/envoy/latest/migrate/examples/traffic-mirroring.md
+blocks:
+- e54212f0381d4c61 bash
+- cbc2d3449ca1da80 bash
+- 10b5c4e162c7e87c bash
+- f6142e4657393d02 yaml
+- 2a4a8ce8b9c5b6a8 bash
+- a15c378432ea5afa yaml
+- 55c94860141e11b2 bash
+tags:
+- paths: migrate-traffic-mirroring
+  block: 0
+  fingerprint: e54212f0381d4c61
+  lang: bash
+  lines: c0029cca 4912a691 f1089fb2 8c8c4228 d45e5147 72ab0e66 f2fe8160 36184fa5 9620a283 3de9d845 2ac3fbc6 1c31dda0 6a61c178 b2bf84ed 3897150c 8485a4e1 f12798fe aa9675f5 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > shadow-ingress.yaml
+  form:
+    attr: paths="migrate-traffic-mirroring"
+    only: true
+    lead: ' '
+- paths: migrate-traffic-mirroring
+  block: 1
+  fingerprint: cbc2d3449ca1da80
+  lang: bash
+  lines: 675e6290 1aa867e4
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=kgateway \
+  form:
+    attr: paths="migrate-traffic-mirroring"
+    only: true
+    lead: ' '
+- paths: migrate-traffic-mirroring
+  block: 4
+  fingerprint: 2a4a8ce8b9c5b6a8
+  lang: bash
+  lines: 2a4a8ce8
+  preview: kubectl apply -f shadow-kgateway.yaml
+  form:
+    attr: paths="migrate-traffic-mirroring"
+    only: true
+    lead: ' '
+- paths: migrate-traffic-mirroring
+  block: 5
+  fingerprint: a15c378432ea5afa
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6c5deb22 36184fa5 301e1bfa d536d4ea d3d416e7 57249e4b 3de9d845 a3b86ab6 9372d642 da480536 eaaad965 aeca2b3d bf068a96 aecdc9c3 e95173ca ae6b70e3 e755a6d9 1e49dbf3 70c97555 13e7e127 da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="migrate-traffic-mirroring"
+    only: true
+    lead: ' '
+- paths: migrate-traffic-mirroring
+  block: 6
+  fingerprint: 55c94860141e11b2
+  lang: bash
+  lines: 55c94860
+  preview: kubectl get httproute shadow-demo-app-example-com -o yaml
+  form:
+    attr: paths="migrate-traffic-mirroring"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: cbc2d3449ca1da80
+    lang: bash
+    lines: 675e6290 1aa867e4
+    preview: ingress2gateway print --providers=ingress-nginx --emitter=kgateway \
+  content: |-
+    {{< doc-test paths="migrate-traffic-mirroring" >}}
+    # Test-only: the converted file must contain what the page's "After"
+    # section shows: the same resources, names, and fields, and none of the
+    # settings that the page says the tool leaves out.
+    python3 - shadow-kgateway.yaml <<'PY'
+    import sys, yaml
+    path = sys.argv[1]
+    docs = [d for d in yaml.safe_load_all(open(path)) if d]
+    def get(kind, name):
+        for d in docs:
+            if d.get("kind") == kind and (d.get("metadata") or {}).get("name") == name:
+                return d
+        have = ", ".join("%s/%s" % (d.get("kind"), (d.get("metadata") or {}).get("name")) for d in docs)
+        sys.exit("FAIL: %s has no %s named %s. It has: %s" % (path, kind, name, have))
+    def only(*want):
+        have = sorted("%s/%s" % (d.get("kind"), (d.get("metadata") or {}).get("name")) for d in docs)
+        if have != sorted(want):
+            sys.exit("FAIL: %s has %s. The page shows %s." % (path, ", ".join(have), ", ".join(sorted(want))))
+    def check(obj, field, want):
+        cur = obj
+        for key in field.split("."):
+            try:
+                cur = cur[int(key)] if key.isdigit() else cur[key]
+            except (KeyError, IndexError, TypeError):
+                sys.exit("FAIL: %s %s has no %s. The page shows %r." % (obj["kind"], obj["metadata"]["name"], field, want))
+        if cur != want:
+            sys.exit("FAIL: %s %s %s is %r. The page shows %r." % (obj["kind"], obj["metadata"]["name"], field, cur, want))
+    def absent(obj, field):
+        cur = obj
+        for key in field.split("."):
+            try:
+                cur = cur[int(key)] if key.isdigit() else cur[key]
+            except (KeyError, IndexError, TypeError):
+                return
+        sys.exit("FAIL: %s %s has %s. The page says it does not." % (obj["kind"], obj["metadata"]["name"], field))
+    only("Gateway/nginx", "HTTPRoute/shadow-demo-app-example-com")
+    gw = get("Gateway", "nginx")
+    check(gw, "spec.gatewayClassName", "kgateway")
+    check(gw, "spec.listeners.0.hostname", "app.example.com")
+    check(gw, "spec.listeners.0.name", "app-example-com-http")
+    check(gw, "spec.listeners.0.port", 80)
+    check(gw, "spec.listeners.0.protocol", "HTTP")
+    rt = get("HTTPRoute", "shadow-demo-app-example-com")
+    check(rt, "spec.hostnames.0", "app.example.com")
+    check(rt, "spec.parentRefs.0.name", "nginx")
+    check(rt, "spec.rules.0.name", "rule-0")
+    check(rt, "spec.rules.0.backendRefs.0.name", "production-svc")
+    check(rt, "spec.rules.0.backendRefs.0.port", 80)
+    check(rt, "spec.rules.0.matches.0.path.type", "PathPrefix")
+    check(rt, "spec.rules.0.matches.0.path.value", '/')
+    absent(rt, "spec.rules.0.filters")
+    print("OK: %s matches the page's After section" % path)
+    PY
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 55c94860141e11b2
+    lang: bash
+    lines: 55c94860
+    preview: kubectl get httproute shadow-demo-app-example-com -o yaml
+  content: |-
+    {{< doc-test paths="migrate-traffic-mirroring" >}}
+    # Test-only: every resource in the converted file and every resource the page
+    # creates by hand exists, and every route and policy is Accepted. No app runs
+    # behind the Ingress's backends in the test cluster, so ResolvedRefs and
+    # traffic are not checked.
+    mig_resources=$(python3 - shadow-kgateway.yaml <<'PY'
+    import sys, yaml
+    for d in yaml.safe_load_all(open(sys.argv[1])):
+        if d:
+            group = d["apiVersion"].split("/")[0]
+            print("%s.%s/%s" % (d["kind"].lower(), group, d["metadata"]["name"]))
+    PY
+    )
+    for mig_res in $mig_resources; do
+      kubectl get "$mig_res" -n default >/dev/null || { echo "FAIL: $mig_res was not created"; exit 1; }
+      case "$mig_res" in
+        httproute.*) mig_jp='{.status.parents[0].conditions[?(@.type=="Accepted")].status}' ;;
+        trafficpolicy.*|backendconfigpolicy.*) mig_jp='{.status.ancestors[0].conditions[?(@.type=="Accepted")].status}' ;;
+        *) echo "OK: $mig_res exists"; continue ;;
+      esac
+      mig_status=""
+      for mig_try in $(seq 1 60); do
+        mig_status=$(kubectl get "$mig_res" -n default -o jsonpath="$mig_jp" 2>/dev/null || true)
+        [ "$mig_status" = "True" ] && break
+        sleep 5
+      done
+      if [ "$mig_status" != "True" ]; then
+        echo "FAIL: $mig_res is not Accepted after 5 minutes. Status:"
+        kubectl get "$mig_res" -n default -o jsonpath='{.status}' || true
+        exit 1
+      fi
+      echo "OK: $mig_res is Accepted"
+    done
+    # Test-only: the hand-authored HTTPRoute replaced the converted one. It still sends
+    # traffic to production-svc and mirrors it to staging-svc on port 80.
+    mig_ok=""
+    for mig_try in $(seq 1 60); do
+      if kubectl get httproute.gateway.networking.k8s.io/shadow-demo-app-example-com -n default -o json | python3 -c '
+    import json, sys
+    r = json.load(sys.stdin)
+    spec_ok = (r["spec"]["rules"][0]["backendRefs"][0].get("name") == "production-svc"
+               and (r["spec"]["rules"][0].get("filters") or [{}])[0].get("type") == "RequestMirror"
+               and r["spec"]["rules"][0]["filters"][0]["requestMirror"]["backendRef"].get("name") == "staging-svc"
+               and r["spec"]["rules"][0]["filters"][0]["requestMirror"]["backendRef"].get("port") == 80)
+    gen = r["metadata"]["generation"]
+    status = r.get("status") or {}
+    entries = (status.get("parents") or []) + (status.get("ancestors") or [])
+    accepted = any(c.get("type") == "Accepted" and c.get("status") == "True" and c.get("observedGeneration") == gen
+                   for e in entries for c in e.get("conditions") or [])
+    sys.exit(0 if spec_ok and accepted else 1)
+    '; then mig_ok=1; break; fi
+      sleep 5
+    done
+    if [ -z "$mig_ok" ]; then
+      echo "FAIL: httproute.gateway.networking.k8s.io/shadow-demo-app-example-com does not have the page's settings, or is not Accepted for its current generation, after 5 minutes:"
+      kubectl get httproute.gateway.networking.k8s.io/shadow-demo-app-example-com -n default -o yaml || true
+      exit 1
+    fi
+    echo "OK: httproute.gateway.networking.k8s.io/shadow-demo-app-example-com has the page's settings and is Accepted"
+    {{< /doc-test >}}

@@ -1,0 +1,328 @@
+format: 1
+source: assets/kgw-docs/pages/setup/customize/custom-bootstrap.md
+blocks:
+- 9be70eef234f07a2 yaml
+- f96808c9529f1243 sh
+- e8a18a18ddc6691a yaml
+- 23a5cce2a90fb3d6 sh
+- 7e507df3a21e9350 yaml
+- 355c9392402e4702 sh
+- 059c787b17014d3c sh
+- 977825fa63a80a6b sh
+- 83c0d6e479306dd8 console
+- 0e02555416f939e9 sh
+tags:
+- paths: custom-bootstrap
+  block: 0
+  fingerprint: 9be70eef234f07a2
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 18bfcf8e 97bcd5e0 cb3f91d5 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 1ecdac76 4a23a5a4 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="custom-bootstrap"
+    only: true
+    lead: ' '
+- paths: custom-bootstrap
+  block: 1
+  fingerprint: f96808c9529f1243
+  lang: sh
+  lines: f96808c9
+  preview: kubectl get configmap custom -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -
+  form:
+    attr: paths="custom-bootstrap"
+    only: true
+    lead: ' '
+- paths: custom-bootstrap
+  block: 3
+  fingerprint: 23a5cce2a90fb3d6
+  lang: sh
+  lines: 23a5cce2
+  preview: kubectl apply -f custom-bootstrap.yaml
+  form:
+    attr: paths="custom-bootstrap"
+    only: true
+    lead: ' '
+- paths: custom-bootstrap
+  block: 4
+  fingerprint: 7e507df3a21e9350
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 18bfcf8e 97bcd5e0 be80440e 36184fa5 a58565b2 36184fa5 c5d7714b 9b00604a 51699912 889016e3 639efa8e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="custom-bootstrap"
+    only: true
+    lead: ' '
+- paths: custom-bootstrap
+  block: 5
+  fingerprint: 355c9392402e4702
+  lang: sh
+  lines: 355c9392
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} | grep custom
+  form:
+    attr: paths="custom-bootstrap"
+    only: true
+    lead: ' '
+- paths: custom-bootstrap
+  block: 9
+  fingerprint: 0e02555416f939e9
+  lang: sh
+  lines: d14976e4 0462678b dcafe1ea
+  preview: kubectl delete gateway custom -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="custom-bootstrap"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 9be70eef234f07a2
+    lang: yaml
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 18bfcf8e 97bcd5e0 cb3f91d5 cd44d8cd 8c67597e 8c8c4228 6b67e0b5 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 1ecdac76 4a23a5a4 2ee1c717 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="custom-bootstrap" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the custom Gateway with gw-params to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: custom
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    # The control plane generates a ConfigMap named after the Gateway, with the
+    # Envoy bootstrap in its envoy.yaml entry. The next step reads it.
+    cb_boot=""
+    for attempt in $(seq 1 60); do
+      cb_boot=$(kubectl get configmap custom -n kgateway-system -o jsonpath='{.data.envoy\.yaml}' 2>/dev/null || true)
+      [ -n "$cb_boot" ] && break
+      echo "generated ConfigMap custom has no envoy.yaml yet, retrying ($attempt/60)"; sleep 2
+    done
+    if [ -z "$cb_boot" ]; then
+      echo "FAIL: the generated ConfigMap custom in kgateway-system has no envoy.yaml entry"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: f96808c9529f1243
+    lang: sh
+    lines: f96808c9
+    preview: kubectl get configmap custom -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -
+  content: |-
+    {{< doc-test paths="custom-bootstrap" >}}
+    # Test-only: the page asks the reader to edit custom-bootstrap.yaml by hand.
+    # Make the same edits: rename the ConfigMap to custom-bootstrap, and add the
+    # stats_config block from the page as a new top-level key of envoy.yaml. Also
+    # drop the server-set fields (resourceVersion, uid, creationTimestamp,
+    # managedFields, ownerReferences) that the copy carries, as the page says.
+    python3 - custom-bootstrap.yaml <<'PYEOF'
+    import sys, yaml
+    path = sys.argv[1]
+    with open(path) as f:
+        cm = yaml.safe_load(f)
+    meta = cm["metadata"]
+    meta["name"] = "custom-bootstrap"
+    for key in ("resourceVersion", "uid", "creationTimestamp", "managedFields", "ownerReferences"):
+        meta.pop(key, None)
+    boot = cm["data"]["envoy.yaml"]
+    if "stats_config" in yaml.safe_load(boot):
+        sys.exit("FAIL: the generated bootstrap already has a stats_config key; the page adds it as a new key")
+    if not boot.endswith("\n"):
+        boot += "\n"
+    boot += (
+        "stats_config:\n"
+        "  histogram_bucket_settings:\n"
+        "  - match:\n"
+        "      prefix: \"cluster.\"\n"
+        "    buckets: [1, 5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]\n"
+    )
+    yaml.safe_load(boot)
+    cm["data"]["envoy.yaml"] = boot
+    with open(path, "w") as f:
+        yaml.safe_dump(cm, f, sort_keys=False)
+    PYEOF
+    grep -n "name: custom-bootstrap" custom-bootstrap.yaml
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 7e507df3a21e9350
+    lang: yaml
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 18bfcf8e 97bcd5e0 be80440e 36184fa5 a58565b2 36184fa5 c5d7714b 9b00604a 51699912 889016e3 639efa8e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="custom-bootstrap" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the envoy-config volume of deployment/custom to point at the custom-bootstrap ConfigMap
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: custom
+        jsonPath: "$.spec.template.spec.volumes[?(@.name=='envoy-config')].configMap.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: "custom-bootstrap"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    # The overlay changes the pod template, so the Deployment rolls out new pods
+    # by itself; no restart is needed. Wait for the rollout to finish.
+    kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 977825fa63a80a6b
+    lang: sh
+    lines: 977825fa
+    preview: curl -s localhost:19000/config_dump | grep -A25 histogram_bucket_settings
+  content: |-
+    {{< doc-test paths="custom-bootstrap" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the applied custom-bootstrap ConfigMap carries the histogram_bucket_settings
+      wait:
+        target:
+          kind: ConfigMap
+          metadata:
+            namespace: kgateway-system
+            name: custom-bootstrap
+        jsonPath: "$.data['envoy.yaml']"
+        jsonPathExpectation:
+          comparator: contains
+          value: "histogram_bucket_settings"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 3
+    EOF
+    # Test-only: the page reads config_dump through a port-forward, which the test
+    # cannot use. The proxy's admin port listens on 127.0.0.1:19000 inside the pod,
+    # so read it with kubectl exec instead. The bootstrap section of config_dump
+    # must carry the histogram_bucket_settings from the custom ConfigMap.
+    cb_ok=0
+    cb_buckets=""
+    for attempt in $(seq 1 60); do
+      cb_buckets=$(kubectl exec deploy/custom -n kgateway-system -- wget -qO- "http://127.0.0.1:19000/config_dump" 2>/dev/null | python3 -c '
+    import json, sys
+    def find(o, key):
+        if isinstance(o, dict):
+            if key in o:
+                return o[key]
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = find(v, key)
+                if r is not None:
+                    return r
+        return None
+    try:
+        s = find(json.load(sys.stdin), "histogram_bucket_settings") or []
+        print(json.dumps([{"prefix": e.get("match", {}).get("prefix"), "buckets": [float(b) for b in e.get("buckets", [])]} for e in s]))
+    except Exception:
+        print("null")
+    ' || true)
+      if printf '%s' "$cb_buckets" | python3 -c '
+    import json, sys
+    want = [{"prefix": "cluster.", "buckets": [1.0, 5.0, 10.0, 25.0, 50.0, 100.0, 250.0, 500.0, 1000.0, 2500.0, 5000.0, 10000.0]}]
+    sys.exit(0 if json.load(sys.stdin) == want else 1)
+    ' 2>/dev/null; then
+        cb_ok=1
+        break
+      fi
+      echo "custom histogram_bucket_settings not in the proxy bootstrap yet (${cb_buckets:-none}), retrying ($attempt/60)"; sleep 3
+    done
+    if [ "$cb_ok" -ne 1 ]; then
+      echo "FAIL: the bootstrap of deploy/custom has histogram_bucket_settings ${cb_buckets:-none}, want prefix cluster. with buckets 1..10000"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 83c0d6e479306dd8
+    lang: console
+    lines: 819021da 021fb596 83af6e88 88dce941 e52a1813 aa214868 e9586b61 16712ce9 60263a31 70b51b9c e90c1863 7b3565ec 4d5feae9 35f1aa9f 63f03d3c 6a442751 16d7e84c 39e5b483 cfae0d42 d10b36aa cfae0d42
+    preview: '"histogram_bucket_settings": ['
+  content: |-
+    {{< doc-test paths="custom-bootstrap" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the custom Gateway Service to get a load balancer address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: custom
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # The custom bootstrap keeps the control-plane sections, so the proxy still
+    # gets its routes over xDS and serves traffic. Test-only: route
+    # custom-bootstrap.example.com on the custom Gateway to httpbin and send a
+    # request through the Gateway's load balancer address on port 80.
+    kubectl apply -f- <<'EOF'
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: custom-bootstrap-httpbin
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: custom
+        namespace: kgateway-system
+      hostnames:
+      - custom-bootstrap.example.com
+      rules:
+      - backendRefs:
+        - name: httpbin
+          port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the custom-bootstrap-httpbin HTTPRoute to be accepted by the custom Gateway
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: custom-bootstrap-httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    cb_addr=""
+    for attempt in $(seq 1 60); do
+      cb_addr=$(kubectl get svc custom -n kgateway-system -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}" 2>/dev/null || true)
+      [ -n "$cb_addr" ] && break
+      echo "Service custom has no load balancer address yet, retrying ($attempt/60)"; sleep 5
+    done
+    if [ -z "$cb_addr" ]; then
+      echo "FAIL: Service custom in kgateway-system got no load balancer address"
+      exit 1
+    fi
+    cb_code=""
+    for attempt in $(seq 1 30); do
+      cb_code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "http://${cb_addr}:80/headers" -H "host: custom-bootstrap.example.com") || true
+      [ "$cb_code" = "200" ] && break
+      echo "request through the custom Gateway returned '$cb_code', want 200, retrying ($attempt/30)"; sleep 2
+    done
+    if [ "$cb_code" != "200" ]; then
+      echo "FAIL: request to custom-bootstrap.example.com through the custom Gateway returned '$cb_code', want 200"
+      exit 1
+    fi
+    {{< /doc-test >}}

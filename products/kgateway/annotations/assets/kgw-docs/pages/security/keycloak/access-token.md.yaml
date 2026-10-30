@@ -1,0 +1,263 @@
+format: 1
+source: assets/kgw-docs/pages/security/keycloak/access-token.md
+blocks:
+- 57e132b89e4dc7f8 yaml
+- 27ce20aa6fd20b33 yaml
+- 41a2cc5dfd94c751 sh
+- 56fff2f3a36470e9 text
+- 31e5ed974a729adf sh
+- b400881cfa58d562 sh
+- 983e7192e5ed9e8e text
+- d3129c21c7bc587e bash
+- f590f9fad1be7dad sh
+- 387692d49a9a6dca bash
+- 12bff835d474ae82 sh
+- 3546a5cd8c3fa5e2 json
+- 8f8f96692a0bbfa7 bash
+- 7cba6b68350d576b bash
+- 6364ab47a888e2d8 text
+- 0b5453897a43451f sh
+tags:
+- paths: keycloak-access-token
+  block: 0
+  fingerprint: 57e132b89e4dc7f8
+  lang: yaml
+  lines: 16c71da1 88b9492f 5ee5f7dc 8c8c4228 2ef223d7 0bebd850 36184fa5 9b9d0530 a1343bf6 a5b107cc d214ed51 44ec9b74 b93c9907 70c97555 69f54740 ad65deb7 28101486 0bebd850 b65713b9 837dc1fd df2f738a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak-access-token"
+    only: true
+    lead: ' '
+- paths: keycloak-access-token
+  block: 1
+  fingerprint: 27ce20aa6fd20b33
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 a4aca1f3 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e34dc3a0 248578da 2ef223d7 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak-access-token"
+    only: true
+    lead: ' '
+- paths: keycloak-access-token
+  block: 2
+  fingerprint: 41a2cc5dfd94c751
+  lang: sh
+  lines: 41a2cc5d
+  preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} keycloak-jwt-poli
+  form:
+    attr: paths="keycloak-access-token"
+    only: true
+    lead: ' '
+- paths: keycloak-access-token
+  block: 15
+  fingerprint: 0b5453897a43451f
+  lang: sh
+  lines: 6e3da719 6296f115
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} keycloak-jwt-p
+  form:
+    attr: paths="keycloak-access-token"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 57e132b89e4dc7f8
+    lang: yaml
+    lines: 16c71da1 88b9492f 5ee5f7dc 8c8c4228 2ef223d7 0bebd850 36184fa5 9b9d0530 a1343bf6 a5b107cc d214ed51 44ec9b74 b93c9907 70c97555 69f54740 ad65deb7 28101486 0bebd850 b65713b9 837dc1fd df2f738a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="keycloak-access-token" >}}
+       # GatewayExtension has no Accepted condition to wait on, so check that the
+       # keycloak-jwt provider exists with the page's issuer.
+       YAMLTest -f - <<'EOF'
+       - name: the keycloak-jwt GatewayExtension has the keycloak provider with the realm issuer
+         wait:
+           target:
+             kind: GatewayExtension
+             metadata:
+               namespace: kgateway-system
+               name: keycloak-jwt
+           jsonPath: "$.spec.jwt.providers[0].issuer"
+           jsonPathExpectation:
+             comparator: equals
+             value: https://keycloak.example.com/realms/myrealm
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 41a2cc5dfd94c751
+    lang: sh
+    lines: 41a2cc5d
+    preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} keycloak-jwt-poli
+  content: |2-
+       {{< doc-test paths="keycloak-access-token" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the keycloak-jwt-policy TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: keycloak-jwt-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 983e7192e5ed9e8e
+    lang: text
+    lines: 983e7192
+    preview: < HTTP/1.1 401 Unauthorized
+  content: |2-
+       {{< doc-test paths="keycloak-access-token" >}}
+       YAMLTest -f - <<'EOF'
+       - name: keycloak-access-token - a request without a token is rejected with 401
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: "www.example.com"
+         source:
+           type: local
+         expect:
+           statusCode: 401
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 12bff835d474ae82
+    lang: sh
+    lines: 12bff835
+    preview: echo $TOKEN | jq -rR 'split(".")[1] | gsub("-"; "+") | gsub("_"; "/") | @base64d
+  content: |2-
+       {{< doc-test paths="keycloak-access-token" >}}
+       # Test-only: the page's token request has a YOUR_CLIENT_SECRET placeholder
+       # and needs keycloak.example.com to resolve. Use the secret from the setup
+       # page's realm ConfigMap and reach keycloak.example.com through the
+       # keycloak-lb Service from the keycloak prerequisite.
+       TOKEN=""
+       for i in $(seq 1 30); do
+         TOKEN=$(curl -sk --max-time 10 --connect-to "keycloak.example.com:443:${KEYCLOAK_ADDRESS}:443" \
+           -d "client_id=kgateway-client" \
+           -d "client_secret=kgateway-client-secret" \
+           -d "username=testuser" \
+           -d "password=password" \
+           -d "grant_type=password" \
+           "https://keycloak.example.com/realms/myrealm/protocol/openid-connect/token" \
+           | jq -r '.access_token // empty' 2>/dev/null || true)
+         [ -n "$TOKEN" ] && break
+         sleep 5
+       done
+       if [ -z "$TOKEN" ]; then
+         echo "FAIL: Keycloak returned no access token for testuser on kgateway-client"
+         exit 1
+       fi
+       export TOKEN
+       # Decode the base64url payload (the page's decode command is checked at the end).
+       payload=$(cut -d. -f2 <<<"$TOKEN" | tr '_-' '/+')
+       while [ $(( ${#payload} % 4 )) -ne 0 ]; do payload="${payload}="; done
+       claims=$(base64 -d <<<"$payload" 2>/dev/null || base64 --decode <<<"$payload")
+       iss=$(jq -r '.iss' <<<"$claims")
+       aud=$(jq -c '[.aud] | flatten' <<<"$claims")
+       if [ "$iss" != "https://keycloak.example.com/realms/myrealm" ]; then
+         echo "FAIL: token iss is '${iss}', want the GatewayExtension issuer https://keycloak.example.com/realms/myrealm"
+         exit 1
+       fi
+       if ! jq -e 'index("kgateway-client") != null' <<<"$aud" >/dev/null; then
+         echo "FAIL: token aud is ${aud}, want it to include kgateway-client"
+         exit 1
+       fi
+       echo "token iss=${iss} aud=${aud}"
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 6364ab47a888e2d8
+    lang: text
+    lines: 6364ab47
+    preview: < HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="keycloak-access-token" >}}
+       YAMLTest -f - <<'EOF'
+       - name: keycloak-access-token - a request with the Keycloak token gets 200 from httpbin
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: "www.example.com"
+             Authorization: "Bearer ${TOKEN}"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyContains:
+           - '"headers"'
+       - name: keycloak-access-token - a request with a token whose signature does not verify is rejected with 401
+         retries: 30
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: "www.example.com"
+             Authorization: "Bearer ${TOKEN}x"
+         source:
+           type: local
+         expect:
+           statusCode: 401
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 6364ab47a888e2d8
+    lang: text
+    lines: 6364ab47
+    preview: < HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="keycloak-access-token" >}}
+       # Step 4 says this command prints the token's iss and aud claims.
+       if ! out=$(echo $TOKEN | jq -rR 'split(".")[1] | gsub("-"; "+") | gsub("_"; "/") | @base64d | fromjson | {iss, aud}' 2>&1); then
+         echo "FAIL: the step 4 decode command failed: ${out}"
+         exit 1
+       fi
+       if ! grep -qF '"iss": "https://keycloak.example.com/realms/myrealm"' <<<"$out" || ! grep -qF '"kgateway-client"' <<<"$out"; then
+         echo "FAIL: the step 4 decode command did not print the token's iss and aud claims: ${out}"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 0b5453897a43451f
+    lang: sh
+    lines: 6e3da719 6296f115
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} keycloak-jwt-p
+  content: |-
+    {{< doc-test paths="keycloak-access-token" >}}
+    # Test-only: the cleanup removed the policy, so the route is open again.
+    YAMLTest -f - <<'EOF'
+    - name: keycloak-access-token - after cleanup, a request without a token succeeds again
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

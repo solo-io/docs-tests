@@ -1,0 +1,159 @@
+format: 1
+source: content/docs/envoy/main/observability/otel-stack.md
+blocks:
+- 7e1efefadfa63773 yaml
+- 4653ef4685cbfced yaml
+- d90f239caf23fe74 yaml
+- aec440d461962e35 yaml
+- 0b138d1c85211c59 sh
+- e68d4e0b6feb7017 sh
+- 8d0f2ea68c68e089
+- 5ab74c897cd126a6 sh
+- ef2d127de37b942b
+- a35cd07ec2da789c sh
+- 4a44dc15364204a8
+- a712e46bf970308f sh
+- 9da8d8b941833386 sh
+- 1b0b1722ae15648d sh
+- 584c858a0f30fcc9 sh
+- 067e6104febc800b sh
+- a0aa3f0a626256a6 sh
+tags:
+- paths: otel-stack
+  block: 0
+  fingerprint: 7e1efefadfa63773
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 94c6a909 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 a6453654 6d0a9a1d 70c97555 a5e38d64 b0c4deaf 5a41b93f b647e2ac ba822d16 13bb91ef abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 1
+  fingerprint: 4653ef4685cbfced
+  lang: yaml
+  lines: 16c71da1 979905a0 e47a48f5 8c8c4228 adeee4c2 b0c4deaf 36184fa5 0e20b496 71ab14c2 9144003f 0bebd850 55708cb7 e6365cc1 0d6480f0 a5e38d64 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 2
+  fingerprint: d90f239caf23fe74
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 ba8a4e98 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 390f7e12 93a4b62b 532a06d9 ea8d0f4e 6d0a9a1d 70c97555 be85e8da b0c4deaf 5a41b93f de3107a5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 3
+  fingerprint: aec440d461962e35
+  lang: yaml
+  lines: 16c71da1 979905a0 e47a48f5 8c8c4228 3bcab326 b0c4deaf 36184fa5 0e20b496 71ab14c2 9144003f 0bebd850 55708cb7 e6365cc1 0d6480f0 be85e8da abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: aec440d461962e35
+    lang: yaml
+    lines: 16c71da1 979905a0 e47a48f5 8c8c4228 3bcab326 b0c4deaf 36184fa5 0e20b496 71ab14c2 9144003f 0bebd850 55708cb7 e6365cc1 0d6480f0 be85e8da abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="otel-stack" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the logging-policy ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: logging-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tracing-policy ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: tracing-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 8d0f2ea68c68e089
+    lang: ''
+    lines: cd58cf30 fe260b1b ab5df625
+    preview: < HTTP/1.1 418 Unknown
+  content: |-
+    {{< doc-test paths="otel-stack" >}}
+    # Send the page's requests until the access logs reach the logs collector and
+    # the spans reach the traces collector. The debug exporter prints both.
+    logs=0; traces=0
+    for i in $(seq 1 30); do
+      for j in 1 2 3 4 5; do
+        curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/status/418" -H "host: www.example.com:8080" || true
+      done
+      sleep 5
+      out=$(kubectl -n telemetry logs deploy/opentelemetry-collector-logs 2>/dev/null || true)
+      logs=$(grep -c '/status/418' <<<"$out" || true)
+      out=$(kubectl -n telemetry logs deploy/opentelemetry-collector-traces 2>/dev/null || true)
+      traces=$(grep -c 'http.status_code: Str(418)' <<<"$out" || true)
+      echo "attempt $i: $logs access log lines, $traces spans with status 418"
+      [ "$logs" -ge 5 ] && [ "$traces" -ge 1 ] && break
+    done
+    [ "$logs" -ge 5 ] || { echo "the logs collector did not receive the gateway access logs"; exit 1; }
+    [ "$traces" -ge 1 ] || { echo "the traces collector did not receive the gateway spans"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 8d0f2ea68c68e089
+    lang: ''
+    lines: cd58cf30 fe260b1b ab5df625
+    preview: < HTTP/1.1 418 Unknown
+  content: |-
+    {{< doc-test paths="otel-stack" >}}
+    # The collectors export to the storage backends. Query Loki and Tempo from the
+    # curl pod that the Prometheus check started.
+    loki=""
+    for i in $(seq 1 36); do
+      loki=$(kubectl -n telemetry exec otel-stack-check -- curl -sfG \
+        http://loki.telemetry.svc.cluster.local:3100/loki/api/v1/query_range \
+        --data-urlencode 'query={service_name=~".+"} |= "/status/418"' \
+        --data-urlencode 'since=1h' --data-urlencode 'limit=5' 2>/dev/null || true)
+      [[ "$loki" == *'/status/418'* ]] && break
+      echo "attempt $i: Loki has no /status/418 access log yet: ${loki:0:200}"
+      sleep 5
+    done
+    [[ "$loki" == *'/status/418'* ]] || { echo "Loki did not store the gateway access logs"; exit 1; }
+    tempo=""
+    for i in $(seq 1 36); do
+      tempo=$(kubectl -n telemetry exec otel-stack-check -- curl -sfG \
+        http://tempo.telemetry.svc.cluster.local:3100/api/search \
+        --data-urlencode 'q={ resource.service.name = "http" }' --data-urlencode 'limit=5' 2>/dev/null || true)
+      [[ "$tempo" == *'"traceID"'* ]] && break
+      echo "attempt $i: Tempo has no traces for service http yet: ${tempo:0:200}"
+      sleep 5
+    done
+    [[ "$tempo" == *'"traceID"'* ]] || { echo "Tempo did not store the gateway traces"; exit 1; }
+    {{< /doc-test >}}

@@ -1,0 +1,182 @@
+format: 1
+source: assets/kgw-docs/snippets/argocd.md
+blocks:
+- 189bf76bb4d0140a sh
+- af2d1010c74d8888 console
+- 47a49d1ba2c456ba sh
+- e5858056c2740c97 yaml
+- 63def2635cff3eae yaml
+- 5fba5f3bf561451f sh
+- ed3303606ae13675 txt
+- dab8cceea145f56c sh
+tags:
+- paths: argocd
+  block: 0
+  fingerprint: 189bf76bb4d0140a
+  lang: sh
+  lines: 189bf76b
+  preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  form:
+    attr: paths="argocd"
+    only: true
+    lead: ' '
+- paths: argocd
+  block: 3
+  fingerprint: e5858056c2740c97
+  lang: yaml
+  lines: 16c71da1 30222287 297654b7 8c8c4228 e901ba59 9b333b0c 36184fa5 0918c5f0 0bebd850 ad5d5e1a cd21b2a6 26ffdce3 141180a1 635643e4 37db9266 d2717b7b 03e5dd0d 3ae37018 2d39b062 9adc0fe6 f0a2c01f 31ec80a0 1adaf582 2ee304ec 333730a0 43401c6a a0caf9fb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="argocd"
+    only: true
+    lead: ' '
+- paths: argocd
+  block: 4
+  fingerprint: 63def2635cff3eae
+  lang: yaml
+  lines: 16c71da1 30222287 297654b7 8c8c4228 6810d63f 9b333b0c 36184fa5 0918c5f0 0bebd850 ad5d5e1a cd21b2a6 26ffdce3 af33efd4 635643e4 37db9266 14ceaa99 bf2d27e1 1c09eadb d2717b7b 03e5dd0d 3ae37018 2d39b062 9adc0fe6 f0a2c01f 31ec80a0 1adaf582 2ee304ec 333730a0 43401c6a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="argocd"
+    only: true
+    lead: ' '
+- paths: argocd
+  block: 5
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="argocd"
+    only: true
+    lead: ' '
+- paths: argocd
+  block: 7
+  fingerprint: dab8cceea145f56c
+  lang: sh
+  lines: dab8ccee
+  preview: kubectl get gatewayclass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}
+  form:
+    attr: paths="argocd"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: e5858056c2740c97
+    lang: yaml
+    lines: 16c71da1 30222287 297654b7 8c8c4228 e901ba59 9b333b0c 36184fa5 0918c5f0 0bebd850 ad5d5e1a cd21b2a6 26ffdce3 141180a1 635643e4 37db9266 d2717b7b 03e5dd0d 3ae37018 2d39b062 9adc0fe6 f0a2c01f 31ec80a0 1adaf582 2ee304ec 333730a0 43401c6a a0caf9fb abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="argocd" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for Argo CD to sync the kgateway-crds-helm Application
+      wait:
+        target:
+          kind: Application
+          metadata:
+            namespace: argocd
+            name: kgateway-crds-helm
+        jsonPath: "$.status.sync.status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Synced"
+        polling:
+          timeoutSeconds: 600
+          intervalSeconds: 5
+    - name: wait for the kgateway TrafficPolicy CRD from the Argo CD sync to be established
+      wait:
+        target:
+          kind: CustomResourceDefinition
+          metadata:
+            name: trafficpolicies.gateway.kgateway.dev
+        jsonPath: "$.status.conditions[?(@.type=='Established')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 5fba5f3bf561451f
+    lang: sh
+    lines: 5fba5f3b
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="argocd" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the kgateway-helm control plane deployment that Argo CD installed to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway-helm
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 600
+          intervalSeconds: 5
+    - name: wait for the controller to create and accept the kgateway GatewayClass
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: kgateway
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: dab8cceea145f56c
+    lang: sh
+    lines: dab8ccee
+    preview: kubectl get gatewayclass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}
+  content: |-
+    {{< doc-test paths="argocd" >}}
+    controller=$(kubectl get gatewayclass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} -o jsonpath='{.spec.controllerName}')
+    if [ "$controller" != "kgateway.dev/{{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}" ]; then
+      echo "FAIL: GatewayClass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} has controller '$controller', not kgateway.dev/{{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    section: (top of page)
+    line: b11fa8bf289afd29
+    occurrence: 0
+    words: 227907a1 a9c0ad21 b29814cf f0176876
+    block_before:
+      block: 7
+      fingerprint: dab8cceea145f56c
+      lang: sh
+      lines: dab8ccee
+      preview: kubectl get gatewayclass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}
+  content: |-
+    {{< doc-test paths="argocd" >}}
+    # Step 9: both Argo CD Applications report Healthy and Synced.
+    for app in kgateway-crds-helm kgateway-helm; do
+      for i in $(seq 1 60); do
+        sync=$(kubectl -n argocd get application "$app" -o jsonpath='{.status.sync.status}')
+        health=$(kubectl -n argocd get application "$app" -o jsonpath='{.status.health.status}')
+        [ "$sync" = "Synced" ] && [ "$health" = "Healthy" ] && break
+        echo "attempt $i: Application $app is sync '$sync', health '$health'; retrying"
+        sleep 5
+      done
+      if [ "$sync" != "Synced" ] || [ "$health" != "Healthy" ]; then
+        echo "FAIL: Argo CD Application $app is sync '$sync', health '$health'; want Synced and Healthy"
+        kubectl -n argocd get application "$app" -o jsonpath='{.status.conditions}'; echo
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}

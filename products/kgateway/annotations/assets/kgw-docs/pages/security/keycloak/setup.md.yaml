@@ -1,0 +1,328 @@
+format: 1
+source: assets/kgw-docs/pages/security/keycloak/setup.md
+blocks:
+- 727dcb87aa30a423 sh
+- 5530e3dd170dc09d sh
+- 4665205b1b791525 yaml
+- 1fab0e51463ce516 sh
+- 5301f8dd5e1b20c4 yaml
+- ae4cf59807a5d77e yaml
+- 325b9dd721b476bf sh
+- 35f7e85e0b07e019 powershell
+- e415387de7f046d7 text
+- 9dda683498b2eaa8 sh
+- 9dda683498b2eaa8 sh
+- 1055fa11be39893f text
+- 00427585dc816ae8 yaml
+- 8677579be9e2ba84 sh
+- f788994de2a21d5e yaml
+- fc6e1ac0f47466ec sh
+- c00c130d11bd9e0f sh
+tags:
+- paths: keycloak,keycloak-setup
+  block: 0
+  fingerprint: 727dcb87aa30a423
+  lang: sh
+  lines: 727dcb87
+  preview: kubectl create namespace keycloak
+  form:
+    attr: paths="keycloak,keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak,keycloak-setup
+  block: 1
+  fingerprint: 5530e3dd170dc09d
+  lang: sh
+  lines: b707dfc9 a428ac58
+  preview: openssl req -x509 -newkey rsa:4096 -keyout tls.key -out tls.crt -days 365 -nodes
+  form:
+    attr: paths="keycloak,keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak,keycloak-setup
+  block: 2
+  fingerprint: 4665205b1b791525
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 28101486 5e1d80db 36184fa5 8432e015 6ecd9479 0ff65a1a 52b5b541 f51d9754 b49874ff cb3f91d5 58584366 ab78925c 8c8c4228 28101486 5e1d80db 36184fa5 97bcd5e0 8432e015 839a5cac 6ecd9479 a58565b2 8c8c4228 fa1e8330 6ecd9479 36184fa5 04968f51 a5b107cc 9773333c 07426774 8db70061 37ad689e b9af6d3e 4c4631fd b9af6d3e 653769eb ce5f0d3a 642c017a 4e0a43e2 0ff65a1a 52b5b541 8be872c7 fcd8c64a 8f08e10d 5ecd3c2e c5d7714b 8f08e10d 035b1576 8f9d472c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak,keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak,keycloak-setup
+  block: 3
+  fingerprint: 1fab0e51463ce516
+  lang: sh
+  lines: 1fab0e51
+  preview: kubectl rollout status deployment/keycloak -n keycloak
+  form:
+    attr: paths="keycloak,keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak,keycloak-setup
+  block: 4
+  fingerprint: 5301f8dd5e1b20c4
+  lang: yaml
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 4ba423b3 5e1d80db ff72caa3 f24e5431 021fb596 a046dd90 afa07114 4af91329 4002a67b 021fb596 94bb11a0 0aa8583f afa07114 fe4ada09 59693229 be1075b9 41d04d50 a2c0f2fb 71e9ad62 39d4b54e c40883b2 a61b93ea 021fb596 eaad9d77 d15de3c7 aab74b88 6685a21a 6771bd6f f933c70d 26427009 d10b36aa d10b36aa cfae0d42 d10b36aa 39d4b54e 55d0c79c 021fb596 5148a496 afa07114 1db432fd 195edbc3 ee84d78b 2cb1ea16 021fb596 9c5ab799 a5e16ce6 d69e1824 d10b36aa cfae0d42 d10b36aa cfae0d42 d10b36aa abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak,keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak,keycloak-setup
+  block: 5
+  fingerprint: ae4cf59807a5d77e
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 28101486 5e1d80db 36184fa5 97bcd5e0 8432e015 839a5cac 6ecd9479 a58565b2 8c8c4228 fa1e8330 6ecd9479 36184fa5 04968f51 a5b107cc 9773333c 821b37b2 8db70061 37ad689e b9af6d3e 4c4631fd b9af6d3e 653769eb ce5f0d3a 642c017a 4e0a43e2 0ff65a1a 52b5b541 8be872c7 fcd8c64a 8f08e10d 5ecd3c2e 766f742f d7e88210 c5d7714b 8f08e10d 035b1576 8f9d472c 766f742f 889016e3 4ba423b3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak,keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak,keycloak-setup
+  block: 6
+  fingerprint: 325b9dd721b476bf
+  lang: sh
+  lines: 325b9dd7
+  preview: kubectl logs deployment/keycloak -n keycloak | grep -i import
+  form:
+    attr: paths="keycloak,keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak,keycloak-setup
+  block: 12
+  fingerprint: 00427585dc816ae8
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 28101486 0bebd850 36184fa5 c582fe46 2efcbf93 bfce7f60 56018bec f51d9754 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak,keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak-setup
+  block: 13
+  fingerprint: 8677579be9e2ba84
+  lang: sh
+  lines: 8677579b
+  preview: kubectl get svc keycloak -n keycloak
+  form:
+    attr: paths="keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak,keycloak-setup
+  block: 14
+  fingerprint: f788994de2a21d5e
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 2727801e 0bebd850 36184fa5 588a5d84 71ab14c2 ad65deb7 28101486 3195c5f5 c3c41907 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keycloak,keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak-setup
+  block: 15
+  fingerprint: fc6e1ac0f47466ec
+  lang: sh
+  lines: d67af702 0062b4a5
+  preview: kubectl delete BackendConfigPolicy keycloak-tls -n {{< reuse "kgw-docs/snippets/
+  form:
+    attr: paths="keycloak-setup"
+    only: true
+    lead: ' '
+- paths: keycloak-setup
+  block: 16
+  fingerprint: c00c130d11bd9e0f
+  lang: sh
+  lines: c00c130d
+  preview: kubectl delete namespace keycloak
+  form:
+    attr: paths="keycloak-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 5530e3dd170dc09d
+    lang: sh
+    lines: b707dfc9 a428ac58
+    preview: openssl req -x509 -newkey rsa:4096 -keyout tls.key -out tls.crt -days 365 -nodes
+  content: |2-
+       {{< doc-test paths="keycloak,keycloak-setup" >}}
+       # Test-only: the guides use https://keycloak.example.com as the public
+       # Keycloak address. Expose Keycloak on port 443 through a LoadBalancer
+       # Service, so the test client can reach that address with
+       # curl --connect-to keycloak.example.com:443:${KEYCLOAK_ADDRESS}:443.
+       kubectl apply -f- <<EOF
+       apiVersion: v1
+       kind: Service
+       metadata:
+         name: keycloak-lb
+         namespace: keycloak
+       spec:
+         type: LoadBalancer
+         selector:
+           app: keycloak
+         ports:
+           - name: https
+             port: 443
+             targetPort: 8443
+       EOF
+       KEYCLOAK_ADDRESS=""
+       for i in $(seq 1 60); do
+         KEYCLOAK_ADDRESS=$(kubectl get svc keycloak-lb -n keycloak -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+         [ -n "$KEYCLOAK_ADDRESS" ] && break
+         sleep 5
+       done
+       if [ -z "$KEYCLOAK_ADDRESS" ]; then
+         echo "FAIL: the keycloak-lb LoadBalancer Service got no address in 300s"
+         kubectl get svc keycloak-lb -n keycloak -o yaml
+         exit 1
+       fi
+       export KEYCLOAK_ADDRESS
+       echo "KEYCLOAK_ADDRESS=${KEYCLOAK_ADDRESS}"
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: ae4cf59807a5d77e
+    lang: yaml
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 28101486 5e1d80db 36184fa5 97bcd5e0 8432e015 839a5cac 6ecd9479 a58565b2 8c8c4228 fa1e8330 6ecd9479 36184fa5 04968f51 a5b107cc 9773333c 821b37b2 8db70061 37ad689e b9af6d3e 4c4631fd b9af6d3e 653769eb ce5f0d3a 642c017a 4e0a43e2 0ff65a1a 52b5b541 8be872c7 fcd8c64a 8f08e10d 5ecd3c2e 766f742f d7e88210 c5d7714b 8f08e10d 035b1576 8f9d472c 766f742f 889016e3 4ba423b3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="keycloak,keycloak-setup" >}}
+    # The Deployment has no readiness probe, so a finished rollout does not mean
+    # that Keycloak answers yet. Wait for the new pod alone, then for the imported
+    # realm's discovery document on the public address.
+    kubectl rollout status deployment/keycloak -n keycloak --timeout=600s
+    for i in $(seq 1 60); do
+      pods=$(kubectl get pods -n keycloak -l app=keycloak --no-headers 2>/dev/null | wc -l | tr -d ' ')
+      [ "$pods" = "1" ] && break
+      sleep 5
+    done
+    issuer=""
+    for i in $(seq 1 90); do
+      issuer=$(curl -sk --max-time 5 --connect-to "keycloak.example.com:443:${KEYCLOAK_ADDRESS}:443" \
+        "https://keycloak.example.com/realms/myrealm/.well-known/openid-configuration" | jq -r '.issuer // empty' 2>/dev/null || true)
+      [ -n "$issuer" ] && break
+      sleep 5
+    done
+    if [ "$issuer" != "https://keycloak.example.com/realms/myrealm" ]; then
+      echo "FAIL: realm myrealm discovery on https://keycloak.example.com returned issuer '${issuer}', want https://keycloak.example.com/realms/myrealm"
+      kubectl get pods -n keycloak -o wide
+      kubectl logs deployment/keycloak -n keycloak --tail=50 || true
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: e415387de7f046d7
+    lang: text
+    lines: 4d72c5d1 405ae16e
+    preview: Realm 'myrealm' imported
+  content: |-
+    {{< doc-test paths="keycloak,keycloak-setup" >}}
+    # Capture the logs first, then match with here-strings: `grep -q` in a pipe
+    # can fail on a match under pipefail.
+    logs=$(kubectl logs deployment/keycloak -n keycloak)
+    for want in "Realm 'myrealm' imported" "Import finished successfully"; do
+      if ! grep -qF "$want" <<<"$logs"; then
+        echo "FAIL: the Keycloak logs do not contain \"$want\""
+        grep -i import <<<"$logs" || true
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 9dda683498b2eaa8
+    lang: sh
+    lines: 9dda6834
+    preview: kubectl port-forward svc/keycloak -n keycloak 8443:8443
+  content: |-
+    {{< doc-test paths="keycloak,keycloak-setup" >}}
+    # Headless stand-in for the admin console check: log in as admin/admin with
+    # the admin-cli client of the master realm and list the realms. Then check
+    # that the imported client and test user issue tokens through the password
+    # grant, and that the audience mapper puts kgateway-client in `aud`.
+    KC_CONNECT="keycloak.example.com:443:${KEYCLOAK_ADDRESS}:443"
+    admin_token=$(curl -sk --max-time 10 --connect-to "$KC_CONNECT" \
+      -d client_id=admin-cli -d username=admin -d password=admin -d grant_type=password \
+      "https://keycloak.example.com/realms/master/protocol/openid-connect/token" | jq -r '.access_token // empty')
+    if [ -z "$admin_token" ]; then
+      echo "FAIL: could not log in to Keycloak as admin/admin"
+      exit 1
+    fi
+    realms=$(curl -sk --max-time 10 --connect-to "$KC_CONNECT" -H "Authorization: Bearer ${admin_token}" \
+      "https://keycloak.example.com/admin/realms" | jq -r '.[].realm')
+    if ! grep -qx "myrealm" <<<"$realms"; then
+      echo "FAIL: myrealm is not in the Keycloak realm list: $(tr '\n' ' ' <<<"$realms")"
+      exit 1
+    fi
+    user_token=$(curl -sk --max-time 10 --connect-to "$KC_CONNECT" \
+      -d client_id=kgateway-client -d client_secret=kgateway-client-secret \
+      -d username=testuser -d password=password -d grant_type=password \
+      "https://keycloak.example.com/realms/myrealm/protocol/openid-connect/token" | jq -r '.access_token // empty')
+    if [ -z "$user_token" ]; then
+      echo "FAIL: the password grant for testuser on kgateway-client returned no access token"
+      exit 1
+    fi
+    payload=$(cut -d. -f2 <<<"$user_token" | tr '_-' '/+')
+    while [ $(( ${#payload} % 4 )) -ne 0 ]; do payload="${payload}="; done
+    claims=$(base64 -d <<<"$payload" 2>/dev/null || base64 --decode <<<"$payload")
+    iss=$(jq -r '.iss' <<<"$claims")
+    aud=$(jq -c '[.aud] | flatten' <<<"$claims")
+    if [ "$iss" != "https://keycloak.example.com/realms/myrealm" ]; then
+      echo "FAIL: token iss is '${iss}', want https://keycloak.example.com/realms/myrealm"
+      exit 1
+    fi
+    if ! jq -e 'index("kgateway-client") != null and index("account") != null' <<<"$aud" >/dev/null; then
+      echo "FAIL: token aud is ${aud}, want it to include kgateway-client and account"
+      exit 1
+    fi
+    echo "token iss=${iss} aud=${aud}"
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: f788994de2a21d5e
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 2727801e 0bebd850 36184fa5 588a5d84 71ab14c2 ad65deb7 28101486 3195c5f5 c3c41907 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="keycloak-setup" >}}
+    # Test-only: the page says the gateway can now reach Keycloak. Prove it with a
+    # temporary HTTPRoute that sends keycloak-reach.example.com to the keycloak
+    # Backend. A 200 with the realm's issuer means the Backend address and the
+    # insecureSkipVerify TLS setting both work. The route is removed right after.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: keycloak-reach-test
+      namespace: kgateway-system
+    spec:
+      parentRefs:
+        - name: http
+          namespace: kgateway-system
+      hostnames:
+        - keycloak-reach.example.com
+      rules:
+        - backendRefs:
+            - group: gateway.kgateway.dev
+              kind: Backend
+              name: keycloak
+    EOF
+    issuer=""
+    for i in $(seq 1 60); do
+      issuer=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/realms/myrealm/.well-known/openid-configuration" \
+        -H "host: keycloak-reach.example.com" | jq -r '.issuer // empty' 2>/dev/null || true)
+      [ -n "$issuer" ] && break
+      sleep 5
+    done
+    kubectl delete httproute keycloak-reach-test -n kgateway-system
+    if [ -z "$issuer" ]; then
+      echo "FAIL: the gateway could not reach Keycloak through the keycloak Backend and the keycloak-tls BackendConfigPolicy in 300s"
+      kubectl get backend keycloak -n kgateway-system -o yaml
+      kubectl get backendconfigpolicy keycloak-tls -n kgateway-system -o yaml
+      exit 1
+    fi
+    echo "gateway reached Keycloak through the Backend, issuer=${issuer}"
+    {{< /doc-test >}}

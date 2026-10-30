@@ -1,0 +1,180 @@
+format: 1
+source: content/docs/envoy/latest/migrate/examples/jwt-auth.md
+blocks:
+- 598e68ae1d4fb827 bash
+- aaf8924d7af08ad6 bash
+- 371a769fcda63dc1 bash
+- 5cd5e4950bd4603a bash
+tags:
+- paths: migrate-jwt-auth
+  block: 0
+  fingerprint: 598e68ae1d4fb827
+  lang: bash
+  lines: 1ff2b03d 4912a691 f1089fb2 8c8c4228 b4f02d28 72ab0e66 1059a667 9aec0e2c 36184fa5 9620a283 3de9d845 b5677cfc 1c31dda0 6a61c178 b2bf84ed 3897150c d217c891 f12798fe fb296fc0 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > jwt-ingress.yaml
+  form:
+    attr: paths="migrate-jwt-auth"
+    only: true
+    lead: ' '
+- paths: migrate-jwt-auth
+  block: 1
+  fingerprint: aaf8924d7af08ad6
+  lang: bash
+  lines: 675e6290 cb2fbe86
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=kgateway \
+  form:
+    attr: paths="migrate-jwt-auth"
+    only: true
+    lead: ' '
+- paths: migrate-jwt-auth
+  block: 2
+  fingerprint: 371a769fcda63dc1
+  lang: bash
+  lines: 5f323a8a d664f32c 5ee5f7dc 8c8c4228 46731bc6 36184fa5 9b9d0530 a1343bf6 bd53aadb 759ba365 44ec9b74 b93c9907 0c434ae1 70c97555 69f54740 ad65deb7 b1d549b4 cb3f91d5 d664f32c ad65deb7 8c8c4228 b1d549b4 36184fa5 c582fe46 2efcbf93 bfce7f60 d160b404 c6ba4159 cb3f91d5 d664f32c 3f173fd2 8c8c4228 0eba1339 36184fa5 588a5d84 71ab14c2 ad65deb7 b1d549b4 3195c5f5 130384f4 9efe4f94 cb3f91d5 d664f32c 8198a54f 8c8c4228 b68b921b 36184fa5 588a5d84 b5a028c9 56bf9360 b5555072 e34dc3a0 248578da 46731bc6 abc56510
+  preview: cat <<'EOF' > jwt-auth.yaml
+  form:
+    attr: paths="migrate-jwt-auth"
+    only: true
+    lead: ' '
+- paths: migrate-jwt-auth
+  block: 3
+  fingerprint: 5cd5e4950bd4603a
+  lang: bash
+  lines: 4f5cbd75 41306883 8f1c00f4 180c1a81
+  preview: kubectl apply -f jwt-kgateway.yaml
+  form:
+    attr: paths="migrate-jwt-auth"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: aaf8924d7af08ad6
+    lang: bash
+    lines: 675e6290 cb2fbe86
+    preview: ingress2gateway print --providers=ingress-nginx --emitter=kgateway \
+  content: |-
+    {{< doc-test paths="migrate-jwt-auth" >}}
+    # Test-only: the converted file has what the "After" section on this page shows.
+    python3 - <<'PY'
+    import sys
+    import yaml
+
+    FILE = "jwt-kgateway.yaml"
+    with open(FILE) as f:
+        docs = [d for d in yaml.safe_load_all(f) if d]
+
+
+    def find(kind, name):
+        for d in docs:
+            if d.get("kind") == kind and (d.get("metadata") or {}).get("name") == name:
+                return d
+        found = ", ".join(f"{d.get('kind')}/{(d.get('metadata') or {}).get('name')}" for d in docs)
+        sys.exit(f"FAIL: {FILE} has no {kind} named {name}. Found: {found}")
+
+
+    def expect(what, got, want):
+        if got != want:
+            sys.exit(f"FAIL: {what} is {got!r}, expected {want!r}")
+
+
+    def kinds():
+        return sorted(f"{d.get('kind')}/{(d.get('metadata') or {}).get('name')}" for d in docs)
+
+    # The page says the converted file has only these two resources, no JWT config.
+    expect("resources", kinds(), ["Gateway/nginx", "HTTPRoute/jwt-demo-jwt-example-com"])
+    gw = find("Gateway", "nginx")
+    gspec = gw.get("spec") or {}
+    expect("Gateway nginx gatewayClassName", gspec.get("gatewayClassName"), "kgateway")
+    expect("Gateway nginx listeners", gspec.get("listeners"),
+           [{"hostname": "jwt.example.com", "name": "jwt-example-com-http", "port": 80, "protocol": "HTTP"}])
+    if "tls" in gspec:
+        sys.exit("FAIL: Gateway nginx has spec.tls; the page shows none")
+    route = find("HTTPRoute", "jwt-demo-jwt-example-com")
+    rspec = route.get("spec") or {}
+    expect("HTTPRoute hostnames", rspec.get("hostnames"), ["jwt.example.com"])
+    expect("HTTPRoute parentRefs", rspec.get("parentRefs"), [{"name": "nginx"}])
+    rules = rspec.get("rules") or []
+    expect("HTTPRoute rule count", len(rules), 1)
+    rule = rules[0]
+    expect("HTTPRoute rules[0].name", rule.get("name"), "rule-0")
+    expect("HTTPRoute rules[0].backendRefs", rule.get("backendRefs"), [{"name": "httpbin", "port": 8000}])
+    expect("HTTPRoute rules[0].matches", rule.get("matches"), [{"path": {"type": "PathPrefix", "value": "/"}}])
+    print("OK: Gateway nginx and HTTPRoute jwt-demo-jwt-example-com, no JWT config, as the page says")
+    PY
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 5cd5e4950bd4603a
+    lang: bash
+    lines: 4f5cbd75 41306883 8f1c00f4 180c1a81
+    preview: kubectl apply -f jwt-kgateway.yaml
+  content: |-
+    {{< doc-test paths="migrate-jwt-auth" >}}
+    # Test-only: every resource that the page applies exists, and the HTTPRoute
+    # is Accepted. The jwt-policy TrafficPolicy must be Accepted too: its
+    # GatewayExtension and the issuer Backend are applied on this page. kgateway
+    # does not fetch the JWKS to accept the policy. The httpbin backend is not
+    # needed for this check.
+    python3 - <<'PY'
+    import json
+    import subprocess
+    import sys
+    import time
+
+    import yaml
+
+    FILES = ['jwt-kgateway.yaml', 'jwt-auth.yaml']
+    docs = []
+    for name in FILES:
+        with open(name) as f:
+            docs += [d for d in yaml.safe_load_all(f) if d]
+    # Kind/name pairs that only need to exist, not be Accepted. See the comment above.
+    EXIST_ONLY = []
+
+
+    def accepted(conditions):
+        for c in conditions or []:
+            if c.get("type") == "Accepted":
+                return c.get("status")
+        return None
+
+
+    def get(kind, name, api_version):
+        group = api_version.rsplit("/", 1)[0] if "/" in api_version else ""
+        resource = f"{kind.lower()}.{group}" if group else kind.lower()
+        out = subprocess.run(["kubectl", "get", resource, name, "-n", "default", "-o", "json"],
+                             capture_output=True, text=True)
+        if out.returncode != 0:
+            return None, out.stderr.strip()
+        return json.loads(out.stdout), None
+
+
+    def problem(d):
+        kind, name = d["kind"], d["metadata"]["name"]
+        obj, err = get(kind, name, d["apiVersion"])
+        if obj is None:
+            return f"{kind}/{name} not found: {err}"
+        if f"{kind}/{name}" in EXIST_ONLY:
+            return None
+        status = obj.get("status") or {}
+        if kind == "HTTPRoute":
+            parents = status.get("parents") or [{}]
+            if accepted(parents[0].get("conditions")) != "True":
+                return f"HTTPRoute/{name} is not Accepted yet: {parents[0].get('conditions')}"
+        if kind == "TrafficPolicy":
+            ancestors = status.get("ancestors") or [{}]
+            if accepted(ancestors[0].get("conditions")) != "True":
+                return f"TrafficPolicy/{name} is not Accepted yet: {ancestors[0].get('conditions')}"
+        return None
+
+
+    for attempt in range(60):
+        problems = [p for p in map(problem, docs) if p]
+        if not problems:
+            print(f"OK: all {len(docs)} resources from {', '.join(FILES)} exist and have the expected status")
+            sys.exit(0)
+        time.sleep(5)
+    sys.exit("FAIL: " + "; ".join(problems))
+    PY
+    {{< /doc-test >}}

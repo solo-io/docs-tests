@@ -1,0 +1,265 @@
+format: 1
+source: assets/kgw-docs/pages/security/okta/authorization-code.md
+blocks:
+- a509d81d5226dd74 sh
+- 33479a9955602843 yaml
+- de149b368ba0b26d yaml
+- e6f9e60436499dc6 sh
+- 8378444c9c09cbaf yaml
+- 2476c2ff8f56e735 sh
+- aa2758b552164624 sh
+- e280a6e402d2a1b7 text
+- ef4bafb65fd2b7ff sh
+- f263e2a9807f007e sh
+- 912c80ff543e3684 text
+- 15a8b17838bd8e43 sh
+- ec8d2e382021cbe2 yaml
+- 5efc1c0033749367 yaml
+- fb3f11873397ee4e yaml
+- cd6e305864ee2632 yaml
+- a029656f5621a2a9 yaml
+- d43f2c16b5bf259d yaml
+- 66f2b92d38937575 yaml
+tags:
+- paths: okta-authorization-code,okta-authorization-code-deny-redirect
+  block: 0
+  fingerprint: a509d81d5226dd74
+  lang: sh
+  lines: 33969b99 f1846705 81d7cf7a
+  preview: kubectl create secret generic okta-client-secret \
+  form:
+    attr: paths="okta-authorization-code,okta-authorization-code-deny-redirect"
+    only: true
+    lead: ' '
+- paths: okta-authorization-code,okta-authorization-code-deny-redirect
+  block: 1
+  fingerprint: 33479a9955602843
+  lang: yaml
+  lines: 16c71da1 d664f32c 5ee5f7dc 8c8c4228 1bc329a3 0bebd850 36184fa5 2ef15a78 70c97555 69f54740 ad65deb7 75021e46 0bebd850 6d215a72 91a6bae5 c2c533fa 4736f806 551ea4dd 61d9749c 4112252c 9519f874 d8541eca 545c1d9d 20d6576f e73ad6de afbc770e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="okta-authorization-code,okta-authorization-code-deny-redirect"
+    only: true
+    lead: ' '
+- paths: okta-authorization-code,okta-authorization-code-deny-redirect
+  block: 2
+  fingerprint: de149b368ba0b26d
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 66556d98 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 2ef15a78 248578da 1bc329a3 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="okta-authorization-code,okta-authorization-code-deny-redirect"
+    only: true
+    lead: ' '
+- paths: okta-authorization-code,okta-authorization-code-deny-redirect
+  block: 3
+  fingerprint: e6f9e60436499dc6
+  lang: sh
+  lines: e6f9e604
+  preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} okta-oauth2-polic
+  form:
+    attr: paths="okta-authorization-code,okta-authorization-code-deny-redirect"
+    only: true
+    lead: ' '
+- paths: okta-authorization-code
+  block: 11
+  fingerprint: 15a8b17838bd8e43
+  lang: sh
+  lines: 4aed15b7 7f861d44 4437779d
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} okta-oauth2-po
+  form:
+    attr: paths="okta-authorization-code"
+    only: true
+    lead: ' '
+- paths: okta-authorization-code-deny-redirect
+  block: 18
+  fingerprint: 66f2b92d38937575
+  lang: yaml
+  lines: 16c71da1 d664f32c 5ee5f7dc 8c8c4228 1bc329a3 0bebd850 36184fa5 2ef15a78 70c97555 69f54740 ad65deb7 75021e46 0bebd850 6d215a72 91a6bae5 c2c533fa 4736f806 551ea4dd 61d9749c 4112252c 9519f874 d8541eca 545c1d9d 20d6576f e73ad6de afbc770e 9f792a8e 38dc0152 03775600 6d88f925 eaa459c8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="okta-authorization-code-deny-redirect"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: c131019a9530d58b
+    occurrence: 0
+    words: d4735e3a d05aa2a1 c0cafcf0 4d040d3f 4ea5ee68 9150c74c ea325d76 3e194352 c4c05d40 670b310e e3d11da4 b9776d7d d8ad572d 78377b52 6201111b 5694d08a 88c9eae6 2f0030c5 f4bf9f7f 6a934b45 a1d98908 1fd4ef08 ac0b52a2 254bb97b 27ce1d1b c9a8dc33 5fb6a47e e0603c49 1216b2a8 6120d7ff 2f0030c5 f2579d97 98c41dcd c1481e2e 663ea1bf 7e9e5ac3 ea325d76 3e194352 c4c05d40 aa9e9b5c 3e194352 c4c05d40 fa42bed0 a0af9f86 8fb6d5f3 0353e1fb 3e194352 b9776d7d a0561fd6 3c469e9d 98c41dcd 3b212781 93f6e11d 5fb6a47e e0603c49 a511aeee 2ad8a704 961eb436 254bb97b a3b142af 2f0030c5
+    block_before: null
+  content: |-
+    {{< doc-test paths="okta-authorization-code,okta-authorization-code-deny-redirect" >}}
+    # Test-only: the HTTPS listener from "Before you begin". The `http` Gateway gets a
+    # second listener, `https` on port 8443, with a www.example.com certificate from
+    # the stand-in's test CA (IDP_DIR, created on the Okta setup page).
+    openssl req -new -nodes -newkey rsa:2048 -subj "/CN=www.example.com" \
+      -keyout "$IDP_DIR/www.key" -out "$IDP_DIR/www.csr"
+    printf 'subjectAltName=DNS:www.example.com\nextendedKeyUsage=serverAuth\nbasicConstraints=CA:FALSE\n' > "$IDP_DIR/www.ext"
+    openssl x509 -req -sha256 -days 7 -in "$IDP_DIR/www.csr" -CA "$IDP_DIR/ca.crt" -CAkey "$IDP_DIR/ca.key" \
+      -CAcreateserial -out "$IDP_DIR/www.crt" -extfile "$IDP_DIR/www.ext"
+    kubectl create secret tls oauth-test-https -n kgateway-system --cert="$IDP_DIR/www.crt" --key="$IDP_DIR/www.key"
+    kubectl patch gateway http -n kgateway-system --type=json -p '[{"op":"add","path":"/spec/listeners/-","value":{"name":"https","protocol":"HTTPS","port":8443,"tls":{"mode":"Terminate","certificateRefs":[{"kind":"Secret","name":"oauth-test-https"}]},"allowedRoutes":{"namespaces":{"from":"All"}}}}]'
+    code=""
+    for i in $(seq 1 60); do
+      code=$(command curl -s --max-time 5 -o /dev/null -w '%{http_code}' --cacert "$IDP_DIR/ca.crt" \
+        --connect-to "www.example.com:443:${INGRESS_GW_ADDRESS}:8443" "https://www.example.com/headers" || true)
+      [ "$code" = 200 ] && break
+      echo "https://www.example.com/headers on port 8443 returned '$code', want 200 before the OAuth2 policy ($i/60)"; sleep 2
+    done
+    [ "$code" = 200 ] || { echo "FAIL: the test HTTPS listener on ${INGRESS_GW_ADDRESS}:8443 does not serve httpbin"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 8378444c9c09cbaf
+    lang: yaml
+    lines: f2decc81 a5e84374 dcfcd85d a4a39e6e 165305ea 69b834a6 dcfcd85d b8724bb7
+    preview: '- message: Policy accepted'
+  content: |-
+    {{< doc-test paths="okta-authorization-code,okta-authorization-code-deny-redirect" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the okta-oauth2-policy TrafficPolicy to be accepted (oauth2 with the okta-oauth2 GatewayExtension)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: okta-oauth2-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the okta-oauth2-policy TrafficPolicy to be attached (oauth2 with the okta-oauth2 GatewayExtension)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: okta-oauth2-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: e280a6e402d2a1b7
+    lang: text
+    lines: bd9ba729 40362023 e3b4bdb8
+    preview: < HTTP/2 302
+  content: |-
+    {{< doc-test paths="okta-authorization-code" >}}
+    # Step 1, Cloud Provider LoadBalancer tab: no session cookie, so the gateway
+    # answers 302 to the authorization endpoint with the registered redirect_uri and
+    # sets the OauthNonce cookie with the Secure and HttpOnly attributes.
+    hdrs=""; status=""
+    for i in $(seq 1 60); do
+      hdrs=$(command curl -sk --max-time 5 -o /dev/null -D - "https://${INGRESS_GW_ADDRESS}:8443/headers" -H "host: www.example.com" | tr -d '\r' || true)
+      status=$(head -n 1 <<<"$hdrs" | awk '{print $2}')
+      [ "$status" = 302 ] && break
+      echo "unauthenticated GET /headers on 8443 returned '$status', want 302 ($i/60)"; sleep 2
+    done
+    location=$(grep -i '^location:' <<<"$hdrs" | head -n 1 | sed 's/^[Ll]ocation: *//')
+    nonce=$(grep -i '^set-cookie: OauthNonce-' <<<"$hdrs" | head -n 1 || true)
+    echo "location: $location"; echo "$nonce"
+    [ "$status" = 302 ] || { echo "FAIL: want 302, got '$status'"; echo "$hdrs"; exit 1; }
+    case "$location" in "${IDP_AUTHORIZE_URL}?"*) ;; *) echo "FAIL: location is not ${IDP_AUTHORIZE_URL}"; exit 1 ;; esac
+    grep -q 'client_id=YOUR_CLIENT_ID' <<<"$location" || { echo "FAIL: location has no client_id=YOUR_CLIENT_ID"; exit 1; }
+    grep -q 'redirect_uri=https%3A%2F%2Fwww.example.com%2Foauth2%2Fredirect' <<<"$location" || { echo "FAIL: location has the wrong redirect_uri"; exit 1; }
+    grep -qi 'secure' <<<"$nonce" && grep -qi 'httponly' <<<"$nonce" || { echo "FAIL: no OauthNonce cookie with Secure and HttpOnly"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    section: Verify
+    line: 0eed6f9770ef082a
+    occurrence: 0
+    words: 935f6831 65819e19 c093955c b9776d7d 1e919ea0 6390361d 4137b01e 46599c5b ca978112 42882135 09345223 70e5d7b6 58296753 b9776d7d 948fe603 a172cedc cde0fb0d b9776d7d 84d8edae b8d31e85 b9776d7d dbcbfc09 961eb436 254bb97b 4945a70f ca978112 09345223 70e5d7b6 8e7fc023 fa51fd49 b1a9e561 b8d31e85 b9776d7d 65819e19 1fe28920
+    block_before:
+      block: 7
+      fingerprint: e280a6e402d2a1b7
+      lang: text
+      lines: bd9ba729 40362023 e3b4bdb8
+      preview: < HTTP/2 302
+  content: |-
+    {{< doc-test paths="okta-authorization-code" >}}
+    # Steps 2 to 4 with curl as the browser and one cookie jar. --connect-to sends
+    # www.example.com to the gateway's HTTPS listener and okta.idp-standin.test to the
+    # stand-in, so every URL and cookie keeps its real host name.
+    JAR="$IDP_DIR/browser-cookies.txt"; rm -f "$JAR"
+    browser() {
+      command curl -sS --max-time 20 --cacert "$IDP_DIR/ca.crt" -c "$JAR" -b "$JAR" \
+        --connect-to "www.example.com:443:${INGRESS_GW_ADDRESS}:8443" \
+        --connect-to "${IDP_HOST}:443:${IDP_ADDRESS}:443" "$@"
+    }
+    login_url=""
+    for i in $(seq 1 30); do
+      login_url=$(browser -o /dev/null -w '%{redirect_url}' "https://www.example.com/headers" || true)
+      case "$login_url" in "${IDP_AUTHORIZE_URL}?"*) break ;; esac
+      echo "GET https://www.example.com/headers did not redirect to the sign-in page yet: '$login_url' ($i/30)"; sleep 2
+    done
+    case "$login_url" in "${IDP_AUTHORIZE_URL}?"*) ;; *) echo "FAIL: no redirect to ${IDP_AUTHORIZE_URL}"; exit 1 ;; esac
+    # Step 2: the sign-in page.
+    code=$(browser -o "$IDP_DIR/login.html" -w '%{http_code}' "$login_url")
+    [ "$code" = 200 ] || { echo "FAIL: the sign-in page returned $code"; cat "$IDP_DIR/login.html"; exit 1; }
+    tx=$(sed -n 's/.*name="tx" value="\([^"]*\)".*/\1/p' "$IDP_DIR/login.html")
+    action=$(sed -n 's/.*action="\([^"]*\)".*/\1/p' "$IDP_DIR/login.html")
+    # Step 3: sign in as the test user. The provider redirects to redirect_uri with a code.
+    callback=$(browser -o /dev/null -w '%{redirect_url}' "https://${IDP_HOST}${action}" \
+      --data-urlencode "tx=${tx}" --data-urlencode "username=testuser@example.com" --data-urlencode "password=YOUR_PASSWORD")
+    case "$callback" in "https://www.example.com/oauth2/redirect?code="*) ;; *) echo "FAIL: sign-in did not redirect to the callback: '$callback'"; exit 1 ;; esac
+    # Step 4: the gateway exchanges the code for tokens through the okta Backend, sets
+    # the session cookies, and sends the browser back to /headers.
+    back=$(browser -o "$IDP_DIR/callback.txt" -w '%{http_code} %{redirect_url}' "$callback")
+    case "$back" in "302 https://www.example.com/headers"*) ;; *)
+      echo "FAIL: the callback returned '$back', want 302 to https://www.example.com/headers"; cat "$IDP_DIR/callback.txt"
+      command kubectl logs -n idp-standin deploy/idp-standin --tail=20 || true; exit 1 ;; esac
+    for cookie in AccessToken- IdToken- OauthHMAC-; do
+      grep -q "$(printf '\t')${cookie}" "$JAR" || { echo "FAIL: no ${cookie}* session cookie after the callback"; cat "$JAR"; exit 1; }
+    done
+    code=$(browser -o "$IDP_DIR/headers.json" -w '%{http_code}' "https://www.example.com/headers")
+    [ "$code" = 200 ] || { echo "FAIL: with the session cookies, /headers returned $code, want 200"; cat "$IDP_DIR/headers.json"; exit 1; }
+    jq -e '.headers.Host[0] == "www.example.com"' "$IDP_DIR/headers.json" >/dev/null || { echo "FAIL: the response is not the httpbin output"; cat "$IDP_DIR/headers.json"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 15a8b17838bd8e43
+    lang: sh
+    lines: 4aed15b7 7f861d44 4437779d
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} okta-oauth2-po
+  content: |-
+    {{< doc-test paths="okta-authorization-code" >}}
+    code=""
+    for i in $(seq 1 60); do
+      code=$(command curl -sk --max-time 5 -o /dev/null -w '%{http_code}' "https://${INGRESS_GW_ADDRESS}:8443/headers" -H "host: www.example.com" || true)
+      [ "$code" = 200 ] && break
+      echo "after cleanup, GET /headers on 8443 returned '$code', want 200 without a login ($i/60)"; sleep 2
+    done
+    [ "$code" = 200 ] || { echo "FAIL: after cleanup, the route still does not answer 200 without a session"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 66f2b92d38937575
+    lang: yaml
+    lines: 16c71da1 d664f32c 5ee5f7dc 8c8c4228 1bc329a3 0bebd850 36184fa5 2ef15a78 70c97555 69f54740 ad65deb7 75021e46 0bebd850 6d215a72 91a6bae5 c2c533fa 4736f806 551ea4dd 61d9749c 4112252c 9519f874 d8541eca 545c1d9d 20d6576f e73ad6de afbc770e 9f792a8e 38dc0152 03775600 6d88f925 eaa459c8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="okta-authorization-code-deny-redirect" >}}
+    # Verify step 5: with denyRedirect, Accept: application/json gets 401 instead of
+    # the redirect, and other requests are still redirected to the sign-in page.
+    code=""
+    for i in $(seq 1 60); do
+      code=$(command curl -sk --max-time 5 -o /dev/null -w '%{http_code}' "https://${INGRESS_GW_ADDRESS}:8443/headers" \
+        -H "host: www.example.com" -H "Accept: application/json" || true)
+      [ "$code" = 401 ] && break
+      echo "GET /headers with Accept: application/json returned '$code', want 401 ($i/60)"; sleep 2
+    done
+    [ "$code" = 401 ] || { echo "FAIL: denyRedirect did not return 401 for Accept: application/json"; exit 1; }
+    location=$(command curl -sk --max-time 5 -o /dev/null -w '%{redirect_url}' "https://${INGRESS_GW_ADDRESS}:8443/headers" -H "host: www.example.com" || true)
+    case "$location" in "${IDP_AUTHORIZE_URL}?"*) ;; *) echo "FAIL: a request without Accept: application/json is not redirected: '$location'"; exit 1 ;; esac
+    {{< /doc-test >}}

@@ -1,0 +1,127 @@
+format: 1
+source: assets/kgw-docs/pages/about/trafficpolicy.md
+blocks:
+- 061575f7b1609a7b yaml
+- 29bac90d5a54847c yaml
+- 53d21ba401d79aab yaml
+- f288746761b067fb yaml
+- 8a8ca0538d72819d yaml
+- 4e40b1be9f39cc14 yaml
+- 6e2f26d960f20cec yaml
+- 6f15bb14e531fb8b yaml
+- bca289164f6f44a7 yaml
+tags:
+- paths: trafficpolicy
+  block: 4
+  fingerprint: 8a8ca0538d72819d
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 1288d06d 301e1bfa 7e1694f1 3de9d845 e9c48165 eaaad965 aeca2b3d bf068a96 d4b58a9b 94ae491e 80e9487c bca8e5f7 b41e6a87 eaaad965 aeca2b3d bf068a96 822e29ec 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="trafficpolicy"
+    only: true
+    lead: ' '
+- paths: trafficpolicy
+  block: 5
+  fingerprint: 4e40b1be9f39cc14
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 46d3340f 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 11103182 a50da420 f971795d 47117d8d ac3eeefa 54ea4e89 8a32cebd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="trafficpolicy"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 4
+    fingerprint: 8a8ca0538d72819d
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 1288d06d 301e1bfa 7e1694f1 3de9d845 e9c48165 eaaad965 aeca2b3d bf068a96 d4b58a9b 94ae491e 80e9487c bca8e5f7 b41e6a87 eaaad965 aeca2b3d bf068a96 822e29ec 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="trafficpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin HTTPRoute with the named rules rule0 and rule1 to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: rule0 (/anything/path1) on the trafficpolicy.example host returns 200 before any policy is attached
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /anything/path1
+        method: GET
+        headers:
+          host: "trafficpolicy.example"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 4e40b1be9f39cc14
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 46d3340f 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 11103182 a50da420 f971795d 47117d8d ac3eeefa 54ea4e89 8a32cebd abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="trafficpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the local-ratelimit TrafficPolicy (targetRefs.sectionName rule1) to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: local-ratelimit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 4e40b1be9f39cc14
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 46d3340f 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 11103182 a50da420 f971795d 47117d8d ac3eeefa 54ea4e89 8a32cebd abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="trafficpolicy" >}}
+    # The policy targets only rule1 (/anything/path2) and allows 1 request per 100s.
+    # Repeated requests to /anything/path2 must hit the limit (429).
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/anything/path2" -H "host: trafficpolicy.example") || true
+      [ "$code" = "429" ] && break
+      echo "rule1 (/anything/path2) returned '${code}', want 429 once the rate limit applies, retrying ($i/60)"
+      sleep 2
+    done
+    if [ "$code" != "429" ]; then
+      echo "FAIL: the local-ratelimit TrafficPolicy attached to rule1 never rate limited /anything/path2"
+      exit 1
+    fi
+    # rule0 (/anything/path1) is in the same HTTPRoute but not targeted, so it is never limited.
+    for i in $(seq 1 5); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/anything/path1" -H "host: trafficpolicy.example") || true
+      if [ "$code" != "200" ]; then
+        echo "FAIL: rule0 (/anything/path1) returned '${code}' on request $i, want 200; the rule1 policy leaked to rule0"
+        exit 1
+      fi
+    done
+    echo "rate limit applies to rule1 only"
+    {{< /doc-test >}}

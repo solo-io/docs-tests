@@ -1,0 +1,126 @@
+format: 1
+source: assets/kgw-docs/pages/setup/http10.md
+blocks:
+- 53411eeda1411889 yaml
+- f420a4cefb8fc543 sh
+- ef39642ff042d1c5 sh
+- 9a9fdee19ec47d95 console
+- 8f178413a6ba42cd sh
+tags:
+- paths: http10
+  block: 0
+  fingerprint: 53411eeda1411889
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 4f7a3329 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 a3b63aa1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http10"
+    only: true
+    lead: ' '
+- paths: http10
+  block: 4
+  fingerprint: 8f178413a6ba42cd
+  lang: sh
+  lines: 8f178413
+  preview: kubectl delete listenerpolicy accept-http10 -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="http10"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: 4bb43c1c904e68ad
+    occurrence: 0
+    words: d9c0d341 9edd6d99 21a355f1 dc63b3e0
+    block_before: null
+  content: |-
+    {{< doc-test paths="http10" >}}
+    # Before the ListenerPolicy: the gateway proxy answers an HTTP/1.0 request with 426 Upgrade Required.
+    code=""
+    for i in $(seq 1 30); do
+      code=$(curl -s --http1.0 -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com") || true
+      [ "$code" = "426" ] && break
+      echo "default gateway: HTTP/1.0 request returned $code, want 426, retrying ($i/30)"; sleep 2
+    done
+    if [ "$code" != "426" ]; then
+      echo "FAIL: before the accept-http10 ListenerPolicy, an HTTP/1.0 request returned $code, want 426 Upgrade Required"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 53411eeda1411889
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 4f7a3329 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 a3b63aa1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http10" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the accept-http10 ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: accept-http10
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # With acceptHttp10: true, the same HTTP/1.0 request now reaches httpbin.
+    code=""
+    for i in $(seq 1 30); do
+      code=$(curl -s --http1.0 -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com") || true
+      [ "$code" = "200" ] && break
+      echo "acceptHttp10 enabled: HTTP/1.0 request returned $code, want 200, retrying ($i/30)"; sleep 2
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: with the accept-http10 ListenerPolicy, an HTTP/1.0 request returned $code, want 200"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 9a9fdee19ec47d95
+    lang: console
+    lines: 8375e707 0ea1116c d10b36aa
+    preview: '"http_protocol_options": {'
+  content: |-
+    {{< doc-test paths="http10" >}}
+    # Same check as the port-forward step, through the gateway proxy's admin port.
+    dump=""
+    for i in $(seq 1 30); do
+      dump=$(kubectl exec deploy/http -n kgateway-system -- wget -qO- 127.0.0.1:19000/config_dump) || true
+      grep -q '"accept_http_10": true' <<<"$dump" && break
+      echo "accept_http_10 not in the Envoy config yet, retrying ($i/30)"; sleep 2
+    done
+    if ! grep -q '"accept_http_10": true' <<<"$dump"; then
+      echo "FAIL: the http_protocol_options of the HTTP connection manager do not have accept_http_10 set to true"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 8f178413a6ba42cd
+    lang: sh
+    lines: 8f178413
+    preview: kubectl delete listenerpolicy accept-http10 -n {{< reuse "kgw-docs/snippets/name
+  content: |-
+    {{< doc-test paths="http10" >}}
+    # After cleanup: HTTP/1.0 requests get 426 Upgrade Required again.
+    code=""
+    for i in $(seq 1 30); do
+      code=$(curl -s --http1.0 -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com") || true
+      [ "$code" = "426" ] && break
+      echo "after cleanup: HTTP/1.0 request returned $code, want 426, retrying ($i/30)"; sleep 2
+    done
+    if [ "$code" != "426" ]; then
+      echo "FAIL: after deleting the accept-http10 ListenerPolicy, an HTTP/1.0 request returned $code, want 426"
+      exit 1
+    fi
+    {{< /doc-test >}}

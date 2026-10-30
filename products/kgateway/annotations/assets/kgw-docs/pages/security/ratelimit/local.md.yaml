@@ -1,0 +1,381 @@
+format: 1
+source: assets/kgw-docs/pages/security/ratelimit/local.md
+blocks:
+- 6a79942bba41bd7e yaml
+- c747cb9dabe8c4d3 yaml
+- 16cf72098f9be33f sh
+- be6e46ada815483f sh
+- 194036ed92f783bf
+- 16cf72098f9be33f sh
+- be6e46ada815483f sh
+- 74e04f253fdb6113
+- da810fcf71c149e0 yaml
+- 1561e26882144cd4 sh
+- da1782b1b4d7ea03 sh
+- 194036ed92f783bf
+- 1561e26882144cd4 sh
+- da1782b1b4d7ea03 sh
+- 74e04f253fdb6113
+- da810fcf71c149e0 yaml
+- 0fcdaaf4bb8048c4 yaml
+- 10dcabf579c6d25a sh
+- 552e7b2b0abafb7f sh
+- db54869c05fffd1a
+- dedd4c1a379146e6
+- 9369a6a94b60a069 yaml
+- 10dcabf579c6d25a sh
+- 552e7b2b0abafb7f sh
+- db54869c05fffd1a
+- db54869c05fffd1a
+- 16599c6589e72736 sh
+tags:
+- paths: local
+  block: 0
+  fingerprint: 6a79942bba41bd7e
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 46d3340f 0f10c5bc 36184fa5 a50da420 f971795d 47117d8d ac3eeefa 54ea4e89 8a32cebd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local"
+    only: true
+    lead: ' '
+- paths: local
+  block: 1
+  fingerprint: c747cb9dabe8c4d3
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 9d5d75c1 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4f32fcf5 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 ae6b70e3 90922aeb 248578da 46d3340f 06b13f44 c548623c 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local"
+    only: true
+    lead: ' '
+- paths: local-gateway
+  block: 8
+  fingerprint: da810fcf71c149e0
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 46d3340f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 f971795d 47117d8d ac3eeefa 54ea4e89 8a32cebd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local-gateway"
+    only: true
+    lead: ' '
+- paths: local-disable
+  block: 15
+  fingerprint: da810fcf71c149e0
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 46d3340f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 f971795d 47117d8d ac3eeefa 54ea4e89 8a32cebd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local-disable"
+    only: true
+    lead: ' '
+- paths: local-disable
+  block: 16
+  fingerprint: 0fcdaaf4bb8048c4
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6e2d5dc9 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa bf0611ca 3de9d845 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local-disable"
+    only: true
+    lead: ' '
+- paths: local-disable
+  block: 21
+  fingerprint: 9369a6a94b60a069
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 587d8e88 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 6e2d5dc9 a50da420 3074a869 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local-disable"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: c747cb9dabe8c4d3
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 9d5d75c1 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4f32fcf5 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 ae6b70e3 90922aeb 248578da 46d3340f 06b13f44 c548623c 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="local" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the httpbin-ratelimit HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-ratelimit
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the httpbin-ratelimit HTTPRoute to resolve its local-ratelimit extensionRef
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-ratelimit
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 194036ed92f783bf
+    lang: ''
+    lines: 5b07bb0e 6364ab47 92413e97 32cf5997 a152bc23 b8fcb227 c441a9d6 8cdb8317 15357256 1aecfa01 cd8a298e 3ca1ea63 5f7c6523
+    preview: '* Request completely sent off'
+  content: |2-
+       {{< doc-test paths="local" >}}
+       # Test-only: wait until the gateway serves the ratelimit.example route. The first
+       # request gets 200; once the single token is used, later ones get 429.
+       c=""
+       for i in $(seq 1 60); do
+         c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: ratelimit.example:8080" || true)
+         if [ "$c" = "200" ] || [ "$c" = "429" ]; then break; fi
+         sleep 2
+       done
+       if [ "$c" != "200" ] && [ "$c" != "429" ]; then
+         echo "local: ratelimit.example never answered 200 or 429 (last status: ${c})"; exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 74e04f253fdb6113
+    lang: ''
+    lines: ab5df625 e7f783c5 b77b3a6f 66a378bb 9d292567 891996b5 722e04ca 2be6c3ba a9e15dd5 ecefad3a ab5df625 191e62f1 fa2dd01e
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="local" >}}
+       # Test-only: prove the 1-token bucket that refills every 100s. Send requests
+       # until one gets 429, wait for the refill, then show that the next request
+       # succeeds and the one right after it is rate limited again.
+       url="http://${INGRESS_GW_ADDRESS}:8080/status/200"
+       hdr="host: ratelimit.example:8080"
+       c=""
+       for i in $(seq 1 60); do
+         c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$url" -H "$hdr" || true)
+         [ "$c" = "429" ] && break
+         sleep 1
+       done
+       if [ "$c" != "429" ]; then
+         echo "local: no 429 after 60 requests to ratelimit.example, so the 1-token bucket is not enforced (last status: ${c})"; exit 1
+       fi
+       # The bucket gets 1 token every 100s. Requests that get 429 do not use a token.
+       ok=""
+       for i in $(seq 1 50); do
+         sleep 5
+         c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$url" -H "$hdr" || true)
+         if [ "$c" = "200" ]; then ok=1; break; fi
+         if [ "$c" != "429" ]; then echo "local: unexpected status ${c} while waiting for the refill"; exit 1; fi
+       done
+       if [ -z "$ok" ]; then
+         echo "local: no request succeeded within 250s, so the bucket did not refill after the 100s fill interval"; exit 1
+       fi
+       resp=$(curl -s -i --max-time 5 "$url" -H "$hdr" || true)
+       status=${resp%%$'\n'*}
+       case "$status" in
+         *" 429"*) ;;
+         *) echo "local: the request right after the refilled one was not rate limited: ${status}"; exit 1 ;;
+       esac
+       case "$resp" in
+         *local_rate_limited*) ;;
+         *) echo "local: the 429 response has no local_rate_limited body"; echo "$resp"; exit 1 ;;
+       esac
+       echo "local: 429 response headers (the page shows x-ratelimit-* headers; not asserted):"
+       echo "$resp"
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: da810fcf71c149e0
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 46d3340f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 a50da420 f971795d 47117d8d ac3eeefa 54ea4e89 8a32cebd abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="local-gateway" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the Gateway-level local-ratelimit TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: kgateway-system
+               name: local-ratelimit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 74e04f253fdb6113
+    lang: ''
+    lines: ab5df625 e7f783c5 b77b3a6f 66a378bb 9d292567 891996b5 722e04ca 2be6c3ba a9e15dd5 ecefad3a ab5df625 191e62f1 fa2dd01e
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="local-gateway" >}}
+       # Test-only: prove the 1-token bucket that refills every 100s. Send requests
+       # until one gets 429, wait for the refill, then show that the next request
+       # succeeds and the one right after it is rate limited again.
+       url="http://${INGRESS_GW_ADDRESS}:8080/status/200"
+       hdr="host: www.example.com:8080"
+       c=""
+       for i in $(seq 1 60); do
+         c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$url" -H "$hdr" || true)
+         [ "$c" = "429" ] && break
+         sleep 1
+       done
+       if [ "$c" != "429" ]; then
+         echo "local-gateway: no 429 after 60 requests to www.example.com, so the 1-token bucket is not enforced (last status: ${c})"; exit 1
+       fi
+       # The bucket gets 1 token every 100s. Requests that get 429 do not use a token.
+       ok=""
+       for i in $(seq 1 50); do
+         sleep 5
+         c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$url" -H "$hdr" || true)
+         if [ "$c" = "200" ]; then ok=1; break; fi
+         if [ "$c" != "429" ]; then echo "local-gateway: unexpected status ${c} while waiting for the refill"; exit 1; fi
+       done
+       if [ -z "$ok" ]; then
+         echo "local-gateway: no request succeeded within 250s, so the bucket did not refill after the 100s fill interval"; exit 1
+       fi
+       resp=$(curl -s -i --max-time 5 "$url" -H "$hdr" || true)
+       status=${resp%%$'\n'*}
+       case "$status" in
+         *" 429"*) ;;
+         *) echo "local-gateway: the request right after the refilled one was not rate limited: ${status}"; exit 1 ;;
+       esac
+       case "$resp" in
+         *local_rate_limited*) ;;
+         *) echo "local-gateway: the 429 response has no local_rate_limited body"; echo "$resp"; exit 1 ;;
+       esac
+       echo "local-gateway: 429 response headers (the page shows x-ratelimit-* headers; not asserted):"
+       echo "$resp"
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 0fcdaaf4bb8048c4
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6e2d5dc9 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa bf0611ca 3de9d845 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="local-disable" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the local-ratelimit TrafficPolicy on the http Gateway to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: kgateway-system
+               name: local-ratelimit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the httpbin-anything HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-anything
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: dedd4c1a379146e6
+    lang: ''
+    lines: b77b3a6f 66a378bb 9d292567 891996b5 722e04ca 2be6c3ba a9e15dd5 ecefad3a ab5df625 191e62f1 fa2dd01e
+    preview: < HTTP/1.1 429 Too Many Requests
+  content: |2-
+       {{< doc-test paths="local-disable" >}}
+       # Test-only: before the disable policy, /anything shares the Gateway bucket of
+       # 1 token, so back-to-back requests get 429 local_rate_limited.
+       c=""
+       body=""
+       for i in $(seq 1 60); do
+         resp=$(curl -s -w '\n%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/anything" -H "host: www.example.com:8080" || true)
+         c=${resp##*$'\n'}
+         body=${resp%$'\n'*}
+         [ "$c" = "429" ] && break
+         sleep 1
+       done
+       if [ "$c" != "429" ]; then
+         echo "local-disable: /anything was never rate limited by the Gateway-level policy (last status: ${c})"; exit 1
+       fi
+       case "$body" in
+         *local_rate_limited*) ;;
+         *) echo "local-disable: expected a local_rate_limited body on /anything, got: ${body}"; exit 1 ;;
+       esac
+       {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: db54869c05fffd1a
+    lang: ''
+    lines: 6364ab47 92413e97 ab5df625
+    preview: < HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="local-disable" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the disable-ratelimit TrafficPolicy on httpbin-anything to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: disable-ratelimit
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       # Test-only: with the Gateway bucket at 1 token per 100s, three back-to-back
+       # 200s on /anything show that the route is excluded from rate limiting.
+       ok=""
+       for i in $(seq 1 40); do
+         a=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/anything" -H "host: www.example.com:8080" || true)
+         b=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/anything" -H "host: www.example.com:8080" || true)
+         d=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/anything" -H "host: www.example.com:8080" || true)
+         if [ "$a$b$d" = "200200200" ]; then ok=1; break; fi
+         sleep 3
+       done
+       if [ -z "$ok" ]; then
+         echo "local-disable: /anything is still rate limited after the disable-ratelimit policy (last: $a $b $d)"; exit 1
+       fi
+       # The Gateway-level limit still applies to the other routes, such as /status/200.
+       c=""
+       for i in $(seq 1 10); do
+         c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true)
+         [ "$c" = "429" ] && break
+       done
+       if [ "$c" != "429" ]; then
+         echo "local-disable: /status/200 is no longer rate limited, so the Gateway-level policy stopped applying (last status: ${c})"; exit 1
+       fi
+       {{< /doc-test >}}

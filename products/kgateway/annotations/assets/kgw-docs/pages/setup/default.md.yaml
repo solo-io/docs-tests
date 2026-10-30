@@ -1,0 +1,220 @@
+format: 1
+source: assets/kgw-docs/pages/setup/default.md
+blocks: []
+hidden:
+- after:
+    section: GatewayClass
+    line: 18ea70cd8e0bd4cf
+    occurrence: 0
+    words: d9c0d341 9edd6d99 21a355f1 d7ed16b3
+    block_before: null
+  content: |-
+    {{< doc-test paths="default" >}}
+    YAMLTest -f - <<'EOF'
+    - name: default - the kgateway GatewayClass is created at install with the kgateway.dev/kgateway controller
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.spec.controllerName"
+        jsonPathExpectation:
+          comparator: equals
+          value: "kgateway.dev/kgateway"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: default - the kgateway GatewayClass has the description that the page shows
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.spec.description"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Standard class for managing Gateway API ingress traffic."
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: default - the kgateway GatewayClass is accepted
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Gateway proxy template
+    line: 304b9e9479fd31ba
+    occurrence: 0
+    words: b9776d7d ecd21b60 4ea5ee68 1241936d fa51fd49 7fdfda5f 10c22bcf bb0347a4 6201111b ea103d6c b7d64a92 fa51fd49 83ccca18 27eb5e51 dd20955d b8d31e85 b9776d7d cde0fb0d 58296753 b9776d7d 4c5d3222 5de95319 663ea1bf 8c987381 f3b96e66 b9776d7d 4ea5ee68 1241936d aee50b18 ca978112 9df6b026 28391d3b 1303c06b daeb1c61 fa51fd49 406effb1 10c22bcf bb0347a4 6ee1bce9 b8d31e85 b9776d7d 56681010 5c4c1964 8e7fc023 bb0347a4 a3b142af b9776d7d daeb1c61 9df6b026 fa51fd49 2ebb9294 ca978112 efa1f375 bb9af5d1 d80c9bf9 7175517a 7063dece 8e7fc023 bb0347a4 9f584196 a3b142af 663ea1bf ed4561f6 b9776d7d 4ea5ee68 663ea1bf f3b96e66 ea325d76 a172cedc b8d31e85 b9776d7d 4ea5ee68 bb0347a4 4137b01e fa8847b0 ea325d76 e5381597 5de95319 6201111b ecd38f26 b9776d7d 9410fb28 6201111b dfc3376b 6c621d1a 8e7fc023 bb0347a4 8656aa55 663ea1bf 97a5e41b 6db7d803 8b7523ec b9776d7d 1f58b914 663ea1bf b9776d7d a172cedc 58296753 4d040d3f 164cf1ca bb0347a4 9f584196 c97ace4c b9776d7d 2998b323 03494afd fa42bed0 a0af9f86 ed4f0b24 075f4ab8 288965a1 fa42bed0 a0af9f86 1458db56 5d2d3ceb fa42bed0 a0af9f86 5d2d3ceb 6201111b 5aca6654 fa42bed0 a0af9f86 5aca6654 9893ff99 663ea1bf e6640de8 c590b3c9 10c22bcf 8044aae1 663ea1bf 8a84e406 6201111b 6a934b45 075f4ab8 663ea1bf ea325d76 a172cedc
+    block_before: null
+  content: |-
+    {{< doc-test paths="default" >}}
+    # The http Gateway from the sample app gets a proxy Deployment and a Service of
+    # type LoadBalancer with an external address, both named after the Gateway.
+    YAMLTest -f - <<'EOF'
+    - name: default - the http Gateway has a gateway proxy deployment
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: default - the http gateway proxy service is of type LoadBalancer
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.spec.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "LoadBalancer"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: default - the http gateway proxy service has an external address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Reserved ports
+    line: d2d9b2b2c8f17978
+    occurrence: 0
+    words: d9c0d341 9edd6d99 21a355f1 db34f613
+    block_before: null
+  content: |-
+    {{< doc-test paths="default" >}}
+    # Reserved ports: a Gateway with a listener on the Prometheus port 9091 next to a
+    # normal listener on 8080.
+    kubectl apply -f- <<'EOF'
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1
+    metadata:
+      name: reserved-port-check
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      gatewayClassName: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+      listeners:
+      - protocol: HTTP
+        port: 8080
+        name: http
+      - protocol: HTTP
+        port: 9091
+        name: reserved
+    EOF
+    {{< version exclude-if="2.0.x,2.1.x,2.2.x,2.3.x,2.4.x" >}}
+    # The listener on 9091 is rejected with the Invalid reason and the "port is reserved"
+    # message, and the proxy Service does not expose port 9091.
+    YAMLTest -f - <<'EOF'
+    - name: default - the listener on the reserved port 9091 is not accepted
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: reserved-port-check
+        jsonPath: "$.status.listeners[?(@.name=='reserved')].conditions[?(@.type=='Accepted')].reason"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Invalid"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: default - the reserved listener's message says the port is reserved
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: reserved-port-check
+        jsonPath: "$.status.listeners[?(@.name=='reserved')].conditions[?(@.type=='Accepted')].message"
+        jsonPathExpectation:
+          comparator: contains
+          value: "invalid port 9091 in listener: port is reserved"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: default - the gateway proxy service for the reserved-port Gateway exists
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: reserved-port-check
+        jsonPath: "$.spec.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "LoadBalancer"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    ports=$(kubectl get svc reserved-port-check -n kgateway-system -o jsonpath='{.spec.ports[*].port}')
+    echo "reserved-port-check Service ports: $ports"
+    if grep -qw 9091 <<<"$ports"; then
+      echo "FAIL: the proxy Service exposes the reserved port 9091"
+      exit 1
+    fi
+    {{< /version >}}
+    {{< version include-if="2.0.x,2.1.x,2.2.x,2.3.x,2.4.x" >}}
+    # The gateway proxy still deploys, and the control plane logs an error about port 9091.
+    YAMLTest -f - <<'EOF'
+    - name: default - the gateway proxy for the reserved-port Gateway still deploys
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: reserved-port-check
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    found=""
+    for i in $(seq 1 30); do
+      # Capture the logs first: under pipefail, `| grep -q` can fail on a match (SIGPIPE).
+      logs=$(kubectl logs deploy/kgateway -n kgateway-system --since=10m 2>/dev/null) || true
+      if grep -i error <<<"$logs" | grep 9091 >/dev/null; then found=1; break; fi
+      echo "no error about port 9091 in the kgateway logs yet, retrying ($i/30)"; sleep 5
+    done
+    if [ -z "$found" ]; then
+      echo "FAIL: the kgateway control plane logs show no error about the reserved port 9091"
+      exit 1
+    fi
+    {{< /version >}}
+    kubectl delete gateway reserved-port-check -n kgateway-system
+    {{< /doc-test >}}

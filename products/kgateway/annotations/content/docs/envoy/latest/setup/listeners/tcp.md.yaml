@@ -1,0 +1,449 @@
+format: 1
+source: content/docs/envoy/latest/setup/listeners/tcp.md
+blocks:
+- f03bceb430d7be14 yaml
+- f43dc5287829feb3 yaml
+- cce32e90dca620d5 yaml
+- 4475bf3e3bd68df9 yaml
+- a6dd0d06b7f7ab91 sh
+- 6590539d06d10ba8 console
+- 50aa2f2127a39b99 yaml
+- ea770ff829f0daab yaml
+- 8efed84777b93d6f yaml
+- ed03ab22b02c61c6 sh
+- c1ee05943a23cb53 console
+- 9164c29f4ab2adb9 sh
+- 2249b5394c43704e sh
+- 3851ae25901b936a sh
+- 260b59cd9c929c77 sh
+- 2cf24dba5fb0a30e console
+- a47b08e28644bff4 console
+- b3b90128206d38f0 shell
+tags:
+- paths: listeners-tcp,listeners-tcp-listenerset
+  block: 0
+  fingerprint: f03bceb430d7be14
+  lang: yaml
+  lines: 16c71da1 f1540154 7963e6b7 8c8c4228 fa1e8330 5fbc7904 f75543c5 0ccc8edc 36184fa5 04968f51 7c6d5dab ff42c2c6 f75543c5 d2c48006 cb3f91d5 f1540154 0d6480f0 8c8c4228 fa1e8330 5fbc7904 f75543c5 0ccc8edc 36184fa5 0ff65a1a 82601aaa 3ca9cd2c 9693ecf1 d10e4e47 8432e015 5fbc7904 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-tcp,listeners-tcp-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-tcp
+  block: 1
+  fingerprint: f43dc5287829feb3
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7cfd31d9 0bebd850 fa1e8330 5fbc7904 36184fa5 c281d1bb c10d7538 83feb025 bca8e5f7 9b5e8f6f 5f37c61e d94df5c7 cda3fdb3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-tcp"
+    only: true
+    lead: ' '
+- paths: listeners-tcp-listenerset
+  block: 2
+  fingerprint: cce32e90dca620d5
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 7cfd31d9 0bebd850 fa1e8330 5fbc7904 36184fa5 c281d1bb 14fc2dbb c3201545 e83d405d c10d7538 83feb025 da480536 2907471a 5f37c61e d94df5c7 cda3fdb3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-tcp-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-tcp-listenerset
+  block: 3
+  fingerprint: 4475bf3e3bd68df9
+  lang: yaml
+  lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 a589cbaf 0bebd850 fa1e8330 5fbc7904 36184fa5 0b7ce857 7cfd31d9 0bebd850 cd44d8cd 350955ef c10d7538 83feb025 bca8e5f7 9cd383f8 5f37c61e d94df5c7 cda3fdb3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-tcp-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-tcp,listeners-tcp-listenerset
+  block: 4
+  fingerprint: a6dd0d06b7f7ab91
+  lang: sh
+  lines: a6dd0d06
+  preview: kubectl get gateway tcp-gateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}
+  form:
+    attr: paths="listeners-tcp,listeners-tcp-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-tcp,listeners-tcp-listenerset
+  block: 6
+  fingerprint: 50aa2f2127a39b99
+  lang: yaml
+  lines: 16c71da1 979905a0 e47a48f5 8c8c4228 4f02dcc9 0ccc8edc 36184fa5 0e20b496 b5a028c9 53721f39 0bebd850 55708cb7 e6365cc1 0d6480f0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-tcp,listeners-tcp-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-tcp
+  block: 7
+  fingerprint: ea770ff829f0daab
+  lang: yaml
+  lines: 16c71da1 8c67597e 53721f39 8c8c4228 3a220dfe 0bebd850 fa1e8330 5fbc7904 36184fa5 d3d416e7 53c0030d 0bebd850 4100bae7 3de9d845 a3b86ab6 b340bc35 0ccc8edc 3ca9cd2c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-tcp"
+    only: true
+    lead: ' '
+- paths: listeners-tcp-listenerset
+  block: 8
+  fingerprint: 8efed84777b93d6f
+  lang: yaml
+  lines: 16c71da1 8c67597e 53721f39 8c8c4228 3a220dfe 0bebd850 fa1e8330 5fbc7904 36184fa5 d3d416e7 8c92a6b6 0bebd850 a8f2cfa5 350955ef a382fc25 3de9d845 a3b86ab6 b340bc35 0ccc8edc 3ca9cd2c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-tcp-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-tcp,listeners-tcp-listenerset
+  block: 9
+  fingerprint: ed03ab22b02c61c6
+  lang: sh
+  lines: ed03ab22
+  preview: kubectl get tcproute/tcp-route-echo -n {{< reuse "kgw-docs/snippets/namespace.md
+  form:
+    attr: paths="listeners-tcp,listeners-tcp-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-tcp,listeners-tcp-listenerset
+  block: 11
+  fingerprint: 9164c29f4ab2adb9
+  lang: sh
+  lines: 736522bb 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="listeners-tcp,listeners-tcp-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-tcp,listeners-tcp-listenerset
+  block: 17
+  fingerprint: b3b90128206d38f0
+  lang: shell
+  lines: d358267d 4fd384c7
+  preview: kubectl delete -A gateways,listenersets,tcproutes,pod,svc -l app=tcp-echo
+  form:
+    attr: paths="listeners-tcp,listeners-tcp-listenerset"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: f03bceb430d7be14
+    lang: yaml
+    lines: 16c71da1 f1540154 7963e6b7 8c8c4228 fa1e8330 5fbc7904 f75543c5 0ccc8edc 36184fa5 04968f51 7c6d5dab ff42c2c6 f75543c5 d2c48006 cb3f91d5 f1540154 0d6480f0 8c8c4228 fa1e8330 5fbc7904 f75543c5 0ccc8edc 36184fa5 0ff65a1a 82601aaa 3ca9cd2c 9693ecf1 d10e4e47 8432e015 5fbc7904 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="listeners-tcp,listeners-tcp-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-tcp - wait for the tcp-echo pod to be ready
+         wait:
+           target:
+             kind: Pod
+             metadata:
+               namespace: default
+               name: tcp-echo
+           jsonPath: "$.status.containerStatuses[0].ready"
+           jsonPathExpectation:
+             comparator: equals
+             value: true
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 4475bf3e3bd68df9
+    lang: yaml
+    lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 a589cbaf 0bebd850 fa1e8330 5fbc7904 36184fa5 0b7ce857 7cfd31d9 0bebd850 cd44d8cd 350955ef c10d7538 83feb025 bca8e5f7 9cd383f8 5f37c61e d94df5c7 cda3fdb3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="listeners-tcp-listenerset" >}}
+          YAMLTest -f - <<'EOF'
+          - name: listeners-tcp-listenerset - wait for the my-tcp-listenerset ListenerSet to be accepted
+            wait:
+              target:
+                kind: ListenerSet
+                metadata:
+                  namespace: kgateway-system
+                  name: my-tcp-listenerset
+              jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          - name: listeners-tcp-listenerset - wait for the tcp-listener-set listener to be programmed
+            wait:
+              target:
+                kind: ListenerSet
+                metadata:
+                  namespace: kgateway-system
+                  name: my-tcp-listenerset
+              jsonPath: "$.status.listeners[?(@.name=='tcp-listener-set')].conditions[?(@.type=='Programmed')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 6590539d06d10ba8
+    lang: console
+    lines: e92e1c51 14eebc40 c9979b93 ca5f57d3 c8986449 14655c98 01da8ea3 de609cda 69a91118 dcfcd85d a4a39e6e 14655c98 01da8ea3 de609cda 79fa3149 dcfcd85d 74bdfc15
+    preview: 'status:'
+  content: |2-
+       {{< doc-test paths="listeners-tcp,listeners-tcp-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-tcp - the tcp-gateway Gateway is accepted
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: tcp-gateway
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp - the tcp-gateway Gateway is programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: tcp-gateway
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: c1ee05943a23cb53
+    lang: console
+    lines: e92e1c51 4b47a249 a98ddb59 52efadaa 01da8ea3 21d5dc59 69a91118 dcfcd85d a4a39e6e 52efadaa 01da8ea3 21d5dc59 91ecf445 dcfcd85d 9a38716e c8772def 0b7ce857 350955ef cd44d8cd 7cfd31d9 0bebd850 4100bae7
+    preview: 'status:'
+  content: |2-
+       {{< doc-test paths="listeners-tcp-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-tcp-listenerset - tcp-route-echo TCPRoute is accepted
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: kgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp-listenerset - tcp-route-echo TCPRoute refs are resolved
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: kgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp-listenerset - tcp-route-echo TCPRoute status names the ListenerSet as its parent
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: kgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].parentRef.kind"
+           jsonPathExpectation:
+             comparator: equals
+             value: "ListenerSet"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp-listenerset - tcp-route-echo TCPRoute parent section is tcp-listener-set
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: kgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].parentRef.sectionName"
+           jsonPathExpectation:
+             comparator: equals
+             value: "tcp-listener-set"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp-listenerset - the tcp-listener-set listener has 1 attached route
+         wait:
+           target:
+             kind: ListenerSet
+             metadata:
+               namespace: kgateway-system
+               name: my-tcp-listenerset
+           jsonPath: "$.status.listeners[?(@.name=='tcp-listener-set')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: c1ee05943a23cb53
+    lang: console
+    lines: e92e1c51 4b47a249 a98ddb59 52efadaa 01da8ea3 21d5dc59 69a91118 dcfcd85d a4a39e6e 52efadaa 01da8ea3 21d5dc59 91ecf445 dcfcd85d 9a38716e c8772def 0b7ce857 350955ef cd44d8cd 7cfd31d9 0bebd850 4100bae7
+    preview: 'status:'
+  content: |2-
+       {{< doc-test paths="listeners-tcp" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-tcp - tcp-route-echo TCPRoute is accepted
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: kgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp - tcp-route-echo TCPRoute refs are resolved
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: kgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp - tcp-route-echo TCPRoute parent is tcp-gateway
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: kgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].parentRef.name"
+           jsonPathExpectation:
+             comparator: equals
+             value: "tcp-gateway"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp - tcp-route-echo TCPRoute parent section is the tcp listener
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: kgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].parentRef.sectionName"
+           jsonPathExpectation:
+             comparator: equals
+             value: "tcp"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    section: Verify the TCP route
+    line: 67f1960ebcb3cd7a
+    occurrence: 0
+    words: 6b86b273 2998b323 b9776d7d 3c462384 d80c9bf9 28391d3b b9776d7d 4ea5ee68 6201111b 157dca92 2ad8a704 58296753 ea325d76 ba528516 3b325109
+    block_before:
+      block: 10
+      fingerprint: c1ee05943a23cb53
+      lang: console
+      lines: e92e1c51 4b47a249 a98ddb59 52efadaa 01da8ea3 21d5dc59 69a91118 dcfcd85d a4a39e6e 52efadaa 01da8ea3 21d5dc59 91ecf445 dcfcd85d 9a38716e c8772def 0b7ce857 350955ef cd44d8cd 7cfd31d9 0bebd850 4100bae7
+      preview: 'status:'
+  content: |2-
+       {{< doc-test paths="listeners-tcp,listeners-tcp-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-tcp - wait for the tcp-gateway Gateway to report an address
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: tcp-gateway
+           jsonPath: "$.status.addresses[0].value"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp - wait for the tcp-gateway service load balancer address
+         wait:
+           target:
+             kind: Service
+             metadata:
+               namespace: kgateway-system
+               name: tcp-gateway
+           jsonPath: "$.status.loadBalancer.ingress[0].ip"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: a47b08e28644bff4
+    lang: console
+    lines: 2cf24dba 2cf24dba
+    preview: hello
+  content: |2-
+       {{< doc-test paths="listeners-tcp,listeners-tcp-listenerset" >}}
+       # Test-only: the page's nc session is interactive. Open a TCP connection with
+       # bash instead, send one line, and expect the tcp-echo app to send it back.
+       msg="hello-from-listeners-tcp"
+       reply=""
+       for i in $(seq 1 60); do
+         reply=$(timeout 10 bash -c 'exec 3<>"/dev/tcp/$1/8000" || exit 1; printf "%s\n" "$2" >&3; IFS= read -r -t 5 line <&3; printf "%s" "$line"' _ "${INGRESS_GW_ADDRESS}" "$msg" 2>/dev/null || true)
+         case "$reply" in *"$msg"*) break ;; esac
+         echo "listeners-tcp attempt $i: got '${reply:-no reply}', retrying"
+         sleep 2
+       done
+       case "$reply" in
+         *"$msg"*) echo "listeners-tcp: tcp-echo echoed '$reply' through port 8000 of tcp-gateway" ;;
+         *) echo "listeners-tcp: no echo from tcp-echo through port 8000 of tcp-gateway"; exit 1 ;;
+       esac
+       {{< /doc-test >}}

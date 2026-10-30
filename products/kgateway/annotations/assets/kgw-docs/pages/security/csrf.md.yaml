@@ -1,0 +1,221 @@
+format: 1
+source: assets/kgw-docs/pages/security/csrf.md
+blocks:
+- 49670589fc3cf1d2 yaml
+- 276bdf671f960f98 sh
+- 3a088090ae112141 sh
+- adb51f0f63cf2968 console
+- e76c2828a8ae1bc7 sh
+- 3fe9ea873570ca13 sh
+- 22ac674b6bd1d4ab console
+- 2791c43f9113acac sh
+- 3f6810b1588e4c6c console
+- 4ada8d3d84afc8e5 sh
+tags:
+- paths: csrf
+  block: 0
+  fingerprint: 49670589fc3cf1d2
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 44dee0a4 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 2a495861 4ed22273 82e7ef59 6c42593a 7317ec24 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="csrf"
+    only: true
+    lead: ' '
+- paths: csrf
+  block: 9
+  fingerprint: 4ada8d3d84afc8e5
+  lang: sh
+  lines: 4ada8d3d
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} csrf -n httpbi
+  form:
+    attr: paths="csrf"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 49670589fc3cf1d2
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 44dee0a4 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 2a495861 4ed22273 82e7ef59 6c42593a 7317ec24 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="csrf" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the csrf TrafficPolicy to be accepted on the httpbin HTTPRoute
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: csrf
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: adb51f0f63cf2968
+    lang: console
+    lines: 8310b5e0 ab5df625 724804a1
+    preview: HTTP/1.1 403 Forbidden
+  content: |-
+    {{< doc-test paths="csrf" >}}
+    YAMLTest -f - <<'EOF'
+    - name: csrf - a POST without an origin is rejected with 403 Invalid origin
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /post
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains:
+        - Invalid origin
+    - name: csrf - a POST from a cross-site origin that is not in additionalOrigins is rejected with 403
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /post
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          origin: "https://attacker.example.org"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains:
+        - Invalid origin
+    - name: csrf - a GET without an origin is not checked, because GET does not change state
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /get
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 22ac674b6bd1d4ab
+    lang: console
+    lines: 92413e97 ab5df625 021fb596 1efe1dd8 2e253c22 c7197869 817ad316 39d4b54e db3da8b1 98089e6d 39d4b54e 6056662a f0120b44 39d4b54e 28d51a37 5296ab3b 39d4b54e 0653176f 031a60ef 39d4b54e cf93d32e 3bc0f6e2 39d4b54e cfa27b48 a321f717 39d4b54e b467788d c1af6ec6 cfae0d42 e52a1813 5c78ec4a 98831145 66e083c5 bb3dd0df 3f450ae3 d7180b90 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="csrf" >}}
+    YAMLTest -f - <<'EOF'
+    - name: csrf - a POST from the additional origin allowThisOne.example.com succeeds and reaches httpbin
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /post
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          origin: "allowThisOne.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Origin[0]"
+          comparator: equals
+          value: allowThisOne.example.com
+    - name: csrf - a same-origin POST, where the origin matches the host, succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /post
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          origin: "http://www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: csrf - the exact match is case sensitive (ignoreCase false), so a lowercase origin is rejected
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /post
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          origin: "allowthisone.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 3f6810b1588e4c6c
+    lang: console
+    lines: 76741cb6 6fcd35db 39b522ee ab5df625
+    preview: 'http.{{< version include-if="2.0.x,2.1.x,2.2.x,2.3.x,2.4.x" >}}http{{< /version '
+  content: |-
+    {{< doc-test paths="csrf" >}}
+    # Test-only: read the counters from the admin port inside the proxy pod instead
+    # of a port-forward. The checks above sent requests without an origin, with a
+    # rejected origin, and with accepted origins, so all three are at least 1.
+    csrf_ok=false
+    for i in $(seq 1 30); do
+      csrf_stats=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/stats" 2>/dev/null) || true
+      csrf_lines=$(grep -E '^http\.[^ ]+\.csrf\.(missing_source_origin|request_invalid|request_valid): ' <<<"$csrf_stats") || true
+      csrf_missing=$(grep -E '\.csrf\.missing_source_origin: ' <<<"$csrf_lines" | head -1 | sed 's/.*: //') || true
+      csrf_invalid=$(grep -E '\.csrf\.request_invalid: ' <<<"$csrf_lines" | head -1 | sed 's/.*: //') || true
+      csrf_valid=$(grep -E '\.csrf\.request_valid: ' <<<"$csrf_lines" | head -1 | sed 's/.*: //') || true
+      if [ "${csrf_missing:-0}" -ge 1 ] 2>/dev/null && [ "${csrf_invalid:-0}" -ge 1 ] 2>/dev/null && [ "${csrf_valid:-0}" -ge 1 ] 2>/dev/null; then
+        csrf_ok=true
+        break
+      fi
+      sleep 2
+    done
+    if [ "$csrf_ok" != true ]; then
+      echo "csrf stats: expected missing_source_origin, request_invalid, and request_valid of at least 1"
+      echo "${csrf_lines:-no csrf stats found}"
+      exit 1
+    fi
+    echo "csrf stats:"
+    echo "$csrf_lines"
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 4ada8d3d84afc8e5
+    lang: sh
+    lines: 4ada8d3d
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} csrf -n httpbi
+  content: |-
+    {{< doc-test paths="csrf" >}}
+    YAMLTest -f - <<'EOF'
+    - name: csrf - after cleanup, a POST without an origin is no longer rejected
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /post
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

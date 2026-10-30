@@ -1,0 +1,190 @@
+format: 1
+source: content/docs/envoy/main/migrate/examples/ssl-redirect.md
+blocks:
+- 9fbad2a0cea8623a bash
+- cb3811e8fdc21083 bash
+- a342fa3a151ceec5 bash
+- 001ab9f9e24f5fb7 yaml
+- 230b7ad42620bd62 bash
+- 58a6a6431c7bd6cd yaml
+- d764dd01f67c42a1 bash
+tags:
+- paths: migrate-ssl-redirect
+  block: 0
+  fingerprint: 9fbad2a0cea8623a
+  lang: bash
+  lines: 6b4b37a7 4912a691 f1089fb2 8c8c4228 79b808e6 72ab0e66 651b7c23 36184fa5 9620a283 3de9d845 a8622e8a 1c31dda0 6a61c178 b2bf84ed 3897150c f40ce49b f12798fe cb038dcc 7c781356 bcbaf886 abc56510
+  preview: cat <<'EOF' > ssl-redirect-ingress.yaml
+  form:
+    attr: paths="migrate-ssl-redirect"
+    only: true
+    lead: ' '
+- paths: migrate-ssl-redirect
+  block: 1
+  fingerprint: cb3811e8fdc21083
+  lang: bash
+  lines: 675e6290 f5f7af03
+  preview: ingress2gateway print --providers=ingress-nginx --emitter=kgateway \
+  form:
+    attr: paths="migrate-ssl-redirect"
+    only: true
+    lead: ' '
+- paths: migrate-ssl-redirect
+  block: 4
+  fingerprint: 230b7ad42620bd62
+  lang: bash
+  lines: 230b7ad4
+  preview: kubectl apply -f ssl-redirect-kgateway.yaml
+  form:
+    attr: paths="migrate-ssl-redirect"
+    only: true
+    lead: ' '
+- paths: migrate-ssl-redirect
+  block: 5
+  fingerprint: 58a6a6431c7bd6cd
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 bb4a9d05 36184fa5 301e1bfa 870d4c12 d3d416e7 57249e4b 1943033b 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 e95173ca ae6b70e3 96b1dd04 4b419f75 efc6b016 27a44f11 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="migrate-ssl-redirect"
+    only: true
+    lead: ' '
+- paths: migrate-ssl-redirect
+  block: 6
+  fingerprint: d764dd01f67c42a1
+  lang: bash
+  lines: d764dd01
+  preview: kubectl get httproute ssl-redirect-demo-secure-example-com -o yaml
+  form:
+    attr: paths="migrate-ssl-redirect"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: cb3811e8fdc21083
+    lang: bash
+    lines: 675e6290 f5f7af03
+    preview: ingress2gateway print --providers=ingress-nginx --emitter=kgateway \
+  content: |-
+    {{< doc-test paths="migrate-ssl-redirect" >}}
+    # Test-only: the converted file must contain what the page's "After"
+    # section shows: the same resources, names, and fields, and none of the
+    # settings that the page says the tool leaves out.
+    python3 - ssl-redirect-kgateway.yaml <<'PY'
+    import sys, yaml
+    path = sys.argv[1]
+    docs = [d for d in yaml.safe_load_all(open(path)) if d]
+    def get(kind, name):
+        for d in docs:
+            if d.get("kind") == kind and (d.get("metadata") or {}).get("name") == name:
+                return d
+        have = ", ".join("%s/%s" % (d.get("kind"), (d.get("metadata") or {}).get("name")) for d in docs)
+        sys.exit("FAIL: %s has no %s named %s. It has: %s" % (path, kind, name, have))
+    def only(*want):
+        have = sorted("%s/%s" % (d.get("kind"), (d.get("metadata") or {}).get("name")) for d in docs)
+        if have != sorted(want):
+            sys.exit("FAIL: %s has %s. The page shows %s." % (path, ", ".join(have), ", ".join(sorted(want))))
+    def check(obj, field, want):
+        cur = obj
+        for key in field.split("."):
+            try:
+                cur = cur[int(key)] if key.isdigit() else cur[key]
+            except (KeyError, IndexError, TypeError):
+                sys.exit("FAIL: %s %s has no %s. The page shows %r." % (obj["kind"], obj["metadata"]["name"], field, want))
+        if cur != want:
+            sys.exit("FAIL: %s %s %s is %r. The page shows %r." % (obj["kind"], obj["metadata"]["name"], field, cur, want))
+    def absent(obj, field):
+        cur = obj
+        for key in field.split("."):
+            try:
+                cur = cur[int(key)] if key.isdigit() else cur[key]
+            except (KeyError, IndexError, TypeError):
+                return
+        sys.exit("FAIL: %s %s has %s. The page says it does not." % (obj["kind"], obj["metadata"]["name"], field))
+    only("Gateway/nginx", "HTTPRoute/ssl-redirect-demo-secure-example-com")
+    gw = get("Gateway", "nginx")
+    check(gw, "spec.gatewayClassName", "kgateway")
+    check(gw, "spec.listeners.0.hostname", "secure.example.com")
+    check(gw, "spec.listeners.0.name", "secure-example-com-http")
+    check(gw, "spec.listeners.0.port", 80)
+    check(gw, "spec.listeners.0.protocol", "HTTP")
+    rt = get("HTTPRoute", "ssl-redirect-demo-secure-example-com")
+    check(rt, "spec.hostnames.0", "secure.example.com")
+    check(rt, "spec.parentRefs.0.name", "nginx")
+    check(rt, "spec.rules.0.name", "rule-0")
+    check(rt, "spec.rules.0.backendRefs.0.name", "web-app")
+    check(rt, "spec.rules.0.backendRefs.0.port", 8080)
+    check(rt, "spec.rules.0.matches.0.path.type", "PathPrefix")
+    check(rt, "spec.rules.0.matches.0.path.value", '/')
+    absent(rt, "spec.rules.0.filters")
+    print("OK: %s matches the page's After section" % path)
+    PY
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: d764dd01f67c42a1
+    lang: bash
+    lines: d764dd01
+    preview: kubectl get httproute ssl-redirect-demo-secure-example-com -o yaml
+  content: |-
+    {{< doc-test paths="migrate-ssl-redirect" >}}
+    # Test-only: every resource in the converted file and every resource the page
+    # creates by hand exists, and every route and policy is Accepted. No app runs
+    # behind the Ingress's backends in the test cluster, so ResolvedRefs and
+    # traffic are not checked.
+    mig_resources=$(python3 - ssl-redirect-kgateway.yaml <<'PY'
+    import sys, yaml
+    for d in yaml.safe_load_all(open(sys.argv[1])):
+        if d:
+            group = d["apiVersion"].split("/")[0]
+            print("%s.%s/%s" % (d["kind"].lower(), group, d["metadata"]["name"]))
+    PY
+    )
+    for mig_res in $mig_resources; do
+      kubectl get "$mig_res" -n default >/dev/null || { echo "FAIL: $mig_res was not created"; exit 1; }
+      case "$mig_res" in
+        httproute.*) mig_jp='{.status.parents[0].conditions[?(@.type=="Accepted")].status}' ;;
+        trafficpolicy.*|backendconfigpolicy.*) mig_jp='{.status.ancestors[0].conditions[?(@.type=="Accepted")].status}' ;;
+        *) echo "OK: $mig_res exists"; continue ;;
+      esac
+      mig_status=""
+      for mig_try in $(seq 1 60); do
+        mig_status=$(kubectl get "$mig_res" -n default -o jsonpath="$mig_jp" 2>/dev/null || true)
+        [ "$mig_status" = "True" ] && break
+        sleep 5
+      done
+      if [ "$mig_status" != "True" ]; then
+        echo "FAIL: $mig_res is not Accepted after 5 minutes. Status:"
+        kubectl get "$mig_res" -n default -o jsonpath='{.status}' || true
+        exit 1
+      fi
+      echo "OK: $mig_res is Accepted"
+    done
+    # Test-only: the hand-authored HTTPRoute replaced the converted one. It attaches to the
+    # HTTP listener and redirects to HTTPS with a 308.
+    mig_ok=""
+    for mig_try in $(seq 1 60); do
+      if kubectl get httproute.gateway.networking.k8s.io/ssl-redirect-demo-secure-example-com -n default -o json | python3 -c '
+    import json, sys
+    r = json.load(sys.stdin)
+    spec_ok = (r["spec"]["parentRefs"][0].get("sectionName") == "secure-example-com-http"
+               and "backendRefs" not in r["spec"]["rules"][0]
+               and (r["spec"]["rules"][0].get("filters") or [{}])[0].get("type") == "RequestRedirect"
+               and r["spec"]["rules"][0]["filters"][0]["requestRedirect"] == {"scheme": "https", "statusCode": 308})
+    gen = r["metadata"]["generation"]
+    status = r.get("status") or {}
+    entries = (status.get("parents") or []) + (status.get("ancestors") or [])
+    accepted = any(c.get("type") == "Accepted" and c.get("status") == "True" and c.get("observedGeneration") == gen
+                   for e in entries for c in e.get("conditions") or [])
+    sys.exit(0 if spec_ok and accepted else 1)
+    '; then mig_ok=1; break; fi
+      sleep 5
+    done
+    if [ -z "$mig_ok" ]; then
+      echo "FAIL: httproute.gateway.networking.k8s.io/ssl-redirect-demo-secure-example-com does not have the page's settings, or is not Accepted for its current generation, after 5 minutes:"
+      kubectl get httproute.gateway.networking.k8s.io/ssl-redirect-demo-secure-example-com -n default -o yaml || true
+      exit 1
+    fi
+    echo "OK: httproute.gateway.networking.k8s.io/ssl-redirect-demo-secure-example-com has the page's settings and is Accepted"
+    {{< /doc-test >}}

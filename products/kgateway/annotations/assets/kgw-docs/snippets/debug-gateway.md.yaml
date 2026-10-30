@@ -1,0 +1,98 @@
+format: 1
+source: assets/kgw-docs/snippets/debug-gateway.md
+blocks:
+- 5fba5f3bf561451f sh
+- 06feb5e661c3754e sh
+- 6a9c83afa2745949 sh
+- a8f652dd4089601b sh
+- f3bcdfc829c391a2 bash
+tags:
+- paths: debug
+  block: 0
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="debug"
+    only: true
+    lead: ' '
+- paths: debug
+  block: 1
+  fingerprint: 06feb5e661c3754e
+  lang: sh
+  lines: 06feb5e6
+  preview: kubectl get httproutes -A
+  form:
+    attr: paths="debug"
+    only: true
+    lead: ' '
+- paths: debug
+  block: 4
+  fingerprint: f3bcdfc829c391a2
+  lang: bash
+  lines: 8ce74291 64903875 11813fc8 52a60a78 8fbdd3d2
+  preview: '# {{< reuse "/kgw-docs/snippets/kgateway.md" >}} control plane'
+  form:
+    attr: paths="debug"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 5fba5f3bf561451f
+    lang: sh
+    lines: 5fba5f3b
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="debug" >}}
+    # The control plane pod and the http gateway proxy pod are Running and Ready.
+    kubectl wait pod -n kgateway-system -l app.kubernetes.io/name=kgateway --for=condition=Ready --timeout=300s
+    kubectl wait pod -n kgateway-system -l gateway.networking.k8s.io/gateway-name=http --for=condition=Ready --timeout=300s
+    {{< /doc-test >}}
+- after:
+    section: (top of page)
+    line: 470aae219e131bd7
+    occurrence: 0
+    words: 4b5af442 1809f7cd 2bcb43cb 177a7ea3 8e7fc023 84532b30 f57bfbce 6201111b 7afbb334 663ea1bf b9776d7d 5c73a5c7 1809f7cd 5e8c03a9
+    block_before:
+      block: 3
+      fingerprint: a8f652dd4089601b
+      lang: sh
+      lines: a8f652dd
+      preview: kubectl port-forward deploy/http -n {{< reuse "kgw-docs/snippets/namespace.md" >
+  content: |-
+    {{< doc-test paths="debug" >}}
+    # Test-only: the CI runner cannot forward ports, so read the Envoy admin
+    # interface on 127.0.0.1:19000 from inside the http gateway proxy pod (its
+    # image ships busybox wget). Check the endpoints in the table.
+    envoy_admin() { kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/$1"; }
+    dump=""
+    for i in $(seq 1 30); do
+      dump=$(envoy_admin config_dump 2>/dev/null || true)
+      grep -q 'www.example.com' <<<"$dump" && break
+      echo "waiting for the http proxy config_dump to hold the www.example.com route ($i/30)"; sleep 5
+    done
+    for want in '"configs"' 'type.googleapis.com/envoy.admin.v3.ListenersConfigDump' 'type.googleapis.com/envoy.admin.v3.RoutesConfigDump' 'www.example.com'; do
+      if ! grep -qF "$want" <<<"$dump"; then
+        echo "FAIL: the Envoy admin config_dump does not contain $want"
+        exit 1
+      fi
+    done
+    listeners=$(envoy_admin listeners)
+    echo "listeners: $listeners"
+    if ! grep -q '8080' <<<"$listeners"; then
+      echo "FAIL: the Envoy admin listeners endpoint does not list the 8080 listener of the http Gateway"
+      exit 1
+    fi
+    logging=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- --post-data "" "http://127.0.0.1:19000/logging")
+    if ! grep -q 'active loggers' <<<"$logging"; then
+      echo "FAIL: the Envoy admin logging endpoint does not list the active loggers and their levels"
+      exit 1
+    fi
+    stats=$(envoy_admin stats/prometheus)
+    if ! grep -q '^envoy_server_live' <<<"$stats"; then
+      echo "FAIL: the Envoy admin stats/prometheus endpoint does not return Prometheus metrics"
+      exit 1
+    fi
+    {{< /doc-test >}}

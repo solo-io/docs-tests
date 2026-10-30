@@ -1,0 +1,276 @@
+format: 1
+source: content/docs/envoy/main/about/policies/global-attachment.md
+blocks:
+- 6ee48d226f693072 sh
+- f3734993ccce5d2c sh
+- 0db9df7fb94177b8 txt
+- 61d2361cc9a569ad json
+- f0b3ffcd3fdc01ef yaml
+- 19e5fa4de5851c4a sh
+- 5f87ce64d9a0ed69 sh
+- 17be897f6d9b74a4 txt
+- 7b4c7635fa55bff6 sh
+- 151308bb257f4d9d yaml
+- 19e5fa4de5851c4a sh
+- 5f87ce64d9a0ed69 sh
+- 0db9df7fb94177b8 txt
+- 61d2361cc9a569ad json
+- dbf443f75f107641 sh
+- 729c8386fef45dcf yaml
+- 64d586bc1791b40f sh
+- 3a7d66aca96133e7 yaml
+- 6ca0d47d3b4e413a yaml
+- 19e5fa4de5851c4a sh
+- 5f87ce64d9a0ed69 sh
+- 7a322ce1b31ace2b txt
+- 054b1d92b6bf5027 sh
+- cded3c1f14380834 yaml
+tags:
+- paths: global-attachment
+  block: 4
+  fingerprint: f0b3ffcd3fdc01ef
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 14ddcd05 207d5e5e 4c75c33f 84d16c86 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-attachment"
+    only: true
+    lead: ' '
+- paths: global-attachment
+  block: 8
+  fingerprint: 7b4c7635fa55bff6
+  lang: sh
+  lines: 7b4c7635
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} -n httpbin tra
+  form:
+    attr: paths="global-attachment"
+    only: true
+    lead: ' '
+- paths: global-attachment
+  block: 9
+  fingerprint: 151308bb257f4d9d
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 14ddcd05 207d5e5e 4c75c33f 84d16c86 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-attachment"
+    only: true
+    lead: ' '
+- paths: global-attachment
+  block: 16
+  fingerprint: 64d586bc1791b40f
+  lang: sh
+  lines: 64d586bc
+  preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
+  form:
+    attr: paths="global-attachment"
+    only: true
+    lead: ' '
+- paths: global-attachment
+  block: 17
+  fingerprint: 3a7d66aca96133e7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc fa1e8330 a73f7096 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-attachment"
+    only: true
+    lead: ' '
+- paths: global-attachment
+  block: 18
+  fingerprint: 6ca0d47d3b4e413a
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0bebd850 36184fa5 bace4b96 b5a028c9 56bf9360 839a5cac a73f7096 8905bcef 14ddcd05 207d5e5e 4c75c33f 84d16c86 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-attachment"
+    only: true
+    lead: ' '
+- paths: global-attachment
+  block: 22
+  fingerprint: 054b1d92b6bf5027
+  lang: sh
+  lines: 054b1d92
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} -n {{< reuse "
+  form:
+    attr: paths="global-attachment"
+    only: true
+    lead: ' '
+- paths: global-attachment
+  block: 23
+  fingerprint: cded3c1f14380834
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="global-attachment"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 61d2361cc9a569ad
+    lang: json
+    lines: 021fb596 1efe1dd8 2e253c22 c7197869 817ad316 39d4b54e 6056662a 6ef1e4db 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e 45bf2c44 88270499 39d4b54e 59bc501f 70635b0e 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 169e4afb cfae0d42 e52a1813 5b234701 ec8d810c 66e083c5 bb3dd0df 3f450ae3 d7180b90 d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="global-attachment" >}}
+       YAMLTest -f - <<'EOF'
+       - name: baseline - /anything on www.example.com returns 200 before any TrafficPolicy
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /anything
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: f0b3ffcd3fdc01ef
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 14ddcd05 207d5e5e 4c75c33f 84d16c86 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="global-attachment" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the transformation TrafficPolicy in the httpbin namespace (same namespace as the HTTPRoute) to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: transformation
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: same-namespace policy - the transform:status header rewrites /anything to /status/418
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /anything
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+             transform: "status"
+         source:
+           type: local
+         expect:
+           statusCode: 418
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 61d2361cc9a569ad
+    lang: json
+    lines: 021fb596 1efe1dd8 2e253c22 c7197869 817ad316 39d4b54e 6056662a 6ef1e4db 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e 45bf2c44 88270499 39d4b54e 59bc501f 70635b0e 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 169e4afb cfae0d42 e52a1813 5b234701 ec8d810c 66e083c5 bb3dd0df 3f450ae3 d7180b90 d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="global-attachment" >}}
+       # Before global attachment is on, the policy in kgateway-system cannot attach to
+       # the HTTPRoute in httpbin, so the request is not rewritten. Wait until the
+       # deleted same-namespace policy is gone (200), then confirm it stays 200.
+       code=""
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/anything" -H "host: www.example.com:8080" -H "transform: status") || true
+         [ "$code" = "200" ] && break
+         echo "cross-namespace policy check: got '${code}', want 200, retrying ($i/60)"; sleep 2
+       done
+       [ "$code" = "200" ] || { echo "FAIL: request with transform:status did not return 200 after moving the policy to kgateway-system"; exit 1; }
+       sleep 5
+       for i in $(seq 1 5); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/anything" -H "host: www.example.com:8080" -H "transform: status") || true
+         [ "$code" = "200" ] || { echo "FAIL: the TrafficPolicy in kgateway-system attached to the httpbin HTTPRoute without global attachment (got ${code}, want 200)"; exit 1; }
+       done
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 729c8386fef45dcf
+    lang: yaml
+    lines: adc43cf7 6c077fe9 a1c21158
+    preview: 'controller:'
+  content: |2-
+       {{< doc-test paths="global-attachment" >}}
+       # Steps 1 and 2 by script: the page's step 1 also runs `open`, which has no
+       # meaning on a CI runner, and step 2 is a manual edit. Helm prints JSON, which is
+       # valid YAML, so jq adds the setting without duplicating the `controller` key.
+       helm get values kgateway -n kgateway-system -o json \
+         | jq '.controller.extraEnv.KGW_GLOBAL_POLICY_NAMESPACE = "kgateway-system"' > kgateway.yaml
+       cat kgateway.yaml
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 64d586bc1791b40f
+    lang: sh
+    lines: 64d586bc
+    preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
+  content: |2-
+       {{< doc-test paths="global-attachment" >}}
+       kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+       global_ns=$(kubectl get deployment kgateway -n kgateway-system \
+         -o jsonpath='{.spec.template.spec.containers[*].env[?(@.name=="KGW_GLOBAL_POLICY_NAMESPACE")].value}')
+       echo "KGW_GLOBAL_POLICY_NAMESPACE=${global_ns}"
+       if [ "$global_ns" != "kgateway-system" ]; then
+         echo "FAIL: after the Helm upgrade, the kgateway control plane does not have KGW_GLOBAL_POLICY_NAMESPACE=kgateway-system"
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 7a322ce1b31ace2b
+    lang: txt
+    lines: 130672c7 a152bc23 c441a9d6 31147f26 a42540c2 b00c8878 fe66b4d1 71b9dd8a 5f7c6523 fe260b1b
+    preview: HTTP/1.1 418 Unknown
+  content: |2-
+       {{< doc-test paths="global-attachment" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the labeled httpbin HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: global policy - the kgateway-system policy selects the httpbin HTTPRoute by label and returns 418
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /anything
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+             transform: "status"
+         source:
+           type: local
+         expect:
+           statusCode: 418
+       - name: global policy - without the transform header the request still returns 200
+         retries: 10
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /anything
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

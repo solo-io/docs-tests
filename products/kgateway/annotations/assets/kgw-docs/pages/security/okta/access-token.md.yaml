@@ -1,0 +1,296 @@
+format: 1
+source: assets/kgw-docs/pages/security/okta/access-token.md
+blocks:
+- 5b5d4d9519ee424f yaml
+- 63ba3e1a8d174529 yaml
+- 8389e201d2265a73 sh
+- 8378444c9c09cbaf yaml
+- 31e5ed974a729adf sh
+- b400881cfa58d562 sh
+- 983e7192e5ed9e8e text
+- 6997ff31e97192e4 sh
+- 5c12153780401672 bash
+- 1be0fff3c8f96471 sh
+- 96477c1bafaf5b74 json
+- 8f8f96692a0bbfa7 bash
+- 7cba6b68350d576b bash
+- 6364ab47a888e2d8 text
+- ee1edfc40c624402 sh
+tags:
+- paths: okta-access-token
+  block: 0
+  fingerprint: 5b5d4d9519ee424f
+  lang: yaml
+  lines: 16c71da1 d664f32c 5ee5f7dc 8c8c4228 e198370a 0bebd850 36184fa5 9b9d0530 3220e5a9 a1343bf6 75eefa4f dbb00389 44ec9b74 b93c9907 70c97555 69f54740 ad65deb7 75021e46 0bebd850 0b64c2cc 837dc1fd 6720ec50 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="okta-access-token"
+    only: true
+    lead: ' '
+- paths: okta-access-token
+  block: 1
+  fingerprint: 63ba3e1a8d174529
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 f45a1105 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e34dc3a0 248578da e198370a 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="okta-access-token"
+    only: true
+    lead: ' '
+- paths: okta-access-token
+  block: 2
+  fingerprint: 8389e201d2265a73
+  lang: sh
+  lines: 8389e201
+  preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} okta-jwt-policy -
+  form:
+    attr: paths="okta-access-token"
+    only: true
+    lead: ' '
+- paths: okta-access-token
+  block: 8
+  fingerprint: 5c12153780401672
+  lang: bash
+  lines: 68bbedfa a61d4fd8 e007e721 d683630f 6a58c32a 11638fb5
+  preview: export TOKEN=$(curl -s -X POST "https://YOUR_OKTA_DOMAIN/oauth2/default/v1/token
+  form:
+    attr: paths="okta-access-token"
+    only: true
+    lead: ' '
+- paths: okta-access-token
+  block: 14
+  fingerprint: ee1edfc40c624402
+  lang: sh
+  lines: 6c3a8ddd 6f873611
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} okta-jwt-polic
+  form:
+    attr: paths="okta-access-token"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 8378444c9c09cbaf
+    lang: yaml
+    lines: f2decc81 a5e84374 dcfcd85d a4a39e6e 165305ea 69b834a6 dcfcd85d b8724bb7
+    preview: '- message: Policy accepted'
+  content: |-
+    {{< doc-test paths="okta-access-token" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the okta-jwt-policy TrafficPolicy to be accepted (jwtAuth with the okta-jwt GatewayExtension)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: okta-jwt-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the okta-jwt-policy TrafficPolicy to be attached (jwtAuth with the okta-jwt GatewayExtension)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: okta-jwt-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 983e7192e5ed9e8e
+    lang: text
+    lines: 983e7192
+    preview: < HTTP/1.1 401 Unauthorized
+  content: |-
+    {{< doc-test paths="okta-access-token" >}}
+    YAMLTest -f - <<'EOF'
+    - name: okta-access-token - a request without a token is rejected with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        bodyContains:
+        - Jwt is missing
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Verify
+    line: 83b7e85e94640615
+    occurrence: 0
+    words: 948fe603 631aada4 3492ad65 1f58b914 b9776d7d 3c469e9d 75857a45 d8ad572d 37a8eec1 3bfc2695 3c469e9d 1eb79602 3492ad65 9150c74c 9390298f 04f8996d ea7792a2 a1d98908 65819e19 961eb436 254bb97b c125d039 c0d03c12 4dcdefd0 56b3669c a5c935d1 f4bf9f7f a780fc8d 82244417 6201111b 1900eab6 7e9e5ac3 ca978112 6cdfd271 5f161c91 3e194352 a57dd3cd 46b42b42 9893ff99 324979d5 e305f589 0d6e4079 663ea1bf b9776d7d 37a8eec1 cbb82ebe b3eacd33 21af6f12 1f58b914 8e7fc023 5f161c91
+    block_before:
+      block: 7
+      fingerprint: 6997ff31e97192e4
+      lang: sh
+      lines: 6997ff31
+      preview: export TOKEN=<access-token-cookie-value>
+  content: |-
+    {{< doc-test paths="okta-access-token" >}}
+    # Test-only: the next step requests the token from https://YOUR_OKTA_DOMAIN.
+    # This curl function swaps in the stand-in host, sends it to the stand-in's
+    # LoadBalancer address, and trusts the test CA. It is removed after the step.
+    curl() {
+      local a args=()
+      for a in "$@"; do args+=("${a//${IDP_PLACEHOLDER}/${IDP_HOST}}"); done
+      command curl --cacert "$IDP_DIR/ca.crt" --resolve "${IDP_HOST}:443:${IDP_ADDRESS}" "${args[@]}"
+    }
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 5c12153780401672
+    lang: bash
+    lines: 68bbedfa a61d4fd8 e007e721 d683630f 6a58c32a 11638fb5
+    preview: export TOKEN=$(curl -s -X POST "https://YOUR_OKTA_DOMAIN/oauth2/default/v1/token
+  content: |-
+    {{< doc-test paths="okta-access-token" >}}
+    unset -f curl
+    # The page's token request must have returned a JWT (three dot-separated parts).
+    if [ "$(tr -cd '.' <<<"$TOKEN" | wc -c | tr -d ' ')" != 2 ]; then
+      echo "FAIL: the client credentials request did not return a JWT access token: '$TOKEN'"
+      command kubectl logs -n idp-standin deploy/idp-standin --tail=20 || true
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 96477c1bafaf5b74
+    lang: json
+    lines: 021fb596 ede0947c 0c340825 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="okta-access-token" >}}
+    # Step 4 decodes the token. The page's jq command reads base64, not base64url,
+    # so it fails on tokens whose payload contains - or _; decode with python3 here.
+    python3 - "$TOKEN" <<'PY'
+    import base64, json, sys
+    part = sys.argv[1].split(".")[1]
+    claims = json.loads(base64.urlsafe_b64decode(part + "=" * (-len(part) % 4)))
+    aud = claims.get("aud")
+    auds = aud if isinstance(aud, list) else [aud]
+    print({"iss": claims.get("iss"), "aud": aud})
+    assert claims.get("iss") == "https://okta.idp-standin.test/oauth2/default", "iss is %r, want https://okta.idp-standin.test/oauth2/default" % claims.get("iss")
+    assert "api://default" in auds, "aud %r does not include api://default" % aud
+    PY
+    {{< /doc-test >}}
+- after:
+    section: Verify
+    line: 934a04e65b9128e8
+    occurrence: 0
+    words: fc93cb07 4183b779 c1481e2e b9776d7d 1a2fc26d 961eb436 254bb97b 4945a70f ca978112 78236fd5 2c70e12b 7175517a b9776d7d 535c6f8e 7175517a adf0e099 961eb436 254bb97b 4945a70f b9776d7d fc93cb07 823412d1
+    block_before:
+      block: 13
+      fingerprint: 6364ab47a888e2d8
+      lang: text
+      lines: 6364ab47
+      preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="okta-access-token" >}}
+    # The token from step 3 reaches httpbin, and the three rejection messages in
+    # the table come back as the response body.
+    sig=${TOKEN##*.}
+    if [ "${sig:20:1}" = A ]; then swap=B; else swap=A; fi
+    BAD_SIG_TOKEN="${TOKEN%.*}.${sig:0:20}${swap}${sig:21}"
+    export BAD_SIG_TOKEN
+    YAMLTest -f - <<'EOF'
+    - name: okta-access-token - a request with the token reaches httpbin
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: www.example.com
+    - name: okta-access-token - no Authorization header gives Jwt is missing
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        bodyContains:
+        - Jwt is missing
+    - name: okta-access-token - a value that is not a JWT gives the three-sections message
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer not-a-jwt"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        bodyContains:
+        - Jwt is not in the form of Header.Payload.Signature with two dots and 3 sections
+    - name: okta-access-token - a token with a changed signature gives Jwt verification fails
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Bearer ${BAD_SIG_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        bodyContains:
+        - Jwt verification fails
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: ee1edfc40c624402
+    lang: sh
+    lines: 6c3a8ddd 6f873611
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} okta-jwt-polic
+  content: |-
+    {{< doc-test paths="okta-access-token" >}}
+    YAMLTest -f - <<'EOF'
+    - name: okta-access-token - after cleanup, a request without a token reaches httpbin again
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

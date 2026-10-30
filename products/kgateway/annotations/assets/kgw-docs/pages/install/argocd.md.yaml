@@ -1,0 +1,54 @@
+format: 1
+source: assets/kgw-docs/pages/install/argocd.md
+blocks:
+- 35fce4a11efdf5d5 shell
+- a41cf60745897b32 shell
+tags:
+- paths: argocd
+  block: 0
+  fingerprint: 35fce4a11efdf5d5
+  lang: shell
+  lines: 2ff6d967 0a80a7b9 735a6a9d e966eb24 1986a957 65b0eaa0 582cf3d3 6c195c91 3e831905
+  preview: kubectl create namespace argocd
+  form:
+    attr: paths="argocd"
+    only: true
+    lead: ' '
+- paths: argocd
+  block: 1
+  fingerprint: a41cf60745897b32
+  lang: shell
+  lines: e365cf6b 2dd09830 ba6a4ec3 ce3a9170 c0757165 f66df8b8 5b510b22
+  preview: '# bcrypt(password)=$2y$10$f6GlB5V/8OzCduEDEgBU.ugVn4vzxgT7cq7vuCebZAKoADaNve9Ve'
+  form:
+    attr: paths="argocd"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 35fce4a11efdf5d5
+    lang: shell
+    lines: 2ff6d967 0a80a7b9 735a6a9d e966eb24 1986a957 65b0eaa0 582cf3d3 6c195c91 3e831905
+    preview: kubectl create namespace argocd
+  content: |-
+    {{< doc-test paths="argocd" >}}
+    # The page waits for the Argo CD deployments. The application controller is a
+    # StatefulSet, and it is the component that syncs Applications.
+    kubectl -n argocd rollout status statefulset/argocd-application-controller --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: a41cf60745897b32
+    lang: shell
+    lines: e365cf6b 2dd09830 ba6a4ec3 ce3a9170 c0757165 f66df8b8 5b510b22
+    preview: '# bcrypt(password)=$2y$10$f6GlB5V/8OzCduEDEgBU.ugVn4vzxgT7cq7vuCebZAKoADaNve9Ve'
+  content: |-
+    {{< doc-test paths="argocd" >}}
+    # The admin password hash is now the bcrypt hash of `gateway`.
+    hash=$(kubectl -n argocd get secret argocd-secret -o json | jq -r '.data["admin.password"] // ""' | base64 -d)
+    if [ "$hash" != '$2y$10$f6GlB5V/8OzCduEDEgBU.ugVn4vzxgT7cq7vuCebZAKoADaNve9Ve' ]; then
+      echo "FAIL: argocd-secret admin.password is '$hash', not the hash of the gateway password"
+      exit 1
+    fi
+    {{< /doc-test >}}

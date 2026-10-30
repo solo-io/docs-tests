@@ -1,0 +1,484 @@
+format: 1
+source: assets/kgw-docs/pages/operations/upgrade.md
+blocks:
+- 189bf76bb4d0140a sh
+- b267eac60a2c273b sh
+- b692d08807a1dcd1 txt
+- c9e100a6e1ee7dd8 sh
+- 61f1493caddc938a txt
+- 4d4bf0365995dd24 sh
+- 29459d6794de986b sh
+- c7b6c2192215d7c5 sh
+- 9a5df46d7afe8526 sh
+- ff716e503be821df sh
+- adaecfb55a637023 sh
+- b47f9628f81808f1 sh
+- 0e7cd6e1f4babe78 sh
+- 91409cd375597f94
+- 5fba5f3bf561451f sh
+tags:
+- paths: upgrade
+  block: 0
+  fingerprint: 189bf76bb4d0140a
+  lang: sh
+  lines: 189bf76b
+  preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  form:
+    attr: paths="upgrade"
+    only: true
+    lead: ' '
+- paths: upgrade-experimental
+  block: 1
+  fingerprint: b267eac60a2c273b
+  lang: sh
+  lines: b267eac6
+  preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  form:
+    attr: paths="upgrade-experimental"
+    only: true
+    lead: ' '
+- paths: upgrade,upgrade-experimental
+  block: 3
+  fingerprint: c9e100a6e1ee7dd8
+  lang: sh
+  lines: c9e100a6
+  preview: kubectl get crds -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.vers
+  form:
+    attr: paths="upgrade,upgrade-experimental"
+    only: true
+    lead: ' '
+- paths: upgrade,upgrade-experimental
+  block: 5
+  fingerprint: 4d4bf0365995dd24
+  lang: sh
+  lines: 4d4bf036
+  preview: export NEW_VERSION={{< reuse "kgw-docs/versions/n-patch.md" >}}
+  form:
+    attr: paths="upgrade,upgrade-experimental"
+    only: true
+    lead: ' '
+- paths: upgrade,upgrade-experimental
+  block: 6
+  fingerprint: 29459d6794de986b
+  lang: sh
+  lines: 29459d67
+  preview: helm template --version {{< reuse "kgw-docs/versions/helm-version-upgrade.md" >}
+  form:
+    attr: paths="upgrade,upgrade-experimental"
+    only: true
+    lead: ' '
+- paths: upgrade,upgrade-experimental
+  block: 7
+  fingerprint: c7b6c2192215d7c5
+  lang: sh
+  lines: c7b6c219
+  preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
+  form:
+    attr: paths="upgrade,upgrade-experimental"
+    only: true
+    lead: ' '
+- paths: upgrade,upgrade-experimental
+  block: 9
+  fingerprint: ff716e503be821df
+  lang: sh
+  lines: ff716e50
+  preview: helm show values oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{
+  form:
+    attr: paths="upgrade,upgrade-experimental"
+    only: true
+    lead: ' '
+- paths: upgrade,upgrade-experimental
+  block: 11
+  fingerprint: b47f9628f81808f1
+  lang: sh
+  lines: 87ff5769 f82702aa ad51e346
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="upgrade,upgrade-experimental"
+    only: true
+    lead: ' '
+- paths: upgrade,upgrade-experimental
+  block: 12
+  fingerprint: 0e7cd6e1f4babe78
+  lang: sh
+  lines: 0e7cd6e1
+  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get pod -l app.kuberne
+  form:
+    attr: paths="upgrade,upgrade-experimental"
+    only: true
+    lead: ' '
+- paths: upgrade,upgrade-experimental
+  block: 14
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="upgrade,upgrade-experimental"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="upgrade" >}}
+    # Test-only: the upgrade starts from the previous minor release, so this
+    # scenario has no install prerequisite. Install the standard channel of the
+    # Gateway API version that the previous minor release supports.
+    kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< version include-if="2.5.x" >}}1.6.1{{< /version >}}{{< version include-if="2.4.x" >}}1.5.1{{< /version >}}/standard-install.yaml
+    {{< /doc-test >}}
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="upgrade-experimental" >}}
+    # Test-only: the upgrade starts from the previous minor release, so this
+    # scenario has no install prerequisite. Install the experimental channel of the
+    # Gateway API version that the previous minor release supports, server-side as
+    # the quick start does.
+    kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< version include-if="2.5.x" >}}1.6.1{{< /version >}}{{< version include-if="2.4.x" >}}1.5.1{{< /version >}}/experimental-install.yaml
+    {{< /doc-test >}}
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="upgrade,upgrade-experimental" >}}
+    # Test-only: install the previous minor release of kgateway with the quick
+    # start's Helm commands, then the httpbin sample app behind the http Gateway,
+    # and confirm that routing works before the upgrade.
+    export OLD_VERSION={{< reuse "kgw-docs/versions/patch_n-1.md" >}}
+    if [ -z "$OLD_VERSION" ]; then echo "FAIL: the previous minor version is empty"; exit 1; fi
+    echo "Installing kgateway v${OLD_VERSION} before the upgrade"
+    helm upgrade -i kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds \
+      --create-namespace --namespace kgateway-system \
+      --version v{{< reuse "kgw-docs/versions/patch_n-1.md" >}} \
+      --set controller.image.pullPolicy=Always
+    helm upgrade -i kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
+      --namespace kgateway-system \
+      --version v{{< reuse "kgw-docs/versions/patch_n-1.md" >}} \
+      --set controller.image.pullPolicy=Always
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=400s
+    kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/heads/{{< reuse "kgw-docs/versions/github-branch.md" >}}/examples/httpbin.yaml
+    kubectl apply -f- <<'EOF'
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1
+    metadata:
+      name: http
+      namespace: kgateway-system
+    spec:
+      gatewayClassName: kgateway
+      listeners:
+      - protocol: HTTP
+        port: 8080
+        name: http
+        allowedRoutes:
+          namespaces:
+            from: All
+    EOF
+    kubectl apply -f- <<'EOF'
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: httpbin
+      namespace: httpbin
+    spec:
+      parentRefs:
+        - name: http
+          namespace: kgateway-system
+      hostnames:
+        - "www.example.com"
+      rules:
+        - backendRefs:
+            - name: httpbin
+              port: 8000
+    EOF
+    kubectl rollout status deployment/httpbin -n httpbin --timeout=400s
+    YAMLTest -f - <<'EOF'
+    - name: upgrade - before the upgrade, the http Gateway is programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: upgrade - before the upgrade, the http gateway service has a load balancer address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: upgrade - before the upgrade, the httpbin HTTPRoute is accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    export INGRESS_GW_ADDRESS=$(kubectl get svc -n kgateway-system http -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080") || true
+      [ "$code" = "200" ] && break
+      echo "before the upgrade: GET /headers returned '$code', want 200 ($i/60)"; sleep 2
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: before the upgrade, routing to httpbin through the http Gateway returned $code, want 200"
+      exit 1
+    fi
+    image=$(kubectl -n kgateway-system get deployment kgateway -o jsonpath='{.spec.template.spec.containers[0].image}')
+    case "$image" in
+      *":v${OLD_VERSION}") echo "kgateway v${OLD_VERSION} runs before the upgrade: $image" ;;
+      *) echo "FAIL: the control plane image before the upgrade is $image, want tag v${OLD_VERSION}"; exit 1 ;;
+    esac
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 61f1493caddc938a
+    lang: txt
+    lines: fde52992 3070e377 5d3fe7c1 039e4740
+    preview: "gatewayclasses.gateway.networking.k8s.io  v1 v1beta1  v1.2.0\texperimental"
+  content: |-
+    {{< doc-test paths="upgrade" >}}
+    # The Gateway API CRDs now carry the new bundle version on the standard channel.
+    want="v{{< reuse "kgw-docs/versions/k8s-gw-version.md" >}}"
+    crds=""
+    for i in $(seq 1 30); do
+      crds=$(kubectl get crds -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.metadata.annotations.gateway\.networking\.k8s\.io/bundle-version}{" "}{.metadata.annotations.gateway\.networking\.k8s\.io/channel}{"\n"}{end}' | grep 'gateway.networking.k8s.io' || true)
+      grep -q "^httproutes.gateway.networking.k8s.io ${want} standard$" <<<"$crds" && break
+      echo "waiting for the Gateway API CRDs to report bundle version ${want} ($i/30)"; sleep 2
+    done
+    echo "$crds"
+    for crd in gatewayclasses gateways httproutes grpcroutes referencegrants; do
+      if ! grep -q "^${crd}.gateway.networking.k8s.io ${want} standard$" <<<"$crds"; then
+        echo "FAIL: ${crd}.gateway.networking.k8s.io is not at bundle version ${want} on the standard channel"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 61f1493caddc938a
+    lang: txt
+    lines: fde52992 3070e377 5d3fe7c1 039e4740
+    preview: "gatewayclasses.gateway.networking.k8s.io  v1 v1beta1  v1.2.0\texperimental"
+  content: |-
+    {{< doc-test paths="upgrade-experimental" >}}
+    # The Gateway API CRDs now carry the new bundle version on the experimental channel.
+    want="v{{< reuse "kgw-docs/versions/k8s-gw-version.md" >}}"
+    crds=""
+    for i in $(seq 1 30); do
+      crds=$(kubectl get crds -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.metadata.annotations.gateway\.networking\.k8s\.io/bundle-version}{" "}{.metadata.annotations.gateway\.networking\.k8s\.io/channel}{"\n"}{end}' | grep 'gateway.networking.k8s.io' || true)
+      grep -q "^httproutes.gateway.networking.k8s.io ${want} experimental$" <<<"$crds" && break
+      echo "waiting for the Gateway API CRDs to report bundle version ${want} ($i/30)"; sleep 2
+    done
+    echo "$crds"
+    for crd in gatewayclasses gateways httproutes grpcroutes referencegrants; do
+      if ! grep -q "^${crd}.gateway.networking.k8s.io ${want} experimental$" <<<"$crds"; then
+        echo "FAIL: ${crd}.gateway.networking.k8s.io is not at bundle version ${want} on the experimental channel"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 4d4bf0365995dd24
+    lang: sh
+    lines: 4d4bf036
+    preview: export NEW_VERSION={{< reuse "kgw-docs/versions/n-patch.md" >}}
+  content: |-
+    {{< doc-test paths="upgrade,upgrade-experimental" >}}
+    # The upgrade version is set and is newer than the version installed before the upgrade.
+    if [ -z "${NEW_VERSION:-}" ]; then echo "FAIL: NEW_VERSION is empty"; exit 1; fi
+    if [ "${NEW_VERSION}" = "${OLD_VERSION}" ]; then echo "FAIL: NEW_VERSION ${NEW_VERSION} is the version that is already installed"; exit 1; fi
+    echo "Upgrading kgateway from v${OLD_VERSION} to v${NEW_VERSION}"
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 29459d6794de986b
+    lang: sh
+    lines: 29459d67
+    preview: helm template --version {{< reuse "kgw-docs/versions/helm-version-upgrade.md" >}
+  content: |-
+    {{< doc-test paths="upgrade,upgrade-experimental" >}}
+    # The optional step rendered the new CRDs into the local helm directory.
+    if ! grep -rqs 'kind: CustomResourceDefinition' ./helm/kgateway-crds; then
+      echo "FAIL: helm template did not write any CustomResourceDefinition into ./helm/kgateway-crds"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: c7b6c2192215d7c5
+    lang: sh
+    lines: c7b6c219
+    preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
+  content: |-
+    {{< doc-test paths="upgrade,upgrade-experimental" >}}
+    # The kgateway-crds release now runs the new chart version, and the kgateway CRDs are still installed.
+    chart=$(helm list -n kgateway-system -o json | jq -r '.[] | select(.name=="kgateway-crds") | .chart')
+    if [ "$chart" != "kgateway-crds-v${NEW_VERSION}" ] && [ "$chart" != "kgateway-crds-${NEW_VERSION}" ]; then
+      echo "FAIL: the kgateway-crds release runs chart '$chart', want version ${NEW_VERSION}"
+      exit 1
+    fi
+    if ! kubectl get crd trafficpolicies.gateway.kgateway.dev >/dev/null 2>&1; then
+      echo "FAIL: the trafficpolicies.gateway.kgateway.dev CRD is missing after the CRD upgrade"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 9a5df46d7afe8526
+    lang: sh
+    lines: 1a5d2257 db51caed
+    preview: helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse
+  content: |-
+    {{< doc-test paths="upgrade,upgrade-experimental" >}}
+    # Test-only: the page's step also opens the file in an editor, which a CI
+    # runner cannot do, so only the helm get values part runs here.
+    helm get values kgateway -n kgateway-system -o yaml > values.yaml
+    cat values.yaml
+    if ! grep -q 'pullPolicy: Always' values.yaml; then
+      echo "FAIL: values.yaml does not hold the controller.image.pullPolicy=Always value from the install"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: adaecfb55a637023
+    lang: sh
+    lines: 534ef968 230d3ee0 58c210ab
+    preview: helm pull oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse
+  content: |-
+    {{< doc-test paths="upgrade,upgrade-experimental" >}}
+    # Test-only: pull and unpack the chart as the page does, without opening an editor.
+    helm pull oci://cr.kgateway.dev/kgateway-dev/charts/kgateway --version v${NEW_VERSION}
+    tar -xf kgateway-v${NEW_VERSION}.tgz
+    if [ ! -s kgateway/values.yaml ]; then
+      echo "FAIL: kgateway-v${NEW_VERSION}.tgz did not unpack to a kgateway/values.yaml file"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: b47f9628f81808f1
+    lang: sh
+    lines: 87ff5769 f82702aa ad51e346
+    preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  content: |-
+    {{< doc-test paths="upgrade,upgrade-experimental" >}}
+    # Wait until the old control plane pod is gone, so the next step reads the new pod.
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=400s
+    images=""
+    for i in $(seq 1 60); do
+      images=$(kubectl -n kgateway-system get pod -l app.kubernetes.io/name=kgateway -o jsonpath='{range .items[*]}{.spec.containers[0].image}{"\n"}{end}')
+      if [ "$(grep -c . <<<"$images")" = "1" ] && grep -q ":v${NEW_VERSION}$" <<<"$images"; then break; fi
+      echo "waiting for only the upgraded control plane pod to run: '$images' ($i/60)"; sleep 5
+    done
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 91409cd375597f94
+    lang: ''
+    lines: 91409cd3
+    preview: cr.{{< reuse "kgw-docs/snippets/kgateway.md" >}}.dev/controller:{{< reuse "kgw-d
+  content: |-
+    {{< doc-test paths="upgrade,upgrade-experimental" >}}
+    # The control plane pod runs the image with the new version tag.
+    image=$(kubectl -n kgateway-system get pod -l app.kubernetes.io/name=kgateway -o jsonpath='{.items[0].spec.containers[0].image}')
+    echo "control plane image: $image"
+    case "$image" in
+      *":v${NEW_VERSION}") ;;
+      *) echo "FAIL: the control plane image is $image, want tag v${NEW_VERSION}"; exit 1 ;;
+    esac
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 5fba5f3bf561451f
+    lang: sh
+    lines: 5fba5f3b
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="upgrade,upgrade-experimental" >}}
+    # The control plane is ready, it rolled the http gateway proxy to the new
+    # version, and routing to httpbin still works after the upgrade.
+    YAMLTest -f - <<'EOF'
+    - name: upgrade - the upgraded kgateway control plane is available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    proxy=""
+    for i in $(seq 1 60); do
+      proxy=$(kubectl -n kgateway-system get deployment http -o jsonpath='{.spec.template.spec.containers[0].image}')
+      case "$proxy" in *":v${NEW_VERSION}") break ;; esac
+      echo "waiting for the http gateway proxy to move to v${NEW_VERSION}: '$proxy' ($i/60)"; sleep 5
+    done
+    case "$proxy" in
+      *":v${NEW_VERSION}") echo "http gateway proxy image: $proxy" ;;
+      *) echo "FAIL: the http gateway proxy image is $proxy, want tag v${NEW_VERSION}"; exit 1 ;;
+    esac
+    kubectl rollout status deployment/http -n kgateway-system --timeout=400s
+    YAMLTest -f - <<'EOF'
+    - name: upgrade - after the upgrade, the http Gateway is still programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: upgrade - after the upgrade, routing to httpbin through the http Gateway still works
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: "www.example.com:8080"
+    EOF
+    {{< /doc-test >}}

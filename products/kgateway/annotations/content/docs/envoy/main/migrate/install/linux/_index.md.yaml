@@ -1,0 +1,114 @@
+format: 1
+source: content/docs/envoy/main/migrate/install/linux/_index.md
+blocks:
+- 77bc0cc3219e8c9b bash
+- 58e2f3a385ae2e25 bash
+- 1b4d5a129d05077e bash
+- 461dcd6db49ceb03 bash
+- a6b6d7c9350846b1 bash
+- bea9765bd4e56982 bash
+- b7d13a8d9e8b7df2 bash
+- fae59f4ea14aa8ca bash
+- 896b20f5145ad524 bash
+tags:
+- paths: install-ingress2gateway
+  block: 0
+  fingerprint: 77bc0cc3219e8c9b
+  lang: bash
+  lines: 67d16d56 0a0a9dfd 3471cb7f 5e386f28
+  preview: VERSION=v0.5.0
+  form:
+    attr: paths="install-ingress2gateway"
+    only: true
+    lead: ' '
+- paths: install-ingress2gateway
+  block: 1
+  fingerprint: 58e2f3a385ae2e25
+  lang: bash
+  lines: 58e2f3a3
+  preview: curl -LO "https://github.com/kgateway-dev/ingress2gateway/releases/download/${VE
+  form:
+    attr: paths="install-ingress2gateway"
+    only: true
+    lead: ' '
+- paths: install-ingress2gateway
+  block: 2
+  fingerprint: 1b4d5a129d05077e
+  lang: bash
+  lines: 1b4d5a12
+  preview: curl -LO https://github.com/kgateway-dev/ingress2gateway/releases/download/${VER
+  form:
+    attr: paths="install-ingress2gateway"
+    only: true
+    lead: ' '
+- paths: install-ingress2gateway
+  block: 3
+  fingerprint: 461dcd6db49ceb03
+  lang: bash
+  lines: 461dcd6d
+  preview: grep "ingress2gateway_${OS}_${ARCH}.tar.gz" checksums.txt | shasum -a 256 --chec
+  form:
+    attr: paths="install-ingress2gateway"
+    only: true
+    lead: ' '
+- paths: install-ingress2gateway
+  block: 5
+  fingerprint: bea9765bd4e56982
+  lang: bash
+  lines: bea9765b
+  preview: tar -xvf ingress2gateway_${OS}_${ARCH}.tar.gz
+  form:
+    attr: paths="install-ingress2gateway"
+    only: true
+    lead: ' '
+- paths: install-ingress2gateway
+  block: 6
+  fingerprint: b7d13a8d9e8b7df2
+  lang: bash
+  lines: b7d13a8d
+  preview: sudo install -o root -g root -m 0755 ingress2gateway /usr/local/bin/ingress2gate
+  form:
+    attr: paths="install-ingress2gateway"
+    only: true
+    lead: ' '
+- paths: install-ingress2gateway
+  block: 8
+  fingerprint: 896b20f5145ad524
+  lang: bash
+  lines: 896b20f5
+  preview: ingress2gateway version
+  form:
+    attr: paths="install-ingress2gateway"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 77bc0cc3219e8c9b
+    lang: bash
+    lines: 67d16d56 0a0a9dfd 3471cb7f 5e386f28
+    preview: VERSION=v0.5.0
+  content: |-
+    {{< doc-test paths="install-ingress2gateway" >}}
+    # Test-only: the page's example sets ARCH=arm64. Use the runner's architecture.
+    case "$(uname -m)" in
+      x86_64) ARCH=x86_64 ;;
+      aarch64|arm64) ARCH=arm64 ;;
+    esac
+    echo "ingress2gateway: OS=$OS ARCH=$ARCH VERSION=$VERSION"
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 896b20f5145ad524
+    lang: bash
+    lines: 896b20f5
+    preview: ingress2gateway version
+  content: |-
+    {{< doc-test paths="install-ingress2gateway" >}}
+    out=$(ingress2gateway version 2>&1)
+    echo "$out"
+    if ! grep -q "ingress2gateway version: ${VERSION}" <<<"$out"; then
+      echo "FAIL: ingress2gateway on PATH does not report ${VERSION}"
+      exit 1
+    fi
+    {{< /doc-test >}}

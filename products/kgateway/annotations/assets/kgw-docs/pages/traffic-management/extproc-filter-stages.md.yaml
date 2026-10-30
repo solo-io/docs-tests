@@ -1,0 +1,345 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/extproc-filter-stages.md
+blocks:
+- 1a5d22570841002c sh
+- 4fcef1108deb676e sh
+- 5fba5f3bf561451f sh
+- 73cad66fe462858a sh
+- d4b71d54c576c2ae yaml
+- 984c6d0c70b927e3 sh
+- f1f5edd6fc437ed9 yaml
+- 3e70ed078a7ed85d yaml
+- aaf689ffa5a4bbc6 yaml
+- 8bb7f9b50520b699 yaml
+- 2a0e07ef00fdb6be sh
+- 5218967dd1b2e871 sh
+- f417d93a4d68b23e console
+- 541b39017fbd7bd5 sh
+- d9f66c4159e25b03 console
+- 5cd600f5aa66dd9f sh
+tags:
+- paths: filter-stages
+  block: 1
+  fingerprint: 4fcef1108deb676e
+  lang: sh
+  lines: b9378eaa 1bd2e2c1 39fd077a f82702aa 78dfeb3a
+  preview: helm upgrade {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+- paths: filter-stages
+  block: 2
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+- paths: filter-stages
+  block: 4
+  fingerprint: d4b71d54c576c2ae
+  lang: yaml
+  lines: b601a2d0 58584366 ab78925c 8c8c4228 8019ef49 36184fa5 8432e015 839a5cac df3364f7 97bcd5e0 a58565b2 8c8c4228 fa1e8330 df3364f7 36184fa5 04968f51 9fb8a5ce 1ffa0261 ff42c2c6 16203cba 0ff65a1a 395694ff cb3f91d5 f1540154 0d6480f0 8c8c4228 8019ef49 36184fa5 0ff65a1a d8212fc2 10973fbe 9693ecf1 7d42f305 8432e015 df3364f7 abc56510
+  preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+- paths: filter-stages
+  block: 5
+  fingerprint: 984c6d0c70b927e3
+  lang: sh
+  lines: 984c6d0c
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} | grep ext-pr
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+- paths: filter-stages
+  block: 6
+  fingerprint: f1f5edd6fc437ed9
+  lang: yaml
+  lines: b601a2d0 d664f32c 5ee5f7dc 8c8c4228 bc3ff0a8 36184fa5 c2fbd82e 6d0a9a1d 70c97555 8019ef49 b8eebd11 25868a16 baafc5c8 a2272b74 cb3f91d5 d664f32c 5ee5f7dc 8c8c4228 982930b0 36184fa5 c2fbd82e 6d0a9a1d 70c97555 8019ef49 b8eebd11 25868a16 fa056bd6 3952dd21 abc56510
+  preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+- paths: filter-stages
+  block: 7
+  fingerprint: 3e70ed078a7ed85d
+  lang: yaml
+  lines: b601a2d0 88b9492f c548623c 8c8c4228 f844e837 36184fa5 c2fbd82e 248578da bc3ff0a8 cb3f91d5 88b9492f c548623c 8c8c4228 d6dfc3eb 36184fa5 c2fbd82e 248578da 982930b0 abc56510
+  preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+- paths: filter-stages
+  block: 8
+  fingerprint: aaf689ffa5a4bbc6
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 de2c460d 0bebd850 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 2f2be4a6 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c 94ae491e 80e9487c bca8e5f7 0f10c5bc ae6b70e3 90922aeb 248578da 06b13f44 c548623c f844e837 90922aeb 248578da 06b13f44 c548623c d6dfc3eb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+- paths: filter-stages
+  block: 9
+  fingerprint: 8bb7f9b50520b699
+  lang: yaml
+  lines: 16c71da1 979905a0 e47a48f5 8c8c4228 543f4e2f 0f10c5bc 36184fa5 0e20b496 b5a028c9 56bf9360 0bebd850 55708cb7 e6365cc1 0d6480f0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+- paths: filter-stages
+  block: 13
+  fingerprint: 541b39017fbd7bd5
+  lang: sh
+  lines: 541b3901
+  preview: kubectl logs -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app.kubernetes
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+- paths: filter-stages
+  block: 15
+  fingerprint: 5cd600f5aa66dd9f
+  lang: sh
+  lines: 7ce40111 c77c4902 a26d008c 99bfe2fa 8d1e9f38 d56d4af0
+  preview: kubectl delete httproute extproc-mixed-stages -n {{< reuse "kgw-docs/snippets/na
+  form:
+    attr: paths="filter-stages"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 1a5d22570841002c
+    lang: sh
+    lines: 1a5d2257
+    preview: helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse
+  content: |2-
+       {{< doc-test paths="filter-stages" >}}
+       # The page's step 1 also runs `open values.yaml`, which has no meaning on a
+       # CI runner, so save the current Helm values the same way without opening them.
+       helm get values kgateway -n kgateway-system -o yaml > values.yaml
+       cat values.yaml
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 5fba5f3bf561451f
+    lang: sh
+    lines: 5fba5f3b
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |2-
+       {{< doc-test paths="filter-stages" >}}
+       kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+       policy_merge=$(kubectl get deployment kgateway -n kgateway-system \
+         -o jsonpath='{.spec.template.spec.containers[*].env[?(@.name=="KGW_POLICY_MERGE")].value}')
+       echo "KGW_POLICY_MERGE=${policy_merge}"
+       if ! jq -e '.trafficPolicy.extProc == "DeepMerge"' <<<"${policy_merge}" >/dev/null; then
+         echo "FAIL: after the Helm upgrade, the kgateway control plane does not have KGW_POLICY_MERGE trafficPolicy.extProc=DeepMerge" >&2
+         exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 73cad66fe462858a
+    lang: sh
+    lines: 47a2791d c2c7ddef
+    preview: make extproc-server-docker EXTPROC_SERVER_VERSION=0.0.2
+  content: |2-
+       {{< doc-test paths="filter-stages" >}}
+       # Run the page's two make targets from a kgateway checkout. v2.4.7 is pinned
+       # because its extproc-server image builds with docker alone (later versions
+       # compile the server with the host Go toolchain) and it has the --add-header
+       # flag that step 5 uses. The published ghcr.io/kgateway-dev/extproc-server:0.0.1
+       # image predates that flag, and no 0.0.2 tag is published.
+       # KIND=kind uses the kind binary on the runner instead of `go tool kind`.
+       kgw_src=$(mktemp -d)
+       git clone --quiet --depth 1 --branch v2.4.7 https://github.com/kgateway-dev/kgateway.git "${kgw_src}"
+       kind_cluster=$(kubectl config current-context)
+       kind_cluster=${kind_cluster#kind-}
+       echo "Loading the ExtProc server image into kind cluster ${kind_cluster}"
+       make -C "${kgw_src}" extproc-server-docker EXTPROC_SERVER_VERSION=0.0.2
+       make -C "${kgw_src}" cluster-load-extproc-server CLUSTER_NAME="${kind_cluster}" EXTPROC_SERVER_VERSION=0.0.2 KIND=kind
+       rm -rf "${kgw_src}"
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: d4b71d54c576c2ae
+    lang: yaml
+    lines: b601a2d0 58584366 ab78925c 8c8c4228 8019ef49 36184fa5 8432e015 839a5cac df3364f7 97bcd5e0 a58565b2 8c8c4228 fa1e8330 df3364f7 36184fa5 04968f51 9fb8a5ce 1ffa0261 ff42c2c6 16203cba 0ff65a1a 395694ff cb3f91d5 f1540154 0d6480f0 8c8c4228 8019ef49 36184fa5 0ff65a1a d8212fc2 10973fbe 9693ecf1 7d42f305 8432e015 df3364f7 abc56510
+    preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  content: |2-
+       {{< doc-test paths="filter-stages" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the ext-proc-grpc Deployment (locally built server started with --add-header) to be available
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: kgateway-system
+               name: ext-proc-grpc
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: f1f5edd6fc437ed9
+    lang: yaml
+    lines: b601a2d0 d664f32c 5ee5f7dc 8c8c4228 bc3ff0a8 36184fa5 c2fbd82e 6d0a9a1d 70c97555 8019ef49 b8eebd11 25868a16 baafc5c8 a2272b74 cb3f91d5 d664f32c 5ee5f7dc 8c8c4228 982930b0 36184fa5 c2fbd82e 6d0a9a1d 70c97555 8019ef49 b8eebd11 25868a16 fa056bd6 3952dd21 abc56510
+    preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  content: |2-
+       {{< doc-test paths="filter-stages" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the ext-proc-before-authn GatewayExtension keeps filterStage AuthN Before
+         wait:
+           target:
+             kind: GatewayExtension
+             metadata:
+               namespace: kgateway-system
+               name: ext-proc-before-authn
+           jsonPath: "$.spec.extProc.filterStage.predicate"
+           jsonPathExpectation:
+             comparator: equals
+             value: Before
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       - name: the ext-proc-after-route GatewayExtension keeps filterStage Route After
+         wait:
+           target:
+             kind: GatewayExtension
+             metadata:
+               namespace: kgateway-system
+               name: ext-proc-after-route
+           jsonPath: "$.spec.extProc.filterStage.stage"
+           jsonPathExpectation:
+             comparator: equals
+             value: Route
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 8bb7f9b50520b699
+    lang: yaml
+    lines: 16c71da1 979905a0 e47a48f5 8c8c4228 543f4e2f 0f10c5bc 36184fa5 0e20b496 b5a028c9 56bf9360 0bebd850 55708cb7 e6365cc1 0d6480f0 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+        {{< doc-test paths="filter-stages" >}}
+        YAMLTest -f - <<'EOF'
+        - name: wait for the extproc-mixed-stages HTTPRoute to be accepted
+          wait:
+            target:
+              kind: HTTPRoute
+              metadata:
+                namespace: kgateway-system
+                name: extproc-mixed-stages
+            jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+            jsonPathExpectation:
+              comparator: equals
+              value: "True"
+            polling:
+              timeoutSeconds: 240
+              intervalSeconds: 5
+        - name: wait for the extproc-mixed-stages HTTPRoute to resolve its httpbin backend
+          wait:
+            target:
+              kind: HTTPRoute
+              metadata:
+                namespace: kgateway-system
+                name: extproc-mixed-stages
+            jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+            jsonPathExpectation:
+              comparator: equals
+              value: "True"
+            polling:
+              timeoutSeconds: 240
+              intervalSeconds: 5
+        EOF
+        {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: f417d93a4d68b23e
+    lang: console
+    lines: 6364ab47 92413e97 ab5df625 dabd3aff 021fb596 2e253c22 c7197869 817ad316 39d4b54e 9b60260d 18d10c7d 39d4b54e 6056662a 88017a50 39d4b54e ab5df625
+    preview: < HTTP/1.1 200 OK
+  content: |2-
+        {{< doc-test paths="filter-stages" >}}
+        YAMLTest -f - <<'EOF'
+        - name: filter-stages - a request to /headers reaches httpbin with x-extproc-processed true added by the ExtProc server
+          retries: 30
+          http:
+            url: "http://${INGRESS_GW_ADDRESS}:8080"
+            path: /headers
+            method: GET
+            headers:
+              host: extproc.example
+          source:
+            type: local
+          expect:
+            statusCode: 200
+            bodyJsonPath:
+            - path: "$.headers['X-Extproc-Processed'][0]"
+              comparator: equals
+              value: "true"
+        EOF
+        {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: d9f66c4159e25b03
+    lang: console
+    lines: e083bd83 eb700d61 a1ec761b e083bd83 eb700d61 a1ec761b 6a47ce56 a1ec761b 6a47ce56 a1ec761b
+    preview: Process
+  content: |2-
+        {{< doc-test paths="filter-stages" >}}
+        # One request must open two ExtProc streams (one per filter stage) and send
+        # request headers on each. Without DeepMerge only one of the two policies
+        # would apply, and the count would be 1. `kubectl logs -l` shows only the last
+        # 10 lines unless --tail=-1 is set.
+        count_lines() {
+          local logs
+          logs=$(kubectl logs -n kgateway-system -l app.kubernetes.io/name=ext-proc-grpc --tail=-1)
+          grep -cE "INFO $1( |\$)" <<<"${logs}" || true
+        }
+        streams_before=$(count_lines process)
+        headers_before=$(count_lines 'got RequestHeaders')
+        code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: extproc.example")
+        if [ "${code}" != "200" ]; then
+          echo "FAIL: the single counted request to /headers returned HTTP ${code}, not 200" >&2
+          exit 1
+        fi
+        streams=0
+        headers=0
+        for _ in $(seq 1 15); do
+          streams=$(( $(count_lines process) - streams_before ))
+          headers=$(( $(count_lines 'got RequestHeaders') - headers_before ))
+          if [ "${streams}" -ge 2 ] && [ "${headers}" -ge 2 ]; then
+            break
+          fi
+          sleep 2
+        done
+        echo "ExtProc streams opened for one request: ${streams}; request headers processed: ${headers}"
+        if [ "${streams}" -ne 2 ] || [ "${headers}" -ne 2 ]; then
+          echo "FAIL: expected the ExtProc server to be called twice for one request (once before AuthN, once after Route), got ${streams} streams and ${headers} RequestHeaders messages" >&2
+          kubectl logs -n kgateway-system -l app.kubernetes.io/name=ext-proc-grpc --tail=40 >&2 || true
+          exit 1
+        fi
+        {{< /doc-test >}}

@@ -1,0 +1,535 @@
+format: 1
+source: content/docs/envoy/main/setup/listeners/https.md
+blocks:
+- 89f5650cd85d2c51 yaml
+- 72bd7a68f744860d yaml
+- 5eb74713e4e96202 yaml
+- 2af07b1225b4d8ac sh
+- c056084eb4eb19d2 yaml
+- 9577cfb5e47f56cd yaml
+- 6468fc1c98d59ef2 sh
+- 397565dd5b8a586c yaml
+- f620901a91acdb13 sh
+- 9981856a377c6b7a yaml
+- 431baf98eba85080 sh
+- 9981856a377c6b7a yaml
+- f620901a91acdb13 sh
+- 8591879c45b8c04b yaml
+- 1d37814d68f8dc37 sh
+- a44d5930e0aafb01 sh
+- 07da62177524e20c sh
+- 3c114409f0d67ffe sh
+- 5423577b8ebec988
+- 7d775ffd83ca328d sh
+- d72b6f52f58809f3 sh
+tags:
+- paths: listeners-https
+  block: 0
+  fingerprint: 89f5650cd85d2c51
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c8857053 0bebd850 fa1e8330 793ff745 36184fa5 c281d1bb c10d7538 2407cef5 c6ba4159 c8857053 3195c5f5 f7446fcf bc611839 52b5b541 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-https"
+    only: true
+    lead: ' '
+- paths: listeners-https-listenerset
+  block: 1
+  fingerprint: 72bd7a68f744860d
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c8857053 0bebd850 fa1e8330 793ff745 36184fa5 c281d1bb 14fc2dbb c3201545 e83d405d c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-https-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-https-listenerset
+  block: 2
+  fingerprint: 5eb74713e4e96202
+  lang: yaml
+  lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 f8c5be71 0bebd850 fa1e8330 793ff745 36184fa5 0b7ce857 c8857053 0bebd850 cd44d8cd 350955ef c10d7538 2407cef5 c6ba4159 08f72093 ef4166c5 3195c5f5 f7446fcf bc611839 52b5b541 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-https-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-https,listeners-https-listenerset
+  block: 3
+  fingerprint: 2af07b1225b4d8ac
+  lang: sh
+  lines: 2af07b12
+  preview: kubectl get gateway https -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o y
+  form:
+    attr: paths="listeners-https,listeners-https-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-https
+  block: 4
+  fingerprint: c056084eb4eb19d2
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 793ff745 36184fa5 301e1bfa 19dbea18 d3d416e7 52b5b541 0bebd850 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-https"
+    only: true
+    lead: ' '
+- paths: listeners-https-listenerset
+  block: 5
+  fingerprint: 9577cfb5e47f56cd
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2e6eee01 0f10c5bc fa1e8330 793ff745 36184fa5 d3d416e7 b7105e1d 0bebd850 a8f2cfa5 350955ef 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="listeners-https-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-https,listeners-https-listenerset
+  block: 6
+  fingerprint: 6468fc1c98d59ef2
+  lang: sh
+  lines: 6468fc1c
+  preview: kubectl get httproute/httpbin-https -n httpbin -o yaml
+  form:
+    attr: paths="listeners-https,listeners-https-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-https
+  block: 8
+  fingerprint: f620901a91acdb13
+  lang: sh
+  lines: f620901a
+  preview: kubectl get gateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} https -o y
+  form:
+    attr: paths="listeners-https"
+    only: true
+    lead: ' '
+- paths: listeners-https-listenerset
+  block: 10
+  fingerprint: 431baf98eba85080
+  lang: sh
+  lines: 431baf98
+  preview: kubectl get listenerset -n {{< reuse "kgw-docs/snippets/namespace.md" >}} my-htt
+  form:
+    attr: paths="listeners-https-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-https-listenerset
+  block: 12
+  fingerprint: f620901a91acdb13
+  lang: sh
+  lines: f620901a
+  preview: kubectl get gateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} https -o y
+  form:
+    attr: paths="listeners-https-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-https,listeners-https-listenerset
+  block: 14
+  fingerprint: 1d37814d68f8dc37
+  lang: sh
+  lines: 3240f6ac 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="listeners-https,listeners-https-listenerset"
+    only: true
+    lead: ' '
+- paths: listeners-https
+  block: 19
+  fingerprint: 7d775ffd83ca328d
+  lang: sh
+  lines: 08cceca6 12e9fff0 9c0792a6
+  preview: kubectl delete -A gateways,httproutes -l example=httpbin-https
+  form:
+    attr: paths="listeners-https"
+    only: true
+    lead: ' '
+- paths: listeners-https-listenerset
+  block: 20
+  fingerprint: d72b6f52f58809f3
+  lang: sh
+  lines: 162750e2 12e9fff0 9c0792a6
+  preview: kubectl delete -A gateways,httproutes,listenersets -l example=httpbin-https
+  form:
+    attr: paths="listeners-https-listenerset"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 89f5650cd85d2c51
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c8857053 0bebd850 fa1e8330 793ff745 36184fa5 c281d1bb c10d7538 2407cef5 c6ba4159 c8857053 3195c5f5 f7446fcf bc611839 52b5b541 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="listeners-https" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-https - wait for the https Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: https
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-https - the https listener resolves its certificate
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: https
+           jsonPath: "$.status.listeners[?(@.name=='https')].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-https - wait for the https listener to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: https
+           jsonPath: "$.status.listeners[?(@.name=='https')].conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 5eb74713e4e96202
+    lang: yaml
+    lines: 16c71da1 8c67597e a8f2cfa5 8c8c4228 f8c5be71 0bebd850 fa1e8330 793ff745 36184fa5 0b7ce857 c8857053 0bebd850 cd44d8cd 350955ef c10d7538 2407cef5 c6ba4159 08f72093 ef4166c5 3195c5f5 f7446fcf bc611839 52b5b541 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="listeners-https-listenerset" >}}
+          YAMLTest -f - <<'EOF'
+          - name: listeners-https-listenerset - wait for the my-https-listenerset ListenerSet to be accepted
+            wait:
+              target:
+                kind: ListenerSet
+                metadata:
+                  namespace: kgateway-system
+                  name: my-https-listenerset
+              jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          - name: listeners-https-listenerset - the https-listener-set listener resolves its certificate
+            wait:
+              target:
+                kind: ListenerSet
+                metadata:
+                  namespace: kgateway-system
+                  name: my-https-listenerset
+              jsonPath: "$.status.listeners[?(@.name=='https-listener-set')].conditions[?(@.type=='ResolvedRefs')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          - name: listeners-https-listenerset - wait for the https-listener-set listener to be programmed
+            wait:
+              target:
+                kind: ListenerSet
+                metadata:
+                  namespace: kgateway-system
+                  name: my-https-listenerset
+              jsonPath: "$.status.listeners[?(@.name=='https-listener-set')].conditions[?(@.type=='Programmed')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 397565dd5b8a586c
+    lang: yaml
+    lines: ab5df625 e92e1c51 4b47a249 a98ddb59 9fc63faa 01da8ea3 9caa108c 69a91118 dcfcd85d a4a39e6e 9fc63faa 01da8ea3 9caa108c 91ecf445 dcfcd85d 9a38716e c8772def 0b7ce857 350955ef cd44d8cd c8857053 0bebd850
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-https-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-https-listenerset - httpbin-https HTTPRoute is accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-https-listenerset - httpbin-https HTTPRoute refs are resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-https-listenerset - httpbin-https HTTPRoute status names the ListenerSet as its parent
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].parentRef.kind"
+           jsonPathExpectation:
+             comparator: equals
+             value: "ListenerSet"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-https-listenerset - httpbin-https HTTPRoute parent is my-https-listenerset
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].parentRef.name"
+           jsonPathExpectation:
+             comparator: equals
+             value: "my-https-listenerset"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 397565dd5b8a586c
+    lang: yaml
+    lines: ab5df625 e92e1c51 4b47a249 a98ddb59 9fc63faa 01da8ea3 9caa108c 69a91118 dcfcd85d a4a39e6e 9fc63faa 01da8ea3 9caa108c 91ecf445 dcfcd85d 9a38716e c8772def 0b7ce857 350955ef cd44d8cd c8857053 0bebd850
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-https" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-https - httpbin-https HTTPRoute is accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-https - httpbin-https HTTPRoute refs are resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-https - httpbin-https HTTPRoute status names the Gateway as its parent
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].parentRef.kind"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Gateway"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-https - httpbin-https HTTPRoute parent is the https Gateway
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-https
+           jsonPath: "$.status.parents[0].parentRef.name"
+           jsonPathExpectation:
+             comparator: equals
+             value: "https"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 9981856a377c6b7a
+    lang: yaml
+    lines: ab5df625 c10d7538 3db56982
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-https" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-https - the https listener of the https Gateway has 1 attached route
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: https
+           jsonPath: "$.status.listeners[?(@.name=='https')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 9981856a377c6b7a
+    lang: yaml
+    lines: ab5df625 c10d7538 3db56982
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-https-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-https-listenerset - the https-listener-set listener has 1 attached route
+         wait:
+           target:
+             kind: ListenerSet
+             metadata:
+               namespace: kgateway-system
+               name: my-https-listenerset
+           jsonPath: "$.status.listeners[?(@.name=='https-listener-set')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 8591879c45b8c04b
+    lang: yaml
+    lines: ab5df625 c10d7538 bf778232
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-https-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-https-listenerset - the generic http listener of the https Gateway has 0 attached routes
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: https
+           jsonPath: "$.status.listeners[?(@.name=='http')].attachedRoutes"
+           jsonPathExpectation:
+             comparator: equals
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    section: Set up an HTTPS listener
+    line: a051464ba993ed1e
+    occurrence: 0
+    words: e7f6c011 2998b323 b9776d7d 3c462384 d80c9bf9 28391d3b b9776d7d 4ea5ee68 6201111b 157dca92 2ad8a704 58296753 ea325d76 ba528516 3b325109
+    block_before:
+      block: 13
+      fingerprint: 8591879c45b8c04b
+      lang: yaml
+      lines: ab5df625 c10d7538 bf778232
+      preview: '...'
+  content: |2-
+       {{< doc-test paths="listeners-https,listeners-https-listenerset" >}}
+       YAMLTest -f - <<'EOF'
+       - name: listeners-https - wait for the https Gateway to report an address
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: https
+           jsonPath: "$.status.addresses[0].value"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-https - wait for the https service load balancer address
+         wait:
+           target:
+             kind: Service
+             metadata:
+               namespace: kgateway-system
+               name: https
+           jsonPath: "$.status.loadBalancer.ingress[0].ip"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 5423577b8ebec988
+    lang: ''
+    lines: b87faf5d 159c96af a3f8fbd0 25ff990a 80bec92f 466d6e89 c893dd27 484eb088 91679b6d fa1a49de 96dfd0be a1e4f838 23a612b3 22c8958f ba2aa675 f1d2e398 3203dbde e6f992f5 e29cb09f a48125de 4d12aa4a 184f0709 7a1a6bbd 3c1ffced f4c5fa5d d1bba220 b41543e3 9cb78018 989b1db1 87d5fc40 aaa8808e b7393a25 65e90522 9c850618 94b746d0 3d62855a
+    preview: '* ALPN, offering h2'
+  content: |2-
+       {{< doc-test paths="listeners-https,listeners-https-listenerset" >}}
+       # The page's curl uses -k. This check verifies the gateway certificate against
+       # the root CA instead, so it also fails if the certificate does not cover
+       # https.example.com.
+       for i in $(seq 1 60); do
+         code=$(curl -sS -o /dev/null --max-time 5 -w '%{http_code}' --cacert example_certs/root.crt \
+           --resolve "https.example.com:443:${INGRESS_GW_ADDRESS}" \
+           https://https.example.com:443/status/200 || true)
+         [ "$code" = "200" ] && break
+         echo "listeners-https attempt $i: got '${code:-no response}', retrying"
+         sleep 2
+       done
+       [ "$code" = "200" ] || { echo "HTTPS request to https.example.com with certificate verification did not return 200"; exit 1; }
+       echo "listeners-https: httpbin returned 200 over HTTPS with a verified certificate"
+       {{< /doc-test >}}

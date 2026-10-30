@@ -1,0 +1,206 @@
+format: 1
+source: assets/kgw-docs/pages/observability/otel-stack.md
+blocks:
+- e7f609f347e3691e yaml
+- 790bd0e204e48860 yaml
+- 00269cf968c4536e sh
+- 9260b2c958883e79 console
+- de2b6440b89c7c16 yaml
+- 5ad0514015aa0582 yaml
+- 304f1945c90f92bf yaml
+- 1d273c73119ef218 sh
+- f81bbb4f0aabb915 console
+- d64a2e983339a745 yaml
+- 18419be80fb652c2 sh
+- ab8037b3c28cd9fd console
+tags:
+- paths: otel-stack
+  block: 0
+  fingerprint: e7f609f347e3691e
+  lang: yaml
+  lines: de13793e 17a7076e b2daaaf1 97c47a9a 2a24ff0e 0b570272 a641f532 456469bd b823b136 c794c548 d5ec3fae 07ea4397 5528c115 259774ff 86c75b8d 0d7a40bb 47fd10c1 8cb1880e 36cbe0dc 093785e8 a7a2adcd e115206d 97bcd5e0 a1c5573d ff7360cf d620c590 e4bc2178 5aff61a9 e4bc2178 20fe4dbd 28f801e6 e4bc2178 188e27df 3ecb9f77 3c053919 e4bc2178 50c39ac0 e4bc2178 8957fd96 e4bc2178 4fafa0d3 3897150c c483b266 e5f9d686 bb85cefe 0eb31522 cc9dba6f 0eb31522 2ecc5143 0eb31522 8224dae4 0eb31522 15968281 0eb31522 e79f6c4d 0eb31522 7a2ad882 0eb31522 d62a555d 0eb31522 43b772b1 0eb31522 7f3b0621 0eb31522 8b7bb22b 0eb31522 8ce0fb11 0eb31522 abc56510
+  preview: helm upgrade --install loki loki \
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 1
+  fingerprint: 790bd0e204e48860
+  lang: yaml
+  lines: 9459870a 17a7076e cf99f6ff 97c47a9a 2a24ff0e 0b570272 c0e581a5 e4bc2178 49bc3c18 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe abc56510
+  preview: helm upgrade --install tempo tempo \
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 2
+  fingerprint: 00269cf968c4536e
+  lang: sh
+  lines: 00269cf9
+  preview: kubectl get pods -n telemetry -l 'app.kubernetes.io/name in (loki,tempo)'
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 4
+  fingerprint: de2b6440b89c7c16
+  lang: yaml
+  lines: b910ca41 908fd025 ec9ea2bc 76ef6b74 9e66685e 77141b8e 48c9d4da 2a24ff0e 0748bda0 e2c98582 b0d83a7c 3de9d845 c734a848 7c789baf cab2be2b 9eade6a7 c88bdb8d b9f33094 c9a3837a 3951fe5a ca27e4f6 0ff65a1a a6a549db ff7360cf e8476da6 d220e0f2 9693ecf1 8ff7327f 687277da 29c74659 2180b199 aa5a7b47 553f01d2 2180b199 c14c1813 f3118cc5 6992e5f7 86fd3078 617f31ba 161dcd97 dfb64f4c 3e6f3ea8 d1b031b0 d8a2afee 1f1272b6 5cb25754 c8942be4 3e41c3c3 ea240120 38caecb8 e5bd9e09 33a48326 9a08c150 30d7683c 5a44c9e7 5cb25754 cf6e0915 691b0de4 8c10aec1 b8274f63 3151fab1 e934265e 2c90f321 33a48326 3b92eeed 4b6ab32a 33a48326 9d331f23 2366c6df 2180b199 c14c1813 f3118cc5 6992e5f7 bb0e15ff bda93a09 161dcd97 dfb64f4c 3e6f3ea8 d1b031b0 d8a2afee 1a7c2715 5cb25754 c8942be4 3e41c3c3 ea240120 38caecb8 e5bd9e09 33a48326 9a08c150 30d7683c 5a44c9e7 5cb25754 cf6e0915 691b0de4 8c10aec1 b8274f63 3151fab1 e934265e 2c90f321 33a48326 3b92eeed 4b6ab32a 33a48326 9d331f23 23e4c81d e0a8668f 531ff275 1afa32ca 3fa26c15 fbb64f63 ada604fb 3897150c 1738e439 540f5e28 c397fdd2 bd3874e4 f3e7485d abc56510
+  preview: helm upgrade --install opentelemetry-collector-metrics opentelemetry-collector \
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 5
+  fingerprint: 5ad0514015aa0582
+  lang: yaml
+  lines: e60f7448 908fd025 ec9ea2bc 76ef6b74 9e66685e 77141b8e 48c9d4da 2a24ff0e 0748bda0 2180b199 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 1c31dda0 bdecf485 23e4c81d 1ea614b2 e297c0e9 3195c5f5 0caee1db fbb64f63 ada604fb 3897150c 1738e439 eb330b86 6f411f1c bd3874e4 768e0753 abc56510
+  preview: helm upgrade --install opentelemetry-collector-logs opentelemetry-collector \
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 6
+  fingerprint: 304f1945c90f92bf
+  lang: yaml
+  lines: c32f326b 908fd025 ec9ea2bc 76ef6b74 9e66685e 77141b8e 48c9d4da 2a24ff0e 0748bda0 2180b199 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 1c31dda0 bdecf485 23e4c81d 99526e59 91758741 3195c5f5 0caee1db fbb64f63 ada604fb 3897150c 1738e439 80a766f7 6f411f1c bd3874e4 d2fc02aa abc56510
+  preview: helm upgrade --install opentelemetry-collector-traces opentelemetry-collector \
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 7
+  fingerprint: 1d273c73119ef218
+  lang: sh
+  lines: 1d273c73
+  preview: kubectl get pods -n telemetry -l app.kubernetes.io/name=opentelemetry-collector
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 9
+  fingerprint: d64a2e983339a745
+  lang: yaml
+  lines: 38eb7a0c 46cdbe39 17950bf1 97c47a9a 2a24ff0e 0b570272 2769a329 e4bc2178 e0a8668f 442db5ed e068e477 708292ae cf9ab9d2 91e47ba6 c217920f d4c6bf8e 9046a3c1 ff7360cf d9db7de3 80ad1c25 63287efc e9823402 80ad1c25 dadf6c3c aed84c38 2961f310 d5008151 f5ea3071 e46ccfa8 e5e784db ee401b12 bcee2219 93345a20 b653ba8d 42374f65 25422008 97ab50d8 47759dc9 2b0f901f e5e784db f5ea3071 987abded c31eb6e7 ec2f6efa ee401b12 bad749cf 103f1d60 163f71ee 3ca68e2d 2b0f901f 1e34f7ca e5e784db ec2f6efa ee401b12 abc56510
+  preview: helm upgrade --install kube-prometheus-stack kube-prometheus-stack \
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+- paths: otel-stack
+  block: 10
+  fingerprint: 18419be80fb652c2
+  lang: sh
+  lines: 18419be8
+  preview: kubectl get pods -n telemetry -l app.kubernetes.io/instance=kube-prometheus-stac
+  form:
+    attr: paths="otel-stack"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 790bd0e204e48860
+    lang: yaml
+    lines: 9459870a 17a7076e cf99f6ff 97c47a9a 2a24ff0e 0b570272 c0e581a5 e4bc2178 49bc3c18 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe abc56510
+    preview: helm upgrade --install tempo tempo \
+  content: |-
+    {{< doc-test paths="otel-stack" >}}
+    # Loki (single binary), its MinIO object store, and Tempo come up. The Loki
+    # chunks and results caches request several GiB of memory and can stay
+    # Pending on a small runner. Loki serves without them, so the test reports
+    # them but does not require them.
+    kubectl -n telemetry rollout status statefulset/loki --timeout=600s
+    for r in $(kubectl -n telemetry get statefulset,deployment -o name | grep minio || true); do
+      kubectl -n telemetry rollout status "$r" --timeout=600s
+    done
+    kubectl -n telemetry rollout status statefulset/tempo --timeout=600s
+    kubectl -n telemetry get pods -o wide
+    pending=$(kubectl -n telemetry get pods --field-selector=status.phase=Pending -o name)
+    if [ -n "$pending" ]; then
+      echo "warning: these pods are still Pending (not required by this test): $pending"
+      kubectl -n telemetry describe $pending | grep -A6 '^Events:' || true
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 304f1945c90f92bf
+    lang: yaml
+    lines: c32f326b 908fd025 ec9ea2bc 76ef6b74 9e66685e 77141b8e 48c9d4da 2a24ff0e 0748bda0 2180b199 aa5a7b47 9560a40c fc690ea7 15141591 9b41ecbe 1c31dda0 bdecf485 23e4c81d 99526e59 91758741 3195c5f5 0caee1db fbb64f63 ada604fb 3897150c 1738e439 80a766f7 6f411f1c bd3874e4 d2fc02aa abc56510
+    preview: helm upgrade --install opentelemetry-collector-traces opentelemetry-collector \
+  content: |-
+    {{< doc-test paths="otel-stack" >}}
+    for d in metrics logs traces; do
+      kubectl -n telemetry rollout status "deployment/opentelemetry-collector-$d" --timeout=300s
+    done
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: d64a2e983339a745
+    lang: yaml
+    lines: 38eb7a0c 46cdbe39 17950bf1 97c47a9a 2a24ff0e 0b570272 2769a329 e4bc2178 e0a8668f 442db5ed e068e477 708292ae cf9ab9d2 91e47ba6 c217920f d4c6bf8e 9046a3c1 ff7360cf d9db7de3 80ad1c25 63287efc e9823402 80ad1c25 dadf6c3c aed84c38 2961f310 d5008151 f5ea3071 e46ccfa8 e5e784db ee401b12 bcee2219 93345a20 b653ba8d 42374f65 25422008 97ab50d8 47759dc9 2b0f901f e5e784db f5ea3071 987abded c31eb6e7 ec2f6efa ee401b12 bad749cf 103f1d60 163f71ee 3ca68e2d 2b0f901f 1e34f7ca e5e784db ec2f6efa ee401b12 abc56510
+    preview: helm upgrade --install kube-prometheus-stack kube-prometheus-stack \
+  content: |-
+    {{< doc-test paths="otel-stack" >}}
+    for d in kube-prometheus-stack-operator kube-prometheus-stack-grafana kube-prometheus-stack-kube-state-metrics; do
+      kubectl -n telemetry rollout status "deployment/$d" --timeout=600s
+    done
+    kubectl -n telemetry rollout status daemonset/kube-prometheus-stack-prometheus-node-exporter --timeout=300s
+    # The operator creates the Prometheus StatefulSet after it starts.
+    for i in $(seq 1 60); do
+      kubectl -n telemetry get statefulset prometheus-kube-prometheus-stack-prometheus >/dev/null 2>&1 && break
+      echo "attempt $i: waiting for the operator to create the Prometheus StatefulSet"
+      sleep 5
+    done
+    kubectl -n telemetry rollout status statefulset/prometheus-kube-prometheus-stack-prometheus --timeout=600s
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: ab8037b3c28cd9fd
+    lang: console
+    lines: 30790290 0384cad3 a70ecf90 1b6d8b4c 6250920f
+    preview: NAME                                                        READY   STATUS    RE
+  content: |-
+    {{< doc-test paths="otel-stack" >}}
+    # Query Prometheus and Grafana from inside the cluster with a curl pod.
+    kubectl -n telemetry run otel-stack-check --image=curlimages/curl:8.11.1 --restart=Never --command -- sleep 7200
+    kubectl -n telemetry wait pod/otel-stack-check --for=condition=Ready --timeout=300s
+    # The metrics collector scrapes the gateway proxy (envoy_*) and the control
+    # plane (kgateway_*) and remote-writes the series to Prometheus.
+    prom_count() {
+      kubectl -n telemetry exec otel-stack-check -- curl -sfG \
+        http://kube-prometheus-stack-prometheus.telemetry.svc:9090/api/v1/query \
+        --data-urlencode "query=count({__name__=~\"$1\"})" 2>/dev/null || true
+    }
+    for metric in 'envoy_.+' 'kgateway_.+'; do
+      ok=""
+      for i in $(seq 1 60); do
+        out=$(prom_count "$metric")
+        if [[ "$out" == *'"result":[{'* ]]; then ok=1; echo "Prometheus has $metric series: $out"; break; fi
+        echo "attempt $i: no $metric series in Prometheus yet"
+        sleep 5
+      done
+      if [ -z "$ok" ]; then
+        echo "Prometheus has no $metric series: the metrics collector did not remote-write the kgateway metrics"
+        kubectl -n telemetry logs deploy/opentelemetry-collector-metrics --tail=50 || true
+        exit 1
+      fi
+    done
+    # Grafana is up and has the Prometheus, Tempo, and Loki data sources.
+    ds=""
+    for i in $(seq 1 30); do
+      ds=$(kubectl -n telemetry exec otel-stack-check -- curl -sf -u admin:prom-operator \
+        http://kube-prometheus-stack-grafana.telemetry.svc/api/datasources 2>/dev/null || true)
+      [[ "$ds" == *'"type":"prometheus"'* && "$ds" == *'"type":"tempo"'* && "$ds" == *'"type":"loki"'* ]] && break
+      echo "attempt $i: Grafana data sources not ready: ${ds:0:200}"
+      sleep 5
+    done
+    [[ "$ds" == *'"type":"prometheus"'* && "$ds" == *'"type":"tempo"'* && "$ds" == *'"type":"loki"'* ]] || { echo "Grafana does not list the Prometheus, Tempo, and Loki data sources"; exit 1; }
+    {{< /doc-test >}}

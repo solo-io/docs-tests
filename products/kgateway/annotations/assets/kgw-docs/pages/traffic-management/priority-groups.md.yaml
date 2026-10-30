@@ -1,0 +1,327 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/priority-groups.md
+blocks:
+- 1a63e161df5a325d yaml
+- 996579c7ad776852 sh
+- 9bad5c8263ca67f1 console
+- b152d1c27be7c96f yaml
+- febce48b98a05a98 yaml
+- 6ed87bbf52412532 yaml
+- a69a722dd440a82e yaml
+- d7d3281ee4c1b2d4 sh
+- 4080067f759ad634 sh
+- 39e8cd96e7395f1d console
+- 0d7814629f1a5c07 sh
+- d7d3281ee4c1b2d4 sh
+- 4080067f759ad634 sh
+- 66b2716f7ed35012 console
+- 6c2c6299a946a79f sh
+- d7d3281ee4c1b2d4 sh
+- 4080067f759ad634 sh
+- 39e8cd96e7395f1d console
+- 81cca34c31843308 sh
+tags:
+- paths: priority-groups
+  block: 0
+  fingerprint: 1a63e161df5a325d
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 f1cc8316 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac 41255c93 a58565b2 8c8c4228 fa1e8330 41255c93 36184fa5 04968f51 ca089a7b 82d4b2d5 0ff65a1a 76dc1fa3 cb3f91d5 f1540154 0d6480f0 8c8c4228 f1cc8316 0f10c5bc 36184fa5 8432e015 41255c93 0ff65a1a 0baaa92b 5374623b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="priority-groups"
+    only: true
+    lead: ' '
+- paths: priority-groups
+  block: 1
+  fingerprint: 996579c7ad776852
+  lang: sh
+  lines: 996579c7
+  preview: kubectl get pods -n httpbin | grep hello-world
+  form:
+    attr: paths="priority-groups"
+    only: true
+    lead: ' '
+- paths: priority-groups
+  block: 3
+  fingerprint: b152d1c27be7c96f
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 f58fff14 0f10c5bc 36184fa5 2efcbf93 bfce7f60 f1566f4d bca8e5f7 cb3f91d5 d664f32c ad65deb7 8c8c4228 4883cee8 0f10c5bc 36184fa5 2efcbf93 bfce7f60 f8e69ad1 da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="priority-groups"
+    only: true
+    lead: ' '
+- paths: priority-groups
+  block: 4
+  fingerprint: febce48b98a05a98
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 adb018a2 0f10c5bc 36184fa5 92d37237 a3b86ab6 b0aa74a3 a3b86ab6 301a028a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="priority-groups"
+    only: true
+    lead: ' '
+- paths: priority-groups
+  block: 5
+  fingerprint: 6ed87bbf52412532
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 a79e9871 0f10c5bc 36184fa5 588a5d84 71ab14c2 ad65deb7 adb018a2 43b04ed6 7bfef072 1c31dda0 7c781356 e07c5e4a 2632c5fe fc9ea4b8 5679d65b 2b04ea41 f34295ce abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="priority-groups"
+    only: true
+    lead: ' '
+- paths: priority-groups
+  block: 6
+  fingerprint: a69a722dd440a82e
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 379a84a7 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 7529dc6c 3de9d845 a3b86ab6 3668b480 ad65deb7 69f54740 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="priority-groups"
+    only: true
+    lead: ' '
+- paths: priority-groups
+  block: 10
+  fingerprint: 0d7814629f1a5c07
+  lang: sh
+  lines: 0d781462
+  preview: kubectl scale deployment/httpbin -n httpbin --replicas=0
+  form:
+    attr: paths="priority-groups"
+    only: true
+    lead: ' '
+- paths: priority-groups
+  block: 14
+  fingerprint: 6c2c6299a946a79f
+  lang: sh
+  lines: 6c2c6299
+  preview: kubectl scale deployment/httpbin -n httpbin --replicas=1
+  form:
+    attr: paths="priority-groups"
+    only: true
+    lead: ' '
+- paths: priority-groups
+  block: 18
+  fingerprint: 81cca34c31843308
+  lang: sh
+  lines: 1940bf86 9b625c6d eac7eb83 a1d1e385 38774d95
+  preview: kubectl delete httproute failover-route -n httpbin
+  form:
+    attr: paths="priority-groups"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 1a63e161df5a325d
+    lang: yaml
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 f1cc8316 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac 41255c93 a58565b2 8c8c4228 fa1e8330 41255c93 36184fa5 04968f51 ca089a7b 82d4b2d5 0ff65a1a 76dc1fa3 cb3f91d5 f1540154 0d6480f0 8c8c4228 f1cc8316 0f10c5bc 36184fa5 8432e015 41255c93 0ff65a1a 0baaa92b 5374623b abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |-
+    {{< doc-test paths="priority-groups" >}}
+    # The hello-world image comes from Docker Hub (nginxdemos/hello:plain-text).
+    kubectl rollout status deploy/hello-world -n httpbin --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: a69a722dd440a82e
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 379a84a7 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 7529dc6c 3de9d845 a3b86ab6 3668b480 ad65deb7 69f54740 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |-
+    {{< doc-test paths="priority-groups" >}}
+    YAMLTest -f - <<'EOF'
+    - name: priority-groups - wait for the httpbin-backend Backend to be accepted
+      wait:
+        target:
+          kind: Backend
+          metadata:
+            namespace: httpbin
+            name: httpbin-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: priority-groups - wait for the hello-world-backend Backend to be accepted
+      wait:
+        target:
+          kind: Backend
+          metadata:
+            namespace: httpbin
+            name: hello-world-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: priority-groups - wait for the failover-backend priority groups Backend to be accepted
+      wait:
+        target:
+          kind: Backend
+          metadata:
+            namespace: httpbin
+            name: failover-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: priority-groups - wait for the failover-healthcheck BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: failover-healthcheck
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: priority-groups - wait for the failover-route HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: failover-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: priority-groups - wait for the failover-route HTTPRoute to resolve its Backend reference
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: failover-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # pg_which: send one request to failover.example and print which app answered:
+    # httpbin (its home page), hello-world (the nginxdemos/hello plain-text body),
+    # or other.
+    pg_which() {
+      local code body
+      body=$(curl -s --max-time 5 -w '\n%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/" -H "host: failover.example:8080" || true)
+      code="${body##*$'\n'}"
+      body="${body%$'\n'*}"
+      if [ "$code" != 200 ]; then
+        echo "other($code)"
+      elif [[ "$body" == *"A golang port of the venerable"* ]]; then
+        echo httpbin
+      elif [[ "$body" == *"Server name: hello-world-"* ]]; then
+        echo hello-world
+      else
+        echo "other($code)"
+      fi
+    }
+    # pg_expect <app> <label>: retry until 5 requests in a row are answered by <app>.
+    # Health checks run every 5s, so allow a few minutes for the proxy to switch.
+    pg_expect() {
+      local want="$1" label="$2" i got streak=0
+      for i in $(seq 1 120); do
+        got=$(pg_which)
+        if [ "$got" = "$want" ]; then
+          streak=$((streak + 1))
+          if [ "$streak" -ge 5 ]; then
+            echo "priority-groups: $label - 5 responses in a row came from $want"
+            return 0
+          fi
+        else
+          streak=0
+          echo "priority-groups: $label - attempt $i answered by $got, waiting for $want"
+          sleep 2
+        fi
+      done
+      echo "priority-groups: $label - expected 5 responses in a row from $want, last answered by ${got:-nothing}"
+      exit 1
+    }
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 39e8cd96e7395f1d
+    lang: console
+    lines: ab7bd47f ddf600a3 f4df780d ab5df625 6364ab47 92413e97 3ca1ea63 ab5df625 193e3c11
+    preview: '* Connected to <host> port 8080'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="priority-groups" >}}
+    # Test-only: replaces the reader's curl. Hosts start unhealthy until their
+    # first health check passes, so retry until the primary group (httpbin) answers.
+    pg_expect httpbin "before the failover"
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 0d7814629f1a5c07
+    lang: sh
+    lines: 0d781462
+    preview: kubectl scale deployment/httpbin -n httpbin --replicas=0
+  blank_before: []
+  content: |-
+    {{< doc-test paths="priority-groups" >}}
+    for i in $(seq 1 60); do
+      pg_pods=$(kubectl get pods -n httpbin -l app=httpbin --no-headers 2>/dev/null || true)
+      [ -z "$pg_pods" ] && break
+      sleep 5
+    done
+    [ -z "$pg_pods" ] || { echo "priority-groups: httpbin pods still exist after scaling to zero: $pg_pods"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 66b2716f7ed35012
+    lang: console
+    lines: 6364ab47 92413e97 3ca1ea63 ab5df625 615ac258 7ac7056a 089976b5 e7df32cd
+    preview: < HTTP/1.1 200 OK
+  blank_before: []
+  content: |-
+    {{< doc-test paths="priority-groups" >}}
+    # Test-only: replaces the reader's curl. With httpbin at zero replicas, its
+    # health check fails and traffic moves to the second group (hello-world).
+    pg_expect hello-world "after scaling httpbin to zero"
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 6c2c6299a946a79f
+    lang: sh
+    lines: 6c2c6299
+    preview: kubectl scale deployment/httpbin -n httpbin --replicas=1
+  blank_before: []
+  content: |-
+    {{< doc-test paths="priority-groups" >}}
+    kubectl rollout status deploy/httpbin -n httpbin --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 39e8cd96e7395f1d
+    lang: console
+    lines: ab7bd47f ddf600a3 f4df780d ab5df625 6364ab47 92413e97 3ca1ea63 ab5df625 193e3c11
+    preview: '* Connected to <host> port 8080'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="priority-groups" >}}
+    # Test-only: replaces the reader's curl. Once httpbin passes its health check
+    # again, traffic returns to the primary group.
+    pg_expect httpbin "after restoring httpbin"
+    {{< /doc-test >}}

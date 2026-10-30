@@ -1,0 +1,622 @@
+format: 1
+source: assets/kgw-docs/pages/security/apikey-auth.md
+blocks:
+- 7e4f458b8aaa78fd mermaid
+- 80beb1bbd3cf65bb yaml
+- 6753e7b52537fbd5 sh
+- c6c1d8e09e256495 yaml
+- 9b553224e67c9367 sh
+- 86e869390b17f47b sh
+- 8057416b7f564bf6
+- b7d5fbc5020aa009 sh
+- 471e47e11427de2f sh
+- 31394132e800ccd3 console
+- 36edb41cf069cef1 sh
+- 172597f37de386dc yaml
+- 565b25d10ea327f2 yaml
+- 9559837c9346d2b0 yaml
+- 1ccc68a446f37162 yaml
+- 0245e31dc9ff9a46 yaml
+- 154c478e8f7743cf yaml
+tags:
+- paths: apikey,apikey-label-selector,apikey-custom-header,apikey-multiple-sources,apikey-client-id,apikey-forward-credential,apikey-disable
+  block: 1
+  fingerprint: 80beb1bbd3cf65bb
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 4ab3129b 0bebd850 fa1e8330 c2e1f378 1426decf 2f7c298d e478f625 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="apikey,apikey-label-selector,apikey-custom-header,apikey-multiple-sources,apikey-client-id,apikey-forward-credential,apikey-disable"
+    only: true
+    lead: ' '
+    tail: ' '
+- paths: apikey
+  block: 2
+  fingerprint: 6753e7b52537fbd5
+  lang: sh
+  lines: 6753e7b5
+  preview: kubectl get secret apikey -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o y
+  form:
+    attr: paths="apikey"
+    only: true
+    lead: ' '
+- paths: apikey,apikey-disable
+  block: 3
+  fingerprint: c6c1d8e09e256495
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="apikey,apikey-disable"
+    only: true
+    lead: ' '
+- paths: apikey
+  block: 10
+  fingerprint: 36edb41cf069cef1
+  lang: sh
+  lines: 8329e2f5 ea3209ca
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} apikey-auth -n
+  form:
+    attr: paths="apikey"
+    only: true
+    lead: ' '
+- paths: apikey-label-selector
+  block: 11
+  fingerprint: 172597f37de386dc
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 27bd7707 839a5cac c2e1f378 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="apikey-label-selector"
+    only: true
+    lead: ' '
+- paths: apikey-custom-header
+  block: 12
+  fingerprint: 565b25d10ea327f2
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b 31457cff 27940dd1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="apikey-custom-header"
+    only: true
+    lead: ' '
+- paths: apikey-multiple-sources
+  block: 13
+  fingerprint: 9559837c9346d2b0
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b 31457cff 27940dd1 db5e9cde 25f9ec69 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="apikey-multiple-sources"
+    only: true
+    lead: ' '
+- paths: apikey-client-id
+  block: 14
+  fingerprint: 1ccc68a446f37162
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b 736cf3fb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="apikey-client-id"
+    only: true
+    lead: ' '
+- paths: apikey-forward-credential
+  block: 15
+  fingerprint: 0245e31dc9ff9a46
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b 840b8a51 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="apikey-forward-credential"
+    only: true
+    lead: ' '
+- paths: apikey-disable
+  block: 16
+  fingerprint: 154c478e8f7743cf
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 0faa51dd 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e1281fca cfd701cc abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="apikey-disable"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: c6c1d8e09e256495
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="apikey" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the apikey-auth TrafficPolicy to be accepted (secretRef, default api-key header)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: apikey-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 8057416b7f564bf6
+    lang: ''
+    lines: ab5df625 983e7192 63282280 a3574d61 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="apikey" >}}
+    YAMLTest -f - <<'EOF'
+    - name: apikey - a request without an API key is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        bodyContains:
+        - Client authentication failed
+    - name: apikey - a request with a wrong API key is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          api-key: "Bearer not-a-valid-key"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 31394132e800ccd3
+    lang: console
+    lines: ab5df625 92413e97 32cf5997 a152bc23 b8fcb227 c441a9d6 5ea21550 706d2426 e34ae395 d286351f 23edd763 0dd35891 3ca1ea63 5f7c6523 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a 6ef1e4db 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e 45bf2c44 88270499 39d4b54e 59bc501f 27662806 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 60c0e4b0 cfae0d42 d10b36aa d10b36aa ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="apikey" >}}
+    YAMLTest -f - <<'EOF'
+    - name: apikey - a request with the API key in the api-key header succeeds and the key is not forwarded
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          api-key: "Bearer N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: www.example.com
+        - path: "$.headers['Api-Key']"
+          comparator: exists
+          negate: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 36edb41cf069cef1
+    lang: sh
+    lines: 8329e2f5 ea3209ca
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} apikey-auth -n
+  content: |-
+    {{< doc-test paths="apikey" >}}
+    # Test-only: the cleanup removed the policy, so the route is open again.
+    YAMLTest -f - <<'EOF'
+    - name: apikey - after cleanup, a request without an API key succeeds again
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 172597f37de386dc
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 27bd7707 839a5cac c2e1f378 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="apikey-label-selector" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the apikey-auth TrafficPolicy to be accepted (secretSelector app=httpbin)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: apikey-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: apikey-label-selector - a request without an API key is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: apikey-label-selector - a request with the key from the selected secret succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          api-key: "Bearer N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 565b25d10ea327f2
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b 31457cff 27940dd1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="apikey-custom-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the apikey-auth TrafficPolicy to be accepted (keySources X-API-KEY header)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: apikey-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: apikey-custom-header - a request with the key in the X-API-KEY header succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          X-API-KEY: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: apikey-custom-header - a request without an API key is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: apikey-custom-header - the default api-key header is no longer read
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          api-key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 9559837c9346d2b0
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b 31457cff 27940dd1 db5e9cde 25f9ec69 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="apikey-multiple-sources" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the apikey-auth TrafficPolicy to be accepted (header, query, and cookie key sources)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: apikey-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: apikey-multiple-sources - a request without an API key is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: apikey-multiple-sources - a request with the key in the X-API-KEY header succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          X-API-KEY: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: apikey-multiple-sources - a request with the key in the api_key query parameter succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+        params:
+          api_key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: apikey-multiple-sources - a request with the key in the auth_token cookie succeeds
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          cookie: "auth_token=N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: apikey-multiple-sources - the header wins over the query parameter, so a wrong header key is denied
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          X-API-KEY: "not-a-valid-key"
+        params:
+          api_key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 1ccc68a446f37162
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b 736cf3fb abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="apikey-client-id" >}}
+    # Test-only: the client id is the entry name in the apikey secret, which is api-key.
+    YAMLTest -f - <<'EOF'
+    - name: wait for the apikey-auth TrafficPolicy to be accepted (clientIdHeader x-client-id)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: apikey-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: apikey-client-id - a valid key is accepted and the client id reaches the backend in x-client-id
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          api-key: "Bearer N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Client-Id'][0]"
+          comparator: equals
+          value: api-key
+    - name: apikey-client-id - a request without an API key is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 0245e31dc9ff9a46
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 97862ff9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e1281fca 9ebc4789 4ab3129b 840b8a51 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="apikey-forward-credential" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the apikey-auth TrafficPolicy to be accepted (forwardCredential true)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: apikey-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: apikey-forward-credential - a valid key is accepted and the api-key header reaches the backend
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+          api-key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['Api-Key'][0]"
+          comparator: equals
+          value: N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy
+    - name: apikey-forward-credential - a request without an API key is denied with 401
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 154c478e8f7743cf
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 0faa51dd 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e1281fca cfd701cc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="apikey-disable" >}}
+    # Test-only: the Gateway-level apikey-auth policy stays in place; the route-level
+    # disable policy turns API key auth off for the httpbin route only.
+    YAMLTest -f - <<'EOF'
+    - name: wait for the apikey-auth TrafficPolicy to be accepted (gateway-level policy that the route overrides)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: apikey-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the apikey-auth-disable TrafficPolicy to be accepted (route-level disable)
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: apikey-auth-disable
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: apikey-disable - the httpbin route accepts a request without an API key
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

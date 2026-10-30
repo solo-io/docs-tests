@@ -17,53 +17,113 @@ blocks:
 - b0c9654ef12d0464 sh
 - 203d0729f7bae309 sh
 - db4b465f4c7b1aaf txt
-- 2fba8559fa74c8b6 json
+- b28f17b656764bab json
 - 4528998df78248b7 sh
 - 1a1d7641506a4ebb sh
 - db4b465f4c7b1aaf txt
 - 2fba8559fa74c8b6 json
-- cd5b8b47e383d41e sh
 - cb36d864ced2132b sh
+- cd5b8b47e383d41e sh
 - 9b8b92ebc0a9d25f sh
 tags:
-- paths: install-httpbin
+- paths: install-httpbin,sample-app
   block: 1
   fingerprint: 2bcdc1655f0a80cf
   lang: shell
   lines: 2bcdc165
   preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
   form:
-    attr: paths="install-httpbin"
+    attr: paths="install-httpbin,sample-app"
     only: true
     lead: ' '
-- paths: install-httpbin
+- paths: sample-app
+  block: 3
+  fingerprint: a73d1b910ea267cc
+  lang: sh
+  lines: a73d1b91
+  preview: kubectl -n httpbin get pods
+  form:
+    attr: paths="sample-app"
+    only: true
+    lead: ' '
+- paths: install-httpbin,sample-app
   block: 5
   fingerprint: 6d3547628678cfdf
   lang: yaml
   lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 9278ed91 0bebd850 36184fa5 39325db0 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
   preview: kubectl apply -f- <<EOF
   form:
-    attr: paths="install-httpbin"
+    attr: paths="install-httpbin,sample-app"
     only: true
     lead: ' '
-- paths: install-httpbin
+- paths: sample-app
+  block: 6
+  fingerprint: 35725c3f076be331
+  lang: sh
+  lines: 35725c3f
+  preview: kubectl get gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="sample-app"
+    only: true
+    lead: ' '
+- paths: sample-app
+  block: 8
+  fingerprint: f42e9099bd1ef95c
+  lang: sh
+  lines: f42e9099
+  preview: kubectl get po -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l gateway.netw
+  form:
+    attr: paths="sample-app"
+    only: true
+    lead: ' '
+- paths: install-httpbin,sample-app
   block: 10
   fingerprint: cded3c1f14380834
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
   preview: kubectl apply -f- <<EOF
   form:
-    attr: paths="install-httpbin"
+    attr: paths="install-httpbin,sample-app"
     only: true
     lead: ' '
-- paths: install-httpbin
+- paths: sample-app
+  block: 11
+  fingerprint: 1c2af4e50f343b88
+  lang: sh
+  lines: 1c2af4e5
+  preview: kubectl get -n httpbin httproute/httpbin -o yaml
+  form:
+    attr: paths="sample-app"
+    only: true
+    lead: ' '
+- paths: install-httpbin,sample-app
   block: 13
   fingerprint: b0c9654ef12d0464
   lang: sh
   lines: f69d5a69 4059cfa2
   preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
   form:
-    attr: paths="install-httpbin"
+    attr: paths="install-httpbin,sample-app"
+    only: true
+    lead: ' '
+- paths: sample-app
+  block: 22
+  fingerprint: cd5b8b47e383d41e
+  lang: sh
+  lines: cd5b8b47
+  preview: kubectl delete -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/h
+  form:
+    attr: paths="sample-app"
+    only: true
+    lead: ' '
+- paths: sample-app
+  block: 23
+  fingerprint: 9b8b92ebc0a9d25f
+  lang: sh
+  lines: 9b8b92eb
+  preview: kubectl delete gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="sample-app"
     only: true
     lead: ' '
 hidden:
@@ -91,6 +151,52 @@ hidden:
           timeoutSeconds: 400
           intervalSeconds: 5
     EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: c0d84e233f3f990d
+    lang: txt
+    lines: 974c2b81 11584f07 52f758c0 472e866f
+    preview: namespace/httpbin created
+  content: |-
+    {{< doc-test paths="sample-app" >}}
+    YAMLTest -f - <<'EOF'
+    - name: sample-app - wait for the httpbin deployment to have a ready replica
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.readyReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: fd10a92dd1d56c27
+    lang: txt
+    lines: fd3d5bd7 37a025e7
+    preview: NAME                      READY   STATUS    RESTARTS   AGE
+  content: |-
+    {{< doc-test paths="sample-app" >}}
+    # The httpbin pod runs with both of its containers ready (2/2), as in the example output.
+    pods=""
+    for i in $(seq 1 60); do
+      pods=$(kubectl get pods -n httpbin -l app=httpbin \
+        -o jsonpath='{range .items[*]}{.status.phase}{" "}{.status.containerStatuses[*].ready}{"\n"}{end}')
+      grep -q '^Running true true$' <<<"$pods" && break
+      echo "httpbin pods not Running 2/2 yet: '$pods' ($i/60)"; sleep 5
+    done
+    if ! grep -q '^Running true true$' <<<"$pods"; then
+      echo "FAIL: no httpbin pod is Running with 2/2 containers ready"
+      exit 1
+    fi
     {{< /doc-test >}}
 - after:
     block: 5
@@ -133,6 +239,78 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
+    block: 7
+    fingerprint: 2edbb639cba842ca
+    lang: txt
+    lines: 277c3a68 9b55fda9
+    preview: NAME   CLASS      ADDRESS                                  PROGRAMMED   AGE
+  content: |-
+    {{< doc-test paths="sample-app" >}}
+    YAMLTest -f - <<'EOF'
+    - name: sample-app - the http Gateway is programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: sample-app - the http Gateway has an external address
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.addresses[0].value"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: sample-app - the http gateway service has a load balancer address
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 412eddc4816f0a98
+    lang: txt
+    lines: 1175d919 6ce8857a
+    preview: NAME                  READY   STATUS    RESTARTS   AGE
+  content: |-
+    {{< doc-test paths="sample-app" >}}
+    # One gateway proxy pod for the http Gateway runs with its container ready (1/1).
+    pods=""
+    for i in $(seq 1 60); do
+      pods=$(kubectl get po -n kgateway-system -l gateway.networking.k8s.io/gateway-name=http \
+        -o jsonpath='{range .items[*]}{.status.phase}{" "}{.status.containerStatuses[*].ready}{"\n"}{end}')
+      grep -q '^Running true$' <<<"$pods" && break
+      echo "http gateway proxy pod not Running 1/1 yet: '$pods' ($i/60)"; sleep 5
+    done
+    if ! grep -q '^Running true$' <<<"$pods"; then
+      echo "FAIL: no http gateway proxy pod is Running with 1/1 containers ready"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
     block: 10
     fingerprint: cded3c1f14380834
     lang: yaml
@@ -168,6 +346,73 @@ hidden:
           value: "True"
         polling:
           timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 32262ae2a204e73b
+    lang: yaml
+    lines: e92e1c51 4b47a249 a98ddb59 6d2cd067 01da8ea3 21d5dc59 69a91118 dcfcd85d a4a39e6e 6d2cd067 01da8ea3 21d5dc59 91ecf445 dcfcd85d 9a38716e c8772def 0b7ce857 350955ef cd44d8cd 9278ed91 0bebd850
+    preview: 'status:'
+  content: |-
+    {{< doc-test paths="sample-app" >}}
+    YAMLTest -f - <<'EOF'
+    - name: sample-app - the httpbin HTTPRoute is accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: sample-app - the httpbin HTTPRoute backend refs are resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: sample-app - the httpbin HTTPRoute status names the kgateway controller
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].controllerName"
+        jsonPathExpectation:
+          comparator: equals
+          value: "kgateway.dev/kgateway"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: sample-app - the httpbin HTTPRoute parentRef is the http Gateway
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].parentRef.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: "http"
+        polling:
+          timeoutSeconds: 120
           intervalSeconds: 5
     EOF
     {{< /doc-test >}}
@@ -247,4 +492,63 @@ hidden:
         curl -sS -o /dev/null -w '%{http_code}' http://httpbin.org/status/200 2>/dev/null | grep -q 200 && break
       echo "httpbin.org stand-in not reachable yet (attempt $i)"; sleep 5
     done
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: b28f17b656764bab
+    lang: json
+    lines: 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a f0120b44 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 51e1b426 cfae0d42 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="sample-app" >}}
+    # Step 2 of the Cloud Provider LoadBalancer tab: the request to www.example.com
+    # returns 200 from httpbin through the Envoy gateway proxy, and httpbin echoes
+    # the request headers back.
+    headers=$(mktemp); body=$(mktemp); code=""
+    for i in $(seq 1 60); do
+      code=$(curl -s --max-time 5 -D "$headers" -o "$body" -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080") || true
+      [ "$code" = "200" ] && break
+      echo "GET /headers returned '$code', want 200, retrying ($i/60)"; sleep 2
+    done
+    cat "$headers"; cat "$body"
+    if [ "$code" != "200" ]; then
+      echo "FAIL: GET http://\${INGRESS_GW_ADDRESS}:8080/headers with host www.example.com:8080 returned $code, want 200"
+      exit 1
+    fi
+    if ! grep -qi '^server: envoy' "$headers"; then
+      echo "FAIL: the response has no 'server: envoy' header, so it did not come through the gateway proxy"
+      exit 1
+    fi
+    if ! python3 -c 'import json,sys; h=json.load(open(sys.argv[1]))["headers"]; sys.exit(0 if any("www.example.com" in v for v in h.get("Host",[])) else 1)' "$body"; then
+      echo "FAIL: httpbin did not echo a Host header of www.example.com"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: 9b8b92ebc0a9d25f
+    lang: sh
+    lines: 9b8b92eb
+    preview: kubectl delete gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="sample-app" >}}
+    # Cleanup removed the httpbin namespace (and the HTTPRoute in it) and the http
+    # Gateway with its proxy deployment. Step 2 is not run: deleting the httpbin
+    # namespace in step 1 already deletes the HTTPRoute.
+    for i in $(seq 1 60); do
+      if ! kubectl get namespace httpbin >/dev/null 2>&1 && ! kubectl get deployment http -n kgateway-system >/dev/null 2>&1; then break; fi
+      echo "waiting for the httpbin namespace and the http proxy deployment to be deleted ($i/60)"; sleep 5
+    done
+    if kubectl get namespace httpbin >/dev/null 2>&1; then
+      echo "FAIL: the httpbin namespace still exists after cleanup"
+      exit 1
+    fi
+    if kubectl get gateway http -n kgateway-system >/dev/null 2>&1; then
+      echo "FAIL: the http Gateway still exists after cleanup"
+      exit 1
+    fi
+    if kubectl get deployment http -n kgateway-system >/dev/null 2>&1; then
+      echo "FAIL: the http gateway proxy deployment still exists after cleanup"
+      exit 1
+    fi
     {{< /doc-test >}}

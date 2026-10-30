@@ -1,0 +1,97 @@
+format: 1
+source: assets/kgw-docs/pages/setup/selfmanaged.md
+blocks:
+- d92472c5528c4961 yaml
+- e3174bd386f0832d yaml
+- 8b346241f3151864 sh
+- cda27b626eae728c sh
+- c4d18351ac54dd29 yaml
+- 291cd8bd1396171e sh
+tags:
+- paths: selfmanaged
+  block: 0
+  fingerprint: d92472c5528c4961
+  lang: yaml
+  lines: 16c71da1 d664f32c ab7e0e08 8c8c4228 4072b0c6 1288d06d 36184fa5 c5b94dbd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="selfmanaged"
+    only: true
+    lead: ' '
+- paths: selfmanaged
+  block: 1
+  fingerprint: e3174bd386f0832d
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 4072b0c6 1288d06d 36184fa5 ac45cc5c 27a69ac8 3f04fdd7 4072b0c6 69f54740 ab7e0e08 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="selfmanaged"
+    only: true
+    lead: ' '
+- paths: selfmanaged
+  block: 2
+  fingerprint: 8b346241f3151864
+  lang: sh
+  lines: 8b346241
+  preview: kubectl get gateway self-managed -n kgateway-system -o yaml
+  form:
+    attr: paths="selfmanaged"
+    only: true
+    lead: ' '
+- paths: selfmanaged
+  block: 5
+  fingerprint: 291cd8bd1396171e
+  lang: sh
+  lines: fae756aa aae7cc8c
+  preview: kubectl delete gatewayparameters self-managed -n kgateway-system
+  form:
+    attr: paths="selfmanaged"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: cda27b626eae728c
+    lang: sh
+    lines: 1f017259 b9b603d9
+    preview: kubectl get pods -n kgateway-system | grep self-managed
+  content: |-
+    {{< doc-test paths="selfmanaged" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the self-managed Gateway to be accepted
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: self-managed
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # The page's check pipes into grep, which exits 1 on the blank output it
+    # expects, so the test makes the same check without grep. The control plane
+    # has accepted the Gateway; give it time to reconcile, and fail if it creates
+    # a proxy Deployment, Service, or bootstrap ConfigMap for the self-managed
+    # Gateway at any point.
+    for attempt in $(seq 1 20); do
+      sm_objs=$(kubectl get deployment,service,configmap -n kgateway-system -l gateway.networking.k8s.io/gateway-name=self-managed -o name 2>/dev/null || true)
+      sm_named=$(kubectl get deployment/self-managed service/self-managed configmap/self-managed -n kgateway-system -o name 2>/dev/null || true)
+      if [ -n "$sm_objs$sm_named" ]; then
+        echo "FAIL: the control plane created proxy resources for the self-managed Gateway:"
+        printf '%s\n' "$sm_objs" "$sm_named"
+        exit 1
+      fi
+      sleep 3
+    done
+    sm_pods=$(kubectl get pods -n kgateway-system -o name | grep self-managed || true)
+    if [ -n "$sm_pods" ]; then
+      echo "FAIL: proxy pods exist for the self-managed Gateway: $sm_pods"
+      exit 1
+    fi
+    echo "no proxy Deployment, Service, ConfigMap, or pod for the self-managed Gateway"
+    {{< /doc-test >}}

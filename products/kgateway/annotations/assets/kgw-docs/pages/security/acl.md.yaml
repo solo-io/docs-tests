@@ -1,0 +1,301 @@
+format: 1
+source: assets/kgw-docs/pages/security/acl.md
+blocks:
+- fbedccd7d8fb0c1d yaml
+- fc2bc467c8dde943 sh
+- 481b419f76f5ec80 sh
+- 8310b5e00816dd33 console
+- 58655f2ec1ed6ad9 sh
+- 92413e9787e7d079 console
+- 42e5551404ad65c0 yaml
+- fc2bc467c8dde943 sh
+- 481b419f76f5ec80 sh
+- 92413e9787e7d079 console
+- 1e9fff4f65402e77 sh
+- 41539e4041eea66c console
+- 1f8b905c3f283961 yaml
+- 5af7e1a460a162e3 sh
+- da1782b1b4d7ea03 sh
+- 4259049d37c460ce console
+- 58655f2ec1ed6ad9 sh
+- 8310b5e00816dd33 console
+- e5ec7a3a6a3b0b37 yaml
+- 5af7e1a460a162e3 sh
+- da1782b1b4d7ea03 sh
+- 986bc84486b25b4f console
+- 24eef3655650f922 sh
+- c0c9053cef7d6c15 sh
+- 5d8fc7a5c990d616 console
+- 776f939faddd43f0 sh
+tags:
+- paths: acl
+  block: 0
+  fingerprint: fbedccd7d8fb0c1d
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 f3fecf68 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 85f8c19e 21343fbe 3de9d845 3aa16e68 ca6c547b 55ba3a2b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="acl"
+    only: true
+    lead: ' '
+- paths: acl
+  block: 6
+  fingerprint: 42e5551404ad65c0
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 f3fecf68 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 85f8c19e ec3b1dd9 62d9fe00 ee81b1ed 3de9d845 6f98dbe3 cf2d7bce ca6c547b 8d4a7560 8548c32f 651a919a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="acl"
+    only: true
+    lead: ' '
+- paths: acl
+  block: 12
+  fingerprint: 1f8b905c3f283961
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 f3fecf68 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 85f8c19e ec3b1dd9 3de9d845 fdc77201 cf2d7bce ca6c547b 651a919a 4e4d0706 cf2d7bce 9cf399cb 55ba3a2b 4a875ec9 cf2d7bce 5f113c31 651a919a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="acl"
+    only: true
+    lead: ' '
+- paths: acl
+  block: 18
+  fingerprint: e5ec7a3a6a3b0b37
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 f3fecf68 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 85f8c19e 21343fbe 62d9fe00 2de1efde 38dc0152 9be078fc a3c271e1 3de9d845 3aa16e68 e306c6f9 55ba3a2b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="acl"
+    only: true
+    lead: ' '
+- paths: acl
+  block: 25
+  fingerprint: 776f939faddd43f0
+  lang: sh
+  lines: 776f939f
+  preview: 'kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} acl-allowlist '
+  form:
+    attr: paths="acl"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Set up an ACL policy
+    line: aa74c7ff2770f6a3
+    occurrence: 0
+    words: b9776d7d 8d0288f4 c590b3c9 7a6c4fac 9c6725dc 92a5dc04 2344f08e e85ec53b 0695b563 b9776d7d abbea20e af2bdbe1 a172cedc
+    block_before: null
+  content: |-
+    {{< doc-test paths="acl" >}}
+    # Test-only: the ACL filter matches the client IP that the gateway proxy sees
+    # (Envoy's source.address), not the IP of the machine that sends the request.
+    # Through cloud-provider-kind, the load balancer container and kube-proxy
+    # rewrite the source address, so a request from the runner can arrive from a
+    # private IP. The proxy sets useRemoteAddress, so it appends the IP that it sees
+    # to X-Forwarded-For, and httpbin echoes that header back. Record the IP for a
+    # request through the load balancer and for one from the httpbin pod before any
+    # ACL policy exists, then expect each policy's outcome for those IPs.
+    # acl_get <lb|pod> <path>: the response status line, headers, and body.
+    acl_get() {
+      if [ "$1" = lb ]; then
+        curl -s -i --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080$2" -H "host: www.example.com" 2>/dev/null || true
+      else
+        kubectl exec -n httpbin deploy/httpbin -c curl -- \
+          curl -s -i --max-time 5 "http://http.kgateway-system.svc.cluster.local:8080$2" -H "host: www.example.com" 2>/dev/null || true
+      fi
+    }
+    # acl_seen <lb|pod>: the client IP that the proxy appended to X-Forwarded-For.
+    acl_seen() {
+      for i in $(seq 1 60); do
+        seen=$(acl_get "$1" /headers | python3 -c '
+    import json, sys
+    raw = sys.stdin.read().replace("\r\n", "\n")
+    try:
+        xff = json.loads(raw.split("\n\n", 1)[1])["headers"]["X-Forwarded-For"][-1]
+        print(xff.split(",")[-1].strip())
+    except Exception:
+        pass
+    ')
+        if [ -n "$seen" ]; then echo "$seen"; return 0; fi
+        sleep 2
+      done
+      echo "acl: httpbin /headers showed no X-Forwarded-For for a request from $1" >&2
+      return 1
+    }
+    # acl_decide <ip> <defaultAction> <action=name=cidr,cidr>...: print "allow <rule>"
+    # or "deny <rule>", where <rule> is the rule name, "rule" for an unnamed rule, or
+    # "default". Longest prefix wins; for the same prefix, the later rule wins.
+    acl_decide() {
+      python3 -c '
+    import ipaddress, sys
+    ip = ipaddress.ip_address(sys.argv[1])
+    if ip.version == 6 and ip.ipv4_mapped:
+        ip = ip.ipv4_mapped
+    best = None
+    for r in sys.argv[3:]:
+        action, name, cidrs = r.split("=", 2)
+        for c in cidrs.split(","):
+            net = ipaddress.ip_network(c, strict=False)
+            if ip.version == net.version and ip in net and (best is None or net.prefixlen >= best[0]):
+                best = (net.prefixlen, action, name or "rule")
+    print(f"{best[1]} {best[2]}" if best else f"{sys.argv[2]} default")
+    ' "$@"
+    }
+    # acl_expect <lb|pod> <label> <status> [<header: value> | !<header>]...: retry a
+    # GET /status/200 until the status matches, every "header: value" line is in the
+    # response, and every !header is not.
+    acl_expect() {
+      from=$1; label=$2; want=$3; shift 3
+      for i in $(seq 1 60); do
+        out=$(acl_get "$from" /status/200 | tr -d '\r')
+        head=${out%%$'\n\n'*}
+        code=$(awk 'NR==1{print $2}' <<<"$head")
+        ok=false
+        if [ "$code" = "$want" ]; then
+          ok=true
+          for spec in "$@"; do
+            case "$spec" in
+              "!"*) if grep -qi "^${spec#!}:" <<<"$head"; then ok=false; fi ;;
+              *) if ! grep -qix "$spec" <<<"$head"; then ok=false; fi ;;
+            esac
+          done
+        fi
+        if [ "$ok" = true ]; then echo "$label: HTTP $code $*"; return 0; fi
+        sleep 2
+      done
+      echo "$label: expected HTTP $want $*; last response headers:"
+      echo "$head"
+      exit 1
+    }
+    # acl_check <lb|pod> <label> <deny status> <blockedBy header|-> <extra deny header|-> <defaultAction> <rules>...:
+    # expect the outcome that acl_decide gives for the IP that the proxy sees.
+    acl_check() {
+      from=$1; label=$2; deny_code=$3; by_hdr=$4; extra=$5; shift 5
+      if [ "$from" = lb ]; then ip=$acl_lb_ip; else ip=$acl_pod_ip; fi
+      read -r action rule <<<"$(acl_decide "$ip" "$@")"
+      specs=()
+      if [ "$action" = deny ]; then
+        if [ "$by_hdr" != - ]; then specs+=("$by_hdr: $rule"); fi
+        if [ "$extra" != - ]; then specs+=("$extra"); fi
+        acl_expect "$from" "$label: $ip is denied ($rule)" "$deny_code" ${specs[@]+"${specs[@]}"}
+      else
+        if [ "$by_hdr" != - ]; then specs+=("!$by_hdr"); fi
+        acl_expect "$from" "$label: $ip is allowed ($rule)" 200 ${specs[@]+"${specs[@]}"}
+      fi
+    }
+    acl_lb_ip=$(acl_seen lb) || exit 1
+    acl_pod_ip=$(acl_seen pod) || exit 1
+    echo "acl: the gateway proxy sees a request through the load balancer as ${acl_lb_ip} and one from the httpbin pod as ${acl_pod_ip}"
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 92413e9787e7d079
+    lang: console
+    lines: 92413e97
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="acl" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the acl-allowlist TrafficPolicy to be accepted on the httpbin HTTPRoute
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: acl-allowlist
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Default deny, allow 10.0.0.0/8. The pod IP is in the cluster's pod CIDR.
+    acl_check pod "acl allowlist, request from the httpbin pod" 403 - - deny "allow==10.0.0.0/8"
+    acl_check lb "acl allowlist, request through the load balancer" 403 - - deny "allow==10.0.0.0/8"
+    case "$(acl_decide "$acl_lb_ip" deny "allow==10.0.0.0/8")" in
+      deny*) ;;
+      *) echo "acl allowlist: NOTE the page expects a 403 for a request from outside the cluster, but the proxy sees ${acl_lb_ip}, which 10.0.0.0/8 allows" ;;
+    esac
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 41539e4041eea66c
+    lang: console
+    lines: 8310b5e0 69532092 ab5df625
+    preview: HTTP/1.1 403 Forbidden
+  content: |-
+    {{< doc-test paths="acl" >}}
+    # Default allow, deny the RFC 1918 ranges, and name the rule in X-Blocked-By.
+    # The pod check comes first: its X-Blocked-By header shows the update is live.
+    acl_check pod "acl denylist, request from the httpbin pod" 403 X-Blocked-By - allow "deny=block-rfc1918=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    acl_check lb "acl denylist, request through the load balancer" 403 X-Blocked-By - allow "deny=block-rfc1918=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    case "$(acl_decide "$acl_lb_ip" allow "deny=block-rfc1918=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16")" in
+      allow*) ;;
+      *) echo "acl denylist: NOTE the page expects a 200 for a request from outside the cluster, but the proxy sees ${acl_lb_ip}, which block-rfc1918 denies" ;;
+    esac
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 8310b5e00816dd33
+    lang: console
+    lines: 8310b5e0
+    preview: HTTP/1.1 403 Forbidden
+  content: |-
+    {{< doc-test paths="acl" >}}
+    # Hole-punching: longest prefix wins. This policy has no blockedByHeaderName, so
+    # a denial without X-Blocked-By shows the update replaced the denylist.
+    acl_check pod "acl hole-punching, request from the httpbin pod" 403 - "!X-Blocked-By" allow "deny=block-internal-range=10.0.0.0/8" "allow=allow-trusted-subnet=10.1.0.0/16" "deny=block-rogue-host=10.1.2.3"
+    acl_check lb "acl hole-punching, request through the load balancer" 403 - "!X-Blocked-By" allow "deny=block-internal-range=10.0.0.0/8" "allow=allow-trusted-subnet=10.1.0.0/16" "deny=block-rogue-host=10.1.2.3"
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 986bc84486b25b4f
+    lang: console
+    lines: 5dbb5bc3 54d89056 ab5df625
+    preview: HTTP/1.1 451 Unavailable For Legal Reasons
+  content: |-
+    {{< doc-test paths="acl" >}}
+    # Default deny with a custom 451 status and X-Blocked-Reason header; only
+    # 203.0.113.0/24 is allowed, so both requests are denied.
+    acl_check lb "acl custom deny, request through the load balancer" 451 - "X-Blocked-Reason: geo-policy" deny "allow==203.0.113.0/24"
+    acl_check pod "acl custom deny, request from the httpbin pod" 451 - "X-Blocked-Reason: geo-policy" deny "allow==203.0.113.0/24"
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: 5d8fc7a5c990d616
+    lang: console
+    lines: 5d8fc7a5
+    preview: 'dev.kgateway.http.acl.blocked: 3'
+  content: |-
+    {{< doc-test paths="acl" >}}
+    # Test-only: read the counter from the admin port inside the proxy pod instead
+    # of a port-forward. Envoy can put a dynamic-module scope in front of the name,
+    # so match on the suffix. Every section above had at least one denial.
+    acl_blocked=""
+    for i in $(seq 1 30); do
+      acl_stats=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/stats" 2>/dev/null) || true
+      acl_blocked=$(grep -E 'dev\.kgateway\.http\.acl\.blocked: [0-9]+$' <<<"$acl_stats" | head -1 | sed 's/.*: //') || true
+      if [ "${acl_blocked:-0}" -ge 1 ] 2>/dev/null; then break; fi
+      sleep 2
+    done
+    if [ "${acl_blocked:-0}" -ge 1 ] 2>/dev/null; then
+      echo "acl stats: dev.kgateway.http.acl.blocked is ${acl_blocked}"
+    else
+      echo "acl stats: expected dev.kgateway.http.acl.blocked of at least 1, got '${acl_blocked:-missing}'"
+      grep -i acl <<<"$acl_stats" || true
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: 776f939faddd43f0
+    lang: sh
+    lines: 776f939f
+    preview: 'kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} acl-allowlist '
+  content: |-
+    {{< doc-test paths="acl" >}}
+    # Test-only: with the policy gone, the httpbin pod's request is no longer denied.
+    acl_expect pod "acl cleanup, request from the httpbin pod" 200 "!X-Blocked-Reason"
+    {{< /doc-test >}}

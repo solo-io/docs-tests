@@ -1,0 +1,377 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/static.md
+blocks:
+- 5b8f5cf4df211f7b yaml
+- 33ddff44bd8c977e yaml
+- 43d18e7edbaeb90d sh
+- 4585eabef58d5839 sh
+- 483ea0cbf2a70acb console
+- 73868d4ce68b8b98 yaml
+- 9d11622b609221fd yaml
+- dd88c08d1c33722b yaml
+- a186b249d9686905 yaml
+- 819c0f8856b02f9a sh
+- 47be3778dcfb987f sh
+- 0f8e5fc4bafccd67 console
+- 18209595aca938ef sh
+- 49eb32cb653cb92a sh
+tags:
+- paths: static
+  block: 0
+  fingerprint: 5b8f5cf4df211f7b
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 8e03ecd4 36184fa5 c582fe46 2efcbf93 bfce7f60 1ccddc24 da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="static"
+    only: true
+    lead: ' '
+- paths: static
+  block: 1
+  fingerprint: 33ddff44bd8c977e
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2db5aa01 0ccc8edc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 702c4484 3de9d845 a3b86ab6 e30d6fb0 ad65deb7 69f54740 ae6b70e3 555016a6 7471bbd1 eeaefec9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="static"
+    only: true
+    lead: ' '
+- paths: static,static-backendtlspolicy
+  block: 5
+  fingerprint: 73868d4ce68b8b98
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 8e03ecd4 36184fa5 c582fe46 2efcbf93 bfce7f60 1ccddc24 c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="static,static-backendtlspolicy"
+    only: true
+    lead: ' '
+- paths: static,static-backendtlspolicy
+  block: 6
+  fingerprint: 9d11622b609221fd
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2db5aa01 0ccc8edc 36184fa5 d3d416e7 52b5b541 0bebd850 301e1bfa 861a8b5e 3de9d845 a3b86ab6 e30d6fb0 ad65deb7 69f54740 ae6b70e3 555016a6 7471bbd1 eeaefec9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="static,static-backendtlspolicy"
+    only: true
+    lead: ' '
+- paths: static
+  block: 7
+  fingerprint: dd88c08d1c33722b
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 2ed3de79 36184fa5 588a5d84 71ab14c2 ad65deb7 8e03ecd4 3195c5f5 5d02c447 9efe4f94 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="static"
+    only: true
+    lead: ' '
+- paths: static-backendtlspolicy
+  block: 8
+  fingerprint: a186b249d9686905
+  lang: yaml
+  lines: abbd1bdc 8c67597e cf153f9d 8c8c4228 2ed3de79 36184fa5 588a5d84 71ab14c2 ad65deb7 8e03ecd4 d2ba729d 1943b25c 9efe4f94 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="static-backendtlspolicy"
+    only: true
+    lead: ' '
+- paths: static,static-backendtlspolicy
+  block: 12
+  fingerprint: 18209595aca938ef
+  lang: sh
+  lines: 72fecde1 83dd5091
+  preview: kubectl delete httproute static-backend
+  form:
+    attr: paths="static,static-backendtlspolicy"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 33ddff44bd8c977e
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2db5aa01 0ccc8edc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 702c4484 3de9d845 a3b86ab6 e30d6fb0 ad65deb7 69f54740 ae6b70e3 555016a6 7471bbd1 eeaefec9 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |-
+    {{< doc-test paths="static" >}}
+    YAMLTest -f - <<'EOF'
+    - name: static - wait for the json-backend Backend (port 80) to be accepted
+      wait:
+        target:
+          kind: Backend
+          metadata:
+            namespace: default
+            name: json-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: static - wait for the static-backend HTTPRoute to be accepted by the http Gateway
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: static-backend
+        jsonPath: "$.status.parents[?(@.parentRef.name=='http')].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: static - wait for the static-backend HTTPRoute to resolve its Backend reference
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: static-backend
+        jsonPath: "$.status.parents[?(@.parentRef.name=='http')].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 483ea0cbf2a70acb
+    lang: console
+    lines: 1542cf51 f8a48cf4 728c31fb 50fc9288 317b9438 62b67e1f 5b07bb0e 6364ab47 92413e97 ab5df625 dabd3aff 245843ab 021fb596 70777a77 d5a92ca7 431e030d 49e5a6f7 e52a1813 021fb596 70777a77 045428ba 153ad29b 8d6e2a96 e52a1813 021fb596 70777a77 b81000bd a2d3fba5 bbeb6fb3 e52a1813 021fb596 70777a77 d41c0339 ef65b4c8 b3f759cb e52a1813 ab5df625
+    preview: '* Connected to <host> (::1) port 8080'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="static" >}}
+    # Test-only: replaces the reader's curl. The Backend points to the public
+    # jsonplaceholder.typicode.com service, so the runner needs internet access.
+    # Retry, and check only the status code and stable fields of the first post.
+    YAMLTest -f - <<'EOF'
+    - name: static - HTTP static backend returns the jsonplaceholder posts through the http Gateway
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /posts
+        method: GET
+        headers:
+          host: "static.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$[0].userId"
+          comparator: equals
+          value: 1
+        - path: "$[0].id"
+          comparator: equals
+          value: 1
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 483ea0cbf2a70acb
+    lang: console
+    lines: 1542cf51 f8a48cf4 728c31fb 50fc9288 317b9438 62b67e1f 5b07bb0e 6364ab47 92413e97 ab5df625 dabd3aff 245843ab 021fb596 70777a77 d5a92ca7 431e030d 49e5a6f7 e52a1813 021fb596 70777a77 045428ba 153ad29b 8d6e2a96 e52a1813 021fb596 70777a77 b81000bd a2d3fba5 bbeb6fb3 e52a1813 021fb596 70777a77 d41c0339 ef65b4c8 b3f759cb e52a1813 ab5df625
+    preview: '* Connected to <host> (::1) port 8080'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="static,static-backendtlspolicy" >}}
+    # Test-only: step 1 of the HTTPS section links to the HTTPS listener guide.
+    # Create the same certificates and the `https` Gateway here, without that
+    # page's httpbin route and cleanup.
+    mkdir -p example_certs
+    openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -subj '/O=any domain/CN=*' -keyout example_certs/root.key -out example_certs/root.crt
+    cat <<'CNF' > example_certs/gateway.cnf
+    [ req ]
+    default_bits = 2048
+    prompt = no
+    default_md = sha256
+    distinguished_name = dn
+    req_extensions = req_ext
+    [ dn ]
+    CN = *.example.com
+    O = any domain
+    [ req_ext ]
+    subjectAltName = @alt_names
+    [ alt_names ]
+    DNS.1 = *.example.com
+    DNS.2 = example.com
+    CNF
+    openssl req -new -nodes -keyout example_certs/gateway.key -out example_certs/gateway.csr -config example_certs/gateway.cnf
+    openssl x509 -req -sha256 -days 365 \
+      -CA example_certs/root.crt -CAkey example_certs/root.key -set_serial 0 \
+      -in example_certs/gateway.csr -out example_certs/gateway.crt \
+      -extfile example_certs/gateway.cnf -extensions req_ext
+    kubectl create secret tls -n kgateway-system https \
+      --key example_certs/gateway.key \
+      --cert example_certs/gateway.crt
+    kubectl apply -f- <<'GW'
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: Gateway
+    metadata:
+      name: https
+      namespace: kgateway-system
+    spec:
+      gatewayClassName: kgateway
+      listeners:
+      - protocol: HTTPS
+        port: 443
+        name: https
+        tls:
+          mode: Terminate
+          certificateRefs:
+            - name: https
+              kind: Secret
+        allowedRoutes:
+          namespaces:
+            from: All
+    GW
+    YAMLTest -f - <<'EOF'
+    - name: static - wait for the https Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: https
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: static - wait for the https listener to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: https
+        jsonPath: "$.status.listeners[?(@.name=='https')].conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deploy/https -n kgateway-system --timeout=300s
+    # The page's HTTPS request sends INGRESS_GW_ADDRESS to the https Gateway, so
+    # point the variable at that Gateway's load balancer from here on.
+    for i in $(seq 1 60); do
+      INGRESS_GW_ADDRESS=$(kubectl get svc -n kgateway-system https -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+      [ -n "$INGRESS_GW_ADDRESS" ] && break
+      sleep 5
+    done
+    [ -n "$INGRESS_GW_ADDRESS" ] || { echo "static: the https Gateway service got no load balancer address"; exit 1; }
+    export INGRESS_GW_ADDRESS
+    echo "static: https Gateway address $INGRESS_GW_ADDRESS"
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 9d11622b609221fd
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2db5aa01 0ccc8edc 36184fa5 d3d416e7 52b5b541 0bebd850 301e1bfa 861a8b5e 3de9d845 a3b86ab6 e30d6fb0 ad65deb7 69f54740 ae6b70e3 555016a6 7471bbd1 eeaefec9 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |-
+    {{< doc-test paths="static,static-backendtlspolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: static - wait for the static-backend HTTPRoute to be accepted by the https Gateway
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: static-backend
+        jsonPath: "$.status.parents[?(@.parentRef.name=='https')].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: static - wait for the json-backend Backend (port 443) to be accepted
+      wait:
+        target:
+          kind: Backend
+          metadata:
+            namespace: default
+            name: json-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: dd88c08d1c33722b
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 2ed3de79 36184fa5 588a5d84 71ab14c2 ad65deb7 8e03ecd4 3195c5f5 5d02c447 9efe4f94 abc56510
+    preview: kubectl apply -f- <<EOF
+  blank_before: []
+  content: |-
+    {{< doc-test paths="static" >}}
+    YAMLTest -f - <<'EOF'
+    - name: static - wait for the static-tls-policy BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: default
+            name: static-tls-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 0f8e5fc4bafccd67
+    lang: console
+    lines: 4d501eb7 7a35487e 117ec132 fa747a77 003417bb 3e7769c2 12c3fdfb b7d0c99e edbf342c 83351d9b 80bec92f 24d920e3 a7e7ba83 2a7b465c f1901ba0 5a4b1a12 756e5458 f32c91a7 fac876a5 e6f992f5 e29cb09f c2a54d59 5f8898a4 770a3e5c 184f0709 7a1a6bbd 81a467da f8a48cf4 5e97ef75 50fc9288 317b9438 62b67e1f 5b07bb0e 6364ab47 92413e97 049c985f aa206e9a 1912910a 97bcb04f 32cf5997 a152bc23 cad1f934 893cdb1b 677f8c72 969c2643 3b8690e5 b2b9208b dad6004c 0bb4e6fc b28359c0 6e75be42 4bc17f4d e13fc7dc ef60f8f1 0f0de238 3ca1ea63 5f7c6523 540f7e84 5ab8c98e 77481f0b eb2a82dc 2347f020 0cf51d8d 4fe40f67 fa05a0db c8080b8d def1e021 3c15e2f3 50c1eec6 23f2922f 910b2bf1 a9537161 02252d50 f9b3fb37 8be56a02 19e23cd6 c7797211 f7f6cc08 92e227f5 60fba0ca a5383056 dc447a68 306a7655 dabd3aff 245843ab 021fb596 70777a77 d5a92ca7 431e030d 49e5a6f7 e52a1813 ab5df625
+    preview: '* Connecting to hostname: localhost'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="static,static-backendtlspolicy" >}}
+    # Test-only: replaces the reader's curl. The client verifies the https Gateway
+    # certificate against example_certs/root.crt, and the gateway proxy verifies
+    # jsonplaceholder.typicode.com against the system CA bundle in the Envoy image.
+    # Until the TLS policy reaches the proxy, the upstream rejects plain HTTP on
+    # port 443, so retry until the posts come back.
+    static_https_ok=false
+    for i in $(seq 1 60); do
+      code=$(curl -sS -o static-posts.json -w '%{http_code}' --max-time 10 --cacert example_certs/root.crt \
+        --resolve "static.example.com:443:${INGRESS_GW_ADDRESS}" \
+        https://static.example.com:443/posts || true)
+      if [ "$code" = "200" ] && python3 -c '
+    import json, sys
+    d = json.load(open("static-posts.json"))
+    sys.exit(0 if isinstance(d, list) and d and d[0].get("userId") == 1 and d[0].get("id") == 1 else 1)
+    ' 2>/dev/null; then
+        static_https_ok=true
+        break
+      fi
+      echo "static: HTTPS attempt $i got '${code:-no response}', retrying"
+      sleep 3
+    done
+    [ "$static_https_ok" = true ] || { echo "static: HTTPS request to static.example.com/posts did not return 200 with the jsonplaceholder posts"; head -c 500 static-posts.json 2>/dev/null; exit 1; }
+    echo "static: HTTPS static backend returned the jsonplaceholder posts"
+    {{< /doc-test >}}

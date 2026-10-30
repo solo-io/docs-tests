@@ -1,0 +1,266 @@
+format: 1
+source: assets/kgw-docs/pages/observability/gateway-metrics.md
+blocks:
+- 19c53b72ce81ed47 sh
+- 30990f64f37fa317 console
+- 40954736e86bd3ad
+- e80806d3fcf0dc47 yaml
+- 9d37e8a2fbaebfdf yaml
+- 3d5e27b9ad918364 sh
+- 3e0757754434a886 yaml
+- 3d5e27b9ad918364 sh
+- 8ba23c4ec1f2af4b
+- ce5c2ea904223ce8 yaml
+- 7de261b968e435e5 yaml
+tags:
+- paths: gateway-metrics
+  block: 3
+  fingerprint: e80806d3fcf0dc47
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 204b92b4 0bebd850 36184fa5 9cc14d83 8afebc2f ff7360cf ea3aa7de abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="gateway-metrics"
+    only: true
+    lead: ' '
+- paths: gateway-metrics-inclusion
+  block: 4
+  fingerprint: 9d37e8a2fbaebfdf
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 204b92b4 0bebd850 36184fa5 9cc14d83 8afebc2f ff7360cf 67d8be8f 4a4de463 3c0c254e d2397975 7e3641d5 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 204b92b4 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="gateway-metrics-inclusion"
+    only: true
+    lead: ' '
+- paths: gateway-metrics-inclusion
+  block: 5
+  fingerprint: 3d5e27b9ad918364
+  lang: sh
+  lines: 4038a6e1 dde2d046
+  preview: kubectl rollout restart deployment/http -n {{< reuse "kgw-docs/snippets/namespac
+  form:
+    attr: paths="gateway-metrics-inclusion"
+    only: true
+    lead: ' '
+- paths: gateway-metrics-exclusion
+  block: 6
+  fingerprint: 3e0757754434a886
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 204b92b4 0bebd850 36184fa5 9cc14d83 8afebc2f ff7360cf 67d8be8f 3bc64b6e edac8b98 431c2a5f 79c1f492 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 204b92b4 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="gateway-metrics-exclusion"
+    only: true
+    lead: ' '
+- paths: gateway-metrics-exclusion
+  block: 7
+  fingerprint: 3d5e27b9ad918364
+  lang: sh
+  lines: 4038a6e1 dde2d046
+  preview: kubectl rollout restart deployment/http -n {{< reuse "kgw-docs/snippets/namespac
+  form:
+    attr: paths="gateway-metrics-exclusion"
+    only: true
+    lead: ' '
+- paths: gateway-metrics
+  block: 9
+  fingerprint: ce5c2ea904223ce8
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 3f429544 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 2a96e4a3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="gateway-metrics"
+    only: true
+    lead: ' '
+- paths: gateway-metrics
+  block: 10
+  fingerprint: 7de261b968e435e5
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 fc6e9888 0bebd850 36184fa5 9cc14d83 8afebc2f e4bc2178 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 ac45cc5c 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 fc6e9888 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="gateway-metrics"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 30990f64f37fa317
+    lang: console
+    lines: e9c9871d 1f56dc7e
+    preview: '# TYPE envoy_cluster_external_upstream_rq counter'
+  content: |-
+    {{< doc-test paths="gateway-metrics,gateway-metrics-inclusion,gateway-metrics-exclusion" >}}
+    # Instead of the port-forward, read the stats from inside the proxy pod. Send
+    # requests to httpbin first so that the upstream request counter exists.
+    found=""
+    for i in $(seq 1 60); do
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true
+      stats=$(kubectl -n kgateway-system exec deploy/http -- wget -qO- http://127.0.0.1:19000/stats/prometheus 2>/dev/null || true)
+      line=$(grep '^envoy_cluster_external_upstream_rq{' <<<"$stats" | grep 'envoy_cluster_name="kube_httpbin_httpbin_8000"' | grep 'envoy_response_code="200"' || true)
+      if [ -n "$line" ]; then found=1; echo "$line"; break; fi
+      echo "attempt $i: no envoy_cluster_external_upstream_rq series for kube_httpbin_httpbin_8000 yet"
+      sleep 2
+    done
+    [ -n "$found" ] || { echo "the proxy stats do not show 200 responses from the kube_httpbin_httpbin_8000 cluster"; exit 1; }
+    grep -q '^envoy_server_live' <<<"$stats" || { echo "the default proxy stats have no envoy_server_live"; exit 1; }
+    # The proxy pod is annotated for Prometheus scraping, and the scrape endpoint
+    # on port 9091 serves the same stats.
+    scrape=$(kubectl -n kgateway-system get deploy http -o jsonpath='{.spec.template.metadata.annotations.prometheus\.io/scrape}')
+    [ "$scrape" = "true" ] || { echo "the http proxy pod template has prometheus.io/scrape='$scrape', expected true"; exit 1; }
+    metrics=$(kubectl -n kgateway-system exec deploy/http -- wget -qO- http://127.0.0.1:9091/metrics)
+    grep -q '^envoy_cluster_external_upstream_rq{' <<<"$metrics" || { echo "port 9091 /metrics does not serve the Envoy stats"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 40954736e86bd3ad
+    lang: ''
+    lines: 83920be3 cc6d8511 334a6b57 3c243341 ba42c863 cb3d62c2
+    preview: '# Requests of the tenant-a listener only'
+  content: |-
+    {{< doc-test paths="gateway-metrics" >}}
+    # Per-listener stat prefix: the HTTP listener on port 8080 reports http_8080,
+    # not the earlier shared prefix http.
+    curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true
+    prom=$(kubectl -n kgateway-system exec deploy/http -- wget -qO- http://127.0.0.1:19000/stats/prometheus)
+    rq=$(grep '^envoy_http_downstream_rq_total{' <<<"$prom" || true)
+    [[ "$rq" == *'envoy_http_conn_manager_prefix="http_8080"'* ]] || { echo "no envoy_http_downstream_rq_total series with envoy_http_conn_manager_prefix=\"http_8080\""; echo "$rq"; exit 1; }
+    if grep -qE 'envoy_http_conn_manager_prefix="http"[,}]' <<<"$rq"; then echo "a listener still uses the earlier shared prefix http"; echo "$rq"; exit 1; fi
+    admin=$(kubectl -n kgateway-system exec deploy/http -- wget -qO- http://127.0.0.1:19000/stats)
+    grep -q '^http\.http_8080\.downstream_rq_total:' <<<"$admin" || { echo "the admin stats have no http.http_8080.downstream_rq_total"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 9d37e8a2fbaebfdf
+    lang: yaml
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 204b92b4 0bebd850 36184fa5 9cc14d83 8afebc2f ff7360cf 67d8be8f 4a4de463 3c0c254e d2397975 7e3641d5 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 204b92b4 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="gateway-metrics-inclusion" >}}
+    # The deployer writes the inclusion list into the proxy bootstrap ConfigMap.
+    boot=""
+    for i in $(seq 1 60); do
+      boot=$(kubectl -n kgateway-system get configmap http -o jsonpath='{.data.envoy\.yaml}' 2>/dev/null || true)
+      [[ "$boot" == *inclusion_list* ]] && break
+      sleep 2
+    done
+    [[ "$boot" == *inclusion_list* ]] || { echo "the proxy bootstrap ConfigMap has no stats_matcher inclusion_list"; exit 1; }
+    # The proxy emits only the included stats: http.* stats stay, and server.*
+    # stats such as envoy_server_live are gone.
+    ok=""
+    for i in $(seq 1 30); do
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true
+      prom=$(kubectl -n kgateway-system exec deploy/http -- wget -qO- http://127.0.0.1:19000/stats/prometheus 2>/dev/null || true)
+      if grep -q '^envoy_http_downstream_rq_total{' <<<"$prom" && ! grep -q '^envoy_server_live' <<<"$prom"; then ok=1; break; fi
+      echo "attempt $i: the proxy still reports server.* stats that the inclusion list leaves out"
+      sleep 4
+    done
+    [ -n "$ok" ] || { echo "The running proxy still emits stats outside the inclusion list. The matcher is in the bootstrap ConfigMap, but Envoy reads its bootstrap only at startup, so the page may need a step that restarts the proxy, such as kubectl rollout restart deployment/http."; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 3e0757754434a886
+    lang: yaml
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 204b92b4 0bebd850 36184fa5 9cc14d83 8afebc2f ff7360cf 67d8be8f 3bc64b6e edac8b98 431c2a5f 79c1f492 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 204b92b4 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="gateway-metrics-exclusion" >}}
+    # The deployer writes the exclusion list into the proxy bootstrap ConfigMap.
+    boot=""
+    for i in $(seq 1 60); do
+      boot=$(kubectl -n kgateway-system get configmap http -o jsonpath='{.data.envoy\.yaml}' 2>/dev/null || true)
+      [[ "$boot" == *exclusion_list* ]] && break
+      sleep 2
+    done
+    [[ "$boot" == *exclusion_list* ]] || { echo "the proxy bootstrap ConfigMap has no stats_matcher exclusion_list"; exit 1; }
+    # The proxy drops the excluded server.* stats and keeps everything else.
+    ok=""
+    for i in $(seq 1 30); do
+      prom=$(kubectl -n kgateway-system exec deploy/http -- wget -qO- http://127.0.0.1:19000/stats/prometheus 2>/dev/null || true)
+      if grep -q '^envoy_cluster_' <<<"$prom" && ! grep -q '^envoy_server_' <<<"$prom"; then ok=1; break; fi
+      echo "attempt $i: the proxy still reports the excluded server.* stats"
+      sleep 4
+    done
+    [ -n "$ok" ] || { echo "The running proxy still emits the excluded server.* stats. The matcher is in the bootstrap ConfigMap, but Envoy reads its bootstrap only at startup, so the page may need a step that restarts the proxy, such as kubectl rollout restart deployment/http."; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: ce5c2ea904223ce8
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 3f429544 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 2a96e4a3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="gateway-metrics" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-stat-prefix TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-stat-prefix
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: ce5c2ea904223ce8
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 3f429544 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 2a96e4a3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="gateway-metrics" >}}
+    # The httpbin HTTPRoute rule has no name, so the prefix resolves to
+    # httpbin.httpbin and the route stats are vhost.<vhost>.route.httpbin.httpbin.*
+    found=""
+    for i in $(seq 1 60); do
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true
+      admin=$(kubectl -n kgateway-system exec deploy/http -- wget -qO- http://127.0.0.1:19000/stats 2>/dev/null || true)
+      line=$(grep -E '^vhost\..+\.route\.httpbin\.httpbin\.' <<<"$admin" || true)
+      if [ -n "$line" ]; then found=1; echo "$line"; break; fi
+      echo "attempt $i: no vhost.*.route.httpbin.httpbin.* stats yet"
+      sleep 2
+    done
+    [ -n "$found" ] || { echo "the proxy reports no per-route stats under the httpbin.httpbin stat prefix"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 7de261b968e435e5
+    lang: yaml
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 fc6e9888 0bebd850 36184fa5 9cc14d83 8afebc2f e4bc2178 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 ac45cc5c 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 fc6e9888 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="gateway-metrics" >}}
+    # Disabling stats removes the prometheus.io annotations, so a new proxy pod
+    # rolls out without the port 9091 listener.
+    scrape="true"
+    for i in $(seq 1 60); do
+      scrape=$(kubectl -n kgateway-system get deploy http -o jsonpath='{.spec.template.metadata.annotations.prometheus\.io/scrape}')
+      [ -z "$scrape" ] && break
+      sleep 2
+    done
+    [ -z "$scrape" ] || { echo "the http proxy pod template still has prometheus.io/scrape=$scrape"; exit 1; }
+    kubectl -n kgateway-system rollout status deployment/http --timeout=300s
+    for i in $(seq 1 60); do
+      n=$(kubectl -n kgateway-system get pods -l gateway.networking.k8s.io/gateway-name=http -o name | wc -l | tr -d ' ')
+      [ "$n" = "1" ] && break
+      echo "attempt $i: $n http proxy pods, waiting for the old pod to go away"
+      sleep 2
+    done
+    pod=$(kubectl -n kgateway-system get pods -l gateway.networking.k8s.io/gateway-name=http -o jsonpath='{.items[0].metadata.name}')
+    boot=$(kubectl -n kgateway-system get configmap http -o jsonpath='{.data.envoy\.yaml}')
+    [[ "$boot" != *prometheus_listener* ]] || { echo "the proxy bootstrap still has the prometheus_listener on port 9091"; exit 1; }
+    if kubectl -n kgateway-system exec "$pod" -- wget -qO- -T 5 http://127.0.0.1:9091/metrics >/dev/null 2>&1; then
+      echo "port 9091 still serves metrics after stats were disabled"; exit 1
+    fi
+    # Envoy still collects stats, and the admin interface on port 19000 serves them.
+    admin=$(kubectl -n kgateway-system exec "$pod" -- wget -qO- http://127.0.0.1:19000/stats/prometheus)
+    grep -q '^envoy_server_live' <<<"$admin" || { echo "the admin interface on port 19000 does not serve the stats"; exit 1; }
+    {{< /doc-test >}}

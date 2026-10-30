@@ -1,0 +1,317 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/extproc.md
+blocks:
+- d96942c99b505347 yaml
+- 603ff9558ab5f338 json
+- 984c6d0c70b927e3 sh
+- b34e62daa1201c4d yaml
+- a81abfe7b268a286 yaml
+- 002d6863eca698b7 yaml
+- 5db194a5f098e3a4 yaml
+- 07100ddae1f34e7a sh
+- b701a0f9acd9afd4 sh
+- 60cb94de86f6fc8d console
+- 020caf6a7ccd02f4 sh
+- 47fb5b191ded2c75 sh
+- 3d40d863cf26b187 json
+- 214a7f2215bce748 yaml
+- 31f9b6b4abd1bc8e yaml
+- 88d3bafd7b84be1b yaml
+- d2217e25cdac789a yaml
+- 07100ddae1f34e7a sh
+- 60cb94de86f6fc8d yaml
+- 020caf6a7ccd02f4 sh
+- 60cb94de86f6fc8d yaml
+- 7dc7a8374923f0b3 yaml
+- b4ad414e95be139f sh
+tags:
+- paths: header-manipulation
+  block: 0
+  fingerprint: d96942c99b505347
+  lang: yaml
+  lines: b601a2d0 58584366 ab78925c 8c8c4228 8019ef49 36184fa5 8432e015 839a5cac 4525ee56 97bcd5e0 a58565b2 8c8c4228 fa1e8330 4525ee56 36184fa5 04968f51 9fb8a5ce 447c1f57 ff42c2c6 0ff65a1a 395694ff cb3f91d5 f1540154 0d6480f0 8c8c4228 8019ef49 fa1e8330 4525ee56 36184fa5 0ff65a1a d8212fc2 10973fbe 9693ecf1 7d42f305 8432e015 4525ee56 abc56510
+  preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  form:
+    attr: paths="header-manipulation"
+    only: true
+    lead: ' '
+- paths: header-manipulation
+  block: 2
+  fingerprint: 984c6d0c70b927e3
+  lang: sh
+  lines: 984c6d0c
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} | grep ext-pr
+  form:
+    attr: paths="header-manipulation"
+    only: true
+    lead: ' '
+- paths: header-manipulation
+  block: 3
+  fingerprint: b34e62daa1201c4d
+  lang: yaml
+  lines: b601a2d0 d664f32c 5ee5f7dc 8c8c4228 09ebff43 36184fa5 4927fe5a c2fbd82e 6d0a9a1d 70c97555 8019ef49 b8eebd11 abc56510
+  preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  form:
+    attr: paths="header-manipulation"
+    only: true
+    lead: ' '
+- paths: header-manipulation
+  block: 4
+  fingerprint: a81abfe7b268a286
+  lang: yaml
+  lines: b601a2d0 88b9492f c548623c 8c8c4228 e2a97dd3 36184fa5 c2fbd82e 248578da 09ebff43 abc56510
+  preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  form:
+    attr: paths="header-manipulation"
+    only: true
+    lead: ' '
+- paths: header-manipulation
+  block: 5
+  fingerprint: 002d6863eca698b7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e2a97dd3 0bebd850 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 2f2be4a6 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c 94ae491e 80e9487c bca8e5f7 0f10c5bc ae6b70e3 90922aeb 248578da 06b13f44 c548623c e2a97dd3 b733d726 aeca2b3d bf068a96 2836fc17 94ae491e 80e9487c bca8e5f7 0f10c5bc abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-manipulation"
+    only: true
+    lead: ' '
+- paths: header-manipulation
+  block: 6
+  fingerprint: 5db194a5f098e3a4
+  lang: yaml
+  lines: 16c71da1 979905a0 e47a48f5 8c8c4228 378ebbd1 4af520a4 36184fa5 0e20b496 b5a028c9 56bf9360 5c480f3d 55708cb7 fdde362c 0d6480f0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-manipulation"
+    only: true
+    lead: ' '
+- paths: header-manipulation
+  block: 21
+  fingerprint: 7dc7a8374923f0b3
+  lang: yaml
+  lines: b601a2d0 d664f32c 5ee5f7dc 8c8c4228 09ebff43 36184fa5 4927fe5a c2fbd82e 6d0a9a1d 70c97555 8019ef49 b8eebd11 c85c6da6 18407896 4a12a316 abc56510
+  preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  form:
+    attr: paths="header-manipulation"
+    only: true
+    lead: ' '
+- paths: header-manipulation
+  block: 22
+  fingerprint: b4ad414e95be139f
+  lang: sh
+  lines: 10d19600 7e24a5d8 4297a945 c8302fe6 8d1e9f38 d56d4af0
+  preview: kubectl delete httproute extproc -n {{< reuse "kgw-docs/snippets/namespace.md" >
+  form:
+    attr: paths="header-manipulation"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: d96942c99b505347
+    lang: yaml
+    lines: b601a2d0 58584366 ab78925c 8c8c4228 8019ef49 36184fa5 8432e015 839a5cac 4525ee56 97bcd5e0 a58565b2 8c8c4228 fa1e8330 4525ee56 36184fa5 04968f51 9fb8a5ce 447c1f57 ff42c2c6 0ff65a1a 395694ff cb3f91d5 f1540154 0d6480f0 8c8c4228 8019ef49 fa1e8330 4525ee56 36184fa5 0ff65a1a d8212fc2 10973fbe 9693ecf1 7d42f305 8432e015 4525ee56 abc56510
+    preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  content: |2-
+       {{< doc-test paths="header-manipulation" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the ext-proc-grpc Deployment (sample ExtProc server) to be available
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: kgateway-system
+               name: ext-proc-grpc
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 5db194a5f098e3a4
+    lang: yaml
+    lines: 16c71da1 979905a0 e47a48f5 8c8c4228 378ebbd1 4af520a4 36184fa5 0e20b496 b5a028c9 56bf9360 5c480f3d 55708cb7 fdde362c 0d6480f0 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="header-manipulation" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the extproc HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: extproc
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 240
+             intervalSeconds: 5
+       - name: wait for the extproc HTTPRoute to resolve its httpbin backend in the httpbin namespace
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: extproc
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 240
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 60cb94de86f6fc8d
+    lang: console
+    lines: 6364ab47 92413e97 ab5df625 dabd3aff 021fb596 2e253c22 c7197869 817ad316 39d4b54e 812dc567 18d10c7d 39d4b54e 6056662a 88017a50 39d4b54e c9aa1623 d29ef39c 39d4b54e 0653176f f538f08a 39d4b54e ab5df625
+    preview: < HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="header-manipulation" >}}
+       YAMLTest -f - <<'EOF'
+       - name: header-manipulation - on /headers, the addHeaders instruction makes the ExtProc server add extproc true to the request that httpbin receives
+         retries: 30
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: extproc.example
+             instructions: '{"addHeaders":{"extproc":"true"}}'
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['Extproc'][0]"
+             comparator: equals
+             value: "true"
+           - path: "$.headers['Instructions'][0]"
+             comparator: equals
+             value: '{"addHeaders":{"extproc":"true"}}'
+       - name: header-manipulation - on /headers, the removeHeaders instruction makes the ExtProc server strip x-remove-me before the request reaches httpbin
+         retries: 10
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: extproc.example
+             x-remove-me: please
+             x-keep-me: please
+             instructions: '{"addHeaders":{"extproc":"true"},"removeHeaders":["x-remove-me"]}'
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['Extproc'][0]"
+             comparator: equals
+             value: "true"
+           - path: "$.headers['X-Remove-Me']"
+             comparator: exists
+             negate: true
+           - path: "$.headers['X-Keep-Me'][0]"
+             comparator: equals
+             value: please
+       - name: header-manipulation - on /headers, a request without an instructions header is not changed by the ExtProc server
+         retries: 10
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /headers
+           method: GET
+           headers:
+             host: extproc.example
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['Extproc']"
+             comparator: exists
+             negate: true
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 3d40d863cf26b187
+    lang: json
+    lines: 6364ab47 92413e97 ab5df625 dabd3aff 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a 88017a50 39d4b54e c9aa1623 d29ef39c 39d4b54e 0653176f f538f08a 39d4b54e ab5df625
+    preview: < HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="header-manipulation" >}}
+       YAMLTest -f - <<'EOF'
+       - name: header-manipulation - on /get, which has no ExtProc filter, the instructions header is passed through but extproc is not added
+         retries: 30
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080"
+           path: /get
+           method: GET
+           headers:
+             host: extproc.example
+             instructions: '{"addHeaders":{"extproc":"true"}}'
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['Instructions'][0]"
+             comparator: equals
+             value: '{"addHeaders":{"extproc":"true"}}'
+           - path: "$.headers['Extproc']"
+             comparator: exists
+             negate: true
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 7dc7a8374923f0b3
+    lang: yaml
+    lines: b601a2d0 d664f32c 5ee5f7dc 8c8c4228 09ebff43 36184fa5 4927fe5a c2fbd82e 6d0a9a1d 70c97555 8019ef49 b8eebd11 c85c6da6 18407896 4a12a316 abc56510
+    preview: kubectl apply -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -f- <<EOF
+  content: |-
+    {{< doc-test paths="header-manipulation" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the ext-proc-extension GatewayExtension keeps both requestAttributes (the CRD accepts the field)
+      wait:
+        target:
+          kind: GatewayExtension
+          metadata:
+            namespace: kgateway-system
+            name: ext-proc-extension
+        jsonPath: "$.spec.extProc.requestAttributes[1]"
+        jsonPathExpectation:
+          comparator: equals
+          value: connection.requested_server_name
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: header-manipulation - after adding requestAttributes, ExtProc on /headers still adds the extproc-attributes header from the instructions
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: extproc.example
+          instructions: '{"addHeaders":{"extproc-attributes":"true"}}'
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['Extproc-Attributes'][0]"
+          comparator: equals
+          value: "true"
+    EOF
+    {{< /doc-test >}}
