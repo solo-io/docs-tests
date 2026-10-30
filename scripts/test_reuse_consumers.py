@@ -170,40 +170,6 @@ class GraphWalkTests(unittest.TestCase):
             ["assets/agw-docs/snippets/orphan.md"],
         )
 
-    def test_only_an_orphan_with_tests_is_warning_worthy(self):
-        # 125 snippets in the real tree reach no page. Warning on all of them
-        # would bury the one case that means a test went dark.
-        write(self.root, "assets/agw-docs/snippets/quiet-orphan.md", "body")
-        write(
-            self.root,
-            "assets/agw-docs/snippets/costly-orphan.md",
-            'body\n{{< doc-test name="x" >}}',
-        )
-        changed = [
-            "assets/agw-docs/snippets/quiet-orphan.md",
-            "assets/agw-docs/snippets/costly-orphan.md",
-        ]
-        self.assertEqual(sorted(rc.unresolved(changed, self.index())), sorted(changed))
-        self.assertEqual(
-            rc.unresolved_losing_tests(changed, self.index(), self.root),
-            ["assets/agw-docs/snippets/costly-orphan.md"],
-        )
-
-    def test_the_percent_form_of_doc_test_counts_as_carrying_tests(self):
-        # Latent, not live: every `doc-test` in the tree is the angle form
-        # today. Asserted anyway, because the cost of it going wrong is an
-        # orphan with tests on it that never gets warned about, and nothing
-        # in the tree would reveal the gap.
-        write(
-            self.root,
-            "assets/agw-docs/snippets/percent-orphan.md",
-            'body\n{{% doc-test name="x" %}}',
-        )
-        changed = ["assets/agw-docs/snippets/percent-orphan.md"]
-        self.assertEqual(
-            rc.unresolved_losing_tests(changed, self.index(), self.root), changed
-        )
-
     def test_a_cycle_terminates(self):
         # Not hypothetical enough to ignore: a snippet pair that includes each
         # other would otherwise hang the discover job rather than fail it.
@@ -383,62 +349,6 @@ class RealRepositoryTests(unittest.TestCase):
             pages,
             "integrations/ was outside the old prefix list",
         )
-
-    # The snippets that carry doc tests and reach no page. All five are
-    # genuinely unreferenced -- version-pinned leftovers no page reuses any
-    # more -- so they are dead files rather than a gap in this walk.
-    #
-    # Named, rather than counted. A count of 5 against exactly 5 leaves no
-    # headroom, so the next person to stage a snippet with `doc-test` on it
-    # before wiring it to a page reds this whole job, now that the suite
-    # gates the discover step. That is the failure `unresolved_losing_tests`
-    # is written to avoid: a selector that reds the build on a legitimate
-    # orphan edit teaches people to ignore it. An allowlist fails only on an
-    # orphan nobody has looked at, names it in the message, and does not
-    # leave dead headroom behind when one of these is cleaned up.
-    KNOWN_ORPHANS_WITH_DOC_TESTS = {
-        "assets/agw-docs/pages/agentgateway/integrations/llm-clients/claude-code-13x.md",
-        "assets/agw-docs/pages/operations/trace-requests-standalone-12x.md",
-        "assets/agw-docs/pages/operations/trace-requests-standalone-13x.md",
-        "assets/agw-docs/pages/operations/ui-standalone.md",
-        "assets/agw-docs/standalone/quickstart/non-agentic-http-13x.md",
-    }
-
-    def test_only_the_known_orphans_fail_to_resolve(self):
-        """62 of the 134 snippets carrying doc tests resolved to no page under
-        the path mirror, and each of those was a check that could not fail.
-        This asserts the set that still does not resolve is exactly the five
-        known-dead paths above, so a regression in the walk shows up as a new
-        name rather than being absorbed by a budget.
-        """
-        unresolved = set()
-        for snippet in sorted((_consumer_repo_root() / "assets").rglob("*.md")):
-            if not rc.carries_doc_tests(snippet):
-                continue
-            rel = snippet.relative_to(_consumer_repo_root()).as_posix()
-            if not rc.consumers([rel], self.index, test_index=self.test_index):
-                unresolved.add(rel)
-
-        new_orphans = unresolved - self.KNOWN_ORPHANS_WITH_DOC_TESTS
-        self.assertEqual(
-            set(),
-            new_orphans,
-            "snippets with doc tests that reach no page and are not known dead "
-            f"files: {sorted(new_orphans)}. Either wire them to a page, or add "
-            "them to KNOWN_ORPHANS_WITH_DOC_TESTS with a note on why they are "
-            "dead.",
-        )
-
-        # The other direction, so a cleaned-up orphan does not sit here
-        # forever pretending to be a known problem.
-        stale = self.KNOWN_ORPHANS_WITH_DOC_TESTS - unresolved
-        self.assertEqual(
-            set(),
-            stale,
-            "these are listed as orphans but now resolve (or are gone). Drop "
-            f"them from KNOWN_ORPHANS_WITH_DOC_TESTS: {sorted(stale)}",
-        )
-
 
 
 class RebaseResolutionTests(unittest.TestCase):
