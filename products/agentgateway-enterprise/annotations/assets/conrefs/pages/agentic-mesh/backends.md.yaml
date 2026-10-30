@@ -10,8 +10,8 @@ blocks:
 - dc724bd32dfe36f8 yaml
 - 05343ad53db2fb55 sh
 - abb20ff4a3ab66a3 sh
-- 74612a163dcbcdd4 sh
-- 23adc6d67112fe82 sh
+- 00295d6f5ca868c6 sh
+- 942e98432a9c3f05 sh
 - 990a2f0f3cdf2a52 sh
 tags:
 - paths: integrations-agentic-mesh-waypoint-backends
@@ -76,9 +76,9 @@ tags:
     lead: ' '
 - paths: integrations-agentic-mesh-waypoint-backends
   block: 9
-  fingerprint: 74612a163dcbcdd4
+  fingerprint: 00295d6f5ca868c6
   lang: sh
-  lines: 3900686d 3558d484
+  lines: 3900686d 9aa03128 fc68f389 cc34797f
   preview: kubectl exec -n ${NAMESPACE} curl-unauth -- \
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
@@ -86,9 +86,9 @@ tags:
     lead: ' '
 - paths: integrations-agentic-mesh-waypoint-backends
   block: 10
-  fingerprint: 23adc6d67112fe82
+  fingerprint: 942e98432a9c3f05
   lang: sh
-  lines: ccd604cb 3558d484
+  lines: ccd604cb 9aa03128 fc68f389 cc34797f
   preview: kubectl exec -n ${NAMESPACE} curl-auth -- \
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
@@ -157,9 +157,9 @@ hidden:
        {{< /doc-test >}}
 - after:
     section: Apply authorization policies alongside backends
-    line: c8deab8de9f63ab0
+    line: 260149c59064c90b
     occurrence: 0
-    words: ef2d127d a12dd3a7 8e7fc023 b9776d7d bbb75229 15d9aff9 b9776d7d 823412d1 a7e2d26e 86474ae6 ca978112 1f58b914 75857a45 b9776d7d e9d83f01 425c89ed b9776d7d bbb75229 153b2a38 ca978112 d26eae87 6db7d803 b9776d7d 1f58b914 b080c643 b9776d7d 487b9104 5c4c1964
+    words: ef2d127d a12dd3a7 8e7fc023 b9776d7d bbb75229 15d9aff9 b9776d7d 823412d1 a7e2d26e 86474ae6 ca978112 31e06f7d 21606b58 1f58b914 75857a45 b9776d7d e9d83f01 425c89ed b9776d7d bbb75229 153b2a38 ca978112 d26eae87 6db7d803 b9776d7d 1f58b914 b080c643 b9776d7d 487b9104 5c4c1964
     block_before:
       block: 8
       fingerprint: abb20ff4a3ab66a3
@@ -172,7 +172,7 @@ hidden:
        # Claim: the waypoint answers the unauthorized pod with a 403.
        code=""
        for i in $(seq 1 60); do
-         code=$(kubectl exec -n ${NAMESPACE} curl-unauth -- curl -s -o /dev/null -m 10 -w '%{http_code}' http://myllm.example.com/openai/v1/models || true)
+         code=$(kubectl exec -n ${NAMESPACE} curl-unauth -- curl -s -o /dev/null -m 10 -w '%{http_code}' http://myllm.example.com/openai -H 'content-type: application/json' -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello"}]}' || true)
          [ "$code" = "403" ] && break
          sleep 2
        done
@@ -180,24 +180,25 @@ hidden:
        {{< /doc-test >}}
 - after:
     section: Apply authorization policies alongside backends
-    line: 492e94cf9f88e41e
+    line: cdc38943510e5c74
     occurrence: 0
-    words: e7f6c011 3f267c2a 8e7fc023 b9776d7d 04dd9c7e 425c89ed 9f584196 ed4561f6 b9776d7d 14c2529e
+    words: e7f6c011 3f267c2a 8e7fc023 b9776d7d 04dd9c7e 425c89ed 9f584196 ed4561f6 b9776d7d 14c2529e b9776d7d 08659077 539822cd bec16879 1f58b914 f4bf9f7f ca978112 31e06f7d 21606b58 a1d98908 27ce1d1b ca978112 72231043 1f58b914 0695b563 ca978112 31e06f7d 21606b58 230d8358 0695b563 ca978112 ec654fac 14c2529e 2c70e12b b9776d7d 1f58b914 153b2a38 27badc98
     block_before:
       block: 9
-      fingerprint: 74612a163dcbcdd4
+      fingerprint: 00295d6f5ca868c6
       lang: sh
-      lines: 3900686d 3558d484
+      lines: 3900686d 9aa03128 fc68f389 cc34797f
       preview: kubectl exec -n ${NAMESPACE} curl-unauth -- \
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-backends" >}}
        # Claim: the authorized pod reaches the provider. With the placeholder key,
-       # OpenAI itself answers 401 (or 404 if it does not know the forwarded path); anything but 403 (the waypoint) or 000/5xx (no
-       # upstream) shows the request went through the backend.
+       # OpenAI itself answers 401; anything but 403 (the waypoint), 400 (agentgateway
+       # could not parse the request), or 000/5xx (no upstream) shows the request went
+       # through the backend.
        code=""
        for i in $(seq 1 30); do
-         code=$(kubectl exec -n ${NAMESPACE} curl-auth -- curl -s -o /dev/null -m 15 -w '%{http_code}' http://myllm.example.com/openai/v1/models || true)
+         code=$(kubectl exec -n ${NAMESPACE} curl-auth -- curl -s -o /dev/null -m 15 -w '%{http_code}' http://myllm.example.com/openai -H 'content-type: application/json' -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello"}]}' || true)
          case "$code" in 2??|401|404) break ;; esac
          sleep 2
        done

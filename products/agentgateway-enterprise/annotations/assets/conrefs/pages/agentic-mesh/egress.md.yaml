@@ -5,18 +5,19 @@ blocks:
 - 0b3353f89e5896aa yaml
 - bf79921f40cf74a5 sh
 - 7ba872767d42125c
-- 30c6c38397844cff yaml
+- c1ed1b319181640c yaml
 - 73c41abf0b1445d4 sh
+- 31bbdc746637e6ee yaml
 - 016b0d3f5a53715b sh
 - e6e39707117a576d yaml
 - 4e6f31a5d25b1a20 yaml
 - 05343ad53db2fb55 sh
 - abb20ff4a3ab66a3 sh
-- 91e87da80d4592ac sh
-- 093fcfe8ae6af849 sh
-- 34582b69398b75d4 sh
+- d36d0812b233b85e sh
+- 7320f86fea3e3ec1 sh
+- ebd00df345271b15 sh
 - 12d871782caa391e
-- b99c02cb0777985f sh
+- d2059d898a50ef0c sh
 - 6943d64a42aecdc8 yaml
 tags:
 - paths: integrations-agentic-mesh-egress
@@ -41,9 +42,9 @@ tags:
     lead: ' '
 - paths: integrations-agentic-mesh-egress
   block: 4
-  fingerprint: 30c6c38397844cff
+  fingerprint: c1ed1b319181640c
   lang: yaml
-  lines: abbd1bdc e6494e6f 32b92192 8c8c4228 f6af1605 18d7aff9 36184fa5 bfce7f60 76f2f5cc 0ff65a1a c5a6a201 c8857053 53aa10f9 0ed8bc35 b6e959f2 abc56510
+  lines: abbd1bdc e6494e6f 32b92192 8c8c4228 f6af1605 18d7aff9 36184fa5 bfce7f60 76f2f5cc 0ff65a1a d6f6a58a 9278ed91 069de162 5770c24c 0ed8bc35 b6e959f2 abc56510
   preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-egress"
@@ -60,7 +61,17 @@ tags:
     only: true
     lead: ' '
 - paths: integrations-agentic-mesh-egress
-  block: 7
+  block: 6
+  fingerprint: 31bbdc746637e6ee
+  lang: yaml
+  lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 500b91dd 18d7aff9 36184fa5 588a5d84 519265a4 ca6fb638 f6af1605 bb85cefe 3195c5f5 a439ad4e abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="integrations-agentic-mesh-egress"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-egress
+  block: 8
   fingerprint: e6e39707117a576d
   lang: yaml
   lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 06a02b2f 18d7aff9 36184fa5 588a5d84 519265a4 ca6fb638 f6af1605 e4f6a86d d48a6346 d25a61e1 1188488c 0a06a173 24fad889 abc56510
@@ -70,7 +81,7 @@ tags:
     only: true
     lead: ' '
 - paths: integrations-agentic-mesh-egress
-  block: 9
+  block: 10
   fingerprint: 05343ad53db2fb55
   lang: sh
   lines: 05343ad5
@@ -80,7 +91,7 @@ tags:
     only: true
     lead: ' '
 - paths: integrations-agentic-mesh-egress
-  block: 10
+  block: 11
   fingerprint: abb20ff4a3ab66a3
   lang: sh
   lines: 346a8b56 041d8c89 ab5cb401
@@ -90,40 +101,40 @@ tags:
     only: true
     lead: ' '
 - paths: integrations-agentic-mesh-egress
-  block: 11
-  fingerprint: 91e87da80d4592ac
+  block: 12
+  fingerprint: d36d0812b233b85e
   lang: sh
-  lines: 3900686d f41abf2c
+  lines: 3900686d e603c7b6 fc68f389 cc34797f
   preview: kubectl exec -n ${NAMESPACE} curl-unauth -- \
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
     lead: ' '
 - paths: integrations-agentic-mesh-egress
-  block: 12
-  fingerprint: 093fcfe8ae6af849
+  block: 13
+  fingerprint: 7320f86fea3e3ec1
   lang: sh
-  lines: ccd604cb f41abf2c
+  lines: ccd604cb e603c7b6 fc68f389 cc34797f
   preview: kubectl exec -n ${NAMESPACE} curl-auth -- \
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
     lead: ' '
 - paths: integrations-agentic-mesh-egress
-  block: 13
-  fingerprint: 34582b69398b75d4
+  block: 14
+  fingerprint: ebd00df345271b15
   lang: sh
-  lines: 34582b69
-  preview: istioctl ztunnel-config connections --namespace ${NAMESPACE}
+  lines: ebd00df3
+  preview: istioctl ztunnel-config connections --workload-namespace ${NAMESPACE}
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
     lead: ' '
 - paths: integrations-agentic-mesh-egress
-  block: 15
-  fingerprint: b99c02cb0777985f
+  block: 16
+  fingerprint: d2059d898a50ef0c
   lang: sh
-  lines: b576eb2e 6d8cafdb 0cecb323 99af1116
+  lines: b576eb2e e7ade3f2 0cecb323 99af1116
   preview: kubectl delete pod curl-unauth curl-auth -n ${NAMESPACE}
   form:
     attr: paths="integrations-agentic-mesh-egress"
@@ -165,7 +176,7 @@ hidden:
        kubectl -n ${NAMESPACE} rollout status deploy/egress-waypoint --timeout=300s
        {{< /doc-test >}}
 - after:
-    block: 6
+    block: 7
     fingerprint: 016b0d3f5a53715b
     lang: sh
     lines: 016b0d3f
@@ -178,7 +189,7 @@ hidden:
        kubectl -n ${NAMESPACE} create serviceaccount ${AGENT_SERVICE_ACCOUNT} --dry-run=client -o yaml | kubectl apply -f -
        {{< /doc-test >}}
 - after:
-    block: 10
+    block: 11
     fingerprint: abb20ff4a3ab66a3
     lang: sh
     lines: 346a8b56 041d8c89 ab5cb401
@@ -194,7 +205,7 @@ hidden:
     occurrence: 0
     words: ef2d127d a12dd3a7 8e7fc023 b9776d7d bbb75229 15d9aff9 b9776d7d 823412d1 a7e2d26e 86474ae6 ca978112 1f58b914 75857a45 b9776d7d e9d83f01 425c89ed b9776d7d bbb75229 153b2a38 ca978112 d26eae87 6db7d803 b9776d7d 1f58b914 b080c643 7d3194f7
     block_before:
-      block: 10
+      block: 11
       fingerprint: abb20ff4a3ab66a3
       lang: sh
       lines: 346a8b56 041d8c89 ab5cb401
@@ -205,7 +216,7 @@ hidden:
        # Claim: the egress waypoint answers the unauthorized pod with a 403.
        code=""
        for i in $(seq 1 60); do
-         code=$(kubectl exec -n ${NAMESPACE} curl-unauth -- curl -s -o /dev/null -m 10 -w '%{http_code}' https://api.openai.com/v1/models || true)
+         code=$(kubectl exec -n ${NAMESPACE} curl-unauth -- curl -s -o /dev/null -m 10 -w '%{http_code}' -X POST http://api.openai.com/v1/chat/completions -H 'content-type: application/json' -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello"}]}' || true)
          [ "$code" = "403" ] && break
          sleep 2
        done
@@ -213,23 +224,24 @@ hidden:
        {{< /doc-test >}}
 - after:
     section: Restrict which agents can call the API
-    line: 2f252da0256dd84b
+    line: abad193db1b556f3
     occurrence: 0
-    words: e7f6c011 3f267c2a 8e7fc023 b9776d7d 04dd9c7e 425c89ed 9f584196 ed4561f6 7d3194f7
+    words: e7f6c011 3f267c2a 8e7fc023 b9776d7d 04dd9c7e 425c89ed 9f584196 ed4561f6 7d3194f7 b9776d7d 1f58b914 47e8d6fa 9390298f 14c2529e 2c70e12b a1d98908 7d3194f7 153b2a38 ca978112 dcaadad1 1eb79602 dcaadad1 10882c27 75857a45 7d3194f7 a1d98908 2ad8a704 a71dd3a9 8e7fc023 b9776d7d bbb75229 eabc01f1 b9776d7d 1f58b914
     block_before:
-      block: 11
-      fingerprint: 91e87da80d4592ac
+      block: 12
+      fingerprint: d36d0812b233b85e
       lang: sh
-      lines: 3900686d f41abf2c
+      lines: 3900686d e603c7b6 fc68f389 cc34797f
       preview: kubectl exec -n ${NAMESPACE} curl-unauth -- \
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-egress" >}}
        # Claim: the authorized pod reaches OpenAI. Without an API key OpenAI answers
-       # 401; a 403 or 000 means the waypoint blocked or dropped the request.
+       # 401; a 403 means the waypoint blocked the request, and a 000 or 5xx means the
+       # waypoint did not reach OpenAI over TLS.
        code=""
        for i in $(seq 1 30); do
-         code=$(kubectl exec -n ${NAMESPACE} curl-auth -- curl -s -o /dev/null -m 15 -w '%{http_code}' https://api.openai.com/v1/models || true)
+         code=$(kubectl exec -n ${NAMESPACE} curl-auth -- curl -s -o /dev/null -m 15 -w '%{http_code}' -X POST http://api.openai.com/v1/chat/completions -H 'content-type: application/json' -d '{"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "Hello"}]}' || true)
          case "$code" in 2??|401) break ;; esac
          sleep 2
        done

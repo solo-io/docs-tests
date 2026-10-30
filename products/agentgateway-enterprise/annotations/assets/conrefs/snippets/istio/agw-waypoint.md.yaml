@@ -14,7 +14,7 @@ blocks:
 - d1e8111e8a510684 sh
 - 14fd7cea859fc2f1 sh
 - 86fc15e86ec2c079 sh
-- 34582b69398b75d4 sh
+- ebd00df345271b15 sh
 - 831ecf64e9117e90
 tags:
 - paths: integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup
@@ -49,10 +49,10 @@ tags:
     lead: ' '
 - paths: integrations-agentic-mesh-waypoint-install
   block: 13
-  fingerprint: 34582b69398b75d4
+  fingerprint: ebd00df345271b15
   lang: sh
-  lines: 34582b69
-  preview: istioctl ztunnel-config connections --namespace ${NAMESPACE}
+  lines: ebd00df3
+  preview: istioctl ztunnel-config connections --workload-namespace ${NAMESPACE}
   form:
     attr: paths="integrations-agentic-mesh-waypoint-install"
     only: true

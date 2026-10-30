@@ -59,6 +59,16 @@ tags:
     only: true
     lead: ' '
 - paths: access-log-otlp
+  block: 8
+  fingerprint: 0016bbb9d53118be
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee b2a76230 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
   block: 9
   fingerprint: 0464a7c30afbff50
   lang: sh
@@ -84,6 +94,16 @@ tags:
   lang: sh
   lines: 9c5e5e9f
   preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agent
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 18
+  fingerprint: 46e70e35e3d4f9f1
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 521b7d5f abc56510
+  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="access-log-otlp"
     only: true
