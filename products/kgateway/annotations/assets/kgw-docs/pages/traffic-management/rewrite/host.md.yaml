@@ -1,0 +1,140 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/rewrite/host.md
+blocks:
+- 2293e54d8cd0ec24 yaml
+- 927c0bdda8c0e4d1 sh
+- 922c8eb7bbce45a2 sh
+- 17ec93f9ec9aa69e console
+- 1dbfec713d8a10e0 yaml
+- 8b52b415baf98040 yaml
+- 9fffa75d45bab5cc sh
+- cf7f8c31825b1eb6 sh
+- db51f069287950d7 console
+- 0188a2418bfa5a8c sh
+tags:
+- paths: rewrite-host
+  block: 0
+  fingerprint: 2293e54d8cd0ec24
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b9a60f2f 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4c845c6c 3de9d845 6e95318c 555016a6 7471bbd1 96b3e94b 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-host"
+    only: true
+    lead: ' '
+- paths: rewrite-host-external
+  block: 4
+  fingerprint: 1dbfec713d8a10e0
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 d217c891 0ccc8edc 36184fa5 c582fe46 2efcbf93 bfce7f60 032b9b98 da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-host-external"
+    only: true
+    lead: ' '
+- paths: rewrite-host-external
+  block: 5
+  fingerprint: 8b52b415baf98040
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1640df23 0ccc8edc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 77e7ed35 3de9d845 6e95318c 555016a6 7471bbd1 9139b6eb 94ae491e 80e9487c ad65deb7 69f54740 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-host-external"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 2293e54d8cd0ec24
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b9a60f2f 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4c845c6c 3de9d845 6e95318c 555016a6 7471bbd1 96b3e94b 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="rewrite-host" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 17ec93f9ec9aa69e
+    lang: console
+    lines: ab5df625 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a 6ef1e4db 39d4b54e 0653176f 031a60ef 39d4b54e cf93d32e 3bc0f6e2 39d4b54e cfa27b48 a321f717 39d4b54e b467788d f7b429f3 cfae0d42 d10b36aa d10b36aa
+    preview: '...'
+  content: |-
+    {{< doc-test paths="rewrite-host" >}}
+    YAMLTest -f - <<'EOF'
+    - name: rewrite-host - rewrite.example requests reach httpbin with the www.example.com Host header
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: "www.example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 8b52b415baf98040
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1640df23 0ccc8edc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 77e7ed35 3de9d845 6e95318c 555016a6 7471bbd1 9139b6eb 94ae491e 80e9487c ad65deb7 69f54740 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="rewrite-host-external" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the backend-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: backend-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: rewrite-host-external - the request reaches httpbin.org with the rewritten host and path
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "external-rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: "httpbin.org"
+        - path: "$.url"
+          comparator: matches
+          value: "/headers$"
+    EOF
+    {{< /doc-test >}}

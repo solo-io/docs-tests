@@ -1,0 +1,122 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/http2-downstream.md
+blocks:
+- 8a5f89a6131bcd68 yaml
+- d2489beaf273ef09 sh
+- f7677fa36f8626a1 sh
+- cce526bc2643f96d console
+- ad4b5f40d95ac392 yaml
+- 03a3fdbbf49189fe sh
+tags:
+- paths: http2-downstream
+  block: 0
+  fingerprint: 8a5f89a6131bcd68
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 805f6218 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 252381c1 46455dc3 cafa1728 9ee409b7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http2-downstream"
+    only: true
+    lead: ' '
+- paths: http2-downstream
+  block: 4
+  fingerprint: ad4b5f40d95ac392
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 805f6218 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 252381c1 0eefac76 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http2-downstream"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Configure downstream HTTP/2 settings
+    line: 8bde1b0480e5ca2d
+    occurrence: 0
+    words: 4af90c5f 8a64ff09 12886f9d 28391d3b a35178ec e0603c49 d4735e3a d5a08b68 b427c3de b38d9d16 ec654fac 89445ea0 6b86b273 972dcafa 84532b30 0f37e81d 663ea1bf e39eef82
+    block_before:
+      block: 0
+      fingerprint: 8a5f89a6131bcd68
+      lang: yaml
+      lines: 16c71da1 d664f32c 9144003f 8c8c4228 805f6218 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 252381c1 46455dc3 cafa1728 9ee409b7 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http2-downstream" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the http2-settings ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: http2-settings
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only helper. The page port-forwards the admin port of the http gateway
+    # proxy; the test reads the same config dump with kubectl exec instead.
+    # h2d_check <label> <python expression on opts>: wait until a non-empty
+    # http2_protocol_options in the listener config satisfies the expression.
+    h2d_check() {
+      local label="$1" expr="$2" i out
+      for i in $(seq 1 60); do
+        out=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_listeners" 2>/dev/null | H2D_EXPR="$expr" python3 -c '
+    import json, os, sys
+    found = []
+    def walk(o):
+        if isinstance(o, dict):
+            v = o.get("http2_protocol_options")
+            if isinstance(v, dict) and v:
+                found.append(v)
+            for x in o.values():
+                walk(x)
+        elif isinstance(o, list):
+            for x in o:
+                walk(x)
+    try:
+        walk(json.load(sys.stdin))
+    except Exception:
+        sys.exit(0)
+    for opts in found:
+        if eval(os.environ["H2D_EXPR"]):
+            print(json.dumps(opts, sort_keys=True))
+            break
+    ' || true)
+        if [ -n "$out" ]; then echo "$label: $out"; return 0; fi
+        sleep 5
+      done
+      echo "$label: no http2_protocol_options on the http proxy's listeners match: $expr"
+      exit 1
+    }
+    h2d_check "http2-downstream window sizes and streams" 'opts.get("initial_stream_window_size") == 131072 and opts.get("initial_connection_window_size") == 262144 and opts.get("max_concurrent_streams") == 100'
+    # HTTP/2 clients still get through with the tuned settings.
+    YAMLTest -f - <<'EOF'
+    - name: http2-downstream - an HTTP/2 prior-knowledge request to httpbin returns 200 over HTTP/2
+      retries: 30
+      command:
+        command: "curl -s -o /dev/null --max-time 5 --http2-prior-knowledge -w '%{http_version} %{http_code}' http://${INGRESS_GW_ADDRESS}:8080/headers -H 'host: www.example.com:8080'"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          equals: "2 200"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: ad4b5f40d95ac392
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 805f6218 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 252381c1 0eefac76 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http2-downstream" >}}
+    # This policy replaces http2-settings, so the window sizes and stream limit
+    # from the first step are gone and allow_connect is set instead.
+    h2d_check "http2-downstream allowConnect" 'opts.get("allow_connect") is True and "max_concurrent_streams" not in opts and "initial_stream_window_size" not in opts and "initial_connection_window_size" not in opts'
+    {{< /doc-test >}}

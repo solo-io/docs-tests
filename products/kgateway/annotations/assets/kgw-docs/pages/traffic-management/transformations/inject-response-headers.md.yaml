@@ -1,0 +1,99 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/transformations/inject-response-headers.md
+blocks:
+- 2e664a7cbf57108a yaml
+- 6bdc19630b6f9df2 yaml
+- e928085d030b90fd sh
+- cd908fb652510d87 sh
+- c1c2e5bd919afbd3 console
+- ed5e148ec7409060 sh
+tags:
+- paths: transform-inject-response-headers
+  block: 0
+  fingerprint: 2e664a7cbf57108a
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 207d5e5e a271c822 d3d7805e d3bf1c94 b9728215 252d87ba be576dda 38b5292a 86229ad1 f5388913 12f5820d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="transform-inject-response-headers"
+    only: true
+    lead: ' '
+- paths: transform-inject-response-headers
+  block: 5
+  fingerprint: ed5e148ec7409060
+  lang: sh
+  lines: ed5e148e
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} transformation
+  form:
+    attr: paths="transform-inject-response-headers"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 2e664a7cbf57108a
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 207d5e5e a271c822 d3d7805e d3bf1c94 b9728215 252d87ba be576dda 38b5292a 86229ad1 f5388913 12f5820d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="transform-inject-response-headers" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "transform-inject-response-headers - wait for the httpbin HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "transform-inject-response-headers - wait for the transformation TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: transformation
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "transform-inject-response-headers - response carries the injected headers"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-gateway-request: "my custom request header"
+          baz: "pattern-to-replace"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-gateway-response
+            comparator: equals
+            value: "my custom request header"
+          - name: x-podname
+            comparator: matches
+            value: "^http-"
+          - name: x-season
+            comparator: equals
+            value: "summer"
+          - name: x-response-raw
+            comparator: equals
+            value: "hello"
+          - name: x-replace
+            comparator: matches
+            value: "^[A-Za-z0-9+/]{22}$"
+    EOF
+    {{< /doc-test >}}

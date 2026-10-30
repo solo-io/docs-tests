@@ -40,6 +40,18 @@ prerequisites:
   httpbin:
     page: install/sample-app.md
     path: install-httpbin
+  # Test-only stand-in for the public httpbin.org service: a Service in front
+  # of the httpbin sample app plus a CoreDNS rewrite, so guides that route to
+  # httpbin.org over plain HTTP run without internet access. Hidden block on
+  # the sample-app page, after the httpbin markup. Needs `httpbin` first.
+  httpbin-org-standin:
+    page: install/sample-app.md
+    path: httpbin-org-standin
+  # The grpc Gateway, the yages.Echo sample gRPC service, the GRPCRoute, and the
+  # grpcurl client pod from the gRPC routing guide, for pages that build on it.
+  grpc-routing:
+    page: traffic-management/grpc.md
+    path: grpc
 # Pages with deliberately no test: section indexes, concept and reference
 # pages, and stubs that point to a guide elsewhere. They count as covered.
 skip:
@@ -137,21 +149,90 @@ skip:
 - page: traffic-management/session-affinity/_index.md
 - page: traffic-management/transformations/_index.md
 scenarios:
-  direct-response:
-    type: functional
-    needs:
-    - install-standard
-    - httpbin
-    source: kgw-docs/pages/traffic-management/direct-response.md
-    path: direct-response
+  access-logging-schema:
+    type: schema
+    source: kgw-docs/pages/security/access-logging2.2.md
+    path: access-logging
   acl-schema:
     type: schema
     source: kgw-docs/pages/security/acl.md
     path: acl
+  add-request-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/header-control/request-header.md
+    path: add-request-header
+  add-response-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/header-control/response-header.md
+    path: add-response-header
   advanced-schema:
     type: schema
     source: kgw-docs/pages/install/advanced.md
     path: advanced
+  affinity-consistent-hashing-maglev:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/session-affinity/consistent-hashing.md
+    path: affinity-consistent-hashing-maglev
+  affinity-consistent-hashing-ringhash:
+    # One scenario per algorithm. Each applies the Headers, Cookies, and Source
+    # IP tabs in turn (same policy name, so each replaces the last) and checks
+    # stickiness by counting which httpbin pod logged each request. A hidden
+    # step scales httpbin to two replicas before the first check.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/session-affinity/consistent-hashing.md
+    path: affinity-consistent-hashing-ringhash
+  affinity-loadbalancing:
+    # Applies the three algorithm tabs in turn and reads the httpbin cluster's
+    # load balancing policy from config_dump through kubectl exec, in place of
+    # the page's port-forward.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/session-affinity/loadbalancing.md
+    path: affinity-loadbalancing
+  affinity-session-persistence-policy:
+    # BackendConfigPolicy tab, main only until the backend page reaches latest.
+    # Standard channel on purpose: the page says this option does not need the
+    # experimental channel.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/session-affinity/session-persistence-backend.md
+    path: affinity-session-persistence-policy
+  affinity-session-persistence:
+    # The page reuses session-persistence.md in latest and
+    # session-persistence-backend.md in main, so this entry uses page: to cover
+    # both trees. HTTPRoute sessionPersistence needs the experimental channel.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - httpbin
+    page: traffic-management/session-affinity/session-persistence.md
+    path: affinity-session-persistence
   alb-schema:
     type: schema
     source: kgw-docs/pages/integrations/aws-elb/alb.md
@@ -196,8 +277,21 @@ scenarios:
     type: schema
     page: migrate/examples/basic-auth.md
     path: basic-auth
-  buffering-schema:
-    type: schema
+  buffering-filter-stage:
+    # Needs kgateway 2.4.5 or later (buffer.filterStage).
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/snippets/buffering-filter-stage.md
+    path: buffering-filter-stage
+  buffering:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/buffering2.2-body.md
     path: buffering
   byo-ext-auth-service-grpc-schema:
@@ -212,10 +306,6 @@ scenarios:
     type: schema
     page: migrate/examples/canary.md
     path: canary
-  change-response-status-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/transformations/change-response-status.md
-    path: change-response-status
   circuit-breakers-schema:
     type: schema
     source: kgw-docs/pages/resiliency/circuit-breakers.md
@@ -224,8 +314,13 @@ scenarios:
     type: schema
     source: kgw-docs/pages/security/jwt/claim-based-rbac.md
     path: claim-based-rbac
-  compression-schema:
-    type: schema
+  compression:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/compression.md
     path: compression
   configs-schema:
@@ -236,10 +331,6 @@ scenarios:
     type: schema
     source: kgw-docs/pages/resiliency/connection.md
     path: connection
-  consistent-hashing-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/session-affinity/consistent-hashing.md
-    path: consistent-hashing
   cors-schema:
     type: schema
     source: kgw-docs/pages/security/cors.md
@@ -256,10 +347,6 @@ scenarios:
     type: schema
     source: kgw-docs/pages/setup/customize/custom-bootstrap.md
     path: custom-bootstrap
-  custom-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/redirect/custom.md
-    path: custom
   customize-gateway-schema:
     type: schema
     source: kgw-docs/pages/setup/customize/gateway.md
@@ -268,20 +355,138 @@ scenarios:
     type: schema
     source: kgw-docs/pages/operations/debug.md
     path: debug
-  decode-base64-headers-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/transformations/decode-base64-headers.md
-    path: decode-base64-headers
   default-schema:
     type: schema
     source: kgw-docs/pages/setup/default.md
     path: default
-  dfp-schema:
-    type: schema
+  delegation-basic:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - source: kgw-docs/pages/traffic-management/route-delegation/basic.md
+      path: route-delegation-prereq
+    source: kgw-docs/pages/traffic-management/route-delegation/basic.md
+    path: delegation-basic
+  delegation-header-query:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - source: kgw-docs/pages/traffic-management/route-delegation/header-query.md
+      path: route-delegation-prereq
+    source: kgw-docs/pages/traffic-management/route-delegation/header-query.md
+    path: delegation-header-query
+  delegation-inheritance-kgateway:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - source: kgw-docs/pages/traffic-management/route-delegation/inheritance/kgateway-policies.md
+      path: route-delegation-prereq
+    source: kgw-docs/pages/traffic-management/route-delegation/inheritance/kgateway-policies.md
+    path: delegation-inheritance-kgateway
+  delegation-inheritance-native:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - source: kgw-docs/pages/traffic-management/route-delegation/inheritance/native-policies.md
+      path: route-delegation-prereq
+    source: kgw-docs/pages/traffic-management/route-delegation/inheritance/native-policies.md
+    path: delegation-inheritance-native
+  delegation-label-wildcard:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - source: kgw-docs/pages/traffic-management/route-delegation/label.md
+      path: route-delegation-prereq
+    source: kgw-docs/pages/traffic-management/route-delegation/label.md
+    path: delegation-label-wildcard
+  delegation-label:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - source: kgw-docs/pages/traffic-management/route-delegation/label.md
+      path: route-delegation-prereq
+    source: kgw-docs/pages/traffic-management/route-delegation/label.md
+    path: delegation-label
+  delegation-multi-level:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - source: kgw-docs/pages/traffic-management/route-delegation/multi-level-delegation.md
+      path: route-delegation-prereq
+    source: kgw-docs/pages/traffic-management/route-delegation/multi-level-delegation.md
+    path: delegation-multi-level
+  delegation-multi-parent:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - source: kgw-docs/pages/traffic-management/route-delegation/multi-parent.md
+      path: route-delegation-prereq
+    source: kgw-docs/pages/traffic-management/route-delegation/multi-parent.md
+    path: delegation-multi-parent
+  dfp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
     source: kgw-docs/pages/traffic-management/dfp.md
     path: dfp
-  early-request-header-modifier-schema:
-    type: schema
+  direct-response:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/direct-response.md
+    path: direct-response
+  dynamic-request-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/header-control/request-header.md
+    path: dynamic-request-header
+  dynamic-response-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/header-control/response-header.md
+    path: dynamic-response-header
+  early-request-header-modifier:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/header-control/early-request-header-modifier.md
     path: early-request-header-modifier
   ec2-schema:
@@ -312,8 +517,13 @@ scenarios:
     type: schema
     source: kgw-docs/pages/traffic-management/extproc-filter-stages.md
     path: filter-stages
-  forward-xfcc-schema:
-    type: schema
+  forward-xfcc:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/header-control/forward-xfcc.md
     path: forward-xfcc
   gateway-metrics-schema:
@@ -332,10 +542,32 @@ scenarios:
     type: schema
     source: kgw-docs/pages/traffic-management/destination-types/kube-services/grpc-services.md
     path: grpc-services
-  grpc-statistics-schema:
-    type: schema
+  grpc-statistics:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - grpc-routing
     page: traffic-management/grpc-statistics.md
     path: grpc-statistics
+  grpc:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    source: kgw-docs/pages/traffic-management/grpc.md
+    path: grpc
+  header-from-secret:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/header-control/request-header.md
+    path: header-from-secret
   header-manipulation-schema:
     type: schema
     source: kgw-docs/pages/traffic-management/extproc.md
@@ -344,34 +576,54 @@ scenarios:
     type: schema
     page: migrate/examples/header-modifiers.md
     path: header-modifiers
-  header-query-schema:
+  health-checks-gateway-schema:
     type: schema
-    source: kgw-docs/pages/traffic-management/route-delegation/header-query.md
-    path: header-query
-  header-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/match/header.md
-    path: header
-  http-connect-tunnels-schema:
-    type: schema
+    source: kgw-docs/pages/traffic-management/health-checks/gateway.md
+    path: health-checks-gateway
+  http-connect-tunnels:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/http-connect-tunnels.md
     path: http-connect-tunnels
   http-services-schema:
     type: schema
     source: kgw-docs/pages/traffic-management/destination-types/kube-services/http-services.md
     path: http-services
-  http-upgrades-schema:
-    type: schema
+  http-upgrades:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/http-upgrades.md
     path: http-upgrades
   http10-schema:
     type: schema
     source: kgw-docs/pages/setup/http10.md
     path: http10
-  http2-downstream-schema:
-    type: schema
+  http2-downstream:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/http2-downstream.md
     path: http2-downstream
+  http2:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/http2.md
+    path: http2
   idle-schema:
     type: schema
     source: kgw-docs/pages/resiliency/timeouts/idle.md
@@ -384,14 +636,10 @@ scenarios:
     type: schema
     source: kgw-docs/pages/integrations/istio/sidecar/ingress.md
     path: ingress
-  inject-response-headers-schema:
+  jwt-claim-extraction-schema:
     type: schema
-    source: kgw-docs/pages/traffic-management/transformations/inject-response-headers.md
-    path: inject-response-headers
-  internal-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/redirect/internal.md
-    path: internal
+    source: kgw-docs/pages/security/jwt/jwt-claim-extraction.md
+    path: jwt-claim-extraction
   keepalive-http2-schema:
     type: schema
     source: kgw-docs/pages/resiliency/keepalive/http2.md
@@ -408,14 +656,6 @@ scenarios:
     type: schema
     source: kgw-docs/pages/security/keycloak/setup.md
     path: keycloak-setup
-  kgateway-policies-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/route-delegation/inheritance/kgateway-policies.md
-    path: kgateway-policies
-  label-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/route-delegation/label.md
-    path: label
   listenerpolicy-schema:
     type: schema
     page: about/policies/listenerpolicy.md
@@ -432,38 +672,110 @@ scenarios:
     type: schema
     page: setup/listeners/tcp.md
     path: listeners-tcp
-  loadbalancing-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/session-affinity/loadbalancing.md
-    path: loadbalancing
-  local-replies-schema:
-    type: schema
+  local-replies:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/local-replies.md
     path: local-replies
   local-schema:
     type: schema
     source: kgw-docs/pages/security/ratelimit/local.md
     path: local
-  match-host-schema:
-    type: schema
+  match-header-exact:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/match/header.md
+    path: match-header-exact
+  match-header-regex:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/match/header.md
+    path: match-header-regex
+  match-host:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/match/host.md
     path: match-host
-  match-path-schema:
-    type: schema
+  match-method:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/match/method.md
+    path: match-method
+  match-path:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/match/path.md
     path: match-path
+  match-query:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/match/query.md
+    path: match-query
   max-connection-duration-schema:
     type: schema
     source: kgw-docs/pages/resiliency/timeouts/max-connection-duration.md
     path: max-connection-duration
-  max-headers-count-schema:
-    type: schema
+  max-headers-count:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/header-control/max-headers-count.md
     path: max-headers-count
-  method-schema:
+  migrate-backend-tls-schema:
     type: schema
-    source: kgw-docs/pages/traffic-management/match/method.md
-    path: method
+    page: migrate/examples/backend-tls.md
+    path: migrate-backend-tls
+  migrate-client-tls-schema:
+    type: schema
+    page: migrate/examples/client-tls.md
+    path: migrate-client-tls
+  migrate-cors-schema:
+    type: schema
+    page: migrate/examples/cors.md
+    path: migrate-cors
+  migrate-external-auth-schema:
+    type: schema
+    page: migrate/examples/external-auth.md
+    path: migrate-external-auth
+  migrate-jwt-auth-schema:
+    type: schema
+    page: migrate/examples/jwt-auth.md
+    path: migrate-jwt-auth
+  migrate-oidc-auth-schema:
+    type: schema
+    page: migrate/examples/oidc-auth.md
+    path: migrate-oidc-auth
   mirroring-schema:
     type: schema
     source: kgw-docs/pages/resiliency/mirroring.md
@@ -472,18 +784,6 @@ scenarios:
     type: schema
     source: kgw-docs/pages/setup/listeners/mtls.md
     path: mtls
-  multi-level-delegation-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/route-delegation/multi-level-delegation.md
-    path: multi-level-delegation
-  multi-parent-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/route-delegation/multi-parent.md
-    path: multi-parent
-  native-policies-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/route-delegation/inheritance/native-policies.md
-    path: native-policies
   nlb-schema:
     type: schema
     source: kgw-docs/pages/integrations/aws-elb/nlb.md
@@ -508,80 +808,217 @@ scenarios:
     type: schema
     source: kgw-docs/pages/resiliency/retry/per-try-timeout.md
     path: per-try-timeout
-  preserve-request-paths-schema:
-    type: schema
+  preserve-request-paths:
+    # Needs kgateway 2.4.5 or later (normalizePath, mergeSlashes).
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/preserve-request-paths.md
     path: preserve-request-paths
   priority-groups-schema:
     type: schema
     source: kgw-docs/pages/traffic-management/priority-groups.md
     path: priority-groups
-  proxy-100-continue-schema:
-    type: schema
+  proxy-100-continue:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/setup/proxy-100-continue.md
     path: proxy-100-continue
-  proxy-protocol-schema:
-    type: schema
+  proxy-protocol-readiness:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/proxy-protocol.md
+    path: proxy-protocol-readiness
+  proxy-protocol-upstream:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/proxy-protocol.md
+    path: proxy-protocol-upstream
+  proxy-protocol:
+    # Three scenarios, each in its own cluster: the readiness section moves the
+    # Gateway listener to port 80, which would break the later :8080 steps.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/proxy-protocol.md
     path: proxy-protocol
-  query-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/match/query.md
-    path: query
   rate-limiting-schema:
     type: schema
     page: migrate/examples/rate-limiting.md
     path: rate-limiting
-  redirect-host-schema:
-    type: schema
+  redirect-custom:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/redirect/custom.md
+    path: redirect-custom
+  redirect-host:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/redirect/host.md
     path: redirect-host
-  redirect-https-schema:
-    type: schema
+  redirect-https:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/redirect/https.md
     path: redirect-https
-  redirect-path-schema:
-    type: schema
+  redirect-internal:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/redirect/internal.md
+    path: redirect-internal
+  redirect-path:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/redirect/path.md
     path: redirect-path
-  redirect-url-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/transformations/redirect-url.md
-    path: redirect-url
+  remove-request-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/header-control/request-header.md
+    path: remove-request-header
+  remove-response-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/header-control/response-header.md
+    path: remove-response-header
   request-buffering-schema:
     type: schema
     page: migrate/examples/request-buffering.md
     path: request-buffering
-  request-header-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/header-control/request-header.md
-    path: request-header
   request-schema:
     type: schema
     source: kgw-docs/pages/resiliency/timeouts/request.md
     path: request
-  response-header-schema:
-    type: schema
+  response-header-from-secret:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/header-control/response-header.md
-    path: response-header
+    path: response-header-from-secret
   retry-schema:
     type: schema
     source: kgw-docs/pages/resiliency/retry/retry.md
     path: retry
-  rewrite-host-schema:
-    type: schema
+  rewrite-host-external:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
+    source: kgw-docs/pages/traffic-management/rewrite/host.md
+    path: rewrite-host-external
+  rewrite-host:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/rewrite/host.md
     path: rewrite-host
-  rewrite-path-schema:
-    type: schema
+  rewrite-path-full-external:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
     source: kgw-docs/pages/traffic-management/rewrite/path.md
-    path: rewrite-path
-  route-delegation-basic-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/route-delegation/basic.md
-    path: route-delegation-basic
-  route-ordering-schema:
-    type: schema
+    path: rewrite-path-full-external
+  rewrite-path-full:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/rewrite/path.md
+    path: rewrite-path-full
+  rewrite-path-prefix-external:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
+    source: kgw-docs/pages/traffic-management/rewrite/path.md
+    path: rewrite-path-prefix-external
+  rewrite-path-prefix:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/rewrite/path.md
+    path: rewrite-path-prefix
+  rewrite-path-regex-external:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
+    source: kgw-docs/pages/traffic-management/rewrite/path.md
+    path: rewrite-path-regex-external
+  rewrite-path-regex:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/rewrite/path.md
+    path: rewrite-path-regex
+  route-ordering:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/match/route-ordering.md
     path: route-ordering
   sample-app-schema:
@@ -600,10 +1037,24 @@ scenarios:
     type: schema
     page: migrate/examples/session-affinity.md
     path: session-affinity
-  session-persistence-schema:
-    type: schema
-    page: traffic-management/session-affinity/session-persistence.md
-    path: session-persistence
+  set-request-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/header-control/request-header.md
+    path: set-request-header
+  set-response-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/header-control/response-header.md
+    path: set-response-header
   setup-gateway-schema:
     type: schema
     page: setup/gateway.md
@@ -624,12 +1075,22 @@ scenarios:
     type: schema
     source: kgw-docs/pages/traffic-management/static.md
     path: static
-  strip-port-host-schema:
-    type: schema
+  strip-port-host:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/header-control/strip-port-host.md
     path: strip-port-host
-  strip-trailing-host-dot-schema:
-    type: schema
+  strip-trailing-host-dot:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/header-control/strip-trailing-host-dot.md
     path: strip-trailing-host-dot
   timeouts-schema:
@@ -660,47 +1121,107 @@ scenarios:
     type: schema
     source: kgw-docs/pages/observability/tracing.md
     path: tracing
-  traffic-management-grpc-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/grpc.md
-    path: traffic-management-grpc
-  traffic-management-http2-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/http2.md
-    path: traffic-management-http2
   traffic-mirroring-schema:
     type: schema
     page: migrate/examples/traffic-mirroring.md
     path: traffic-mirroring
-  traffic-split-schema:
-    type: schema
+  traffic-split:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/traffic-split.md
     path: traffic-split
   trafficpolicy-schema:
     type: schema
     source: kgw-docs/pages/about/trafficpolicy.md
     path: trafficpolicy
+  transform-change-response-status:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/transformations/change-response-status.md
+    path: transform-change-response-status
+  transform-decode-base64-headers:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/transformations/decode-base64-headers.md
+    path: transform-decode-base64-headers
+  transform-inject-response-headers:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/transformations/inject-response-headers.md
+    path: transform-inject-response-headers
+  transform-redirect-url:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/transformations/redirect-url.md
+    path: transform-redirect-url
+  transform-update-request-path:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/transformations/update-request-path.md
+    path: transform-update-request-path
+  transform-update-response-body:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/transformations/update-response-body.md
+    path: transform-update-response-body
   two-backends-schema:
     type: schema
     source: kgw-docs/pages/security/oauth/two-backends.md
     path: two-backends
-  update-request-path-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/transformations/update-request-path.md
-    path: update-request-path
-  update-response-body-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/transformations/update-response-body.md
-    path: update-response-body
   url-rewriting-schema:
     type: schema
     page: migrate/examples/url-rewriting.md
     path: url-rewriting
-  weighted-routes-schema:
-    type: schema
+  weighted-routes:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/weighted-routes.md
     path: weighted-routes
-  zone-routing-schema:
-    type: schema
+  zone-routing-force:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/zone-routing.md
+    path: zone-routing-force
+  zone-routing:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/zone-routing.md
     path: zone-routing

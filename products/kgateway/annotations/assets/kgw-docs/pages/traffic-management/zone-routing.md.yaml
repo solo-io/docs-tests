@@ -1,0 +1,292 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/zone-routing.md
+blocks:
+- a73976e056f817d9 sh
+- 42eb42eebc092fc8 console
+- 08347e6143e5d91e yaml
+- 611e2997bb8e7fe0 yaml
+- b5b0f5054d404677 sh
+- b5ab0af5da82368e console
+- 3da123fd3fef897a yaml
+- 509d1d69a5205763 yaml
+- acb7f228a5c292c0 sh
+- e72653f3cab4cd0b console
+- a72ba93097410446 sh
+- 1c39bc75f2e2d72d sh
+tags:
+- paths: zone-routing,zone-routing-force
+  block: 2
+  fingerprint: 08347e6143e5d91e
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 2bbc79ae 1288d06d 36184fa5 9cc14d83 e8215d3e 9dd296fc 8ad5f986 9287e3e4 8db70061 2cd3e3d5 44fa9021 e3c18b2d 3ea6d39c 55b2ecb0 75d041e4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="zone-routing,zone-routing-force"
+    only: true
+    lead: ' '
+- paths: zone-routing,zone-routing-force
+  block: 3
+  fingerprint: 611e2997bb8e7fe0
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 2bbc79ae 4a23a5a4 2ee1c717 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="zone-routing,zone-routing-force"
+    only: true
+    lead: ' '
+- paths: zone-routing
+  block: 6
+  fingerprint: 3da123fd3fef897a
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 ff91d602 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 5679d65b f34295ce c3fcb66b 9dae0e78 b5193703 e09e743c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="zone-routing"
+    only: true
+    lead: ' '
+- paths: zone-routing-force
+  block: 7
+  fingerprint: 509d1d69a5205763
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 ff91d602 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 5679d65b f34295ce c3fcb66b 9dae0e78 b5193703 e09e743c e60bbe0f e9345e1d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="zone-routing-force"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 08347e6143e5d91e
+    lang: yaml
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 2bbc79ae 1288d06d 36184fa5 9cc14d83 e8215d3e 9dd296fc 8ad5f986 9287e3e4 8db70061 2cd3e3d5 44fa9021 e3c18b2d 3ea6d39c 55b2ecb0 75d041e4 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="zone-routing,zone-routing-force" >}}
+    # Test-only: kind nodes carry no topology labels, so the GatewayParameters
+    # nodeSelector topology.kubernetes.io/zone: us-east-1a matches no node and the
+    # proxy pod stays Pending. Label every node with the zone and region that the
+    # example uses before the Gateway picks up the GatewayParameters.
+    kubectl label nodes --all topology.kubernetes.io/zone=us-east-1a topology.kubernetes.io/region=us-east-1 --overwrite
+    kubectl get nodes -L topology.kubernetes.io/zone
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 611e2997bb8e7fe0
+    lang: yaml
+    lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 2bbc79ae 4a23a5a4 2ee1c717 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="zone-routing,zone-routing-force" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the http Gateway with zone-aware-gw-params to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    zr_env=""
+    for attempt in $(seq 1 60); do
+      zr_env=$(kubectl get deployment http -n kgateway-system -o jsonpath='{.spec.template.spec.containers[*].env[?(@.name=="KGATEWAY_NODE_ZONE")].value}' 2>/dev/null || true)
+      [ "$zr_env" = "us-east-1a" ] && break
+      sleep 2
+    done
+    if [ "$zr_env" != "us-east-1a" ]; then
+      echo "zone-routing: expected KGATEWAY_NODE_ZONE=us-east-1a on deployment/http, got '${zr_env}'"
+      exit 1
+    fi
+    kubectl rollout status deployment/http -n kgateway-system --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 3da123fd3fef897a
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 ff91d602 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 5679d65b f34295ce c3fcb66b 9dae0e78 b5193703 e09e743c abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="zone-routing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the prefer-local httpbin-zone-aware BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-zone-aware
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the page reads config_dump through a port-forward, which the test
+    # cannot use. The proxy's admin port listens on 127.0.0.1:19000 inside the pod,
+    # so read it with kubectl exec instead, and check the zone_aware_lb_config of
+    # the httpbin cluster: routing_enabled 100, min_cluster_size 3, and
+    # force_local_zone.min_size none (none means no force_local_zone).
+    zr_ok=0
+    for attempt in $(seq 1 60); do
+      zr_cfg=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_active_clusters" 2>/dev/null | python3 -c '
+    import json, sys
+    def find(o, key, name=None):
+        # First dict under o that has key (and, if name is set, that name).
+        if isinstance(o, dict):
+            if key in o and (name is None or o.get("name") == name):
+                return o if name else o[key]
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = find(v, key, name)
+                if r is not None:
+                    return r
+        return None
+    # The zone_aware_lb_config sits in the typed load_balancing_policy of the
+    # httpbin cluster (locality_lb_config), so search the whole cluster for it.
+    try:
+        cluster = find(json.load(sys.stdin), "name", "kube_httpbin_httpbin_8000")
+        print(json.dumps(find(cluster, "zone_aware_lb_config"), separators=(",", ":"), sort_keys=True))
+    except Exception:
+        print("null")
+    ' || true)
+      if printf '%s' "$zr_cfg" | python3 -c '
+    import json, sys
+    want_force = sys.argv[1]
+    c = json.load(sys.stdin)
+    ok = (isinstance(c, dict)
+          and float(c.get("routing_enabled", {}).get("value", -1)) == 100
+          and str(c.get("min_cluster_size")) == "3")
+    force = c.get("force_local_zone") if isinstance(c, dict) else None
+    if want_force == "none":
+        ok = ok and force is None
+    else:
+        ok = ok and isinstance(force, dict) and str(force.get("min_size")) == want_force
+    sys.exit(0 if ok else 1)
+    ' none 2>/dev/null; then
+        zr_ok=1
+        break
+      fi
+      sleep 2
+    done
+    echo "zone-routing prefer local: zone_aware_lb_config of cluster kube_httpbin_httpbin_8000: ${zr_cfg:-none}"
+    if [ "$zr_ok" -ne 1 ]; then
+      echo "zone-routing prefer local: expected routing_enabled 100, min_cluster_size 3, force_local_zone.min_size none"
+      exit 1
+    fi
+    YAMLTest -f - <<'EOF'
+    - name: zone-routing prefer local - httpbin still answers through the gateway
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 509d1d69a5205763
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 ff91d602 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 5679d65b f34295ce c3fcb66b 9dae0e78 b5193703 e09e743c e60bbe0f e9345e1d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="zone-routing-force" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the force-local httpbin-zone-aware BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-zone-aware
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the page reads config_dump through a port-forward, which the test
+    # cannot use. The proxy's admin port listens on 127.0.0.1:19000 inside the pod,
+    # so read it with kubectl exec instead, and check the zone_aware_lb_config of
+    # the httpbin cluster: routing_enabled 100, min_cluster_size 3, and
+    # force_local_zone.min_size 2 (none means no force_local_zone).
+    zr_ok=0
+    for attempt in $(seq 1 60); do
+      zr_cfg=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_active_clusters" 2>/dev/null | python3 -c '
+    import json, sys
+    def find(o, key, name=None):
+        # First dict under o that has key (and, if name is set, that name).
+        if isinstance(o, dict):
+            if key in o and (name is None or o.get("name") == name):
+                return o if name else o[key]
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = find(v, key, name)
+                if r is not None:
+                    return r
+        return None
+    # The zone_aware_lb_config sits in the typed load_balancing_policy of the
+    # httpbin cluster (locality_lb_config), so search the whole cluster for it.
+    try:
+        cluster = find(json.load(sys.stdin), "name", "kube_httpbin_httpbin_8000")
+        print(json.dumps(find(cluster, "zone_aware_lb_config"), separators=(",", ":"), sort_keys=True))
+    except Exception:
+        print("null")
+    ' || true)
+      if printf '%s' "$zr_cfg" | python3 -c '
+    import json, sys
+    want_force = sys.argv[1]
+    c = json.load(sys.stdin)
+    ok = (isinstance(c, dict)
+          and float(c.get("routing_enabled", {}).get("value", -1)) == 100
+          and str(c.get("min_cluster_size")) == "3")
+    force = c.get("force_local_zone") if isinstance(c, dict) else None
+    if want_force == "none":
+        ok = ok and force is None
+    else:
+        ok = ok and isinstance(force, dict) and str(force.get("min_size")) == want_force
+    sys.exit(0 if ok else 1)
+    ' 2 2>/dev/null; then
+        zr_ok=1
+        break
+      fi
+      sleep 2
+    done
+    echo "zone-routing force local: zone_aware_lb_config of cluster kube_httpbin_httpbin_8000: ${zr_cfg:-none}"
+    if [ "$zr_ok" -ne 1 ]; then
+      echo "zone-routing force local: expected routing_enabled 100, min_cluster_size 3, force_local_zone.min_size 2"
+      exit 1
+    fi
+    YAMLTest -f - <<'EOF'
+    - name: zone-routing force local - httpbin still answers through the gateway
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,264 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/route-delegation/inheritance/kgateway-policies.md
+blocks:
+- 4b975c4f260f43df yaml
+- a0e921644c9c52cf yaml
+- 6d63011eb019e3ea yaml
+- 1fc7324922c7dbbb yaml
+- 963c71630093974b yaml
+- 9bfce794e1c4d7ce sh
+- 34908e27dd5569fa sh
+- 3dc1ae5a4ca34564 console
+- 9bfce794e1c4d7ce sh
+- 34908e27dd5569fa sh
+- 6918188eeb8b9330 console
+- 0fdbfca5ac544c23 sh
+- 6bb1b89af29e02ab sh
+- 13f518bd6cd28427 console
+- 0fdbfca5ac544c23 sh
+- 6bb1b89af29e02ab sh
+- 6918188eeb8b9330 console
+- be7ff097eda9d607 sh
+tags:
+- paths: delegation-inheritance-kgateway
+  block: 0
+  fingerprint: 4b975c4f260f43df
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1c9ca8c2 0bebd850 72ab0e66 0558cc75 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa e444c303 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 94ae491e b5a028c9 56bf9360 91f62e83 53143665 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-inheritance-kgateway"
+    only: true
+    lead: ' '
+- paths: delegation-inheritance-kgateway
+  block: 1
+  fingerprint: a0e921644c9c52cf
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 22f8933d 0bebd850 72ab0e66 30e223b2 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 49bca2ce 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 94ae491e b5a028c9 56bf9360 91f62e83 53143665 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-inheritance-kgateway"
+    only: true
+    lead: ' '
+- paths: delegation-inheritance-kgateway
+  block: 2
+  fingerprint: 6d63011eb019e3ea
+  lang: yaml
+  lines: 16c71da1 d664f32c 8198a54f 8c8c4228 12518744 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 1c9ca8c2 b5a028c9 56bf9360 22f8933d 8905bcef 14ddcd05 207d5e5e d512b6e9 47a3667c a50da420 f971795d 47117d8d ac3eeefa 54ea4e89 822e2aa9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-inheritance-kgateway"
+    only: true
+    lead: ' '
+- paths: delegation-inheritance-kgateway
+  block: 3
+  fingerprint: 1fc7324922c7dbbb
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-inheritance-kgateway"
+    only: true
+    lead: ' '
+- paths: delegation-inheritance-kgateway
+  block: 4
+  fingerprint: 963c71630093974b
+  lang: yaml
+  lines: 16c71da1 d664f32c 8198a54f 8c8c4228 a4523099 53143665 36184fa5 588a5d84 b5a028c9 56bf9360 587e8306 8905bcef 14ddcd05 207d5e5e fb43b212 1e6d3825 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-inheritance-kgateway"
+    only: true
+    lead: ' '
+    tail: ' '
+hidden:
+- after:
+    block: 4
+    fingerprint: 963c71630093974b
+    lang: yaml
+    lines: 16c71da1 d664f32c 8198a54f 8c8c4228 a4523099 53143665 36184fa5 588a5d84 b5a028c9 56bf9360 587e8306 8905bcef 14ddcd05 207d5e5e fb43b212 1e6d3825 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-inheritance-kgateway" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the parent1 HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent1
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the parent2 HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent2
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the child-team1 HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: team1
+               name: child-team1
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the parent-policy TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: kgateway-system
+               name: parent-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the child-policy TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: team1
+               name: child-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       # Each domain is limited to 1 request per 60s. Send requests until the local
+       # rate limit answers 429 on both domains, which shows that the parent-policy is
+       # programmed, then wait for both token buckets to refill before the checks.
+       for host in delegation-parent1.example delegation-parent2.example; do
+         for i in $(seq 1 60); do
+           code=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo" -H "host: ${host}:8080" || true)
+           if [ "$code" = "429" ]; then break; fi
+           sleep 2
+         done
+       done
+       sleep 65
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 3dc1ae5a4ca34564
+    lang: console
+    lines: 92413e97 a152bc23 c441a9d6 706d2426 ab5df625 021fb596 1efe1dd8 2e253c22 c7197869 817ad316 39d4b54e 6056662a af276b6f 39d4b54e 0653176f f538f08a 39d4b54e ab5df625 44800aa4 56c3f3d3 39d4b54e b467788d 1c70657f cfae0d42 e52a1813 7394ba08 1956b702 66e083c5 bb3dd0df 3f450ae3 d7180b90 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="delegation-inheritance-kgateway" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "delegation-inheritance-kgateway - parent1 (ShallowMergePreferParent) applies the parent transformation, not the child one"
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo"
+           method: GET
+           headers:
+             host: "delegation-parent1.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['X-Parent-Policy'][0]"
+             comparator: equals
+             value: "This policy is inherited from the parent."
+           - path: "$.headers['X-Child-Team1']"
+             comparator: exists
+             negate: true
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 6918188eeb8b9330
+    lang: console
+    lines: 66a378bb 09b20ca0 fa948eea dbe17e63 5f7c6523 1ae91c0c
+    preview: HTTP/1.1 429 Too Many Requests
+  content: |2-
+       {{< doc-test paths="delegation-inheritance-kgateway" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "delegation-inheritance-kgateway - second parent1 request hits the inherited local rate limit"
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo"
+           method: GET
+           headers:
+             host: "delegation-parent1.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 429
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 13f518bd6cd28427
+    lang: console
+    lines: 92413e97 a152bc23 c441a9d6 706d2426 ab5df625 021fb596 1efe1dd8 2e253c22 c7197869 817ad316 39d4b54e 6056662a 9145465e 39d4b54e 0653176f f538f08a 39d4b54e b81cf0a6 fcded6ab 39d4b54e cf93d32e 3bc0f6e2 39d4b54e ab5df625 c079afad c9f4d7f0 66e083c5 bb3dd0df 3f450ae3 d7180b90 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="delegation-inheritance-kgateway" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "delegation-inheritance-kgateway - parent2 (default ShallowMergePreferChild) applies the child transformation instead of the parent one"
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo"
+           method: GET
+           headers:
+             host: "delegation-parent2.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['X-Child-Team1'][0]"
+             comparator: equals
+             value: "This is the child-team1 policy."
+           - path: "$.headers['X-Parent-Policy']"
+             comparator: exists
+             negate: true
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 6918188eeb8b9330
+    lang: console
+    lines: 66a378bb 09b20ca0 fa948eea dbe17e63 5f7c6523 1ae91c0c
+    preview: HTTP/1.1 429 Too Many Requests
+  content: |2-
+       {{< doc-test paths="delegation-inheritance-kgateway" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "delegation-inheritance-kgateway - second parent2 request hits the local rate limit inherited from parent2"
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo"
+           method: GET
+           headers:
+             host: "delegation-parent2.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 429
+       EOF
+       {{< /doc-test >}}

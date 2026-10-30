@@ -1,0 +1,556 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/rewrite/path.md
+blocks:
+- fed7ddf041ce30da yaml
+- 927c0bdda8c0e4d1 sh
+- 922c8eb7bbce45a2 sh
+- ea5a67672a704a2c console
+- 85535d8f12bdf98f sh
+- 7147da24d1c3812a sh
+- 85c0ecb35d0a42f3 console
+- a30378ad90733519 yaml
+- 73e008a7b544c81d yaml
+- 9fffa75d45bab5cc sh
+- cf7f8c31825b1eb6 sh
+- 1d15b8eaa375d2bb console
+- 62cf13a2d1bc5330 yaml
+- 927c0bdda8c0e4d1 sh
+- 922c8eb7bbce45a2 sh
+- ea5a67672a704a2c console
+- 85535d8f12bdf98f sh
+- 7147da24d1c3812a sh
+- ea5a67672a704a2c console
+- a30378ad90733519 yaml
+- ed42fd1c44cbb383 yaml
+- 9fffa75d45bab5cc sh
+- cf7f8c31825b1eb6 sh
+- 1d15b8eaa375d2bb console
+- 6376329557fb0188 yaml
+- 802b0ffa08e449d2 yaml
+- 68fc714f2138e312 sh
+- d2d9e0c8a384f7fb sh
+- 7aea866bd41ccec0 console
+- 1f7d0635a2ebaaa2 sh
+- ea8b12a343c1df3b sh
+- f45151b084d2aa5a console
+- a30378ad90733519 yaml
+- 0597708e9ca32986 yaml
+- fc7e3bd95c1e8568 yaml
+- 91f0a6f18a805a6f sh
+- d9ab7d9cc84ca6ea sh
+- 1d15b8eaa375d2bb console
+- b4d2f7315646d602 sh
+tags:
+- paths: rewrite-path-prefix
+  block: 0
+  fingerprint: fed7ddf041ce30da
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b9a60f2f 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4c845c6c 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 16453fa5 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-prefix"
+    only: true
+    lead: ' '
+- paths: rewrite-path-prefix-external
+  block: 7
+  fingerprint: a30378ad90733519
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 d217c891 0f10c5bc 36184fa5 c582fe46 2efcbf93 bfce7f60 032b9b98 da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-prefix-external"
+    only: true
+    lead: ' '
+- paths: rewrite-path-prefix-external
+  block: 8
+  fingerprint: 73e008a7b544c81d
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1640df23 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 77e7ed35 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c ae6b70e3 555016a6 7471bbd1 9139b6eb 57af3940 9337d19e 16453fa5 94ae491e 80e9487c ad65deb7 69f54740 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-prefix-external"
+    only: true
+    lead: ' '
+- paths: rewrite-path-full
+  block: 12
+  fingerprint: 62cf13a2d1bc5330
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b9a60f2f 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4c845c6c 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c ae6b70e3 555016a6 7471bbd1 57af3940 ffc433f2 8ec8b669 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-full"
+    only: true
+    lead: ' '
+- paths: rewrite-path-full-external
+  block: 19
+  fingerprint: a30378ad90733519
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 d217c891 0f10c5bc 36184fa5 c582fe46 2efcbf93 bfce7f60 032b9b98 da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-full-external"
+    only: true
+    lead: ' '
+- paths: rewrite-path-full-external
+  block: 20
+  fingerprint: ed42fd1c44cbb383
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1640df23 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 77e7ed35 3de9d845 6e95318c 555016a6 7471bbd1 9139b6eb 57af3940 ffc433f2 8ec8b669 94ae491e 80e9487c ad65deb7 69f54740 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-full-external"
+    only: true
+    lead: ' '
+- paths: rewrite-path-regex
+  block: 24
+  fingerprint: 6376329557fb0188
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b9a60f2f 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4c845c6c 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-regex"
+    only: true
+    lead: ' '
+- paths: rewrite-path-regex
+  block: 25
+  fingerprint: 802b0ffa08e449d2
+  lang: yaml
+  lines: 16c71da1 db17a588 6becf7d5 8c8c4228 8f04cfe9 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 b9a60f2f 7471bbd1 3cf1346e 9f847e9f d0bbf0de abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-regex"
+    only: true
+    lead: ' '
+- paths: rewrite-path-regex-external
+  block: 32
+  fingerprint: a30378ad90733519
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 d217c891 0f10c5bc 36184fa5 c582fe46 2efcbf93 bfce7f60 032b9b98 da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-regex-external"
+    only: true
+    lead: ' '
+- paths: rewrite-path-regex-external
+  block: 33
+  fingerprint: 0597708e9ca32986
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1640df23 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 77e7ed35 3de9d845 6e95318c 555016a6 7471bbd1 9139b6eb 94ae491e 80e9487c ad65deb7 69f54740 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-regex-external"
+    only: true
+    lead: ' '
+- paths: rewrite-path-regex-external
+  block: 34
+  fingerprint: fc7e3bd95c1e8568
+  lang: yaml
+  lines: 16c71da1 db17a588 6becf7d5 8c8c4228 8f04cfe9 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 1640df23 7471bbd1 3cf1346e 9f847e9f 0f76917b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="rewrite-path-regex-external"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: fed7ddf041ce30da
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b9a60f2f 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4c845c6c 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 16453fa5 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="rewrite-path-prefix" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: ea5a67672a704a2c
+    lang: console
+    lines: ab5df625 71b2577f d44fd7bc 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="rewrite-path-prefix" >}}
+    YAMLTest -f - <<'EOF'
+    - name: rewrite-path-prefix - /headers is rewritten to /anything
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: matches
+          value: "/anything$"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 85c0ecb35d0a42f3
+    lang: console
+    lines: ab5df625 71b2577f bbf10282 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="rewrite-path-prefix" >}}
+    YAMLTest -f - <<'EOF'
+    - name: rewrite-path-prefix - /headers/200 keeps the suffix and is rewritten to /anything/200
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers/200"
+        method: GET
+        headers:
+          host: "rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: matches
+          value: "/anything/200$"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 73e008a7b544c81d
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1640df23 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 77e7ed35 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c ae6b70e3 555016a6 7471bbd1 9139b6eb 57af3940 9337d19e 16453fa5 94ae491e 80e9487c ad65deb7 69f54740 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="rewrite-path-prefix-external" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the backend-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: backend-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: rewrite-path-prefix-external - the request reaches httpbin.org with the rewritten host and path
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "external-rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: "httpbin.org"
+        - path: "$.url"
+          comparator: matches
+          value: "/anything$"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 62cf13a2d1bc5330
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b9a60f2f 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4c845c6c 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c ae6b70e3 555016a6 7471bbd1 57af3940 ffc433f2 8ec8b669 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="rewrite-path-full" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: ea5a67672a704a2c
+    lang: console
+    lines: ab5df625 71b2577f d44fd7bc 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="rewrite-path-full" >}}
+    YAMLTest -f - <<'EOF'
+    - name: rewrite-path-full - /headers is rewritten to /anything
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: matches
+          value: "/anything$"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: ea5a67672a704a2c
+    lang: console
+    lines: ab5df625 71b2577f d44fd7bc 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="rewrite-path-full" >}}
+    YAMLTest -f - <<'EOF'
+    - name: rewrite-path-full - /headers/200 is rewritten to /anything without the suffix
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers/200"
+        method: GET
+        headers:
+          host: "rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: matches
+          value: "/anything$"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: ed42fd1c44cbb383
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1640df23 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 77e7ed35 3de9d845 6e95318c 555016a6 7471bbd1 9139b6eb 57af3940 ffc433f2 8ec8b669 94ae491e 80e9487c ad65deb7 69f54740 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="rewrite-path-full-external" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the backend-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: backend-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: rewrite-path-full-external - the request reaches httpbin.org with the rewritten host and path
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "external-rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: "httpbin.org"
+        - path: "$.url"
+          comparator: matches
+          value: "/anything$"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: 6376329557fb0188
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b9a60f2f 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4c845c6c 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="rewrite-path-regex" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: 802b0ffa08e449d2
+    lang: yaml
+    lines: 16c71da1 db17a588 6becf7d5 8c8c4228 8f04cfe9 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 b9a60f2f 7471bbd1 3cf1346e 9f847e9f d0bbf0de abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="rewrite-path-regex" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-rewrite-regex TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-rewrite-regex
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 28
+    fingerprint: 7aea866bd41ccec0
+    lang: console
+    lines: ab5df625 71b2577f d88521c5 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="rewrite-path-regex" >}}
+    YAMLTest -f - <<'EOF'
+    - name: rewrite-path-regex - /anything/stores/us/entities is rewritten to /anything/rewrite/path
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/stores/us/entities"
+        method: GET
+        headers:
+          host: "rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: matches
+          value: "/anything/rewrite/path$"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 31
+    fingerprint: f45151b084d2aa5a
+    lang: console
+    lines: ab5df625 71b2577f 483559b9 66e083c5 bb3dd0df 3f450ae3 d7180b90 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="rewrite-path-regex" >}}
+    YAMLTest -f - <<'EOF'
+    - name: rewrite-path-regex - /anything/stores/us/buildings does not match and is not rewritten
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/stores/us/buildings"
+        method: GET
+        headers:
+          host: "rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: matches
+          value: "/anything/stores/us/buildings$"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 34
+    fingerprint: fc7e3bd95c1e8568
+    lang: yaml
+    lines: 16c71da1 db17a588 6becf7d5 8c8c4228 8f04cfe9 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 1640df23 7471bbd1 3cf1346e 9f847e9f 0f76917b abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="rewrite-path-regex-external" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the backend-rewrite HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: backend-rewrite
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin-rewrite-regex policy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-rewrite-regex
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: rewrite-path-regex-external - the request reaches httpbin.org with the rewritten host and path
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /anything/stores/us/entities
+        method: GET
+        headers:
+          host: "external-rewrite.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: "httpbin.org"
+        - path: "$.url"
+          comparator: matches
+          value: "/anything$"
+    EOF
+    {{< /doc-test >}}

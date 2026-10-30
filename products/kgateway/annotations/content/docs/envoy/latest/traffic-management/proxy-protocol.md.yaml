@@ -1,0 +1,417 @@
+format: 1
+source: content/docs/envoy/latest/traffic-management/proxy-protocol.md
+blocks:
+- 38c3fff5122a33b0 yaml
+- 543195cb7322a0ec sh
+- dfffaf5956b44130
+- c2b90d32894c7cb8 sh
+- 3a522ea10d3bf48b console
+- 1e4db4954dab8c19 sh
+- db54869c05fffd1a console
+- 18175d34a8152a84 yaml
+- c2b90d32894c7cb8 sh
+- 5852fbc6152449ed
+- 36b52f9712f5e39a yaml
+- 9049692303d01632 yaml
+- 3d5e27b9ad918364 sh
+- 85906a4b7cac63b9 sh
+- 96990f188789ce3e console
+- 0018c1b4b6802c2e yaml
+- 692672c2f6c8aaf0 yaml
+- e442da8e64c5d74f yaml
+- 854ab4ef47adaeea sh
+- 866440c48664ecbe sh
+- 808e2153ed2b52b9
+- d74aad1ed94f7675 sh
+tags:
+- paths: proxy-protocol
+  block: 0
+  fingerprint: 38c3fff5122a33b0
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 5d4fb6bd 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 65e28c64 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="proxy-protocol"
+    only: true
+    lead: ' '
+- paths: proxy-protocol
+  block: 7
+  fingerprint: 18175d34a8152a84
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 5d4fb6bd 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c ab5f8e13 61a948d3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="proxy-protocol"
+    only: true
+    lead: ' '
+- paths: proxy-protocol-readiness
+  block: 10
+  fingerprint: 36b52f9712f5e39a
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 1ecdac76 0bebd850 36184fa5 9cc14d83 9287e3e4 d208b044 73c63fd2 3897150c 0ff65a1a 2166826e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="proxy-protocol-readiness"
+    only: true
+    lead: ' '
+- paths: proxy-protocol-readiness
+  block: 11
+  fingerprint: 9049692303d01632
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 1ecdac76 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="proxy-protocol-readiness"
+    only: true
+    lead: ' '
+- paths: proxy-protocol-readiness
+  block: 12
+  fingerprint: 3d5e27b9ad918364
+  lang: sh
+  lines: 4038a6e1 dde2d046
+  preview: kubectl rollout restart deployment/http -n {{< reuse "kgw-docs/snippets/namespac
+  form:
+    attr: paths="proxy-protocol-readiness"
+    only: true
+    lead: ' '
+- paths: proxy-protocol-upstream
+  block: 15
+  fingerprint: 0018c1b4b6802c2e
+  lang: yaml
+  lines: 16c71da1 f1540154 7963e6b7 8c8c4228 d47ab493 0ccc8edc fa1e8330 ca426d7e 36184fa5 04968f51 6b6c602b 84990da2 d3adf11a 0ff65a1a c09fb5af cb3f91d5 f1540154 0d6480f0 8c8c4228 d47ab493 0ccc8edc 36184fa5 8432e015 ca426d7e 0ff65a1a c7823aa8 6a310683 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="proxy-protocol-upstream"
+    only: true
+    lead: ' '
+- paths: proxy-protocol-upstream
+  block: 16
+  fingerprint: 692672c2f6c8aaf0
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 db15fc07 0ccc8edc 36184fa5 588a5d84 e6365cc1 0d6480f0 d47ab493 ddfd6ab5 05058103 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="proxy-protocol-upstream"
+    only: true
+    lead: ' '
+- paths: proxy-protocol-upstream
+  block: 17
+  fingerprint: e442da8e64c5d74f
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d47ab493 0ccc8edc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa b9264392 3de9d845 a3b86ab6 50b47610 d22b0e16 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="proxy-protocol-upstream"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 38c3fff5122a33b0
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 5d4fb6bd 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 65e28c64 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="proxy-protocol" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the proxy-protocol ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: proxy-protocol
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: dfffaf5956b44130
+    lang: ''
+    lines: 245843ab 021fb596 b5e2f688 a0f01a26 3f8b00c7 f7d6c73f d10b36aa d10b36aa cfae0d42
+    preview: '['
+  content: |-
+    {{< doc-test paths="proxy-protocol" >}}
+    # Same check as the port-forward step, through the gateway proxy's admin port:
+    # a dynamic (Gateway) listener carries the proxy_protocol listener filter.
+    filters=""
+    for i in $(seq 1 30); do
+      filters=$(kubectl exec deploy/http -n kgateway-system -- wget -qO- 127.0.0.1:19000/config_dump \
+        | jq -r '.configs[] | select(.["@type"] == "type.googleapis.com/envoy.admin.v3.ListenersConfigDump")
+            | .dynamic_listeners[]?.active_state.listener.listener_filters[]?.name') || true
+      grep -qx 'envoy.filters.listener.proxy_protocol' <<<"$filters" && break
+      echo "proxy_protocol listener filter not on the Gateway listener yet, retrying ($i/30)"; sleep 2
+    done
+    if ! grep -qx 'envoy.filters.listener.proxy_protocol' <<<"$filters"; then
+      echo "FAIL: no envoy.filters.listener.proxy_protocol filter on the Gateway listeners"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 3a522ea10d3bf48b
+    lang: console
+    lines: 5b07bb0e 0a36410d 5a78cd8f e3e1e62d
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="proxy-protocol" >}}
+    # Without a PROXY header the listener closes the connection before any HTTP
+    # response: curl gets no status code and fails with an empty reply (52) or a
+    # reset (56).
+    code=""; rc=0; ok=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080") && rc=0 || rc=$?
+      if [ "$code" = "000" ] && { [ "$rc" = "52" ] || [ "$rc" = "56" ]; }; then ok=1; break; fi
+      echo "request without a PROXY header returned '$code' (curl exit $rc), want no response, retrying ($i/30)"; sleep 2
+    done
+    if [ -z "$ok" ]; then
+      echo "FAIL: request without a PROXY header returned '$code' (curl exit $rc), want an empty reply"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: db54869c05fffd1a
+    lang: console
+    lines: 6364ab47 92413e97 ab5df625
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="proxy-protocol" >}}
+    # With --haproxy-protocol the same request succeeds.
+    code=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' --haproxy-protocol "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080") || true
+      [ "$code" = "200" ] && break
+      echo "request with a PROXY header returned '$code', want 200, retrying ($i/30)"; sleep 2
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: request with a PROXY header returned '$code', want 200"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 5852fbc6152449ed
+    lang: ''
+    lines: 553be58c ab5df625 6364ab47
+    preview: '* Connected to <INGRESS_GW_ADDRESS> port 80'
+  content: |-
+    {{< doc-test paths="proxy-protocol" >}}
+    # allowRequestsWithoutProxyProtocol: a request without a PROXY header now
+    # succeeds, after the strict listener from the previous section is replaced.
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080") || true
+      [ "$code" = "200" ] && break
+      echo "request without a PROXY header (allow mode) returned '$code', want 200, retrying ($i/60)"; sleep 2
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: with allowRequestsWithoutProxyProtocol, a request without a PROXY header returned '$code', want 200"
+      exit 1
+    fi
+    code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' --haproxy-protocol "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080") || true
+    if [ "$code" != "200" ]; then
+      echo "FAIL: with allowRequestsWithoutProxyProtocol, a request with a PROXY header returned '$code', want 200"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 9049692303d01632
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 1ecdac76 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="proxy-protocol-readiness" >}}
+    # The gateway Service must now expose the readiness port 8082, and the proxy
+    # deployment must be rolled out.
+    ports=""
+    for i in $(seq 1 60); do
+      ports=$(kubectl get svc http -n kgateway-system -o jsonpath='{.spec.ports[*].port}') || true
+      grep -qw 8082 <<<"$ports" && break
+      echo "gateway Service does not expose 8082 yet (ports: $ports), retrying ($i/60)"; sleep 5
+    done
+    if ! grep -qw 8082 <<<"$ports"; then
+      echo "FAIL: the http gateway Service does not expose port 8082"
+      kubectl get svc http -n kgateway-system -o yaml
+      exit 1
+    fi
+    kubectl rollout status deployment/http -n kgateway-system --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 96990f188789ce3e
+    lang: console
+    lines: 245843ab 021fb596 b5e2f688 a0f01a26 3f8b00c7 de5eb55d d10b36aa d10b36aa cfae0d42
+    preview: '['
+  content: |-
+    {{< doc-test paths="proxy-protocol-readiness" >}}
+    # Same check as the port-forward step, through the gateway proxy's admin port:
+    # the static readiness listener on 8082 has the proxy_protocol filter with
+    # allow_requests_without_proxy_protocol.
+    filter=""
+    for i in $(seq 1 60); do
+      filter=$(kubectl exec deploy/http -n kgateway-system -- wget -qO- 127.0.0.1:19000/config_dump \
+        | jq -c '.configs[] | select(.["@type"] == "type.googleapis.com/envoy.admin.v3.ListenersConfigDump")
+            | .static_listeners[].listener | select(.address.socket_address.port_value == 8082)
+            | .listener_filters[]? | select(.name == "envoy.filters.listener.proxy_protocol")') || true
+      grep -q '"allow_requests_without_proxy_protocol":true' <<<"$filter" && break
+      echo "readiness listener has no proxy_protocol filter yet, retrying ($i/60)"; sleep 5
+    done
+    echo "$filter"
+    if ! grep -q '"allow_requests_without_proxy_protocol":true' <<<"$filter"; then
+      echo "FAIL: the readiness listener on 8082 has no proxy_protocol filter with allow_requests_without_proxy_protocol: true"
+      echo "(the bootstrap is read at Envoy start; the proxy pod might need a restart to pick up the GatewayParameters change)"
+      exit 1
+    fi
+    # A load balancer health check with a PROXY header, and a plain one, both
+    # reach /ready on 8082 through the gateway Service.
+    INGRESS_GW_ADDRESS=$(kubectl get svc -n kgateway-system http -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    for flag in --haproxy-protocol ""; do
+      code=""
+      for i in $(seq 1 30); do
+        code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' $flag "http://${INGRESS_GW_ADDRESS}:8082/ready") || true
+        [ "$code" = "200" ] && break
+        echo "readiness check ${flag:-without a PROXY header} returned '$code', retrying ($i/30)"; sleep 2
+      done
+      if [ "$code" != "200" ]; then
+        echo "FAIL: GET :8082/ready ${flag:-without a PROXY header} returned '$code', want 200"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 0018c1b4b6802c2e
+    lang: yaml
+    lines: 16c71da1 f1540154 7963e6b7 8c8c4228 d47ab493 0ccc8edc fa1e8330 ca426d7e 36184fa5 04968f51 6b6c602b 84990da2 d3adf11a 0ff65a1a c09fb5af cb3f91d5 f1540154 0d6480f0 8c8c4228 d47ab493 0ccc8edc 36184fa5 8432e015 ca426d7e 0ff65a1a c7823aa8 6a310683 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="proxy-protocol-upstream" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the proxy-echo pod to be ready
+      wait:
+        target:
+          kind: Pod
+          metadata:
+            namespace: default
+            name: proxy-echo
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: e442da8e64c5d74f
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d47ab493 0ccc8edc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa b9264392 3de9d845 a3b86ab6 50b47610 d22b0e16 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="proxy-protocol-upstream" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the proxy-echo HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: proxy-echo
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the proxy-echo HTTPRoute refs to be resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: proxy-echo
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the proxy-echo-upstream-pp BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: default
+            name: proxy-echo-upstream-pp
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Enable upstream proxy protocol
+    line: d05b8de9cde7f441
+    occurrence: 0
+    words: e7f6c011 b9776d7d 4ea5ee68 fa51fd49 80cfa3e7 10c22bcf ea325d76 e0603c49 a9f4b3d2 cdc29937 b9776d7d b38d9d16 b2850942 6db7d803 d6a7cd2a 378f37b1 6dc09a30 84532b30 f46f5990 1eb79602 b38d9d16 bf632b0c 6db7d803 378f37b1 6201111b 153b2a38 ca978112 7182dd43 663ea1bf b9776d7d 948fe603
+    block_before:
+      block: 18
+      fingerprint: 854ab4ef47adaeea
+      lang: sh
+      lines: 854ab4ef
+      preview: 'curl -vi http://$INGRESS_GW_ADDRESS:8080/ -H "host: echo.example.com"'
+  content: |-
+    {{< doc-test paths="proxy-protocol-upstream" >}}
+    # The nc echo server never answers with HTTP, so the gateway proxy returns 503.
+    code=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 20 -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/" -H "host: echo.example.com") || true
+      [ "$code" = "503" ] && break
+      echo "echo.example.com returned '$code', want 503, retrying ($i/30)"; sleep 2
+    done
+    if [ "$code" != "503" ]; then
+      echo "FAIL: echo.example.com returned '$code', want 503"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: 808e2153ed2b52b9
+    lang: ''
+    lines: baeb0a7f fc5d49bb 4c033427 2cc2234d 4ade1590 906bfb2b ad3a5de7 774ef17a aea64030 fe196f7f
+    preview: PROXY TCP4 10.244.X.X 10.245.X.X 16329 8080
+  content: |-
+    {{< doc-test paths="proxy-protocol-upstream" >}}
+    # The echo pod logs must start a connection with a PROXY protocol v1 line for
+    # the gateway listener port, followed by the forwarded HTTP request.
+    logs=""
+    for i in $(seq 1 15); do
+      logs=$(kubectl logs proxy-echo -n default) || true
+      grep -Eq '^PROXY TCP4 [0-9.]+ [0-9.]+ [0-9]+ 8080' <<<"$logs" && break
+      sleep 2
+    done
+    printf '%s\n' "$logs"
+    if ! grep -Eq '^PROXY TCP4 [0-9.]+ [0-9.]+ [0-9]+ 8080' <<<"$logs"; then
+      echo "FAIL: no 'PROXY TCP4 <src> <dst> <port> 8080' line in the proxy-echo logs"
+      exit 1
+    fi
+    if ! grep -Fiq 'host: echo.example.com' <<<"$logs"; then
+      echo "FAIL: the proxy-echo logs do not show the forwarded HTTP request for echo.example.com"
+      exit 1
+    fi
+    {{< /doc-test >}}

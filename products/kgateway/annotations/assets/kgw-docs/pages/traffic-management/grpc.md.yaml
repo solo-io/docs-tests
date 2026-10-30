@@ -1,0 +1,215 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/grpc.md
+blocks:
+- efdea8e6cbd3ea0e yaml
+- 8988bd9d773ecaed sh
+- 7a976aa4db932652 console
+- 967f045042e473c7 yaml
+- abb5606e73041609 yaml
+- 1dcd16bb54919710 bash
+- 610f1ce7b18ec9fe console
+- cdea0f25b942079a sh
+- 1726d827176e86b2 console
+- 9cb70aac5669b097 sh
+- 0146cfadef3b7313 console
+- 89a2e2cb4a3666f2 sh
+- f702b39231380ee9 sh
+- 91c7326bb093ebc5 console
+- bb5ed0f16b5d2f98 sh
+- 6c649ca1d956bef7 console
+- 557101269de31855 bash
+tags:
+- paths: grpc
+  block: 0
+  fingerprint: efdea8e6cbd3ea0e
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 167a6906 0bebd850 fa1e8330 f2940c17 36184fa5 8432e015 839a5cac f2940c17 97bcd5e0 a58565b2 8c8c4228 fa1e8330 f2940c17 36184fa5 04968f51 5ed9d638 97f2e789 0ff65a1a 088263b2 9693ecf1 8db70061 63862108 516ef5ea f7d23240 c5d509f1 b1f3f283 516ef5ea f7d23240 ede66692 8e799ec0 162b7570 25e2e45f 61eae934 cb3f91d5 f1540154 0d6480f0 8c8c4228 a4394357 0bebd850 fa1e8330 f2940c17 36184fa5 08a3b86e 0ff65a1a 796eea4c 9693ecf1 7811827d 7d42f305 8432e015 f2940c17 cb3f91d5 f1540154 7963e6b7 8c8c4228 2c6d5d22 0bebd850 fa1e8330 3f8e8ec9 36184fa5 04968f51 dcd91ba7 2d3c53f5 8ff7327f 25997bea e5eedb00 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="grpc"
+    only: true
+    lead: ' '
+- paths: grpc
+  block: 3
+  fingerprint: 967f045042e473c7
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 4c46ad82 0bebd850 36184fa5 c281d1bb c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="grpc"
+    only: true
+    lead: ' '
+- paths: grpc
+  block: 4
+  fingerprint: abb5606e73041609
+  lang: yaml
+  lines: abbd1bdc 8c67597e 61a8be06 8c8c4228 0ec4d34b 0bebd850 36184fa5 d3d416e7 9be9ce38 301e1bfa 2e3b62cc 3de9d845 b733d726 8d9978c8 d8c72eff 31943d79 8d9978c8 5b6efaf1 94ae491e 2b5155a3 2b6bc07a abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: efdea8e6cbd3ea0e
+    lang: yaml
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 167a6906 0bebd850 fa1e8330 f2940c17 36184fa5 8432e015 839a5cac f2940c17 97bcd5e0 a58565b2 8c8c4228 fa1e8330 f2940c17 36184fa5 04968f51 5ed9d638 97f2e789 0ff65a1a 088263b2 9693ecf1 8db70061 63862108 516ef5ea f7d23240 c5d509f1 b1f3f283 516ef5ea f7d23240 ede66692 8e799ec0 162b7570 25e2e45f 61eae934 cb3f91d5 f1540154 0d6480f0 8c8c4228 a4394357 0bebd850 fa1e8330 f2940c17 36184fa5 08a3b86e 0ff65a1a 796eea4c 9693ecf1 7811827d 7d42f305 8432e015 f2940c17 cb3f91d5 f1540154 7963e6b7 8c8c4228 2c6d5d22 0bebd850 fa1e8330 3f8e8ec9 36184fa5 04968f51 dcd91ba7 2d3c53f5 8ff7327f 25997bea e5eedb00 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="grpc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the grpc-echo Deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: grpc-echo
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the grpcurl-client Pod to be Ready
+      wait:
+        target:
+          kind: Pod
+          metadata:
+            namespace: kgateway-system
+            name: grpcurl-client
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 967f045042e473c7
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 4c46ad82 0bebd850 36184fa5 c281d1bb c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="grpc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the grpc Gateway to be programmed
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: grpc
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the grpc gateway proxy Deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: grpc
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: abb5606e73041609
+    lang: yaml
+    lines: abbd1bdc 8c67597e 61a8be06 8c8c4228 0ec4d34b 0bebd850 36184fa5 d3d416e7 9be9ce38 301e1bfa 2e3b62cc 3de9d845 b733d726 8d9978c8 d8c72eff 31943d79 8d9978c8 5b6efaf1 94ae491e 2b5155a3 2b6bc07a abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="grpc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the example-route GRPCRoute to be accepted
+      wait:
+        target:
+          kind: GRPCRoute
+          metadata:
+            namespace: kgateway-system
+            name: example-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the example-route GRPCRoute to resolve its references
+      wait:
+        target:
+          kind: GRPCRoute
+          metadata:
+            namespace: kgateway-system
+            name: example-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Verify the gRPC route
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 15
+      fingerprint: 6c649ca1d956bef7
+      lang: console
+      lines: cf663cf2 a459bc0a 7bf66f9e 14733ddf 3280055c 5c8bf2cb b752aa38 d10b36aa
+      preview: grpc.health.v1.Health
+  content: |-
+    {{< doc-test paths="grpc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: grpc - yages.Echo/Ping through the grpc Gateway returns pong
+      retries: 60
+      command:
+        command: "kubectl exec -n kgateway-system grpcurl-client -c grpcurl -- grpcurl -plaintext -authority grpc.com -vv grpc:80 yages.Echo/Ping"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: '"text": "pong"'
+    - name: grpc - reflection list through the grpc Gateway includes yages.Echo
+      retries: 10
+      command:
+        command: "kubectl exec -n kgateway-system grpcurl-client -c grpcurl -- grpcurl -plaintext -authority grpc.com -vv grpc:80 list"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: "yages.Echo"
+    - name: grpc - describe yages.Echo through the grpc Gateway shows the Reverse method
+      retries: 10
+      command:
+        command: "kubectl exec -n kgateway-system grpcurl-client -c grpcurl -- grpcurl -plaintext -authority grpc.com -vv grpc:80 describe yages.Echo"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: "rpc Reverse"
+    EOF
+    {{< /doc-test >}}

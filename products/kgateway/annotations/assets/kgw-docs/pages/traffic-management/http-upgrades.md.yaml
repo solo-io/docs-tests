@@ -1,0 +1,399 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/http-upgrades.md
+blocks:
+- b8944ce705060f2f sh
+- bd264d5a16c32315 sh
+- 307ca57fd49f7587 console
+- 825305219c4ad551 yaml
+- b8944ce705060f2f sh
+- bd264d5a16c32315 sh
+- f81b566b20f4d008 console
+- 6ca12798acaef6b9 sh
+- ce0bb5109fef71ba yaml
+- b8944ce705060f2f sh
+- bd264d5a16c32315 sh
+- f81b566b20f4d008 console
+- c079278758454413 sh
+- b8944ce705060f2f sh
+- bd264d5a16c32315 sh
+- 307ca57fd49f7587 console
+- 5db12673c8eba6ab yaml
+- f9fd984d72061273 yaml
+- bb1e153002ba46f6 sh
+- 6da756627bb7bc78 sh
+- ad4ee961abc3e41a console
+- 1a757ea8f76399e8 yaml
+- bb1e153002ba46f6 sh
+- 6da756627bb7bc78 sh
+- da2998915337b955 console
+- d4b85c4d9ee59c3c sh
+tags:
+- paths: http-upgrades
+  block: 3
+  fingerprint: 825305219c4ad551
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 c32ea815 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 accff0e4 3972c659 473d5e31 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-upgrades"
+    only: true
+    lead: ' '
+- paths: http-upgrades
+  block: 7
+  fingerprint: 6ca12798acaef6b9
+  lang: sh
+  lines: 6ca12798
+  preview: kubectl delete listenerpolicy enable-upgrades -n {{< reuse "kgw-docs/snippets/na
+  form:
+    attr: paths="http-upgrades"
+    only: true
+    lead: ' '
+- paths: http-upgrades
+  block: 8
+  fingerprint: ce0bb5109fef71ba
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 6dc41319 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 7b71dfa3 2f734378 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-upgrades"
+    only: true
+    lead: ' '
+- paths: http-upgrades
+  block: 12
+  fingerprint: c079278758454413
+  lang: sh
+  lines: c0792787
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} websocket-upgr
+  form:
+    attr: paths="http-upgrades"
+    only: true
+    lead: ' '
+- paths: http-upgrades
+  block: 16
+  fingerprint: 5db12673c8eba6ab
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 db3af243 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa de88776c 3de9d845 e3c53dc8 eaaad965 77988a63 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-upgrades"
+    only: true
+    lead: ' '
+- paths: http-upgrades
+  block: 17
+  fingerprint: f9fd984d72061273
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 13fc2a06 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 db3af243 031aff23 7b71dfa3 c330251d 315099db 3e5e97f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-upgrades"
+    only: true
+    lead: ' '
+- paths: http-upgrades
+  block: 21
+  fingerprint: 1a757ea8f76399e8
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 13fc2a06 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 db3af243 031aff23 7b71dfa3 c330251d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-upgrades"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 307ca57fd49f7587
+    lang: console
+    lines: f4d99b6a 8cdb8317 3ca1ea63 a4dc4f0d
+    preview: < HTTP/1.1 403 Forbidden
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    # default listener: the WebSocket upgrade request must be rejected with 403.
+    code=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
+        -H "Host: www.example.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
+        -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+        "http://${INGRESS_GW_ADDRESS}:8080/get") || true
+      [ "$code" = "403" ] && break
+      echo "default listener: upgrade request returned '$code', want 403, retrying ($i/30)"; sleep 2
+    done
+    if [ "$code" != "403" ]; then
+      echo "FAIL: default listener: upgrade request returned '$code', want 403 Forbidden"
+      exit 1
+    fi
+    echo "default listener: upgrade request rejected with 403"
+    {{< /doc-test >}}
+- after:
+    section: Enable upgrades for a listener
+    line: afacc87870d22a8a
+    occurrence: 0
+    words: a982f300 b9776d7d 7fef9479 c51e455b 8e7fc023 b9776d7d c4c05d40 41eb03ed a5c935d1 f4bf9f7f 7ce54cba 7175517a 5a638a12 c51e455b ba78973d 2928d38a a330395c b1d6b91b 6bab65a2 7692c3ad 8811208d 5a638a12 fcec9150 a04c3b82 5a638a12 ec72420d 1581e27d 1216b2a8 c5acaa3d c9a8dc33
+    block_before:
+      block: 3
+      fingerprint: 825305219c4ad551
+      lang: yaml
+      lines: 16c71da1 d664f32c 9144003f 8c8c4228 c32ea815 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 accff0e4 3972c659 473d5e31 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the enable-upgrades ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: enable-upgrades
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: f81b566b20f4d008
+    lang: console
+    lines: 5b07bb0e 8eafa6ea
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    # ListenerPolicy enable-upgrades: the gateway proxy must forward the upgrade instead of rejecting it.
+    # httpbin does not speak WebSocket, so the page expects curl to time out
+    # (exit 28, no status code); any non-403 response also means it was forwarded.
+    code=""; rc=0; ok=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
+        -H "Host: www.example.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
+        -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+        "http://${INGRESS_GW_ADDRESS}:8080/get") && rc=0 || rc=$?
+      if [ "$rc" = "28" ] && [ "$code" = "000" ]; then ok=1; break; fi
+      if [ "$rc" = "0" ] && [ "$code" != "403" ] && [ "$code" != "000" ]; then
+        echo "NOTE: ListenerPolicy enable-upgrades: got HTTP $code instead of the timeout the page shows"; ok=1; break
+      fi
+      echo "ListenerPolicy enable-upgrades: upgrade request returned '$code' (curl exit $rc), retrying ($i/30)"; sleep 2
+    done
+    if [ -z "$ok" ]; then
+      echo "FAIL: ListenerPolicy enable-upgrades: upgrade request still rejected or failed: '$code' (curl exit $rc)"
+      exit 1
+    fi
+    echo "ListenerPolicy enable-upgrades: upgrade request forwarded (status '$code', curl exit $rc)"
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 6ca12798acaef6b9
+    lang: sh
+    lines: 6ca12798
+    preview: kubectl delete listenerpolicy enable-upgrades -n {{< reuse "kgw-docs/snippets/na
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    # ListenerPolicy removed: the WebSocket upgrade request must be rejected with 403.
+    code=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
+        -H "Host: www.example.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
+        -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+        "http://${INGRESS_GW_ADDRESS}:8080/get") || true
+      [ "$code" = "403" ] && break
+      echo "ListenerPolicy removed: upgrade request returned '$code', want 403, retrying ($i/30)"; sleep 2
+    done
+    if [ "$code" != "403" ]; then
+      echo "FAIL: ListenerPolicy removed: upgrade request returned '$code', want 403 Forbidden"
+      exit 1
+    fi
+    echo "ListenerPolicy removed: upgrade request rejected with 403"
+    {{< /doc-test >}}
+- after:
+    section: Enable WebSocket on a route
+    line: 681e81108031518f
+    occurrence: 0
+    words: cf9f5440 1303c06b b9776d7d 7fef9479 3c469e9d a5c935d1 f4bf9f7f 7ce54cba 5a638a12 7175517a c0a94e19 35efc6de d0a36305 6201111b 2928d38a ac0b52a2 254bb97b a330395c b9776d7d 0967115f 3c469e9d dc8ffdbf 031af55b dad569e1 8e7fc023 599fc58f f905b195 58296753 f80105ef bbfcd416 75a288c0 663ea1bf b17ef6d1 87d05cd0
+    block_before:
+      block: 8
+      fingerprint: ce0bb5109fef71ba
+      lang: yaml
+      lines: 16c71da1 88b9492f c548623c 8c8c4228 6dc41319 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 7b71dfa3 2f734378 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the websocket-upgrade TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: websocket-upgrade
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: f81b566b20f4d008
+    lang: console
+    lines: 5b07bb0e 8eafa6ea
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    # TrafficPolicy websocket-upgrade: the gateway proxy must forward the upgrade instead of rejecting it.
+    # httpbin does not speak WebSocket, so the page expects curl to time out
+    # (exit 28, no status code); any non-403 response also means it was forwarded.
+    code=""; rc=0; ok=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
+        -H "Host: www.example.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
+        -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+        "http://${INGRESS_GW_ADDRESS}:8080/get") && rc=0 || rc=$?
+      if [ "$rc" = "28" ] && [ "$code" = "000" ]; then ok=1; break; fi
+      if [ "$rc" = "0" ] && [ "$code" != "403" ] && [ "$code" != "000" ]; then
+        echo "NOTE: TrafficPolicy websocket-upgrade: got HTTP $code instead of the timeout the page shows"; ok=1; break
+      fi
+      echo "TrafficPolicy websocket-upgrade: upgrade request returned '$code' (curl exit $rc), retrying ($i/30)"; sleep 2
+    done
+    if [ -z "$ok" ]; then
+      echo "FAIL: TrafficPolicy websocket-upgrade: upgrade request still rejected or failed: '$code' (curl exit $rc)"
+      exit 1
+    fi
+    echo "TrafficPolicy websocket-upgrade: upgrade request forwarded (status '$code', curl exit $rc)"
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 307ca57fd49f7587
+    lang: console
+    lines: f4d99b6a 8cdb8317 3ca1ea63 a4dc4f0d
+    preview: < HTTP/1.1 403 Forbidden
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    # TrafficPolicy removed: the WebSocket upgrade request must be rejected with 403.
+    code=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
+        -H "Host: www.example.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
+        -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+        "http://${INGRESS_GW_ADDRESS}:8080/get") || true
+      [ "$code" = "403" ] && break
+      echo "TrafficPolicy removed: upgrade request returned '$code', want 403, retrying ($i/30)"; sleep 2
+    done
+    if [ "$code" != "403" ]; then
+      echo "FAIL: TrafficPolicy removed: upgrade request returned '$code', want 403 Forbidden"
+      exit 1
+    fi
+    echo "TrafficPolicy removed: upgrade request rejected with 403"
+    {{< /doc-test >}}
+- after:
+    section: Terminate CONNECT requests on a route
+    line: 52c512fa2840faba
+    occurrence: 0
+    words: cf9f5440 d13d7117 6fa15fc0 b9776d7d 5a638a12 1f58b914 b1d6b91b b9776d7d 4ea5ee68 1241936d 6201111b b4a27519 b9776d7d 239f59ed 663ea1bf b9776d7d 10e08a41 f4bf9f7f d7439bee 00645195 3a6eb079 15eaa752 f34912a1 7175517a fcbcf165 b9776d7d 4ea5ee68 1241936d b4a27519 b9776d7d 5a638a12 1f58b914 663ea1bf b9776d7d 10e08a41 1216b2a8 c5acaa3d 2ad8a704 ec654fac f905b195 15eaa752 1303c06b fa51fd49 5a638a12
+    block_before:
+      block: 17
+      fingerprint: f9fd984d72061273
+      lang: yaml
+      lines: 16c71da1 88b9492f c548623c 8c8c4228 13fc2a06 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 db3af243 031aff23 7b71dfa3 c330251d 315099db 3e5e97f7 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-connect HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-connect
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin-connect HTTPRoute refs to be resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-connect
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the connect-termination TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: connect-termination
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: ad4ee961abc3e41a
+    lang: console
+    lines: 6364ab47 3ca1ea63 dabd3aff d62ece41 b38bc40e 9d00f09c ed94dcdc 50fc9288 317b9438 62b67e1f 5b07bb0e 6364ab47 d6ef152a 72529f30 a54f0e53 7a58bab1 dabd3aff 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a e774783a 39d4b54e 0653176f f538f08a cfae0d42 d10b36aa d10b36aa
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    # CONNECT termination: curl opens a CONNECT tunnel to the gateway proxy (first
+    # 200), then sends GET /headers through it, which httpbin answers (second 200).
+    out=""; codes=""
+    for i in $(seq 1 30); do
+      out=$(curl -s --max-time 10 -p -x "http://${INGRESS_GW_ADDRESS}:8080" -w '\n%{http_connect} %{http_code}' http://connect.example:8000/headers) || true
+      codes=$(printf '%s\n' "$out" | tail -n 1)
+      [ "$codes" = "200 200" ] && break
+      echo "CONNECT termination: CONNECT/GET returned '$codes', want '200 200', retrying ($i/30)"; sleep 2
+    done
+    printf '%s\n' "$out"
+    if [ "$codes" != "200 200" ]; then
+      echo "FAIL: CONNECT termination: CONNECT and GET codes were '$codes', want '200 200'"
+      exit 1
+    fi
+    if ! grep -q '"connect.example:8000"' <<<"$out"; then
+      echo "FAIL: CONNECT termination: httpbin did not echo Host connect.example:8000"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: da2998915337b955
+    lang: console
+    lines: 20fa3eb6 32cf5997 b8fcb227 6df41b03 2347f020 505f7c4d 3ca1ea63 a4dc4f0d dabd3aff a9525f2f 5a78cd8f 970fe299
+    preview: < HTTP/1.1 404 Not Found
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    # Without terminate, the gateway proxy forwards the CONNECT request to httpbin,
+    # which answers 404, so curl reports the CONNECT tunnel failed. Wait for the
+    # terminated tunnel (200) to go away first.
+    connect=""; rc=0
+    for i in $(seq 1 30); do
+      connect=$(curl -s -o /dev/null --max-time 10 -p -x "http://${INGRESS_GW_ADDRESS}:8080" -w '%{http_connect}' http://connect.example:8000/headers) && rc=0 || rc=$?
+      [ "$connect" = "404" ] && break
+      echo "CONNECT without terminate: CONNECT returned '$connect' (curl exit $rc), want 404, retrying ($i/30)"; sleep 2
+    done
+    if [ "$connect" != "404" ] || [ "$rc" != "56" ]; then
+      echo "FAIL: CONNECT without terminate: CONNECT returned '$connect' (curl exit $rc), want 404 and curl exit 56"
+      exit 1
+    fi
+    echo "CONNECT without terminate: tunnel failed with 404 as expected"
+    {{< /doc-test >}}

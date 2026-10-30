@@ -1,0 +1,97 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/transformations/redirect-url.md
+blocks:
+- fc656594c8dce1cd yaml
+- f1aa81c343056d66 yaml
+- fc656594c8dce1cd yaml
+- a9476ba7c1035cce sh
+- ad953b533ec9ed21 sh
+- a7f136f8624367ad console
+- ed5e148ec7409060 sh
+tags:
+- paths: transform-redirect-url
+  block: 2
+  fingerprint: fc656594c8dce1cd
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 14ddcd05 274fdf3f 6b50eb0d c43935da abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="transform-redirect-url"
+    only: true
+    lead: ' '
+- paths: transform-redirect-url
+  block: 6
+  fingerprint: ed5e148ec7409060
+  lang: sh
+  lines: ed5e148e
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} transformation
+  form:
+    attr: paths="transform-redirect-url"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: fc656594c8dce1cd
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 14ddcd05 274fdf3f 6b50eb0d c43935da abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="transform-redirect-url" >}}
+       YAMLTest -f - <<'EOF'
+       - name: transform-redirect-url - wait for the httpbin HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: transform-redirect-url - wait for the transformation TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: transformation
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: a7f136f8624367ad
+    lang: console
+    lines: ab5df625 6364ab47 92413e97 ab5df625 021fb596 1efe1dd8 2e253c22 c7197869 817ad316 39d4b54e 6056662a f0120b44 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e 45bf2c44 990adfa3 39d4b54e 59bc501f 990adfa3 39d4b54e cfa27b48 a321f717 39d4b54e 04b49fc5 38952cef 39d4b54e b467788d 3824daef cfae0d42 e52a1813 58434bcf 9dda9ff2 d10b36aa
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="transform-redirect-url" >}}
+       YAMLTest -f - <<'EOF'
+       - name: transform-redirect-url - httpbin receives the x-forwarded-uri header built from the authority and path
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['X-Forwarded-Uri'][0]"
+             comparator: equals
+             value: "https://www.example.com:8080/get"
+       EOF
+       {{< /doc-test >}}

@@ -1,0 +1,163 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/match/header.md
+blocks:
+- 17420da2087d86d3 yaml
+- ed3c249480d9a467 sh
+- d76edfa27d11be1a sh
+- 78eaab81a3dd957d
+- d869e601efbacfcc sh
+- 4bb7fcd1dbe58805 sh
+- 8a9453fe9a7298cc
+- b189234773e80377 yaml
+- 9bfe965c6a2602f2 sh
+- fba673a7e5ad342c sh
+- 1c0598282e057a51
+- 3d675404d3c7ccc2 sh
+- bca534c824399461 sh
+- 45c84ba3561a4443
+- 32ed805e3efa5796 sh
+tags:
+- paths: match-header-exact
+  block: 0
+  fingerprint: 17420da2087d86d3
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 d0672ddc 85b6786c b36e4bda 6d88f925 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="match-header-exact"
+    only: true
+    lead: ' '
+- paths: match-header-regex
+  block: 7
+  fingerprint: b189234773e80377
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 d0672ddc db06fb04 d23ac847 ff36735c 85b6786c 575a50d7 ff36735c 0be206f8 4b5817e7 ff36735c 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="match-header-regex"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 17420da2087d86d3
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 d0672ddc 85b6786c b36e4bda 6d88f925 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="match-header-exact" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-match HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-match
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 17420da2087d86d3
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 d0672ddc 85b6786c b36e4bda 6d88f925 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="match-header-exact" >}}
+    YAMLTest -f - <<'EOF'
+    - name: match-header-exact - request with the version v2 header returns 200
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "match.example:8080"
+          version: "v2"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: match-header-exact - request without the version header returns 404
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "match.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: b189234773e80377
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 d0672ddc db06fb04 d23ac847 ff36735c 85b6786c 575a50d7 ff36735c 0be206f8 4b5817e7 ff36735c 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="match-header-regex" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-match HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-match
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: b189234773e80377
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 d0672ddc db06fb04 d23ac847 ff36735c 85b6786c 575a50d7 ff36735c 0be206f8 4b5817e7 ff36735c 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="match-header-regex" >}}
+    YAMLTest -f - <<'EOF'
+    - name: match-header-regex - request with valid pet, version, and Authorization headers returns 200
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "match.example:8080"
+          Authorization: "Bearer 123"
+          pet: "dogs"
+          version: "3.0"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: match-header-regex - request with an invalid version header value returns 404
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "match.example:8080"
+          Authorization: "Bearer 123"
+          pet: "dogs"
+          version: "30"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}

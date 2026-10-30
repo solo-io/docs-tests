@@ -1,0 +1,98 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/header-control/strip-trailing-host-dot.md
+blocks:
+- fc576b80803ae6e6 yaml
+- 090d0264b173abb1 sh
+- b5f24fe943e6b276 sh
+- 26b5dad20e94f555 console
+- 4985386757ea0f7e sh
+tags:
+- paths: strip-trailing-host-dot
+  block: 0
+  fingerprint: fc576b80803ae6e6
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 ddee2a72 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 ce73957a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="strip-trailing-host-dot"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Strip trailing dots
+    line: 9173899daf81f9c4
+    occurrence: 0
+    words: a9190076 ca978112 5b83f814 663ea1bf b9776d7d 4ea5ee68 8e7fc023 0e9a0002 b9776d7d 80fc0fb9 8a84e406 75857a45 b9776d7d af2bdbe1 a172cedc b9776d7d 823412d1 1754dbdd 663ea1bf 5ef5ef03 e0603c49 6201111b 3e194352 0353e1fb b8d31e85 b9776d7d 4ea5ee68
+    block_before: null
+  content: |-
+    {{< doc-test paths="strip-trailing-host-dot" >}}
+    YAMLTest -f - <<'EOF'
+    - name: strip-trailing-host-dot - before the policy, a trailing-dot host matches no route
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com."
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Strip trailing dots
+    line: 419b709ba3a0b365
+    occurrence: 0
+    words: 1a932372 6ee0eb49 663ea1bf b5bea41b 663ea1bf d6038403 7692c3ad 6d388d29 e392dad8 75857a45 b9776d7d 4740ae63 7175517a 8f76fd50 1e0584a2 6db7d803 dfc3376b 0a63dd9a 6201111b 8a84e406 e0705e68 b9776d7d 8531d896 cd42404d fa51fd49 bb8c8605 8e12cac1 1581e27d c266ada2 b9776d7d c0d2856b 7175517a 6ee0eb49 2ad8a704 663ea1bf fcbcf165 663ea1bf 6ca7ea2f b9776d7d 6d388d29 e392dad8
+    block_before:
+      block: 0
+      fingerprint: fc576b80803ae6e6
+      lang: yaml
+      lines: 16c71da1 d664f32c 9144003f 8c8c4228 ddee2a72 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 ce73957a abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="strip-trailing-host-dot" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the strip-trailing-host-dot ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: strip-trailing-host-dot
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 26b5dad20e94f555
+    lang: console
+    lines: 92413e97 a152bc23 c441a9d6 706d2426 2891fbf0 f45fc48a 5f7c6523 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a 6ef1e4db 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e 45bf2c44 88270499 39d4b54e 59bc501f 70635b0e 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 4d15d85d cfae0d42 d10b36aa d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="strip-trailing-host-dot" >}}
+    YAMLTest -f - <<'EOF'
+    - name: strip-trailing-host-dot - trailing-dot host is routed and forwarded without the dot
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com."
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: www.example.com
+    EOF
+    {{< /doc-test >}}

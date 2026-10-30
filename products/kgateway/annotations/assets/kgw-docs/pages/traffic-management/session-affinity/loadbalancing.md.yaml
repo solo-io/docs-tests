@@ -1,0 +1,198 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/session-affinity/loadbalancing.md
+blocks:
+- 9559752afd807dfb yaml
+- 717a365d5e8331d3 yaml
+- a3b9d487b3e1ffba yaml
+- a8f652dd4089601b sh
+- aaf382fb23a0792a sh
+- 242e2bf97aa7abe8 json
+- 728b9bbe6b800597 sh
+- 9d40c8587f66f5d2 sh
+tags:
+- paths: affinity-loadbalancing
+  block: 0
+  fingerprint: 9559752afd807dfb
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 ec6958ff 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b d48b60ee f77f6ebc 867f1a3e 4aec1f38 c1d6067d 15a3d003 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-loadbalancing"
+    only: true
+    lead: ' '
+- paths: affinity-loadbalancing
+  block: 1
+  fingerprint: 717a365d5e8331d3
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 ec6958ff 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 1b66420f 867f1a3e 4aec1f38 c1d6067d 15a3d003 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-loadbalancing"
+    only: true
+    lead: ' '
+- paths: affinity-loadbalancing
+  block: 2
+  fingerprint: a3b9d487b3e1ffba
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 ec6958ff 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 6f1b16d5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-loadbalancing"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 9559752afd807dfb
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 ec6958ff 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b d48b60ee f77f6ebc 867f1a3e 4aec1f38 c1d6067d 15a3d003 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-loadbalancing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the least request httpbin-lb-policy BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-lb-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the page reads config_dump through a port-forward, which the test
+    # cannot use. The proxy's admin port listens on 127.0.0.1:19000 inside the pod,
+    # so read it with kubectl exec instead.
+    # sa_lb_check <label> <string>...: wait until the load_balancing_policy of the
+    # httpbin cluster contains every string (compact JSON, sorted keys).
+    sa_lb_check() {
+      local label="$1" attempt lbp="" s ok
+      shift
+      for attempt in $(seq 1 60); do
+        lbp=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_active_clusters" 2>/dev/null | python3 -c '
+    import json, sys
+    def find(o):
+        if isinstance(o, dict):
+            if o.get("name") == "kube_httpbin_httpbin_8000" and "load_balancing_policy" in o:
+                return o["load_balancing_policy"]
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = find(v)
+                if r is not None:
+                    return r
+        return None
+    try:
+        print(json.dumps(find(json.load(sys.stdin)), separators=(",", ":"), sort_keys=True))
+    except Exception:
+        print("null")
+    ' || true)
+        ok=1
+        for s in "$@"; do
+          case "$lbp" in *"$s"*) ;; *) ok=0 ;; esac
+        done
+        if [ "$ok" -eq 1 ]; then echo "$label: $lbp"; return 0; fi
+        sleep 2
+      done
+      echo "$label: the load_balancing_policy of cluster kube_httpbin_httpbin_8000 does not contain all of: $*"
+      echo "$label: last value: ${lbp:-none}"
+      exit 1
+    }
+    sa_lb_check least-request '"name":"envoy.load_balancing_policies.least_request"' '"choice_count":3' '"slow_start_window":"10s"' '"default_value":1.5' '"min_weight_percent":{"value":10}'
+    YAMLTest -f - <<'EOF'
+    - name: loadbalancing - least request - httpbin answers through the gateway
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 717a365d5e8331d3
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 ec6958ff 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 1b66420f 867f1a3e 4aec1f38 c1d6067d 15a3d003 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-loadbalancing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the round robin httpbin-lb-policy BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-lb-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    sa_lb_check round-robin '"name":"envoy.load_balancing_policies.round_robin"' '"slow_start_window":"10s"' '"default_value":1.5' '"min_weight_percent":{"value":10}'
+    YAMLTest -f - <<'EOF'
+    - name: loadbalancing - round robin - httpbin answers through the gateway
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: a3b9d487b3e1ffba
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 ec6958ff 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 6f1b16d5 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-loadbalancing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the random httpbin-lb-policy BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-lb-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    sa_lb_check random '"name":"envoy.load_balancing_policies.random"'
+    YAMLTest -f - <<'EOF'
+    - name: loadbalancing - random - httpbin answers through the gateway
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

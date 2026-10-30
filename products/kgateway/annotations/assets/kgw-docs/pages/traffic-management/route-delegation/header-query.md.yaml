@@ -1,0 +1,184 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/route-delegation/header-query.md
+blocks:
+- 002990171dd349fb yaml
+- d2359283d80a905b yaml
+- cbcb62b9ca2ec54d yaml
+- b230403c3ae4af0a sh
+- 28e9a2509568ea8f sh
+- c2e76fd0f0f85c3a
+- c4c11f1c5146ce23 sh
+- a7c7678838e135de sh
+- fe264c21695706de
+- 73f804bd5017f44d sh
+- 046d8b35a17c5563 sh
+- c656878c99192c48
+- 02f7d0651e4c9b6c yaml
+- 73f804bd5017f44d sh
+- 093b80a43d7a6364 sh
+- a28ad407797a32e5
+- 6aeb01a6a620ff82 sh
+tags:
+- paths: delegation-header-query
+  block: 0
+  fingerprint: 002990171dd349fb
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 0bebd850 36184fa5 301e1bfa b3d5ff50 d3d416e7 82601aaa 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 38dc0152 6c185c69 d425395d c4a459dc b32488bc 6c185c69 9edab9e2 c4a459dc 94ae491e b5a028c9 56bf9360 91f62e83 53143665 b733d726 aeca2b3d bf068a96 b83a8e91 38dc0152 6c185c69 bb0a67cb cb3b110e b32488bc 6c185c69 c31c43c0 cb3b110e 94ae491e b5a028c9 56bf9360 91f62e83 52418815 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-header-query"
+    only: true
+    lead: ' '
+- paths: delegation-header-query
+  block: 1
+  fingerprint: d2359283d80a905b
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 38dc0152 6c185c69 d425395d c4a459dc 6c185c69 48bae7d5 3b1a9ad9 b32488bc 6c185c69 9edab9e2 c4a459dc 6c185c69 cd237a6e 3b1a9ad9 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-header-query"
+    only: true
+    lead: ' '
+- paths: delegation-header-query
+  block: 2
+  fingerprint: cbcb62b9ca2ec54d
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 38dc0152 6c185c69 48bae7d5 3b1a9ad9 b32488bc 6c185c69 cd237a6e 3b1a9ad9 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-header-query"
+    only: true
+    lead: ' '
+- paths: delegation-header-query
+  block: 12
+  fingerprint: 02f7d0651e4c9b6c
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 72ab0e66 8b6d0949 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 38dc0152 6c185c69 48bae7d5 3b1a9ad9 b32488bc 6c185c69 cd237a6e 3b1a9ad9 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-header-query"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: cbcb62b9ca2ec54d
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 38dc0152 6c185c69 48bae7d5 3b1a9ad9 b32488bc 6c185c69 cd237a6e 3b1a9ad9 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-header-query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the header and query parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: cbcb62b9ca2ec54d
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 38dc0152 6c185c69 48bae7d5 3b1a9ad9 b32488bc 6c185c69 cd237a6e 3b1a9ad9 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-header-query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: delegation-header-query - /anything/team1/foo with all parent and child matchers returns 200
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo?query1=val1&queryX=valX"
+           method: GET
+           headers:
+             host: "delegation.example"
+             header1: "val1"
+             headerX: "valX"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.args.queryX[0]"
+             comparator: equals
+             value: "valX"
+       - name: delegation-header-query - /anything/team1/foo with only the parent matchers returns 404
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo?query1=val1"
+           method: GET
+           headers:
+             host: "delegation.example"
+             header1: "val1"
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       - name: delegation-header-query - /anything/team2/bar returns 500 because child-team2 does not repeat the parent matchers
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team2/bar?queryX=valX&query2=val2"
+           method: GET
+           headers:
+             host: "delegation.example"
+             headerX: "valX"
+             header2: "val2"
+         source:
+           type: local
+         expect:
+           statusCode: 500
+           bodyContains: "invalid route configuration detected and replaced with a direct response"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 02f7d0651e4c9b6c
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 72ab0e66 8b6d0949 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 38dc0152 6c185c69 48bae7d5 3b1a9ad9 b32488bc 6c185c69 cd237a6e 3b1a9ad9 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-header-query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: delegation-header-query - /anything/team2/bar returns 200 after child-team2 inherits the parent matchers
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team2/bar?queryX=valX&query2=val2"
+           method: GET
+           headers:
+             host: "delegation.example"
+             headerX: "valX"
+             header2: "val2"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.args.query2[0]"
+             comparator: equals
+             value: "val2"
+           - path: "$.args.queryX[0]"
+             comparator: equals
+             value: "valX"
+       - name: delegation-header-query - /anything/team2/bar without the inherited parent header returns 404
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team2/bar?queryX=valX&query2=val2"
+           method: GET
+           headers:
+             host: "delegation.example"
+             headerX: "valX"
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       EOF
+       {{< /doc-test >}}

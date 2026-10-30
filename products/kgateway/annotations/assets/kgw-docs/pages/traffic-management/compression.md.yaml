@@ -1,0 +1,310 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/compression.md
+blocks:
+- 618314d55aeeb8d2 yaml
+- ec050a27289142e0 yaml
+- bed01b87f2e61f32 sh
+- 6f94e4c3aa7ada5a sh
+- 4bac1580371a9211 console
+- b1ac80f3f80b4655 sh
+- e74fa0e1e991e159 sh
+- 49183bec76532b5f console
+- 0276c7035bc5543f yaml
+- 1e7b5b6cf22bbd8d yaml
+- bb49aedd9f2aa87a sh
+- ef1c1b9fe87d70b3 sh
+- 86db794caa1d96e5 sh
+- 0bf4751e698bd25f json
+- bedd34f2fdbd297f yaml
+- 9dc012f71299cf31 yaml
+- 2a22cc04d08a6eee sh
+tags:
+- paths: compression
+  block: 0
+  fingerprint: 618314d55aeeb8d2
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 b8380b45 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa eeada6f7 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+- paths: compression
+  block: 1
+  fingerprint: ec050a27289142e0
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 7ce03f8d 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 b8380b45 933a226c 137da9a2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+- paths: compression
+  block: 8
+  fingerprint: 0276c7035bc5543f
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 682c63f7 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa e347aaad 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+- paths: compression
+  block: 9
+  fingerprint: 1e7b5b6cf22bbd8d
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 878cf389 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 682c63f7 933a226c 341e1cdb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+- paths: compression
+  block: 10
+  fingerprint: bb49aedd9f2aa87a
+  lang: sh
+  lines: bb49aedd
+  preview: echo -n 'Hello, world!' | gzip > /tmp/payload.gz
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+- paths: compression
+  block: 14
+  fingerprint: bedd34f2fdbd297f
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 7ce03f8d 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 b8380b45 933a226c a2a94a32 fd1454c3 26a3cba1 934c9340 7abd9f2a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+- paths: compression
+  block: 15
+  fingerprint: 9dc012f71299cf31
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 878cf389 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 682c63f7 933a226c 983806fd fd1454c3 26a3cba1 934c9340 7abd9f2a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+- paths: compression
+  block: 16
+  fingerprint: 2a22cc04d08a6eee
+  lang: sh
+  lines: ed67cadd 659ef5eb 38af46b0 cf0abf7a
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} response-compr
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: ec050a27289142e0
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 7ce03f8d 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 b8380b45 933a226c 137da9a2 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="compression" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "compression - wait for the httpbin-compression HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-compression
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "compression - wait for the response-compression TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: response-compression
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 4bac1580371a9211
+    lang: console
+    lines: 6364ab47 92413e97 623a9733 263e725f feb292fe d2de276e dc447a68 306a7655 3ca1ea63 5f7c6523
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="compression" >}}
+    # YAMLTest's HTTP client decompresses gzip and drops the content-encoding
+    # header, so the compression checks read the raw response headers with curl.
+    # comp_expect <label> <Accept-Encoding value, or "" for none> <content-encoding, or "none">
+    comp_expect() {
+      local label="$1" accept="$2" want="$3" attempt got=""
+      for attempt in $(seq 1 60); do
+        if [ -n "$accept" ]; then
+          got=$(curl -s -o /dev/null -D - --max-time 10 "http://${INGRESS_GW_ADDRESS}:8080/html" \
+            -H "host: compression.example:8080" -H "Accept-Encoding: $accept" || true)
+        else
+          got=$(curl -s -o /dev/null -D - --max-time 10 "http://${INGRESS_GW_ADDRESS}:8080/html" \
+            -H "host: compression.example:8080" || true)
+        fi
+        got=$(printf '%s\n' "$got" | tr -d '\r' | awk 'NR==1{code=$2} tolower($1)=="content-encoding:"{enc=$2} END{if (code!="200") print "status-" code; else if (enc=="") print "none"; else print enc}')
+        [ "$got" = "$want" ] && { echo "$label: content-encoding $got"; return 0; }
+        echo "$label: attempt $attempt got '$got', want '$want'"
+        sleep 2
+      done
+      echo "$label: the /html response never had content-encoding '$want'"
+      exit 1
+    }
+    comp_expect "compression - Accept-Encoding gzip gets a gzip-compressed response" gzip gzip
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 49183bec76532b5f
+    lang: console
+    lines: 6364ab47 92413e97 623a9733 263e725f cc1f0809 23325f75 3ca1ea63 5f7c6523
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="compression" >}}
+    comp_expect "compression - no Accept-Encoding gets an uncompressed response" "" none
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 1e7b5b6cf22bbd8d
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 878cf389 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 682c63f7 933a226c 341e1cdb abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="compression" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "compression - wait for the httpbin-decompression HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-decompression
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "compression - wait for the request-decompression TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: request-decompression
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 0bf4751e698bd25f
+    lang: json
+    lines: 021fb596 ab5df625 8dc27067 2e253c22 9f496af2 d5a590b4 39d4b54e ab5df625 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="compression" >}}
+    # decomp_expect <label> <payload file> <Content-Encoding> <yes|no>: POST the
+    # file to /post and check whether httpbin received the decompressed string.
+    decomp_expect() {
+      local label="$1" file="$2" enc="$3" want="$4" attempt data="" got
+      for attempt in $(seq 1 60); do
+        data=$(curl -s --max-time 10 -X POST "http://${INGRESS_GW_ADDRESS}:8080/post" \
+          -H "host: decompression.example:8080" \
+          -H "Content-Type: text/plain" \
+          -H "Content-Encoding: $enc" \
+          --data-binary @"$file" | jq -r '.data' 2>/dev/null || true)
+        if [ "$data" = "Hello, world!" ]; then got=yes; elif [ -n "$data" ]; then got=no; else got=""; fi
+        [ "$got" = "$want" ] && { echo "$label: data is '$data'"; return 0; }
+        echo "$label: attempt $attempt got data '${data}', want decompressed=$want"
+        sleep 2
+      done
+      echo "$label: httpbin never received the expected body"
+      exit 1
+    }
+    decomp_expect "compression - a gzip request body reaches httpbin decompressed" /tmp/payload.gz gzip yes
+    {{< /doc-test >}}
+- after:
+    section: Brotli and Zstd compression codecs
+    line: 74d151eef54b3663
+    occurrence: 0
+    words: b9776d7d 8d0288f4 50d858e0 582d95ad ad55a1e0 f4bf9f7f b9776d7d 35af1308 a40d3dbc 0695b563 c8d77bf4 f4bf9f7f ca978112 5c7ee207
+    block_before:
+      block: 13
+      fingerprint: 0bf4751e698bd25f
+      lang: json
+      lines: 021fb596 ab5df625 8dc27067 2e253c22 9f496af2 d5a590b4 39d4b54e ab5df625 d10b36aa d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="compression" >}}
+    # Before the libraries field is set, response compression is gzip only, so a
+    # client that accepts only Brotli gets an uncompressed response.
+    comp_expect "compression - before libraries, Accept-Encoding br gets no compression" br none
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: bedd34f2fdbd297f
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 7ce03f8d 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 b8380b45 933a226c a2a94a32 fd1454c3 26a3cba1 934c9340 7abd9f2a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="compression" >}}
+    comp_expect "compression - libraries, Accept-Encoding br gets Brotli" br br
+    comp_expect "compression - libraries, Accept-Encoding zstd gets Zstd" zstd zstd
+    comp_expect "compression - libraries, Accept-Encoding gzip still gets gzip" gzip gzip
+    comp_expect "compression - libraries, equal preference picks the first configured codec (Brotli)" "gzip, zstd, br" br
+    comp_expect "compression - libraries, no Accept-Encoding still gets no compression" "" none
+    {{< /doc-test >}}
+- after:
+    section: Brotli and Zstd request decompression
+    line: 5cf8219aa8614bb4
+    occurrence: 0
+    words: b9776d7d 8d0288f4 50d858e0 582d95ad ad55a1e0 6201111b 242daddb 58296753 77f930e4 663ea1bf c8d77bf4 10c22bcf 1f58b914 46f2e2fa
+    block_before:
+      block: 14
+      fingerprint: bedd34f2fdbd297f
+      lang: yaml
+      lines: 16c71da1 88b9492f c548623c 8c8c4228 7ce03f8d 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 b8380b45 933a226c a2a94a32 fd1454c3 26a3cba1 934c9340 7abd9f2a abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="compression" >}}
+    echo 'CwaASGVsbG8sIHdvcmxkIQM=' | base64 -d > /tmp/payload.br
+    echo 'KLUv/SANaQAASGVsbG8sIHdvcmxkIQ==' | base64 -d > /tmp/payload.zst
+    # Before the libraries field is set, only gzip request bodies are decompressed.
+    decomp_expect "compression - before libraries, a Brotli request body is not decompressed" /tmp/payload.br br no
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 9dc012f71299cf31
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 878cf389 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 682c63f7 933a226c 983806fd fd1454c3 26a3cba1 934c9340 7abd9f2a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="compression" >}}
+    decomp_expect "compression - libraries, a Brotli request body reaches httpbin decompressed" /tmp/payload.br br yes
+    decomp_expect "compression - libraries, a Zstd request body reaches httpbin decompressed" /tmp/payload.zst zstd yes
+    decomp_expect "compression - libraries, a gzip request body is still decompressed" /tmp/payload.gz gzip yes
+    {{< /doc-test >}}

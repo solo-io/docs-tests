@@ -1,0 +1,267 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/buffering2.2-body.md
+blocks:
+- 0a1122922d4c8f47 yaml
+- 23c2c620e39cf5e1 yaml
+- f3373b143e30f0a2 sh
+- 0828fbef588f8a1b sh
+- 81a334c34851ee3b sh
+- ce0fe748c47e4cad
+- 09a1ca7479f564d2 sh
+- 6b49563f0ec29ef6 sh
+- b0902c930b94f3bc json
+- 0a1122922d4c8f47 yaml
+- 664c2ae19a6e1ad6 sh
+- 3684642e1fbbde4d yaml
+- f3373b143e30f0a2 sh
+- 0828fbef588f8a1b sh
+- 81a334c34851ee3b sh
+- 09a1ca7479f564d2 sh
+- 6b49563f0ec29ef6 sh
+- 126e7e5df57dff26 json
+tags:
+- paths: buffering
+  block: 0
+  fingerprint: 0a1122922d4c8f47
+  lang: yaml
+  lines: 16c71da1 db17a588 6becf7d5 8c8c4228 30102e1d 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 a7422106 c25585dd e60d050b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="buffering"
+    only: true
+    lead: ' '
+- paths: buffering
+  block: 1
+  fingerprint: 23c2c620e39cf5e1
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 51aa56eb 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 283ff893 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="buffering"
+    only: true
+    lead: ' '
+- paths: buffering,buffering-filter-stage
+  block: 2
+  fingerprint: f3373b143e30f0a2
+  lang: sh
+  lines: f3373b14
+  preview: dd if=/dev/zero bs=2048 count=1 | base64 | tr -d '\n' > /tmp/large_payload_2k.tx
+  form:
+    attr: paths="buffering,buffering-filter-stage"
+    only: true
+    lead: ' '
+- paths: buffering
+  block: 9
+  fingerprint: 0a1122922d4c8f47
+  lang: yaml
+  lines: 16c71da1 db17a588 6becf7d5 8c8c4228 30102e1d 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 a7422106 c25585dd e60d050b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="buffering"
+    only: true
+    lead: ' '
+- paths: buffering
+  block: 10
+  fingerprint: 664c2ae19a6e1ad6
+  lang: sh
+  lines: 664c2ae1
+  preview: kubectl delete listenerpolicy bufferlimits -n {{< reuse "/kgw-docs/snippets/name
+  form:
+    attr: paths="buffering"
+    only: true
+    lead: ' '
+- paths: buffering
+  block: 11
+  fingerprint: 3684642e1fbbde4d
+  lang: yaml
+  lines: 16c71da1 db17a588 6becf7d5 8c8c4228 5e94eeed 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e861b016 35b1a0b9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="buffering"
+    only: true
+    lead: ' '
+- paths: buffering
+  block: 12
+  fingerprint: f3373b143e30f0a2
+  lang: sh
+  lines: f3373b14
+  preview: dd if=/dev/zero bs=2048 count=1 | base64 | tr -d '\n' > /tmp/large_payload_2k.tx
+  form:
+    attr: paths="buffering"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 23c2c620e39cf5e1
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 51aa56eb 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 283ff893 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="buffering" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "buffering - per gateway - wait for the httpbin HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "buffering - per gateway - wait for the transformation-buffer-body TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: transformation-buffer-body
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "buffering - per gateway - wait for the bufferlimits ListenerPolicy to be accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: bufferlimits
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: ce0fe748c47e4cad
+    lang: ''
+    lines: fee17489 17e5226f 2f0a2ffa 32cf5997 a152bc23 b8fcb227 c441a9d6 1aecfa01 cd8a298e aca26794 8f2b5b73 3ca1ea63 5f7c6523
+    preview: '* upload completely sent off: 2747 bytes'
+  content: |-
+    {{< doc-test paths="buffering" >}}
+    # buffering_large <label> <expected code>: send the page's 2 KiB payload to
+    # /anything until the gateway returns the expected status code. curl prints
+    # 000 when the connection fails, so a reset never counts as a match.
+    buffering_large() {
+      local label="$1" want="$2" attempt code=""
+      for attempt in $(seq 1 60); do
+        code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 -X POST "http://${INGRESS_GW_ADDRESS}:8080/anything" \
+          -H "host: www.example.com:8080" \
+          -H "Content-Type: text/plain" \
+          --data-binary "{\"payload\": \"$(cat /tmp/large_payload_2k.txt)\"}" || true)
+        [ "$code" = "$want" ] && { echo "$label: got $code"; return 0; }
+        echo "$label: attempt $attempt got '${code:-no response}', want $want"
+        sleep 2
+      done
+      echo "$label: the 2 KiB request never returned $want"
+      exit 1
+    }
+    buffering_large "buffering - per gateway - the 2 KiB payload exceeds the 1 KiB listener buffer" 413
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: b0902c930b94f3bc
+    lang: json
+    lines: 35099277 6364ab47 92413e97 ab5df625 0244487e 84c60230 bb3dd0df 3f450ae3 731195c0 34af3e75 d10b36aa d10b36aa
+    preview: '* upload completely sent off: 27 bytes'
+  content: |-
+    {{< doc-test paths="buffering" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "buffering - per gateway - a hello world payload within the 1 KiB limit succeeds"
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          Content-Type: application/json
+        body: '{"payload":  "hello world"}'
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.json.payload"
+          comparator: equals
+          value: "hello world"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 664c2ae19a6e1ad6
+    lang: sh
+    lines: 664c2ae1
+    preview: kubectl delete listenerpolicy bufferlimits -n {{< reuse "/kgw-docs/snippets/name
+  content: |-
+    {{< doc-test paths="buffering" >}}
+    # With the bufferlimits ListenerPolicy gone, the default 1 MiB buffer applies
+    # again, so the 2 KiB payload goes through before the route limit is set.
+    buffering_large "buffering - per route - after the ListenerPolicy is deleted, the 2 KiB payload succeeds" 200
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 3684642e1fbbde4d
+    lang: yaml
+    lines: 16c71da1 db17a588 6becf7d5 8c8c4228 5e94eeed 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e861b016 35b1a0b9 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="buffering" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "buffering - per route - wait for the transformation-buffer-limit TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: transformation-buffer-limit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 126e7e5df57dff26
+    lang: json
+    lines: 021fb596 1efe1dd8 f876c22a 03ee0faf 1b4d8aee 2e253c22 ab5df625 e52a1813 731195c0 34af3e75 e52a1813 46f0abe8 048ada06 a7fd6362 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="buffering" >}}
+    buffering_large "buffering - per route - the 2 KiB payload exceeds maxRequestSize 1024" 413
+    YAMLTest -f - <<'EOF'
+    - name: "buffering - per route - a hello world payload within maxRequestSize succeeds"
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          Content-Type: application/json
+        body: '{"payload":  "hello world"}'
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.json.payload"
+          comparator: equals
+          value: "hello world"
+    EOF
+    {{< /doc-test >}}

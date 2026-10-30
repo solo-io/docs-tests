@@ -1,0 +1,209 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/redirect/internal.md
+blocks:
+- 48bacc260d3a7fbd sh
+- 54d309b66d0fa028 sh
+- 0ffcf3b912c1363e console
+- 699e2718585b4daf yaml
+- 48bacc260d3a7fbd sh
+- 54d309b66d0fa028 sh
+- f1116f04ea3349c9 console
+- 7e9d7111868c3410 yaml
+- 617d65c436c94d29 sh
+- 1e6bc5fa21cbbbb9 sh
+- 5ea86929f37018e5 console
+- 12359ecb20c8e64e sh
+tags:
+- paths: redirect-internal
+  block: 3
+  fingerprint: 699e2718585b4daf
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 c292254b 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 22b362d2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="redirect-internal"
+    only: true
+    lead: ' '
+- paths: redirect-internal
+  block: 7
+  fingerprint: 7e9d7111868c3410
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 c292254b 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 0cde17e8 c54a3f81 c76b22e8 be81ae9d 0b86962a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="redirect-internal"
+    only: true
+    lead: ' '
+- paths: redirect-internal
+  block: 11
+  fingerprint: 12359ecb20c8e64e
+  lang: sh
+  lines: 12359ecb
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} internal-redir
+  form:
+    attr: paths="redirect-internal"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 0ffcf3b912c1363e
+    lang: console
+    lines: 5b07bb0e 9e72ae31 7dc9d89c 32cf5997 a152bc23 b8fcb227 c441a9d6 d08a7638 a5fa9359 ab5df625
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="redirect-internal" >}}
+    YAMLTest -f - <<'EOF'
+    - name: redirect-internal - without a policy, the gateway returns the upstream 302 to the client
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /redirect-to
+        method: GET
+        params:
+          url: "http://www.example.com/anything/redirected"
+          status_code: "302"
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 302
+        headers:
+        - name: location
+          comparator: equals
+          value: "http://www.example.com/anything/redirected"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: f1116f04ea3349c9
+    lang: console
+    lines: 92413e97 ab5df625 021fb596 82c9ab0f 59f86da8 ab5df625 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="redirect-internal" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the internal-redirect TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: internal-redirect
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: f1116f04ea3349c9
+    lang: console
+    lines: 92413e97 ab5df625 021fb596 82c9ab0f 59f86da8 ab5df625 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="redirect-internal" >}}
+    YAMLTest -f - <<'EOF'
+    - name: redirect-internal - the gateway follows the 302 and returns the /anything/redirected response
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /redirect-to
+        method: GET
+        params:
+          url: "http://www.example.com/anything/redirected"
+          status_code: "302"
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: contains
+          value: "/anything/redirected"
+    - name: redirect-internal - default settings do not follow a 303, so the client gets the 303
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /redirect-to
+        method: GET
+        params:
+          url: "http://www.example.com/anything/redirected"
+          status_code: "303"
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 303
+        headers:
+        - name: location
+          comparator: equals
+          value: "http://www.example.com/anything/redirected"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 5ea86929f37018e5
+    lang: console
+    lines: 92413e97 ab5df625 021fb596 2e253c22 1671f64c 18d10c7d 39d4b54e 6056662a 6ef1e4db 39d4b54e ab5df625 25fb5a1b ebf482f0 39d4b54e ab5df625 e52a1813 59f86da8 ab5df625 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="redirect-internal" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the updated internal-redirect TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: internal-redirect
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 5ea86929f37018e5
+    lang: console
+    lines: 92413e97 ab5df625 021fb596 2e253c22 1671f64c 18d10c7d 39d4b54e 6056662a 6ef1e4db 39d4b54e ab5df625 25fb5a1b ebf482f0 39d4b54e ab5df625 e52a1813 59f86da8 ab5df625 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="redirect-internal" >}}
+    YAMLTest -f - <<'EOF'
+    - name: redirect-internal - the updated policy follows a 303 and copies access-control-allow-credentials to the follow-up request
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /redirect-to
+        method: GET
+        params:
+          url: "http://www.example.com/anything/redirected"
+          status_code: "303"
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: contains
+          value: "/anything/redirected"
+        - path: "$.headers['Access-Control-Allow-Credentials'][0]"
+          comparator: equals
+          value: "true"
+    EOF
+    {{< /doc-test >}}

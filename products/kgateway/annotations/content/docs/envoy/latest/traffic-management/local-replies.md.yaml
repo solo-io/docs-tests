@@ -1,0 +1,197 @@
+format: 1
+source: content/docs/envoy/latest/traffic-management/local-replies.md
+blocks:
+- c51d024ad28f5067 sh
+- e9f47a4847fdc3db sh
+- 5b1317247fb6579d console
+- 75ecfd4302e900e9 yaml
+- 33a6a3e232641459 yaml
+- c51d024ad28f5067 sh
+- e9f47a4847fdc3db sh
+- 1ae5f2df60eda932 console
+- c51d024ad28f5067 sh
+- e9f47a4847fdc3db sh
+- 5b7fb8fab46bd75b console
+- fa85d0017a2be35b yaml
+- c51d024ad28f5067 sh
+- e9f47a4847fdc3db sh
+- d5343c6799ce46f4 console
+- df04f471f3f6fa1c yaml
+- aac8411f5ce289b7 yaml
+- 90b6dc3930e3411c yaml
+- f5d0f1e0d28669c6 yaml
+- 1dff9f3500f098b0 sh
+tags:
+- paths: local-replies
+  block: 3
+  fingerprint: 75ecfd4302e900e9
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 05f39c10 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 70701e78 8300214b 22987b5f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local-replies"
+    only: true
+    lead: ' '
+- paths: local-replies
+  block: 4
+  fingerprint: 33a6a3e232641459
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 05f39c10 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 70701e78 8300214b bc3511de 1b360372 ebc31adf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local-replies"
+    only: true
+    lead: ' '
+- paths: local-replies
+  block: 11
+  fingerprint: fa85d0017a2be35b
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 05f39c10 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 70701e78 72151565 a081c4d0 e970541e 40fb9027 0f5198c5 d16378ff bc3511de 80ee94af 5adcf286 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="local-replies"
+    only: true
+    lead: ' '
+- paths: local-replies
+  block: 19
+  fingerprint: 1dff9f3500f098b0
+  lang: sh
+  lines: 1dff9f35
+  preview: kubectl delete listenerpolicy local-replies -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="local-replies"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 5b1317247fb6579d
+    lang: console
+    lines: 20fa3eb6 8cdb8317
+    preview: < HTTP/1.1 404 Not Found
+  content: |-
+    {{< doc-test paths="local-replies" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "local-replies - before the policy, an unmatched host gets a 404 with an empty body"
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "no-such-host.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+        headers:
+        - name: content-length
+          comparator: equals
+          value: "0"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 75ecfd4302e900e9
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 05f39c10 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 70701e78 8300214b 22987b5f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="local-replies" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "local-replies - wait for the local-replies ListenerPolicy to be accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: local-replies
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "local-replies - text defaultBodyFormat fills the 404 body"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "no-such-host.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+        bodyRegex:
+        - '^error 404: route_not_found'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 33a6a3e232641459
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 05f39c10 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 70701e78 8300214b bc3511de 1b360372 ebc31adf abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="local-replies" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "local-replies - json defaultBodyFormat replaces the text body"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "no-such-host.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+        headers:
+        - name: content-type
+          comparator: contains
+          value: application/json
+        bodyJsonPath:
+        - path: "$.message"
+          comparator: equals
+          value: route_not_found
+        bodyRegex:
+        - '"status": ?"?404"?'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: d5343c6799ce46f4
+    lang: console
+    lines: 20fa3eb6 57dc8cc1 ab5df625 a71f9f53
+    preview: < HTTP/1.1 404 Not Found
+  content: |-
+    {{< doc-test paths="local-replies" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "local-replies - the 404 mapper body replaces the defaultBodyFormat body"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "no-such-host.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+        headers:
+        - name: content-type
+          comparator: contains
+          value: application/json
+        bodyJsonPath:
+        - path: "$.error"
+          comparator: equals
+          value: not found
+        - path: "$.code"
+          comparator: equals
+          value: "404"
+        - path: "$.message"
+          comparator: exists
+          negate: true
+    EOF
+    {{< /doc-test >}}

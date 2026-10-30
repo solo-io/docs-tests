@@ -1,0 +1,991 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/header-control/request-header.md
+blocks:
+- 58b9f1fd9435d82e yaml
+- 970b139d32a8bfc7 yaml
+- 8ab3bb6af0ab6e28 yaml
+- d9343d09f8636684 sh
+- a4da8d44e8d58ea2 sh
+- d0a258eb0a675734 yaml
+- 0a79944142c4be45 sh
+- 18473dc90ef73c64 sh
+- 23b91c81d939daa2 yaml
+- 277919f74f676448 sh
+- d07a1849fb5fb1b7 sh
+- 9bcd187710727091 yaml
+- 970b139d32a8bfc7 yaml
+- a63f5c1740f89623 yaml
+- d9343d09f8636684 sh
+- a4da8d44e8d58ea2 sh
+- d0a258eb0a675734 yaml
+- 0a79944142c4be45 sh
+- 18473dc90ef73c64 sh
+- 14be5e961ca74472 yaml
+- 277919f74f676448 sh
+- d07a1849fb5fb1b7 sh
+- 6820d1a221fc7a63 sh
+- cd98ed12332053ef sh
+- 82c4c8e4aff73061 yaml
+- d9b0dc9556b122aa yaml
+- 970b139d32a8bfc7 yaml
+- 21902aa76859a05c yaml
+- d9343d09f8636684 sh
+- a4da8d44e8d58ea2 sh
+- 0b0abbcdbe676a11 sh
+- 277919f74f676448 sh
+- d07a1849fb5fb1b7 sh
+- 6604082b14adad15 yaml
+- 970b139d32a8bfc7 yaml
+- d9a33b9f777398eb yaml
+- d9343d09f8636684 sh
+- a4da8d44e8d58ea2 sh
+- 25e403df861bab0f json
+- 6ac96bf2a40f8b74 sh
+- 823412178ad37f88 yaml
+- 1175d4c06b84a43f yaml
+- 38db140b25cd2efa yaml
+- 69a99e10f60d84bc yaml
+- b36b66a60ef4ae03 yaml
+- 970b139d32a8bfc7 yaml
+- afec173c6b8b75e8 yaml
+- d9343d09f8636684 sh
+- a4da8d44e8d58ea2 sh
+- b075984128903a40 sh
+- 277919f74f676448 sh
+- d07a1849fb5fb1b7 sh
+tags:
+- paths: add-request-header
+  block: 0
+  fingerprint: 58b9f1fd9435d82e
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 274fdf3f b3470e51 0ca4c44a 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="add-request-header"
+    only: true
+    lead: ' '
+- paths: add-request-header
+  block: 1
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="add-request-header"
+    only: true
+    lead: ' '
+- paths: add-request-header
+  block: 2
+  fingerprint: 8ab3bb6af0ab6e28
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 274fdf3f b3470e51 0ca4c44a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="add-request-header"
+    only: true
+    lead: ' '
+- paths: add-request-header
+  block: 10
+  fingerprint: d07a1849fb5fb1b7
+  lang: sh
+  lines: 277919f7 0da08e01
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="add-request-header"
+    only: true
+    lead: ' '
+- paths: set-request-header
+  block: 11
+  fingerprint: 9bcd187710727091
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 207d5e5e b3470e51 0ca4c44a 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="set-request-header"
+    only: true
+    lead: ' '
+- paths: set-request-header
+  block: 12
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="set-request-header"
+    only: true
+    lead: ' '
+- paths: set-request-header
+  block: 13
+  fingerprint: a63f5c1740f89623
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 207d5e5e b3470e51 0ca4c44a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="set-request-header"
+    only: true
+    lead: ' '
+- paths: set-request-header
+  block: 21
+  fingerprint: d07a1849fb5fb1b7
+  lang: sh
+  lines: 277919f7 0da08e01
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="set-request-header"
+    only: true
+    lead: ' '
+- paths: remove-request-header
+  block: 25
+  fingerprint: d9b0dc9556b122aa
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 0a282488 7de9ac69 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-request-header"
+    only: true
+    lead: ' '
+- paths: remove-request-header
+  block: 26
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-request-header"
+    only: true
+    lead: ' '
+- paths: remove-request-header
+  block: 27
+  fingerprint: 21902aa76859a05c
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 0a282488 7de9ac69 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-request-header"
+    only: true
+    lead: ' '
+- paths: remove-request-header
+  block: 32
+  fingerprint: d07a1849fb5fb1b7
+  lang: sh
+  lines: 277919f7 0da08e01
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="remove-request-header"
+    only: true
+    lead: ' '
+- paths: header-from-secret
+  block: 33
+  fingerprint: 6604082b14adad15
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 8fea740c 0bebd850 1426decf 2f7c298d 508bbe4b 212e4964 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-from-secret"
+    only: true
+    lead: ' '
+- paths: header-from-secret
+  block: 34
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-from-secret"
+    only: true
+    lead: ' '
+- paths: header-from-secret
+  block: 35
+  fingerprint: d9a33b9f777398eb
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 1148742f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 207d5e5e 5e7dbb4b 9ebc4789 8fea740c 94843f36 1fcc6ff1 9ebc4789 8fea740c 6a19ae92 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="header-from-secret"
+    only: true
+    lead: ' '
+- paths: header-from-secret
+  block: 39
+  fingerprint: 6ac96bf2a40f8b74
+  lang: sh
+  lines: 277919f7 aa0b93d6 e088942c
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="header-from-secret"
+    only: true
+    lead: ' '
+- paths: dynamic-request-header
+  block: 44
+  fingerprint: b36b66a60ef4ae03
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 207d5e5e 0bdf0940 47d621ab 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dynamic-request-header"
+    only: true
+    lead: ' '
+- paths: dynamic-request-header
+  block: 45
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dynamic-request-header"
+    only: true
+    lead: ' '
+- paths: dynamic-request-header
+  block: 46
+  fingerprint: afec173c6b8b75e8
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 207d5e5e 0bdf0940 47d621ab abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dynamic-request-header"
+    only: true
+    lead: ' '
+- paths: dynamic-request-header
+  block: 51
+  fingerprint: d07a1849fb5fb1b7
+  lang: sh
+  lines: 277919f7 0da08e01
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="dynamic-request-header"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 58b9f1fd9435d82e
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 274fdf3f b3470e51 0ca4c44a 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="add-request-header" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the httpbin-headers HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-headers
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       for i in $(seq 1 60); do
+         out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+         if echo "$out" | grep -q '"My-Header"'; then break; fi
+         sleep 2
+       done
+       YAMLTest -f - <<'EOF'
+       - name: "add-request-header - HTTPRoute filter adds my-header: hello"
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "headers.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['My-Header'][0]"
+             comparator: equals
+             value: "hello"
+       - name: "add-request-header - HTTPRoute filter appends hello to an existing my-header: foo"
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "headers.example:8080"
+             my-header: "foo"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['My-Header'][0]"
+             comparator: equals
+             value: "foo"
+           - path: "$.headers['My-Header'][1]"
+             comparator: equals
+             value: "hello"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 970b139d32a8bfc7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="add-request-header" >}}
+          YAMLTest -f - <<'EOF'
+          - name: wait for the httpbin-headers HTTPRoute to be accepted
+            wait:
+              target:
+                kind: HTTPRoute
+                metadata:
+                  namespace: httpbin
+                  name: httpbin-headers
+              jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          for i in $(seq 1 60); do
+            out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+            if echo "$out" | grep -q '"headers"' && ! echo "$out" | grep -q '"My-Header"'; then break; fi
+            sleep 2
+          done
+          YAMLTest -f - <<'EOF'
+          - name: "add-request-header - HTTPRoute without the filter no longer adds my-header"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['My-Header']"
+                comparator: exists
+                negate: true
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 8ab3bb6af0ab6e28
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 274fdf3f b3470e51 0ca4c44a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="add-request-header" >}}
+          YAMLTest -f - <<'EOF'
+          - name: wait for the httpbin-headers TrafficPolicy to be accepted
+            wait:
+              target:
+                kind: TrafficPolicy
+                metadata:
+                  namespace: kgateway-system
+                  name: httpbin-headers
+              jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          for i in $(seq 1 60); do
+            out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+            if echo "$out" | grep -q '"My-Header"'; then break; fi
+            sleep 2
+          done
+          YAMLTest -f - <<'EOF'
+          - name: "add-request-header - TrafficPolicy adds my-header: hello"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['My-Header'][0]"
+                comparator: equals
+                value: "hello"
+          - name: "add-request-header - TrafficPolicy appends hello to an existing my-header: foo"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+                my-header: "foo"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['My-Header'][0]"
+                comparator: equals
+                value: "foo"
+              - path: "$.headers['My-Header'][1]"
+                comparator: equals
+                value: "hello"
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 9bcd187710727091
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 207d5e5e b3470e51 0ca4c44a 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="set-request-header" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the httpbin-headers HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-headers
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       for i in $(seq 1 60); do
+         out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+         if echo "$out" | grep -q '"My-Header"'; then break; fi
+         sleep 2
+       done
+       YAMLTest -f - <<'EOF'
+       - name: "set-request-header - HTTPRoute filter sets my-header: hello"
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "headers.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['My-Header'][0]"
+             comparator: equals
+             value: "hello"
+       - name: "set-request-header - HTTPRoute filter overwrites an existing my-header: foo with hello"
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "headers.example:8080"
+             my-header: "foo"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['My-Header'][0]"
+             comparator: equals
+             value: "hello"
+           - path: "$.headers['My-Header'][1]"
+             comparator: exists
+             negate: true
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 970b139d32a8bfc7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="set-request-header" >}}
+          YAMLTest -f - <<'EOF'
+          - name: wait for the httpbin-headers HTTPRoute to be accepted
+            wait:
+              target:
+                kind: HTTPRoute
+                metadata:
+                  namespace: httpbin
+                  name: httpbin-headers
+              jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          for i in $(seq 1 60); do
+            out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+            if echo "$out" | grep -q '"headers"' && ! echo "$out" | grep -q '"My-Header"'; then break; fi
+            sleep 2
+          done
+          YAMLTest -f - <<'EOF'
+          - name: "set-request-header - HTTPRoute without the filter no longer sets my-header"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['My-Header']"
+                comparator: exists
+                negate: true
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: a63f5c1740f89623
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 207d5e5e b3470e51 0ca4c44a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="set-request-header" >}}
+          YAMLTest -f - <<'EOF'
+          - name: wait for the httpbin-headers TrafficPolicy to be accepted
+            wait:
+              target:
+                kind: TrafficPolicy
+                metadata:
+                  namespace: kgateway-system
+                  name: httpbin-headers
+              jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          for i in $(seq 1 60); do
+            out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+            if echo "$out" | grep -q '"My-Header"'; then break; fi
+            sleep 2
+          done
+          YAMLTest -f - <<'EOF'
+          - name: "set-request-header - TrafficPolicy sets my-header: hello"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['My-Header'][0]"
+                comparator: equals
+                value: "hello"
+          - name: "set-request-header - TrafficPolicy overwrites an existing my-header: foo with hello"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+                my-header: "foo"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['My-Header'][0]"
+                comparator: equals
+                value: "hello"
+              - path: "$.headers['My-Header'][1]"
+                comparator: exists
+                negate: true
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: 82c4c8e4aff73061
+    lang: yaml
+    lines: ab5df625 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a f0120b44 39d4b54e 0653176f 031a60ef 39d4b54e cf93d32e 3bc0f6e2 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 65bbd9b1 cfae0d42 d10b36aa d10b36aa
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="remove-request-header" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "remove-request-header - baseline request on www.example.com includes User-Agent"
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+             User-Agent: "doc-test"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['User-Agent'][0]"
+             comparator: equals
+             value: "doc-test"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: d9b0dc9556b122aa
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 0a282488 7de9ac69 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="remove-request-header" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the httpbin-headers HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-headers
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       for i in $(seq 1 60); do
+         out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+         if echo "$out" | grep -q '"headers"' && ! echo "$out" | grep -q '"User-Agent"'; then break; fi
+         sleep 2
+       done
+       YAMLTest -f - <<'EOF'
+       - name: "remove-request-header - HTTPRoute filter removes the User-Agent header"
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "headers.example:8080"
+             User-Agent: "doc-test"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['User-Agent']"
+             comparator: exists
+             negate: true
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 26
+    fingerprint: 970b139d32a8bfc7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="remove-request-header" >}}
+          YAMLTest -f - <<'EOF'
+          - name: wait for the httpbin-headers HTTPRoute to be accepted
+            wait:
+              target:
+                kind: HTTPRoute
+                metadata:
+                  namespace: httpbin
+                  name: httpbin-headers
+              jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          for i in $(seq 1 60); do
+            out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+            if echo "$out" | grep -q '"User-Agent"'; then break; fi
+            sleep 2
+          done
+          YAMLTest -f - <<'EOF'
+          - name: "remove-request-header - HTTPRoute without the filter keeps User-Agent"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+                User-Agent: "doc-test"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['User-Agent'][0]"
+                comparator: equals
+                value: "doc-test"
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 27
+    fingerprint: 21902aa76859a05c
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 0a282488 7de9ac69 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="remove-request-header" >}}
+          YAMLTest -f - <<'EOF'
+          - name: wait for the httpbin-headers TrafficPolicy to be accepted
+            wait:
+              target:
+                kind: TrafficPolicy
+                metadata:
+                  namespace: kgateway-system
+                  name: httpbin-headers
+              jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          for i in $(seq 1 60); do
+            out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+            if echo "$out" | grep -q '"headers"' && ! echo "$out" | grep -q '"User-Agent"'; then break; fi
+            sleep 2
+          done
+          YAMLTest -f - <<'EOF'
+          - name: "remove-request-header - TrafficPolicy removes the User-Agent header"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+                User-Agent: "doc-test"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['User-Agent']"
+                comparator: exists
+                negate: true
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 35
+    fingerprint: d9a33b9f777398eb
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 1148742f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 207d5e5e 5e7dbb4b 9ebc4789 8fea740c 94843f36 1fcc6ff1 9ebc4789 8fea740c 6a19ae92 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="header-from-secret" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the httpbin-headers HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-headers
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the httpbin-secret-headers TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: kgateway-system
+               name: httpbin-secret-headers
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       for i in $(seq 1 60); do
+         out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+         if echo "$out" | grep -q '"X-Api-Key"'; then break; fi
+         sleep 2
+       done
+       YAMLTest -f - <<'EOF'
+       - name: "header-from-secret - X-Api-Key and X-Tenant-Id come from the backend-creds Secret"
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "headers.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['X-Api-Key'][0]"
+             comparator: equals
+             value: "my-secret-api-key"
+           - path: "$.headers['X-Tenant-Id'][0]"
+             comparator: equals
+             value: "tenant-abc"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 44
+    fingerprint: b36b66a60ef4ae03
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c 8a168813 8fb7eebc 207d5e5e 0bdf0940 47d621ab 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="dynamic-request-header" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the httpbin-headers HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-headers
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       for i in $(seq 1 60); do
+         out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+         if echo "$out" | grep -q '"X-Client-Ip"'; then break; fi
+         sleep 2
+       done
+       YAMLTest -f - <<'EOF'
+       - name: "dynamic-request-header - HTTPRoute filter sets X-Client-Ip to the client address without a port"
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "headers.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['X-Client-Ip'][0]"
+             comparator: matches
+             value: "^[0-9a-fA-F.:]+$"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 45
+    fingerprint: 970b139d32a8bfc7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="dynamic-request-header" >}}
+          YAMLTest -f - <<'EOF'
+          - name: wait for the httpbin-headers HTTPRoute to be accepted
+            wait:
+              target:
+                kind: HTTPRoute
+                metadata:
+                  namespace: httpbin
+                  name: httpbin-headers
+              jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          for i in $(seq 1 60); do
+            out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+            if echo "$out" | grep -q '"headers"' && ! echo "$out" | grep -q '"X-Client-Ip"'; then break; fi
+            sleep 2
+          done
+          YAMLTest -f - <<'EOF'
+          - name: "dynamic-request-header - HTTPRoute without the filter no longer sets X-Client-Ip"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['X-Client-Ip']"
+                comparator: exists
+                negate: true
+          EOF
+          {{< /doc-test >}}
+- after:
+    block: 46
+    fingerprint: afec173c6b8b75e8
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 14ddcd05 207d5e5e 0bdf0940 47d621ab abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+          {{< doc-test paths="dynamic-request-header" >}}
+          YAMLTest -f - <<'EOF'
+          - name: wait for the httpbin-headers TrafficPolicy to be accepted
+            wait:
+              target:
+                kind: TrafficPolicy
+                metadata:
+                  namespace: kgateway-system
+                  name: httpbin-headers
+              jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+              jsonPathExpectation:
+                comparator: equals
+                value: "True"
+              polling:
+                timeoutSeconds: 300
+                intervalSeconds: 5
+          EOF
+          for i in $(seq 1 60); do
+            out=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: headers.example:8080" -H "user-agent: doc-test" || true)
+            if echo "$out" | grep -q '"X-Client-Ip"'; then break; fi
+            sleep 2
+          done
+          YAMLTest -f - <<'EOF'
+          - name: "dynamic-request-header - TrafficPolicy sets X-Client-Ip to the client address without a port"
+            retries: 5
+            http:
+              url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+              method: GET
+              headers:
+                host: "headers.example:8080"
+            source:
+              type: local
+            expect:
+              statusCode: 200
+              bodyJsonPath:
+              - path: "$.headers['X-Client-Ip'][0]"
+                comparator: matches
+                value: "^[0-9a-fA-F.:]+$"
+          EOF
+          {{< /doc-test >}}

@@ -1,0 +1,187 @@
+format: 1
+source: assets/kgw-docs/snippets/buffering-filter-stage.md
+blocks:
+- 7da18524d471cbe0 yaml
+- 672df9cca601898c yaml
+- e9ab4bf9df76e670 sh
+- 0c449e558c04b72f sh
+- 4fe4ff8034a844a1 console
+- 2cb6225120fffaf1 yaml
+- e9ab4bf9df76e670 sh
+- 0c449e558c04b72f sh
+- ddd5576ce52e982b
+- aba21665f2849380 sh
+- f0dba47b9f9989c2 sh
+- c70869605d5e984d console
+- 90a9410587ea3319 sh
+tags:
+- paths: buffering-filter-stage
+  block: 0
+  fingerprint: 7da18524d471cbe0
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 852ae295 0f10c5bc fa1e8330 23cc601c 36184fa5 97bcd5e0 8432e015 839a5cac 23cc601c a58565b2 8c8c4228 fa1e8330 23cc601c 36184fa5 04968f51 92abaa1b 852ae295 0ff65a1a 088263b2 cb3f91d5 f1540154 0d6480f0 8c8c4228 852ae295 0f10c5bc fa1e8330 23cc601c 36184fa5 0ff65a1a d8212fc2 7811827d 9693ecf1 7d42f305 8432e015 23cc601c cb3f91d5 d664f32c 5ee5f7dc 8c8c4228 ef0ff09d 0f10c5bc 36184fa5 9e973d21 e833744f 6d0a9a1d 70c97555 852ae295 b8eebd11 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="buffering-filter-stage"
+    only: true
+    lead: ' '
+- paths: buffering-filter-stage
+  block: 1
+  fingerprint: 672df9cca601898c
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 23058379 0f10c5bc 36184fa5 d3d416e7 82601aaa 791ec828 301e1bfa 190d46be 3de9d845 a3b86ab6 80e9487c bca8e5f7 cb3f91d5 db17a588 6becf7d5 8c8c4228 24a264b8 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 23058379 e833744f 248578da ef0ff09d 40a067ee e6d1ada3 e861b016 8fa0d33e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="buffering-filter-stage"
+    only: true
+    lead: ' '
+- paths: buffering-filter-stage
+  block: 5
+  fingerprint: 2cb6225120fffaf1
+  lang: yaml
+  lines: 16c71da1 db17a588 6becf7d5 8c8c4228 24a264b8 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 23058379 e833744f 248578da ef0ff09d 40a067ee e6d1ada3 e861b016 8fa0d33e 25868a16 baafc5c8 a2272b74 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="buffering-filter-stage"
+    only: true
+    lead: ' '
+- paths: buffering,buffering-filter-stage
+  block: 12
+  fingerprint: 90a9410587ea3319
+  lang: sh
+  lines: 0e8c0d1f 26f4008c ca1ac239 19c43c7a fbf1cfb5
+  preview: kubectl delete {{< reuse "/kgw-docs/snippets/trafficpolicy.md" >}} transformatio
+  form:
+    attr: paths="buffering,buffering-filter-stage"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 7da18524d471cbe0
+    lang: yaml
+    lines: 16c71da1 58584366 ab78925c 8c8c4228 852ae295 0f10c5bc fa1e8330 23cc601c 36184fa5 97bcd5e0 8432e015 839a5cac 23cc601c a58565b2 8c8c4228 fa1e8330 23cc601c 36184fa5 04968f51 92abaa1b 852ae295 0ff65a1a 088263b2 cb3f91d5 f1540154 0d6480f0 8c8c4228 852ae295 0f10c5bc fa1e8330 23cc601c 36184fa5 0ff65a1a d8212fc2 7811827d 9693ecf1 7d42f305 8432e015 23cc601c cb3f91d5 d664f32c 5ee5f7dc 8c8c4228 ef0ff09d 0f10c5bc 36184fa5 9e973d21 e833744f 6d0a9a1d 70c97555 852ae295 b8eebd11 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="buffering-filter-stage" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "buffering-filter-stage - wait for the ext-authz deployment to be ready"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: httpbin
+            name: ext-authz
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 672df9cca601898c
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 23058379 0f10c5bc 36184fa5 d3d416e7 82601aaa 791ec828 301e1bfa 190d46be 3de9d845 a3b86ab6 80e9487c bca8e5f7 cb3f91d5 db17a588 6becf7d5 8c8c4228 24a264b8 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 23058379 e833744f 248578da ef0ff09d 40a067ee e6d1ada3 e861b016 8fa0d33e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="buffering-filter-stage" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "buffering-filter-stage - wait for the bufferedroute HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: bufferedroute
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "buffering-filter-stage - wait for the bufferedroute-policy TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: bufferedroute-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 4fe4ff8034a844a1
+    lang: console
+    lines: 92413e97 a152bc23 c441a9d6 706d2426
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="buffering-filter-stage" >}}
+    # bfs_large <label> <expected code>: send the 2 KiB payload with the
+    # x-ext-authz: allow header to the bufferedroute.com route until the gateway
+    # returns the expected status code (000 means the connection failed).
+    bfs_large() {
+      local label="$1" want="$2" attempt code=""
+      for attempt in $(seq 1 60); do
+        code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 -X POST "http://${INGRESS_GW_ADDRESS}:8080/anything" \
+          -H "host: bufferedroute.com:8080" \
+          -H "x-ext-authz: allow" \
+          --data-binary @/tmp/large_payload_2k.txt || true)
+        [ "$code" = "$want" ] && { echo "$label: got $code"; return 0; }
+        echo "$label: attempt $attempt got '${code:-no response}', want $want"
+        sleep 2
+      done
+      echo "$label: the 2 KiB request never returned $want"
+      exit 1
+    }
+    # Without filterStage, external auth reads the body ahead of the buffer filter,
+    # so maxRequestSize 1024 is not enforced and the oversized request succeeds.
+    bfs_large "buffering-filter-stage - default placement - the 2 KiB payload is not rejected" 200
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: ddd5576ce52e982b
+    lang: ''
+    lines: 2f0a2ffa 8f2b5b73 fa948eea
+    preview: HTTP/1.1 413 Payload Too Large
+  content: |-
+    {{< doc-test paths="buffering-filter-stage" >}}
+    bfs_large "buffering-filter-stage - before AuthN - the 2 KiB payload is rejected by the buffer filter" 413
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: c70869605d5e984d
+    lang: console
+    lines: 92413e97 ab5df625 731195c0 34af3e75 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="buffering-filter-stage" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "buffering-filter-stage - before AuthN - a hello world payload within the limit succeeds"
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: POST
+        headers:
+          host: "bufferedroute.com:8080"
+          x-ext-authz: allow
+        body: '{"payload": "hello world"}'
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyRegex:
+        - 'hello world'
+    EOF
+    {{< /doc-test >}}

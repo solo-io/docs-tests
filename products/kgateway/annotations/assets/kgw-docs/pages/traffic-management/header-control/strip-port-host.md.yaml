@@ -1,0 +1,239 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/header-control/strip-port-host.md
+blocks:
+- b63a64a8d7d3667a sh
+- 04edca11bda846d8 sh
+- eaecfc50a4b5613e console
+- 7375ea84b4891e4a yaml
+- b63a64a8d7d3667a sh
+- 04edca11bda846d8 sh
+- aad84349ce003d98 console
+- 2c002fcdf00fc3e0 sh
+- 20d6578013f4f2f9 console
+- e1147955bcdd829d yaml
+- 3ea105525316b62c sh
+- 6e5e7207595138b5 sh
+- 6fcad2964c81b64d console
+- b63a64a8d7d3667a sh
+- 04edca11bda846d8 sh
+- 3c9462e61c4a2c71 console
+- b29d9eddd61283b8 sh
+tags:
+- paths: strip-port-host
+  block: 0
+  fingerprint: b63a64a8d7d3667a
+  lang: sh
+  lines: b63a64a8
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:9999"'
+  form:
+    attr: paths="strip-port-host"
+    only: true
+    lead: ' '
+- paths: strip-port-host
+  block: 3
+  fingerprint: 7375ea84b4891e4a
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 8077d5d5 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 aafd06c5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="strip-port-host"
+    only: true
+    lead: ' '
+- paths: strip-port-host
+  block: 4
+  fingerprint: b63a64a8d7d3667a
+  lang: sh
+  lines: b63a64a8
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:9999"'
+  form:
+    attr: paths="strip-port-host"
+    only: true
+    lead: ' '
+- paths: strip-port-host
+  block: 7
+  fingerprint: 2c002fcdf00fc3e0
+  lang: sh
+  lines: 2c002fcd
+  preview: kubectl get gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o ya
+  form:
+    attr: paths="strip-port-host"
+    only: true
+    lead: ' '
+- paths: strip-port-host
+  block: 9
+  fingerprint: e1147955bcdd829d
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 8077d5d5 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 3dbc54b1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="strip-port-host"
+    only: true
+    lead: ' '
+- paths: strip-port-host
+  block: 10
+  fingerprint: 3ea105525316b62c
+  lang: sh
+  lines: 3ea10552
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080"'
+  form:
+    attr: paths="strip-port-host"
+    only: true
+    lead: ' '
+- paths: strip-port-host
+  block: 13
+  fingerprint: b63a64a8d7d3667a
+  lang: sh
+  lines: b63a64a8
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:9999"'
+  form:
+    attr: paths="strip-port-host"
+    only: true
+    lead: ' '
+- paths: strip-port-host
+  block: 16
+  fingerprint: b29d9eddd61283b8
+  lang: sh
+  lines: b29d9edd
+  preview: kubectl delete listenerpolicy strip-host-port -n {{< reuse "kgw-docs/snippets/na
+  form:
+    attr: paths="strip-port-host"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Strip any port
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 1
+      fingerprint: 04edca11bda846d8
+      lang: sh
+      lines: 04edca11
+      preview: 'curl -v localhost:8080/headers -H "host: www.example.com:9999"'
+  content: |2-
+       {{< doc-test paths="strip-port-host" >}}
+       YAMLTest -f - <<'EOF'
+       - name: strip-port-host - without a ListenerPolicy, the port in the Host header is forwarded
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "www.example.com:9999"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers.Host[0]"
+             comparator: equals
+             value: "www.example.com:9999"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 7375ea84b4891e4a
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 8077d5d5 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 aafd06c5 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="strip-port-host" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the strip-host-port ListenerPolicy to be accepted
+         wait:
+           target:
+             kind: ListenerPolicy
+             metadata:
+               namespace: kgateway-system
+               name: strip-host-port
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: strip-port-host - AnyPort strips port 9999 from the Host header
+         retries: 40
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "www.example.com:9999"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers.Host[0]"
+             comparator: equals
+             value: "www.example.com"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 2c002fcdf00fc3e0
+    lang: sh
+    lines: 2c002fcd
+    preview: kubectl get gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o ya
+  content: |2-
+       {{< doc-test paths="strip-port-host" >}}
+       YAMLTest -f - <<'EOF'
+       - name: strip-port-host - the http Gateway listener is on port 8080
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: http
+           jsonPath: "$.spec.listeners[?(@.name=='http')].port"
+           jsonPathExpectation:
+             comparator: equals
+             value: 8080
+           polling:
+             timeoutSeconds: 30
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: e1147955bcdd829d
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 8077d5d5 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 3dbc54b1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="strip-port-host" >}}
+       YAMLTest -f - <<'EOF'
+       - name: strip-port-host - MatchingPort keeps port 9999, which does not match the listener port
+         retries: 40
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "www.example.com:9999"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers.Host[0]"
+             comparator: equals
+             value: "www.example.com:9999"
+       - name: strip-port-host - MatchingPort strips port 8080, which matches the listener port
+         retries: 40
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers.Host[0]"
+             comparator: equals
+             value: "www.example.com"
+       EOF
+       {{< /doc-test >}}

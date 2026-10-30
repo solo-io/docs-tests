@@ -1,0 +1,116 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/dfp.md
+blocks:
+- 61b8d58760d43333 yaml
+- a0357764cc3d4c71 yaml
+- 7ed5a709f9e32789 sh
+- 8a9df626af35e14d sh
+- db27627a49427b8e console
+- f70f89f0e86d5a5a sh
+- baeb6e9131a6b899 sh
+tags:
+- paths: dfp
+  block: 0
+  fingerprint: 61b8d58760d43333
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 37cd1f2f 0f10c5bc 36184fa5 759edf3a a13d7c79 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dfp"
+    only: true
+    lead: ' '
+- paths: dfp
+  block: 1
+  fingerprint: a0357764cc3d4c71
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 0f10c5bc b8a9e3f3 36184fa5 d3d416e7 82601aaa 0bebd850 3de9d845 a3b86ab6 1dfe1459 69f54740 ad65deb7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dfp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: a0357764cc3d4c71
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 0f10c5bc b8a9e3f3 36184fa5 d3d416e7 82601aaa 0bebd850 3de9d845 a3b86ab6 1dfe1459 69f54740 ad65deb7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dfp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the dfp-httproute HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: dfp-httproute
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the dfp-httproute HTTPRoute to resolve the dfp-backend Backend
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: dfp-httproute
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: db27627a49427b8e
+    lang: console
+    lines: 5b07bb0e 6364ab47 92413e97 ab5df625 c77e5168 876b0aad ce519ccc 89af9cce 13192e93 4757d7fc 7067ca25 10fa9fb7 b0cde1e8 7681f551 ab5df625
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="dfp" >}}
+    # Test-only: the httpbin-org-standin prerequisite resolves httpbin.org in the
+    # cluster to the go-httpbin sample app, so the welcome page differs from the
+    # public httpbin.org page in the example output. Check the status code on /,
+    # then prove that the request went through the dynamic forward proxy: go-httpbin
+    # echoes the httpbin.org Host header that the proxy resolved.
+    YAMLTest -f - <<'EOF'
+    - name: dfp - a request for the httpbin.org host returns the welcome page through the dynamic forward proxy
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /
+        method: GET
+        headers:
+          host: "httpbin.org"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "<html"
+    - name: dfp - the httpbin.org request reaches the resolved upstream with its Host header unchanged
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "httpbin.org"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.Host[0]"
+          comparator: equals
+          value: "httpbin.org"
+    EOF
+    {{< /doc-test >}}

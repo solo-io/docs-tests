@@ -1,0 +1,284 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/header-control/forward-xfcc.md
+blocks:
+- 70376a0001802930 sh
+- 74086e5643a836fd sh
+- 0ead07c203eaa569 console
+- 26eb194a504d67ca yaml
+- 70376a0001802930 sh
+- 74086e5643a836fd sh
+- 71257f43a45942fd console
+- 1bea0c5b88abd264 yaml
+- 302f96f18c0b050b yaml
+- ffbda3a9929e7054 yaml
+- e453f928d9bf0cfe sh
+tags:
+- paths: forward-xfcc
+  block: 0
+  fingerprint: 70376a0001802930
+  lang: sh
+  lines: 8d4dc71f 34ced9d9 2552186c
+  preview: curl -s http://$INGRESS_GW_ADDRESS:8080/headers \
+  form:
+    attr: paths="forward-xfcc"
+    only: true
+    lead: ' '
+- paths: forward-xfcc
+  block: 3
+  fingerprint: 26eb194a504d67ca
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 cc92cbb9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 97ff51db 8f99fff5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="forward-xfcc"
+    only: true
+    lead: ' '
+- paths: forward-xfcc
+  block: 4
+  fingerprint: 70376a0001802930
+  lang: sh
+  lines: 8d4dc71f 34ced9d9 2552186c
+  preview: curl -s http://$INGRESS_GW_ADDRESS:8080/headers \
+  form:
+    attr: paths="forward-xfcc"
+    only: true
+    lead: ' '
+- paths: forward-xfcc
+  block: 7
+  fingerprint: 1bea0c5b88abd264
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 cc92cbb9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 97ff51db d4dcf0cb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="forward-xfcc"
+    only: true
+    lead: ' '
+- paths: forward-xfcc
+  block: 8
+  fingerprint: 302f96f18c0b050b
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 cc92cbb9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 97ff51db a95d103f abf45c1f 094ab7c7 258d1eeb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="forward-xfcc"
+    only: true
+    lead: ' '
+- paths: forward-xfcc
+  block: 9
+  fingerprint: ffbda3a9929e7054
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 cc92cbb9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 97ff51db 572b4de5 abf45c1f 094ab7c7 9e31939c 258d1eeb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="forward-xfcc"
+    only: true
+    lead: ' '
+- paths: forward-xfcc
+  block: 10
+  fingerprint: e453f928d9bf0cfe
+  lang: sh
+  lines: e453f928
+  preview: kubectl delete listenerpolicy forward-xfcc -n {{< reuse "kgw-docs/snippets/names
+  form:
+    attr: paths="forward-xfcc"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Forward the XFCC headers
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 1
+      fingerprint: 74086e5643a836fd
+      lang: sh
+      lines: 9e9a5aa7 0d5c4183 2552186c
+      preview: curl -s localhost:8080/headers \
+  content: |2-
+       {{< doc-test paths="forward-xfcc" >}}
+       YAMLTest -f - <<'EOF'
+       - name: forward-xfcc - without a ListenerPolicy, the gateway strips the XFCC header
+         retries: 5
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+             x-forwarded-client-cert: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers.X-Forwarded-Client-Cert"
+             comparator: exists
+             negate: true
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 26eb194a504d67ca
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 cc92cbb9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 97ff51db 8f99fff5 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="forward-xfcc" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the forward-xfcc ListenerPolicy to be accepted
+         wait:
+           target:
+             kind: ListenerPolicy
+             metadata:
+               namespace: kgateway-system
+               name: forward-xfcc
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: forward-xfcc - AlwaysForwardOnly forwards the client's XFCC header unchanged on a plain HTTP listener
+         retries: 40
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+             x-forwarded-client-cert: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers.X-Forwarded-Client-Cert[0]"
+             comparator: equals
+             value: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 1bea0c5b88abd264
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 cc92cbb9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 97ff51db d4dcf0cb abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="forward-xfcc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: forward-xfcc - ForwardOnly strips the XFCC header on a plain HTTP listener
+      retries: 40
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-forwarded-client-cert: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.X-Forwarded-Client-Cert"
+          comparator: exists
+          negate: true
+    EOF
+    # Test scaffolding: reset to AlwaysForwardOnly (header forwarded) so that the
+    # next section's 'header is stripped' check proves the new mode took effect.
+    kubectl patch listenerpolicy forward-xfcc -n kgateway-system --type merge \
+      -p '{"spec":{"default":{"httpSettings":{"forwardClientCertDetails":{"mode":"AlwaysForwardOnly","details":null}}}}}'
+    YAMLTest -f - <<'EOF'
+    - name: forward-xfcc - after ForwardOnly, reset to AlwaysForwardOnly forwards the XFCC header again
+      retries: 40
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-forwarded-client-cert: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.X-Forwarded-Client-Cert[0]"
+          comparator: equals
+          value: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 302f96f18c0b050b
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 cc92cbb9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 97ff51db a95d103f abf45c1f 094ab7c7 258d1eeb abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="forward-xfcc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: forward-xfcc - AppendForward strips the XFCC header on a plain HTTP listener
+      retries: 40
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-forwarded-client-cert: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.X-Forwarded-Client-Cert"
+          comparator: exists
+          negate: true
+    EOF
+    # Test scaffolding: reset to AlwaysForwardOnly (header forwarded) so that the
+    # next section's 'header is stripped' check proves the new mode took effect.
+    kubectl patch listenerpolicy forward-xfcc -n kgateway-system --type merge \
+      -p '{"spec":{"default":{"httpSettings":{"forwardClientCertDetails":{"mode":"AlwaysForwardOnly","details":null}}}}}'
+    YAMLTest -f - <<'EOF'
+    - name: forward-xfcc - after AppendForward, reset to AlwaysForwardOnly forwards the XFCC header again
+      retries: 40
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-forwarded-client-cert: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.X-Forwarded-Client-Cert[0]"
+          comparator: equals
+          value: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: ffbda3a9929e7054
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 cc92cbb9 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 97ff51db 572b4de5 abf45c1f 094ab7c7 9e31939c 258d1eeb abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="forward-xfcc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: forward-xfcc - SanitizeSet strips the XFCC header on a plain HTTP listener
+      retries: 40
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-forwarded-client-cert: "By=spiffe://cluster.local/ns/default/sa/backend;Hash=abc123"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers.X-Forwarded-Client-Cert"
+          comparator: exists
+          negate: true
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,121 @@
+format: 1
+source: assets/kgw-docs/pages/setup/proxy-100-continue.md
+blocks:
+- acf3952e94888047 sh
+- d85c716d7b72ba31 sh
+- bcdb9a5a57fb2020 console
+- 8b9a0abd20b66454 yaml
+- acf3952e94888047 sh
+- d85c716d7b72ba31 sh
+- 1329a1054fb50190 console
+- 391262ee448afecd sh
+- 2c059bed28dfe153 console
+- 4693d5e6fd6527e8 sh
+tags:
+- paths: proxy-100-continue
+  block: 3
+  fingerprint: 8b9a0abd20b66454
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 64cd035e 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 1c40ec1e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="proxy-100-continue"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: bcdb9a5a57fb2020
+    lang: console
+    lines: 31271dfa 6364ab47 ab5df625
+    preview: < HTTP/1.1 100 Continue
+  content: |-
+    {{< doc-test paths="proxy-100-continue" >}}
+    # default gateway: curl must get a 100 Continue and then a 200, and the headers that
+    # httpbin echoes back does not include the Expect header.
+    body=$(mktemp); trace=$(mktemp); ok=""
+    for i in $(seq 1 30); do
+      curl -s -v --max-time 10 -o "$body" -X POST "http://${INGRESS_GW_ADDRESS}:8080/anything" \
+        -H "host: www.example.com" -H "Expect: 100-continue" --data-binary 'hello' 2>"$trace" || true
+      if grep -q '^< HTTP/1.1 100 Continue' "$trace" && grep -q '^< HTTP/1.1 200 OK' "$trace" && ! grep -q '"Expect"' "$body"; then ok=1; break; fi
+      echo "default gateway: response not as expected yet, retrying ($i/30)"; sleep 2
+    done
+    grep '^< HTTP' "$trace"; cat "$body"
+    if [ -z "$ok" ]; then
+      echo "FAIL: default gateway: want 100 Continue, then 200 OK, and an echoed header list that does not include Expect"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    section: Forward 100-continue requests
+    line: 122e782490d1194a
+    occurrence: 0
+    words: 247a6b87 6ee0eb49 663ea1bf b5bea41b 663ea1bf 9dc08e40 ec72420d 0695b563 ea325d76 77f2f036 a15195c5 1e0584a2 663ea1bf b9776d7d 10e08a41 6201111b 663ea1bf d74ff0ee b9776d7d ad573668 e256ee8e a9f4b3d2 75857a45 b9776d7d 10e08a41 3c482346 663ea1bf b9776d7d 948fe603 c266ada2 b9776d7d c0d2856b 7175517a 6ee0eb49 2ad8a704 663ea1bf fcbcf165 663ea1bf 5654d410 b9776d7d 4ea5ee68 1241936d 0db52f40 0695b563 ad573668 e256ee8e 5a41ac42
+    block_before:
+      block: 3
+      fingerprint: 8b9a0abd20b66454
+      lang: yaml
+      lines: 16c71da1 d664f32c 9144003f 8c8c4228 64cd035e 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 1c40ec1e abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="proxy-100-continue" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the proxy-100-continue ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: proxy-100-continue
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 1329a1054fb50190
+    lang: console
+    lines: 31271dfa 6364ab47 ab5df625 021fb596 ab5df625 2e253c22 ab5df625 7eb9a4ef a8b41a97 39d4b54e ab5df625 d10b36aa d10b36aa
+    preview: < HTTP/1.1 100 Continue
+  content: |-
+    {{< doc-test paths="proxy-100-continue" >}}
+    # proxy100Continue enabled: curl must get a 100 Continue and then a 200, and the headers that
+    # httpbin echoes back includes the Expect header.
+    body=$(mktemp); trace=$(mktemp); ok=""
+    for i in $(seq 1 30); do
+      curl -s -v --max-time 10 -o "$body" -X POST "http://${INGRESS_GW_ADDRESS}:8080/anything" \
+        -H "host: www.example.com" -H "Expect: 100-continue" --data-binary 'hello' 2>"$trace" || true
+      if grep -q '^< HTTP/1.1 100 Continue' "$trace" && grep -q '^< HTTP/1.1 200 OK' "$trace" && grep -q '"Expect"' "$body"; then ok=1; break; fi
+      echo "proxy100Continue enabled: response not as expected yet, retrying ($i/30)"; sleep 2
+    done
+    grep '^< HTTP' "$trace"; cat "$body"
+    if [ -z "$ok" ]; then
+      echo "FAIL: proxy100Continue enabled: want 100 Continue, then 200 OK, and an echoed header list that includes Expect"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 2c059bed28dfe153
+    lang: console
+    lines: 2c059bed
+    preview: '"proxy_100_continue": true,'
+  content: |-
+    {{< doc-test paths="proxy-100-continue" >}}
+    # Same check as the port-forward step, through the gateway proxy's admin port.
+    dump=""
+    for i in $(seq 1 30); do
+      dump=$(kubectl exec deploy/http -n kgateway-system -- wget -qO- 127.0.0.1:19000/config_dump) || true
+      grep -q '"proxy_100_continue": true' <<<"$dump" && break
+      echo "proxy_100_continue not in the Envoy config yet, retrying ($i/30)"; sleep 2
+    done
+    if ! grep -q '"proxy_100_continue": true' <<<"$dump"; then
+      echo "FAIL: the HTTP connection manager does not have proxy_100_continue set to true"
+      exit 1
+    fi
+    {{< /doc-test >}}

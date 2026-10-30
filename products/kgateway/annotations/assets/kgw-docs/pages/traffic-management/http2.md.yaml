@@ -1,0 +1,194 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/http2.md
+blocks:
+- 3ce085a9c02413ea yaml
+- da95be60f0bf9f9f yaml
+- 416122baed206f1f yaml
+- eca63ad0444ece4b sh
+- cd4dd945b3ca79a0 console
+- 00e0bc39df6b4233 yaml
+- 4101c7b354949337 sh
+- c54d645551f15efd sh
+- 2b7f2cf4d010aa91 console
+- baf560ccbd73e1a0 sh
+- e1418cb25c086cd5 console
+- ae3c6288ca33f705 yaml
+- af4681391d188dd1 yaml
+- 28633be031fc306b sh
+- 5d9c89f30ce94d81 sh
+- 75c2dc414b179959 console
+- baf560ccbd73e1a0 sh
+- 117f6be3e655c8ed console
+- 4f7611d4f6b7f90e sh
+- 09ec057c63d28598 sh
+tags:
+- paths: http2
+  block: 0
+  fingerprint: 3ce085a9c02413ea
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 54ccadac 92046d69 542b651c a99fad3a de1589be 1170ae18 ba0b9b83 4a6e079a a532a3cf 0b3361a3 4b3ddcf2 190df8ce 9fdf0bf6 f5806206 81914dc6 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http2"
+    only: true
+    lead: ' '
+- paths: http2
+  block: 2
+  fingerprint: 416122baed206f1f
+  lang: yaml
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 bf2b569a ff72caa3 d1fe37d2 7ec19fcf 97c1b1af ea58f9c5 f90c77bc d10b36aa 9df10491 0310a8b5 7af1f28b 659d3076 b280e4a8 357daa37 90fbe632 d10b36aa d10b36aa d10b36aa cb3f91d5 f1540154 0d6480f0 8c8c4228 f7734d83 36184fa5 8432e015 4483b2bc 0ff65a1a 83feb025 c095a45d f07da78e 51ef3959 cb3f91d5 f1540154 7963e6b7 8c8c4228 f7734d83 fa1e8330 4483b2bc 36184fa5 04968f51 57249e4b 797f2e3c 0ff65a1a 76dc1fa3 5f6fa1fe fcd8c64a d0b75ea0 491b9537 c8761a7b 4fb8b4ed c5d7714b d0b75ea0 889016e3 bf2b569a d04b512d ef96118b bef000f8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http2"
+    only: true
+    lead: ' '
+- paths: http2
+  block: 5
+  fingerprint: 00e0bc39df6b4233
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f7734d83 0ccc8edc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4a7bf264 3de9d845 a3b86ab6 57249e4b c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http2"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 3ce085a9c02413ea
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 54ccadac 92046d69 542b651c a99fad3a de1589be 1170ae18 ba0b9b83 4a6e079a a532a3cf 0b3361a3 4b3ddcf2 190df8ce 9fdf0bf6 f5806206 81914dc6 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http2" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the access-logs ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: access-logs
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 416122baed206f1f
+    lang: yaml
+    lines: 16c71da1 f1540154 033792b5 8c8c4228 bf2b569a ff72caa3 d1fe37d2 7ec19fcf 97c1b1af ea58f9c5 f90c77bc d10b36aa 9df10491 0310a8b5 7af1f28b 659d3076 b280e4a8 357daa37 90fbe632 d10b36aa d10b36aa d10b36aa cb3f91d5 f1540154 0d6480f0 8c8c4228 f7734d83 36184fa5 8432e015 4483b2bc 0ff65a1a 83feb025 c095a45d f07da78e 51ef3959 cb3f91d5 f1540154 7963e6b7 8c8c4228 f7734d83 fa1e8330 4483b2bc 36184fa5 04968f51 57249e4b 797f2e3c 0ff65a1a 76dc1fa3 5f6fa1fe fcd8c64a d0b75ea0 491b9537 c8761a7b 4fb8b4ed c5d7714b d0b75ea0 889016e3 bf2b569a d04b512d ef96118b bef000f8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http2" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the nginx Pod to be Ready
+      wait:
+        target:
+          kind: Pod
+          metadata:
+            namespace: default
+            name: nginx
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 00e0bc39df6b4233
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f7734d83 0ccc8edc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4a7bf264 3de9d845 a3b86ab6 57249e4b c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http2" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the nginx HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: nginx
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 2b7f2cf4d010aa91
+    lang: console
+    lines: ab5df625 371dd70d 8d33ecfe 50fc9288 317b9438 62b67e1f 5b07bb0e ffc72578 b2316fab ab5df625 c77e5168 b7d082ee ce519ccc ab410b04 7681f551 dee4b72e afa50296 a9c8ea47 5e4117ea 69eb3111 9aabfd16 fbbb40aa 76264609 731d9446 c8fd7c44 e161e9ba b73a8205 1e8335c9 f65f2687 124207d8 fdfe0993
+    preview: '...'
+  content: |-
+    {{< doc-test paths="http2" >}}
+    # nginx accepts only HTTP/2 (listen 80 http2), so a 200 with the nginx welcome
+    # page over HTTP/2 shows both the downstream and the upstream used HTTP/2.
+    h2_ok=false
+    for i in $(seq 1 60); do
+      h2_out=$(curl -sk --max-time 5 --http2-prior-knowledge -o /tmp/http2-nginx-body.html -w '%{http_version} %{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/" -H "host: http2.example.com:8080" || true)
+      if [ "$h2_out" = "2 200" ] && grep -q "Welcome to nginx!" /tmp/http2-nginx-body.html 2>/dev/null; then
+        h2_ok=true
+        break
+      fi
+      sleep 2
+    done
+    if [ "$h2_ok" != true ]; then
+      echo "http2: expected an HTTP/2 200 with the nginx welcome page from host http2.example.com, got '${h2_out:-no response}' (http_version http_code)"
+      exit 1
+    fi
+    echo "http2: http2.example.com returned HTTP/2 200 with the nginx welcome page"
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: e1418cb25c086cd5
+    lang: console
+    lines: 021fb596 d0892335 f96c00b8 13a408da 7fb9ed8d c652e208 82c9ab0f 9b62b96b 28c4b572 d7024160 d389d27b 59d24d16 052615b6 4d2a85aa 107aceb8 cc43da82 262e6e80 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="http2" >}}
+    # The access log entry for the nginx request records protocol HTTP/2, the
+    # nginx backend cluster, and a 200 response code.
+    h2_log_ok=false
+    for i in $(seq 1 30); do
+      h2_log=$(kubectl -n kgateway-system logs deployments/http --tail=500 2>/dev/null | python3 -c '
+    import json, sys
+    for line in sys.stdin:
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            e = json.loads(line)
+        except Exception:
+            continue
+        if str(e.get("authority", "")).startswith("http2.example.com") and e.get("protocol") == "HTTP/2" \
+                and str(e.get("response_code")) == "200" and e.get("backendCluster") == "kube_default_nginx_8080":
+            print(json.dumps(e, sort_keys=True))
+    ' | tail -1 || true)
+      if [ -n "$h2_log" ]; then
+        h2_log_ok=true
+        break
+      fi
+      sleep 2
+    done
+    if [ "$h2_log_ok" != true ]; then
+      echo "http2: no access log entry for http2.example.com with protocol HTTP/2, backendCluster kube_default_nginx_8080, and response_code 200"
+      kubectl -n kgateway-system logs deployments/http --tail=20 || true
+      exit 1
+    fi
+    echo "http2: access log entry: $h2_log"
+    {{< /doc-test >}}

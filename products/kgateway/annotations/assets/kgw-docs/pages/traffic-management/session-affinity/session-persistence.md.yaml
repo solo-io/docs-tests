@@ -1,0 +1,234 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/session-affinity/session-persistence.md
+blocks:
+- 037eac15ac0e2599 yaml
+- 1aab5f7974287597 sh
+- 0e2cb4c4905b9f20 sh
+- 2c25f8ed4dd32a9a
+- f45a9f776f59b83e yaml
+- 9d41b733e27a5d73 sh
+- f61914f12d54de1e sh
+- 10671b45f6ad929d console
+- 71b81759d8770c5c sh
+- 2561c48d4a05bd62 sh
+- fa9db1c2e0dc0624 sh
+- 3e936e1b3e1e105f
+- b1fceae1e5668eb4 sh
+- fc5f36ec25692d3d sh
+- e81dcfbb80049319
+- 0af915066f60e0fd sh
+- 4528998df78248b7 sh
+- 71b81759d8770c5c sh
+- 2561c48d4a05bd62 sh
+- fa9db1c2e0dc0624 sh
+- c7df67b1381e2cf8
+- 85cd28a0028ea8da sh
+- 5c927b54c8d8312e yaml
+tags:
+- paths: affinity-session-persistence
+  block: 1
+  fingerprint: 1aab5f7974287597
+  lang: sh
+  lines: 1aab5f79
+  preview: kubectl scale deployment httpbin -n httpbin --replicas=2
+  form:
+    attr: paths="affinity-session-persistence"
+    only: true
+    lead: ' '
+    tail: ' '
+- paths: affinity-session-persistence
+  block: 2
+  fingerprint: 0e2cb4c4905b9f20
+  lang: sh
+  lines: 0e2cb4c4
+  preview: kubectl get pods -n httpbin
+  form:
+    attr: paths="affinity-session-persistence"
+    only: true
+    lead: ' '
+- paths: affinity-session-persistence
+  block: 4
+  fingerprint: f45a9f776f59b83e
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 98564d41 22f6103c 33c051d8 b777448c e8443677 44af2d99 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-session-persistence"
+    only: true
+    lead: ' '
+- paths: affinity-session-persistence
+  block: 12
+  fingerprint: b1fceae1e5668eb4
+  lang: sh
+  lines: b1fceae1
+  preview: kubectl rollout restart deploy/http -n {{< reuse "kgw-docs/snippets/namespace.md
+  form:
+    attr: paths="affinity-session-persistence"
+    only: true
+    lead: ' '
+- paths: affinity-session-persistence
+  block: 13
+  fingerprint: fc5f36ec25692d3d
+  lang: sh
+  lines: fc5f36ec
+  preview: kubectl get po -n kgateway-system -l gateway.networking.k8s.io/gateway-name=http
+  form:
+    attr: paths="affinity-session-persistence"
+    only: true
+    lead: ' '
+- paths: affinity-session-persistence
+  block: 15
+  fingerprint: 0af915066f60e0fd
+  lang: sh
+  lines: f2dd8a82 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="affinity-session-persistence"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 1aab5f7974287597
+    lang: sh
+    lines: 1aab5f79
+    preview: kubectl scale deployment httpbin -n httpbin --replicas=2
+  content: |-
+    {{< doc-test paths="affinity-session-persistence" >}}
+    kubectl rollout status deployment/httpbin -n httpbin --timeout=300s
+    # Test-only helpers. go-httpbin logs one line per request with its URI, so a
+    # batch of requests to /anything/<marker> shows which httpbin pods served it.
+    SA_HOST="${SA_HOST:-www.example.com}"
+    SA_LAST_POD=""
+    # sa_batch <marker> [curl args]: send 20 requests; %s in an arg becomes a value
+    # that is unique to each request.
+    sa_batch() {
+      local marker="$1" i a
+      shift
+      for i in $(seq 1 20); do
+        local args=()
+        for a in "$@"; do
+          case "$a" in *%s*) a=$(printf "$a" "$i-$RANDOM") ;; esac
+          args+=("$a")
+        done
+        curl -s -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/anything/${marker}" \
+          -H "host: ${SA_HOST}" ${args[@]+"${args[@]}"} || true
+      done
+    }
+    # sa_tally <marker>: print "<pod> <count>" for each httpbin pod that logged the marker.
+    sa_tally() {
+      local p n
+      for p in $(kubectl get pods -n httpbin -l app=httpbin -o jsonpath='{.items[*].metadata.name}'); do
+        n=$(kubectl logs -n httpbin "$p" -c httpbin | grep -c "/anything/$1\"" || true)
+        if [ "${n:-0}" -gt 0 ]; then echo "$p $n"; fi
+      done
+      return 0
+    }
+    # sa_expect <label> sticky|spread [curl args]: retry a batch of 20 requests
+    # until all 20 reach one pod (sticky) or at least 2 pods (spread).
+    sa_expect() {
+      local label="$1" mode="$2" attempt marker tally="" pods
+      shift 2
+      for attempt in $(seq 1 30); do
+        marker="${label}-${attempt}-${RANDOM}${RANDOM}"
+        sa_batch "$marker" ${@+"$@"}
+        sleep 2
+        tally=$(sa_tally "$marker")
+        pods=$(printf '%s\n' "$tally" | grep -c . || true)
+        if [ "$mode" = sticky ] && [ "$pods" -eq 1 ] && [ "${tally##* }" -eq 20 ]; then
+          SA_LAST_POD="${tally% *}"
+          echo "$label: all 20 requests were served by $SA_LAST_POD"
+          return 0
+        fi
+        if [ "$mode" = spread ] && [ "$pods" -ge 2 ]; then
+          echo "$label: requests were spread across $pods pods"
+          return 0
+        fi
+        sleep 3
+      done
+      echo "$label: expected $mode requests, but the last batch was served as: ${tally:-no requests logged}"
+      exit 1
+    }
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: f45a9f776f59b83e
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 98564d41 22f6103c 33c051d8 b777448c e8443677 44af2d99 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-session-persistence" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin HTTPRoute with session persistence to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 3e936e1b3e1e105f
+    lang: ''
+    lines: d254a3c2 f3af0a17 019f793e c66962a3 caf240e8 b872f0d7 ab5df625
+    preview: 'Defaulted container "httpbin" out of: httpbin, curl'
+  content: |-
+    {{< doc-test paths="affinity-session-persistence" >}}
+    # Test-only: replaces the reader's curl and kubectl logs steps. The first
+    # response sets the Session-A cookie; requests with that cookie stay on one pod,
+    # while requests without it are load balanced across both pods.
+    SA_HOST="www.example.com:8080"
+    sp_cookie=""
+    for attempt in $(seq 1 60); do
+      hdrs=$(curl -s -D - -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: ${SA_HOST}" | tr -d '\r' || true)
+      sp_cookie=$(printf '%s\n' "$hdrs" | grep -i '^set-cookie: Session-A=' | head -n 1 || true)
+      if [ -n "$sp_cookie" ]; then break; fi
+      sleep 2
+    done
+    if [ -z "$sp_cookie" ]; then echo "the response has no set-cookie header for Session-A"; exit 1; fi
+    echo "$sp_cookie"
+    SP_VALUE=$(printf '%s\n' "$sp_cookie" | sed 's/^[^=]*=\([^;]*\).*/\1/')
+    sa_expect session-persistence-no-cookie spread
+    sa_expect session-persistence-same-cookie sticky -H "cookie: Session-A=${SP_VALUE}"
+    SP_POD="$SA_LAST_POD"
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: b1fceae1e5668eb4
+    lang: sh
+    lines: b1fceae1
+    preview: kubectl rollout restart deploy/http -n {{< reuse "kgw-docs/snippets/namespace.md
+  content: |-
+    {{< doc-test paths="affinity-session-persistence" >}}
+    kubectl rollout status deployment/http -n kgateway-system --timeout=300s
+    for attempt in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com:8080" || true)
+      if [ "$code" = "200" ]; then break; fi
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: c7df67b1381e2cf8
+    lang: ''
+    lines: ab5df625 caf240e8 1bb9ef3e a2ca4415 57d4092a 95740058 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="affinity-session-persistence" >}}
+    # Test-only: replaces the reader's curl and kubectl logs steps after the
+    # gateway restart. The cookie from before the restart still reaches the same pod.
+    sa_expect session-persistence-after-restart sticky -H "cookie: Session-A=${SP_VALUE}"
+    if [ "$SA_LAST_POD" != "$SP_POD" ]; then
+      echo "after the gateway restart, the Session-A cookie reached $SA_LAST_POD instead of $SP_POD"
+      exit 1
+    fi
+    {{< /doc-test >}}

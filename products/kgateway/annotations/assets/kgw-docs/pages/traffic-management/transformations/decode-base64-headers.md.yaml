@@ -1,0 +1,88 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/transformations/decode-base64-headers.md
+blocks:
+- 7dffab2301c18e39 sh
+- 7874f19864251709
+- e621cf6cd79cd430 yaml
+- 35757df4cbcc282a yaml
+- 5e870b0d59be50ee sh
+- 52f99741dcaaba8d sh
+- 5e05e2bce2e5d8ee console
+- ed5e148ec7409060 sh
+tags:
+- paths: transform-decode-base64-headers
+  block: 2
+  fingerprint: e621cf6cd79cd430
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 274fdf3f dbc0ec10 7e230db5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="transform-decode-base64-headers"
+    only: true
+    lead: ' '
+- paths: transform-decode-base64-headers
+  block: 7
+  fingerprint: ed5e148ec7409060
+  lang: sh
+  lines: ed5e148e
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} transformation
+  form:
+    attr: paths="transform-decode-base64-headers"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: e621cf6cd79cd430
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 274fdf3f dbc0ec10 7e230db5 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="transform-decode-base64-headers" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "transform-decode-base64-headers - wait for the httpbin HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "transform-decode-base64-headers - wait for the transformation TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: transformation
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "transform-decode-base64-headers - x-base64-decoded carries the decoded value from the 11th character"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-base64-encoded: "dHJhbnNmb3JtYXRpb24gdGVzdA=="
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-base64-decoded
+            comparator: equals
+            value: "ion test"
+    EOF
+    {{< /doc-test >}}

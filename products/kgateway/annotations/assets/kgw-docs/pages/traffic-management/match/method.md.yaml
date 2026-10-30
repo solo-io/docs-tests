@@ -1,0 +1,81 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/match/method.md
+blocks:
+- fa3a5f680a029954 yaml
+- e9312d1d48d630d3 sh
+- 07aa3ad2a5076fe2 sh
+- 161885978aefd7a3
+- 2c4ae8af8fa11053 sh
+- a0a489b8c818f70b sh
+- 2d1f74e5afa4a149
+- 32ed805e3efa5796 sh
+tags:
+- paths: match-method
+  block: 0
+  fingerprint: fa3a5f680a029954
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 4f7ab38a 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="match-method"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: fa3a5f680a029954
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 4f7ab38a 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="match-method" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-match HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-match
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: fa3a5f680a029954
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 4f7ab38a 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="match-method" >}}
+    YAMLTest -f - <<'EOF'
+    - name: match-method - GET request returns 200
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "match.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: match-method - POST request returns 404
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/post"
+        method: POST
+        headers:
+          host: "match.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}

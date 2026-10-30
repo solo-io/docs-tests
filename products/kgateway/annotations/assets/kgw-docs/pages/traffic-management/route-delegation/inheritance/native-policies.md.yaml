@@ -1,0 +1,156 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/route-delegation/inheritance/native-policies.md
+blocks:
+- 43ec65cad0fdf4c9 yaml
+- 9155a914ed8749d4 yaml
+- efe0cc9888185447 yaml
+- 12151b3d6a73de67 sh
+- f579a9ce98b4843d sh
+- 31aa8acf46697686 console
+- 137ca5fea4e0a147 sh
+- 3fb4e2970d39151b sh
+- 1febbf05bf9c937c console
+- 6aeb01a6a620ff82 sh
+tags:
+- paths: delegation-inheritance-native
+  block: 0
+  fingerprint: 43ec65cad0fdf4c9
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 0bebd850 36184fa5 d3d416e7 82601aaa 301e1bfa 8c2fb89f 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 94ae491e b5a028c9 56bf9360 91f62e83 53143665 dbf95901 a38747fd b733d726 aeca2b3d bf068a96 b83a8e91 94ae491e b5a028c9 56bf9360 91f62e83 52418815 dbf95901 a9ad938e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-inheritance-native"
+    only: true
+    lead: ' '
+- paths: delegation-inheritance-native
+  block: 1
+  fingerprint: 9155a914ed8749d4
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-inheritance-native"
+    only: true
+    lead: ' '
+- paths: delegation-inheritance-native
+  block: 2
+  fingerprint: efe0cc9888185447
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 d3d416e7 dad80896 0bebd850 350955ef 56bf9360 3de9d845 b733d726 aeca2b3d bf068a96 14a88714 94ae491e 80e9487c bca8e5f7 dbf95901 c710f077 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-inheritance-native"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: efe0cc9888185447
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 d3d416e7 dad80896 0bebd850 350955ef 56bf9360 3de9d845 b733d726 aeca2b3d bf068a96 14a88714 94ae491e 80e9487c bca8e5f7 dbf95901 c710f077 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-inheritance-native" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the child-team1 HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: team1
+               name: child-team1
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the child-team2 HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: team2
+               name: child-team2
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       for i in $(seq 1 60); do
+         out1=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo" -H "host: delegation.example:8080" || true)
+         out2=$(curl -s --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/anything/team2/bar" -H "host: delegation.example:8080" || true)
+         if echo "$out1" | grep -q '"X-Envoy-Expected-Rq-Timeout-Ms"' && echo "$out2" | grep -q '"X-Envoy-Expected-Rq-Timeout-Ms"'; then break; fi
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 31aa8acf46697686
+    lang: console
+    lines: 92413e97 a152bc23 c441a9d6 706d2426 daf6b085 71b9dd8a 5f7c6523 021fb596 1efe1dd8 2e253c22 c7197869 817ad316 39d4b54e 6056662a 087ed887 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 328d48ab 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 5ea7704a cfae0d42 e52a1813 905b1194 2370b3ae 66e083c5 bb3dd0df 3f450ae3 d7180b90 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="delegation-inheritance-native" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "delegation-inheritance-native - child-team1 inherits the 10s request timeout from the parent"
+         retries: 30
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo"
+           method: GET
+           headers:
+             host: "delegation.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['X-Envoy-Expected-Rq-Timeout-Ms'][0]"
+             comparator: equals
+             value: "10000"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 1febbf05bf9c937c
+    lang: console
+    lines: 92413e97 a152bc23 c441a9d6 706d2426 daf6b085 cd8a298e 5f7c6523 021fb596 1efe1dd8 2e253c22 c7197869 817ad316 39d4b54e 6056662a 087ed887 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 906a8170 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 8bcd03d8 cfae0d42 e52a1813 53cddacf 872dfc47 66e083c5 bb3dd0df 3f450ae3 d7180b90 d10b36aa
+    preview: HTTP/1.1 200 OK
+  content: |2-
+       {{< doc-test paths="delegation-inheritance-native" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "delegation-inheritance-native - child-team2 overrides the parent 20s request timeout with its own 30s"
+         retries: 30
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team2/bar"
+           method: GET
+           headers:
+             host: "delegation.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.headers['X-Envoy-Expected-Rq-Timeout-Ms'][0]"
+             comparator: equals
+             value: "30000"
+       EOF
+       {{< /doc-test >}}

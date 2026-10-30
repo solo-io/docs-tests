@@ -1,0 +1,59 @@
+format: 1
+source: assets/kgw-docs/snippets/listeners-https-create-cert.md
+blocks:
+- 364f4c60ae2e6d8f sh
+- e9c2b888dd589532 sh
+- d4b0fcee86300f76 sh
+- ff7eef5f0f38b10e sh
+- d9f116e1620852db sh
+tags:
+- paths: redirect-https
+  block: 0
+  fingerprint: 364f4c60ae2e6d8f
+  lang: sh
+  lines: 364f4c60
+  preview: mkdir example_certs
+  form:
+    attr: paths="redirect-https"
+    only: true
+    lead: ' '
+- paths: redirect-https
+  block: 1
+  fingerprint: e9c2b888dd589532
+  lang: sh
+  lines: 5f9b086b 7be9668d
+  preview: '# root cert'
+  form:
+    attr: paths="redirect-https"
+    only: true
+    lead: ' '
+- paths: redirect-https
+  block: 2
+  fingerprint: d4b0fcee86300f76
+  lang: sh
+  lines: a22e047b ec8675ee 91fd91f7 fb111352 4413c7e9 3ae939d2 936175d9 d43df850 d64f2f49 3f9613a1 31fe2619 60a9b85b b318e09b 8c70d593 8c2e6043 abc56510
+  preview: cat <<'EOF' > example_certs/gateway.cnf
+  form:
+    attr: paths="redirect-https"
+    only: true
+    lead: ' '
+- paths: redirect-https
+  block: 3
+  fingerprint: ff7eef5f0f38b10e
+  lang: sh
+  lines: 9b7ba93f cfc18677 0b0bd3da e5b521a4 a92bf41b
+  preview: openssl req -new -nodes -keyout example_certs/gateway.key -out example_certs/gat
+  form:
+    attr: paths="redirect-https"
+    only: true
+    lead: ' '
+- paths: redirect-https
+  block: 4
+  fingerprint: d9f116e1620852db
+  lang: sh
+  lines: cf2794a6 d4aa484c 68382244 9b8fb3b5
+  preview: kubectl create secret tls -n {{< reuse "kgw-docs/snippets/namespace.md" >}} http
+  form:
+    attr: paths="redirect-https"
+    only: true
+    lead: ' '

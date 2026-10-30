@@ -1,0 +1,131 @@
+format: 1
+source: assets/kgw-docs/snippets/prereq-delegation.md
+blocks:
+- 995dfc90f4865825 yaml
+- add2e63bf2d8fb71 sh
+- c53f0dd10a0fd984 sh
+- 499ec36c45084035 sh
+- b60615b9a43d4325 sh
+- ab3fb5312252a472 sh
+- 8256929203a85c96
+tags:
+- paths: route-delegation-prereq
+  block: 0
+  fingerprint: 995dfc90f4865825
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 9278ed91 1288d06d 36184fa5 ac45cc5c c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="route-delegation-prereq"
+    only: true
+    lead: ' '
+- paths: route-delegation-prereq
+  block: 1
+  fingerprint: add2e63bf2d8fb71
+  lang: sh
+  lines: cdd506b2 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n kgateway-system http -o jsonpath=
+  form:
+    attr: paths="route-delegation-prereq"
+    only: true
+    lead: ' '
+- paths: route-delegation-prereq
+  block: 3
+  fingerprint: 499ec36c45084035
+  lang: sh
+  lines: 0d2b41f9 40ce3f6f
+  preview: kubectl create namespace team1
+  form:
+    attr: paths="route-delegation-prereq"
+    only: true
+    lead: ' '
+- paths: route-delegation-prereq
+  block: 4
+  fingerprint: b60615b9a43d4325
+  lang: sh
+  lines: 6017562b 928cf4e9
+  preview: kubectl -n team1 apply -f https://raw.githubusercontent.com/kgateway-dev/kgatewa
+  form:
+    attr: paths="route-delegation-prereq"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 995dfc90f4865825
+    lang: yaml
+    lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 9278ed91 1288d06d 36184fa5 ac45cc5c c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="route-delegation-prereq" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the delegation http Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: http
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       # Programmed can be True before cloud-provider-kind gives the Service an
+       # address, and the next step reads that address into INGRESS_GW_ADDRESS.
+       - name: wait for the delegation http gateway service to get a load balancer address
+         wait:
+           target:
+             kind: Service
+             metadata:
+               namespace: kgateway-system
+               name: http
+           jsonPath: "$.status.loadBalancer.ingress[0].ip"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: b60615b9a43d4325
+    lang: sh
+    lines: 6017562b 928cf4e9
+    preview: kubectl -n team1 apply -f https://raw.githubusercontent.com/kgateway-dev/kgatewa
+  content: |2-
+       {{< doc-test paths="route-delegation-prereq" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for team1 httpbin deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: team1
+               name: httpbin
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 400
+             intervalSeconds: 5
+       - name: wait for team2 httpbin deployment to be ready
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: team2
+               name: httpbin
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 400
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}

@@ -1,0 +1,107 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/header-control/early-request-header-modifier.md
+blocks:
+- 5ec534ed2f37bebb sh
+- c2b2e7aaec1b5746 sh
+- 93252944e01da702 json
+- 18e69995c08b8afd yaml
+- 5ec534ed2f37bebb sh
+- c2b2e7aaec1b5746 sh
+- e0c64950a9ccba20 json
+- 8476351bac108030 sh
+tags:
+- paths: early-request-header-modifier
+  block: 3
+  fingerprint: 18e69995c08b8afd
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 43b82286 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 6b14d8fb 0a282488 9cfbba79 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="early-request-header-modifier"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 93252944e01da702
+    lang: json
+    lines: 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a 6ef1e4db 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e 45bf2c44 88270499 39d4b54e 59bc501f 70635b0e 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 41f9bf0e 39d4b54e 71bdd366 9790fe86 cfae0d42 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="early-request-header-modifier" >}}
+    YAMLTest -f - <<'EOF'
+    - name: early-request-header-modifier - before the policy, httpbin echoes the x-user-id header
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-user-id: reserved-user
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-User-Id'][0]"
+          comparator: equals
+          value: reserved-user
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Remove a reserved header
+    line: 597bc95a59e70752
+    occurrence: 0
+    words: d680db0e 1e0584a2 8e7d0a25 b4267ce9 6db7d803 8a84e406 65045134
+    block_before:
+      block: 3
+      fingerprint: 18e69995c08b8afd
+      lang: yaml
+      lines: 16c71da1 d664f32c 9144003f 8c8c4228 43b82286 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 6b14d8fb 0a282488 9cfbba79 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="early-request-header-modifier" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the remove-header ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: remove-header
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: e0c64950a9ccba20
+    lang: json
+    lines: 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a 6ef1e4db 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 3bc0f6e2 39d4b54e 45bf2c44 88270499 39d4b54e 59bc501f 70635b0e 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 5168edc1 cfae0d42 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="early-request-header-modifier" >}}
+    YAMLTest -f - <<'EOF'
+    - name: early-request-header-modifier - x-user-id is removed before it reaches httpbin
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-user-id: reserved-user
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-User-Id']"
+          comparator: exists
+          negate: true
+    EOF
+    {{< /doc-test >}}

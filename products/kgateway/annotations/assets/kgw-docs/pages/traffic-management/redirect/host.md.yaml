@@ -1,0 +1,82 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/redirect/host.md
+blocks:
+- 6f814cec9a1a70b2 yaml
+- 3077bddc15d0d268 sh
+- 3a5cf6e5518a814b sh
+- 4b6ed9a7be677ca3
+- 8ab115a1ce4bafd4 sh
+tags:
+- paths: redirect-host
+  block: 0
+  fingerprint: 6f814cec9a1a70b2
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f05018d1 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 5e204d2e 3de9d845 6e95318c 96b1dd04 4b419f75 96b3e94b 7ee1ecd3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="redirect-host"
+    only: true
+    lead: ' '
+- paths: redirect-host
+  block: 4
+  fingerprint: 8ab115a1ce4bafd4
+  lang: sh
+  lines: 8ab115a1
+  preview: kubectl delete httproute httpbin-redirect -n httpbin
+  form:
+    attr: paths="redirect-host"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 4b6ed9a7be677ca3
+    lang: ''
+    lines: e7f783c5 9e72ae31 7dc9d89c eda06f87 a03544dc 3ca1ea63 5f7c6523 8cdb8317 15357256
+    preview: '* Mark bundle as not supporting multiuse'
+  content: |-
+    {{< doc-test paths="redirect-host" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-redirect HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-redirect
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 4b6ed9a7be677ca3
+    lang: ''
+    lines: e7f783c5 9e72ae31 7dc9d89c eda06f87 a03544dc 3ca1ea63 5f7c6523 8cdb8317 15357256
+    preview: '* Mark bundle as not supporting multiuse'
+  content: |-
+    {{< doc-test paths="redirect-host" >}}
+    YAMLTest -f - <<'EOF'
+    - name: redirect-host - host.redirect.example returns 302 with location www.example.com/headers
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "host.redirect.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 302
+        headers:
+        - name: location
+          comparator: matches
+          value: "^http://www\\.example\\.com(:[0-9]+)?/headers$"
+    EOF
+    {{< /doc-test >}}

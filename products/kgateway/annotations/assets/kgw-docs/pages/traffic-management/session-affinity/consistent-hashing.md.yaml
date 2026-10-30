@@ -1,0 +1,461 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/session-affinity/consistent-hashing.md
+blocks:
+- a475877b9e1f54ca yaml
+- 4dc08b06904f2057 yaml
+- c5ed2fb543e2724d yaml
+- adaacf2370fb90da yaml
+- eba980e1911d338c yaml
+- 7eb1339c11f26398 yaml
+- 1aab5f7974287597 sh
+- 0e2cb4c4905b9f20 sh
+- 2c25f8ed4dd32a9a
+- 1dca44edff0750b5 sh
+- c5f79c301f8c8c6d sh
+- 7061394edec5d3f1 sh
+- 4679bf91d076af37 console
+- bcf44870a3393be8 sh
+- 78b6dce507a48f85 sh
+- dcf6fdb700262cb4 sh
+- a8090f25ddecd87e sh
+- 4679bf91d076af37 console
+- 33c1a6caa1a02985 sh
+- fa9db1c2e0dc0624 sh
+- 3e936e1b3e1e105f
+- 85cd28a0028ea8da sh
+- 082d4dd6e4126214 sh
+tags:
+- paths: affinity-consistent-hashing-ringhash
+  block: 0
+  fingerprint: a475877b9e1f54ca
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b a08d0375 9352db75 506c96cc 580dd090 72715e94 0f40df5f 5fbf16d2 72715e94 6d8cffd0 843016c5 cf807e53 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-consistent-hashing-ringhash"
+    only: true
+    lead: ' '
+- paths: affinity-consistent-hashing-ringhash
+  block: 1
+  fingerprint: 4dc08b06904f2057
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b a08d0375 9352db75 506c96cc 580dd090 bf8aef4f 50ddd0ed ae99763d 81b1fcc2 eee5d0ce 66b9079e 44a8be8a 5fbf16d2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-consistent-hashing-ringhash"
+    only: true
+    lead: ' '
+- paths: affinity-consistent-hashing-ringhash
+  block: 2
+  fingerprint: c5ed2fb543e2724d
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b a08d0375 9352db75 506c96cc 580dd090 b20e5ab3 5fbf16d2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-consistent-hashing-ringhash"
+    only: true
+    lead: ' '
+- paths: affinity-consistent-hashing-maglev
+  block: 3
+  fingerprint: adaacf2370fb90da
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 8f10aef3 580dd090 72715e94 0f40df5f 5fbf16d2 72715e94 6d8cffd0 843016c5 cf807e53 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-consistent-hashing-maglev"
+    only: true
+    lead: ' '
+- paths: affinity-consistent-hashing-maglev
+  block: 4
+  fingerprint: eba980e1911d338c
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 8f10aef3 580dd090 bf8aef4f 50ddd0ed ae99763d 81b1fcc2 eee5d0ce 66b9079e 44a8be8a 5fbf16d2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-consistent-hashing-maglev"
+    only: true
+    lead: ' '
+- paths: affinity-consistent-hashing-maglev
+  block: 5
+  fingerprint: 7eb1339c11f26398
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 8f10aef3 580dd090 b20e5ab3 5fbf16d2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="affinity-consistent-hashing-maglev"
+    only: true
+    lead: ' '
+- paths: affinity-consistent-hashing-ringhash,affinity-consistent-hashing-maglev
+  block: 6
+  fingerprint: 1aab5f7974287597
+  lang: sh
+  lines: 1aab5f79
+  preview: kubectl scale deployment httpbin -n httpbin --replicas=2
+  form:
+    attr: paths="affinity-consistent-hashing-ringhash,affinity-consistent-hashing-maglev"
+    only: true
+    lead: ' '
+    tail: ' '
+- paths: affinity-consistent-hashing-ringhash,affinity-consistent-hashing-maglev
+  block: 7
+  fingerprint: 0e2cb4c4905b9f20
+  lang: sh
+  lines: 0e2cb4c4
+  preview: kubectl get pods -n httpbin
+  form:
+    attr: paths="affinity-consistent-hashing-ringhash,affinity-consistent-hashing-maglev"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: a475877b9e1f54ca
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b a08d0375 9352db75 506c96cc 580dd090 72715e94 0f40df5f 5fbf16d2 72715e94 6d8cffd0 843016c5 cf807e53 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-consistent-hashing-ringhash" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the ringhash header httpbin-hash BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-hash
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the page scales httpbin to two replicas in its verify steps. Scale
+    # now, so that each hash policy tab can be checked right after it is applied.
+    kubectl scale deployment httpbin -n httpbin --replicas=2
+    kubectl rollout status deployment/httpbin -n httpbin --timeout=300s
+    # Test-only helpers. go-httpbin logs one line per request with its URI, so a
+    # batch of requests to /anything/<marker> shows which httpbin pods served it.
+    SA_HOST="${SA_HOST:-www.example.com}"
+    SA_LAST_POD=""
+    # sa_batch <marker> [curl args]: send 20 requests; %s in an arg becomes a value
+    # that is unique to each request.
+    sa_batch() {
+      local marker="$1" i a
+      shift
+      for i in $(seq 1 20); do
+        local args=()
+        for a in "$@"; do
+          case "$a" in *%s*) a=$(printf "$a" "$i-$RANDOM") ;; esac
+          args+=("$a")
+        done
+        curl -s -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/anything/${marker}" \
+          -H "host: ${SA_HOST}" ${args[@]+"${args[@]}"} || true
+      done
+    }
+    # sa_tally <marker>: print "<pod> <count>" for each httpbin pod that logged the marker.
+    sa_tally() {
+      local p n
+      for p in $(kubectl get pods -n httpbin -l app=httpbin -o jsonpath='{.items[*].metadata.name}'); do
+        n=$(kubectl logs -n httpbin "$p" -c httpbin | grep -c "/anything/$1\"" || true)
+        if [ "${n:-0}" -gt 0 ]; then echo "$p $n"; fi
+      done
+      return 0
+    }
+    # sa_expect <label> sticky|spread [curl args]: retry a batch of 20 requests
+    # until all 20 reach one pod (sticky) or at least 2 pods (spread).
+    sa_expect() {
+      local label="$1" mode="$2" attempt marker tally="" pods
+      shift 2
+      for attempt in $(seq 1 30); do
+        marker="${label}-${attempt}-${RANDOM}${RANDOM}"
+        sa_batch "$marker" ${@+"$@"}
+        sleep 2
+        tally=$(sa_tally "$marker")
+        pods=$(printf '%s\n' "$tally" | grep -c . || true)
+        if [ "$mode" = sticky ] && [ "$pods" -eq 1 ] && [ "${tally##* }" -eq 20 ]; then
+          SA_LAST_POD="${tally% *}"
+          echo "$label: all 20 requests were served by $SA_LAST_POD"
+          return 0
+        fi
+        if [ "$mode" = spread ] && [ "$pods" -ge 2 ]; then
+          echo "$label: requests were spread across $pods pods"
+          return 0
+        fi
+        sleep 3
+      done
+      echo "$label: expected $mode requests, but the last batch was served as: ${tally:-no requests logged}"
+      exit 1
+    }
+    # sa_cookie_hash <label>: a request without the session-id cookie gets one in
+    # set-cookie; the same cookie keeps requests on one pod, and different cookie
+    # values reach more than one pod.
+    sa_cookie_hash() {
+      local label="$1" attempt hdrs="" cookie=""
+      for attempt in $(seq 1 60); do
+        hdrs=$(curl -s -D - -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: ${SA_HOST}" | tr -d '\r' || true)
+        cookie=$(printf '%s\n' "$hdrs" | grep -i '^set-cookie: session-id=' | head -n 1 || true)
+        if [ -n "$cookie" ]; then break; fi
+        sleep 2
+      done
+      if [ -z "$cookie" ]; then echo "$label: the response has no set-cookie header for session-id"; exit 1; fi
+      echo "$label: $cookie"
+      case "$cookie" in *"Path=/api"*) ;; *) echo "$label: the session-id cookie does not have Path=/api"; exit 1 ;; esac
+      case "$cookie" in *"Max-Age=1800"*) ;; *) echo "$label: the session-id cookie does not have Max-Age=1800 (ttl 30m)"; exit 1 ;; esac
+      local value
+      value=$(printf '%s\n' "$cookie" | sed 's/^[^=]*=\([^;]*\).*/\1/')
+      sa_expect "$label-same-cookie" sticky -H "cookie: session-id=${value}"
+      sa_expect "$label-other-cookies" spread -H "cookie: session-id=%s"
+    }
+    # sa_source_ip <label>: wait until the proxy no longer sets the session-id
+    # cookie from the previous policy, then expect every request from this client
+    # to reach one pod.
+    sa_source_ip() {
+      local label="$1" attempt hdrs=""
+      for attempt in $(seq 1 60); do
+        hdrs=$(curl -s -D - -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: ${SA_HOST}" | tr -d '\r' || true)
+        if printf '%s\n' "$hdrs" | grep -q '^HTTP/[0-9.]* 200' && ! printf '%s\n' "$hdrs" | grep -qi '^set-cookie: session-id='; then break; fi
+        if [ "$attempt" -eq 60 ]; then echo "$label: the proxy still sets the session-id cookie"; exit 1; fi
+        sleep 2
+      done
+      sa_expect "$label" sticky
+    }
+    # Different x-user-id values reach both pods, so both pods serve traffic.
+    sa_expect ringhash-header-other-users spread -H "x-user-id: %s"
+    # The same x-user-id keeps requests on one pod.
+    sa_expect ringhash-header-same-user sticky -H "x-user-id: me"
+    # x-user-id is terminal, so a different x-session-id on each request does not
+    # change the pod.
+    sa_expect ringhash-header-terminal sticky -H "x-user-id: me" -H "x-session-id: %s"
+    # Without x-user-id, the x-session-id fallback policy keeps requests on one pod.
+    sa_expect ringhash-header-fallback sticky -H "x-session-id: s1"
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 4dc08b06904f2057
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b a08d0375 9352db75 506c96cc 580dd090 bf8aef4f 50ddd0ed ae99763d 81b1fcc2 eee5d0ce 66b9079e 44a8be8a 5fbf16d2 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-consistent-hashing-ringhash" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the ringhash cookie httpbin-hash BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-hash
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    sa_cookie_hash ringhash-cookie
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: c5ed2fb543e2724d
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b a08d0375 9352db75 506c96cc 580dd090 b20e5ab3 5fbf16d2 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-consistent-hashing-ringhash" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the ringhash source IP httpbin-hash BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-hash
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    sa_source_ip ringhash-source-ip
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: adaacf2370fb90da
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 8f10aef3 580dd090 72715e94 0f40df5f 5fbf16d2 72715e94 6d8cffd0 843016c5 cf807e53 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-consistent-hashing-maglev" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the maglev header httpbin-hash BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-hash
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the page scales httpbin to two replicas in its verify steps. Scale
+    # now, so that each hash policy tab can be checked right after it is applied.
+    kubectl scale deployment httpbin -n httpbin --replicas=2
+    kubectl rollout status deployment/httpbin -n httpbin --timeout=300s
+    # Test-only helpers. go-httpbin logs one line per request with its URI, so a
+    # batch of requests to /anything/<marker> shows which httpbin pods served it.
+    SA_HOST="${SA_HOST:-www.example.com}"
+    SA_LAST_POD=""
+    # sa_batch <marker> [curl args]: send 20 requests; %s in an arg becomes a value
+    # that is unique to each request.
+    sa_batch() {
+      local marker="$1" i a
+      shift
+      for i in $(seq 1 20); do
+        local args=()
+        for a in "$@"; do
+          case "$a" in *%s*) a=$(printf "$a" "$i-$RANDOM") ;; esac
+          args+=("$a")
+        done
+        curl -s -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/anything/${marker}" \
+          -H "host: ${SA_HOST}" ${args[@]+"${args[@]}"} || true
+      done
+    }
+    # sa_tally <marker>: print "<pod> <count>" for each httpbin pod that logged the marker.
+    sa_tally() {
+      local p n
+      for p in $(kubectl get pods -n httpbin -l app=httpbin -o jsonpath='{.items[*].metadata.name}'); do
+        n=$(kubectl logs -n httpbin "$p" -c httpbin | grep -c "/anything/$1\"" || true)
+        if [ "${n:-0}" -gt 0 ]; then echo "$p $n"; fi
+      done
+      return 0
+    }
+    # sa_expect <label> sticky|spread [curl args]: retry a batch of 20 requests
+    # until all 20 reach one pod (sticky) or at least 2 pods (spread).
+    sa_expect() {
+      local label="$1" mode="$2" attempt marker tally="" pods
+      shift 2
+      for attempt in $(seq 1 30); do
+        marker="${label}-${attempt}-${RANDOM}${RANDOM}"
+        sa_batch "$marker" ${@+"$@"}
+        sleep 2
+        tally=$(sa_tally "$marker")
+        pods=$(printf '%s\n' "$tally" | grep -c . || true)
+        if [ "$mode" = sticky ] && [ "$pods" -eq 1 ] && [ "${tally##* }" -eq 20 ]; then
+          SA_LAST_POD="${tally% *}"
+          echo "$label: all 20 requests were served by $SA_LAST_POD"
+          return 0
+        fi
+        if [ "$mode" = spread ] && [ "$pods" -ge 2 ]; then
+          echo "$label: requests were spread across $pods pods"
+          return 0
+        fi
+        sleep 3
+      done
+      echo "$label: expected $mode requests, but the last batch was served as: ${tally:-no requests logged}"
+      exit 1
+    }
+    # sa_cookie_hash <label>: a request without the session-id cookie gets one in
+    # set-cookie; the same cookie keeps requests on one pod, and different cookie
+    # values reach more than one pod.
+    sa_cookie_hash() {
+      local label="$1" attempt hdrs="" cookie=""
+      for attempt in $(seq 1 60); do
+        hdrs=$(curl -s -D - -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: ${SA_HOST}" | tr -d '\r' || true)
+        cookie=$(printf '%s\n' "$hdrs" | grep -i '^set-cookie: session-id=' | head -n 1 || true)
+        if [ -n "$cookie" ]; then break; fi
+        sleep 2
+      done
+      if [ -z "$cookie" ]; then echo "$label: the response has no set-cookie header for session-id"; exit 1; fi
+      echo "$label: $cookie"
+      case "$cookie" in *"Path=/api"*) ;; *) echo "$label: the session-id cookie does not have Path=/api"; exit 1 ;; esac
+      case "$cookie" in *"Max-Age=1800"*) ;; *) echo "$label: the session-id cookie does not have Max-Age=1800 (ttl 30m)"; exit 1 ;; esac
+      local value
+      value=$(printf '%s\n' "$cookie" | sed 's/^[^=]*=\([^;]*\).*/\1/')
+      sa_expect "$label-same-cookie" sticky -H "cookie: session-id=${value}"
+      sa_expect "$label-other-cookies" spread -H "cookie: session-id=%s"
+    }
+    # sa_source_ip <label>: wait until the proxy no longer sets the session-id
+    # cookie from the previous policy, then expect every request from this client
+    # to reach one pod.
+    sa_source_ip() {
+      local label="$1" attempt hdrs=""
+      for attempt in $(seq 1 60); do
+        hdrs=$(curl -s -D - -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: ${SA_HOST}" | tr -d '\r' || true)
+        if printf '%s\n' "$hdrs" | grep -q '^HTTP/[0-9.]* 200' && ! printf '%s\n' "$hdrs" | grep -qi '^set-cookie: session-id='; then break; fi
+        if [ "$attempt" -eq 60 ]; then echo "$label: the proxy still sets the session-id cookie"; exit 1; fi
+        sleep 2
+      done
+      sa_expect "$label" sticky
+    }
+    # Different x-user-id values reach both pods, so both pods serve traffic.
+    sa_expect maglev-header-other-users spread -H "x-user-id: %s"
+    # The same x-user-id keeps requests on one pod.
+    sa_expect maglev-header-same-user sticky -H "x-user-id: me"
+    # x-user-id is terminal, so a different x-session-id on each request does not
+    # change the pod.
+    sa_expect maglev-header-terminal sticky -H "x-user-id: me" -H "x-session-id: %s"
+    # Without x-user-id, the x-session-id fallback policy keeps requests on one pod.
+    sa_expect maglev-header-fallback sticky -H "x-session-id: s1"
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: eba980e1911d338c
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 8f10aef3 580dd090 bf8aef4f 50ddd0ed ae99763d 81b1fcc2 eee5d0ce 66b9079e 44a8be8a 5fbf16d2 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-consistent-hashing-maglev" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the maglev cookie httpbin-hash BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-hash
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    sa_cookie_hash maglev-cookie
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 7eb1339c11f26398
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 f61f9536 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5679d65b 8f10aef3 580dd090 b20e5ab3 5fbf16d2 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="affinity-consistent-hashing-maglev" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the maglev source IP httpbin-hash BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-hash
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    sa_source_ip maglev-source-ip
+    {{< /doc-test >}}

@@ -1,0 +1,823 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/match/route-ordering.md
+blocks:
+- 26067ec726d046d5 yaml
+- 73efc789852139bd yaml
+- 0873114c553876b1 yaml
+hidden:
+- after:
+    section: Specificity-based ordering
+    line: a24af144b784e918
+    occurrence: 0
+    words: 1eb79602 eee94966 1754dbdd deb538b5 5ef5ef03 e22bc966 75857a45 5ef5ef03 6984f86d 8e7fc023 ba78973d 55d9067e 663ea1bf b9776d7d 0967115f c4c05d40 ca978112 8a84e406 0695b563 ca978112 73834add e7a2e8b2 9cdc6c47 4e2b5722 c1cc0ecc 5fb6a47e ca978112 13602ce5 7692c3ad 005cef24 28391d3b 77bc06c5 e5381597 2ad8a704 b63b99f6 c3657998 58296753 7175517a 58296753 749ab2c0 3eeb7e96 b9776d7d 6984f86d 910adfb4 406effb1
+    block_before: null
+  content: |-
+    {{< doc-test paths="route-ordering" >}}
+    # Older HTTPRoute: a short /anything prefix, plus bare prefixes that the newer route refines.
+    kubectl apply -f- <<KEOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: ordering-older
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - ordering-specificity.example
+      rules:
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: short-prefix
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/method
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: no-method
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/header
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: no-header
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/query
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: no-query
+        backendRefs:
+        - name: httpbin
+          port: 8000
+    KEOF
+    # Creation timestamps have one-second resolution; make the second route strictly newer.
+    sleep 2
+    kubectl apply -f- <<KEOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: ordering-newer
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - ordering-specificity.example
+      rules:
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/team
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: long-prefix
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: Exact
+            value: /anything/team/exact
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: exact
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/method
+          method: GET
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: method
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/header
+          headers:
+          - name: x-match
+            value: a
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: header
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/query
+          queryParams:
+          - name: q
+            value: a
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: query
+        backendRefs:
+        - name: httpbin
+          port: 8000
+    KEOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the ordering-older HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: ordering-older
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the ordering-newer HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: ordering-newer
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "specificity - a longer PathPrefix in a newer HTTPRoute wins over a shorter one in an older HTTPRoute"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team/1"
+        method: GET
+        headers:
+          host: "ordering-specificity.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "long-prefix"
+    - name: "specificity - a request that only the short prefix matches goes to the short prefix"
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/other"
+        method: GET
+        headers:
+          host: "ordering-specificity.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "short-prefix"
+    - name: "specificity - Exact wins over PathPrefix"
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team/exact"
+        method: GET
+        headers:
+          host: "ordering-specificity.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "exact"
+    - name: "specificity - a rule with a method match wins over a same-length prefix without one"
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/method/1"
+        method: GET
+        headers:
+          host: "ordering-specificity.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "method"
+    - name: "specificity - a request with another method falls through to the rule without a method match"
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/method/1"
+        method: POST
+        headers:
+          host: "ordering-specificity.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "no-method"
+    - name: "specificity - a rule with a header match wins over a same-length prefix without one"
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/header/1"
+        method: GET
+        headers:
+          host: "ordering-specificity.example:8080"
+          x-match: "a"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "header"
+    - name: "specificity - a request without the header falls through to the rule without a header match"
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/header/1"
+        method: GET
+        headers:
+          host: "ordering-specificity.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "no-header"
+    - name: "specificity - a rule with a query param match wins over a same-length prefix without one"
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/query/1?q=a"
+        method: GET
+        headers:
+          host: "ordering-specificity.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "query"
+    - name: "specificity - a request without the query param falls through to the rule without a query param match"
+      retries: 20
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/query/1"
+        method: GET
+        headers:
+          host: "ordering-specificity.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "no-query"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 26067ec726d046d5
+    lang: yaml
+    lines: 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 1c1f7402 b733d726 aeca2b3d bf068a96 2c96e08c
+    preview: 'spec:'
+  content: |-
+    {{< doc-test paths="route-ordering" >}}
+    kubectl apply -f- <<KEOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: ordering-tie-single
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - ordering-tie.example
+      rules:
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/tie
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: rule-1
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/tie
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: rule-2
+        backendRefs:
+        - name: httpbin
+          port: 8000
+    KEOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the ordering-tie-single HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: ordering-tie-single
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "tiebreak within one HTTPRoute - the first of two equally specific rules wins"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/tie/1"
+        method: GET
+        headers:
+          host: "ordering-tie.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "rule-1"
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Across HTTPRoutes
+    line: 2b0257f10b8fda02
+    occurrence: 0
+    words: d4735e3a f871002e 9359f3bb 82a3537f 3eeb7e96 935f6831 b9776d7d 6984f86d 193c45b5 b9776d7d 0967115f 323748f8 6c621d1a ba78973d 7fdbf2f7 9eeb9c56 a7e2d26e 9359f3bb 6201111b 82a3537f
+    block_before:
+      block: 0
+      fingerprint: 26067ec726d046d5
+      lang: yaml
+      lines: 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 1c1f7402 b733d726 aeca2b3d bf068a96 2c96e08c
+      preview: 'spec:'
+  content: |-
+    {{< doc-test paths="route-ordering" >}}
+    kubectl apply -f- <<KEOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: ordering-tie-b
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - ordering-tie-across.example
+      rules:
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/tie
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: older-b
+        backendRefs:
+        - name: httpbin
+          port: 8000
+    KEOF
+    sleep 2
+    kubectl apply -f- <<KEOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: ordering-tie-a
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - ordering-tie-across.example
+      rules:
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /anything/tie
+        filters:
+        - type: RequestHeaderModifier
+          requestHeaderModifier:
+            set:
+            - name: X-Route
+              value: newer-a
+        backendRefs:
+        - name: httpbin
+          port: 8000
+    KEOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the ordering-tie-b HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: ordering-tie-b
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the ordering-tie-a HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: ordering-tie-a
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "tiebreak across HTTPRoutes - the older HTTPRoute wins although its name sorts later"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything/tie/1"
+        method: GET
+        headers:
+          host: "ordering-tie-across.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Route'][0]"
+          comparator: equals
+          value: "older-b"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 73efc789852139bd
+    lang: yaml
+    lines: 36184fa5 3de9d845 b733d726 aeca2b3d ff36735c bfa310d4 b733d726 aeca2b3d ff36735c 9ddb0361
+    preview: 'spec:'
+  content: |2-
+      {{< doc-test paths="route-ordering" >}}
+      kubectl apply -f- <<KEOF
+      apiVersion: gateway.networking.k8s.io/v1
+      kind: HTTPRoute
+      metadata:
+        name: ordering-regex-single
+        namespace: httpbin
+      spec:
+        parentRefs:
+        - name: http
+          namespace: kgateway-system
+        hostnames:
+        - ordering-regex.example
+        rules:
+        - matches:
+          - path:
+              type: RegularExpression
+              value: /anything/api/homepage-beta-flag.*
+          filters:
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+              - name: X-Route
+                value: beta-flag
+          backendRefs:
+          - name: httpbin
+            port: 8000
+        - matches:
+          - path:
+              type: RegularExpression
+              value: /anything/api/homepage.*
+          filters:
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+              - name: X-Route
+                value: homepage
+          backendRefs:
+          - name: httpbin
+            port: 8000
+        - matches:
+          - path:
+              type: PathPrefix
+              value: /anything/api/homepage
+          filters:
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+              - name: X-Route
+                value: prefix
+          backendRefs:
+          - name: httpbin
+            port: 8000
+      KEOF
+      # The same two regex rules, broader one listed first.
+      kubectl apply -f- <<KEOF
+      apiVersion: gateway.networking.k8s.io/v1
+      kind: HTTPRoute
+      metadata:
+        name: ordering-regex-reversed
+        namespace: httpbin
+      spec:
+        parentRefs:
+        - name: http
+          namespace: kgateway-system
+        hostnames:
+        - ordering-regex-reversed.example
+        rules:
+        - matches:
+          - path:
+              type: RegularExpression
+              value: /anything/api/homepage.*
+          filters:
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+              - name: X-Route
+                value: homepage
+          backendRefs:
+          - name: httpbin
+            port: 8000
+        - matches:
+          - path:
+              type: RegularExpression
+              value: /anything/api/homepage-beta-flag.*
+          filters:
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+              - name: X-Route
+                value: beta-flag
+          backendRefs:
+          - name: httpbin
+            port: 8000
+      KEOF
+      # Two HTTPRoutes: the broader regex is older.
+      kubectl apply -f- <<KEOF
+      apiVersion: gateway.networking.k8s.io/v1
+      kind: HTTPRoute
+      metadata:
+        name: ordering-regex-broad
+        namespace: httpbin
+      spec:
+        parentRefs:
+        - name: http
+          namespace: kgateway-system
+        hostnames:
+        - ordering-regex-across.example
+        rules:
+        - matches:
+          - path:
+              type: RegularExpression
+              value: /anything/api/homepage.*
+          filters:
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+              - name: X-Route
+                value: homepage-older
+          backendRefs:
+          - name: httpbin
+            port: 8000
+      KEOF
+      sleep 2
+      kubectl apply -f- <<KEOF
+      apiVersion: gateway.networking.k8s.io/v1
+      kind: HTTPRoute
+      metadata:
+        name: ordering-regex-specific
+        namespace: httpbin
+      spec:
+        parentRefs:
+        - name: http
+          namespace: kgateway-system
+        hostnames:
+        - ordering-regex-across.example
+        rules:
+        - matches:
+          - path:
+              type: RegularExpression
+              value: /anything/api/homepage-beta-flag.*
+          filters:
+          - type: RequestHeaderModifier
+            requestHeaderModifier:
+              set:
+              - name: X-Route
+                value: beta-flag-newer
+          backendRefs:
+          - name: httpbin
+            port: 8000
+      KEOF
+      YAMLTest -f - <<'EOF'
+      - name: wait for the ordering-regex-single HTTPRoute to be accepted
+        wait:
+          target:
+            kind: HTTPRoute
+            metadata:
+              namespace: httpbin
+              name: ordering-regex-single
+          jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+          jsonPathExpectation:
+            comparator: equals
+            value: "True"
+          polling:
+            timeoutSeconds: 300
+            intervalSeconds: 5
+      - name: wait for the ordering-regex-reversed HTTPRoute to be accepted
+        wait:
+          target:
+            kind: HTTPRoute
+            metadata:
+              namespace: httpbin
+              name: ordering-regex-reversed
+          jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+          jsonPathExpectation:
+            comparator: equals
+            value: "True"
+          polling:
+            timeoutSeconds: 300
+            intervalSeconds: 5
+      - name: wait for the ordering-regex-broad HTTPRoute to be accepted
+        wait:
+          target:
+            kind: HTTPRoute
+            metadata:
+              namespace: httpbin
+              name: ordering-regex-broad
+          jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+          jsonPathExpectation:
+            comparator: equals
+            value: "True"
+          polling:
+            timeoutSeconds: 300
+            intervalSeconds: 5
+      - name: wait for the ordering-regex-specific HTTPRoute to be accepted
+        wait:
+          target:
+            kind: HTTPRoute
+            metadata:
+              namespace: httpbin
+              name: ordering-regex-specific
+          jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+          jsonPathExpectation:
+            comparator: equals
+            value: "True"
+          polling:
+            timeoutSeconds: 300
+            intervalSeconds: 5
+      - name: "regex in one HTTPRoute - the more specific pattern listed first wins"
+        retries: 60
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}:8080/anything/api/homepage-beta-flag-1"
+          method: GET
+          headers:
+            host: "ordering-regex.example:8080"
+        source:
+          type: local
+        expect:
+          statusCode: 200
+          bodyJsonPath:
+          - path: "$.headers['X-Route'][0]"
+            comparator: equals
+            value: "beta-flag"
+      - name: "regex in one HTTPRoute - a path only the broader pattern matches goes to it"
+        retries: 20
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}:8080/anything/api/homepage-v2"
+          method: GET
+          headers:
+            host: "ordering-regex.example:8080"
+        source:
+          type: local
+        expect:
+          statusCode: 200
+          bodyJsonPath:
+          - path: "$.headers['X-Route'][0]"
+            comparator: equals
+            value: "homepage"
+      - name: "regex in one HTTPRoute - a PathPrefix rule listed after the regex rules still wins"
+        retries: 20
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}:8080/anything/api/homepage/1"
+          method: GET
+          headers:
+            host: "ordering-regex.example:8080"
+        source:
+          type: local
+        expect:
+          statusCode: 200
+          bodyJsonPath:
+          - path: "$.headers['X-Route'][0]"
+            comparator: equals
+            value: "prefix"
+      - name: "regex in one HTTPRoute - with the broader pattern listed first, it wins (no specificity ranking)"
+        retries: 60
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}:8080/anything/api/homepage-beta-flag-1"
+          method: GET
+          headers:
+            host: "ordering-regex-reversed.example:8080"
+        source:
+          type: local
+        expect:
+          statusCode: 200
+          bodyJsonPath:
+          - path: "$.headers['X-Route'][0]"
+            comparator: equals
+            value: "homepage"
+      - name: "regex across HTTPRoutes - the older HTTPRoute wins although the newer one is more specific"
+        retries: 60
+        http:
+          url: "http://${INGRESS_GW_ADDRESS}:8080/anything/api/homepage-beta-flag-1"
+          method: GET
+          headers:
+            host: "ordering-regex-across.example:8080"
+        source:
+          type: local
+        expect:
+          statusCode: 200
+          bodyJsonPath:
+          - path: "$.headers['X-Route'][0]"
+            comparator: equals
+            value: "homepage-older"
+      EOF
+      {{< /doc-test >}}

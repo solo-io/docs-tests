@@ -1,0 +1,95 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/header-control/max-headers-count.md
+blocks:
+- 664f950048d49097 yaml
+- 3ea105525316b62c sh
+- 6e5e7207595138b5 sh
+- 6364ab47a888e2d8 console
+- 6eb2754b1f0e8865 sh
+- 3c7b7b358a7b75e0 sh
+- c94a1c2b4d0340b6 console
+- ba61801cd6abbbe2 sh
+tags:
+- paths: max-headers-count
+  block: 0
+  fingerprint: 664f950048d49097
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 d7bbaed7 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 82f0ad45 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="max-headers-count"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Set a maximum header count
+    line: 0038668b594237ab
+    occurrence: 0
+    words: 85087514 b9776d7d 8a64ff09 12886f9d 28391d3b 378f37b1 8e7fc023 ba78973d eabc01f1 58296753 ca978112 1f58b914 ec72420d 8e7fc023 3a12b051 1eb79602 55ea09e5 95100519 ca978112 0a1f1256 a9f4b3d2 10c22bcf e0603c49 6e2bdcfd 6201111b ca978112 dca83e71 01be30bb 10c22bcf e0603c49 d4735e3a 1e5fac86 4137b01e 46599c5b b1d6b91b 6bab65a2 6b86b273 935f6831 6cbf83e0 84532b30 043a7187 37a8eec1 28391d3b ad573668 fa51fd49 f8391613
+    block_before:
+      block: 0
+      fingerprint: 664f950048d49097
+      lang: yaml
+      lines: 16c71da1 d664f32c 9144003f 8c8c4228 d7bbaed7 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 82f0ad45 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="max-headers-count" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the max-headers-count ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: max-headers-count
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 6364ab47a888e2d8
+    lang: console
+    lines: 6364ab47
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="max-headers-count" >}}
+    YAMLTest -f - <<'EOF'
+    - name: max-headers-count - curl with only its default headers gets 200
+      retries: 5
+      command:
+        command: "curl -s -o /dev/null --max-time 5 -w '%{http_code}' http://${INGRESS_GW_ADDRESS}:8080/headers -H 'host: www.example.com:8080'"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          equals: "200"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: c94a1c2b4d0340b6
+    lang: console
+    lines: c94a1c2b
+    preview: < HTTP/1.1 431 Request Header Fields Too Large
+  content: |-
+    {{< doc-test paths="max-headers-count" >}}
+    YAMLTest -f - <<'EOF'
+    - name: max-headers-count - curl with 3 extra headers (6 total) gets 431
+      retries: 20
+      command:
+        command: "curl -s -o /dev/null --max-time 5 -w '%{http_code}' http://${INGRESS_GW_ADDRESS}:8080/headers -H 'host: www.example.com:8080' -H 'x-custom-1: a' -H 'x-custom-2: b' -H 'x-custom-3: c'"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          equals: "431"
+    EOF
+    {{< /doc-test >}}

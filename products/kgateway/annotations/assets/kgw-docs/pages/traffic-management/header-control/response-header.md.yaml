@@ -1,0 +1,875 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/header-control/response-header.md
+blocks:
+- 2701994a3310870a yaml
+- 970b139d32a8bfc7 yaml
+- 351995206d1e6d23 yaml
+- 4680ccb189cf08b2 sh
+- 990ed4f22f3e1a15 sh
+- 55873cf1b9295576 yaml
+- 277919f74f676448 sh
+- d07a1849fb5fb1b7 sh
+- e96300283ce0deed yaml
+- 970b139d32a8bfc7 yaml
+- 251b16d141d389e6 yaml
+- 4680ccb189cf08b2 sh
+- 990ed4f22f3e1a15 sh
+- 130b78556a6c0797 yaml
+- 277919f74f676448 sh
+- d07a1849fb5fb1b7 sh
+- f8d585ba5c7f2c44 sh
+- 3c87a7c8c15d70f3 sh
+- a1d8d8289c767e2e yaml
+- dff00313f8114047 yaml
+- 970b139d32a8bfc7 yaml
+- 978f8167ac4195e1 yaml
+- 4680ccb189cf08b2 sh
+- 990ed4f22f3e1a15 sh
+- fde9bf5a950ec091
+- 277919f74f676448 sh
+- d07a1849fb5fb1b7 sh
+- 10400d1e221a72e9 yaml
+- 970b139d32a8bfc7 yaml
+- d3978b01e6250eb8 yaml
+- 4680ccb189cf08b2 sh
+- 990ed4f22f3e1a15 sh
+- c344f63485b8355c sh
+- 02ecb8f9a6b35c05 sh
+- f1a19eb49623ed2d yaml
+- eb237e00e1e516b5 yaml
+- b866827610a17ac2 yaml
+- 0b2d9b12c5ccdbcc yaml
+- fdaf9c5383bdb21f yaml
+- 970b139d32a8bfc7 yaml
+- bce3cb81e79c2218 yaml
+- 4680ccb189cf08b2 sh
+- 990ed4f22f3e1a15 sh
+- c9cef5950b9a0e65 sh
+- 277919f74f676448 sh
+- d07a1849fb5fb1b7 sh
+tags:
+- paths: add-response-header
+  block: 0
+  fingerprint: 2701994a3310870a
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 274fdf3f 3f48a57d 0ca4c44a 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="add-response-header"
+    only: true
+    lead: ' '
+- paths: add-response-header
+  block: 1
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="add-response-header"
+    only: true
+    lead: ' '
+- paths: add-response-header
+  block: 2
+  fingerprint: 351995206d1e6d23
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 274fdf3f 3f48a57d 0ca4c44a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="add-response-header"
+    only: true
+    lead: ' '
+- paths: add-response-header
+  block: 7
+  fingerprint: d07a1849fb5fb1b7
+  lang: sh
+  lines: 277919f7 0da08e01
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="add-response-header"
+    only: true
+    lead: ' '
+- paths: set-response-header
+  block: 8
+  fingerprint: e96300283ce0deed
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 207d5e5e 3f48a57d 6cf8deb4 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="set-response-header"
+    only: true
+    lead: ' '
+- paths: set-response-header
+  block: 9
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="set-response-header"
+    only: true
+    lead: ' '
+- paths: set-response-header
+  block: 10
+  fingerprint: 251b16d141d389e6
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 207d5e5e 3f48a57d 6cf8deb4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="set-response-header"
+    only: true
+    lead: ' '
+- paths: set-response-header
+  block: 15
+  fingerprint: d07a1849fb5fb1b7
+  lang: sh
+  lines: 277919f7 0da08e01
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="set-response-header"
+    only: true
+    lead: ' '
+- paths: remove-response-header
+  block: 19
+  fingerprint: dff00313f8114047
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 0a282488 91d8df64 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-response-header"
+    only: true
+    lead: ' '
+- paths: remove-response-header
+  block: 20
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-response-header"
+    only: true
+    lead: ' '
+- paths: remove-response-header
+  block: 21
+  fingerprint: 978f8167ac4195e1
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 0a282488 91d8df64 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="remove-response-header"
+    only: true
+    lead: ' '
+- paths: remove-response-header
+  block: 26
+  fingerprint: d07a1849fb5fb1b7
+  lang: sh
+  lines: 277919f7 0da08e01
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="remove-response-header"
+    only: true
+    lead: ' '
+- paths: response-header-from-secret
+  block: 27
+  fingerprint: 10400d1e221a72e9
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 777ee570 0bebd850 1426decf 2f7c298d 1cd4273a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="response-header-from-secret"
+    only: true
+    lead: ' '
+- paths: response-header-from-secret
+  block: 28
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="response-header-from-secret"
+    only: true
+    lead: ' '
+- paths: response-header-from-secret
+  block: 29
+  fingerprint: d3978b01e6250eb8
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 921f62c7 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 207d5e5e fb5281eb 9ebc4789 777ee570 e78ec7c9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="response-header-from-secret"
+    only: true
+    lead: ' '
+- paths: response-header-from-secret
+  block: 33
+  fingerprint: 02ecb8f9a6b35c05
+  lang: sh
+  lines: 277919f7 694dc81d 858487bf
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="response-header-from-secret"
+    only: true
+    lead: ' '
+- paths: dynamic-response-header
+  block: 38
+  fingerprint: fdaf9c5383bdb21f
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 207d5e5e aac5041c 4f05a771 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dynamic-response-header"
+    only: true
+    lead: ' '
+- paths: dynamic-response-header
+  block: 39
+  fingerprint: 970b139d32a8bfc7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dynamic-response-header"
+    only: true
+    lead: ' '
+- paths: dynamic-response-header
+  block: 40
+  fingerprint: bce3cb81e79c2218
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 207d5e5e aac5041c 4f05a771 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dynamic-response-header"
+    only: true
+    lead: ' '
+- paths: dynamic-response-header
+  block: 45
+  fingerprint: d07a1849fb5fb1b7
+  lang: sh
+  lines: 277919f7 0da08e01
+  preview: kubectl delete httproute httpbin-headers -n httpbin
+  form:
+    attr: paths="dynamic-response-header"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 2701994a3310870a
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 274fdf3f 3f48a57d 0ca4c44a 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="add-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "add-response-header - wait for the httpbin-headers HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-headers
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "add-response-header - HTTPRoute filter adds my-response: hello"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: equals
+            value: "hello"
+    - name: "add-response-header - HTTPRoute filter appends to an existing my-response header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?my-response=world"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: contains
+            value: "world"
+          - name: my-response
+            comparator: contains
+            value: "hello"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 970b139d32a8bfc7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="add-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "add-response-header - wait for the httpbin-headers HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-headers
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "add-response-header - route without the filter returns no my-response header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: exists
+            negate: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 351995206d1e6d23
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 274fdf3f 3f48a57d 0ca4c44a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="add-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "add-response-header - wait for the httpbin-headers TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: httpbin-headers
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "add-response-header - TrafficPolicy adds my-response: hello"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: equals
+            value: "hello"
+    - name: "add-response-header - TrafficPolicy appends to an existing my-response header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?my-response=world"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: contains
+            value: "world"
+          - name: my-response
+            comparator: contains
+            value: "hello"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: e96300283ce0deed
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 207d5e5e 3f48a57d 6cf8deb4 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="set-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "set-response-header - wait for the httpbin-headers HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-headers
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "set-response-header - HTTPRoute filter sets my-response: custom"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: equals
+            value: "custom"
+    - name: "set-response-header - HTTPRoute filter overwrites an existing my-response header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?my-response=original"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: equals
+            value: "custom"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 970b139d32a8bfc7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="set-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "set-response-header - wait for the httpbin-headers HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-headers
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "set-response-header - route without the filter returns no my-response header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: exists
+            negate: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 251b16d141d389e6
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 207d5e5e 3f48a57d 6cf8deb4 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="set-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "set-response-header - wait for the httpbin-headers TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: httpbin-headers
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "set-response-header - TrafficPolicy sets my-response: custom"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: equals
+            value: "custom"
+    - name: "set-response-header - TrafficPolicy overwrites an existing my-response header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?my-response=original"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: my-response
+            comparator: equals
+            value: "custom"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: a1d8d8289c767e2e
+    lang: yaml
+    lines: ab5df625 e7f783c5 6364ab47 92413e97 32cf5997 a152bc23 b8fcb227 c441a9d6 5ea21550 706d2426 22279e30 96ea5e9b 4f4edc3b 71b9dd8a 3ca1ea63 5f7c6523
+    preview: '...'
+  content: |-
+    {{< doc-test paths="remove-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "remove-response-header - the httpbin route returns a content-length header before any modifier"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: content-length
+            comparator: exists
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: dff00313f8114047
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 0a282488 91d8df64 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="remove-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "remove-response-header - wait for the httpbin-headers HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-headers
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "remove-response-header - HTTPRoute filter removes the content-length header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: content-length
+            comparator: exists
+            negate: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: 970b139d32a8bfc7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="remove-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "remove-response-header - wait for the httpbin-headers HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-headers
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "remove-response-header - route without the filter returns the content-length header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: content-length
+            comparator: exists
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 978f8167ac4195e1
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 0a282488 91d8df64 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="remove-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "remove-response-header - wait for the httpbin-headers TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: httpbin-headers
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "remove-response-header - TrafficPolicy removes the content-length header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: content-length
+            comparator: exists
+            negate: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 29
+    fingerprint: d3978b01e6250eb8
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 921f62c7 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 207d5e5e fb5281eb 9ebc4789 777ee570 e78ec7c9 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="response-header-from-secret" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-from-secret - wait for the httpbin-headers HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-headers
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "response-header-from-secret - wait for the httpbin-secret-response-headers TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: httpbin-secret-response-headers
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "response-header-from-secret - x-response-signature carries the value from the Secret"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-response-signature
+            comparator: equals
+            value: "my-response-signing-key"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 38
+    fingerprint: fdaf9c5383bdb21f
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 6e95318c b8dbb1bb 07091912 207d5e5e aac5041c 4f05a771 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dynamic-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dynamic-response-header - wait for the httpbin-headers HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-headers
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "dynamic-response-header - HTTPRoute filter sets x-response-code to the response code"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-response-code
+            comparator: equals
+            value: "200"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 39
+    fingerprint: 970b139d32a8bfc7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1e41b268 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 41b570d8 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dynamic-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dynamic-response-header - wait for the httpbin-headers HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-headers
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "dynamic-response-header - route without the filter returns no x-response-code header"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-response-code
+            comparator: exists
+            negate: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 40
+    fingerprint: bce3cb81e79c2218
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 1e41b268 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3f14b184 99c83b01 207d5e5e aac5041c 4f05a771 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dynamic-response-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dynamic-response-header - wait for the httpbin-headers TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: httpbin-headers
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "dynamic-response-header - TrafficPolicy sets x-response-code to the response code"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers"
+        method: GET
+        headers:
+          host: "headers.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-response-code
+            comparator: equals
+            value: "200"
+    EOF
+    {{< /doc-test >}}

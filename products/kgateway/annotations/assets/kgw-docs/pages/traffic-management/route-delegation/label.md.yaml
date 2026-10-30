@@ -1,0 +1,266 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/route-delegation/label.md
+blocks:
+- cde794e5971d68b9 yaml
+- d5f0b548b7b9ecce yaml
+- af9aae90924c09a8 yaml
+- 12151b3d6a73de67 sh
+- f579a9ce98b4843d sh
+- 19a86acc22d081c6
+- 137ca5fea4e0a147 sh
+- 3fb4e2970d39151b sh
+- 714a8bd51d805f3d
+- 470083a494f0318b yaml
+- d92496f85fa46f9e yaml
+- 691e252213cb41aa yaml
+- 12151b3d6a73de67 sh
+- f579a9ce98b4843d sh
+- 19a86acc22d081c6
+- 137ca5fea4e0a147 sh
+- 3fb4e2970d39151b sh
+- 714a8bd51d805f3d
+- 8923b86740e3640d sh
+tags:
+- paths: delegation-label
+  block: 0
+  fingerprint: cde794e5971d68b9
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 0bebd850 36184fa5 d3d416e7 82601aaa 301e1bfa b3d5ff50 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 94ae491e f5c80367 42293177 21da19f0 12ee8085 4db23575 53143665 b733d726 aeca2b3d bf068a96 b83a8e91 94ae491e a18e4d91 462aeead 21da19f0 12ee8085 6a70ad75 52418815 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-label"
+    only: true
+    lead: ' '
+- paths: delegation-label
+  block: 1
+  fingerprint: d5f0b548b7b9ecce
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 fa1e8330 11829884 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-label"
+    only: true
+    lead: ' '
+- paths: delegation-label
+  block: 2
+  fingerprint: af9aae90924c09a8
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 fa1e8330 6bc108a8 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-label"
+    only: true
+    lead: ' '
+- paths: delegation-label-wildcard
+  block: 9
+  fingerprint: 470083a494f0318b
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 0bebd850 36184fa5 d3d416e7 82601aaa 301e1bfa b3d5ff50 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 21da19f0 12ee8085 5fd3ce88 d32f5351 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-label-wildcard"
+    only: true
+    lead: ' '
+- paths: delegation-label-wildcard
+  block: 10
+  fingerprint: d92496f85fa46f9e
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 fa1e8330 e27eb2d0 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-label-wildcard"
+    only: true
+    lead: ' '
+- paths: delegation-label-wildcard
+  block: 11
+  fingerprint: 691e252213cb41aa
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 fa1e8330 e27eb2d0 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-label-wildcard"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: af9aae90924c09a8
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 fa1e8330 6bc108a8 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-label" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the label parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the label parent HTTPRoute delegation refs to be resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: af9aae90924c09a8
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 fa1e8330 6bc108a8 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-label" >}}
+       YAMLTest -f - <<'EOF'
+       - name: delegation-label - /anything/team1/foo returns 200 through child-team1
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.url"
+             comparator: matches
+             value: "/anything/team1/foo$"
+       - name: delegation-label - /anything/team2/bar returns 200 through child-team2
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team2/bar"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.url"
+             comparator: matches
+             value: "/anything/team2/bar$"
+       - name: delegation-label - /anything/team1/bar returns 404 because no child HTTPRoute matches it
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/bar"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 691e252213cb41aa
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 fa1e8330 e27eb2d0 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-label-wildcard" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the wildcard label parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the wildcard label parent HTTPRoute delegation refs to be resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 691e252213cb41aa
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 fa1e8330 e27eb2d0 36184fa5 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-label-wildcard" >}}
+       YAMLTest -f - <<'EOF'
+       - name: delegation-label-wildcard - /anything/team1/foo returns 200 through child-team1
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.url"
+             comparator: matches
+             value: "/anything/team1/foo$"
+       - name: delegation-label-wildcard - /anything/team2/bar returns 200 through child-team2
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team2/bar"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.url"
+             comparator: matches
+             value: "/anything/team2/bar$"
+       - name: delegation-label-wildcard - /anything/team1/bar returns 404 because no child HTTPRoute matches it
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/bar"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       EOF
+       {{< /doc-test >}}

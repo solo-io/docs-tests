@@ -1,0 +1,246 @@
+format: 1
+source: content/docs/envoy/main/traffic-management/grpc-statistics.md
+blocks:
+- b1134b6c8ee69825 yaml
+- bd1bada9858cf19a sh
+- 4f0c8b682c28cdeb sh
+- dc92e2587ed86760 json
+- 2d49a8b876d984d1 sh
+- 1278e0c2da30c211 sh
+- 71e7bbf3b187dd3f console
+- 867df5c449d48c29 yaml
+- bd1bada9858cf19a sh
+- 4f0c8b682c28cdeb sh
+- 5bc7a9d551e7389d json
+- 49af9d3d2b15b287 sh
+- 1278e0c2da30c211 sh
+- 1b32ac5428881f14 console
+- ef0c102c47a59012 sh
+tags:
+- paths: grpc-statistics
+  block: 0
+  fingerprint: b1134b6c8ee69825
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 ac60528e 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 4c46ad82 0b02fb9c 74de47a5 b50933ce 4afc1868 9d6a08af abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="grpc-statistics"
+    only: true
+    lead: ' '
+- paths: grpc-statistics
+  block: 4
+  fingerprint: 2d49a8b876d984d1
+  lang: sh
+  lines: 446898e7 ad5ba554
+  preview: kubectl exec -n {{< reuse "kgw-docs/snippets/namespace.md" >}} grpcurl-client -c
+  form:
+    attr: paths="grpc-statistics"
+    only: true
+    lead: ' '
+- paths: grpc-statistics
+  block: 7
+  fingerprint: 867df5c449d48c29
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 ac60528e 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 4c46ad82 0b02fb9c 74de47a5 b50933ce d4bd4ca4 857d8219 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="grpc-statistics"
+    only: true
+    lead: ' '
+- paths: grpc-statistics
+  block: 11
+  fingerprint: 49af9d3d2b15b287
+  lang: sh
+  lines: 446898e7 ad5ba554 446898e7 76c5faef
+  preview: kubectl exec -n {{< reuse "kgw-docs/snippets/namespace.md" >}} grpcurl-client -c
+  form:
+    attr: paths="grpc-statistics"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Show statistics for all methods
+    line: 09cf56414a2aa3aa
+    occurrence: 0
+    words: a6f3e8c7 ec91fdd9 a76d07aa ca978112 56f0e5b2 10c22bcf b9776d7d 1581e27d 9b2abfc2 3fdb7e87 28391d3b bec16879 1f58b914
+    block_before:
+      block: 0
+      fingerprint: b1134b6c8ee69825
+      lang: yaml
+      lines: 16c71da1 d664f32c 9144003f 8c8c4228 ac60528e 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 4c46ad82 0b02fb9c 74de47a5 b50933ce 4afc1868 9d6a08af abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="grpc-statistics" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the grpc-stats ListenerPolicy (statsForAllMethods) to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: grpc-stats
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only helpers. The page port-forwards the admin port of the grpc gateway
+    # proxy; the test reads the same admin endpoints with kubectl exec instead.
+    # gs_filters prints the HTTP filters of the grpc proxy's listeners as compact
+    # JSON, one filter chain per line.
+    gs_filters() {
+      kubectl exec -n kgateway-system deploy/grpc -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_listeners" 2>/dev/null | python3 -c '
+    import json, sys
+    def walk(o):
+        if isinstance(o, dict):
+            if isinstance(o.get("http_filters"), list):
+                print(json.dumps(o["http_filters"], separators=(",", ":"), sort_keys=True))
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+    try:
+        walk(json.load(sys.stdin))
+    except Exception:
+        pass
+    ' || true
+    }
+    # gs_check_filter <label> <python expression on cfg>: wait until a filter chain
+    # has envoy.filters.http.grpc_stats before envoy.filters.http.router and the
+    # grpc_stats typed_config (cfg) satisfies the expression.
+    gs_check_filter() {
+      local label="$1" expr="$2" i out
+      for i in $(seq 1 60); do
+        out=$(gs_filters | GS_EXPR="$expr" python3 -c '
+    import json, os, sys
+    for line in sys.stdin:
+        chain = json.loads(line)
+        names = [f.get("name") for f in chain]
+        if "envoy.filters.http.grpc_stats" in names and "envoy.filters.http.router" in names \
+                and names.index("envoy.filters.http.grpc_stats") < names.index("envoy.filters.http.router"):
+            cfg = chain[names.index("envoy.filters.http.grpc_stats")].get("typed_config", {})
+            if eval(os.environ["GS_EXPR"]):
+                print(json.dumps(cfg, sort_keys=True))
+                break
+    ' || true)
+        if [ -n "$out" ]; then echo "$label: $out"; return 0; fi
+        sleep 5
+      done
+      echo "$label: no listener on the grpc proxy has grpc_stats before router with: $expr"
+      gs_filters
+      exit 1
+    }
+    # gs_stat <stat name suffix after the grpc-echo-svc cluster name>: print the
+    # counter value, or nothing when Envoy has not created that stat.
+    gs_stat() {
+      kubectl exec -n kgateway-system deploy/grpc -- wget -qO- "http://127.0.0.1:19000/stats" 2>/dev/null \
+        | grep -E "^cluster\.kube_[^ ]*grpc-echo-svc_3000\.$1: " | head -1 | sed 's/.*: //' || true
+    }
+    gs_check_filter "grpc-statistics all methods" 'cfg.get("stats_for_all_methods") is True and cfg.get("enable_upstream_stats") is True'
+    {{< /doc-test >}}
+- after:
+    section: Show statistics for all methods
+    line: 5d853a39bb1ed85d
+    occurrence: 0
+    words: f8e9955c 56f0e5b2 28391d3b b9776d7d 1581e27d 9b2abfc2 3fdb7e87 10c22bcf f46f5990 663ea1bf 1eb79602 5b7e6bf2 f905b195 f57bfbce 15eaa752 a6f3e8c7 fa51fd49 b5bea41b
+    block_before:
+      block: 6
+      fingerprint: 71e7bbf3b187dd3f
+      lang: console
+      lines: 44b0d754 dd0228a5 f52b81fb 58d353a8 37664f4a 38a0da2b df22f60c 4da2b53f 89cc9aad 23c63dfa beee6eb9
+      preview: cluster.kube_kgateway-system_grpc-echo-svc_3000.grpc.grpc.reflection.v1alpha.Ser
+  content: |-
+    {{< doc-test paths="grpc-statistics" >}}
+    # Per-method stats for both the reflection call and Ping, with gRPC status 0,
+    # and the upstream latency histogram from enableUpstreamStats.
+    gs_all_ok=false
+    for i in $(seq 1 30); do
+      ping_success=$(gs_stat 'grpc\.yages\.Echo\.Ping\.success')
+      ping_ok=$(gs_stat 'grpc\.yages\.Echo\.Ping\.0')
+      refl_total=$(gs_stat 'grpc\.grpc\.reflection\.v1alpha\.ServerReflection\.ServerReflectionInfo\.total')
+      ping_rq_time=$(gs_stat 'grpc\.yages\.Echo\.Ping\.upstream_rq_time')
+      if [ "${ping_success:-0}" -ge 1 ] 2>/dev/null && [ "${ping_ok:-0}" -ge 1 ] 2>/dev/null \
+          && [ "${refl_total:-0}" -ge 1 ] 2>/dev/null && [ -n "$ping_rq_time" ]; then
+        gs_all_ok=true
+        break
+      fi
+      sleep 2
+    done
+    if [ "$gs_all_ok" != true ]; then
+      echo "grpc-statistics all methods: expected per-method grpc stats on the grpc-echo-svc cluster"
+      echo "Ping.success=${ping_success:-missing} Ping.0=${ping_ok:-missing} ServerReflectionInfo.total=${refl_total:-missing} Ping.upstream_rq_time=${ping_rq_time:-missing}"
+      kubectl exec -n kgateway-system deploy/grpc -- wget -qO- "http://127.0.0.1:19000/stats" 2>/dev/null | grep -E '^cluster\.kube_.*\.grpc\.' || true
+      exit 1
+    fi
+    echo "grpc-statistics all methods: Ping.success=$ping_success Ping.0=$ping_ok ServerReflectionInfo.total=$refl_total"
+    {{< /doc-test >}}
+- after:
+    section: Show statistics for specific methods
+    line: e3ef2ee9b88b3817
+    occurrence: 0
+    words: cf7b1b5e d627a4f8 40caeb2d b389db14 3f386731 663ea1bf 70ce871f 58296753 b9776d7d 95e7969d 5b7e6bf2 e904c9cc b9776d7d a330395c 4137b01e dd9245cc f61053bf 3f386731 ac0b52a2 254bb97b 6ee0eb49 1eb79602 c0d2856b 0c24734d 0695b563 aafbff5e
+    block_before:
+      block: 7
+      fingerprint: 867df5c449d48c29
+      lang: yaml
+      lines: 16c71da1 d664f32c 9144003f 8c8c4228 ac60528e 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 4c46ad82 0b02fb9c 74de47a5 b50933ce d4bd4ca4 857d8219 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="grpc-statistics" >}}
+    # The allow list policy replaces the statsForAllMethods policy of the same name,
+    # so its ancestors are already Accepted. Wait for the proxy to drop
+    # stats_for_all_methods and pick up the allow list instead.
+    gs_check_filter "grpc-statistics allow list" 'not cfg.get("stats_for_all_methods") and not cfg.get("enable_upstream_stats") and any(s.get("service_name") == "yages.Echo" and s.get("method_names") == ["Ping"] for s in cfg.get("individual_method_stats_allowlist", {}).get("services", []))'
+    # Record the counters that exist before the next calls. Envoy keeps the stats
+    # from the all-methods section, so the allow list shows up as Ping still
+    # counting by name while ServerReflectionInfo stops counting by name.
+    gs_ping_before=$(gs_stat 'grpc\.yages\.Echo\.Ping\.total')
+    gs_refl_before=$(gs_stat 'grpc\.grpc\.reflection\.v1alpha\.ServerReflection\.ServerReflectionInfo\.total')
+    gs_agg_before=$(gs_stat 'grpc\.total')
+    echo "grpc-statistics allow list: before the calls Ping.total=${gs_ping_before:-missing} ServerReflectionInfo.total=${gs_refl_before:-missing} grpc.total=${gs_agg_before:-missing}"
+    {{< /doc-test >}}
+- after:
+    section: Show statistics for specific methods
+    line: 9d5f8ed3302fb663
+    occurrence: 0
+    words: c818c516 7b2de53b 12886f9d 28391d3b 1f58b914 7175517a a9f4b3d2 f5cccfb7 7afbb334
+    block_before:
+      block: 13
+      fingerprint: 1b32ac5428881f14
+      lang: console
+      lines: 034cb716 ff5dd136 443e3f19 0b1580a4 d0ef6196 38a0da2b df22f60c 4da2b53f 89cc9aad 23c63dfa
+      preview: 'cluster.kube_kgateway-system_grpc-echo-svc_3000.grpc.0: 2'
+  content: |-
+    {{< doc-test paths="grpc-statistics" >}}
+    # Ping still gets its own per-method counters; the reflection calls count only
+    # in the aggregate grpc.* stats, not under ServerReflectionInfo by name.
+    gs_allow_ok=false
+    for i in $(seq 1 30); do
+      gs_ping_after=$(gs_stat 'grpc\.yages\.Echo\.Ping\.total')
+      gs_refl_after=$(gs_stat 'grpc\.grpc\.reflection\.v1alpha\.ServerReflection\.ServerReflectionInfo\.total')
+      gs_agg_after=$(gs_stat 'grpc\.total')
+      gs_agg_ok=$(gs_stat 'grpc\.0')
+      if [ "${gs_ping_after:-0}" -ge $(( ${gs_ping_before:-0} + 1 )) ] 2>/dev/null \
+          && [ "${gs_agg_after:-0}" -ge $(( ${gs_agg_before:-0} + 2 )) ] 2>/dev/null \
+          && [ "${gs_agg_ok:-0}" -ge 2 ] 2>/dev/null; then
+        gs_allow_ok=true
+        break
+      fi
+      sleep 2
+    done
+    if [ "$gs_allow_ok" != true ]; then
+      echo "grpc-statistics allow list: expected Ping.total to rise by 1 and the aggregate grpc.total to rise by 2 (the two reflection calls)"
+      echo "Ping.total ${gs_ping_before:-missing} -> ${gs_ping_after:-missing}; grpc.total ${gs_agg_before:-missing} -> ${gs_agg_after:-missing}; grpc.0=${gs_agg_ok:-missing}"
+      kubectl exec -n kgateway-system deploy/grpc -- wget -qO- "http://127.0.0.1:19000/stats" 2>/dev/null | grep -E '^cluster\.kube_.*\.grpc\.' || true
+      exit 1
+    fi
+    if [ "${gs_refl_after:-0}" != "${gs_refl_before:-0}" ]; then
+      echo "grpc-statistics allow list: ServerReflectionInfo.total changed from ${gs_refl_before:-missing} to ${gs_refl_after:-missing}, but the method is not in methodAllowlist"
+      exit 1
+    fi
+    echo "grpc-statistics allow list: Ping.total ${gs_ping_before:-0} -> $gs_ping_after, grpc.total ${gs_agg_before:-0} -> $gs_agg_after, ServerReflectionInfo.total unchanged at ${gs_refl_after:-missing}"
+    {{< /doc-test >}}

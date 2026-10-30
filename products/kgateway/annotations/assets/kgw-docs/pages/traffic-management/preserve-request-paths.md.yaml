@@ -1,0 +1,233 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/preserve-request-paths.md
+blocks:
+- 1acc55014907b71d yaml
+- 8cc734933c01c160 sh
+- 28a08e882a336b23 console
+- 49ab04fa9a107d0e sh
+- 6c3d35085ee6b535 sh
+- 1e2ea52d68e0d40b console
+- 79bdfc1472295225 yaml
+- 325db331ca256a85 sh
+- 448f78290f74067c sh
+- 4072752c6777bca3 console
+- a123203675bc9d7d sh
+- 325db331ca256a85 sh
+- 448f78290f74067c sh
+- 4d6379761cb08494 console
+- d89d6d3ca34eb15d sh
+tags:
+- paths: preserve-request-paths
+  block: 0
+  fingerprint: 1acc55014907b71d
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 d1abf83c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 3b9814cb 9c66dd47 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="preserve-request-paths"
+    only: true
+    lead: ' '
+- paths: preserve-request-paths
+  block: 6
+  fingerprint: 79bdfc1472295225
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 cd3a6aff 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 c4f4d189 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="preserve-request-paths"
+    only: true
+    lead: ' '
+- paths: preserve-request-paths
+  block: 10
+  fingerprint: a123203675bc9d7d
+  lang: sh
+  lines: 3440fe1e 3fb0e237
+  preview: kubectl patch listenerpolicy escaped-slashes -n {{< reuse "kgw-docs/snippets/nam
+  form:
+    attr: paths="preserve-request-paths"
+    only: true
+    lead: ' '
+- paths: preserve-request-paths
+  block: 14
+  fingerprint: d89d6d3ca34eb15d
+  lang: sh
+  lines: 42cb96a5 af4b2418
+  preview: kubectl delete listenerpolicy preserve-path-handling -n {{< reuse "kgw-docs/snip
+  form:
+    attr: paths="preserve-request-paths"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Disable path normalization and slash merging
+    line: 68d592eb1199d45c
+    occurrence: 0
+    words: e9d8992f a0af9f86 ba4ae545 6201111b 939d59d1 de003e6b e9d8992f
+    block_before: null
+  content: |-
+    {{< doc-test paths="preserve-request-paths" >}}
+    # pp_check <label> <raw path> <expected code> <ERE for the location header
+    # (30x) or for the url that httpbin echoes (200)>. curl --path-as-is sends
+    # the path exactly as written, so the proxy sees the repeated slash or dot
+    # segment.
+    pp_check() {
+      local label="$1" path="$2" want="$3" pattern="$4" attempt code="" got=""
+      for attempt in $(seq 1 60); do
+        code=$(curl -s --path-as-is -D /tmp/pp_headers -o /tmp/pp_body -w '%{http_code}' --max-time 10 \
+          "http://${INGRESS_GW_ADDRESS}:8080${path}" -H "host: www.example.com:8080" || true)
+        case "$code" in
+          30*) got=$(tr -d '\r' < /tmp/pp_headers | awk 'tolower($1)=="location:"{print $2}' || true) ;;
+          200) got=$(jq -r '.url // empty' /tmp/pp_body 2>/dev/null || true) ;;
+          *) got="" ;;
+        esac
+        if [ "$code" = "$want" ] && { [ -z "$pattern" ] || printf '%s' "$got" | grep -Eq "$pattern"; }; then
+          echo "$label: $code $got"
+          return 0
+        fi
+        echo "$label: attempt $attempt got $code '${got}', want $want matching '$pattern'"
+        sleep 2
+      done
+      echo "$label: $path never returned $want matching '$pattern'"
+      exit 1
+    }
+    # Before the policy, Envoy merges slashes and normalizes dot segments, so
+    # httpbin receives the canonical path and answers 200.
+    pp_check "preserve-request-paths - default, slashes are merged before httpbin" "/anything/foo//bar" 200 "/anything/foo/bar$"
+    pp_check "preserve-request-paths - default, dot segments are resolved before httpbin" "/anything/foo/../bar" 200 "/anything/bar$"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 1acc55014907b71d
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 d1abf83c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 3b9814cb 9c66dd47 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="preserve-request-paths" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "preserve-request-paths - wait for the preserve-path-handling ListenerPolicy to be accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: preserve-path-handling
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Disable path normalization and slash merging
+    line: bcf4814c419b7e5d
+    occurrence: 0
+    words: 09c4a3a9 beeb20fb f905b195 b9776d7d 49139de9 c4c05d40 a1d98908 bb0347a4 4a2326c6 e3b98a4d be8dff00 663ea1bf dfc3376b a7e2d26e 82a3537f 7175517a f8d397a3 a3b142af 9f3f589d 254bb97b 6fcb2e97 663ea1bf aa9e9b5c b9776d7d 97b05602 b7d64a92 99262a02 28391d3b ca978112 6da06335 5ca4f385 28391d3b b9776d7d c4c05d40 8e7fc023 84532b30 fa51fd49 94e8566d 6f9a4880 762069bc 1e5fac86 10c22bcf f3959239 ea325d76 2937013f
+    block_before:
+      block: 2
+      fingerprint: 28a08e882a336b23
+      lang: console
+      lines: 021fb596 1add9c36 5c440eaf d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="preserve-request-paths" >}}
+    # Test-only: the page reads config_dump through a port-forward, which the test
+    # cannot use. The admin port listens on 127.0.0.1:19000 inside the proxy pod,
+    # so read it with kubectl exec. Every HTTP connection manager on the Gateway's
+    # listeners must have normalize_path false and merge_slashes unset or false.
+    for attempt in $(seq 1 60); do
+      hcms=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump" 2>/dev/null | jq -c '[
+        .configs[]
+        | select(.["@type"] == "type.googleapis.com/envoy.admin.v3.ListenersConfigDump")
+        | .dynamic_listeners[]
+        | .active_state.listener.filter_chains[].filters[]
+        | select(.name == "envoy.filters.network.http_connection_manager")
+        | .typed_config
+        | {normalize_path, merge_slashes}
+      ]' 2>/dev/null || true)
+      if printf '%s' "$hcms" | jq -e 'length > 0 and all(.[]; .normalize_path == false and (.merge_slashes // false) == false)' >/dev/null 2>&1; then
+        echo "preserve-request-paths - config_dump: $hcms"
+        break
+      fi
+      echo "preserve-request-paths - attempt $attempt: config_dump HCM settings '${hcms}'"
+      [ "$attempt" -eq 60 ] && { echo "preserve-request-paths - the listener still normalizes paths or merges slashes"; exit 1; }
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 1e2ea52d68e0d40b
+    lang: console
+    lines: f1f969b3 263e725f 8af4b9b3 5b58a396
+    preview: HTTP/1.1 301 Moved Permanently
+  content: |-
+    {{< doc-test paths="preserve-request-paths" >}}
+    # httpbin redirects a non-canonical path to its clean form, which it can only
+    # do when the proxy forwards the raw path.
+    pp_check "preserve-request-paths - the repeated slash reaches httpbin unmerged" "/anything/foo//bar" 301 "^/anything/foo/bar$"
+    pp_check "preserve-request-paths - the dot segment reaches httpbin unnormalized" "/anything/foo/../bar" 301 "^/anything/bar$"
+    {{< /doc-test >}}
+- after:
+    section: Handle escaped slashes
+    line: aa3b73cd6b6f90d5
+    occurrence: 0
+    words: 935f6831 bb0347a4 ac0b52a2 254bb97b 6ee0eb49 b9776d7d c0d2856b 84532b30 308f4070 b9776d7d 044c5f4a cc304905 aaa8d3c8 77bc06c5 fa51fd49 b9776d7d 0967115f f4bf9f7f c2b85b5c 1eb79602 37a8eec1 f23be8ee 12ea12ea 58296753 ca978112 ebb3de8a 5ca4f385 28391d3b 84532b30
+    block_before:
+      block: 5
+      fingerprint: 1e2ea52d68e0d40b
+      lang: console
+      lines: f1f969b3 263e725f 8af4b9b3 5b58a396
+      preview: HTTP/1.1 301 Moved Permanently
+  content: |-
+    {{< doc-test paths="preserve-request-paths" >}}
+    # Before pathWithEscapedSlashesAction is set, the escaped slash is forwarded
+    # unchanged.
+    pp_check "preserve-request-paths - default, an escaped slash is forwarded unchanged" "/anything/a%2Fb" 200 "/anything/a%2[Ff]b$"
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 79bdfc1472295225
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 cd3a6aff 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 c4f4d189 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="preserve-request-paths" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "preserve-request-paths - wait for the escaped-slashes ListenerPolicy to be accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: escaped-slashes
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 4072752c6777bca3
+    lang: console
+    lines: 4072752c
+    preview: HTTP/1.1 400 Bad Request
+  content: |-
+    {{< doc-test paths="preserve-request-paths" >}}
+    pp_check "preserve-request-paths - RejectRequest answers an escaped slash with 400" "/anything/a%2Fb" 400 ""
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 4d6379761cb08494
+    lang: console
+    lines: 4c046625 ca4f0754
+    preview: HTTP/1.1 307 Temporary Redirect
+  content: |-
+    {{< doc-test paths="preserve-request-paths" >}}
+    pp_check "preserve-request-paths - UnescapeAndRedirect answers with a 307 to the unescaped path" "/anything/a%2Fb" 307 "/anything/a/b$"
+    {{< /doc-test >}}

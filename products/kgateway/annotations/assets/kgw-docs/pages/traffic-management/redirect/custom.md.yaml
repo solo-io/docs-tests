@@ -1,0 +1,98 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/redirect/custom.md
+blocks:
+- 52040a8157315106 yaml
+- 8f9a9ab057bb20a7 sh
+- c9885e92ffa368c0 sh
+- caa6c3495c2d0f0a console
+- 8ab115a1ce4bafd4 sh
+tags:
+- paths: redirect-custom
+  block: 0
+  fingerprint: 52040a8157315106
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f05018d1 0f10c5bc 72ab0e66 ce4c1759 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 55d0b075 3de9d845 b733d726 aeca2b3d bf068a96 2836fc17 ae6b70e3 96b1dd04 4b419f75 57af3940 9337d19e 16453fa5 7ee1ecd3 b733d726 aeca2b3d bf068a96 d9812fb5 ae6b70e3 96b1dd04 4b419f75 57af3940 9337d19e 16453fa5 7ee1ecd3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="redirect-custom"
+    only: true
+    lead: ' '
+- paths: redirect-custom
+  block: 4
+  fingerprint: 8ab115a1ce4bafd4
+  lang: sh
+  lines: 8ab115a1
+  preview: kubectl delete httproute httpbin-redirect -n httpbin
+  form:
+    attr: paths="redirect-custom"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: caa6c3495c2d0f0a
+    lang: console
+    lines: 5b07bb0e 29d1c718 4c046625 37ef3fe3 925d5528 8cdb8317 15357256
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="redirect-custom" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-redirect HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-redirect
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: caa6c3495c2d0f0a
+    lang: console
+    lines: 5b07bb0e 29d1c718 4c046625 37ef3fe3 925d5528 8cdb8317 15357256
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="redirect-custom" >}}
+    YAMLTest -f - <<'EOF'
+    - name: redirect-custom - /get returns the annotation's 307 instead of the filter's 302, with location /anything
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /get
+        method: GET
+        headers:
+          host: "redirect.example"
+      source:
+        type: local
+      expect:
+        statusCode: 307
+        headers:
+        - name: location
+          comparator: matches
+          value: "^http://redirect\\.example(:[0-9]+)?/anything$"
+    - name: redirect-custom - /post/test returns 307 with location /anything/test
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /post/test
+        method: GET
+        headers:
+          host: "redirect.example"
+      source:
+        type: local
+      expect:
+        statusCode: 307
+        headers:
+        - name: location
+          comparator: matches
+          value: "^http://redirect\\.example(:[0-9]+)?/anything/test$"
+    EOF
+    {{< /doc-test >}}

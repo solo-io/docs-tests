@@ -1,0 +1,269 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/weighted-routes.md
+blocks:
+- 1a63e161df5a325d yaml
+- d94b2ee3e19dafc5 yaml
+- a591b3d7068eaa6d sh
+- e25767e7e0e01633 sh
+- 1b25cb1fe0b4e18e txt
+- 6ee48d226f693072 sh
+- f3734993ccce5d2c sh
+- 0db9df7fb94177b8 txt
+- 61d2361cc9a569ad json
+- 0194c35f2559fa8d sh
+- 76915ad1d89121b6 yaml
+- 64d586bc1791b40f sh
+- e29ece1ae9932314 yaml
+- a591b3d7068eaa6d sh
+- e25767e7e0e01633 sh
+- db4b465f4c7b1aaf txt
+- 5662fc539c3143bf txt
+- aa0c7321b20bd0d6 yaml
+- a591b3d7068eaa6d sh
+- e25767e7e0e01633 sh
+- db4b465f4c7b1aaf txt
+- 2fba8559fa74c8b6 json
+- 849da10c33686d7a sh
+- cded3c1f14380834 yaml
+tags:
+- paths: weighted-routes
+  block: 0
+  fingerprint: 1a63e161df5a325d
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 f1cc8316 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac 41255c93 a58565b2 8c8c4228 fa1e8330 41255c93 36184fa5 04968f51 ca089a7b 82d4b2d5 0ff65a1a 76dc1fa3 cb3f91d5 f1540154 0d6480f0 8c8c4228 f1cc8316 0f10c5bc 36184fa5 8432e015 41255c93 0ff65a1a 0baaa92b 5374623b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="weighted-routes"
+    only: true
+    lead: ' '
+- paths: weighted-routes
+  block: 1
+  fingerprint: d94b2ee3e19dafc5
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e 80e9487c bca8e5f7 b733d726 aeca2b3d bf068a96 184c30f7 94ae491e ca089a7b da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="weighted-routes"
+    only: true
+    lead: ' '
+- paths: weighted-routes
+  block: 11
+  fingerprint: 64d586bc1791b40f
+  lang: sh
+  lines: 64d586bc
+  preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
+  form:
+    attr: paths="weighted-routes"
+    only: true
+    lead: ' '
+- paths: weighted-routes
+  block: 12
+  fingerprint: e29ece1ae9932314
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e 80e9487c bca8e5f7 cb3f91d5 8c67597e 56bf9360 8c8c4228 a45be908 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 184c30f7 94ae491e ca089a7b da480536 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="weighted-routes"
+    only: true
+    lead: ' '
+- paths: weighted-routes
+  block: 17
+  fingerprint: aa0c7321b20bd0d6
+  lang: yaml
+  lines: 95f0380a 088bae5f
+  preview: kubectl annotate httproute -n httpbin httpbin kgateway.dev/route-weight=10
+  form:
+    attr: paths="weighted-routes"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: d94b2ee3e19dafc5
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e 80e9487c bca8e5f7 b733d726 aeca2b3d bf068a96 184c30f7 94ae491e ca089a7b da480536 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="weighted-routes" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the hello-world deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: httpbin
+            name: hello-world
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the two-rule httpbin HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: weighted-routes default precedence - /anything/a is served by the more specific hello-world rule
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /anything/a
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "Server name: hello-world"
+    - name: weighted-routes default precedence - /anything is served by httpbin
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /anything
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: matches
+          value: "/anything$"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 76915ad1d89121b6
+    lang: yaml
+    lines: adc43cf7 6c077fe9 c38a9485
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="weighted-routes" >}}
+    # Test-only: the previous step opens the values file in an editor and asks the
+    # reader to add the controller.extraEnv value by hand. Write the same file
+    # here: the current release values plus KGW_WEIGHTED_ROUTE_PRECEDENCE: true,
+    # so the page's own helm upgrade command below runs unchanged.
+    helm get values kgateway -n kgateway-system -o yaml > kgateway.yaml
+    python3 - <<'PY'
+    import yaml
+    with open("kgateway.yaml") as f:
+        values = yaml.safe_load(f) or {}
+    values.setdefault("controller", {}).setdefault("extraEnv", {})["KGW_WEIGHTED_ROUTE_PRECEDENCE"] = True
+    with open("kgateway.yaml", "w") as f:
+        yaml.safe_dump(values, f, default_flow_style=False)
+    PY
+    cat kgateway.yaml
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 64d586bc1791b40f
+    lang: sh
+    lines: 64d586bc
+    preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
+  content: |-
+    {{< doc-test paths="weighted-routes" >}}
+    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    wr_env=$(kubectl get deployment kgateway -n kgateway-system -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_WEIGHTED_ROUTE_PRECEDENCE")].value}')
+    if [ "$wr_env" != "true" ]; then
+      echo "weighted-routes: expected KGW_WEIGHTED_ROUTE_PRECEDENCE=true on the kgateway controller, got '${wr_env}'"
+      exit 1
+    fi
+    YAMLTest -f - <<'EOF'
+    - name: wait for the upgraded kgateway control plane to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: e29ece1ae9932314
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e 80e9487c bca8e5f7 cb3f91d5 8c67597e 56bf9360 8c8c4228 a45be908 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 184c30f7 94ae491e ca089a7b da480536 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="weighted-routes" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the hello-world-a HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: hello-world-a
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: weighted-routes separate routes without weights - /anything/a is still served by hello-world
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /anything/a
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "Server name: hello-world"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: aa0c7321b20bd0d6
+    lang: yaml
+    lines: 95f0380a 088bae5f
+    preview: kubectl annotate httproute -n httpbin httpbin kgateway.dev/route-weight=10
+  content: |-
+    {{< doc-test paths="weighted-routes" >}}
+    YAMLTest -f - <<'EOF'
+    - name: weighted-routes weighted - /anything/a is served by httpbin, no longer by hello-world
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /anything/a
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains:
+          value: "Server name: hello-world"
+          negate: true
+        bodyJsonPath:
+        - path: "$.url"
+          comparator: matches
+          value: "/anything/a$"
+    EOF
+    {{< /doc-test >}}

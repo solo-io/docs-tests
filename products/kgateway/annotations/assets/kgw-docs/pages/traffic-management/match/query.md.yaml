@@ -1,0 +1,70 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/match/query.md
+blocks:
+- 6c735cecc663573a yaml
+- ed3c249480d9a467 sh
+- d76edfa27d11be1a sh
+- 69d57793964e9553
+- 0ea75e5295bb7a9c sh
+- 64c514c1dc0f4b89 sh
+- 4092edfcc9ffa422
+- 32ed805e3efa5796 sh
+tags:
+- paths: match-query
+  block: 0
+  fingerprint: 6c735cecc663573a
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 c1a0be84 6c185c69 648aaa11 1abb110d 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="match-query"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 6c735cecc663573a
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e67d1f43 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c49a234e 3de9d845 b733d726 c1a0be84 6c185c69 648aaa11 1abb110d 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="match-query" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the httpbin-match HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin-match
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: "match-query - /status/200?user=me matches the user=me query parameter and returns 200"
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/status/200?user=me"
+           method: GET
+           headers:
+             host: "match.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       - name: "match-query - /status/200 without the query parameter returns 404"
+         retries: 20
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+           method: GET
+           headers:
+             host: "match.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       EOF
+       {{< /doc-test >}}

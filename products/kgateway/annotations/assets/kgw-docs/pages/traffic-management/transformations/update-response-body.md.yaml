@@ -1,0 +1,212 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/transformations/update-response-body.md
+blocks:
+- b73801223e827fd2 sh
+- c914a56c80f8d7fe sh
+- 651c13fb28d623c1 console
+- 6e386eb37ea462eb yaml
+- b73801223e827fd2 sh
+- c914a56c80f8d7fe sh
+- a7e09c04e8633b15 console
+- 1c33547adef51827 yaml
+- b73801223e827fd2 sh
+- c914a56c80f8d7fe sh
+- cc3612176a2c9aa9 console
+- ed5e148ec7409060 sh
+tags:
+- paths: transform-update-response-body
+  block: 3
+  fingerprint: 6e386eb37ea462eb
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 a7422106 0f016518 4ef8038c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="transform-update-response-body"
+    only: true
+    lead: ' '
+- paths: transform-update-response-body
+  block: 7
+  fingerprint: 1c33547adef51827
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 a7422106 0f016518 4a8b91e0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="transform-update-response-body"
+    only: true
+    lead: ' '
+- paths: transform-update-response-body
+  block: 11
+  fingerprint: ed5e148ec7409060
+  lang: sh
+  lines: ed5e148e
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} transformation
+  form:
+    attr: paths="transform-update-response-body"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 651c13fb28d623c1
+    lang: console
+    lines: 021fb596 e19c56b2 e19db026 d1352ff1 772458fa 021fb596 138ad6d6 8dd03359 e52a1813 021fb596 8531c6fe 8a16aa59 41578054 39d4b54e 8c902ea5 8dd03359 d10b36aa 39d4b54e 01acfaa4 d10b36aa d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="transform-update-response-body" >}}
+       YAMLTest -f - <<'EOF'
+       - name: transform-update-response-body - before the policy - wait for the httpbin HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: transform-update-response-body - before the policy, /json returns the sample slideshow
+         retries: 30
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/json"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.slideshow.author"
+             comparator: equals
+             value: "Yours Truly"
+           - path: "$.slideshow.slides[0].type"
+             comparator: equals
+             value: "all"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: a7e09c04e8633b15
+    lang: console
+    lines: a7e09c04
+    preview: '{"author": "Yours Truly", "title": "Sample Slide Show"}'
+  content: |2-
+       {{< doc-test paths="transform-update-response-body" >}}
+       YAMLTest -f - <<'EOF'
+       - name: transform-update-response-body - author and title body - wait for the httpbin HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: transform-update-response-body - author and title body - wait for the transformation TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: transformation
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: transform-update-response-body - the response body is a JSON object with only the author and title fields
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/json"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.author"
+             comparator: equals
+             value: "Yours Truly"
+           - path: "$.title"
+             comparator: equals
+             value: "Sample Slide Show"
+           - path: "$.slideshow"
+             comparator: exists
+             negate: true
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: cc3612176a2c9aa9
+    lang: console
+    lines: 021fb596 e19c56b2 e19db026 d1352ff1 772458fa 021fb596 138ad6d6 d5ab404f e52a1813 021fb596 8531c6fe 8a16aa59 41578054 39d4b54e 8c902ea5 d5ab404f d10b36aa 39d4b54e 01acfaa4 d10b36aa d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="transform-update-response-body" >}}
+       YAMLTest -f - <<'EOF'
+       - name: transform-update-response-body - replace_with_random body - wait for the httpbin HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: httpbin
+               name: httpbin
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: transform-update-response-body - replace_with_random body - wait for the transformation TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: httpbin
+               name: transformation
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: transform-update-response-body - the original body returns with every all value replaced by a random string
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/json"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.slideshow.author"
+             comparator: equals
+             value: "Yours Truly"
+           - path: "$.slideshow.slides[0].type"
+             comparator: equals
+             value: "all"
+             negate: true
+           - path: "$.slideshow.slides[1].type"
+             comparator: equals
+             value: "all"
+             negate: true
+       EOF
+       {{< /doc-test >}}

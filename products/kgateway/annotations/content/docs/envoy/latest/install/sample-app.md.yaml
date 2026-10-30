@@ -197,3 +197,54 @@ hidden:
         statusCode: 200
     EOF
     {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: b0c9654ef12d0464
+    lang: sh
+    lines: f69d5a69 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  content: |-
+    {{< doc-test paths="httpbin-org-standin" >}}
+    # Test-only stand-in for the public httpbin.org service, so guides that route
+    # to httpbin.org run without internet access. A Service named httpbin-org
+    # fronts the httpbin sample app on port 80, and a CoreDNS rewrite answers
+    # httpbin.org lookups with that Service's address. Plain HTTP only: a guide
+    # that originates TLS to httpbin.org:443 needs the real service.
+    kubectl apply -f- <<'EOF'
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: httpbin-org
+      namespace: httpbin
+    spec:
+      selector:
+        app: httpbin
+      ports:
+      - name: http
+        port: 80
+        targetPort: 8080
+    EOF
+    kubectl get configmap coredns -n kube-system -o jsonpath='{.data.Corefile}' > /tmp/Corefile
+    if ! grep -q 'httpbin-org.httpbin.svc.cluster.local' /tmp/Corefile; then
+      python3 - <<'PY'
+    import re
+    corefile = open("/tmp/Corefile").read()
+    rule = """    rewrite stop {
+            name exact httpbin.org httpbin-org.httpbin.svc.cluster.local
+            answer name httpbin-org.httpbin.svc.cluster.local httpbin.org
+        }
+    """
+    corefile, n = re.subn(r"^(\.:53 \{\n)", r"\1" + rule, corefile, count=1, flags=re.M)
+    assert n == 1, "no .:53 server block in the CoreDNS Corefile"
+    open("/tmp/Corefile", "w").write(corefile)
+    PY
+      kubectl create configmap coredns -n kube-system --from-file=Corefile=/tmp/Corefile --dry-run=client -o yaml | kubectl apply -f -
+      kubectl rollout restart deployment coredns -n kube-system
+      kubectl rollout status deployment coredns -n kube-system --timeout=180s
+    fi
+    for i in $(seq 1 30); do
+      kubectl run httpbin-org-check --rm -i --restart=Never -n httpbin --image=curlimages/curl:8.10.1 -- \
+        curl -sS -o /dev/null -w '%{http_code}' http://httpbin.org/status/200 2>/dev/null | grep -q 200 && break
+      echo "httpbin.org stand-in not reachable yet (attempt $i)"; sleep 5
+    done
+    {{< /doc-test >}}

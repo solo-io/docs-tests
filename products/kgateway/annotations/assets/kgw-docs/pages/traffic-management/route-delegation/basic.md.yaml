@@ -1,0 +1,168 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/route-delegation/basic.md
+blocks:
+- 5f6d7e4fc86b1f48 yaml
+- 1fc7324922c7dbbb yaml
+- a7cc88dd261bd05c yaml
+- e6289b03bdeb39cc sh
+- 77c2dd6568e592f6 sh
+- 9eeff5ddfff42a8b sh
+- fe264c21695706de
+- 13847d88210393d3 sh
+- df8030fa0e6ef027 sh
+- c2e76fd0f0f85c3a
+- bf03fc2ef8fe92c4 sh
+- 68000b4516e885a2 sh
+- fe264c21695706de
+- 862041a89cfc849d sh
+- c0946e837a49ef06 sh
+- c2e76fd0f0f85c3a
+- 6aeb01a6a620ff82 sh
+tags:
+- paths: delegation-basic
+  block: 0
+  fingerprint: 5f6d7e4fc86b1f48
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 2ffc2bb4 0bebd850 36184fa5 301e1bfa b3d5ff50 d3d416e7 82601aaa 3de9d845 b733d726 aeca2b3d bf068a96 3454efa5 94ae491e b5a028c9 56bf9360 91f62e83 53143665 b733d726 aeca2b3d bf068a96 b83a8e91 94ae491e b5a028c9 56bf9360 91f62e83 52418815 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-basic"
+    only: true
+    lead: ' '
+- paths: delegation-basic
+  block: 1
+  fingerprint: 1fc7324922c7dbbb
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 587e8306 53143665 36184fa5 3de9d845 b733d726 aeca2b3d bf068a96 0cd67f7e 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-basic"
+    only: true
+    lead: ' '
+- paths: delegation-basic
+  block: 2
+  fingerprint: a7cc88dd261bd05c
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 d3d416e7 dad80896 0bebd850 350955ef 56bf9360 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="delegation-basic"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: a7cc88dd261bd05c
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 d3d416e7 dad80896 0bebd850 350955ef 56bf9360 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-basic" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the parent HTTPRoute to be accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the parent HTTPRoute delegation refs to be resolved
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: kgateway-system
+               name: parent
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: wait for the child-team2 HTTPRoute to be accepted by its parent HTTPRoute
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: team2
+               name: child-team2
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: a7cc88dd261bd05c
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 38c60fa9 52418815 36184fa5 d3d416e7 dad80896 0bebd850 350955ef 56bf9360 3de9d845 b733d726 aeca2b3d 6d88f925 14a88714 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="delegation-basic" >}}
+       YAMLTest -f - <<'EOF'
+       - name: delegation-basic - /anything/team1/foo returns 200 through child-team1
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/foo"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.url"
+             comparator: matches
+             value: "/anything/team1/foo$"
+       - name: delegation-basic - /anything/team1/bar returns 404 because child-team1 has no matching path
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team1/bar"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       - name: delegation-basic - /anything/team2/bar returns 200 through child-team2
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team2/bar"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+           - path: "$.url"
+             comparator: matches
+             value: "/anything/team2/bar$"
+       - name: delegation-basic - /anything/team2/bar/test returns 404 because child-team2 matches the exact path only
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/team2/bar/test"
+           method: GET
+           headers:
+             host: "delegation.example"
+         source:
+           type: local
+         expect:
+           statusCode: 404
+       EOF
+       {{< /doc-test >}}

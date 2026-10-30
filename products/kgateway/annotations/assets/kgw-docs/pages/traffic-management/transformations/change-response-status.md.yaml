@@ -1,0 +1,111 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/transformations/change-response-status.md
+blocks:
+- 54d1f85207ee9d71 yaml
+- 4b739bcf84132e98 yaml
+- d50c7d844255c8e6 sh
+- 0c98a5dd64297be4 sh
+- 24e9608b3340d147 console
+- 6647d75624aa2e1e sh
+- 42a6f534cf943d87 sh
+- 5021e6907e8a1550 console
+- ed5e148ec7409060 sh
+tags:
+- paths: transform-change-response-status
+  block: 0
+  fingerprint: 54d1f85207ee9d71
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 207d5e5e 78aa8473 778c2711 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="transform-change-response-status"
+    only: true
+    lead: ' '
+- paths: transform-change-response-status
+  block: 8
+  fingerprint: ed5e148ec7409060
+  lang: sh
+  lines: ed5e148e
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} transformation
+  form:
+    attr: paths="transform-change-response-status"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 54d1f85207ee9d71
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 8905bcef 99c83b01 207d5e5e 78aa8473 778c2711 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="transform-change-response-status" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "transform-change-response-status - wait for the httpbin HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "transform-change-response-status - wait for the transformation TrafficPolicy to be accepted"
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: transformation
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "transform-change-response-status - foo: bar response header turns the status into 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?foo=bar"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        headers:
+          - name: foo
+            comparator: equals
+            value: "bar"
+        bodyJsonPath:
+        - path: "$.foo[0]"
+          comparator: equals
+          value: bar
+    - name: "transform-change-response-status - any other foo value returns 403"
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?foo=baz"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        headers:
+          - name: foo
+            comparator: equals
+            value: "baz"
+        bodyJsonPath:
+        - path: "$.foo[0]"
+          comparator: equals
+          value: baz
+    EOF
+    {{< /doc-test >}}

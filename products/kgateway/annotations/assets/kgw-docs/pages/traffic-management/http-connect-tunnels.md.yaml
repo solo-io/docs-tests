@@ -1,0 +1,210 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/http-connect-tunnels.md
+blocks:
+- b460b17e752fe22d yaml
+- 52e55bd3721973bd sh
+- ab2640e9fa28bcb7 console
+- 07bebffa5af282e4 yaml
+- cd0bed871d8f4553 yaml
+- e81d224d686d9a3c yaml
+- 9a13e17d2943fe2b sh
+- 07edf129b5a34014 console
+- 8af8709d2770f963 yaml
+- 775d8f356be699ad sh
+- 2293a2666aafcf47 sh
+- 4259049d37c460ce console
+- fadecdc79497ba64 sh
+- e6758ba8a864a432 console
+- b2dfb237c238df90 sh
+tags:
+- paths: http-connect-tunnels
+  block: 0
+  fingerprint: b460b17e752fe22d
+  lang: yaml
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 a5e3680f 0f10c5bc ff72caa3 3339d95d bef397fe 353194cf 68524782 307a2a65 34eacfca 36e5e77a 4ec31919 3edc5603 78aae275 cb3f91d5 58584366 ab78925c 8c8c4228 14fef6a9 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac eb5e8c01 a58565b2 8c8c4228 fa1e8330 eb5e8c01 36184fa5 04968f51 b42273a3 cd169ea7 0ff65a1a 2c9ab60d fcd8c64a 0d315c70 371c8508 3e9eb86a c5d7714b 0d315c70 889016e3 a5e3680f cb3f91d5 f1540154 0d6480f0 8c8c4228 14fef6a9 0f10c5bc 36184fa5 8432e015 eb5e8c01 0ff65a1a fea23495 9cfcb56e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-connect-tunnels"
+    only: true
+    lead: ' '
+- paths: http-connect-tunnels
+  block: 3
+  fingerprint: 07bebffa5af282e4
+  lang: yaml
+  lines: 16c71da1 d664f32c 20ed7317 8c8c4228 45174446 0f10c5bc 36184fa5 c582fe46 2efcbf93 bfce7f60 f1566f4d bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-connect-tunnels"
+    only: true
+    lead: ' '
+- paths: http-connect-tunnels
+  block: 4
+  fingerprint: cd0bed871d8f4553
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 9181ca33 0f10c5bc 1426decf 2f7c298d 7922ee1c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-connect-tunnels"
+    only: true
+    lead: ' '
+- paths: http-connect-tunnels
+  block: 5
+  fingerprint: e81d224d686d9a3c
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 babf079d 0f10c5bc 36184fa5 588a5d84 71ab14c2 20ed7317 45174446 38921003 d8168cbb 70c97555 14fef6a9 3a48088f 38dc0152 1637329a 9ebc4789 9181ca33 13bbd0ee abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-connect-tunnels"
+    only: true
+    lead: ' '
+- paths: http-connect-tunnels
+  block: 8
+  fingerprint: 8af8709d2770f963
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 9cb41306 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 29dc90dd 3de9d845 a3b86ab6 28efa50b 69f54740 20ed7317 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="http-connect-tunnels"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: ab2640e9fa28bcb7
+    lang: console
+    lines: 5f80a9c6 50f83ff5
+    preview: NAME                            READY   STATUS    RESTARTS   AGE
+  content: |-
+    {{< doc-test paths="http-connect-tunnels" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the egress-proxy Squid deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: httpbin
+            name: egress-proxy
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 8af8709d2770f963
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 9cb41306 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 29dc90dd 3de9d845 a3b86ab6 28efa50b 69f54740 20ed7317 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="http-connect-tunnels" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tunnel HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: tunnel
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tunnel HTTPRoute refs to be resolved
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: tunnel
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the httpbin-tunnel BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-tunnel
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 4259049d37c460ce
+    lang: console
+    lines: 92413e97 ab5df625
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="http-connect-tunnels" >}}
+    # Requests for tunnel.example reach httpbin only through the Squid CONNECT tunnel.
+    code=""
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: tunnel.example") || true
+      [ "$code" = "200" ] && break
+      echo "tunnel.example returned '$code', retrying ($i/60)"; sleep 2
+    done
+    if [ "$code" != "200" ]; then
+      echo "FAIL: request to tunnel.example through the gateway returned '$code', want 200"
+      exit 1
+    fi
+    # The gateway proxy's CONNECT listener (stat prefix tunnel_<cluster>) must have
+    # carried a connection, which proves the request went through the tunnel.
+    stats=$(kubectl exec deploy/http -n kgateway-system -- wget -qO- '127.0.0.1:19000/stats?filter=^tcp\.tunnel_')
+    echo "$stats"
+    if ! grep -Eq '^tcp\.tunnel_.*\.downstream_cx_total: [1-9]' <<<"$stats"; then
+      echo "FAIL: no connection counted on the gateway proxy's CONNECT tunnel listener"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: e6758ba8a864a432
+    lang: console
+    lines: e6758ba8
+    preview: 10.244.0.32 CONNECT httpbin.httpbin.svc.cluster.local:8000 200 "Proxy-Authorizat
+  content: |-
+    {{< doc-test paths="http-connect-tunnels" >}}
+    # Squid writes a CONNECT entry to its access log when the tunnel closes. The
+    # gateway proxy keeps the upstream connection pooled, so if the entry is not
+    # there yet, restart httpbin to close the tunnel from the destination side.
+    want='CONNECT httpbin.httpbin.svc.cluster.local:8000 200 "Proxy-Authorization: Basic dXNlcjpwYXNz"'
+    found=""
+    for i in $(seq 1 10); do
+      log=$(kubectl exec -n httpbin deploy/egress-proxy -- cat /var/log/squid/access.log) || true
+      if grep -Fq "$want" <<<"$log"; then found=1; break; fi
+      sleep 3
+    done
+    if [ -z "$found" ]; then
+      echo "no CONNECT entry in the Squid access log yet; restarting httpbin to close the pooled tunnel"
+      kubectl rollout restart deployment/httpbin -n httpbin
+      kubectl rollout status deployment/httpbin -n httpbin --timeout=300s
+      for i in $(seq 1 30); do
+        log=$(kubectl exec -n httpbin deploy/egress-proxy -- cat /var/log/squid/access.log) || true
+      if grep -Fq "$want" <<<"$log"; then found=1; break; fi
+        sleep 3
+      done
+    fi
+    kubectl exec -n httpbin deploy/egress-proxy -- cat /var/log/squid/access.log
+    if [ -z "$found" ]; then
+      echo "FAIL: the Squid access log has no line containing: $want"
+      exit 1
+    fi
+    {{< /doc-test >}}

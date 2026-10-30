@@ -1,0 +1,164 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/traffic-split.md
+blocks:
+- 84f5ae09c856ce73 sh
+- b551886219df2aae sh
+- 2178fd33f131147a
+- d208a005aa111b1b sh
+- 635cc55e4fd7d569
+- 107a44113db67b9a yaml
+- 192bcba986371713 sh
+- 8e568f9cc04df690 sh
+- e91f515cf5f8e8c5 sh
+- 35d1d9667ff60206
+- b2bb085d53fffaf4 sh
+- c0b3c0eb47a09e70 sh
+tags:
+- paths: traffic-split
+  block: 0
+  fingerprint: 84f5ae09c856ce73
+  lang: sh
+  lines: 84f5ae09
+  preview: kubectl create namespace helloworld
+  form:
+    attr: paths="traffic-split"
+    only: true
+    lead: ' '
+- paths: traffic-split
+  block: 1
+  fingerprint: b551886219df2aae
+  lang: sh
+  lines: b5518862
+  preview: kubectl -n helloworld apply -f https://raw.githubusercontent.com/solo-io/gloo-ed
+  form:
+    attr: paths="traffic-split"
+    only: true
+    lead: ' '
+- paths: traffic-split
+  block: 5
+  fingerprint: 107a44113db67b9a
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 e10efe59 d28822e6 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa c441422c 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 9f953dec a2aee449 5a3e261b 57044578 a2aee449 5a3e261b 1982dc6b a2aee449 e0822f08 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="traffic-split"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: b551886219df2aae
+    lang: sh
+    lines: b5518862
+    preview: kubectl -n helloworld apply -f https://raw.githubusercontent.com/solo-io/gloo-ed
+  content: |-
+    {{< doc-test paths="traffic-split" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the helloworld-v1 deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: helloworld
+            name: helloworld-v1
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the helloworld-v2 deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: helloworld
+            name: helloworld-v2
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the helloworld-v3 deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: helloworld
+            name: helloworld-v3
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 35d1d9667ff60206
+    lang: ''
+    lines: 92413e97 5f7c6523 880b4545 263e725f 99c1fade d88bbcb8 6b56eaba
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="traffic-split" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the traffic-split HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: helloworld
+            name: traffic-split
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: traffic-split - traffic.split.example requests reach a helloworld app
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /hello
+        method: GET
+        headers:
+          host: "traffic.split.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "Hello version: v"
+    EOF
+    # Test-only: the split is random, so check it loosely. Over 100 requests with
+    # weights 10/10/80, every version answers at least once and v3 answers most.
+    # The odds that a 10% backend never answers by chance are about 3 in 100,000.
+    ts_v1=0; ts_v2=0; ts_v3=0; ts_other=0
+    for i in $(seq 1 100); do
+      ts_body=$(curl -s --max-time 10 "http://${INGRESS_GW_ADDRESS}:8080/hello" -H "host: traffic.split.example:8080" || true)
+      case "$ts_body" in
+        *"Hello version: v1,"*) ts_v1=$((ts_v1+1)) ;;
+        *"Hello version: v2,"*) ts_v2=$((ts_v2+1)) ;;
+        *"Hello version: v3,"*) ts_v3=$((ts_v3+1)) ;;
+        *) ts_other=$((ts_other+1)) ;;
+      esac
+    done
+    echo "traffic-split: v1=$ts_v1 v2=$ts_v2 v3=$ts_v3 other=$ts_other (of 100)"
+    if [ "$ts_v1" -lt 1 ] || [ "$ts_v2" -lt 1 ] || [ "$ts_v3" -lt 1 ]; then
+      echo "traffic-split: expected every helloworld version to answer at least once"
+      exit 1
+    fi
+    if [ "$ts_v3" -le "$ts_v1" ] || [ "$ts_v3" -le "$ts_v2" ]; then
+      echo "traffic-split: expected helloworld-v3 (weight 80) to answer more often than v1 and v2 (weight 10 each)"
+      exit 1
+    fi
+    if [ "$ts_other" -gt 10 ]; then
+      echo "traffic-split: $ts_other of 100 requests did not return a helloworld response"
+      exit 1
+    fi
+    {{< /doc-test >}}
