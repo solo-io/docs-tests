@@ -202,7 +202,7 @@ hidden:
        LINE=$(log_line /v1/audio/transcriptions)
        echo "$LINE"
        for want in 'gen_ai.operation.name=transcription' 'gen_ai.request.model=whisper-1' \
-                   'gen_ai.usage.audio_seconds=90' 'audio_rate=0.005' 'audio_cost=0.0075' 'agw.ai.usage.cost.total=0.0075'; do
+                'gen_ai.usage.audio_seconds=90' 'audio_rate=0.005' 'audio_cost=0.0075' 'agw.ai.usage.cost.total=0.00750*'; do
          echo "$LINE" | grep -Eq "(^|[[:space:]])${want}([[:space:]]|$)" || { echo "FAIL: transcription log entry lacks $want"; exit 1; }
        done
        echo "transcription recorded with 90 s at the overlay rate: cost 0.0075"

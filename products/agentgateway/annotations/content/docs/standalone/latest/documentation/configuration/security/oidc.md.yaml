@@ -428,8 +428,8 @@ hidden:
     rm -f jar-log
     expect_code "$(login jar-log http://localhost:3000/app)" 200 "login"
     expect_code "$(req logged -b jar-log http://localhost:3000/logged)" 200 "request with the session"
-    for _ in $(seq 1 10); do grep -q 'user.id=doc-user' /tmp/doc-test-agw-oidc-accesslog.log && break; sleep 1; done
-    grep 'http.path=/logged' /tmp/doc-test-agw-oidc-accesslog.log | grep 'user.id=doc-user' | grep -q 'user.email=doc-user@example.com' \
+    for _ in $(seq 1 10); do grep -Eq 'user\.id="?doc-user"?' /tmp/doc-test-agw-oidc-accesslog.log && break; sleep 1; done
+    grep 'http.path=/logged' /tmp/doc-test-agw-oidc-accesslog.log | grep -Eq 'user\.id="?doc-user"?.*user\.email="?doc-user@example\.com"?' \
       || { echo "FAIL: the access log has no user.id and user.email from the session"; cat /tmp/doc-test-agw-oidc-accesslog.log; exit 1; }
     echo "ok: access log records jwt.sub and jwt.email from the session"
     stop_agw

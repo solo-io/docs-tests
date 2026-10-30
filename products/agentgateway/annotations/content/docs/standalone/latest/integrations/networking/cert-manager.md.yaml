@@ -82,7 +82,7 @@ hidden:
     sed -e 's#/certs/#./certs/#' cert-manager.yaml > cert-manager-local.yaml
     agentgateway -f cert-manager-local.yaml --validate-only
     sed 's/port: 443/port: 8443/' cert-manager-local.yaml > cert-manager-8443.yaml
-    start_agw cert-manager-8443.yaml cert-manager https://localhost:8443/
+    start_agw cert-manager-8443.yaml cert-manager http://localhost:15021/healthz/ready
     OUT=$(curl -s -o /dev/null -w '%{http_code} %{ssl_verify_result}' --cacert certs/tls.crt https://localhost:8443/mcp || true)
     case "$OUT" in
       "000 "*) echo "FAIL: TLS handshake with the certificate failed: $OUT"; cat /tmp/doc-test-agw-cert-manager.log; exit 1 ;;
