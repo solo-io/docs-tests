@@ -1,0 +1,108 @@
+format: 1
+source: assets/conrefs/snippets/istio/agw-ingress.md
+blocks:
+- cf5c2e378628f4cb sh
+- 97c49ccd22d09e1a yaml
+- d35e901b8d7a974c sh
+- 4516cf9ad31ae94e
+- e649a451d425fee1 sh
+tags:
+- paths: integrations-agentic-mesh-ingress
+  block: 1
+  fingerprint: 97c49ccd22d09e1a
+  lang: yaml
+  lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 295d26d4 8d7577a7 36184fa5 2f2479a1 c10d7538 82601aaa c095a45d 069de162 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="integrations-agentic-mesh-ingress"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-ingress
+  block: 2
+  fingerprint: d35e901b8d7a974c
+  lang: sh
+  lines: ad0727bd 660202cb
+  preview: kubectl get pods -n ${INGRESS_NAMESPACE} -l gateway.networking.k8s.io/gateway-na
+  form:
+    attr: paths="integrations-agentic-mesh-ingress"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-ingress
+  block: 4
+  fingerprint: e649a451d425fee1
+  lang: sh
+  lines: 912d009a 5f875b6d 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get gateway agentgateway-ingress -n ${INGRES
+  form:
+    attr: paths="integrations-agentic-mesh-ingress"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: cf5c2e378628f4cb
+    lang: sh
+    lines: cf5c2e37
+    preview: export INGRESS_NAMESPACE=<namespace>
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
+       # The page leaves the namespace to the reader and does not create it.
+       export INGRESS_NAMESPACE=agw-ingress
+       kubectl create namespace ${INGRESS_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
+       {{< /doc-test >}}
+- after:
+    section: (top of page)
+    line: b9b4c3a54ef3f6cd
+    occurrence: 0
+    words: 4e074085 a12dd3a7 8e7fc023 b9776d7d 487a0a9a 4ea5ee68 425c89ed fa51fd49 c071cf5f 6201111b b9776d7d 4ea5ee68 fa51fd49 2de632d1
+    block_before:
+      block: 1
+      fingerprint: 97c49ccd22d09e1a
+      lang: yaml
+      lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 295d26d4 8d7577a7 36184fa5 2f2479a1 c10d7538 82601aaa c095a45d 069de162 5f37c61e c3201545 e83d405d abc56510
+      preview: kubectl apply -f - <<EOF
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
+       kubectl -n ${INGRESS_NAMESPACE} wait gateway/agentgateway-ingress --for=condition=Programmed --timeout=300s
+       # The controller creates the Deployment shortly after the Gateway is Programmed.
+       for i in $(seq 1 60); do kubectl -n ${INGRESS_NAMESPACE} get deploy/agentgateway-ingress >/dev/null 2>&1 && break; sleep 2; done
+       kubectl -n ${INGRESS_NAMESPACE} rollout status deploy/agentgateway-ingress --timeout=300s
+       {{< /doc-test >}}
+- after:
+    section: (top of page)
+    line: 516d5a1444974903
+    occurrence: 0
+    words: 4b227777 157dca92 b9776d7d 3c462384 bb9af5d1 d80c9bf9 28391d3b b9776d7d 487a0a9a 4ea5ee68
+    block_before:
+      block: 3
+      fingerprint: 4516cf9ad31ae94e
+      lang: ''
+      lines: 39fc93f2 9034b69c a475b27f 425b699f
+      preview: NAME                                      READY   STATUS    RESTARTS   AGE
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
+       # Wait for the LoadBalancer to publish an address on the Gateway status.
+       for i in $(seq 1 90); do
+         addr=$(kubectl get gateway agentgateway-ingress -n ${INGRESS_NAMESPACE} -o jsonpath='{.status.addresses[0].value}' 2>/dev/null || true)
+         [ -n "$addr" ] && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: e649a451d425fee1
+    lang: sh
+    lines: 912d009a 5f875b6d 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get gateway agentgateway-ingress -n ${INGRES
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
+       [ -n "${INGRESS_GW_ADDRESS}" ] || { echo "the ingress Gateway has no address"; exit 1; }
+       # Claim: the controller set the ingress pod's ambient dataplane mode to none.
+       mode=$(kubectl -n ${INGRESS_NAMESPACE} get pods -l gateway.networking.k8s.io/gateway-name=agentgateway-ingress \
+         -o jsonpath='{.items[0].metadata.labels.istio\.io/dataplane-mode}')
+       [ "$mode" = "none" ] || { echo "expected istio.io/dataplane-mode=none on the ingress pod, got '${mode}'"; exit 1; }
+       {{< /doc-test >}}

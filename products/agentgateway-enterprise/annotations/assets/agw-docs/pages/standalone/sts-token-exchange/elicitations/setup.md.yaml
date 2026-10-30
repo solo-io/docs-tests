@@ -1,0 +1,282 @@
+format: 1
+source: assets/agw-docs/pages/standalone/sts-token-exchange/elicitations/setup.md
+blocks:
+- ef6892a73c513eb7 sh
+- ae0712f40daace65 sh
+- c86c85415e29f8ac sh
+- 3bc69a39b4283c3b sh
+- 060b27fdb201d450 console
+- 59c047b43ff0f413 sh
+- 2d21e0463de4b203 console
+- baff1ab9046f22cd sh
+- 288c4af02a951261 sh
+- b6934f81b99b2389 console
+- 425d04ba9847426c sh
+- 4aef058b3dac9351 console
+- 953b7069cb5c7fd5 sh
+- e46c857eec5d3e10
+- e0cbc66f3840b0d0 sh
+- 83cc8b799693c31e
+- f8015802a1e97814 sh
+- d4354f515c911080 json
+- ba81df982e4a85c5 sh
+- 1843beef398d3e5f json
+- 12cd11185c81d45b sh
+tags:
+- paths: mcp-elicitation-brokered-setup
+  block: 0
+  fingerprint: ef6892a73c513eb7
+  lang: sh
+  lines: 2ade129a 62892a1d
+  preview: mkdir -p "$HOME/agentgateway-brokered-elicitation"
+  form:
+    attr: paths="mcp-elicitation-brokered-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-setup
+  block: 1
+  fingerprint: ae0712f40daace65
+  lang: sh
+  lines: 0b871ecf 021fb596 fe324177 afa07114 469bd28a 4002a67b 021fb596 3012c0e0 a5bd813a fe4ada09 59693229 3f42e715 41d04d50 7ed3c152 39d4b54e a61b93ea 021fb596 f34b9f6a d15de3c7 aab74b88 6685a21a 4fe4e563 7d170475 a39bb952 d10b36aa d10b36aa cfae0d42 d10b36aa 39d4b54e 55d0c79c 021fb596 32990666 afa07114 09db9566 07f50448 e50d678d e9532c63 2cb1ea16 021fb596 9c5ab799 ffaab9ac d69e1824 d10b36aa cfae0d42 d10b36aa cfae0d42 d10b36aa abc56510
+  preview: cat > realm.json <<'EOF'
+  form:
+    attr: paths="mcp-elicitation-brokered-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-setup
+  block: 2
+  fingerprint: c86c85415e29f8ac
+  lang: sh
+  lines: edfefa09 461e9c9e 33efe395 8d2fbad8 e988b5bc 2cbf41b0 5ba03e49
+  preview: docker run -d --name agentgateway-downstream-keycloak \
+  form:
+    attr: paths="mcp-elicitation-brokered-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-setup
+  block: 3
+  fingerprint: 3bc69a39b4283c3b
+  lang: sh
+  lines: 7c9cfeec fbb97a21 a4c3ed04 18e2d299
+  preview: until curl -fsS http://localhost:8080/realms/downstream-mcp/.well-known/openid-c
+  form:
+    attr: paths="mcp-elicitation-brokered-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-setup
+  block: 7
+  fingerprint: baff1ab9046f22cd
+  lang: sh
+  lines: 62892a1d 82def27f 943d11d8 0b02fb9c 2b6bc07a d67b54bf a56ac672 4b0e6312 eaaad965 5f783d11 7fa108bb 917a9ec2 c8f3f59a c873f373 60799967 b3abcad4 44ec9b74 03e4c030 92db8240 d1e0dc43 6a855af1 4a4bebf7 d72f261d df374e41 3035507a 233e460f 82726b6f 546787b2 4aee8d36 bc24674f 99dc25b8 4b0e6312 eaaad965 ed937048 d72f261d 17c05a12 7b1fc5bd ff7360cf 9a3ab873 62a0ff5d 64c17556 60799967 312e2a24 03e4c030 f19d2cb2 64c17556 60799967 312e2a24 03e4c030 998560fe 64c17556 60799967 312e2a24 03e4c030 19bcae4b 866a279a 6fdcdb03 e36eea14 b2c7d028 3b16dc47 ebf23a25 43047332 ff590013 e68ca7ba cab2be2b 4c9a2da4 6f403570 42d57a54 018ffb4c a2466ec4 7fd204aa aa11783a 28101486 617fd961 7e36a6e0 93e7008d 72d5b538 837dd2e9 03a368e3 c3f1f27e ba864438 216e5719 f4d98810 82ac5841 abc56510
+  preview: cd "$HOME/agentgateway-brokered-elicitation"
+  form:
+    attr: paths="mcp-elicitation-brokered-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-setup
+  block: 8
+  fingerprint: 288c4af02a951261
+  lang: sh
+  lines: 288c4af0
+  preview: agentgateway --validate-only -f config.yaml
+  form:
+    attr: paths="mcp-elicitation-brokered-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-setup
+  block: 14
+  fingerprint: e0cbc66f3840b0d0
+  lang: sh
+  lines: e0cbc66f
+  preview: curl -i http://localhost:3000/mcp
+  form:
+    attr: paths="mcp-elicitation-brokered-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-setup
+  block: 16
+  fingerprint: f8015802a1e97814
+  lang: sh
+  lines: f8015802
+  preview: curl -s http://localhost:3000/.well-known/oauth-protected-resource/mcp | jq '{re
+  form:
+    attr: paths="mcp-elicitation-brokered-setup"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-setup
+  block: 18
+  fingerprint: ba81df982e4a85c5
+  lang: sh
+  lines: ba81df98
+  preview: curl -s http://localhost:3000/.well-known/oauth-authorization-server/mcp | jq '{
+  form:
+    attr: paths="mcp-elicitation-brokered-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: 'Step 1: Set up Keycloak'
+    line: 3eaff11cba8e1438
+    occurrence: 0
+    words: 6ee0eb49 75a288c0 d63f4a0c 58296753 d548c5b8 f4bf9f7f ea325d76 50d858e0 0c1eeccc fa8847b0 ca978112 7d4e02d3 0695b563 ca978112 31510842 6e306c51 948fe603 10c22bcf b9776d7d 4ea5ee68 6201111b ca978112 9f86d081 04f8996d b9776d7d 948fe603 e0ba89fd 7dfb4cf6 3c482346 663ea1bf b9776d7d 4ea5ee68 f3959239 42882135
+    block_before: null
+  content: |-
+    {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
+    # ============================================================================
+    # Doc test coverage for "Set up brokered elicitation" (standalone; comments not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Keycloak in Docker with the downstream-mcp realm, the Everything MCP
+    #     server, the complete config.yaml (--validate-only), and the STS and proxy
+    #     started from it, with the STS log lines that the page quotes.
+    #   * The 401 challenge, protected resource metadata, and authorization server
+    #     metadata, with exact values.
+    #   * Dynamic client registration accepts an allowlisted Inspector callback
+    #     and rejects one that is not on the allowlist.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The separate terminals: the MCP server, STS, and proxy run in the
+    #     background of this script instead, and stop when it exits.
+    #   * Clean up: the brokered pages that chain this one need Keycloak; the exit
+    #     trap removes the container instead.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    command -v agentgateway-sts >/dev/null || { echo "agentgateway-sts not installed" >&2; exit 1; }
+    DT_LOGS=$(mktemp -d)
+    DT_PIDS=""
+    trap 'kill $DT_PIDS 2>/dev/null || true; docker rm -f agentgateway-downstream-keycloak >/dev/null 2>&1 || true' EXIT
+    # Helpers that stand in for the browser in the brokered pages that chain this
+    # one: kc_form_login posts a Keycloak login form, and follow_redirects_until
+    # walks a redirect chain until a URL prefix.
+    kc_form_login() {
+      local url="$1" user="$2" pass="$3" jar="$4" page action
+      page=$(curl -sS -c "$jar" -b "$jar" "$url")
+      action=$(printf '%s' "$page" | { grep -o 'action="[^"]*login-actions/authenticate[^"]*"' || true; } | head -1 \
+        | sed -e 's/^action="//' -e 's/"$//' -e 's/&amp;/\&/g')
+      if [ -z "$action" ]; then
+        echo "no Keycloak login form at $url" >&2
+        printf '%s\n' "$page" | head -40 >&2
+        return 1
+      fi
+      curl -sS -o /dev/null -w '%{redirect_url}' -c "$jar" -b "$jar" \
+        --data-urlencode "username=$user" --data-urlencode "password=$pass" \
+        --data-urlencode "credentialId=" "$action"
+    }
+    follow_redirects_until() {
+      local prefix="$1" url="$2" jar="$3" i
+      for i in $(seq 1 10); do
+        case "$url" in "$prefix"*) printf '%s' "$url"; return 0;; esac
+        url=$(curl -sS -o /dev/null -w '%{redirect_url}' -c "$jar" -b "$jar" "$url")
+        if [ -z "$url" ]; then echo "redirect chain ended before reaching $prefix" >&2; return 1; fi
+      done
+      echo "too many redirects before $prefix" >&2
+      return 1
+    }
+    query_param() {
+      python3 -c 'import sys,urllib.parse as u; print(u.parse_qs(u.urlparse(sys.argv[1]).query)[sys.argv[2]][0])' "$1" "$2"
+    }
+    urlenc() { jq -rn --arg v "$1" '$v|@uri'; }
+    pkce_pair() {
+      PKCE_VERIFIER=$(openssl rand -hex 32)
+      PKCE_CHALLENGE=$(printf '%s' "$PKCE_VERIFIER" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')
+    }
+    wait_for_log() {
+      local file="$1" text="$2" i
+      for i in $(seq 1 60); do
+        grep -qF "$text" "$file" 2>/dev/null && return 0
+        sleep 1
+      done
+      echo "FAIL: '$text' not in $file" >&2
+      tail -n 40 "$file" >&2
+      return 1
+    }
+    # Starts (or restarts) the STS in the background from the working directory.
+    start_sts() {
+      if [ -n "${STS_PID:-}" ]; then kill "$STS_PID" 2>/dev/null || true; wait "$STS_PID" 2>/dev/null || true; fi
+      : > "$DT_LOGS/sts.log"
+      agentgateway-sts sts --config-file config.yaml --address 127.0.0.1:7777 > "$DT_LOGS/sts.log" 2>&1 &
+      STS_PID=$!
+      DT_PIDS="$DT_PIDS $STS_PID"
+      wait_for_log "$DT_LOGS/sts.log" 'starting token exchange server on'
+    }
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 59c047b43ff0f413
+    lang: sh
+    lines: 59c047b4
+    preview: npx -y @modelcontextprotocol/server-everything@{{< reuse "agw-docs/versions/mcp-
+  content: |-
+    {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
+    # Hidden equivalent of the separate terminal: run the MCP server in the background.
+    npx -y @modelcontextprotocol/server-everything@{{< reuse "agw-docs/versions/mcp-server-everything.md" >}} streamableHttp > "$DT_LOGS/mcp.log" 2>&1 &
+    DT_PIDS="$DT_PIDS $!"
+    wait_for_log "$DT_LOGS/mcp.log" 'listening on port 3001'
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 425d04ba9847426c
+    lang: sh
+    lines: 425d04ba
+    preview: agentgateway-sts sts --config-file config.yaml --address 127.0.0.1:7777
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
+       # Hidden equivalent of the STS terminal, from the working directory.
+       cd "$HOME/agentgateway-brokered-elicitation"
+       start_sts
+       # Match on fields: the log line also carries other keys, such as "component".
+       jq -e -R 'fromjson? | select(.msg == "MCP resource paths declared as issuer-proxy handled" and .paths == ["/mcp"])' "$DT_LOGS/sts.log" >/dev/null \
+         || { echo "FAIL: STS did not declare /mcp" >&2; cat "$DT_LOGS/sts.log" >&2; exit 1; }
+       grep -F '"address":"127.0.0.1:7777"' "$DT_LOGS/sts.log" >/dev/null \
+         || { echo "FAIL: STS not on 127.0.0.1:7777" >&2; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 953b7069cb5c7fd5
+    lang: sh
+    lines: 62892a1d 7c7b21fd f6931a7b
+    preview: cd "$HOME/agentgateway-brokered-elicitation"
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
+       # Hidden equivalent of the proxy terminal.
+       cd "$HOME/agentgateway-brokered-elicitation"
+       export PATH="$HOME/.agentgateway/bin:$PATH"
+       agentgateway -f config.yaml > "$DT_LOGS/proxy.log" 2>&1 &
+       DT_PIDS="$DT_PIDS $!"
+       for i in $(seq 1 60); do
+         [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/mcp)" = "401" ] && break
+         sleep 1
+       done
+       [ "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/mcp)" = "401" ] \
+         || { echo "FAIL: proxy not answering 401 on /mcp" >&2; tail -n 40 "$DT_LOGS/proxy.log" >&2; exit 1; }
+       grep -F 'bind="bind/3000"' "$DT_LOGS/proxy.log" >/dev/null || { echo "FAIL: no bind/3000 in proxy log" >&2; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 1843beef398d3e5f
+    lang: json
+    lines: 021fb596 436b5498 cc0e23dc 5dcb6a31 77a8a270 d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
+       ISSUER_CLIENT_ID=agw-issuer
+       HDRS=$(curl -s -o /dev/null -D - http://localhost:3000/mcp)
+       grep -q '^HTTP/[0-9.]* 401' <<<"$HDRS" || { echo "FAIL: expected 401" >&2; echo "$HDRS" >&2; exit 1; }
+       grep -qi '^www-authenticate: Bearer resource_metadata="http://localhost:3000/.well-known/oauth-protected-resource/mcp"' <<<"$HDRS" \
+         || { echo "FAIL: www-authenticate does not name the resource metadata" >&2; echo "$HDRS" >&2; exit 1; }
+       PRM=$(curl -fsS http://localhost:3000/.well-known/oauth-protected-resource/mcp)
+       [ "$(jq -r .resource <<<"$PRM")" = "http://localhost:3000/mcp" ] || { echo "FAIL: resource" >&2; echo "$PRM" >&2; exit 1; }
+       [ "$(jq -r '.authorization_servers[0]' <<<"$PRM")" = "http://localhost:3000/mcp" ] || { echo "FAIL: authorization_servers" >&2; echo "$PRM" >&2; exit 1; }
+       ASM=$(curl -fsS http://localhost:3000/.well-known/oauth-authorization-server/mcp)
+       [ "$(jq -r .issuer <<<"$ASM")" = "http://localhost:3000/mcp" ] || { echo "FAIL: issuer" >&2; echo "$ASM" >&2; exit 1; }
+       for k in authorization_endpoint:authorize token_endpoint:token registration_endpoint:register; do
+         [ "$(jq -r ".${k%%:*}" <<<"$ASM")" = "http://localhost:3000/oauth-issuer/${k#*:}" ] || { echo "FAIL: ${k%%:*}" >&2; echo "$ASM" >&2; exit 1; }
+       done
+       # Dynamic client registration: an allowlisted Inspector callback is accepted,
+       # and a callback that is not on the allowlist is rejected. Loopback callbacks
+       # match on any port (RFC 8252), so the rejected one differs by path.
+       DCR=$(curl -fsS -X POST http://localhost:3000/oauth-issuer/register -H 'Content-Type: application/json' \
+         -d '{"client_name":"doc-test","redirect_uris":["http://localhost:6274/oauth/callback"]}')
+       [ "$(jq -r .client_id <<<"$DCR")" = "${ISSUER_CLIENT_ID}" ] || { echo "FAIL: DCR client_id" >&2; echo "$DCR" >&2; exit 1; }
+       DCR_BAD=$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3000/oauth-issuer/register -H 'Content-Type: application/json' \
+         -d '{"client_name":"doc-test","redirect_uris":["http://localhost:6274/not-allowlisted/callback"]}')
+       [ "$DCR_BAD" = "400" ] || { echo "FAIL: unlisted redirect_uri returned $DCR_BAD, want 400" >&2; exit 1; }
+       {{< /doc-test >}}

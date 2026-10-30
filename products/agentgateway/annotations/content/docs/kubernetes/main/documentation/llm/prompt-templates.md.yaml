@@ -59,7 +59,7 @@ hidden:
        - name: wait for the static-prompt-template policy to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: static-prompt-template
@@ -101,7 +101,7 @@ hidden:
        - name: wait for the dynamic-prompt-template policy to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: dynamic-prompt-template

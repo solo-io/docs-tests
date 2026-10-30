@@ -45,7 +45,8 @@ hidden:
       agentgateway -f "$1" > "/tmp/doc-test-agw-$2.log" 2>&1 &
       AGW_PID=$!
       for _ in $(seq 1 30); do
-        curl -s -o /dev/null -m 2 "$3" && return 0
+        # -k: the listener uses a self-signed certificate; this only waits for it to answer.
+        curl -sk -o /dev/null -m 2 "$3" && return 0
         kill -0 "$AGW_PID" 2>/dev/null || break
         sleep 1
       done

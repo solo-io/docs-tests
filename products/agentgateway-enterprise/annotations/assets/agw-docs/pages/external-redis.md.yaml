@@ -1,0 +1,350 @@
+format: 1
+source: assets/agw-docs/pages/external-redis.md
+blocks:
+- 62015e87db8694c1 sh
+- 9d2753834a6819fa yaml
+- 461228f4bdc69e10 yaml
+- 8e67cb70be464883 sh
+- 62015e87db8694c1 sh
+- 1b50892a45a20bc8 yaml
+- 461228f4bdc69e10 yaml
+- 8e67cb70be464883 sh
+- 82dfc3d7ed9c6ad9 yaml
+- 62015e87db8694c1 sh
+- 68fb3daa9b06f68b yaml
+- 461228f4bdc69e10 yaml
+- 7c3613b270393832 sh
+tags:
+- paths: external-redis-enterprise
+  block: 2
+  fingerprint: 461228f4bdc69e10
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="external-redis-enterprise"
+    only: true
+    lead: ' '
+- paths: external-redis-enterprise
+  block: 3
+  fingerprint: 8e67cb70be464883
+  lang: sh
+  lines: 8e67cb70
+  preview: kubectl get deployment -l 'app in (rate-limiter, ext-cache)' -n {{< reuse "kgw-d
+  form:
+    attr: paths="external-redis-enterprise"
+    only: true
+    lead: ' '
+- paths: external-redis-enterprise
+  block: 6
+  fingerprint: 461228f4bdc69e10
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="external-redis-enterprise"
+    only: true
+    lead: ' '
+- paths: external-redis-enterprise
+  block: 7
+  fingerprint: 8e67cb70be464883
+  lang: sh
+  lines: 8e67cb70
+  preview: kubectl get deployment -l 'app in (rate-limiter, ext-cache)' -n {{< reuse "kgw-d
+  form:
+    attr: paths="external-redis-enterprise"
+    only: true
+    lead: ' '
+- paths: external-redis-enterprise
+  block: 10
+  fingerprint: 68fb3daa9b06f68b
+  lang: yaml
+  lines: e10f493b 5a05cd6c 2ee1c717 8c8c4228 070c96c0 0bebd850 36184fa5 356067ee 3e196ba7 ff7360cf 18bfcf8e 36184fa5 a58565b2 36184fa5 04968f51 fef2806a 8db70061 d05d74e6 516ef5ea 98a7707f 45d129c0 5b43fb45 abc56510
+  preview: kubectl apply --server-side -f- <<EOF
+  form:
+    attr: paths="external-redis-enterprise"
+    only: true
+    lead: ' '
+- paths: external-redis-enterprise
+  block: 11
+  fingerprint: 461228f4bdc69e10
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="external-redis-enterprise"
+    only: true
+    lead: ' '
+- paths: external-redis-enterprise
+  block: 12
+  fingerprint: 7c3613b270393832
+  lang: sh
+  lines: 7c3613b2
+  preview: kubectl get deployment -l app=ext-auth-service -n {{< reuse "kgw-docs/snippets/n
+  form:
+    attr: paths="external-redis-enterprise"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 62015e87db8694c1
+    lang: sh
+    lines: 1a53c997 1bd2e2c1 44718fec
+    preview: kubectl create secret generic redis-auth \
+  content: |2-
+       {{< doc-test paths="external-redis-enterprise" >}}
+       # ============================================================================
+       # Doc test coverage for the external Redis guide (not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "`extCache` fields": with `extCache.redis.url` and `extCache.auth` set, the
+       #     deployer removes the in-cluster ext-cache Deployment, and a global rate limit
+       #     on the httpbin route is enforced with its counters stored in the external Redis.
+       #   * "Overlay": with the REDIS_* overlay, the rate limiter rolls out with the
+       #     overlay variables, the in-cluster ext-cache Deployment is listed again, and the
+       #     rate limit counters are stored in the external Redis.
+       #   * "Redis password": the ext-auth-service overlay applies and the Deployment
+       #     rolls out with SESSION_REDIS_PASSWORD.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * A managed Redis such as Memorystore or ElastiCache: a password-protected Redis
+       #     in the `external-redis` namespace stands in for it. The visible steps that use
+       #     `<redis-password>`, `10.0.0.12`, or `redis.example.com` run here with that
+       #     instance's values instead.
+       #   * TLS (`REDIS_SOCKET_TYPE: tls`, `REDIS_CA_CERT`), and the AuthConfig session
+       #     store and login flow, which need an OIDC provider.
+       kubectl create namespace external-redis --dry-run=client -o yaml | kubectl apply -f -
+       kubectl apply -n external-redis -f- <<EOF
+       apiVersion: apps/v1
+       kind: Deployment
+       metadata:
+         name: redis
+       spec:
+         replicas: 1
+         selector:
+           matchLabels:
+             app: redis
+         template:
+           metadata:
+             labels:
+               app: redis
+           spec:
+             containers:
+             - name: redis
+               image: redis:7-alpine
+               args: ["redis-server", "--requirepass", "doc-test-redis-pass"]
+               ports:
+               - containerPort: 6379
+       EOF
+       kubectl apply -n external-redis -f- <<EOF
+       apiVersion: v1
+       kind: Service
+       metadata:
+         name: redis
+       spec:
+         selector:
+           app: redis
+         ports:
+         - port: 6379
+           targetPort: 6379
+       EOF
+       kubectl rollout status deployment/redis -n external-redis --timeout=180s
+       redis_keys() {
+         kubectl exec -n external-redis deploy/redis -- redis-cli -a doc-test-redis-pass --no-auth-warning DBSIZE | tr -d '\r '
+       }
+       rl_deployment() {
+         kubectl get deployment -l app=rate-limiter -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o name | head -n 1
+       }
+       # A global rate limit on the httpbin route, as in the global rate limiting guide.
+       apply_rate_limit() {
+         kubectl apply -f- <<EOF
+       apiVersion: ratelimit.solo.io/v1alpha1
+       kind: RateLimitConfig
+       metadata:
+         name: redis-test-limit
+         namespace: httpbin
+       spec:
+         raw:
+           descriptors:
+           - key: generic_key
+             value: counter
+             rateLimit:
+               requestsPerUnit: 3
+               unit: MINUTE
+           rateLimits:
+           - actions:
+             - genericKey:
+                 descriptorValue: counter
+       EOF
+         kubectl apply -f- <<EOF
+       apiVersion: {{< reuse "kgw-docs/snippets/trafficpolicy-apiversion.md" >}}
+       kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+       metadata:
+         name: redis-test-limit
+         namespace: httpbin
+       spec:
+         targetRefs:
+         - group: gateway.networking.k8s.io
+           kind: HTTPRoute
+           name: httpbin
+         traffic:
+           entRateLimit:
+             global:
+               rateLimitConfigRefs:
+               - name: redis-test-limit
+       EOF
+       }
+       # Send requests until one is rate limited, then check that Redis holds the counter.
+       check_limit_in_redis() {
+         kubectl exec -n external-redis deploy/redis -- redis-cli -a doc-test-redis-pass --no-auth-warning FLUSHALL
+         limited=""
+         for attempt in $(seq 1 90); do
+           status=$(curl -s -o /dev/null -w "%{http_code}" "http://${INGRESS_GW_ADDRESS}:80/get" -H "host: www.example.com")
+           if [ "$status" = "429" ]; then limited=yes; break; fi
+           sleep 1
+         done
+         if [ -z "$limited" ]; then echo "the global rate limit was never enforced (last status $status)"; return 1; fi
+         keys=$(redis_keys)
+         if [ "$keys" = "0" ]; then echo "the external Redis holds no rate limit counters"; return 1; fi
+         echo "rate limited; the external Redis holds $keys keys"
+       }
+       kubectl create secret generic redis-auth \
+         -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+         --from-literal=password=doc-test-redis-pass --dry-run=client -o yaml | kubectl apply -f -
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 9d2753834a6819fa
+    lang: yaml
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 070c96c0 0bebd850 36184fa5 356067ee ba62cf2b ff7360cf ab89fa94 ba77f9b0 4e27285c 146e11c6 dc3774d8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="external-redis-enterprise" >}}
+       kubectl apply -f- <<EOF
+       apiVersion: {{< reuse "kgw-docs/snippets/gatewayparam-apiversion.md" >}}
+       kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+       metadata:
+         name: ext-params
+         namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+       spec:
+         sharedExtensions:
+           ratelimiter:
+             enabled: true
+           extCache:
+             redis:
+               url: redis.external-redis.svc.cluster.local:6379
+             auth:
+               secretName: redis-auth
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 8e67cb70be464883
+    lang: sh
+    lines: 8e67cb70
+    preview: kubectl get deployment -l 'app in (rate-limiter, ext-cache)' -n {{< reuse "kgw-d
+  content: |2-
+       {{< doc-test paths="external-redis-enterprise" >}}
+       for attempt in $(seq 1 60); do
+         if [ -z "$(kubectl get deployment -l app=ext-cache -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o name)" ]; then break; fi
+         sleep 3
+       done
+       if [ -n "$(kubectl get deployment -l app=ext-cache -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o name)" ]; then echo "the in-cluster ext-cache Deployment was not removed"; exit 1; fi
+       kubectl rollout status "$(rl_deployment)" -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=180s
+       apply_rate_limit
+       check_limit_in_redis
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 1b50892a45a20bc8
+    lang: yaml
+    lines: e10f493b 5a05cd6c 2ee1c717 8c8c4228 070c96c0 0bebd850 36184fa5 356067ee ba62cf2b ff7360cf 18bfcf8e 36184fa5 a58565b2 36184fa5 04968f51 fcb7783c 8db70061 3c7b2a9b 43bc591b 95859ef9 4d05a913 d03270c1 13c7f350 c796fb1f 516ef5ea 98a7707f 45d129c0 5b43fb45 abc56510
+    preview: kubectl apply --server-side -f- <<EOF
+  content: |2-
+       {{< doc-test paths="external-redis-enterprise" >}}
+       # The two methods are alternatives. Remove the `extCache` resource from the previous
+       # section so that this section starts as a reader who chose the overlay would.
+       kubectl delete {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}} ext-params -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found
+       kubectl apply --server-side -f- <<EOF
+       apiVersion: {{< reuse "kgw-docs/snippets/gatewayparam-apiversion.md" >}}
+       kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+       metadata:
+         name: ext-params
+         namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+       spec:
+         sharedExtensions:
+           ratelimiter:
+             enabled: true
+             deployment:
+               spec:
+                 template:
+                   spec:
+                     containers:
+                     - name: rate-limiter
+                       env:
+                       - name: REDIS_URL
+                         value: redis.external-redis.svc.cluster.local:6379
+                       - name: REDIS_SOCKET_TYPE
+                         value: tcp
+                       - name: REDIS_DB
+                         value: "0"
+                       - name: REDIS_PASSWORD
+                         valueFrom:
+                           secretKeyRef:
+                             name: redis-auth
+                             key: password
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 8e67cb70be464883
+    lang: sh
+    lines: 8e67cb70
+    preview: kubectl get deployment -l 'app in (rate-limiter, ext-cache)' -n {{< reuse "kgw-d
+  content: |2-
+       {{< doc-test paths="external-redis-enterprise" >}}
+       for attempt in $(seq 1 60); do
+         url=$(kubectl get deployment -l app=rate-limiter -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.items[0].spec.template.spec.containers[?(@.name=="rate-limiter")].env[?(@.name=="REDIS_URL")].value}')
+         if [ "$url" = "redis.external-redis.svc.cluster.local:6379" ]; then break; fi
+         sleep 3
+       done
+       if [ "$url" != "redis.external-redis.svc.cluster.local:6379" ]; then echo "rate-limiter REDIS_URL: expected redis.external-redis.svc.cluster.local:6379, got $url"; exit 1; fi
+       kubectl rollout status "$(rl_deployment)" -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=180s
+       for attempt in $(seq 1 60); do
+         if [ -n "$(kubectl get deployment -l app=ext-cache -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o name)" ]; then break; fi
+         sleep 3
+       done
+       if [ -z "$(kubectl get deployment -l app=ext-cache -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o name)" ]; then echo "the in-cluster ext-cache Deployment is not listed"; exit 1; fi
+       check_limit_in_redis
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 7c3613b270393832
+    lang: sh
+    lines: 7c3613b2
+    preview: kubectl get deployment -l app=ext-auth-service -n {{< reuse "kgw-docs/snippets/n
+  content: |2-
+       {{< doc-test paths="external-redis-enterprise" >}}
+       for attempt in $(seq 1 60); do
+         envs=$(kubectl get deployment -l app=ext-auth-service -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.items[0].spec.template.spec.containers[?(@.name=="ext-auth-service")].env[*].name}')
+         if echo "$envs" | grep -qw SESSION_REDIS_PASSWORD; then break; fi
+         sleep 3
+       done
+       if ! echo "$envs" | grep -qw SESSION_REDIS_PASSWORD; then echo "ext-auth-service has no SESSION_REDIS_PASSWORD"; exit 1; fi
+       EA=$(kubectl get deployment -l app=ext-auth-service -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o name | head -n 1)
+       kubectl rollout status "$EA" -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=180s
+       # The page has no cleanup. Restore the default GatewayClass and remove the test resources.
+       kubectl apply -f- <<EOF
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: GatewayClass
+       metadata:
+         name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+       spec:
+         controllerName: solo.io/{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+       EOF
+       kubectl delete {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}} ext-params -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found
+       kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} redis-test-limit -n httpbin --ignore-not-found
+       kubectl delete RateLimitConfig redis-test-limit -n httpbin --ignore-not-found
+       kubectl delete secret redis-auth -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found
+       kubectl delete namespace external-redis --ignore-not-found
+       {{< /doc-test >}}

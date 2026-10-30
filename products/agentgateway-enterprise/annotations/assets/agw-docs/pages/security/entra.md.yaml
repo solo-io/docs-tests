@@ -1,0 +1,188 @@
+format: 1
+source: assets/agw-docs/pages/security/entra.md
+blocks:
+- 3aa6cf7e31c078a9 bash
+- 62157ada1de8b271 bash
+- ae23f1067090f4cf bash
+- b7576e06d63f8d7a yaml
+- 872caeac36d11667 yaml
+- 44e6bd1d48d3d479 bash
+- 9a6ff2cadafb8214 bash
+- 25c771cc4cff252a console
+- 455d414e8f613435 bash
+- 87e6667d9fd4056d bash
+- d243458144143b88 bash
+- d05f31db00facf66 json
+- d7b6984df979f8b1
+- c4290a44ad722d36 bash
+tags:
+- paths: oauth-entra
+  block: 2
+  fingerprint: ae23f1067090f4cf
+  lang: bash
+  lines: b431ac5c 27fa6ad1 4795c0ae 53ca0fbd
+  preview: '# OIDC metadata document discovery endpoint'
+  form:
+    attr: paths="oauth-entra"
+    only: true
+    lead: ' '
+- paths: oauth-entra
+  block: 3
+  fingerprint: b7576e06d63f8d7a
+  lang: yaml
+  lines: 16c71da1 263e4531 f84e6062 8c8c4228 de02dd5c 0bebd850 36184fa5 2efcbf93 ab1a39d7 c6ba4159 c8f3f59a e8eb2c7f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="oauth-entra"
+    only: true
+    lead: ' '
+- paths: oauth-entra
+  block: 4
+  fingerprint: 872caeac36d11667
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 7be46bab 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d a9110e4f d3cb008e a1343bf6 34cb8cb0 837dc1fd 20cd4423 44ec9b74 b93c9907 c5210559 70c97555 de02dd5c f84e6062 22aec9ce c6ba4159 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="oauth-entra"
+    only: true
+    lead: ' '
+- paths: oauth-entra
+  block: 13
+  fingerprint: c4290a44ad722d36
+  lang: bash
+  lines: 66c8226d b83b0cf2
+  preview: kubectl delete agentgatewaybackend entra-jwks -n {{< reuse "kgw-docs/snippets/na
+  form:
+    attr: paths="oauth-entra"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 3aa6cf7e31c078a9
+    lang: bash
+    lines: 69d33851 0d38fb89
+    preview: export ENTRA_TENANT_ID=<your-tenant-id>
+  content: |2-
+       {{< doc-test paths="oauth-entra" >}}
+       # ============================================================================
+       # Doc test coverage for "MS Entra ID as an IdP" (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * The entra-jwks backend and the JWT policy are accepted, and the policy's
+       #     remote JWKS (login.microsoftonline.com) resolves, so the policy is enforced
+       #     on the openai route.
+       #   * A request without a token is rejected with 401.
+       #   * A well-formed RS256 JWT with the policy's issuer and audience, but signed
+       #     by a key that is not in the Entra JWKS, is rejected with 401.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * "Register an app in Entra ID", "Expose an API", the client secret, and
+       #     `az login`: they need a real Entra tenant and a signed-in user, which CI
+       #     does not have. So the test cannot get a token that Entra signed, and the
+       #     200 response with a valid token is not checked.
+       #   * The request path: the openai prerequisite route matches /openai, so the
+       #     checks call /openai instead of /v1/chat/completions.
+       # The tenant is Microsoft's multi-tenant `common` alias, whose JWKS endpoint is
+       # public. The client ID is a placeholder that no token in this test carries.
+       export ENTRA_TENANT_ID="${ENTRA_TENANT_ID:-common}"
+       export ENTRA_CLIENT_ID="${ENTRA_CLIENT_ID:-aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee}"
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: b7576e06d63f8d7a
+    lang: yaml
+    lines: 16c71da1 263e4531 f84e6062 8c8c4228 de02dd5c 0bebd850 36184fa5 2efcbf93 ab1a39d7 c6ba4159 c8f3f59a e8eb2c7f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="oauth-entra" >}}
+    YAMLTest -f - <<'EOF'
+    - name: entra-jwks backend is accepted
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: entra-jwks
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 872caeac36d11667
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 7be46bab 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d a9110e4f d3cb008e a1343bf6 34cb8cb0 837dc1fd 20cd4423 44ec9b74 b93c9907 c5210559 70c97555 de02dd5c f84e6062 22aec9ce c6ba4159 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="oauth-entra" >}}
+    YAMLTest -f - <<'EOF'
+    - name: entra-jwt-policy is accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: entra-jwt-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    - name: a request without a token is rejected by the Entra JWT policy
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80"
+        path: "/openai"
+        method: POST
+        headers:
+          content-type: "application/json"
+        body: '{"model":"","messages":[{"role":"user","content":"no token"}]}'
+      source:
+        type: local
+      retries: 15
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 25c771cc4cff252a
+    lang: console
+    lines: 25c771cc
+    preview: 'authentication failure: no bearer token found'
+  content: |2-
+       {{< doc-test paths="oauth-entra" >}}
+       # Mint an RS256 JWT with the policy's issuer and audience, signed by a key that
+       # Entra never published. The policy must reject it on the signature.
+       FORGED_KEY=$(mktemp)
+       openssl genrsa -out "$FORGED_KEY" 2048 2>/dev/null
+       b64url() { openssl base64 -A | tr '+/' '-_' | tr -d '='; }
+       NOW=$(date +%s)
+       JWT_HEADER=$(printf '{"alg":"RS256","typ":"JWT","kid":"doc-test-forged"}' | b64url)
+       JWT_BODY=$(printf '{"iss":"https://sts.windows.net/%s/","aud":"api://%s","sub":"doc-test","iat":%s,"exp":%s}' \
+         "$ENTRA_TENANT_ID" "$ENTRA_CLIENT_ID" "$NOW" "$((NOW + 600))" | b64url)
+       JWT_SIG=$(printf '%s.%s' "$JWT_HEADER" "$JWT_BODY" | openssl dgst -sha256 -sign "$FORGED_KEY" | b64url)
+       export FORGED_TOKEN="$JWT_HEADER.$JWT_BODY.$JWT_SIG"
+       YAMLTest -f - <<EOF
+       - name: a token that Entra did not sign is rejected
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: "application/json"
+             authorization: "Bearer ${FORGED_TOKEN}"
+           body: '{"model":"","messages":[{"role":"user","content":"forged token"}]}'
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 401
+       EOF
+       {{< /doc-test >}}

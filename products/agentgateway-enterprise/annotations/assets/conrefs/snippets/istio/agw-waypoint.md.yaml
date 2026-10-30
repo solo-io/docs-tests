@@ -1,0 +1,199 @@
+format: 1
+source: assets/conrefs/snippets/istio/agw-waypoint.md
+blocks:
+- 32bf31282726b79d sh
+- dad3ac076ef4f447 yaml
+- 11cb7e985a2cda3c sh
+- 194de76d360a433f
+- 32bf31282726b79d sh
+- 8f3ef5d7166403d7 sh
+- 2227c3f9e5d6c2f1 sh
+- a2306b83080608ca yaml
+- 11cb7e985a2cda3c sh
+- 194de76d360a433f
+- d1e8111e8a510684 sh
+- 14fd7cea859fc2f1 sh
+- 86fc15e86ec2c079 sh
+- 34582b69398b75d4 sh
+- 831ecf64e9117e90
+tags:
+- paths: integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup
+  block: 1
+  fingerprint: dad3ac076ef4f447
+  lang: yaml
+  lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 8c300a0b 18d7aff9 fa1e8330 f1651cd1 36184fa5 a86d8611 c10d7538 326e54f2 572d5678 6d9c1787 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup
+  block: 2
+  fingerprint: 11cb7e985a2cda3c
+  lang: sh
+  lines: 6965bfad 8e9e2829
+  preview: kubectl get pods -n ${NAMESPACE} -l gateway.networking.k8s.io/gateway-name=agent
+  form:
+    attr: paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup
+  block: 11
+  fingerprint: 14fd7cea859fc2f1
+  lang: sh
+  lines: 9fe5ae2d ebeaeaee 69486046
+  preview: kubectl label namespace ${NAMESPACE} \
+  form:
+    attr: paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-waypoint-install
+  block: 13
+  fingerprint: 34582b69398b75d4
+  lang: sh
+  lines: 34582b69
+  preview: istioctl ztunnel-config connections --namespace ${NAMESPACE}
+  form:
+    attr: paths="integrations-agentic-mesh-waypoint-install"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 32bf31282726b79d
+    lang: sh
+    lines: 32bf3128
+    preview: export NAMESPACE=<ns>
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup" >}}
+       # The page leaves the namespace to the reader. Use a fixed one, create it, and
+       # enroll it in the ambient mesh so that its workloads reach the waypoint.
+       export NAMESPACE=agw-mesh
+       kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
+       kubectl label namespace ${NAMESPACE} istio.io/dataplane-mode=ambient --overwrite
+       {{< /doc-test >}}
+- after:
+    section: Single cluster
+    line: b06367c8d4bf6395
+    occurrence: 0
+    words: 4e074085 a12dd3a7 8e7fc023 b9776d7d 56e57ada bbb75229 425c89ed fa51fd49 c071cf5f 6201111b b9776d7d 4ea5ee68 fa51fd49 2de632d1
+    block_before:
+      block: 1
+      fingerprint: dad3ac076ef4f447
+      lang: yaml
+      lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 8c300a0b 18d7aff9 fa1e8330 f1651cd1 36184fa5 a86d8611 c10d7538 326e54f2 572d5678 6d9c1787 abc56510
+      preview: kubectl apply -f - <<EOF
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup" >}}
+       kubectl -n ${NAMESPACE} wait gateway/agentgateway-waypoint --for=condition=Programmed --timeout=300s
+       # The controller creates the Deployment shortly after the Gateway is Programmed.
+       for i in $(seq 1 60); do kubectl -n ${NAMESPACE} get deploy/agentgateway-waypoint >/dev/null 2>&1 && break; sleep 2; done
+       kubectl -n ${NAMESPACE} rollout status deploy/agentgateway-waypoint --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 11cb7e985a2cda3c
+    lang: sh
+    lines: 6965bfad 8e9e2829
+    preview: kubectl get pods -n ${NAMESPACE} -l gateway.networking.k8s.io/gateway-name=agent
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-waypoint-install" >}}
+       # Claims: the pod is Running and the Gateway uses the waypoint class and is programmed.
+       class=$(kubectl -n ${NAMESPACE} get gateway agentgateway-waypoint -o jsonpath='{.spec.gatewayClassName}')
+       [ "$class" = "enterprise-agentgateway-waypoint" ] || { echo "unexpected class ${class}"; exit 1; }
+       running=$(kubectl -n ${NAMESPACE} get pods -l gateway.networking.k8s.io/gateway-name=agentgateway-waypoint \
+         --field-selector=status.phase=Running --no-headers | wc -l | tr -d ' ')
+       [ "$running" -ge 1 ] || { echo "no running waypoint pod"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 14fd7cea859fc2f1
+    lang: sh
+    lines: 9fe5ae2d ebeaeaee 69486046
+    preview: kubectl label namespace ${NAMESPACE} \
+  blank_before: []
+  content: |2-
+         {{< doc-test paths="integrations-agentic-mesh-waypoint-install" >}}
+         # Claim: traffic to enrolled services flows through the agentgateway waypoint.
+         # Deploy an app and a client in the enrolled namespace, confirm a request
+         # succeeds, then attach a deny rule to the waypoint Gateway: a 403 on the
+         # denied path can only come from the waypoint.
+         kubectl apply -n ${NAMESPACE} -f - <<EOF
+         apiVersion: v1
+         kind: Service
+         metadata:
+           name: httpbin
+           labels:
+             app: httpbin
+         spec:
+           ports:
+           - name: http
+             port: 8000
+             targetPort: 8080
+           selector:
+             app: httpbin
+         ---
+         apiVersion: apps/v1
+         kind: Deployment
+         metadata:
+           name: httpbin
+         spec:
+           replicas: 1
+           selector:
+             matchLabels:
+               app: httpbin
+           template:
+             metadata:
+               labels:
+                 app: httpbin
+             spec:
+               containers:
+               - name: httpbin
+                 image: docker.io/mccutchen/go-httpbin:v2.6.0
+                 command: [go-httpbin]
+                 args: ["-port", "8080"]
+                 ports:
+                 - containerPort: 8080
+         EOF
+         kubectl -n ${NAMESPACE} run waypoint-client --image=curlimages/curl --restart=Never -- sleep 3600
+         kubectl -n ${NAMESPACE} rollout status deploy/httpbin --timeout=180s
+         kubectl -n ${NAMESPACE} wait pod/waypoint-client --for=condition=Ready --timeout=180s
+         code=""
+         for i in $(seq 1 60); do
+           code=$(kubectl -n ${NAMESPACE} exec waypoint-client -- curl -s -o /dev/null -m 5 -w '%{http_code}' http://httpbin:8000/get || true)
+           [ "$code" = "200" ] && break
+           sleep 2
+         done
+         [ "$code" = "200" ] || { echo "expected 200 from httpbin through the waypoint, got ${code}"; exit 1; }
+         kubectl apply -f - <<EOF
+         apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+         kind: EnterpriseAgentgatewayPolicy
+         metadata:
+           name: waypoint-probe-deny
+           namespace: ${NAMESPACE}
+         spec:
+           targetRefs:
+           - group: gateway.networking.k8s.io
+             kind: Gateway
+             name: agentgateway-waypoint
+           traffic:
+             authorization:
+               action: Deny
+               policy:
+                 matchExpressions:
+                 - 'request.path == "/anything/waypoint-probe"'
+         EOF
+         code=""
+         for i in $(seq 1 60); do
+           code=$(kubectl -n ${NAMESPACE} exec waypoint-client -- curl -s -o /dev/null -m 5 -w '%{http_code}' http://httpbin:8000/anything/waypoint-probe || true)
+           [ "$code" = "403" ] && break
+           sleep 2
+         done
+         [ "$code" = "403" ] || { echo "expected 403 from the waypoint deny rule, got ${code}"; exit 1; }
+         ok=$(kubectl -n ${NAMESPACE} exec waypoint-client -- curl -s -o /dev/null -m 5 -w '%{http_code}' http://httpbin:8000/get || true)
+         [ "$ok" = "200" ] || { echo "expected /get to stay 200 with the deny rule, got ${ok}"; exit 1; }
+         kubectl -n ${NAMESPACE} delete enterpriseagentgatewaypolicy waypoint-probe-deny
+         {{< /doc-test >}}

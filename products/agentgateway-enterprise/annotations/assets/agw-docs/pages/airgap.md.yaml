@@ -1,0 +1,282 @@
+format: 1
+source: assets/agw-docs/pages/airgap.md
+blocks:
+- 74d9e1ebc7016d86 sh
+- a6d06a74156b786a sh
+- 373d5f1377f6d0f1 sh
+- 694179eff3dbf733 sh
+- 206112879b9ad86d sh
+- 8c7c32a34652999c sh
+- 40f7eed9c57099b2 sh
+- fcfae6d24b77192b sh
+- 523ea8902ed1873b yaml
+- 6890744ce7095743 yaml
+- 38a67bbfeb831731 sh
+- b4f6dbe7e6e33a85 yaml
+- 38a67bbfeb831731 sh
+- f85b5c834567a5f8 yaml
+- f6c04958c90df851 yaml
+- f323e40fa4bcce93 yaml
+- 38a67bbfeb831731 sh
+- f6c04958c90df851 yaml
+- c06e2311b977eb15 sh
+- 3f1659db934c4508 sh
+- 4b084da9b87abcc2 sh
+- 99090d3edb69bdb5 sh
+- 113e70153ba167f1 sh
+- 0b0a6cf8e400977b sh
+- 64a82c128f17df92 yaml
+- b534e57e12ec1c2a sh
+- d5f6360246c81d11 sh
+- a8c68715cb3b642c sh
+- c0d6a61ef9e3eccd sh
+- bc2a93ce39e459df sh
+- 7bec3b93c91d31ce sh
+- 4956806f279b5ea3 yaml
+- e2a8e9039ba3db2f yaml
+- 3a286baa41ef5295 yaml
+- 81124d7f22451b1b sh
+- 06fb55dde8478d60 sh
+- 5c0f5ec27981abfa
+tags:
+- paths: enterprise-airgap
+  block: 0
+  fingerprint: 74d9e1ebc7016d86
+  lang: sh
+  lines: b3bead00 d11e6989 9ac2dfad d39745f4 e9332104 78c366f3 1aca3585 5aabf630
+  preview: '# Control plane'
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 1
+  fingerprint: a6d06a74156b786a
+  lang: sh
+  lines: b3bead00 b38fc9fe 9ac2dfad 007d79ea b5cbc6fd d5ecdbc8 2714bed9 532c3dfe
+  preview: '# Control plane'
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 2
+  fingerprint: 373d5f1377f6d0f1
+  lang: sh
+  lines: b3bead00 df101494 9ac2dfad 2cacc947 6ff4f29c 1a23a046 58a3e4e0 ef617aa5
+  preview: '# Control plane'
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 3
+  fingerprint: 694179eff3dbf733
+  lang: sh
+  lines: 694179ef
+  preview: curl -LO https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< r
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 5
+  fingerprint: 8c7c32a34652999c
+  lang: sh
+  lines: b3bead00 73468017 1c595073 bf0c1b60 9ac2dfad 3bfa1229 914a0b73 6b049323 a673fac3 670e941c 8bdd13f2 261bc773 0f567554 22408e2f e89b64da 9e90e3d4 c7907f2d 6c019e9e 6f7458ce 9168a5b8
+  preview: '# Control plane'
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 6
+  fingerprint: 40f7eed9c57099b2
+  lang: sh
+  lines: 40f7eed9
+  preview: kubectl create namespace {{< reuse "agw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 15
+  fingerprint: f323e40fa4bcce93
+  lang: yaml
+  lines: 41b4f836 c51be8dc c14c1813 c01255f9 6962ade9 55532f0a a396599a 2d0a637c e409bdd9 abc56510
+  preview: mkdir -p enterprise-agentgateway
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 16
+  fingerprint: 38a67bbfeb831731
+  lang: sh
+  lines: 38a67bbf
+  preview: kubectl apply -f standard-install.yaml
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 17
+  fingerprint: f6c04958c90df851
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 8af957d1 36184fa5 2f2479a1 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 18
+  fingerprint: c06e2311b977eb15
+  lang: sh
+  lines: 7cf5780a 3ba992c3
+  preview: 'helm pull oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse '
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 19
+  fingerprint: 3f1659db934c4508
+  lang: sh
+  lines: e68579db 47f92532
+  preview: helm push {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}-v$AGENTGATEWAY_
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 20
+  fingerprint: 4b084da9b87abcc2
+  lang: sh
+  lines: 24d0bc4d 7a0b9974 3ba69cac 09c016e8 7a0b9974 fde80217 878ad6e0 37d65509
+  preview: 'helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} oci:'
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+- paths: enterprise-airgap
+  block: 35
+  fingerprint: 06fb55dde8478d60
+  lang: sh
+  lines: cca5dc08 20aca5b0 7e00906f
+  preview: kubectl get deploy,statefulset -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="enterprise-airgap"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: 'Step 1: Pull images on a connected device'
+    line: cc32ad7f204825ce
+    occurrence: 0
+    words: b8d31e85 4d040d3f 12a7bd86 263a4dbe 68ff63fb b9776d7d 80ea8bc4 21b2eed1 10c22bcf d9c0d341 eb4e3800 21a355f1 5e82ea9e 7b12be43
+    block_before: null
+  content: |-
+    {{< doc-test paths="enterprise-airgap" >}}
+    # ============================================================================
+    # Doc test coverage for "Install in air-gapped environments" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Steps 1 and 2: every control plane and data plane image is pulled from the
+    #     public registry, re-tagged, and pushed to a private registry.
+    #   * Step 3: the namespace and an image pull secret.
+    #   * Step 4: the global.imageRegistry values file, the downloaded Gateway API
+    #     CRDs, and "Mirror Helm charts": both charts are pulled, pushed to the
+    #     private registry, and installed from it with the values file.
+    #   * Step 6: the controller and the proxy run images from the private registry.
+    # HOW THE PRIVATE REGISTRY WORKS HERE:
+    #   * A registry:2 container on the runner (127.0.0.1:PORT) takes the pushes,
+    #     and a second registry:2 container in the kind node's network namespace
+    #     serves the same storage on localhost:PORT, so that the node's containerd
+    #     pulls from "localhost:PORT" over plain HTTP. PRIVATE_REGISTRY is the same
+    #     string for the push side and the pull side.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * A disconnected network: the cluster can still reach public registries; the
+    #     image checks prove that the pods use the private registry instead.
+    #   * Registry authentication: the test registry has none, so the pull secret
+    #     has placeholder credentials.
+    #   * Step 5 (management UI): optional, and covered by the UI setup tests.
+    NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
+    REG_PORT=$(( 20000 + RANDOM % 20000 ))
+    REG_NAME="${NODE}-airgap-registry"
+    docker volume create "${REG_NAME}"
+    docker run -d --name "${REG_NAME}-push" -p "127.0.0.1:${REG_PORT}:5000" -v "${REG_NAME}:/var/lib/registry" registry:2
+    docker run -d --name "${REG_NAME}-pull" --network "container:${NODE}" -e REGISTRY_HTTP_ADDR=":${REG_PORT}" -v "${REG_NAME}:/var/lib/registry" registry:2
+    for i in $(seq 1 30); do curl -fsS "http://127.0.0.1:${REG_PORT}/v2/" && break; sleep 1; done
+    for i in $(seq 1 30); do docker exec "${NODE}" curl -fsS "http://localhost:${REG_PORT}/v2/" && break; sleep 1; done
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 206112879b9ad86d
+    lang: sh
+    lines: c13d7aa3 431ef27c
+    preview: export PRIVATE_REGISTRY=<registry.example.com>
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-airgap" >}}
+       # The visible exports are placeholders; use the test registry.
+       export PRIVATE_REGISTRY="localhost:${REG_PORT}"
+       export PRIVATE_REPOSITORY=enterprise-agentgateway
+       # The test registry serves plain HTTP. Docker treats localhost as insecure,
+       # but Helm does not, so add --plain-http to Helm OCI calls that use it.
+       helm() {
+         case " $* " in
+           *" oci://localhost:"*) command helm "$@" --plain-http ;;
+           *) command helm "$@" ;;
+         esac
+       }
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: fcfae6d24b77192b
+    lang: sh
+    lines: 656f64a9 e87b6717 1231af6f c234339c 2708ed4f 3ba69cac
+    preview: kubectl create secret docker-registry private-registry-credentials \
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-airgap" >}}
+       kubectl create secret docker-registry private-registry-credentials \
+         --docker-server=$PRIVATE_REGISTRY \
+         --docker-username=doc-test \
+         --docker-password=doc-test \
+         --docker-email=doc-test@example.com \
+         -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: 4b084da9b87abcc2
+    lang: sh
+    lines: 24d0bc4d 7a0b9974 3ba69cac 09c016e8 7a0b9974 fde80217 878ad6e0 37d65509
+    preview: 'helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} oci:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-airgap" >}}
+       kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} --timeout=300s
+       kubectl wait --for=condition=Programmed gateway/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/agentgateway-proxy --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 35
+    fingerprint: 06fb55dde8478d60
+    lang: sh
+    lines: cca5dc08 20aca5b0 7e00906f
+    preview: kubectl get deploy,statefulset -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-airgap" >}}
+    CTRL_IMG=$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get deploy {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -o jsonpath='{.spec.template.spec.containers[0].image}')
+    PROXY_IMG=$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get deploy agentgateway-proxy -o jsonpath='{.spec.template.spec.containers[0].image}')
+    echo "controller: ${CTRL_IMG}"; echo "proxy: ${PROXY_IMG}"
+    case "${CTRL_IMG}" in "${PRIVATE_REGISTRY}/${PRIVATE_REPOSITORY}/"*) ;; *) echo "controller image is not from the private registry"; exit 1 ;; esac
+    case "${PROXY_IMG}" in "${PRIVATE_REGISTRY}/${PRIVATE_REPOSITORY}/"*) ;; *) echo "proxy image is not from the private registry"; exit 1 ;; esac
+    # Running pods prove that the node pulled both images from the private registry.
+    kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} wait --for=condition=Ready pod -l app.kubernetes.io/name={{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} --timeout=120s
+    kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} wait --for=condition=Ready pod -l gateway.networking.k8s.io/gateway-name=agentgateway-proxy --timeout=120s
+    docker rm -f "${REG_NAME}-push" "${REG_NAME}-pull" || true
+    docker volume rm "${REG_NAME}" || true
+    {{< /doc-test >}}

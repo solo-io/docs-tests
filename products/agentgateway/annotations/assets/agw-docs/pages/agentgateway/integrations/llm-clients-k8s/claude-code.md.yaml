@@ -164,7 +164,7 @@ hidden:
       preview: claude
   content: |-
     {{< doc-test paths="claude-code-k8s" >}}
-    kubectl delete agentgatewaybackend anthropic -n agentgateway-system --ignore-not-found
+    kubectl delete {{< reuse "agw-docs/snippets/backend.md" >}} anthropic -n agentgateway-system --ignore-not-found
     kubectl delete httproute claude -n agentgateway-system --ignore-not-found
     kubectl delete secret anthropic-secret -n agentgateway-system --ignore-not-found
     {{< /doc-test >}}

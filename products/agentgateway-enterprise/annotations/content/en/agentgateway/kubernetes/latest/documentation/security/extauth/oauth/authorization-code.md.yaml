@@ -1,0 +1,227 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/documentation/security/extauth/oauth/authorization-code.md
+blocks:
+- 937e29fdce59ed16 yaml
+- 22534b75bf3f2eda yaml
+- f3e260063641c711 yaml
+- 40e5d266fe21a352 sh
+- 4b1ab5000b178727 sh
+- 05551b87590e88a8 sh
+- 04049f99a13a87c5
+- e4b91154e6e4e74c
+- e739ddbda52be16b sh
+- c53f9d7f6b0f2d45 sh
+- 4a960f02a001cc8d sh
+- bf33764833294085 sh
+tags:
+- paths: oauth-authorization-code
+  block: 1
+  fingerprint: 22534b75bf3f2eda
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 a23af473 8af957d1 36184fa5 d5ec3fae afba47a2 f1c7325d baeb199d 643f8ded 5caedf2d e73ad6de c35a37c3 8af957d1 61d0946d 61d9749c 9519f874 0bc8506e e8a6bb4b ba77f9b0 3a604046 fa579f78 ced79e71 38dc0152 73535c78 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="oauth-authorization-code"
+    only: true
+    lead: ' '
+- paths: oauth-authorization-code
+  block: 2
+  fingerprint: f3e260063641c711
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 a23af473 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 2c3ea4d6 75674f79 a23af473 8af957d1 70c97555 aaecb171 8af957d1 fe80e1dd abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="oauth-authorization-code"
+    only: true
+    lead: ' '
+- paths: oauth-authorization-code
+  block: 3
+  fingerprint: 40e5d266fe21a352
+  lang: sh
+  lines: 40e5d266
+  preview: kubectl get authconfig oauth-authorization-code -n {{< reuse "agw-docs/snippets/
+  form:
+    attr: paths="oauth-authorization-code"
+    only: true
+    lead: ' '
+- paths: oauth-authorization-code
+  block: 11
+  fingerprint: bf33764833294085
+  lang: sh
+  lines: aa5427a1 cccd33ed 363ffe45
+  preview: kubectl delete authconfig oauth-authorization-code -n {{< reuse "agw-docs/snippe
+  form:
+    attr: paths="oauth-authorization-code"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 937e29fdce59ed16
+    lang: yaml
+    lines: abbd1bdc f1540154 a67acb0a 8c8c4228 c35a37c3 8af957d1 170ac459 2f7c298d 8ba30b95 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="oauth-authorization-code" >}}
+       kubectl apply -f - <<EOF
+       apiVersion: v1
+       kind: Secret
+       metadata:
+         name: oauth-keycloak
+         namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+       type: extauth.solo.io/oauth
+       stringData:
+         client-secret: ${KEYCLOAK_SECRET}
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 22534b75bf3f2eda
+    lang: yaml
+    lines: 16c71da1 98875768 efd325e8 8c8c4228 a23af473 8af957d1 36184fa5 d5ec3fae afba47a2 f1c7325d baeb199d 643f8ded 5caedf2d e73ad6de c35a37c3 8af957d1 61d0946d 61d9749c 9519f874 0bc8506e e8a6bb4b ba77f9b0 3a604046 fa579f78 ced79e71 38dc0152 73535c78 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="oauth-authorization-code" >}}
+       # ============================================================================
+       # Doc test coverage for "Authorization code" (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * The client secret, the AuthConfig with oidcAuthorizationCode, and the
+       #     policy are accepted.
+       #   * A request without a session is redirected (302) to the Keycloak
+       #     authorization endpoint, with the gateway callback as redirect_uri.
+       #   * The whole authorization code flow, run headless: the test fetches the
+       #     Keycloak login form, posts user1's credentials, follows the redirect
+       #     back to the callback path, and gets the keycloak-session cookie. A request
+       #     with that cookie reaches the LLM.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The browser itself: the Keycloak login page is driven with curl, which
+       #     covers the same HTTP exchanges but not the page rendering.
+       #   * A live OpenAI completion: the openai prerequisite points the backend at
+       #     the httpbun mock LLM.
+       #   * The port-forward tabs: CI reaches the gateway through its LoadBalancer.
+       # The Redis host in the AuthConfig above comes from a snippet that renders
+       # empty for agentgateway (it has gates only for Gloo and kgateway versions),
+       # which leaves `host: :6379`. Point it at the ext-cache Redis that the
+       # enterprise install deploys, so the session can be stored.
+       kubectl patch authconfig oauth-authorization-code -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=json \
+         -p='[{"op":"replace","path":"/spec/configs/0/oauth2/oidcAuthorizationCode/session/redis/options/host","value":"ext-cache-enterprise-agentgateway:6379"}]'
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 40e5d266fe21a352
+    lang: sh
+    lines: 40e5d266
+    preview: kubectl get authconfig oauth-authorization-code -n {{< reuse "agw-docs/snippets/
+  content: |2-
+       {{< doc-test paths="oauth-authorization-code" >}}
+       kubectl wait --for=jsonpath='{.status.state}'=Accepted authconfig/oauth-authorization-code -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=120s
+       YAMLTest -f - <<'EOF'
+       - name: oauth-authorization-code policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               name: oauth-authorization-code
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 04049f99a13a87c5
+    lang: ''
+    lines: 7dc9d89c f9d8b2a7
+    preview: HTTP/1.1 302 Found
+  content: |2-
+       {{< doc-test paths="oauth-authorization-code" >}}
+       # A request without a session cookie gets a 302 to the Keycloak login.
+       AUTHZ_JAR=$(mktemp)
+       AUTH_URL=""
+       for i in $(seq 1 30); do
+         AUTH_URL=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' -c "$AUTHZ_JAR" \
+           "http://${INGRESS_GW_ADDRESS}:80/openai" -H content-type:application/json \
+           -d '{"model":"gpt-3.5-turbo","messages":[{"role":"user","content":"hi"}]}')
+         case "$AUTH_URL" in "302 ${KEYCLOAK_URL}/realms/master/protocol/openid-connect/auth?"*) break;; esac
+         sleep 4
+       done
+       case "$AUTH_URL" in
+         "302 ${KEYCLOAK_URL}/realms/master/protocol/openid-connect/auth?"*) ;;
+         *) echo "expected a 302 to the Keycloak auth endpoint, got: $AUTH_URL"; exit 1;;
+       esac
+       AUTH_URL=${AUTH_URL#302 }
+       echo "$AUTH_URL" | grep -q "client_id=${KEYCLOAK_CLIENT}" || { echo "redirect is missing the client ID"; exit 1; }
+       echo "$AUTH_URL" | grep -q "redirect_uri=http%3A%2F%2F${INGRESS_GW_ADDRESS}%3A80%2Fopenai" || { echo "redirect_uri is not the gateway callback"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: e739ddbda52be16b
+    lang: sh
+    lines: e739ddbd
+    preview: export COOKIE="<keycloak-session-id>"
+  content: |2-
+       {{< doc-test paths="oauth-authorization-code" >}}
+       # The visible steps sign in through a browser and copy the cookie by hand.
+       # Run the same exchanges with curl: load the Keycloak login form, post user1's
+       # credentials, and follow the redirect to the callback path, where ext auth
+       # trades the code for tokens and sets the keycloak-session cookie.
+       KC_JAR=$(mktemp)
+       LOGIN_PAGE=$(curl -fsS -c "$KC_JAR" -b "$KC_JAR" "$AUTH_URL")
+       LOGIN_ACTION=$(printf '%s' "$LOGIN_PAGE" | python3 -c '
+       import html, re, sys
+       page = sys.stdin.read()
+       form = re.search(r"<form[^>]*id=\"kc-form-login\"[^>]*>", page)
+       action = re.search(r"action=\"([^\"]+)\"", form.group(0)) if form else None
+       print(html.unescape(action.group(1)) if action else "")
+       ')
+       test -n "$LOGIN_ACTION" || { echo "no Keycloak login form in the authorization page"; exit 1; }
+       CALLBACK=$(curl -s -o /dev/null -w '%{redirect_url}' -c "$KC_JAR" -b "$KC_JAR" \
+         --data-urlencode username=user1 --data-urlencode password=password "$LOGIN_ACTION")
+       case "$CALLBACK" in
+         # Keycloak drops the default :80 port from the redirect URI it sends back.
+         "http://${INGRESS_GW_ADDRESS}:80/openai?"*code=*|"http://${INGRESS_GW_ADDRESS}/openai?"*code=*) ;;
+         *) echo "Keycloak did not redirect to the callback with a code: $CALLBACK"; exit 1;;
+       esac
+       CALLBACK_HDRS=$(curl -s -o /dev/null -D - -c "$AUTHZ_JAR" -b "$AUTHZ_JAR" "$CALLBACK")
+       COOKIE=$(awk '$6 == "keycloak-session" {print $6"="$7}' "$AUTHZ_JAR" | tail -1)
+       test -n "$COOKIE" || { echo "the callback did not set the keycloak-session cookie"; echo "$CALLBACK_HDRS"; kubectl logs -n agentgateway-system deploy/ext-auth-service-enterprise-agentgateway --tail=30 || true; exit 1; }
+       export COOKIE
+       {{< /doc-test >}}
+- after:
+    section: 'Step 3: Verify access token validation'
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 10
+      fingerprint: 4a960f02a001cc8d
+      lang: sh
+      lines: 73e22635 966919ec b0cead6d a90f7a89 4b3b16d3 021fb596 23c01049 29fe507d e52a1813 021fb596 09d1b3dd 4bbbd315 d10b36aa cfae0d42 fc075a9d
+      preview: curl -v "localhost:8080/openai" -H content-type:application/json \
+  content: |2-
+       {{< doc-test paths="oauth-authorization-code" >}}
+       # The LoadBalancer tab above leaves out the Cookie header, so it is not run.
+       # This is the port-forward tab's request, sent to the gateway's LoadBalancer.
+       YAMLTest -f - <<EOF
+       - name: a request with the keycloak-session cookie reaches the LLM
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: "application/json"
+             cookie: "${COOKIE}"
+           body: '{"model":"gpt-3.5-turbo","messages":[{"role":"user","content":"with session"}]}'
+         source:
+           type: local
+         retries: 5
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

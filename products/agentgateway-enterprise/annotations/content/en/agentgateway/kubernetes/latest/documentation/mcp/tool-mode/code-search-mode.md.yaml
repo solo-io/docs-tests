@@ -1,0 +1,240 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/documentation/mcp/tool-mode/code-search-mode.md
+blocks:
+- 2f40320f9d62eb55 yaml
+- ab9e7307b0687f5e yaml
+- 7c4b9f0bd01dc31f yaml
+- 7e24d1b5293ab0d9 sh
+- 5bbc58dd3cbf8ecd sh
+- c12a1c88eb0bcb80 sh
+- 1fef9b2595740d1b sh
+- 65b32453edf81bcf sh
+- 970f99923bf33b20 text
+- 26419d22d1700a89 sh
+- 43b8b7f129c6143c text
+- bf1a9a4db3c44af8 text
+- 9579e9090e387df4 sh
+- 3c1283d04a9bb380 text
+- 548193c68bd5023c sh
+tags:
+- paths: mcp-code-search-mode
+  block: 0
+  fingerprint: 2f40320f9d62eb55
+  lang: yaml
+  lines: 16c71da1 58584366 ab78925c 8c8c4228 94299a3d 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac 65f7ff6a a58565b2 8c8c4228 fa1e8330 65f7ff6a 36184fa5 04968f51 f7b9d9c2 0f8a659d ff42c2c6 0ff65a1a 11edf656 9278ed91 cb3f91d5 f1540154 0d6480f0 8c8c4228 94299a3d 0ccc8edc fa1e8330 65f7ff6a 36184fa5 8432e015 65f7ff6a 0ff65a1a 82601aaa da480536 ad63f385 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-code-search-mode"
+    only: true
+    lead: ' '
+- paths: mcp-code-search-mode
+  block: 1
+  fingerprint: ab9e7307b0687f5e
+  lang: yaml
+  lines: 16c71da1 00c69c65 450c56e0 8c8c4228 f6ac6ff2 0ccc8edc 36184fa5 425ef23b 0a1642b9 4d87344e 2ddd4ce7 c272f9f8 3035507a c3016ad1 2efcbf93 067411b0 da480536 91f2837c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-code-search-mode"
+    only: true
+    lead: ' '
+- paths: mcp-code-search-mode
+  block: 2
+  fingerprint: 7c4b9f0bd01dc31f
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 a872b174 0ccc8edc 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 825853cd ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 0827ed27 94ae491e 4a7e7cdb b8ac8874 450c56e0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-code-search-mode"
+    only: true
+    lead: ' '
+- paths: mcp-code-search-mode
+  block: 3
+  fingerprint: 7e24d1b5293ab0d9
+  lang: sh
+  lines: 82a16f1c 4059cfa2 c07591e9 8ef31d3c
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  form:
+    attr: paths="mcp-code-search-mode"
+    only: true
+    lead: ' '
+- paths: mcp-code-search-mode
+  block: 6
+  fingerprint: 1fef9b2595740d1b
+  lang: sh
+  lines: 815bec4d 506a4604 d9d77043 25d24546 689f6bc4 9fc5c59c d906e700 506a4604 d9d77043 12994e67
+  preview: curl -sS -D /tmp/hdr -o /tmp/init -X POST "$MCP_URL" \
+  form:
+    attr: paths="mcp-code-search-mode"
+    only: true
+    lead: ' '
+- paths: mcp-code-search-mode
+  block: 7
+  fingerprint: 65b32453edf81bcf
+  lang: sh
+  lines: 9fc5c59c d906e700 506a4604 d9d77043 23bfaa53
+  preview: curl -sS -X POST "$MCP_URL" \
+  form:
+    attr: paths="mcp-code-search-mode"
+    only: true
+    lead: ' '
+- paths: mcp-code-search-mode
+  block: 9
+  fingerprint: 26419d22d1700a89
+  lang: sh
+  lines: 9fc5c59c d906e700 506a4604 d9d77043 7ece8111
+  preview: curl -sS -X POST "$MCP_URL" \
+  form:
+    attr: paths="mcp-code-search-mode"
+    only: true
+    lead: ' '
+- paths: mcp-code-search-mode
+  block: 12
+  fingerprint: 9579e9090e387df4
+  lang: sh
+  lines: 9fc5c59c d906e700 506a4604 d9d77043 62ae10eb
+  preview: curl -sS -X POST "$MCP_URL" \
+  form:
+    attr: paths="mcp-code-search-mode"
+    only: true
+    lead: ' '
+- paths: mcp-code-search-mode
+  block: 14
+  fingerprint: 548193c68bd5023c
+  lang: sh
+  lines: 0fadc68a 0d4dd979 2b76a843 ec6ed4be
+  preview: kubectl delete httproute mcp-code-search -n default
+  form:
+    attr: paths="mcp-code-search-mode"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 7c4b9f0bd01dc31f
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 a872b174 0ccc8edc 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 825853cd ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 0827ed27 94ae491e 4a7e7cdb b8ac8874 450c56e0 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mcp-code-search-mode" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the mcp-website-fetcher deployment is available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: mcp-website-fetcher
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 180
+          intervalSeconds: 5
+    - name: the mcp-code-search-backend backend is accepted
+      wait:
+        target:
+          kind: EnterpriseAgentgatewayBackend
+          metadata:
+            namespace: default
+            name: mcp-code-search-backend
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: the mcp-code-search HTTPRoute is accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: mcp-code-search
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 7e24d1b5293ab0d9
+    lang: sh
+    lines: 82a16f1c 4059cfa2 c07591e9 8ef31d3c
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
+  content: |2-
+       {{< doc-test paths="mcp-code-search-mode" >}}
+       # Wait until the route answers an MCP initialize with a session ID, so the
+       # visible initialize step below does not race route programming.
+       for attempt in $(seq 1 30); do
+         if curl -s --max-time 10 -D - -o /dev/null -X POST "$MCP_URL" \
+             -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+             -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"curl","version":"1"}}}' \
+             | grep -qi '^mcp-session-id:'; then break; fi
+         sleep 5
+       done
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 1fef9b2595740d1b
+    lang: sh
+    lines: 815bec4d 506a4604 d9d77043 25d24546 689f6bc4 9fc5c59c d906e700 506a4604 d9d77043 12994e67
+    preview: curl -sS -D /tmp/hdr -o /tmp/init -X POST "$MCP_URL" \
+  content: |2-
+       {{< doc-test paths="mcp-code-search-mode" >}}
+       [ -n "$SID" ] || { echo "no mcp-session-id in the initialize response"; cat /tmp/hdr; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 65b32453edf81bcf
+    lang: sh
+    lines: 9fc5c59c d906e700 506a4604 d9d77043 23bfaa53
+    preview: curl -sS -X POST "$MCP_URL" \
+  content: |2-
+       {{< doc-test paths="mcp-code-search-mode" >}}
+       LIST=$(curl -sS --max-time 60 -X POST "$MCP_URL" -H "Mcp-Session-Id: $SID" \
+         -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+         -d '{"jsonrpc":"2.0","id":20,"method":"tools/list","params":{}}')
+       echo "$LIST"
+       grep -q '"name":"get_tool"' <<<"$LIST"
+       grep -q '"name":"run_code"' <<<"$LIST"
+       if grep -q '"name":"invoke_tool"' <<<"$LIST"; then echo "unexpected match: '"name":"invoke_tool"'"; exit 1; fi
+       # The upstream fetch tool is never listed directly.
+       if grep -q '"name":"fetch"' <<<"$LIST"; then echo "unexpected match: '"name":"fetch"'"; exit 1; fi
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 26419d22d1700a89
+    lang: sh
+    lines: 9fc5c59c d906e700 506a4604 d9d77043 7ece8111
+    preview: curl -sS -X POST "$MCP_URL" \
+  content: |2-
+       {{< doc-test paths="mcp-code-search-mode" >}}
+       GET=$(curl -sS --max-time 60 -X POST "$MCP_URL" -H "Mcp-Session-Id: $SID" \
+         -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+         -d '{"jsonrpc":"2.0","id":21,"method":"tools/call","params":{"name":"get_tool","arguments":{"name":"fetch"}}}')
+       echo "$GET"
+       grep -q '"typescript"' <<<"$GET"
+       grep -q 'async function fetch' <<<"$GET"
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 9579e9090e387df4
+    lang: sh
+    lines: 9fc5c59c d906e700 506a4604 d9d77043 62ae10eb
+    preview: curl -sS -X POST "$MCP_URL" \
+  content: |2-
+       {{< doc-test paths="mcp-code-search-mode" >}}
+       OUT=$(curl -sS --max-time 60 -X POST "$MCP_URL" -H "Mcp-Session-Id: $SID" \
+         -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+         -d '{"jsonrpc":"2.0","id":22,"method":"tools/call","params":{"name":"run_code","arguments":{"code":"const r = await fetch({url: \"https://example.com\"}); ({first120: String(r).slice(0,120), length: String(r).length})"}}}')
+       echo "$OUT"
+       grep -q '"success"' <<<"$OUT"
+       grep -q '"first120"' <<<"$OUT"
+       if grep -q '"error"' <<<"$OUT"; then echo "unexpected match: '"error"'"; exit 1; fi
+       {{< /doc-test >}}

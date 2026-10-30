@@ -1,0 +1,315 @@
+format: 1
+source: assets/conrefs/pages/gateway/ext-auth-rate-limit-deployer.md
+blocks:
+- 7656eb0a04764d4e sh
+- 95e00ce0c7b845a2
+- f160aa3b2acd5d3c yaml
+- a8067c02c90cfdab sh
+- 75b074c63458b37e
+- bcf62eb802dd9da0 bash
+- 073aece75664d7ec sh
+- d1c435e63bd18481 yaml
+- d2252f64985cfbf2 yaml
+- 994b1e1768335838 yaml
+- a8067c02c90cfdab sh
+- 3e6ec75a0f71fc89
+- 68599ee2654c5bfd bash
+- e829087e1565e234 yaml
+- 0a47dd793c335a6e yaml
+- 7967eda3dea3759c yaml
+- 1582568557e958a5 yaml
+- f64ab531aaffd57e yaml
+- 873728f3c3064b4d yaml
+- c8aaa409dba79c71 yaml
+- 73dedc0c1cac1bde yaml
+- 5371579399935c68 sh
+tags:
+- paths: shared-extensions-deployer
+  block: 0
+  fingerprint: 7656eb0a04764d4e
+  lang: sh
+  lines: 7656eb0a
+  preview: kubectl get gatewayclasses
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 2
+  fingerprint: f160aa3b2acd5d3c
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 fa1e8330 36af8845 36184fa5 39325db0 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 3
+  fingerprint: a8067c02c90cfdab
+  lang: sh
+  lines: ce13b50a 821b160d
+  preview: kubectl get deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 5
+  fingerprint: bcf62eb802dd9da0
+  lang: bash
+  lines: bcf62eb8
+  preview: kubectl delete Gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 6
+  fingerprint: 073aece75664d7ec
+  lang: sh
+  lines: 073aece7
+  preview: kubectl get gatewayclass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} -o y
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 8
+  fingerprint: d2252f64985cfbf2
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 0277df17 36184fa5 d609f689 106f5da3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 9
+  fingerprint: 994b1e1768335838
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 1caae7e2 0ccc8edc 36184fa5 f0d741b9 c10d7538 82601aaa da480536 069de162 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 10
+  fingerprint: a8067c02c90cfdab
+  lang: sh
+  lines: ce13b50a 821b160d
+  preview: kubectl get deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 12
+  fingerprint: 68599ee2654c5bfd
+  lang: bash
+  lines: 9450b7c0 99233dcc
+  preview: kubectl delete Gateway my-team-gateway -n default
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 15
+  fingerprint: 7967eda3dea3759c
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 ab3ccc48 0bebd850 36184fa5 356067ee 3e196ba7 ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ba62cf2b ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ab89fa94 ff7360cf cab2be2b 77f1ea54 cde43a03 14551a55 2629ac0e 983d6140 0217db29 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 16
+  fingerprint: 1582568557e958a5
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 ddb71f7b 36184fa5 d609f689 b02ea8cb 3f04fdd7 4a23a5a4 2ee1c717 ab3ccc48 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 19
+  fingerprint: c8aaa409dba79c71
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 74dd1168 0bebd850 36184fa5 356067ee 3e196ba7 e4bc2178 ba62cf2b e4bc2178 ab89fa94 e4bc2178 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 20
+  fingerprint: 73dedc0c1cac1bde
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 ddb71f7b 36184fa5 d609f689 b02ea8cb 3f04fdd7 4a23a5a4 2ee1c717 74dd1168 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+- paths: shared-extensions-deployer
+  block: 21
+  fingerprint: 5371579399935c68
+  lang: sh
+  lines: fafc61d6 821b160d
+  preview: kubectl delete deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  form:
+    attr: paths="shared-extensions-deployer"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 7656eb0a04764d4e
+    lang: sh
+    lines: 7656eb0a
+    preview: kubectl get gatewayclasses
+  content: |2-
+       {{< doc-test paths="shared-extensions-deployer" >}}
+       # ============================================================================
+       # Doc test coverage for the shared extensions deployer (not rendered on the page)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Shared setup": creating the `http` Gateway provisions the ext-auth-service,
+       #     rate-limiter, and ext-cache Deployments for the default GatewayClass, and
+       #     deleting the Gateway leaves them for the prerequisite agentgateway-proxy
+       #     Gateway, which uses the same class.
+       #   * "Dedicated setup": a Gateway on a custom GatewayClass gets its own set of the
+       #     three Deployments, and deleting the Gateway and class removes them.
+       #   * "Update resource requests and limits": the parameters resource and GatewayClass
+       #     update apply, and the Deployments roll out with the documented resources.
+       #   * "Disable the deployer": after the GatewayClass references the disabling
+       #     parameters resource, no extension Deployments remain for the class.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The Gloo Gateway and kgateway variants: not rendered for agentgateway.
+       # ext_deployments CLASS: names of the extension Deployments for a GatewayClass, in any namespace.
+       ext_deployments() {
+         kubectl get deployments -A -l "app in (ext-auth-service,rate-limiter,ext-cache),gateway.solo.io/gatewayclass=$1" -o name
+       }
+       # wait_count CLASS N: poll until the class has exactly N extension Deployments.
+       wait_count() {
+         for attempt in $(seq 1 60); do
+           n=$(ext_deployments "$1" | wc -l | tr -d ' ')
+           if [ "$n" = "$2" ]; then echo "$1 has $n extension Deployments"; return 0; fi
+           sleep 3
+         done
+         echo "$1: expected $2 extension Deployments, found $n"; ext_deployments "$1"; return 1
+       }
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: a8067c02c90cfdab
+    lang: sh
+    lines: ce13b50a 821b160d
+    preview: kubectl get deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  content: |2-
+       {{< doc-test paths="shared-extensions-deployer" >}}
+       wait_count {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} 3
+       for d in $(kubectl get deployments -A -l "app in (ext-auth-service,rate-limiter,ext-cache),gateway.solo.io/gatewayclass={{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}" -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}{" "}{end}'); do
+         kubectl rollout status deployment/"${d#*/}" -n "${d%%/*}" --timeout=180s
+       done
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: bcf62eb802dd9da0
+    lang: bash
+    lines: bcf62eb8
+    preview: kubectl delete Gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |2-
+       {{< doc-test paths="shared-extensions-deployer" >}}
+       # The prerequisite agentgateway-proxy Gateway uses the same GatewayClass, so
+       # the shared Deployments stay after the http Gateway is deleted. They are
+       # removed only with the last Gateway of the class.
+       sleep 15
+       wait_count {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} 3
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: a8067c02c90cfdab
+    lang: sh
+    lines: ce13b50a 821b160d
+    preview: kubectl get deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  content: |2-
+       {{< doc-test paths="shared-extensions-deployer" >}}
+       wait_count my-team-gatewayclass 3
+       for d in $(kubectl get deployments -A -l "app in (ext-auth-service,rate-limiter,ext-cache),gateway.solo.io/gatewayclass=my-team-gatewayclass" -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}{" "}{end}'); do
+         kubectl rollout status deployment/"${d#*/}" -n "${d%%/*}" --timeout=180s
+       done
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 68599ee2654c5bfd
+    lang: bash
+    lines: 9450b7c0 99233dcc
+    preview: kubectl delete Gateway my-team-gateway -n default
+  content: |2-
+       {{< doc-test paths="shared-extensions-deployer" >}}
+       wait_count my-team-gatewayclass 0
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 1582568557e958a5
+    lang: yaml
+    lines: 16c71da1 8c67597e 9730d414 8c8c4228 ddb71f7b 36184fa5 d609f689 b02ea8cb 3f04fdd7 4a23a5a4 2ee1c717 ab3ccc48 0bebd850 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="shared-extensions-deployer" >}}
+       # Extensions exist only while a Gateway uses the class, and the shared setup deleted
+       # the `http` Gateway. Create a test Gateway so that the new resources roll out.
+       kubectl apply -f- <<EOF
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: Gateway
+       metadata:
+         name: doc-test-extensions
+         namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+       spec:
+         gatewayClassName: {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}
+         listeners:
+         - protocol: HTTP
+           port: 8080
+           name: http
+       EOF
+       for attempt in $(seq 1 60); do
+         got=$(kubectl get deployment -l app=rate-limiter,gateway.solo.io/gatewayclass={{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.items[0].spec.template.spec.containers[0].resources.limits.cpu}' 2>/dev/null || true)
+         if [ "$got" = "750m" ]; then break; fi
+         sleep 3
+       done
+       if [ "$got" != "750m" ]; then echo "rate-limiter CPU limit: expected 750m, got $got"; exit 1; fi
+       for attempt in $(seq 1 60); do
+         got=$(kubectl get deployment -l app=ext-cache,gateway.solo.io/gatewayclass={{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.items[0].spec.template.spec.containers[0].resources.limits.memory}' 2>/dev/null || true)
+         if [ "$got" = "2Gi" ]; then break; fi
+         sleep 3
+       done
+       if [ "$got" != "2Gi" ]; then echo "ext-cache memory limit: expected 2Gi, got $got"; exit 1; fi
+       echo "the extension Deployments use the new requests and limits"
+       {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 5371579399935c68
+    lang: sh
+    lines: fafc61d6 821b160d
+    preview: kubectl delete deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  content: |2-
+       {{< doc-test paths="shared-extensions-deployer" >}}
+       wait_count {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} 0
+       # The page has no cleanup for these sections. Restore the default GatewayClass and
+       # remove the test resources.
+       kubectl apply -f- <<EOF
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: GatewayClass
+       metadata:
+         name: {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}
+       spec:
+         controllerName: solo.io/{{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}
+         description: Standard class for managing Gateway API ingress traffic.
+       EOF
+       kubectl delete gateway doc-test-extensions -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found
+       kubectl delete {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}} my-gw-params disable-deployer-gw-params -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found
+       {{< /doc-test >}}

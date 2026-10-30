@@ -118,7 +118,9 @@ hidden:
                           "model": model, "output": [{"type": "message", "id": "msg_mock", "status": "completed",
                           "role": "assistant", "content": [{"type": "output_text", "text": "mock completion",
                           "annotations": []}]}],
-                          "usage": {"input_tokens": 1, "output_tokens": 1, "total_tokens": 2}}
+                          "usage": {"input_tokens": 1, "output_tokens": 1, "total_tokens": 2,
+                                    "input_tokens_details": {"cached_tokens": 0},
+                                    "output_tokens_details": {"reasoning_tokens": 0}}}
                else:
                    out = {"id": "chatcmpl-mock", "object": "chat.completion", "created": 0, "model": model,
                           "choices": [{"index": 0, "finish_reason": "stop",

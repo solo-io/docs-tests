@@ -219,7 +219,7 @@ hidden:
     - name: nginx-backend-tls policy is accepted
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: agentgateway-system
             name: nginx-backend-tls
@@ -289,7 +289,7 @@ hidden:
     - name: nginx-backend-tls policy with a custom CA key is accepted
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: agentgateway-system
             name: nginx-backend-tls

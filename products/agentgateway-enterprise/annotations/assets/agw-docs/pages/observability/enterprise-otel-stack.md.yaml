@@ -1,0 +1,199 @@
+format: 1
+source: assets/agw-docs/pages/observability/enterprise-otel-stack.md
+blocks:
+- 9e3248d8649d156e mermaid
+- 71d78bb0682311bb yaml
+- b51fb612cf55b52c sh
+- 130f78ad216f40ce sh
+- e2c21751abc07c4d yaml
+- a295bd4bba808ed3 sh
+- 7e0364232f53e00c sh
+- 49ff661705a7cf4b sh
+- 59466a39122a3275 sh
+tags:
+- paths: enterprise-otel-stack
+  block: 1
+  fingerprint: 71d78bb0682311bb
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-otel-stack"
+    only: true
+    lead: ' '
+- paths: enterprise-otel-stack
+  block: 2
+  fingerprint: b51fb612cf55b52c
+  lang: sh
+  lines: b51fb612
+  preview: kubectl delete agentgatewaypolicy tracing -n {{< reuse "agw-docs/snippets/namesp
+  form:
+    attr: paths="enterprise-otel-stack"
+    only: true
+    lead: ' '
+- paths: enterprise-otel-stack
+  block: 4
+  fingerprint: e2c21751abc07c4d
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-otel-stack"
+    only: true
+    lead: ' '
+- paths: enterprise-otel-stack
+  block: 5
+  fingerprint: a295bd4bba808ed3
+  lang: sh
+  lines: a295bd4b
+  preview: kubectl delete agentgatewaypolicy access-logs -n {{< reuse "agw-docs/snippets/na
+  form:
+    attr: paths="enterprise-otel-stack"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Traces
+    line: 3f8e72bfb6fe05c4
+    occurrence: 0
+    words: 58296753 83b4d270 8f7fad11 fa51fd49 20158224 4d327af4 ea325d76 9d935d8e fa8847b0 ca978112 11507a0e d9c0d341 ea62dcb6 21a355f1 bb5a0dc2 663ea1bf 251fecd5 b9776d7d 1241936d b1d6b91b b9776d7d 9b97ac5e 16091175 0736fd5b 21af6f12 61975955 b9776d7d 83b4d270 823412d1
+    block_before:
+      block: 0
+      fingerprint: 9e3248d8649d156e
+      lang: mermaid
+      lines: a3d27ba5 66425209 d9710b19 74ca2415 3fcf6a8d 393a6eee
+      preview: flowchart TD
+  content: |-
+    {{< doc-test paths="enterprise-otel-stack" >}}
+    # ============================================================================
+    # Doc test coverage for the observability stack migration (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Migrate traces" and "Migrate access logs": the enterprise tracing and
+    #     access log policies are accepted, the OSS AgentgatewayPolicy resources
+    #     delete cleanly, and access logs from httpbin traffic land in ClickHouse.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The OSS stack itself. This cluster never had one, so two OSS
+    #     AgentgatewayPolicy resources named like the OSS guide's are created here
+    #     so the documented deletes have something to delete. The helm uninstall
+    #     steps for the OSS collectors, Tempo, and Loki are left out.
+    #   * Step 3's clickhouse-client query is run without -it and with the
+    #     credentials from the auth Secret (the page's command passes none).
+    #   * The UI Tracing view (browser) and the monitoring.enabled upgrade
+    #     (placeholder release name; covered by the metrics external scenario).
+    kubectl apply -f- <<EOF
+    apiVersion: agentgateway.dev/v1alpha1
+    kind: AgentgatewayPolicy
+    metadata:
+      name: tracing
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      targetRefs:
+      - group: gateway.networking.k8s.io
+        kind: Gateway
+        name: agentgateway-proxy
+      frontend:
+        tracing:
+          backendRef:
+            name: {{< reuse "agw-docs/snippets/solo-ui/telemetry-collector.md" >}}
+            namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+            kind: Service
+            port: 4317
+          randomSampling: "false"
+    ---
+    apiVersion: agentgateway.dev/v1alpha1
+    kind: AgentgatewayPolicy
+    metadata:
+      name: access-logs
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      targetRefs:
+      - group: gateway.networking.k8s.io
+        kind: Gateway
+        name: agentgateway-proxy
+      frontend:
+        accessLog:
+          filter: 'true'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 71d78bb0682311bb
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="enterprise-otel-stack" >}}
+       # Policy check 2
+       YAMLTest -f - <<'EOF'
+       - name: the tracing policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: tracing
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Give the proxy a moment to load the new policy before the next request.
+       sleep 10
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: e2c21751abc07c4d
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="enterprise-otel-stack" >}}
+       # Policy check 3
+       YAMLTest -f - <<'EOF'
+       - name: the access-logs policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Give the proxy a moment to load the new policy before the next request.
+       sleep 10
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: a295bd4bba808ed3
+    lang: sh
+    lines: a295bd4b
+    preview: kubectl delete agentgatewaypolicy access-logs -n {{< reuse "agw-docs/snippets/na
+  content: |2-
+       {{< doc-test paths="enterprise-otel-stack" >}}
+       export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.username}' | base64 -d)
+       export CH_PASS=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.password}' | base64 -d)
+       chq() { kubectl exec -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -- clickhouse-client --user "$CH_USER" --password "$CH_PASS" --query "$1"; }
+       # Wait until a count query returns more than zero rows. Telemetry is batched, so allow a few minutes.
+       ch_wait_rows() {
+         local q="$1" n=0
+         for i in $(seq 1 36); do
+           n=$(chq "$q" 2>/dev/null || echo 0)
+           if [ "${n:-0}" -gt 0 ] 2>/dev/null; then echo "rows: $n"; return 0; fi
+           sleep 10
+         done
+         echo "no rows after 6 minutes for: $q"; return 1
+       }
+       for i in 1 2 3 4 5; do curl -s -o /dev/null http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com"; done
+       ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE position(toString(LogAttributes), 'www.example.com') > 0"
+       kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} tracing access-logs -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+       {{< /doc-test >}}

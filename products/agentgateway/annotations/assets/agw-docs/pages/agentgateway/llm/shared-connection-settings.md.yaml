@@ -87,7 +87,7 @@ hidden:
        - name: wait for llm-providers backend to be accepted
          wait:
            target:
-             kind: AgentgatewayBackend
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
              metadata:
                namespace: agentgateway-system
                name: llm-providers
@@ -112,7 +112,7 @@ hidden:
        - name: wait for cloud-instance-1-metrics backend to be accepted
          wait:
            target:
-             kind: AgentgatewayBackend
+             kind: {{< reuse "agw-docs/snippets/backend.md" >}}
              metadata:
                namespace: agentgateway-system
                name: cloud-instance-1-metrics
@@ -137,7 +137,7 @@ hidden:
        - name: wait for cloud-instance-1-connection policy to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: cloud-instance-1-connection

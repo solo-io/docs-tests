@@ -1,0 +1,238 @@
+format: 1
+source: assets/agw-docs/pages/standalone/mcp-composable.md
+blocks:
+- c91d0ac093d7fde2 yaml
+- dbb29a00057c2f1e yaml
+- 288c4af02a951261 sh
+- f6931a7b2e59dbc5 sh
+- c8f5d513e8aa906e sh
+- de110fab2babf831 text
+- 4e20351861884ccf sh
+- d33eafc9d23c6734 sh
+- 2b062fe716d35bd5 json
+- fd018ab0fb3dfe15 sh
+- 037b22e489f2ec4f json
+- 054353cc4c3e2b1a yaml
+- a3bc6d6134b0c59c yaml
+tags:
+- paths: composable
+  block: 2
+  fingerprint: 288c4af02a951261
+  lang: sh
+  lines: 288c4af0
+  preview: agentgateway --validate-only -f config.yaml
+  form:
+    attr: paths="composable"
+    only: true
+    lead: ' '
+- paths: composable
+  block: 4
+  fingerprint: c8f5d513e8aa906e
+  lang: sh
+  lines: 591d254a 67c5a3ac 4347ff3f b0cead6d 362c024a d5a92ca7 9ed087af dc0575f0 8839ee90 84919319 322f9aac d10b36aa fc075a9d
+  preview: curl -sD - http://localhost:3000/mcp \
+  form:
+    attr: paths="composable"
+    only: true
+    lead: ' '
+- paths: composable
+  block: 7
+  fingerprint: d33eafc9d23c6734
+  lang: sh
+  lines: 2b185ce9 67c5a3ac 4347ff3f 5b5ecebc 3f897f1f
+  preview: curl -s http://localhost:3000/mcp \
+  form:
+    attr: paths="composable"
+    only: true
+    lead: ' '
+- paths: composable
+  block: 9
+  fingerprint: fd018ab0fb3dfe15
+  lang: sh
+  lines: 2b185ce9 67c5a3ac 4347ff3f 5b5ecebc b0cead6d 362c024a b81000bd 78c8c519 dc0575f0 f57e7a20 571f278b d10b36aa fc075a9d
+  preview: curl -s http://localhost:3000/mcp \
+  form:
+    attr: paths="composable"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="composable" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Steps 1-2 combined: the github-api backend and the custom target pass
+    #     --validate-only exactly as written (TLS backend to api.github.com).
+    #   * Step 4: the composite tool is listed by tools/list and a tools/call runs
+    #     both HTTP steps and returns the CEL output sentence built from them.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The live GitHub API: unauthenticated calls are rate limited per IP, so a
+    #     local stand-in serves the two endpoints, and the backend is pointed at it
+    #     (plaintext, no backendTLS) in a derived copy of the config.
+    #   * The MCP step reference example (fragment only).
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    # Test-only stand-in for the two GitHub API endpoints the steps call.
+    cat > github-standin.py <<'PY'
+    import json
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+    DATA = {
+        "/users/octocat": {"login": "octocat", "public_repos": 8},
+        "/users/octocat/repos?per_page=5": [{"name": "Hello-World"}, {"name": "linguist"}],
+    }
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            if self.path not in DATA:
+                self.send_response(404); self.end_headers(); return
+            body = json.dumps(DATA[self.path]).encode()
+            self.send_response(200)
+            self.send_header("content-type", "application/json")
+            self.send_header("content-length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        def log_message(self, *args):
+            pass
+    HTTPServer(("127.0.0.1", 3093), Handler).serve_forever()
+    PY
+    python3 github-standin.py &
+    GH_PID=$!
+    for _ in $(seq 1 20); do curl -sf -o /dev/null -m 2 http://localhost:3093/users/octocat && break; sleep 1; done \
+      || { echo "GitHub stand-in did not start"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    section: 'Step 3: Start agentgateway'
+    line: a44ecebcd4826592
+    occurrence: 0
+    words: 3e64cc41 4e074085 cced28c6 56e57ada cced28c6
+    block_before:
+      block: 1
+      fingerprint: dbb29a00057c2f1e
+      lang: yaml
+      lines: a7f80a73 82726b6f 3035507a f93266b7 b6fb1fd3 7da63f38 f73ee7f5 85a3959b 61177ff2 97bebbb9 8afbd5a3 d0d6d503 fa248ef0 c1a4d738 56501c6b c7baa465 1abb110d 6670606d a57a3f8f 6a6768ed 38dc0152 3b194d85 858cb653 03775600 1b15fb3d c7baa465 7c282413 6670606d a57a3f8f f8f3f2ae 38dc0152 3b194d85 858cb653 03775600 1b15fb3d 7dbc49c1 44677d18 255a2038 738f8531
+      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+  content: |-
+    {{< doc-test paths="composable" >}}
+    # "Combine both sections into one configuration file" (Steps 1 and 2 as written).
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    backends:
+    - name: github-api
+      host: api.github.com:443
+      policies:
+        backendTLS: {}
+    mcp:
+      targets:
+      - name: github-summary
+        custom:
+          description: "Fetch a GitHub user's public profile and list a few of their repositories."
+          inputSchema:
+            type: object
+            additionalProperties: false
+            required: [name]
+            properties:
+              name:
+                type: string
+                description: "GitHub username"
+          steps:
+          - http:
+              name: user
+              backend: /github-api
+              method: GET
+              path: '"/users/" + input.name'
+              headers:
+              - name: User-Agent
+                value: '"agentgateway-composable-mcp"'
+              - name: Accept
+                value: '"application/vnd.github+json"'
+          - http:
+              name: repos
+              backend: /github-api
+              method: GET
+              path: '"/users/" + input.name + "/repos?per_page=5"'
+              headers:
+              - name: User-Agent
+                value: '"agentgateway-composable-mcp"'
+              - name: Accept
+                value: '"application/vnd.github+json"'
+          output: |
+            "Hello " + output.user.login
+            + "! You have " + string(output.user.public_repos) + " public repos."
+            + " A few of them: " + output.repos.map(r, r.name).join(", ") + "."
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 288c4af02a951261
+    lang: sh
+    lines: 288c4af0
+    preview: agentgateway --validate-only -f config.yaml
+  content: |-
+    {{< doc-test paths="composable" >}}
+    # Point the backend at the local stand-in (plaintext) for the run.
+    python3 - <<'PY'
+    import pathlib
+    src = pathlib.Path("config.yaml").read_text()
+    old = "  host: api.github.com:443\n  policies:\n    backendTLS: {}\n"
+    assert old in src, "backend block changed; update the composable doc test"
+    pathlib.Path("config-local.yaml").write_text(src.replace(old, "  host: localhost:3093\n"))
+    PY
+    agentgateway --validate-only -f config-local.yaml
+    agentgateway -f config-local.yaml > agw.log 2>&1 &
+    AGW_PID=$!
+    trap 'kill $AGW_PID $GH_PID 2>/dev/null' EXIT
+    for _ in $(seq 1 30); do
+      curl -s -o /dev/null -m 2 -w '%{http_code}' http://localhost:3000/mcp -X POST \
+        -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+        -d '{"jsonrpc":"2.0","id":0,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"t","version":"1"}}}' \
+        | grep -q 200 && break
+      sleep 1
+    done
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 4e20351861884ccf
+    lang: sh
+    lines: 4e203518
+    preview: export SESSION_ID=<mcp-session-id>
+  content: |-
+    {{< doc-test paths="composable" >}}
+    export SESSION_ID=$(curl -sD - -o /dev/null http://localhost:3000/mcp \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json, text/event-stream" \
+      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' \
+      | awk -F': *' 'tolower($1)=="mcp-session-id"{gsub(/\r/,"",$2);print $2}')
+    [ -n "$SESSION_ID" ] || { echo "no mcp-session-id header"; cat agw.log; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: d33eafc9d23c6734
+    lang: sh
+    lines: 2b185ce9 67c5a3ac 4347ff3f 5b5ecebc 3f897f1f
+    preview: curl -s http://localhost:3000/mcp \
+  content: |-
+    {{< doc-test paths="composable" >}}
+    curl -s http://localhost:3000/mcp \
+      -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+      -H "Mcp-Session-Id: $SESSION_ID" \
+      -d '{"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}}' > tools-list.txt
+    grep -q '"name":"github-summary"' tools-list.txt || { echo "github-summary not in tools/list"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: fd018ab0fb3dfe15
+    lang: sh
+    lines: 2b185ce9 67c5a3ac 4347ff3f 5b5ecebc b0cead6d 362c024a b81000bd 78c8c519 dc0575f0 f57e7a20 571f278b d10b36aa fc075a9d
+    preview: curl -s http://localhost:3000/mcp \
+  content: |-
+    {{< doc-test paths="composable" >}}
+    out=$(curl -s http://localhost:3000/mcp \
+      -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+      -H "Mcp-Session-Id: $SESSION_ID" \
+      -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"github-summary","arguments":{"name":"octocat"}}}')
+    echo "$out"
+    grep -q 'Hello octocat! You have 8 public repos. A few of them: Hello-World, linguist.' <<<"$out" \
+      || { echo "composite output does not combine both steps"; cat agw.log; exit 1; }
+    {{< /doc-test >}}

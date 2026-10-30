@@ -30,11 +30,11 @@ hidden:
       name: xds-headers
       namespace: agentgateway-system
     spec:
-      gatewayClassName: agentgateway
+      gatewayClassName: {{< reuse "agw-docs/snippets/gatewayclass.md" >}}
       infrastructure:
         parametersRef:
-          group: agentgateway.dev
-          kind: AgentgatewayParameters
+          group: {{< reuse "agw-docs/snippets/group.md" >}}
+          kind: {{< reuse "agw-docs/snippets/gatewayparameters.md" >}}
           name: agentgateway-config
       listeners:
         - name: http

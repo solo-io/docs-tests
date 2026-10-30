@@ -1,0 +1,556 @@
+format: 1
+source: assets/agw-docs/pages/security/extauth/opa/rego.md
+blocks:
+- 986befcecb7c8e6b mermaid
+- 311cc4ee145585a5 yaml
+- 3d16b9fe1f5eae0c yaml
+- 85f6e75b906fa1fe sh
+- a00fb0c50741f81b
+- 8d15afdf9d31c257 yaml
+- cfc685edf6a34139 yaml
+- 2a0155348c76b5ec sh
+- 39ced1fc055b3492 sh
+- fce304658a1ae8b9 sh
+- 5e72696b727be3a5 sh
+- 943941ae7d86c246
+- 136895c1268d5077 sh
+- c7741b85e381b463 sh
+- 55c66f9c9da163a5
+- 6fdaaef397b1e7b1 yaml
+- d98a94e44852d4b0 yaml
+- 226dc5f99cdf35f7 sh
+- 846dabb2cfc55441 sh
+- 1a1e19ce9333aabe
+- 75d9bf9eab8eb8be sh
+- 68ea9ededecbb5b2 sh
+- b483f8cf3f27ad8f
+- 8fc157bac56662e4 sh
+- 45d5b6993b83e4b3 sh
+- 73a475688f8998eb
+- 801b7bcf5c7a1baf sh
+tags:
+- paths: extauth-opa-rego
+  block: 1
+  fingerprint: 311cc4ee145585a5
+  lang: yaml
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 ee5074a9 f497f0e2 ff72caa3 558c3aa0 adb8db29 68c14ff3 a8c3a01e 47e67609 9e3fb78d b29fa646 5c03f1cd 8d02d24c a7cb81f3 d10b36aa 0b7dde59 45ba84b7 08062739 3a2c7b02 de956db6 141cc0c5 d1d66eeb a63d3226 5c03f1cd d10b36aa d10b36aa abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 2
+  fingerprint: 3d16b9fe1f5eae0c
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 fb9d09af f497f0e2 36184fa5 d5ec3fae c19c90c1 b79ab3f2 483ba7fd f497f0e2 93f1dc71 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 3
+  fingerprint: 85f6e75b906fa1fe
+  lang: sh
+  lines: 85f6e75b
+  preview: kubectl get authconfig llm-opa -n agentgateway-system -o jsonpath='{.status.stat
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 5
+  fingerprint: 8d15afdf9d31c257
+  lang: yaml
+  lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f f497f0e2 1426decf 2f7c298d ef4d188c cb3f91d5 263e4531 f84e6062 8c8c4228 6666820d f497f0e2 36184fa5 ad3afdb1 93a4b62b da4aa5f1 6d88d930 c8f3f59a 146e11c6 9ebc4789 4df4f75f cb3f91d5 8c67597e 56bf9360 8c8c4228 6666820d f497f0e2 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 f497f0e2 22aec9ce f84e6062 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 6
+  fingerprint: cfc685edf6a34139
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 ee5074a9 f497f0e2 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 2c3ea4d6 75674f79 fb9d09af f497f0e2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 7
+  fingerprint: 2a0155348c76b5ec
+  lang: sh
+  lines: 91d39c8e da957743
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get gateway agentgateway-proxy \
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 9
+  fingerprint: fce304658a1ae8b9
+  lang: sh
+  lines: 81db6b1b 67c5a3ac bdc304df
+  preview: curl -i $INGRESS_GW_ADDRESS/openai \
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 12
+  fingerprint: 136895c1268d5077
+  lang: sh
+  lines: 81db6b1b 67c5a3ac 9e43ed35 977bc72c
+  preview: curl -i $INGRESS_GW_ADDRESS/openai \
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 15
+  fingerprint: 6fdaaef397b1e7b1
+  lang: yaml
+  lines: 16c71da1 263e4531 f84e6062 8c8c4228 d2ace77c f497f0e2 36184fa5 82726b6f 3035507a f7b9d9c2 2efcbf93 738be9ea da480536 91f2837c cb3f91d5 8c67597e 56bf9360 8c8c4228 d2ace77c f497f0e2 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e f1be08d9 f497f0e2 22aec9ce f84e6062 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 16
+  fingerprint: d98a94e44852d4b0
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 4dd43fed f497f0e2 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d 2c3ea4d6 75674f79 fb9d09af f497f0e2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 17
+  fingerprint: 226dc5f99cdf35f7
+  lang: sh
+  lines: 2174e1c3 67c5a3ac 4347ff3f 7f5f76a3
+  preview: curl -i $INGRESS_GW_ADDRESS/mcp \
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 20
+  fingerprint: 75d9bf9eab8eb8be
+  lang: sh
+  lines: 1991dc82 6f3fdbd8 67c5a3ac 4347ff3f 9e43ed35 7f5f76a3 67515cfa
+  preview: HEADERS=$(mktemp)
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 23
+  fingerprint: 8fc157bac56662e4
+  lang: sh
+  lines: 4b190ff7 67c5a3ac 4347ff3f 449b834b 9e43ed35 12994e67 4b190ff7 67c5a3ac 4347ff3f 449b834b 9e43ed35 456e4e82
+  preview: curl $INGRESS_GW_ADDRESS/mcp \
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 26
+  fingerprint: 801b7bcf5c7a1baf
+  lang: sh
+  lines: d6ae2181 05e28b27 a7824cd9 02759540 16acc686 a84b7153
+  preview: kubectl delete -n agentgateway-system EnterpriseAgentgatewayPolicy llm-opa-polic
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Create the Rego policy
+    line: 0c1745d593bc3f8d
+    occurrence: 0
+    words: b9776d7d 8d0288f4 823412d1 ed64d1d1 5ef5ef03 ec72420d a7e2d26e 37a8eec1 6201111b 77f6a166 ec72420d 8e7fc023 c0cbff04 ca978112 54b759db 8c284055 1e0584a2 ff777205 dce19053 7187f067 ca978112 71d6a37f f6a214f7 2958d416 8e7fc023 1e2135d1 b9776d7d e0603c49 a9f4b3d2 b9776d7d 37a8eec1 7369949b fa51fd49 b9776d7d 3026a0ca f38c764c 6201111b b9776d7d 41008373 7369949b ab2dd33e 2ad8a704 15eaa752 b9776d7d 1e0584a2 a5408438
+    block_before:
+      block: 0
+      fingerprint: 986befcecb7c8e6b
+      lang: mermaid
+      lines: 536f52ac c962c5e5 36246e22 2d989573 f2a0af94 64379f8a c85e7182 08c34ac4 60fdd210 f2149324 ed4db21a 2ae41f29 630fea1c c166dbd1 745f6456 361e48d0
+      preview: sequenceDiagram
+  content: |-
+    {{< doc-test paths="extauth-opa-rego" >}}
+    # ============================================================================
+    # Doc test coverage for the embedded OPA (Rego config map) external auth guide (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Rego config map and the AuthConfig apply, and the
+    #     AuthConfig reaches the Accepted state.
+    #   * LLM route: without the api-key header the request is denied with 403, the
+    #     custom body, and x-opa-decision: denied; with the header it returns 200 and
+    #     x-opa-decision: allowed.
+    #   * MCP route: initialize is denied without the header; with it, initialize
+    #     returns an mcp-session-id and tools/list lists the fetch tool.
+    #   * Cleanup runs.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * A live OpenAI completion: the backend is patched to the in-cluster httpbun
+    #     mock LLM, so no API key is needed. The OPA decision happens before any
+    #     provider call.
+    #   * That x-validated-by reaches the upstream and api-key is stripped: the mock
+    #     does not echo request headers.
+    #   * The Local host / port-forward tabs: CI reaches the gateway via LoadBalancer.
+    # The guide's prerequisite MCP server must run in agentgateway-system (the static
+    # MCP guide deploys it in default), so deploy it here.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-mock-openai-key}"
+    # The hub has no deploy-mock-llm snippet, so the httpbun mock LLM is inlined here.
+    kubectl apply -f- <<EOF
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: httpbun
+      namespace: default
+      labels:
+        app: httpbun
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: httpbun
+      template:
+        metadata:
+          labels:
+            app: httpbun
+        spec:
+          containers:
+            - name: httpbun
+              image: sharat87/httpbun
+              env:
+                - name: HTTPBUN_BIND
+                  value: "0.0.0.0:3090"
+              ports:
+                - containerPort: 3090
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: httpbun
+      namespace: default
+      labels:
+        app: httpbun
+    spec:
+      selector:
+        app: httpbun
+      ports:
+        - protocol: TCP
+          port: 3090
+          targetPort: 3090
+      type: ClusterIP
+    EOF
+    kubectl rollout status deployment/httpbun -n default --timeout=180s
+    kubectl apply -n agentgateway-system -f- <<EOF
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: mcp-website-fetcher
+    spec:
+      selector:
+        matchLabels:
+          app: mcp-website-fetcher
+      template:
+        metadata:
+          labels:
+            app: mcp-website-fetcher
+        spec:
+          containers:
+          - name: mcp-website-fetcher
+            image: ghcr.io/peterj/mcp-website-fetcher:main
+            imagePullPolicy: Always
+    EOF
+    kubectl apply -n agentgateway-system -f- <<EOF
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: mcp-website-fetcher
+    spec:
+      selector:
+        app: mcp-website-fetcher
+      ports:
+      - port: 80
+        targetPort: 8000
+        appProtocol: agentgateway.dev/mcp
+    EOF
+    kubectl rollout status deployment/mcp-website-fetcher -n agentgateway-system --timeout=180s
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 85f6e75b906fa1fe
+    lang: sh
+    lines: 85f6e75b
+    preview: kubectl get authconfig llm-opa -n agentgateway-system -o jsonpath='{.status.stat
+  content: |-
+    {{< doc-test paths="extauth-opa-rego" >}}
+    kubectl wait --for=jsonpath='{.status.state}'=Accepted authconfig/llm-opa -n agentgateway-system --timeout=120s
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 8d15afdf9d31c257
+    lang: yaml
+    lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f f497f0e2 1426decf 2f7c298d ef4d188c cb3f91d5 263e4531 f84e6062 8c8c4228 6666820d f497f0e2 36184fa5 ad3afdb1 93a4b62b da4aa5f1 6d88d930 c8f3f59a 146e11c6 9ebc4789 4df4f75f cb3f91d5 8c67597e 56bf9360 8c8c4228 6666820d f497f0e2 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 f497f0e2 22aec9ce f84e6062 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-opa-rego" >}}
+       kubectl patch AgentgatewayBackend openai -n agentgateway-system --type=merge --patch-file /dev/stdin <<EOF
+       spec:
+         ai:
+           provider:
+             host: httpbun.default.svc.cluster.local
+             port: 3090
+             path: /llm/chat/completions
+       EOF
+       YAMLTest -f - <<'EOF'
+       - name: openai backend is accepted
+         wait:
+           target:
+             kind: AgentgatewayBackend
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: openai HTTPRoute is accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: openai
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: cfc685edf6a34139
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 ee5074a9 f497f0e2 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 2c3ea4d6 75674f79 fb9d09af f497f0e2 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-opa-rego" >}}
+       YAMLTest -f - <<'EOF'
+       - name: llm-opa-policy policy is accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: llm-opa-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: fce304658a1ae8b9
+    lang: sh
+    lines: 81db6b1b 67c5a3ac bdc304df
+    preview: curl -i $INGRESS_GW_ADDRESS/openai \
+  content: |2-
+       {{< doc-test paths="extauth-opa-rego" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the /openai route denies a request without api-key
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: "application/json"
+           body: '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"hi"}],"max_tokens":5}'
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 403
+           headers:
+           - name: x-opa-decision
+             comparator: equals
+             value: "denied"
+           bodyContains: "Access denied: missing or invalid API key"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 136895c1268d5077
+    lang: sh
+    lines: 81db6b1b 67c5a3ac 9e43ed35 977bc72c
+    preview: curl -i $INGRESS_GW_ADDRESS/openai \
+  content: |2-
+       {{< doc-test paths="extauth-opa-rego" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the /openai route allows a request with api-key
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: "application/json"
+             api-key: "authorized-user-key"
+           body: '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"hi"}],"max_tokens":5}'
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 200
+           headers:
+           - name: x-opa-decision
+             comparator: equals
+             value: "allowed"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 6fdaaef397b1e7b1
+    lang: yaml
+    lines: 16c71da1 263e4531 f84e6062 8c8c4228 d2ace77c f497f0e2 36184fa5 82726b6f 3035507a f7b9d9c2 2efcbf93 738be9ea da480536 91f2837c cb3f91d5 8c67597e 56bf9360 8c8c4228 d2ace77c f497f0e2 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e f1be08d9 f497f0e2 22aec9ce f84e6062 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-opa-rego" >}}
+       YAMLTest -f - <<'EOF'
+       - name: mcp backend is accepted
+         wait:
+           target:
+             kind: AgentgatewayBackend
+             metadata:
+               namespace: agentgateway-system
+               name: mcp
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       - name: mcp HTTPRoute is accepted
+         wait:
+           target:
+             kind: HTTPRoute
+             metadata:
+               namespace: agentgateway-system
+               name: mcp
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: d98a94e44852d4b0
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 4dd43fed f497f0e2 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d 2c3ea4d6 75674f79 fb9d09af f497f0e2 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-opa-rego" >}}
+       YAMLTest -f - <<'EOF'
+       - name: mcp-opa-policy policy is accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: mcp-opa-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 226dc5f99cdf35f7
+    lang: sh
+    lines: 2174e1c3 67c5a3ac 4347ff3f 7f5f76a3
+    preview: curl -i $INGRESS_GW_ADDRESS/mcp \
+  content: |2-
+       {{< doc-test paths="extauth-opa-rego" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the /mcp route denies initialize without api-key
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/mcp"
+           method: POST
+           headers:
+             content-type: "application/json"
+             accept: "application/json, text/event-stream"
+           body: '{"jsonrpc":"2.0","method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}},"id":1}'
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 403
+           headers:
+           - name: x-opa-decision
+             comparator: equals
+             value: "denied"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: 75d9bf9eab8eb8be
+    lang: sh
+    lines: 1991dc82 6f3fdbd8 67c5a3ac 4347ff3f 9e43ed35 7f5f76a3 67515cfa
+    preview: HEADERS=$(mktemp)
+  content: |2-
+       {{< doc-test paths="extauth-opa-rego" >}}
+       test -n "$SESSION" || { echo "initialize returned no mcp-session-id"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: 8fc157bac56662e4
+    lang: sh
+    lines: 4b190ff7 67c5a3ac 4347ff3f 449b834b 9e43ed35 12994e67 4b190ff7 67c5a3ac 4347ff3f 449b834b 9e43ed35 456e4e82
+    preview: curl $INGRESS_GW_ADDRESS/mcp \
+  content: |2-
+       {{< doc-test paths="extauth-opa-rego" >}}
+       curl -s $INGRESS_GW_ADDRESS/mcp \
+         -H "Content-Type: application/json" \
+         -H "Accept: application/json, text/event-stream" \
+         -H "Mcp-Session-Id: $SESSION" \
+         -H "api-key: authorized-user-key" \
+         -d '{"jsonrpc":"2.0","method":"tools/list","id":3}' | grep -q '"fetch"' || { echo "tools/list did not list the fetch tool"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 26
+    fingerprint: 801b7bcf5c7a1baf
+    lang: sh
+    lines: d6ae2181 05e28b27 a7824cd9 02759540 16acc686 a84b7153
+    preview: kubectl delete -n agentgateway-system EnterpriseAgentgatewayPolicy llm-opa-polic
+  content: |-
+    {{< doc-test paths="extauth-opa-rego" >}}
+    # Remove the helpers this test added.
+    kubectl delete deployment,service mcp-website-fetcher -n agentgateway-system --ignore-not-found
+    {{< /doc-test >}}

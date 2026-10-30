@@ -88,7 +88,7 @@ hidden:
          enabled: true
          gateway:
            create: true
-           className: agentgateway
+           className: {{< reuse "agw-docs/snippets/gatewayclass.md" >}}
            name: openshell-ingress
        EOF
        {{< /doc-test >}}

@@ -1,0 +1,200 @@
+format: 1
+source: assets/conrefs/pages/gateway/licensing.md
+blocks:
+- e7ec31289e349cd3 sh
+- d6b60841a75f90f9 sh
+- 94947d75279727a9 yaml
+- 888be0a422cf3291 yaml
+- fe3eda094a7ecca3 sh
+- ec1a4d57ca19073c console
+- 12f398d993156eaf sh
+- 35bd3ef804e81bc9
+- 1b5f8b27730c708c sh
+- 4460a322d3025cee bash
+- 274079499b6408e7 sh
+- f108eba057e499c0 bash
+- 68ee6fcd2cb53df1 bash
+- 12f398d993156eaf sh
+tags:
+- paths: enterprise-licensing
+  block: 0
+  fingerprint: e7ec31289e349cd3
+  lang: sh
+  lines: 8a3b9e28 1bd2e2c1 7fe1d0d2 f3b85382
+  preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
+  form:
+    attr: paths="enterprise-licensing"
+    only: true
+    lead: ' '
+- paths: enterprise-licensing
+  block: 2
+  fingerprint: 94947d75279727a9
+  lang: yaml
+  lines: 4f9a49d2 f1540154 a67acb0a 1426decf 8c8c4228 91e75609 0bebd850 2f7c298d ce1a9758 abc56510
+  preview: cat << EOF | kubectl apply -f -
+  form:
+    attr: paths="enterprise-licensing"
+    only: true
+    lead: ' '
+- paths: enterprise-licensing
+  block: 10
+  fingerprint: 274079499b6408e7
+  lang: sh
+  lines: 87fb9ffa bb33f2e0 d2f34d1e bc73c86d
+  preview: kubectl create secret generic --save-config \
+  form:
+    attr: paths="enterprise-licensing"
+    only: true
+    lead: ' '
+- paths: enterprise-licensing
+  block: 11
+  fingerprint: f108eba057e499c0
+  lang: bash
+  lines: f108eba0
+  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout restart deploy
+  form:
+    attr: paths="enterprise-licensing"
+    only: true
+    lead: ' '
+- paths: enterprise-licensing
+  block: 13
+  fingerprint: 12f398d993156eaf
+  lang: sh
+  lines: 12f398d9
+  preview: kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "
+  form:
+    attr: paths="enterprise-licensing"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Provide key directly
+    line: ba1ea144d5c55a86
+    occurrence: 0
+    words: 7508386a 82a3537f 9b97ac5e cc1d3b02
+    block_before: null
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-licensing" >}}
+    # ============================================================================
+    # Doc test coverage for "Licensing" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Provide key directly": the Enterprise license helm upgrade with
+    #     licensing.licenseKey creates the enterprise-agentgateway-license secret.
+    #   * "Provide key in a secret": after a hidden uninstall of the controller, the
+    #     page's secret is applied and the controller installs with
+    #     licensing.secretName / createSecret=false and reads that secret.
+    #   * "Update the license": the secret is re-created with the same key, the
+    #     controller restarts, and its logs have no `license validation failed`.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The Trial license tab: same command with a trial key; CI has one key.
+    #   * "Check the license values": a hidden Python decode replaces the visible
+    #     base64 pipeline, which can fail on unpadded JWT segments under pipefail.
+    #   * Restarting enterprise-agentgateway-ui: the UI is not installed here.
+    # The page uses $LICENSE_KEY; CI provides AGENTGATEWAY_LICENSE_KEY.
+    export LICENSE_KEY="${AGENTGATEWAY_LICENSE_KEY}"
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: e7ec31289e349cd3
+    lang: sh
+    lines: 8a3b9e28 1bd2e2c1 7fe1d0d2 f3b85382
+    preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-licensing" >}}
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -o jsonpath='{.data.{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key}' | base64 --decode | grep -q .
+    # "Provide key in a secret" applies before you install: remove the controller
+    # release (its Helm-owned secret goes with it) so the next steps start clean.
+    helm uninstall {{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --wait
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} wait --for=delete secret/{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license --timeout=60s || true
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 888be0a422cf3291
+    lang: yaml
+    lines: 46ab7fcc 49c99de3 241af637
+    preview: 'licensing:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-licensing" >}}
+       cat > license-values.yaml <<'EOF'
+       licensing:
+         secretName: enterprise-agentgateway-license
+         createSecret: false
+       EOF
+       helm upgrade -i {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} \
+         -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+         --version {{< reuse "agw-docs/versions/helm-version-flag.md" >}} \
+         -f license-values.yaml
+       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
+       # The release must not own the secret: it was created by hand.
+       [ -z "$(kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -o jsonpath='{.metadata.labels.app\.kubernetes\.io/managed-by}')" ]
+       kubectl wait --for=condition=Accepted gatewayclass/{{< reuse "agw-docs/snippets/gatewayclass.md" >}} --timeout=120s
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: fe3eda094a7ecca3
+    lang: sh
+    lines: a23bf984 1bd2e2c1 0c975bff
+    preview: kubectl get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license   \
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-licensing" >}}
+    kubectl get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+      -o jsonpath="{.data.{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key}" | base64 --decode > license.jwt
+    python3 - <<'EOF'
+    import base64, json
+    parts = open("license.jwt").read().strip().split(".")
+    claims = None
+    for seg in parts[:2]:
+        try:
+            claims = json.loads(base64.urlsafe_b64decode(seg + "=" * (-len(seg) % 4)))
+        except Exception:
+            continue
+        if isinstance(claims, dict) and "exp" in claims:
+            break
+    assert isinstance(claims, dict) and "exp" in claims and claims.get("product") == "agentgateway", "license claims not found"
+    print("license product:", claims["product"], "exp:", claims["exp"])
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 4460a322d3025cee
+    lang: bash
+    lines: 4460a322
+    preview: export LICENSE_KEY=<new-key-string>
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-licensing" >}}
+       # The visible export is a placeholder; re-use the CI key as the "new" key.
+       export LICENSE_KEY="${AGENTGATEWAY_LICENSE_KEY}" && echo "LICENSE_KEY set for update"
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: f108eba057e499c0
+    lang: bash
+    lines: f108eba0
+    preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout restart deploy
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-licensing" >}}
+       # Wait for the restarted pod, so that the next step reads its logs.
+       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 12f398d993156eaf
+    lang: sh
+    lines: 12f398d9
+    preview: kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-licensing" >}}
+       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
+       if kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} | grep "license validation failed"; then
+         echo "controller reports a license validation failure"; exit 1
+       fi
+       {{< /doc-test >}}

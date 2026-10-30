@@ -37,7 +37,7 @@ hidden:
        - name: wait for httpbin-health policy to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: httpbin
                name: httpbin-health

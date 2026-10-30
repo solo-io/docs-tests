@@ -1,0 +1,123 @@
+format: 1
+source: assets/agw-docs/pages/security/waf/ip-filtering.md
+blocks:
+- f3a84abf31c23af3 sh
+- 39ced1fc055b3492 sh
+- 86b1e0241c6df49a yaml
+- b4be424b2372124d yaml
+- e1a59971f26a8ca9 sh
+- 096bf26ddf92c0be sh
+- e32d3af47b7bf58c sh
+- 241dd920965f4bc6 sh
+- 4259049d37c460ce console
+- f679db8999b61beb sh
+- adbe49c47c131d01 yaml
+- ca85a6f1fcbb3dde yaml
+- 8522f161ae59f7e9 yaml
+- d9327fb98ff9b0c0 yaml
+tags:
+- paths: waf-ip-filtering
+  block: 0
+  fingerprint: f3a84abf31c23af3
+  lang: sh
+  lines: 1ae47ca5 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 2
+  fingerprint: 86b1e0241c6df49a
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 142b1d35 385a2eb3 1851f975 139e0649 7c77bc8f 86359fa1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 3
+  fingerprint: b4be424b2372124d
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 a140c182 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d cbd111cf f02322aa c9abe331 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 4
+  fingerprint: e1a59971f26a8ca9
+  lang: sh
+  lines: e1a59971
+  preview: kubectl get enterpriseagentgatewaypolicy httpbin-waf-ip -n httpbin -o yaml
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 6
+  fingerprint: e32d3af47b7bf58c
+  lang: sh
+  lines: e32d3af4
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/status/200 -H "host: www.example.com"'
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 9
+  fingerprint: f679db8999b61beb
+  lang: sh
+  lines: 2b808a0e 73570a62
+  preview: kubectl delete wafpolicy -n httpbin httpbin-waf
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: b4be424b2372124d
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 a140c182 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d cbd111cf f02322aa c9abe331 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="waf-ip-filtering" >}}
+       for i in $(seq 1 60); do
+         kubectl get enterpriseagentgatewaypolicy httpbin-waf-ip -n httpbin -o yaml | grep "reason: Attached" >/dev/null && break
+         sleep 2
+       done
+       kubectl get enterpriseagentgatewaypolicy httpbin-waf-ip -n httpbin -o yaml | grep "reason: Attached" >/dev/null
+       {{< /doc-test >}}
+- after:
+    section: Configure IP-based filtering
+    line: 1a406b001e6d80da
+    occurrence: 3
+    words: 7508386a
+    block_before:
+      block: 7
+      fingerprint: 241dd920965f4bc6
+      lang: sh
+      lines: 241dd920
+      preview: 'curl -i localhost:8080/status/200 -H "host: www.example.com"'
+  content: |2-
+       {{< doc-test paths="waf-ip-filtering" >}}
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/status/200" -H "host: www.example.com" )
+         [ "$code" = "200" ] && break
+         sleep 2
+       done
+       echo "got $code"
+       [ "$code" = "200" ]
+       # Confirm that @ipMatch denies a matching source: widen the range to every IPv4 address.
+       kubectl patch wafpolicy httpbin-waf -n httpbin --type merge -p '{"spec":{"customDirectives":[{"inline":"SecRule REMOTE_ADDR \"@ipMatch 0.0.0.0/0\" \"id:1001,phase:1,deny,status:403,msg:'"'"'blocked IP'"'"'\"\n"}]}}'
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/status/200" -H "host: www.example.com" )
+         [ "$code" = "403" ] && break
+         sleep 2
+       done
+       echo "got $code"
+       [ "$code" = "403" ]
+       {{< /doc-test >}}

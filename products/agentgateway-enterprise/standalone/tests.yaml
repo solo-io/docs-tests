@@ -1,0 +1,1135 @@
+# Doc-test scenario definitions for the enterprise agentgateway docs, standalone mode.
+#
+# Built the same way as ../kubernetes/tests.yaml: a rebase shell copies its
+# upstream twin's scenarios from ../../agentgateway/standalone/tests.yaml (same
+# name and path; a twin keyed on source: becomes page: here, one scenario per
+# shell that shows it). An enterprise-only page gets its own scenarios; a
+# schema-only one is named `<page>-schema`.
+#
+# What differs from open source:
+#
+#   The binary. Upstream annotations install the open source binary through a
+#            hidden reuse of agw-docs/snippets/install-agentgateway-binary.md.
+#            The consuming site's assets/ shadow upstream ones, so its
+#            workflow drops ./install-agentgateway-binary.md (next to this
+#            file) into its own assets/ before the run, and every scenario
+#            installs the enterprise binary instead, with no change to the
+#            upstream annotations.
+#   The license. The enterprise binary will not start without
+#            ENTERPRISE_AGENTGATEWAY_LICENSE_KEY, which the workflow sets from
+#            a secret. No annotation tags a block that exports a placeholder
+#            for it.
+#   The schema. Standalone config is checked against the enterprise
+#            config.json at the release tag, not the open source one: it adds
+#            the enterprise-only fields (license, entSts, purview, ...).
+version: 1
+mode: standalone
+content_root: content/en/agentgateway
+prerequisites: {}
+skip:
+- page: _index.md
+- page: documentation/_index.md
+- page: documentation/about/_index.md
+- page: documentation/about/architecture/_index.md
+- page: documentation/about/architecture/network.md
+- page: documentation/about/introduction.md
+- page: documentation/agent/_index.md
+- page: documentation/agent/about.md
+- page: documentation/configuration/_index.md
+- page: documentation/configuration/import.md
+- page: documentation/configuration/policies/_index.md
+- page: documentation/configuration/policies/attachment.md
+- page: documentation/configuration/policies/conditional-policies.md
+- page: documentation/configuration/resiliency/_index.md
+- page: documentation/configuration/security/_index.md
+- page: documentation/configuration/security/backend-authn/_index.md
+- page: documentation/configuration/security/backend-authn/providers/_index.md
+- page: documentation/configuration/security/backend-authn/token-exchange/_index.md
+- page: documentation/configuration/security/backend-authn/token-exchange/idps/_index.md
+- page: documentation/configuration/security/backend-authn/token-exchange/sts/_index.md
+- page: documentation/configuration/security/backend-authn/token-exchange/sts/about.md
+- page: documentation/configuration/security/backend-authn/token-exchange/sts/elicitation.md
+- page: documentation/configuration/traffic-management/_index.md
+- page: documentation/llm/_index.md
+- page: documentation/llm/about.md
+- page: documentation/llm/api-types/_index.md
+- page: documentation/llm/api-types/completions.md
+- page: documentation/llm/api-types/embeddings.md
+- page: documentation/llm/api-types/messages.md
+- page: documentation/llm/api-types/models.md
+- page: documentation/llm/api-types/passthrough.md
+- page: documentation/llm/api-types/rerank.md
+- page: documentation/llm/api-types/responses.md
+- page: documentation/llm/api-types/token-count.md
+- page: documentation/llm/cost-controls/_index.md
+- page: documentation/llm/cost-controls/budget-limits/_index.md
+- page: documentation/llm/cost-controls/budget-limits/rate-limit.md
+- page: documentation/llm/inference/_index.md
+- page: documentation/llm/playground.md
+- page: documentation/llm/prompt-guards/_index.md
+- page: documentation/llm/providers.md
+- page: documentation/mcp/_index.md
+- page: documentation/mcp/about.md
+- page: documentation/mcp/apps.md
+- page: documentation/mcp/connect.md
+- page: documentation/mcp/elicitation/_index.md
+- page: documentation/mcp/elicitation/about.md
+- page: documentation/mcp/elicitation/brokered/_index.md
+- page: documentation/mcp/elicitation/brokered/about.md
+- page: documentation/mcp/guardrails/_index.md
+- page: documentation/mcp/guardrails/about.md
+- page: documentation/mcp/mcp-authn.md
+- page: documentation/mcp/mcp-authz.md
+- page: documentation/mcp/spec-compatibility.md
+- page: documentation/observability/_index.md
+- page: documentation/observability/access-logs/_index.md
+- page: documentation/observability/access-logs/database.md
+- page: documentation/observability/access-logs/view.md
+- page: documentation/observability/metrics/_index.md
+- page: documentation/observability/metrics/overview.md
+- page: documentation/observability/metrics/reference.md
+- page: documentation/observability/traces/_index.md
+- page: documentation/observability/traces/attribute-reference.md
+- page: documentation/observability/traces/configs/_index.md
+- page: documentation/observability/traces/configs/grafana-cloud.md
+- page: documentation/observability/traces/configs/honeycomb.md
+- page: documentation/observability/traces/setup.md
+- page: documentation/operations/_index.md
+- page: documentation/operations/agctl.md
+- page: documentation/operations/config-resources.md
+- page: documentation/operations/inspect-config.md
+- page: documentation/operations/upgrade.md
+- page: documentation/quickstart/_index.md
+- page: documentation/setup/_index.md
+- page: documentation/setup/install/_index.md
+- page: documentation/setup/install/helm.md
+- page: documentation/setup/install/kubernetes.md
+- page: documentation/setup/storage.md
+- page: documentation/setup/ui/_index.md
+- page: documentation/setup/ui/expose-ui.md
+- page: documentation/setup/ui/secure-ui.md
+- page: documentation/setup/update.md
+- page: integrations/_index.md
+- page: integrations/auth/_index.md
+- page: integrations/cloud-providers/_index.md
+- page: integrations/llm/_index.md
+- page: integrations/llm/clients/_index.md
+- page: integrations/llm/clients/microsoft-intune.md
+- page: integrations/llm/guardrails/_index.md
+- page: integrations/llm/guardrails/deepkeep.md
+- page: integrations/llm/observability/_index.md
+- page: integrations/llm/observability/azure-monitor.md
+- page: integrations/llm/observability/datadog.md
+- page: integrations/llm/providers/_index.md
+- page: integrations/llm/routing/_index.md
+- page: integrations/llm/routing/vllm-semantic-router.md
+- page: integrations/mcp/_index.md
+- page: integrations/mcp/clients/_index.md
+- page: integrations/mcp/clients/antigravity.md
+- page: integrations/mcp/clients/claude.md
+- page: integrations/mcp/clients/cursor.md
+- page: integrations/mcp/clients/devin.md
+- page: integrations/mcp/clients/opencode.md
+- page: integrations/mcp/clients/vscode.md
+- page: integrations/mcp/servers/_index.md
+- page: integrations/networking/_index.md
+- page: integrations/web-uis/_index.md
+- page: not-in-version.md
+- page: reference/_index.md
+- page: reference/agctl/_index.md
+- page: reference/agctl/agctl-catalog-import.md
+- page: reference/agctl/agctl-catalog.md
+- page: reference/agctl/agctl-proxy-profile-cpu.md
+- page: reference/agctl/agctl-proxy-profile-heap.md
+- page: reference/agctl/agctl-proxy-profile.md
+- page: reference/agctl/agctl-proxy-trace.md
+- page: reference/agctl/agctl-proxy.md
+- page: reference/agctl/agctl-standalone-analytics.md
+- page: reference/agctl/agctl-standalone-apply.md
+- page: reference/agctl/agctl-standalone-budgets.md
+- page: reference/agctl/agctl-standalone-delete.md
+- page: reference/agctl/agctl-standalone-get.md
+- page: reference/agctl/agctl-standalone-keys-create.md
+- page: reference/agctl/agctl-standalone-keys.md
+- page: reference/agctl/agctl-standalone-logs.md
+- page: reference/agctl/agctl-standalone.md
+- page: reference/agctl/agctl-version.md
+- page: reference/agctl/agctl.md
+- page: reference/cel/_index.md
+- page: reference/cel/cel-context.md
+- page: reference/configuration/_index.md
+- page: reference/helm/_index.md
+- page: reference/sbom.md
+- page: release-notes/_index.md
+- page: release-notes/changelog.md
+- page: release-notes/release-notes.md
+- page: release-notes/versions.md
+scenarios:
+  a2a:
+    page: documentation/agent/a2a.md
+    path: a2a
+  admin-address:
+    type:
+    - schema
+    - functional
+    page: documentation/operations/debug.md
+    path: admin-address
+  agentcore-standalone:
+    type:
+    - schema
+    - functional
+    path: agentcore-standalone
+    page: documentation/agent/agentcore.md
+  anthropic:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/anthropic.md
+    path: anthropic
+  api-types-decisions:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/api-types/decisions.md
+    path: api-types-decisions-run
+  apikey-authn:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/apikey-authn.md
+    path: apikey-authn
+  apikey-budgets:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/cost-controls/budget-limits/per-key.md
+    path: apikey-budgets
+  attribute-budgets:
+    type: &id001
+    - schema
+    - functional
+    page: documentation/llm/cost-controls/budget-limits/attribute-budgets.md
+    path: attribute-budgets
+  attribution:
+    type:
+    - schema
+    - functional
+    path: attribution
+    page: documentation/llm/cost-controls/attribution.md
+  auth0-mcp-authn:
+    type:
+    - schema
+    - functional
+    page: integrations/auth/auth0.md
+    path: auth0-mcp-authn
+  authentik-mcp-authn:
+    type:
+    - schema
+    - functional
+    page: integrations/auth/authentik.md
+    path: authentik-mcp-authn
+  aws:
+    type:
+    - schema
+    - functional
+    page: integrations/cloud-providers/aws.md
+    path: aws
+  aws-assume-role-chain-schema:
+    type: schema
+    page: documentation/configuration/security/backend-authn/providers/aws-assume-role-chain.md
+    path: aws-assume-role-chain
+  azure:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/azure.md
+    path: azure
+  azure-cloud:
+    type:
+    - schema
+    - functional
+    page: integrations/cloud-providers/azure.md
+    path: azure-cloud
+  azure-content-safety:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/prompt-guards/azure-content-safety.md
+    path: azure-content-safety
+  backend-authn-aws:
+    path: backend-authn-aws
+    page: documentation/configuration/security/backend-authn/providers/aws.md
+  backend-authn-azure:
+    path: backend-authn-azure
+    page: documentation/configuration/security/backend-authn/providers/azure.md
+  backend-authn-copilot:
+    type:
+    - schema
+    - functional
+    path: backend-authn-copilot
+    page: documentation/configuration/security/backend-authn/providers/copilot.md
+  backend-authn-cross-app-access:
+    path: cross-app-access
+    page: documentation/configuration/security/backend-authn/token-exchange/cross-app-access.md
+  backend-authn-gcp:
+    path: backend-authn-gcp
+    page: documentation/configuration/security/backend-authn/providers/gcp.md
+  backend-authn-jwt-sign:
+    path: backend-authn-jwt-sign
+    page: documentation/configuration/security/backend-authn/jwt-sign.md
+  backend-authn-key:
+    type:
+    - schema
+    - functional
+    path: backend-authn-key
+    page: documentation/configuration/security/backend-authn/key.md
+  backend-authn-te-google:
+    type:
+    - schema
+    - functional
+    path: te-google
+    page: documentation/configuration/security/backend-authn/token-exchange/idps/google.md
+  backend-tls:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/backend-tls.md
+    path: backend-tls
+  backends:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/backends.md
+    path: backends
+  baseten:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/baseten.md
+    path: baseten
+  basic-authn:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/basic-authn.md
+    path: basic-authn
+  bedrock:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/bedrock.md
+    path: bedrock
+  bedrock-guardrails:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/prompt-guards/bedrock-guardrails.md
+    path: bedrock-guardrails
+  binary-install:
+    type:
+    - schema
+    - functional
+    path: binary-install
+    page: documentation/setup/install/binary.md
+  buffer:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/buffer.md
+    path: buffer
+  callout-proxy:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/callout-proxy.md
+    path: callout-proxy
+  cel-playground:
+    page: reference/cel/playground.md
+    path: cel-playground
+  cel-variables:
+    type:
+    - schema
+    - functional
+    page: reference/cel/variables.md
+    path: cel-variables
+  cel-yaml-examples:
+    page: reference/cel/yaml-and-examples.md
+    path: cel-yaml-examples
+  cerebras:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/cerebras.md
+    path: cerebras
+  cert-manager:
+    type:
+    - schema
+    - functional
+    page: integrations/networking/cert-manager.md
+    path: cert-manager
+  chatbot-ui:
+    type:
+    - schema
+    - functional
+    page: integrations/web-uis/chatbot-ui.md
+    path: chatbot-ui
+  client-auth:
+    path: client-auth
+    page: documentation/configuration/security/backend-authn/token-exchange/standard.md
+  cohere:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/cohere.md
+    path: cohere
+  composable:
+    type: *id001
+    page: documentation/mcp/composable.md
+    path: composable
+  conditional-reversible:
+    type: *id001
+    page: documentation/llm/prompt-guards/conditional-reversible.md
+    path: conditional-reversible
+  config-overview:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/overview.md
+    path: config-overview
+  configuration/gateways:
+    type:
+    - schema
+    - functional
+    name: listeners
+    page: documentation/configuration/gateways.md
+    path: gateways
+  copilot-validate:
+    type:
+    - schema
+    - functional
+    path: copilot-validate
+    page: integrations/llm/clients/github-copilot.md
+  cors:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/cors.md
+    path: cors
+  cost-dashboard:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/cost-controls/dashboard.md
+    path: cost-dashboard
+  costs:
+    type:
+    - schema
+    - functional
+    path: costs
+    page: documentation/llm/cost-controls/costs.md
+  csrf:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/csrf.md
+    path: csrf
+  custom-cel-functions:
+    type:
+    - schema
+    - functional
+    path: custom-cel-functions
+    page: reference/cel/custom-functions.md
+  deepinfra:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/deepinfra.md
+    path: deepinfra
+  deepseek:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/deepseek.md
+    path: deepseek
+  descope-mcp-authn:
+    type:
+    - schema
+    - functional
+    page: integrations/auth/descope.md
+    path: descope-mcp-authn
+  devin-egress:
+    type:
+    - schema
+    - functional
+    path: devin-egress
+    page: integrations/llm/clients/devin.md
+  direct-response:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/direct-response.md
+    path: direct-response
+  docker-install:
+    type:
+    - schema
+    - functional
+    path: docker-install
+    page: documentation/setup/install/docker.md
+  egress-proxy:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/egress-proxy.md
+    path: egress-proxy
+  entra-mcp-authn:
+    type:
+    - schema
+    - functional
+    page: integrations/auth/entra.md
+    path: entra-mcp-authn
+  external-authz:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/external-authz.md
+    path: external-authz
+  external-dns-schema:
+    type: schema
+    page: integrations/networking/external-dns.md
+    path: external-dns
+  extproc:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/extproc.md
+    path: extproc
+  fault-injection:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/resiliency/fault-injection.md
+    path: fault-injection
+  fireworks:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/fireworks.md
+    path: fireworks
+  gcp:
+    type:
+    - schema
+    - functional
+    page: integrations/cloud-providers/gcp.md
+    path: gcp
+  gemini:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/gemini.md
+    path: gemini
+  gemini-inbound-standalone:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/api-types/gemini.md
+    path: gemini-inbound-standalone
+  google-model-armor:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/prompt-guards/google-model-armor.md
+    path: google-model-armor
+  goose:
+    type:
+    - schema
+    - functional
+    page: integrations/web-uis/goose.md
+    path: goose
+  grafana:
+    page: documentation/observability/metrics/grafana.md
+    path: grafana
+  groq:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/groq.md
+    path: groq
+  guardrail-webhooks:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/prompt-guards/webhooks.md
+    path: guardrail-webhooks
+  guardrails-overview:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/prompt-guards/overview.md
+    path: guardrails-overview
+  http-authz:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/http-authz.md
+    path: http-authz
+  huggingface:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/huggingface.md
+    path: huggingface
+  jaeger-standalone:
+    type:
+    - schema
+    - functional
+    page: documentation/observability/traces/configs/jaeger.md
+    path: jaeger-standalone
+  jev:
+    page: integrations/llm/guardrails/jev.md
+    path: jev
+  jwt-authn:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/jwt-authn.md
+    path: jwt-authn
+  keycloak-mcp-authn:
+    type:
+    - schema
+    - functional
+    page: integrations/auth/keycloak.md
+    path: keycloak-mcp-authn
+  langfuse-validate:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/observability/langfuse.md
+    path: langfuse-validate
+  langsmith-validate:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/observability/langsmith.md
+    path: langsmith-validate
+  librechat:
+    type:
+    - schema
+    - functional
+    page: integrations/web-uis/librechat.md
+    path: librechat
+  license:
+    type: *id001
+    page: documentation/setup/license.md
+    path: license
+  listeners:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/listeners.md
+    path: listeners
+  llm-api-keys:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/api-keys.md
+    path: llm-api-keys-standalone
+  llm-audio:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/api-types/audio.md
+    path: llm-audio
+  llm-client-claude-code:
+    type:
+    - schema
+    - functional
+    path: claude-code
+    page: integrations/llm/clients/claude-code.md
+  llm-client-claude-desktop:
+    type:
+    - schema
+    - functional
+    path: claude-desktop
+    page: integrations/llm/clients/claude-desktop.md
+  llm-client-codex:
+    type:
+    - schema
+    - functional
+    path: codex
+    page: integrations/llm/clients/codex.md
+  llm-client-continue:
+    path: llm-client-continue
+    page: integrations/llm/clients/continue.md
+  llm-client-curl:
+    type:
+    - schema
+    - functional
+    path: llm-client-curl
+    page: integrations/llm/clients/curl.md
+  llm-client-cursor:
+    path: llm-client-cursor
+    page: integrations/llm/clients/cursor.md
+  llm-client-openai-sdk:
+    type:
+    - schema
+    - functional
+    path: llm-client-openai-sdk
+    page: integrations/llm/clients/openai-sdk.md
+  llm-client-opencode:
+    type:
+    - schema
+    - functional
+    path: llm-client-opencode
+    page: integrations/llm/clients/opencode.md
+  llm-configuration-modes:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/configuration-modes.md
+    path: llm-configuration-modes
+  llm-observability:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/observability.md
+    path: llm-observability
+  llm-openai:
+    path: llm
+    page: documentation/quickstart/llm.md
+  llm-policies:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/llm.md
+    path: llm-policies
+  llm-provider-copilot:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/copilot.md
+    path: llm-provider-copilot
+  llm/transformations:
+    type:
+    - schema
+    - functional
+    name: transformations
+    page: documentation/llm/transformations.md
+    path: transformations
+  manipulation:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/manipulation.md
+    path: manipulation
+  matching:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/matching.md
+    path: matching
+  mcp-authn:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/mcp-authn.md
+    path: mcp-authn
+  mcp-authz-config:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/mcp-authz.md
+    path: mcp-authz-config
+  mcp-elicitation-brokered-agent:
+    type:
+    - schema
+    - functional
+    before:
+    - page: documentation/mcp/elicitation/brokered/setup.md
+      path: mcp-elicitation-brokered-setup
+    page: documentation/mcp/elicitation/brokered/agent.md
+    path: mcp-elicitation-brokered-agent
+  mcp-elicitation-brokered-consent:
+    type:
+    - schema
+    - functional
+    before:
+    - page: documentation/mcp/elicitation/brokered/setup.md
+      path: mcp-elicitation-brokered-setup
+    page: documentation/mcp/elicitation/brokered/consent-screen.md
+    path: mcp-elicitation-brokered-consent
+  mcp-elicitation-brokered-downstream-only:
+    type:
+    - schema
+    - functional
+    before:
+    - page: documentation/mcp/elicitation/brokered/setup.md
+      path: mcp-elicitation-brokered-setup
+    page: documentation/mcp/elicitation/brokered/downstream-only.md
+    path: mcp-elicitation-brokered-downstream-only
+  mcp-elicitation-brokered-issuer-settings-schema:
+    type: schema
+    page: documentation/mcp/elicitation/brokered/issuer-settings.md
+    path: mcp-elicitation-brokered-issuer-settings
+  mcp-elicitation-brokered-setup:
+    type:
+    - schema
+    - functional
+    page: documentation/mcp/elicitation/brokered/setup.md
+    path: mcp-elicitation-brokered-setup
+  mcp-guardrails:
+    type:
+    - schema
+    - functional
+    page: documentation/mcp/guardrails/setup.md
+    path: mcp-guardrails
+  mcp-guardrails-cel:
+    type:
+    - schema
+    - functional
+    page: documentation/mcp/guardrails/cel.md
+    path: mcp-guardrails-cel
+  mcp-guardrails-processors:
+    path: mcp-guardrails-processors
+    page: documentation/mcp/guardrails/processors.md
+  mcp-keep-alive:
+    type:
+    - schema
+    - functional
+    page: documentation/mcp/configuration-modes.md
+    path: mcp-keep-alive
+  mcp-observability:
+    type:
+    - schema
+    - functional
+    page: documentation/mcp/mcp-observability.md
+    path: mcp-observability
+  mcp-openapi:
+    type:
+    - schema
+    - functional
+    page: integrations/mcp/servers/openapi.md
+    path: mcp-openapi
+  mcp-playground:
+    type:
+    - schema
+    - functional
+    path: mcp
+    page: documentation/quickstart/mcp.md
+  mcp-stateless:
+    type:
+    - schema
+    - functional
+    page: integrations/mcp/servers/http.md
+    path: mcp-stateless
+  mcp-stdio:
+    type:
+    - schema
+    - functional
+    page: integrations/mcp/servers/stdio.md
+    path: mcp-stdio
+  mcp-target-policies:
+    type:
+    - schema
+    - functional
+    page: documentation/mcp/mcp-target-policies.md
+    path: mcp-target-policies
+  mcp-virtual:
+    type:
+    - schema
+    - functional
+    page: integrations/mcp/servers/virtual.md
+    path: mcp-virtual
+  meta-validate:
+    type:
+    - schema
+    - functional
+    path: meta-validate
+    page: integrations/llm/providers/meta.md
+  mirroring:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/resiliency/mirroring.md
+    path: mirroring
+  mistral:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/mistral.md
+    path: mistral
+  multi-layer-guardrails:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/prompt-guards/multi-layer.md
+    path: multi-layer-guardrails
+  multiple-llms:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/multiple-llms.md
+    path: multiple-llms
+  network-authz:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/network-authz.md
+    path: network-authz
+  non-agentic-http:
+    type:
+    - schema
+    - functional
+    path: httpbin
+    page: documentation/quickstart/non-agentic-http.md
+  oauth2-proxy:
+    type:
+    - schema
+    - functional
+    page: integrations/auth/oauth2-proxy.md
+    path: oauth2-proxy
+  oidc-browser:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/oidc.md
+    path: oidc-browser
+  okta-mcp-authn:
+    type:
+    - schema
+    - functional
+    page: integrations/auth/okta.md
+    path: okta-mcp-authn
+  ollama-standalone-validate:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/ollama.md
+    path: ollama-standalone-validate
+  open-webui:
+    type:
+    - schema
+    - functional
+    page: integrations/web-uis/open-webui.md
+    path: open-webui
+  openai:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/openai.md
+    path: openai
+  openai-compatible-validate:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/custom.md
+    path: openai-compat-validate
+  openrouter:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/openrouter.md
+    path: openrouter
+  otel-collector:
+    type:
+    - schema
+    - functional
+    page: documentation/observability/traces/configs/otel.md
+    path: otel-collector
+  otlp-log-export:
+    type:
+    - schema
+    - functional
+    page: documentation/observability/access-logs/export.md
+    path: otlp-log-export
+  perplexity:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/perplexity.md
+    path: perplexity
+  phoenix:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/observability/phoenix.md
+    path: phoenix
+  prometheus-standalone:
+    page: documentation/observability/metrics/prometheus.md
+    path: prometheus-standalone
+  prompt-guards-moderation:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/prompt-guards/moderation.md
+    path: prompt-guards-moderation-inline
+  purview-dlp-schema:
+    type: schema
+    page: documentation/llm/prompt-guards/purview-dlp.md
+    path: purview-dlp
+  rate-limits:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/resiliency/rate-limits.md
+    path: rate-limits
+  realtime-standalone:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/api-types/realtime.md
+    path: realtime-standalone
+  redirects:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/redirects.md
+    path: redirects
+  regex:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/prompt-guards/regex.md
+    path: regex
+  retries:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/resiliency/retries.md
+    path: retries
+  rewrites:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/rewrites.md
+    path: rewrites
+  route-delegation:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/route-delegation.md
+    path: route-delegation
+  routes:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/routes.md
+    path: routes
+  schema-validation:
+    page: reference/configuration/validation.md
+    path: schema-validation
+  standalone-database:
+    type:
+    - schema
+    - functional
+    path: standalone-database
+    page: documentation/setup/database.md
+  static-config:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/static-configuration.md
+    path: static-config
+  sts-delegation:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/backend-authn/token-exchange/sts/delegation.md
+    path: sts-delegation
+  sts-dual-auth:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/backend-authn/token-exchange/sts/dual-auth.md
+    path: sts-dual-auth
+  sts-impersonation:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/backend-authn/token-exchange/sts/impersonation.md
+    path: sts-impersonation
+  sts-setup:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/backend-authn/token-exchange/sts/setup.md
+    path: sts-setup
+  tailscale:
+    type:
+    - schema
+    - functional
+    page: integrations/auth/tailscale.md
+    path: tailscale
+  te-jwt-bearer-standalone:
+    path: te-jwt-bearer-standalone
+    page: documentation/configuration/security/backend-authn/token-exchange/jwt-bearer.md
+  timeouts:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/resiliency/timeouts.md
+    path: timeouts
+  togetherai:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/togetherai.md
+    path: togetherai
+  tool-mode:
+    type: *id001
+    page: documentation/mcp/tool-mode.md
+    path: tool-mode
+  trace-validate:
+    type:
+    - schema
+    - functional
+    page: documentation/operations/trace-requests.md
+    path: trace-validate
+  transformations:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/traffic-management/transformations.md
+    path: transformations
+  typesafe:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/typesafe.md
+    path: typesafe
+  ui-default-port:
+    path: ui-standalone-default
+    page: documentation/setup/ui/launch-ui.md
+  ui-gateway:
+    type:
+    - schema
+    - functional
+    path: ui-standalone-gateway
+    page: documentation/setup/ui/gateway-ui.md
+  ui-mcp-catalog:
+    type: functional
+    page: documentation/setup/ui/mcp-catalog.md
+    path: ui-mcp-catalog
+  vertex:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/vertex.md
+    path: vertex
+  virtual-keys:
+    type:
+    - schema
+    - functional
+    path: virtual-keys
+    page: documentation/llm/cost-controls/virtual-keys.md
+  virtual-models:
+    type:
+    - schema
+    - functional
+    page: documentation/llm/virtual-models.md
+    path: virtual-models
+  xai:
+    type:
+    - schema
+    - functional
+    page: integrations/llm/providers/xai.md
+    path: xai

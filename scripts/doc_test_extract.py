@@ -195,7 +195,13 @@ class Extractor:
         # case that prompted this is an install snippet whose consumer copy adds
         # the enterprise license steps and whose upstream copy has none, so the
         # test would have installed the wrong build and passed.
-        self.asset_roots: List[Path] = [r.resolve() for r in (asset_roots or [repo_root])]
+        # A consuming site's own (non-rebased) pages can also reuse a snippet that
+        # only the upstream has, for example a version file such as
+        # agw-docs/versions/keycloak.md. Hugo finds it through the module union,
+        # so the upstream checkout is the fallback root here too. Without it the
+        # reuse rendered empty, and an image tag came out as "keycloak:".
+        default_roots = [repo_root] + ([upstream_root] if upstream_root else [])
+        self.asset_roots: List[Path] = [r.resolve() for r in (asset_roots or default_roots)]
         # A consuming site may REBASE a whole upstream page rather than reuse a
         # snippet: the page's entire body is `{{< rebase file="..." >}}`, and the
         # upstream content is unioned in when the site builds. Without these two,
@@ -223,6 +229,10 @@ class Extractor:
         self.skip_tabs_without_paths = bool(options.get("skip_tabs_without_paths", True))
         self.version = definition.get("context", {}).get("version")
         self.product = definition.get("context", {}).get("product")
+        # Extra names a conditional-text gate also matches, besides the product.
+        # A site whose gates name the product (include-if="agentgateway") while
+        # its tests run with the mode as the product passes the name here.
+        self.conditions = {c for c in definition.get("context", {}).get("conditions") or [] if c}
 
         # Map linkVersion tokens (e.g. "latest", "main") to canonical version
         # strings (e.g. "1.5.x", "1.4.x") as defined in hugo.yaml.  This
@@ -372,7 +382,12 @@ class Extractor:
                 break
         if candidate is None:
             return ""
-        self.recursion_edges.append((source_file.as_posix(), candidate.as_posix(), "reuse"))
+        if candidate.is_relative_to(Path(self.repo_root).resolve()):
+            self.recursion_edges.append((source_file.as_posix(), candidate.as_posix(), "reuse"))
+        else:
+            # An upstream fallback file (see asset_roots). The manifest makes edge
+            # paths relative to repo_root, so track it with the rebased files.
+            self.rebased_files.add(candidate)
         return self._expand_text(candidate, self._read_file(candidate), depth + 1).rstrip("\n")
 
     def _resolve_include(self, source_file: Path, include_path: str, depth: int) -> str:
@@ -488,7 +503,8 @@ class Extractor:
                     "main_file": upstream_rel,
                     "sources": [],
                     "options": self.definition.get("options", {}),
-                    "context": {"product": mode, "version": self.upstream_version_for[version]},
+                    "context": {"product": mode, "version": self.upstream_version_for[version],
+                                "conditions": sorted(self.conditions)},
                 },
                 docs_tests_root=self.docs_tests_root,
                 asset_roots=[self.repo_root, self.upstream_root],
@@ -510,13 +526,11 @@ class Extractor:
             include_if = [x.strip() for x in params.get("include-if", "").split(",") if x.strip()]
             exclude_if = [x.strip() for x in params.get("exclude-if", "").split(",") if x.strip()]
 
-            if include_if:
-                if not self.product:
-                    return ""
-                if self.product not in include_if:
-                    return ""
+            names = self.conditions | ({self.product} if self.product else set())
+            if include_if and not names.intersection(include_if):
+                return ""
 
-            if exclude_if and self.product and self.product in exclude_if:
+            if exclude_if and names.intersection(exclude_if):
                 return ""
 
             return body

@@ -1,0 +1,145 @@
+format: 1
+source: assets/agw-docs/pages/security/waf/custom-rules.md
+blocks:
+- f3a84abf31c23af3 sh
+- 39ced1fc055b3492 sh
+- f3c4a3078dae0ecf yaml
+- 03c4810e62b409b3 yaml
+- f78dbf159b6a8706 yaml
+- 30ed66ce3c6a1812 yaml
+- e32d3af47b7bf58c sh
+- 241dd920965f4bc6 sh
+- 4259049d37c460ce console
+- 5a1ecb3c6b70ef84 sh
+- cf9921fa50acf1d1 sh
+- 7a137888e17fb3d5 console
+- 29631f7f7e9a9b6a sh
+- 2248480c6bcd94c8 yaml
+- dc8f5bff01eac5a5 yaml
+- f098ea5d4dbbd8d0 yaml
+- 0abea1d97d2d97a1 yaml
+- 6d5594871157f0a0 yaml
+tags:
+- paths: waf-custom-rules,waf-custom-rules-configmap
+  block: 0
+  fingerprint: f3a84abf31c23af3
+  lang: sh
+  lines: 1ae47ca5 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-
+  form:
+    attr: paths="waf-custom-rules,waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules
+  block: 2
+  fingerprint: f3c4a3078dae0ecf
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 142b1d35 385a2eb3 1851f975 139e0649 7c77bc8f 060b94e5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-custom-rules"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules
+  block: 3
+  fingerprint: 03c4810e62b409b3
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 c9abe331 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d cbd111cf f02322aa c9abe331 0f10c5bc abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-custom-rules"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules-configmap
+  block: 4
+  fingerprint: f78dbf159b6a8706
+  lang: yaml
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 7e36fe29 0f10c5bc ff72caa3 a03dccf6 1851f975 b29a38fc 060b94e5 cb3f91d5 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 142b1d35 889016e3 7e36fe29 0f10c5bc 1fe7fd13 a04a3597 139e0649 985337c0 7e36fe29 0f10c5bc 1fe7fd13 911347d9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules-configmap
+  block: 5
+  fingerprint: 30ed66ce3c6a1812
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 c9abe331 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d cbd111cf f02322aa c9abe331 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules,waf-custom-rules-configmap
+  block: 6
+  fingerprint: e32d3af47b7bf58c
+  lang: sh
+  lines: e32d3af4
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/status/200 -H "host: www.example.com"'
+  form:
+    attr: paths="waf-custom-rules,waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules,waf-custom-rules-configmap
+  block: 9
+  fingerprint: 5a1ecb3c6b70ef84
+  lang: sh
+  lines: c479339a dbe1f38d
+  preview: 'curl -vik http://$INGRESS_GW_ADDRESS:80/status/200 -H "host: www.example.com" \'
+  form:
+    attr: paths="waf-custom-rules,waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules,waf-custom-rules-configmap
+  block: 12
+  fingerprint: 29631f7f7e9a9b6a
+  lang: sh
+  lines: 2b808a0e f82d4769 41ba6194
+  preview: kubectl delete wafpolicy -n httpbin httpbin-waf
+  form:
+    attr: paths="waf-custom-rules,waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Configure custom rules
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 7
+      fingerprint: 241dd920965f4bc6
+      lang: sh
+      lines: 241dd920
+      preview: 'curl -i localhost:8080/status/200 -H "host: www.example.com"'
+  content: |2-
+       {{< doc-test paths="waf-custom-rules,waf-custom-rules-configmap" >}}
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/status/200" -H "host: www.example.com" )
+         [ "$code" = "200" ] && break
+         sleep 2
+       done
+       echo "got $code"
+       [ "$code" = "200" ]
+       {{< /doc-test >}}
+- after:
+    section: Configure custom rules
+    line: 600fe1bb59e46b50
+    occurrence: 3
+    words: 32d3feda
+    block_before:
+      block: 10
+      fingerprint: cf9921fa50acf1d1
+      lang: sh
+      lines: a395b9b5 dbe1f38d
+      preview: 'curl -vik localhost:8080/status/200 -H "host: www.example.com" \'
+  content: |2-
+       {{< doc-test paths="waf-custom-rules,waf-custom-rules-configmap" >}}
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/status/200" -H "host: www.example.com" -H "User-Agent: scammer")
+         [ "$code" = "403" ] && break
+         sleep 2
+       done
+       echo "got $code"
+       [ "$code" = "403" ]
+       {{< /doc-test >}}

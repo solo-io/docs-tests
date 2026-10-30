@@ -459,23 +459,6 @@ def consumers(
     return sorted(found)
 
 
-# `[<%]` for the same reason `REUSE_RE` and `INCLUDE_RE` have it, even though
-# all 1198 uses in the tree are the angle form today. A literal `"{{< doc-test"`
-# means the first `{{% doc-test` somebody writes drops that file out of the
-# warning set, so an unresolved snippet that carries tests goes unreported --
-# the silent gap this module exists to close, in a new place.
-DOC_TEST_RE = re.compile(r"""\{\{[<%]\s*doc-test""")
-
-
-def carries_doc_tests(path: pathlib.Path) -> bool:
-    """Whether this file defines doc tests of its own."""
-    try:
-        text = path.read_text(encoding="utf-8", errors="ignore")
-    except OSError:
-        return False
-    return bool(DOC_TEST_RE.search(text))
-
-
 def unresolved(
     changed: list[str],
     index: dict[str, set[str]],
@@ -495,32 +478,6 @@ def unresolved(
     on a legitimate orphan edit teaches people to ignore it.
     """
     return [c for c in changed if not consumers([c], index, test_index=test_index)]
-
-
-def unresolved_losing_tests(
-    changed: list[str],
-    index: dict[str, set[str]],
-    root: pathlib.Path,
-    test_index: dict[str, set[str]] | None = None,
-) -> list[str]:
-    """Unresolved changed files that had tests to lose. The warning-worthy set.
-
-    Warning on every unresolved file would fire on 125 orphans, and a warning
-    that fires on routine edits is one people learn to scroll past -- which is
-    precisely how the old "No content candidates found" line survived as long
-    as it did. So it is narrowed to the case where something is actually lost.
-
-    A file reaching no page can only cost its OWN tests. Its consumers are by
-    definition none, and the snippets IT reuses are reached from their pages,
-    not through this one, so their tests are unaffected by this edit. Which
-    makes "unresolved AND carries doc tests" exactly the set worth a warning,
-    and the same set the budget test in `test_reuse_consumers.py` pins at 5.
-    """
-    return [
-        c
-        for c in unresolved(changed, index, test_index)
-        if carries_doc_tests(root / c)
-    ]
 
 
 def main() -> int:
@@ -544,11 +501,6 @@ def main() -> int:
         help='JSON map of this repo\'s versions to upstream version roots, '
         'e.g. \'{"latest":"latest"}\'; the same value doc_test_run.py takes',
     )
-    parser.add_argument(
-        "--quiet",
-        action="store_true",
-        help="do not report changed files that reach no page (stderr)",
-    )
     args = parser.parse_args()
 
     changed = list(args.files)
@@ -570,31 +522,14 @@ def main() -> int:
 
     index = build_reverse_index(root)
     test_index = build_test_dependency_index(root)
-    via_rebase: set[str] = set()
     if args.upstream_root:
         upstream_index = build_reverse_index(pathlib.Path(args.upstream_root).resolve())
         rebase_index = build_rebase_index(root, json.loads(args.upstream_versions))
-        # Per file, so the warning below can tell which inputs reached a page
-        # only through a shell. Same per-file trade `unresolved` makes.
-        via_rebase = {
-            c for c in changed if rebase_shells([c], index, upstream_index, rebase_index)
-        }
         shells = rebase_shells(changed, index, upstream_index, rebase_index)
         # Walked as if they changed, so their test dependents come with them.
         changed = changed + sorted(shells - set(changed))
     for page in consumers(changed, index, test_index=test_index):
         print(page)
-
-    # To stderr, so the page list on stdout stays pipeable. A file with tests
-    # that selects nothing is the exact symptom of the bug this replaced, and
-    # the old code did print it -- as "No content candidates found", buried in
-    # a green log nobody opened. Naming it, and only when something is lost,
-    # is what makes the difference; the caller decides how loud to be.
-    if not args.quiet:
-        for path in unresolved_losing_tests(changed, index, root, test_index):
-            if path in via_rebase:
-                continue
-            print(f"has doc tests but reaches no content page: {path}", file=sys.stderr)
     return 0
 
 

@@ -1,0 +1,170 @@
+format: 1
+source: assets/agw-docs/pages/security/waf/observability.md
+blocks:
+- 15c94629af2a5dcf yaml
+- 65b85cd0749745cb yaml
+- 30d4f8746e334edf bash
+- e1bb53b13b5f17ad sh
+- c4ccc9c86c2902b5 sh
+- 7983cdd3824eef8f yaml
+- 492c39ecb503c90a sh
+- f69ec89637f28173 sh
+tags:
+- paths: waf-observability
+  block: 0
+  fingerprint: 15c94629af2a5dcf
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 c54cd66d f497f0e2 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 0e1ba50e 73c054bf 274fdf3f 0d26b26f 3b2806ae abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 1
+  fingerprint: 65b85cd0749745cb
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 cccdaef6 f497f0e2 36184fa5 142b1d35 385a2eb3 1851f975 456ae8a0 42d84aba c71ecc2a 1b6cccd3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 2
+  fingerprint: 30d4f8746e334edf
+  lang: bash
+  lines: 30d4f874
+  preview: kubectl logs deploy/waf-server-enterprise-agentgateway -n agentgateway-system
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 5
+  fingerprint: 7983cdd3824eef8f
+  lang: yaml
+  lines: 16c71da1 00c69c65 98f7f300 8c8c4228 3adefa17 f497f0e2 36184fa5 356067ee 9eb3a28d ff7360cf 540f5e28 e4bc2178 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Access logs
+    line: c9ba2050afb620f8
+    occurrence: 0
+    words: a0561fd6 98f38f12 3374a1ad
+    block_before: null
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: waf.solo.io/v1alpha1
+    kind: WAFPolicy
+    metadata:
+      name: httpbin-waf
+      namespace: httpbin
+    spec:
+      ruleEngineSettings:
+        inline: |
+          SecRuleEngine On
+      customDirectives:
+        - inline: |
+            SecRule REQUEST_HEADERS:User-Agent "@streq scammer" "deny,status:403,id:107,phase:1,msg:'blocked scammer'"
+    ---
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayPolicy
+    metadata:
+      name: httpbin-waf
+      namespace: httpbin
+    spec:
+      targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: httpbin
+      traffic:
+        entWAF:
+          wafPolicyRef:
+            name: httpbin-waf
+    EOF
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/status/200" -H "host: www.example.com" -H "User-Agent: scammer")
+      [ "$code" = "403" ] && break
+      sleep 2
+    done
+    echo "got $code"
+    [ "$code" = "403" ]
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 15c94629af2a5dcf
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 c54cd66d f497f0e2 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 0e1ba50e 73c054bf 274fdf3f 0d26b26f 3b2806ae abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    for i in $(seq 1 30); do
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:80/status/200" -H "host: www.example.com" -H "User-Agent: scammer"
+      kubectl logs deploy/agentgateway-proxy -n agentgateway-system --since=2m | grep -E 'statusString.{0,4}403' && break
+      sleep 3
+    done
+    kubectl logs deploy/agentgateway-proxy -n agentgateway-system --since=2m | grep -E 'statusString.{0,4}403' >/dev/null
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 30d4f8746e334edf
+    lang: bash
+    lines: 30d4f874
+    preview: kubectl logs deploy/waf-server-enterprise-agentgateway -n agentgateway-system
+  content: |2-
+       {{< doc-test paths="waf-observability" >}}
+       for i in $(seq 1 30); do
+         POD=$(kubectl get pods -n agentgateway-system -o name | grep 'waf-server-enterprise-agentgateway' | head -1 | cut -d/ -f2)
+         kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/${POD}:9091/proxy/metrics" > /tmp/waf-out.txt 2>/dev/null && grep -q 'waf_server_requests_total' /tmp/waf-out.txt && break
+         sleep 3
+       done
+       grep -c 'waf_server_requests_total' /tmp/waf-out.txt
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: f69ec89637f28173
+    lang: sh
+    lines: f69ec896
+    preview: curl -s http://localhost:15000/config_dump | jq '[.policies[] | select(.policy.t
+  content: |2-
+       {{< doc-test paths="waf-observability" >}}
+       # The proxy admin port listens on localhost in the pod, which the API server
+       # pod proxy cannot reach, so use the same port-forward as the page.
+       : > /tmp/waf-out.txt
+       for i in $(seq 1 30); do
+         kubectl -n agentgateway-system port-forward deployment/agentgateway-proxy 15000 >/tmp/waf-pf.log 2>&1 &
+         PF_PID=$!
+         sleep 3
+         curl -s http://localhost:15000/config_dump > /tmp/waf-out.txt || true
+         kill "$PF_PID" 2>/dev/null || true
+         wait "$PF_PID" 2>/dev/null || true
+         grep 'waf-server-enterprise-agentgateway' /tmp/waf-out.txt >/dev/null && break
+         sleep 2
+       done
+       cat /tmp/waf-pf.log
+       grep -c 'waf-server-enterprise-agentgateway' /tmp/waf-out.txt
+       {{< /doc-test >}}
+- after:
+    section: Verify the WAF policy on the gateway proxy
+    line: 55e565fe7b15dc18
+    occurrence: 0
+    words: b9776d7d e0ee8bb5 9472f22c b9776d7d c000cccd 34a04005 77bc06c5 a71dd3a9 8e7fc023 ec72420d b8d31e85 b9776d7d eadc688c e22bc966 ba78973d 7afbb334 663ea1bf b9776d7d b0a1a126 b3eacd33 10c22bcf 3b1957f3
+    block_before:
+      block: 7
+      fingerprint: f69ec89637f28173
+      lang: sh
+      lines: f69ec896
+      preview: curl -s http://localhost:15000/config_dump | jq '[.policies[] | select(.policy.t
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kubectl delete enterpriseagentgatewaypolicy -n agentgateway-system waf-access-logs --ignore-not-found
+    kubectl delete wafpolicy -n agentgateway-system waf-policy --ignore-not-found
+    kubectl delete enterpriseagentgatewaypolicy -n httpbin httpbin-waf --ignore-not-found
+    kubectl delete wafpolicy -n httpbin httpbin-waf --ignore-not-found
+    {{< /doc-test >}}

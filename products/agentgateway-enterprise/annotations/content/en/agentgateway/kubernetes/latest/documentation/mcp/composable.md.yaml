@@ -1,0 +1,249 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/documentation/mcp/composable.md
+blocks:
+- 154e6feb2e32bac7 json
+- 6799835b5336722b yaml
+- e4b2559f8872e700 yaml
+- f4ce76620e34cac9 sh
+- a9ccd39dd6c0b598 yaml
+- 7da457a42942144a yaml
+- 3be3859d0f93cc3e yaml
+- 58ba144377af68a7 sh
+- 39ced1fc055b3492 sh
+- 452e2e34d9956db4 sh
+- 7711c3de72925137 sh
+- c0344b6e755b9ab0 text
+- 387ad3cdc9d90651
+- 76d2a4cca521679a sh
+- 2bfd0257e9f0c3cd json
+- 9991f8a65e640864 sh
+- 037b22e489f2ec4f json
+- e877e244e746798d yaml
+- c60dc0f8797f6044 yaml
+- c9b4c601873935a9 yaml
+- 25a9028634ce41d3 yaml
+- 990b25e6e8f55c83 yaml
+- 70bc2dc1c4b32489 yaml
+- 0328f6f608149625 json
+- 6979bd1ec3e0230a json
+- 9423834d6a1c20d6 yaml
+- 52f8ae90f7675a35 console
+- cb8b1bd1aed085de yaml
+- dcc88c4a05f93b44 sh
+tags:
+- paths: mcp-composable
+  block: 4
+  fingerprint: a9ccd39dd6c0b598
+  lang: yaml
+  lines: 16c71da1 00c69c65 450c56e0 8c8c4228 8f1e6870 0ccc8edc 36184fa5 2efcbf93 ac07a2ef c6ba4159 cb3f91d5 00c69c65 5cad5c90 8c8c4228 6bb3de0c 0ccc8edc 36184fa5 588a5d84 94ae49d1 450c56e0 8f1e6870 bb85cefe e8eb2c7f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-composable"
+    only: true
+    lead: ' '
+- paths: mcp-composable
+  block: 5
+  fingerprint: 7da457a42942144a
+  lang: yaml
+  lines: 16c71da1 00c69c65 450c56e0 8c8c4228 f98361ef 0ccc8edc 36184fa5 425ef23b 3035507a f93266b7 b6fb1fd3 7da63f38 f73ee7f5 85a3959b 61177ff2 97bebbb9 8afbd5a3 d0d6d503 fa248ef0 c1a4d738 56501c6b dce6d1fa 1c31dda0 70c97555 b8ac8874 450c56e0 8f1e6870 a57a3f8f 6a6768ed 38dc0152 3b194d85 858cb653 03775600 1b15fb3d 88587dc9 1c31dda0 70c97555 b8ac8874 450c56e0 8f1e6870 a57a3f8f f8f3f2ae 38dc0152 3b194d85 858cb653 03775600 1b15fb3d 7dbc49c1 44677d18 255a2038 738f8531 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-composable"
+    only: true
+    lead: ' '
+- paths: mcp-composable
+  block: 6
+  fingerprint: 3be3859d0f93cc3e
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f98361ef 0ccc8edc 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e d43ba700 b8ac8874 450c56e0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mcp-composable"
+    only: true
+    lead: ' '
+- paths: mcp-composable
+  block: 7
+  fingerprint: 58ba144377af68a7
+  lang: sh
+  lines: 0ad8dbfc 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get gateway agentgateway-proxy -n agentgatew
+  form:
+    attr: paths="mcp-composable"
+    only: true
+    lead: ' '
+- paths: mcp-composable
+  block: 10
+  fingerprint: 7711c3de72925137
+  lang: sh
+  lines: f7503a49 67c5a3ac 4347ff3f b0cead6d 362c024a d5a92ca7 9ed087af dc0575f0 8839ee90 84919319 322f9aac d10b36aa fc075a9d
+  preview: curl -sD - "http://${INGRESS_GW_ADDRESS}/mcp" \
+  form:
+    attr: paths="mcp-composable"
+    only: true
+    lead: ' '
+- paths: mcp-composable
+  block: 13
+  fingerprint: 76d2a4cca521679a
+  lang: sh
+  lines: fe010736 67c5a3ac 4347ff3f 5b5ecebc 3f897f1f
+  preview: curl -s "http://${INGRESS_GW_ADDRESS}/mcp" \
+  form:
+    attr: paths="mcp-composable"
+    only: true
+    lead: ' '
+- paths: mcp-composable
+  block: 15
+  fingerprint: 9991f8a65e640864
+  lang: sh
+  lines: fe010736 67c5a3ac 4347ff3f 5b5ecebc b0cead6d 362c024a b81000bd 78c8c519 dc0575f0 f57e7a20 571f278b d10b36aa fc075a9d
+  preview: curl -s "http://${INGRESS_GW_ADDRESS}/mcp" \
+  form:
+    attr: paths="mcp-composable"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 6
+    fingerprint: 3be3859d0f93cc3e
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f98361ef 0ccc8edc 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e d43ba700 b8ac8874 450c56e0 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mcp-composable" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the github-api backend is accepted
+      wait:
+        target:
+          kind: EnterpriseAgentgatewayBackend
+          metadata:
+            namespace: default
+            name: github-api
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: the composable-mcp backend is accepted
+      wait:
+        target:
+          kind: EnterpriseAgentgatewayBackend
+          metadata:
+            namespace: default
+            name: composable-mcp
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: the github-api-tls policy is accepted
+      wait:
+        target:
+          kind: EnterpriseAgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: github-api-tls
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: the composable-mcp HTTPRoute is accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: composable-mcp
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 58ba144377af68a7
+    lang: sh
+    lines: 0ad8dbfc 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get gateway agentgateway-proxy -n agentgatew
+  content: |2-
+       {{< doc-test paths="mcp-composable" >}}
+       # Wait until the route answers an MCP initialize with a session ID.
+       for attempt in $(seq 1 30); do
+         if curl -s --max-time 10 -D - -o /dev/null "http://${INGRESS_GW_ADDRESS}/mcp" \
+             -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+             -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' \
+             | grep -qi '^mcp-session-id:'; then break; fi
+         sleep 5
+       done
+       {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 387ad3cdc9d90651
+    lang: ''
+    lines: 387ad3cd
+    preview: export SESSION_ID=eyJ0Ij...
+  content: |2-
+       {{< doc-test paths="mcp-composable" >}}
+       # The visible export is a placeholder. Start a session and capture its real ID.
+       SESSION_ID=$(curl -s --max-time 10 -D - -o /dev/null "http://${INGRESS_GW_ADDRESS}/mcp" \
+         -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+         -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}' \
+         | awk -F': *' 'tolower($1)=="mcp-session-id"{gsub(/\r/,"",$2);print $2}')
+       export SESSION_ID
+       [ -n "$SESSION_ID" ] || { echo "no mcp-session-id from the gateway"; exit 1; }
+       curl -s --max-time 10 "http://${INGRESS_GW_ADDRESS}/mcp" -H "Mcp-Session-Id: $SESSION_ID" \
+         -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+         -d '{"jsonrpc":"2.0","method":"notifications/initialized"}' >/dev/null || true
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 76d2a4cca521679a
+    lang: sh
+    lines: fe010736 67c5a3ac 4347ff3f 5b5ecebc 3f897f1f
+    preview: curl -s "http://${INGRESS_GW_ADDRESS}/mcp" \
+  content: |2-
+       {{< doc-test paths="mcp-composable" >}}
+       LIST=$(curl -s --max-time 30 "http://${INGRESS_GW_ADDRESS}/mcp" \
+         -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+         -H "Mcp-Session-Id: $SESSION_ID" \
+         -d '{"jsonrpc": "2.0", "id": 20, "method": "tools/list", "params": {}}')
+       echo "$LIST"
+       grep -q '"name":"github-summary"' <<<"$LIST"
+       grep -q '"required":\["name"\]' <<<"$LIST"
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 9991f8a65e640864
+    lang: sh
+    lines: fe010736 67c5a3ac 4347ff3f 5b5ecebc b0cead6d 362c024a b81000bd 78c8c519 dc0575f0 f57e7a20 571f278b d10b36aa fc075a9d
+    preview: curl -s "http://${INGRESS_GW_ADDRESS}/mcp" \
+  content: |2-
+       {{< doc-test paths="mcp-composable" >}}
+       # The tool calls the public GitHub API, which rate-limits unauthenticated callers,
+       # so retry a few times before failing.
+       for attempt in $(seq 1 5); do
+         CALL=$(curl -s --max-time 60 "http://${INGRESS_GW_ADDRESS}/mcp" \
+           -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" \
+           -H "Mcp-Session-Id: $SESSION_ID" \
+           -d '{"jsonrpc":"2.0","id":21,"method":"tools/call","params":{"name":"github-summary","arguments":{"name":"octocat"}}}')
+         echo "$CALL"
+         grep -q 'Hello octocat! You have [0-9]* public repos. A few of them: ' <<<"$CALL" && break
+         sleep 10
+       done
+       grep -q 'Hello octocat! You have [0-9]* public repos. A few of them: ' <<<"$CALL"
+       # The visible cleanup deletes an AgentgatewayPolicy, but Step 1 created an
+       # EnterpriseAgentgatewayPolicy, so clean up here instead.
+       kubectl delete httproute composable-mcp -n default --ignore-not-found
+       kubectl delete enterpriseagentgatewaybackend composable-mcp github-api -n default --ignore-not-found
+       kubectl delete enterpriseagentgatewaypolicy github-api-tls -n default --ignore-not-found
+       {{< /doc-test >}}

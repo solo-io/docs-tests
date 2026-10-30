@@ -1,0 +1,216 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/documentation/security/extauth/oauth/access-token.md
+blocks:
+- aa1f141eaa6c0fa9 yaml
+- 9e0355280b8f6519 sh
+- f57034773dfed63c yaml
+- 4b1ab5000b178727 sh
+- 05551b87590e88a8 sh
+- 075d442613b76162
+- 645e129217fb9985 sh
+- 2f766d5c2d095136 sh
+- 69d0286685ea2d98 console
+- f765ab0e81eee77e sh
+- 62da1c4825501893 sh
+- 4476789f3b046fc3
+- 890891b20f4d3b5c sh
+tags:
+- paths: oauth-access-token
+  block: 0
+  fingerprint: aa1f141eaa6c0fa9
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 81c3599f 8af957d1 36184fa5 d5ec3fae afba47a2 971c8e86 9b9d0530 8b782833 ad87b24c ef60f61f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 1
+  fingerprint: 9e0355280b8f6519
+  lang: sh
+  lines: 9e035528
+  preview: kubectl get authconfig oauth-jwt-validation -n {{< reuse "agw-docs/snippets/name
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 2
+  fingerprint: f57034773dfed63c
+  lang: yaml
+  lines: abbd1bdc fbc30693 7f57603a 8c8c4228 81c3599f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 2c3ea4d6 75674f79 81c3599f 8af957d1 70c97555 aaecb171 8af957d1 fe80e1dd abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 3
+  fingerprint: 4b1ab5000b178727
+  lang: sh
+  lines: adc85b7a a90f7a89 4b3b16d3 021fb596 23c01049 29fe507d e52a1813 021fb596 09d1b3dd 4bbbd315 d10b36aa cfae0d42 fc075a9d
+  preview: curl -v "${INGRESS_GW_ADDRESS}:80/openai" -H content-type:application/json -d '{
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 6
+  fingerprint: 645e129217fb9985
+  lang: sh
+  lines: bd37e137 9348e6ef 15ae54eb bd09ef43 4536b685 64825780 0096af31 54d1cb67
+  preview: export USER1_TOKEN=$(curl -Ssm 10 --fail-with-body \
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 7
+  fingerprint: 2f766d5c2d095136
+  lang: sh
+  lines: 2f766d5c
+  preview: echo $USER1_TOKEN
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 12
+  fingerprint: 890891b20f4d3b5c
+  lang: sh
+  lines: 5668ce2d 015b0dc5
+  preview: kubectl delete authconfig oauth-jwt-validation -n {{< reuse "agw-docs/snippets/n
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 9e0355280b8f6519
+    lang: sh
+    lines: 9e035528
+    preview: kubectl get authconfig oauth-jwt-validation -n {{< reuse "agw-docs/snippets/name
+  content: |2-
+       {{< doc-test paths="oauth-access-token" >}}
+       # ============================================================================
+       # Doc test coverage for "Access token validation" (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * The AuthConfig with the inline Keycloak JWKS reaches the Accepted state,
+       #     and the policy that points the Gateway at the ext auth service is accepted.
+       #   * A request without a token is denied with 403.
+       #   * A Keycloak access token for user1 (password grant with the registered
+       #     client) passes access token validation and reaches the LLM.
+       #   * A token whose signature does not match the JWKS is denied.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * A live OpenAI completion: the openai prerequisite patches the backend to
+       #     the in-cluster httpbun mock LLM, so no provider key is needed.
+       #   * The port-forward tabs: CI reaches the gateway through its LoadBalancer.
+       # The IdP is the in-cluster Keycloak from "Keycloak as an IdP".
+       kubectl wait --for=jsonpath='{.status.state}'=Accepted authconfig/oauth-jwt-validation -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=120s
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f57034773dfed63c
+    lang: yaml
+    lines: abbd1bdc fbc30693 7f57603a 8c8c4228 81c3599f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 2c3ea4d6 75674f79 81c3599f 8af957d1 70c97555 aaecb171 8af957d1 fe80e1dd abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="oauth-access-token" >}}
+       YAMLTest -f - <<'EOF'
+       - name: oauth-jwt-validation policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               name: oauth-jwt-validation
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 075d442613b76162
+    lang: ''
+    lines: ab5df625 5c0c3827 f4d99b6a d986f32c 95ba2772 dabd3aff bed133f0 b2e50529 ab5df625
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="oauth-access-token" >}}
+       YAMLTest -f - <<'EOF'
+       - name: a request without a token is denied by ext auth
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: "application/json"
+           body: '{"model":"gpt-3.5-turbo","messages":[{"role":"user","content":"no token"}]}'
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 403
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 2f766d5c2d095136
+    lang: sh
+    lines: 2f766d5c
+    preview: echo $USER1_TOKEN
+  content: |2-
+       {{< doc-test paths="oauth-access-token" >}}
+       echo "$USER1_TOKEN" | grep -Eq '^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$' \
+         || { echo "Keycloak returned no access token for user1"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 4476789f3b046fc3
+    lang: ''
+    lines: ab5df625 6364ab47 ab5df625
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="oauth-access-token" >}}
+       # The LoadBalancer tab's command above is split across lines in the wrong
+       # place, so it is not run. This is the same request, written as the
+       # port-forward tab writes it, sent to the gateway's LoadBalancer address.
+       BAD_TOKEN="${USER1_TOKEN%.*}.AAAA"
+       YAMLTest -f - <<EOF
+       - name: a request with user1's Keycloak access token passes validation
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: "application/json"
+             authorization: "Bearer ${USER1_TOKEN}"
+           body: '{"model":"gpt-3.5-turbo","messages":[{"role":"user","content":"with token"}]}'
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 200
+       - name: a token with a tampered signature is denied
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/openai"
+           method: POST
+           headers:
+             content-type: "application/json"
+             authorization: "Bearer ${BAD_TOKEN}"
+           body: '{"model":"gpt-3.5-turbo","messages":[{"role":"user","content":"bad token"}]}'
+         source:
+           type: local
+         retries: 3
+         expect:
+           statusCode: 403
+       EOF
+       {{< /doc-test >}}

@@ -1,0 +1,121 @@
+format: 1
+source: assets/agw-docs/pages/security/waf/owasp-crs.md
+blocks:
+- f3a84abf31c23af3 sh
+- 39ced1fc055b3492 sh
+- bac0ebaf837daf4b yaml
+- 30ed66ce3c6a1812 yaml
+- e32d3af47b7bf58c sh
+- 241dd920965f4bc6 sh
+- 4259049d37c460ce
+- 94a2c8875226a198 sh
+- 0a2a4aa2377d69ff sh
+- 7a137888e17fb3d5
+- ff28c669855a00ab sh
+- 84150562857e922f yaml
+- 3492ad97fe5c3c81 yaml
+- d5aff487d1ef7081 yaml
+tags:
+- paths: waf-crs
+  block: 0
+  fingerprint: f3a84abf31c23af3
+  lang: sh
+  lines: 1ae47ca5 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system agentgateway-
+  form:
+    attr: paths="waf-crs"
+    only: true
+    lead: ' '
+- paths: waf-crs
+  block: 2
+  fingerprint: bac0ebaf837daf4b
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 931824dd 4048f30b 385a2eb3 2d2f62ea db554749 c4c2ea69 142b1d35 385a2eb3 1851f975 139e0649 7c77bc8f 5feaf48d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-crs"
+    only: true
+    lead: ' '
+- paths: waf-crs
+  block: 3
+  fingerprint: 30ed66ce3c6a1812
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 c9abe331 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d cbd111cf f02322aa c9abe331 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-crs"
+    only: true
+    lead: ' '
+- paths: waf-crs
+  block: 4
+  fingerprint: e32d3af47b7bf58c
+  lang: sh
+  lines: e32d3af4
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/status/200 -H "host: www.example.com"'
+  form:
+    attr: paths="waf-crs"
+    only: true
+    lead: ' '
+- paths: waf-crs
+  block: 7
+  fingerprint: 94a2c8875226a198
+  lang: sh
+  lines: 597b8706 036345c8
+  preview: curl -vik "http://$INGRESS_GW_ADDRESS:80/.htaccess" \
+  form:
+    attr: paths="waf-crs"
+    only: true
+    lead: ' '
+- paths: waf-crs
+  block: 10
+  fingerprint: ff28c669855a00ab
+  lang: sh
+  lines: 2b808a0e f82d4769
+  preview: kubectl delete wafpolicy -n httpbin httpbin-waf
+  form:
+    attr: paths="waf-crs"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Configure the OWASP Core Rule Set
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 5
+      fingerprint: 241dd920965f4bc6
+      lang: sh
+      lines: 241dd920
+      preview: 'curl -i localhost:8080/status/200 -H "host: www.example.com"'
+  content: |2-
+       {{< doc-test paths="waf-crs" >}}
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/status/200" -H "host: www.example.com" )
+         [ "$code" = "200" ] && break
+         sleep 2
+       done
+       echo "got $code"
+       [ "$code" = "200" ]
+       {{< /doc-test >}}
+- after:
+    section: Configure the OWASP Core Rule Set
+    line: 600fe1bb59e46b50
+    occurrence: 2
+    words: 32d3feda
+    block_before:
+      block: 8
+      fingerprint: 0a2a4aa2377d69ff
+      lang: sh
+      lines: b6741bad 036345c8
+      preview: curl -vik "localhost:8080/.htaccess" \
+  content: |2-
+       {{< doc-test paths="waf-crs" >}}
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:80/.htaccess" -H "host: www.example.com" )
+         [ "$code" = "403" ] && break
+         sleep 2
+       done
+       echo "got $code"
+       [ "$code" = "403" ]
+       {{< /doc-test >}}

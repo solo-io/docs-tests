@@ -9,7 +9,7 @@ This repo currently holds two things:
 - `scripts/` — the extractor/runner tooling (`doc_test_extract.py`, `doc_test_run.py`,
   `doc_test_schema_check.py`, `doc_test_inject_status.py`, `doc_test_fetch_artifacts.sh`,
   `merge_test_results.py`, `report_summary.py`, `list_untested_docs.py`). This is the
-  canonical copy — `agentgateway-oss-website`'s CI and Makefile check this repo out and
+  canonical copy — `agentgateway/website`'s CI and Makefile check this repo out and
   invoke these scripts directly (`docs-tests/scripts/doc_test_run.py --repo-root .`, etc.);
   it no longer keeps its own copies.
 - `products/` — the actual test content, one directory per product. For agentgateway,
@@ -277,8 +277,6 @@ asserts on a real response, which is what `functional` means.
 |---|---|---|---|
 | `schema` | The doc's own examples validate against the real schema for the version the page documents: custom resources and Gateway API kinds against their CRDs, core Kubernetes kinds through `kubeconform`, and standalone config files against agentgateway's `schema/config.json` (renamed/removed/mistyped fields, wrong types) | Nothing — no cluster, no execution (`doc_test_schema_check.py`) | Yes, in its own job |
 | `functional` | Real behavior in a real cluster (apply config, assert on a real response) | A `kind` cluster, no vendor credentials | Yes |
-| `live` | A real external endpoint is reachable and returns the documented unauthenticated response | A real public endpoint, no credentials | Yes, alongside `functional` |
-| `credentialed` | Full behavior against a real vendor with real credentials | Named secrets, provisioned out of band | No — scheduled, non-blocking, never on a PR |
 
 `schema` needs no prerequisite chain — since nothing executes, only the step that shows
 the custom resource itself matters:
@@ -292,12 +290,11 @@ test:
       path: rewrite
 ```
 
-**Known gap, not a mechanism limitation:** some enterprise-only pages (Entra token
-exchange, for one) can't reach `live` today because there's no shared dev tenant to test
-against — registering a real Entra app/tenant is manual, one-time setup with no
-vendor-provided sandbox. That test stays tagged at whatever type it can actually reach,
-with the gap tracked, rather than silently passing at a narrower type than the page's own
-content would suggest.
+`schema` and `functional` are the only types; any other `type:` is an error. A page that
+depends on an external service (an LLM provider, an identity provider, a cloud account)
+is tested as `functional` against an in-cluster stand-in: the httpbun mock LLM, an
+in-cluster Keycloak, a patched provider host. What the stand-in can't reach (a real Entra
+tenant, a browser login) stays untested, and the scenario's comments say so.
 
 ### Declaring more than one type on the same scenario
 
@@ -766,6 +763,41 @@ fails when any of the following is true:
 
 The fixer records its work in a JSON summary with `fixed`, `unresolved`, and `removed`
 lists. The comment at the top of the script describes the format.
+
+### Keeping a scenario's type in step with its page
+
+A rewrite can change which test type fits a page. The stale test still passes, so
+nothing else notices. `scripts/doc_test_type_check.py` compares each scenario's
+`type:` with the page it tests, looking only at the page itself, not its `needs:`.
+
+| Finding | Severity | What `--apply` does |
+|---|---|---|
+| `schema-empty`: `schema`, but the page shows no resource or config file. The check passes only on its prerequisites' resources. | Error | Drops `schema`. A scenario left with no type moves to `skip:`. |
+| `functional-empty`: `functional`, but the page has no visible yaml or shell block left | Error | Drops `functional`, keeping or adding `schema` if the page shows resources |
+| `skip-checkable`: under `skip:`, but the page shows resources | Error | Adds a `<page>-schema` scenario and removes the `skip:` entry |
+| `schema-unreadable`: `schema`, but no resource on the page parses as YAML, often `\$` in a heredoc | Warning | Nothing |
+| `could-be-functional`: `schema` only or `skip:`, but the page has commands to run | Warning | Nothing. A functional test needs prerequisites and assertions, so a person writes it. |
+
+A finding only counts if it holds in every version root the page is in, so a
+main-only rewrite waits for the release. Run the check after `annotations.py attach`:
+
+```sh
+python3 docs-tests/scripts/doc_test_type_check.py --repo-root . \
+  --product agentgateway --config-schema agentgateway-main/schema/config.json \
+  --summary "$GITHUB_STEP_SUMMARY"
+```
+
+Errors listed in `products/<product>/type-check-baseline.yaml` are reported as
+`baselined` and don't fail the run. Use the baseline for a finding `--apply` would get
+wrong. For example, `install/argocd.md` shows an Argo CD `Application`, which the schema
+check has no schema for. A run logs baseline entries that no longer match anything.
+Remove those entries, or regenerate the file with `--write-baseline`.
+
+`--apply` edits `tests.yaml` line by line, so comments stay. A comment right above a
+removed entry goes with it. The script re-parses the result and compares it with the
+intended change before it writes anything. Before you merge, run the schema check on
+the edited manifests: a new `skip-checkable` scenario can still fail on a kind that
+has no schema.
 
 ### Fixing a failing doc test
 

@@ -1,0 +1,256 @@
+format: 1
+source: assets/agw-docs/pages/standalone/sts-token-exchange/impersonation.md
+blocks:
+- 5d03cde3882df446 json
+- 10b97f3c1ba8ec47 json
+- 7920ab01ecc5c8c0 yaml
+- 3a2b1df7a5f2fbe6 yaml
+- 10d99a769198dd1d sh
+- dcaadad1cfce4377 console
+- 16d0ed81987470bc sh
+- 976a65c69d102b1b sh
+- 27badc983df1780b console
+- 81fff1cecda8b58a sh
+- c76c58f7389b2675 console
+- bd693b286a855070 console
+tags:
+- paths: sts-impersonation
+  block: 4
+  fingerprint: 10d99a769198dd1d
+  lang: sh
+  lines: 10d99a76
+  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/
+  form:
+    attr: paths="sts-impersonation"
+    only: true
+    lead: ' '
+- paths: sts-impersonation
+  block: 7
+  fingerprint: 976a65c69d102b1b
+  lang: sh
+  lines: d8e3e8e9 ab37a0a1
+  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/ \
+  form:
+    attr: paths="sts-impersonation"
+    only: true
+    lead: ' '
+- paths: sts-impersonation
+  block: 9
+  fingerprint: 81fff1cecda8b58a
+  lang: sh
+  lines: 81fff1ce
+  preview: curl -s -X POST "http://127.0.0.1:15000/logging?level=debug"
+  form:
+    attr: paths="sts-impersonation"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: 2fb96247776cc45c
+    occurrence: 0
+    words: 6ee0eb49 75a288c0 b9776d7d 1e529d2f fa42bed0 a0af9f86 caf9f906 b7d64a92 5d2d3ceb ae08dbb2 2fad9ff8 1e529d2f 8fb6d5f3 6201111b 3f267c2a 8e7fc023 ca978112 d15690f0 3c469e9d ab27b729 df448a78
+    block_before:
+      block: 1
+      fingerprint: 10b97f3c1ba8ec47
+      lang: json
+      lines: 021fb596 3112e925 295ea2be 1dd9e76b 35587151 71434d9a bb27ffd7 d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="sts-impersonation" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Step 1, HTTP route tab: the jwtAuth + oauthTokenExchange route, with the
+    #     STS from the setup guide, loads (--validate-only) and runs.
+    #   * Step 2: no Authorization header gives 401; an IdP token gives 200; the
+    #     backend receives an STS-signed JWT (iss is entSts.issuer, aud is
+    #     internal-api, sub is the user's IdP sub) instead of the IdP token, and the
+    #     token carries no act claim; the debug-logging call answers; the STS logs
+    #     the /token request with status 200.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The IdP and the backend. Keycloak in docker dev mode stands in for
+    #     idp.example.com, and a local echo server for internal-api.example.com:8080.
+    #   * The MCP target tab (schema-checked only; the dual authentication guide
+    #     runs that shape end to end).
+    #   * The proxy's debug log line for the exchange: the proxy caches exchanged
+    #     tokens, so a request after logging is raised may not log it.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    trap 'rc=$?; kill ${AGW_PID:-} ${STS_PID:-} ${ECHO_PID:-} ${MCP_PID:-} 2>/dev/null || true; if [ $rc -ne 0 ]; then echo "--- sts.log"; tail -n 50 sts.log 2>/dev/null; echo "--- agw.log"; tail -n 50 agw.log 2>/dev/null; fi; docker rm -f keycloak-sts >/dev/null 2>&1 || true' EXIT
+    # IdP stand-in: Keycloak in docker dev mode. Realm "sts" with:
+    #   user-client  public client, password grant; adds aud=agentgateway and a
+    #                hardcoded may_act.sub claim naming agent-1's service account
+    #   agent-1      confidential client whose service account is the agent
+    #   user1        test user
+    docker rm -f keycloak-sts >/dev/null 2>&1 || true
+    docker run -d --name keycloak-sts -p 8080:8080 \
+      -e KC_BOOTSTRAP_ADMIN_USERNAME=admin -e KC_BOOTSTRAP_ADMIN_PASSWORD=admin \
+      quay.io/keycloak/keycloak:26.4 start-dev >/dev/null
+    KEYCLOAK_URL=http://localhost:8080
+    for i in $(seq 1 90); do
+      curl -fsS -o /dev/null "${KEYCLOAK_URL}/realms/master/.well-known/openid-configuration" 2>/dev/null && break
+      sleep 2
+    done
+    KC_ADMIN=$(curl -fsS "${KEYCLOAK_URL}/realms/master/protocol/openid-connect/token" \
+      -d client_id=admin-cli -d username=admin -d password=admin -d grant_type=password | jq -r .access_token)
+    test -n "$KC_ADMIN" && test "$KC_ADMIN" != null || { echo "Keycloak admin login failed"; exit 1; }
+    kc() { curl -fsS -H "Authorization: Bearer ${KC_ADMIN}" -H 'Content-Type: application/json' "$@"; }
+    kc -X POST "${KEYCLOAK_URL}/admin/realms" -d '{"realm":"sts","enabled":true}'
+    kc -X POST "${KEYCLOAK_URL}/admin/realms/sts/clients" \
+      -d '{"clientId":"agent-1","enabled":true,"publicClient":false,"secret":"agent-1-secret","serviceAccountsEnabled":true,"standardFlowEnabled":false,"directAccessGrantsEnabled":false}'
+    AGENT_CLIENT_UUID=$(kc "${KEYCLOAK_URL}/admin/realms/sts/clients?clientId=agent-1" | jq -r '.[0].id')
+    AGENT_SUB=$(kc "${KEYCLOAK_URL}/admin/realms/sts/clients/${AGENT_CLIENT_UUID}/service-account-user" | jq -r .id)
+    kc -X POST "${KEYCLOAK_URL}/admin/realms/sts/clients" -d @- <<KCEOF
+    {"clientId":"user-client","enabled":true,"publicClient":true,"directAccessGrantsEnabled":true,"standardFlowEnabled":false,
+     "protocolMappers":[
+      {"name":"aud-agentgateway","protocol":"openid-connect","protocolMapper":"oidc-audience-mapper",
+       "config":{"included.custom.audience":"agentgateway","access.token.claim":"true","id.token.claim":"false"}},
+      {"name":"may-act","protocol":"openid-connect","protocolMapper":"oidc-hardcoded-claim-mapper",
+       "config":{"claim.name":"may_act.sub","claim.value":"${AGENT_SUB}","jsonType.label":"String","access.token.claim":"true","id.token.claim":"false","userinfo.token.claim":"false"}}]}
+    KCEOF
+    kc -X POST "${KEYCLOAK_URL}/admin/realms/sts/users" \
+      -d '{"username":"user1","enabled":true,"email":"user1@example.com","emailVerified":true,"firstName":"User","lastName":"One","credentials":[{"type":"password","value":"Password1!","temporary":false}]}'
+    KEYCLOAK_ISSUER=${KEYCLOAK_URL}/realms/sts
+    KEYCLOAK_JWKS=${KEYCLOAK_ISSUER}/protocol/openid-connect/certs
+    get_user_token() {
+      curl -fsS "${KEYCLOAK_ISSUER}/protocol/openid-connect/token" -d grant_type=password \
+        -d client_id=user-client -d username=user1 -d 'password=Password1!' | jq -r .access_token
+    }
+    get_agent_token() {
+      curl -fsS "${KEYCLOAK_ISSUER}/protocol/openid-connect/token" -d grant_type=client_credentials \
+        -d client_id=agent-1 -d client_secret=agent-1-secret | jq -r .access_token
+    }
+    jwt_claims() { python3 -c 'import sys,json,base64; p=sys.argv[1].split(".")[1]; p+="="*(-len(p)%4); print(json.dumps(json.loads(base64.urlsafe_b64decode(p))))' "$1"; }
+    test -n "$(get_user_token)" || { echo "user1 cannot get a token from Keycloak"; exit 1; }
+    openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out sts-jwt.pem
+    chmod 600 sts-jwt.pem
+    # Backend stand-in for internal-api.example.com: echoes the Authorization
+    # header that it receives, so the test can decode the token the proxy forwarded.
+    cat > sts-echo.py <<'PYEOF'
+    import http.server, json
+    class H(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            b = json.dumps({"authorization": self.headers.get("Authorization", "")}).encode()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(b)))
+            self.end_headers()
+            self.wfile.write(b)
+        def log_message(self, *a):
+            pass
+    http.server.HTTPServer(("127.0.0.1", 8081), H).serve_forever()
+    PYEOF
+    python3 sts-echo.py &
+    ECHO_PID=$!
+    # Setup guide's entSts section plus the page's HTTP route, with the stand-ins.
+    cat > config.yaml <<EOF
+    entSts:
+      enabled: true
+      issuer: https://sts.example.com
+      tokenExpiration: 1h
+      requireAudience: false
+      privateKeyPath: ${PWD}/sts-jwt.pem
+      subjectValidators:
+      - validatorType: remote
+        issuer: ${KEYCLOAK_ISSUER}
+        remoteConfig:
+          url: ${KEYCLOAK_JWKS}
+      actorValidators:
+      - validatorType: remote
+        issuer: ${KEYCLOAK_ISSUER}
+        remoteConfig:
+          url: ${KEYCLOAK_JWKS}
+      apiValidators:
+      - validatorType: remote
+        issuer: ${KEYCLOAK_ISSUER}
+        remoteConfig:
+          url: ${KEYCLOAK_JWKS}
+    binds:
+    - port: 3000
+      listeners:
+      - name: default
+        routes:
+        - name: internal-api
+          matches:
+          - path:
+              pathPrefix: /
+          policies:
+            jwtAuth:
+              mode: strict
+              providers:
+              - issuer: ${KEYCLOAK_ISSUER}
+                jwks:
+                  url: ${KEYCLOAK_JWKS}
+          backends:
+          - host: 127.0.0.1:8081
+            policies:
+              backendAuth:
+                oauthTokenExchange:
+                  host: 127.0.0.1:7777
+                  path: /token
+                  audiences: ["internal-api"]
+                  allowSubjectTokenFromClaims: true
+                  subjectToken:
+                    tokenType: "urn:ietf:params:oauth:token-type:jwt"
+    EOF
+    agentgateway-sts sts --config-file config.yaml --address 127.0.0.1:7777 > sts.log 2>&1 &
+    STS_PID=$!
+    for i in $(seq 1 30); do curl -fsS -o /dev/null http://127.0.0.1:7777/healthz 2>/dev/null && break; sleep 1; done
+    curl -fsS -o /dev/null http://127.0.0.1:7777/healthz || { echo "STS did not become healthy"; exit 1; }
+    grep -q '"minting_enabled":true' sts.log || { echo "STS log does not report minting_enabled true"; exit 1; }
+    agentgateway -f config.yaml --validate-only
+    agentgateway -f config.yaml > agw.log 2>&1 &
+    AGW_PID=$!
+    for i in $(seq 1 30); do curl -fsS -o /dev/null http://localhost:15021/healthz/ready 2>/dev/null && break; sleep 1; done
+    curl -fsS -o /dev/null http://localhost:15021/healthz/ready || { echo "proxy did not become ready"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 10d99a769198dd1d
+    lang: sh
+    lines: 10d99a76
+    preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/
+  content: |2-
+       {{< doc-test paths="sts-impersonation" >}}
+       code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/)
+       [ "$code" = 401 ] || { echo "expected 401 without a token, got $code"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 16d0ed81987470bc
+    lang: sh
+    lines: 16d0ed81
+    preview: export USER_TOKEN=<your-idp-jwt>
+  content: |2-
+       {{< doc-test paths="sts-impersonation" >}}
+       export USER_TOKEN=$(get_user_token)
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 976a65c69d102b1b
+    lang: sh
+    lines: d8e3e8e9 ab37a0a1
+    preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/ \
+  content: |2-
+       {{< doc-test paths="sts-impersonation" >}}
+       code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/ -H "Authorization: Bearer ${USER_TOKEN}")
+       [ "$code" = 200 ] || { echo "expected 200 with a token, got $code"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 81fff1cecda8b58a
+    lang: sh
+    lines: 81fff1ce
+    preview: curl -s -X POST "http://127.0.0.1:15000/logging?level=debug"
+  content: |2-
+       {{< doc-test paths="sts-impersonation" >}}
+       USER_SUB=$(jwt_claims "$USER_TOKEN" | jq -r .sub)
+       FWD=$(curl -fsS http://localhost:3000/ -H "Authorization: Bearer ${USER_TOKEN}" | jq -r .authorization)
+       case "$FWD" in "Bearer ${USER_TOKEN}") echo "backend received the IdP token unchanged"; exit 1;; esac
+       jwt_claims "${FWD#Bearer }" | jq -e --arg sub "$USER_SUB" \
+         '.iss == "https://sts.example.com" and .sub == $sub and ((.aud | if type == "array" then . else [.] end) | index("internal-api")) and (has("act") | not)' >/dev/null \
+         || { echo "backend token does not match the page: $(jwt_claims "${FWD#Bearer }")"; exit 1; }
+       grep '"path":"/token"' sts.log | grep -q '"status_code":200' \
+         || { echo "STS log has no successful /token request"; exit 1; }
+       {{< /doc-test >}}

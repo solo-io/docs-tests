@@ -1,0 +1,178 @@
+format: 1
+source: assets/agw-docs/snippets/sts-keycloak-kubernetes.md
+blocks:
+- 727dcb87aa30a423 sh
+- cabd98b628658dfa sh
+- a85f8c0a99e42d0c sh
+- 0d0cbc0fb5db3fbd sh
+- 8e16bae0de137d69 sh
+- 1bdf582f93325033 sh
+- 95228f755ed2f710 sh
+- 5ebf001b34cf90dd sh
+- 0dd74aed8d472d73 sh
+- 7fa85a3cfca5bc6f sh
+- f61c05d30adf1550 sh
+- db2075f7ebd3633a console
+tags:
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 0
+  fingerprint: 727dcb87aa30a423
+  lang: sh
+  lines: 727dcb87
+  preview: kubectl create namespace keycloak
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 1
+  fingerprint: cabd98b628658dfa
+  lang: sh
+  lines: cabd98b6
+  preview: kubectl -n keycloak apply -f https://raw.githubusercontent.com/solo-io/gloo-mesh
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 2
+  fingerprint: a85f8c0a99e42d0c
+  lang: sh
+  lines: a85f8c0a
+  preview: kubectl -n keycloak rollout status deploy/keycloak
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 3
+  fingerprint: 0d0cbc0fb5db3fbd
+  lang: sh
+  lines: a2888476 d595778e 8ebb163c 09c09818 41752bd2
+  preview: export ENDPOINT_KEYCLOAK=$(kubectl -n keycloak get service keycloak -o jsonpath=
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 5
+  fingerprint: 1bdf582f93325033
+  lang: sh
+  lines: a3be7965 3bee196e
+  preview: export KEYCLOAK_TOKEN=$(curl -d "client_id=admin-cli" -d "username=admin" -d "pa
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 6
+  fingerprint: 95228f755ed2f710
+  lang: sh
+  lines: 4485b325 51c2e5e2 67c5a3ac ff66f42c
+  preview: curl -s -X POST "${KEYCLOAK_URL}/admin/realms" \
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 7
+  fingerprint: 5ebf001b34cf90dd
+  lang: sh
+  lines: df0e1918 c0ee87a6
+  preview: export KEYCLOAK_JWKS_URI=${KEYCLOAK_URL}/realms/agentgateway/protocol/openid-con
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 8
+  fingerprint: 0dd74aed8d472d73
+  lang: sh
+  lines: 4f11519f 51c2e5e2 67c5a3ac b0cead6d 72747f72 1baf055c afa07114 8c92794d be1075b9 59693229 0a43be95 fb66e404 fc075a9d
+  preview: curl -s -X POST "${KEYCLOAK_URL}/admin/realms/agentgateway/clients" \
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 9
+  fingerprint: 7fa85a3cfca5bc6f
+  lang: sh
+  lines: e1c07f81 43e129ea 51c2e5e2 67c5a3ac 3b2325c4 75007c55 6b8955bd 0a16c0cb daf1bdd0 0d11d8cb 7b35b450 51c2e5e2 67c5a3ac 4d2286ba
+  preview: '# Create the user'
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 10
+  fingerprint: f61c05d30adf1550
+  lang: sh
+  lines: 8833ad46 913aae8e 9fe3305e 6850d3e9 d7651c06 6aa5f13d 23396309 b012595c b29ed696 c6c27d6d 3efc2b61 b2c27768 8a331fdd
+  preview: curl -s -X POST "${KEYCLOAK_URL}/realms/agentgateway/protocol/openid-connect/tok
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: a85f8c0a99e42d0c
+    lang: sh
+    lines: a85f8c0a
+    preview: kubectl -n keycloak rollout status deploy/keycloak
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-interactive-setup" >}}
+       kubectl -n keycloak wait --for=jsonpath='{.status.loadBalancer.ingress}' service/keycloak --timeout=180s
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: a85f8c0a99e42d0c
+    lang: sh
+    lines: a85f8c0a
+    preview: kubectl -n keycloak rollout status deploy/keycloak
+  content: |2-
+       {{< doc-test paths="te-impersonation" >}}
+       # The next step reads the LoadBalancer address, which cloud-provider-kind
+       # assigns a few seconds after the Service exists. Wait for it, and for
+       # Keycloak to answer on it.
+       for i in $(seq 1 60); do
+         kc_ip=$(kubectl -n keycloak get service keycloak -o jsonpath='{.status.loadBalancer.ingress[0].ip}{.status.loadBalancer.ingress[0].hostname}')
+         [ -n "$kc_ip" ] && break; sleep 5
+       done
+       test -n "$kc_ip" || { echo "keycloak Service got no LoadBalancer address"; exit 1; }
+       for i in $(seq 1 60); do
+         curl -fsS -o /dev/null "http://$kc_ip:8080/realms/master/.well-known/openid-configuration" && break; sleep 5
+       done
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 0d0cbc0fb5db3fbd
+    lang: sh
+    lines: a2888476 d595778e 8ebb163c 09c09818 41752bd2
+    preview: export ENDPOINT_KEYCLOAK=$(kubectl -n keycloak get service keycloak -o jsonpath=
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-interactive-setup" >}}
+       for i in $(seq 1 60); do
+         curl -fsS -o /dev/null "${KEYCLOAK_URL}/realms/master/.well-known/openid-configuration" && break
+         sleep 5
+       done
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: db2075f7ebd3633a
+    lang: console
+    lines: 021fb596 e4a6bc3d 4014a1ed e682dd8d 7638dfc6 d10b36aa
+    preview: '{'
+  content: |2-
+       {{< doc-test paths="te-impersonation" >}}
+       # The realm, client, and user exist: user1 gets a token from fe-client-1 with
+       # the agentgateway realm as issuer.
+       jwt_claims() { python3 -c 'import sys,json,base64; p=sys.argv[1].split(".")[1]; p+="="*(-len(p)%4); print(json.dumps(json.loads(base64.urlsafe_b64decode(p))))' "$1"; }
+       KC_CHECK_TOKEN=$(curl -fsS -X POST "${KEYCLOAK_URL}/realms/agentgateway/protocol/openid-connect/token" \
+         -d 'grant_type=password' -d 'client_id=fe-client-1' -d 'username=user1' -d 'password=Password1!' | jq -r .access_token)
+       jwt_claims "$KC_CHECK_TOKEN" \
+         | jq -e --arg iss "${KEYCLOAK_URL}/realms/agentgateway" '.iss == $iss and .preferred_username == "user1"' >/dev/null \
+         || { echo "user1 token from the agentgateway realm has the wrong issuer or user"; exit 1; }
+       curl -fsS -o /dev/null "$KEYCLOAK_JWKS_URI" || { echo "KEYCLOAK_JWKS_URI does not answer"; exit 1; }
+       {{< /doc-test >}}

@@ -141,7 +141,7 @@ hidden:
     - name: wait for mcp-okta-authn policy to be accepted
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: default
             name: mcp-okta-authn

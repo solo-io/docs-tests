@@ -1,0 +1,53 @@
+format: 1
+source: assets/agw-docs/pages/cost-dashboard.md
+blocks:
+- ecca3dd0d92c51fb sh
+- 130fb412ca979578 sh
+- e2dfe295df3c42c8 yaml
+- 0068df1cb774642b sh
+- f0bd5857e19c0061 sh
+- 79f5ebc66f817002 sh
+- 877bc76579f8e257 yaml
+- 3a0de637e0ed8188 sh
+- 1262c030e90ac41d sh
+tags:
+- paths: enterprise-cost-dashboard
+  block: 4
+  fingerprint: f0bd5857e19c0061
+  lang: sh
+  lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 0ceeffe6
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="enterprise-cost-dashboard"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 4
+    fingerprint: f0bd5857e19c0061
+    lang: sh
+    lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 0ceeffe6
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  content: |2-
+       {{< doc-test paths="enterprise-cost-dashboard" >}}
+       # ============================================================================
+       # Doc test coverage for "Cost dashboard" (not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Enable cost management", helm upgrade CLI tab: the upgrade succeeds, the
+       #     value is stored on the release, and the UI rolls out and answers HTTP.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The Helm values file tab (`open` is macOS-only) and every UI tab on the
+       #     page (port-forward and browser).
+       helm get values enterprise-agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o yaml | grep 'costManagement: true' >/dev/null
+       kubectl rollout status deployment/{{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
+       code=""
+       for i in $(seq 1 30); do
+         code=$(kubectl run ui-check-$RANDOM -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --quiet --image=curlimages/curl:8.11.1 -- \
+           curl -s -o /dev/null -w '%{http_code}' http://{{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}}.{{< reuse "agw-docs/snippets/namespace.md" >}}.svc.cluster.local:80/ 2>/dev/null || true)
+         if echo "$code" | grep -Eq '^[23][0-9][0-9]'; then break; fi
+         sleep 10
+       done
+       echo "UI returned: $code"
+       echo "$code" | grep -Eq '^[23][0-9][0-9]'
+       {{< /doc-test >}}

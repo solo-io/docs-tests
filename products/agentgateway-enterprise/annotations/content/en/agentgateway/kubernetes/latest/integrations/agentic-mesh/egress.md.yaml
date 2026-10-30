@@ -1,0 +1,29 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/integrations/agentic-mesh/egress.md
+blocks:
+- acf87bc841d852fa sh
+tags:
+- paths: integrations-agentic-mesh-egress
+  block: 0
+  fingerprint: acf87bc841d852fa
+  lang: sh
+  lines: eed9279f 56636913 f82702aa 09709669 cd85f142
+  preview: helm get values enterprise-agentgateway -n agentgateway-system -o yaml > values.
+  form:
+    attr: paths="integrations-agentic-mesh-egress"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: acf87bc841d852fa
+    lang: sh
+    lines: eed9279f 56636913 f82702aa 09709669 cd85f142
+    preview: helm get values enterprise-agentgateway -n agentgateway-system -o yaml > values.
+  blank_before: []
+  content: |2-
+      {{< doc-test paths="integrations-agentic-mesh-egress" >}}
+      kubectl -n agentgateway-system rollout status deploy/enterprise-agentgateway --timeout=300s
+      helm get values enterprise-agentgateway -n agentgateway-system -o yaml | grep 'autoEnabled: true' >/dev/null \
+        || { echo "istio.autoEnabled is not set on the release (egress)"; exit 1; }
+      {{< /doc-test >}}

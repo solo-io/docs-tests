@@ -125,7 +125,7 @@ hidden:
        - name: wait for jwt-auth-policy with authorization to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: jwt-auth-policy

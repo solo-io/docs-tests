@@ -1,0 +1,146 @@
+format: 1
+source: assets/agw-docs/pages/observability/enterprise-metrics-external.md
+blocks:
+- 6069bbd51f9db0fa yaml
+- 67492b4197446009 sh
+- 4d4d0aa7b92b47b3 sh
+- edd720f88a727deb sh
+- 70cb7d061c5974e7 console
+- 4b1ca6f659672af2 yaml
+- e4e1434f1a797da5 yaml
+- 1214acfbaca013fd yaml
+- 890b2757f5e937f8 sh
+- a8bd531dad182fba sh
+- 2bad7704867f31ad sh
+tags:
+- paths: enterprise-metrics-external
+  block: 1
+  fingerprint: 67492b4197446009
+  lang: sh
+  lines: 67492b41
+  preview: kubectl get prometheus -A -o jsonpath='{.items[*].spec.serviceMonitorSelector}'
+  form:
+    attr: paths="enterprise-metrics-external"
+    only: true
+    lead: ' '
+- paths: enterprise-metrics-external
+  block: 2
+  fingerprint: 4d4d0aa7b92b47b3
+  lang: sh
+  lines: 2d065637 96064311 736e1ed1 b07f1c94 d9baa781 878ad6e0 3ba69cac
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="enterprise-metrics-external"
+    only: true
+    lead: ' '
+- paths: enterprise-metrics-external
+  block: 3
+  fingerprint: edd720f88a727deb
+  lang: sh
+  lines: edd720f8
+  preview: kubectl get servicemonitor,podmonitor -n {{< reuse "agw-docs/snippets/namespace.
+  form:
+    attr: paths="enterprise-metrics-external"
+    only: true
+    lead: ' '
+- paths: enterprise-metrics-external
+  block: 9
+  fingerprint: a8bd531dad182fba
+  lang: sh
+  lines: a8bd531d
+  preview: kubectl get configmap enterprise-agentgateway-dashboard -n {{< reuse "agw-docs/s
+  form:
+    attr: paths="enterprise-metrics-external"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: (top of page)
+    line: 9fe5d652c1c7abaa
+    occurrence: 0
+    words: a11a75e0 d4735e3a 1809f7cd 06e55b63 afa4530d 6201111b 82adf67b 1809f7cd
+    block_before: null
+  content: |-
+    {{< doc-test paths="enterprise-metrics-external" >}}
+    # ============================================================================
+    # Doc test coverage for "Export metrics to an external system" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Option 1: the documented OTel Collector values install and the collector
+    #     rolls out (with a stand-in remote write endpoint; nothing receives it).
+    #   * Option 2: with the Prometheus Operator CRDs present, monitoring.enabled
+    #     creates the ServiceMonitor, the PodMonitor, and the Grafana dashboard
+    #     ConfigMap.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Data arriving in a real Prometheus, Datadog, or Grafana Cloud (external
+    #     accounts), and the Grafana sidecar steps (placeholder namespace, no Grafana).
+    #   * The other-namespace values snippets (values only, no command).
+    helm upgrade --install agentgateway-metrics opentelemetry-collector \
+      --repo https://open-telemetry.github.io/opentelemetry-helm-charts \
+      --set mode=deployment \
+      --set image.repository="otel/opentelemetry-collector-contrib" \
+      --set command.name="otelcol-contrib" \
+      --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} \
+      -f - <<EOF
+    config:
+      receivers:
+        prometheus:
+          config:
+            scrape_configs:
+              - job_name: agentgateway-controller
+                scrape_interval: 15s
+                static_configs:
+                  - targets:
+                      - enterprise-agentgateway.{{< reuse "agw-docs/snippets/namespace.md" >}}:9092
+              - job_name: agentgateway-proxy
+                scrape_interval: 15s
+                static_configs:
+                  - targets:
+                      - agentgateway-proxy.{{< reuse "agw-docs/snippets/namespace.md" >}}:15020
+      exporters:
+        prometheusremotewrite:
+          endpoint: http://prometheus.invalid:9090/api/v1/write
+      service:
+        pipelines:
+          metrics:
+            receivers: [prometheus]
+            processors: [batch]
+            exporters: [prometheusremotewrite]
+    EOF
+    kubectl rollout status deployment/agentgateway-metrics-opentelemetry-collector -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+    helm uninstall agentgateway-metrics -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+    # Option 2 needs the Prometheus Operator CRDs; no Prometheus instance is installed.
+    # v0.88.0 or later: the chart sets PodMonitor spec.scrapeNativeHistograms.
+    kubectl apply --server-side -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.94.2/stripped-down-crds.yaml
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 4d4d0aa7b92b47b3
+    lang: sh
+    lines: 2d065637 96064311 736e1ed1 b07f1c94 d9baa781 878ad6e0 3ba69cac
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  content: |2-
+       {{< doc-test paths="enterprise-metrics-external" >}}
+       kubectl rollout status deployment/enterprise-agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: edd720f88a727deb
+    lang: sh
+    lines: edd720f8
+    preview: kubectl get servicemonitor,podmonitor -n {{< reuse "agw-docs/snippets/namespace.
+  content: |2-
+       {{< doc-test paths="enterprise-metrics-external" >}}
+       kubectl get servicemonitor enterprise-agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+       kubectl get podmonitor enterprise-agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: a8bd531dad182fba
+    lang: sh
+    lines: a8bd531d
+    preview: kubectl get configmap enterprise-agentgateway-dashboard -n {{< reuse "agw-docs/s
+  content: |2-
+       {{< doc-test paths="enterprise-metrics-external" >}}
+       test "$(kubectl get configmap enterprise-agentgateway-dashboard -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.metadata.labels.grafana_dashboard}')" = "1"
+       {{< /doc-test >}}

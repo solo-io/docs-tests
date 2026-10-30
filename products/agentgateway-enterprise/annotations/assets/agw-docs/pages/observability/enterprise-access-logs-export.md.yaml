@@ -1,0 +1,290 @@
+format: 1
+source: assets/agw-docs/pages/observability/enterprise-access-logs-export.md
+blocks:
+- e2c21751abc07c4d yaml
+- 0464a7c30afbff50 sh
+- 83b6675b43262b27 sh
+- 67b6a24692cbcf9b sh
+- 1daf17b176264fe3 sh
+- 389aca25f9f6b573 sql
+- 5f84d4415ead85a6 sql
+- 5c58c0c468cc505d sql
+- 0016bbb9d53118be yaml
+- 0464a7c30afbff50 sh
+- 83b6675b43262b27 sh
+- c158609e1a699367 sh
+- 177cd1fe9bf38e62 sh
+- 1daf17b176264fe3 sh
+- 389aca25f9f6b573 sql
+- 9164aaa232af4f15 console
+- 9c5e5e9f018dacdc sh
+- a54409387001605c console
+- 46e70e35e3d4f9f1 yaml
+- 0ce516776ddf1110 sh
+- 2060ea3dff20ebb0 sh
+- f956fb9f83df700f sh
+- 962ed85a07386f97 console
+- 3c8432802d54c212 sh
+- 97def03d923888bb console
+- 5a85429987ce9aa1 sh
+tags:
+- paths: access-log-otlp
+  block: 0
+  fingerprint: e2c21751abc07c4d
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 1
+  fingerprint: 0464a7c30afbff50
+  lang: sh
+  lines: 0464a7c3
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com"'
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 3
+  fingerprint: 67b6a24692cbcf9b
+  lang: sh
+  lines: 03784a74 26d8a4ad
+  preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 9
+  fingerprint: 0464a7c30afbff50
+  lang: sh
+  lines: 0464a7c3
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com"'
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 11
+  fingerprint: c158609e1a699367
+  lang: sh
+  lines: c158609e
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/status/500 -H "host: www.example.com"'
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 16
+  fingerprint: 9c5e5e9f018dacdc
+  lang: sh
+  lines: 9c5e5e9f
+  preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agent
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 19
+  fingerprint: 0ce516776ddf1110
+  lang: sh
+  lines: 0ce51677
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com" -H "x-trace'
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 21
+  fingerprint: f956fb9f83df700f
+  lang: sh
+  lines: f956fb9f
+  preview: kubectl logs deploy/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 25
+  fingerprint: 5a85429987ce9aa1
+  lang: sh
+  lines: 5a854299
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< re
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: e2c21751abc07c4d
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="access-log-otlp" >}}
+    # ============================================================================
+    # Doc test coverage for "Export logs to ClickHouse" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The OTLP access log policy and its filter and attributes variants are accepted.
+    #   * Records reach the otel_logs_json table; the page's own SQL (status filter)
+    #     runs non-interactively; with otlp.filter only the 500 is exported while
+    #     stdout keeps both requests; the otlp.attributes variant exports trace_id.
+    #   * Cleanup runs.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The interactive `kubectl exec -it ... clickhouse-client` shells; the same
+    #     queries run with --query instead.
+    #   * The step that reads `deploy/opentelemetry-collector-logs -n telemetry`:
+    #     that collector belongs to the OSS stack and does not exist here. The
+    #     exported trace_id is checked in ClickHouse instead.
+    # Policy check 11
+    YAMLTest -f - <<'EOF'
+    - name: the access-logs policy is accepted
+      wait:
+        target:
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+          metadata:
+            namespace: agentgateway-system
+            name: access-logs
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    # Give the proxy a moment to load the new policy before the next request.
+    sleep 10
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 67b6a24692cbcf9b
+    lang: sh
+    lines: 03784a74 26d8a4ad
+    preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
+  content: |2-
+       {{< doc-test paths="access-log-otlp" >}}
+       export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.username}' | base64 -d)
+       export CH_PASS=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.password}' | base64 -d)
+       chq() { kubectl exec -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -- clickhouse-client --user "$CH_USER" --password "$CH_PASS" --query "$1"; }
+       # Wait until a count query returns more than zero rows. Telemetry is batched, so allow a few minutes.
+       ch_wait_rows() {
+         local q="$1" n=0
+         for i in $(seq 1 36); do
+           n=$(chq "$q" 2>/dev/null || echo 0)
+           if [ "${n:-0}" -gt 0 ] 2>/dev/null; then echo "rows: $n"; return 0; fi
+           sleep 10
+         done
+         echo "no rows after 6 minutes for: $q"; return 1
+       }
+       ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE position(toString(LogAttributes), 'www.example.com') > 0"
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 5f84d4415ead85a6
+    lang: sql
+    lines: 57ca61ba 7cd4ce96 39c46c94
+    preview: SELECT Timestamp, LogAttributes FROM {{< reuse "agw-docs/snippets/solo-ui/clickh
+  content: |2-
+       {{< doc-test paths="access-log-otlp" >}}
+       chq "SELECT Timestamp, LogAttributes FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE JSONExtractInt(LogAttributes, 'http', 'status') >= 400 ORDER BY Timestamp DESC LIMIT 20"
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 0016bbb9d53118be
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee b2a76230 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="access-log-otlp" >}}
+       # Policy check 12
+       YAMLTest -f - <<'EOF'
+       - name: the access-logs policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Give the proxy a moment to load the new policy before the next request.
+       sleep 10
+       # Step 2 repeats an earlier identical curl, which the extractor drops, so send it here.
+       curl -s -o /dev/null http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com"
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 9164aaa232af4f15
+    lang: console
+    lines: ab5df625 6616497a 972c27bb 5c71768c ab5df625
+    preview: '...'
+  content: |2-
+       {{< doc-test paths="access-log-otlp" >}}
+       ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE JSONExtractInt(LogAttributes, 'http', 'status') = 500"
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 9c5e5e9f018dacdc
+    lang: sh
+    lines: 9c5e5e9f
+    preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agent
+  content: |2-
+       {{< doc-test paths="access-log-otlp" >}}
+       out=$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agentgateway-proxy | grep 'request ' | tail -2)
+       echo "$out"
+       echo "$out" | grep -q 'http.path=/get'
+       echo "$out" | grep -q 'http.path=/status/500'
+       {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 46e70e35e3d4f9f1
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 521b7d5f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="access-log-otlp" >}}
+       # Policy check 13
+       YAMLTest -f - <<'EOF'
+       - name: the access-logs policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Give the proxy a moment to load the new policy before the next request.
+       sleep 10
+       {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: f956fb9f83df700f
+    lang: sh
+    lines: f956fb9f
+    preview: kubectl logs deploy/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace
+  content: |2-
+       {{< doc-test paths="access-log-otlp" >}}
+       ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE position(toString(LogAttributes), 'abc123') > 0"
+       # http.host is removed from the export only.
+       test "$(chq "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE position(toString(LogAttributes), 'abc123') > 0 AND position(toString(LogAttributes), 'www.example.com') > 0")" = "0"
+       {{< /doc-test >}}

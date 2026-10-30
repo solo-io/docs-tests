@@ -42,7 +42,7 @@ from reuse_consumers import rebase_targets, resolve_rebase_target  # noqa: E402
 # Enough to see the error and the commands just before it, small enough that a
 # dozen failures fit in an agent's first read.
 OUTPUT_CHARS = 4000
-FIXABLE_TYPES = {"functional", "live"}
+FIXABLE_TYPES = {"functional"}
 
 
 def split_key(key: str) -> tuple[str, str, str]:

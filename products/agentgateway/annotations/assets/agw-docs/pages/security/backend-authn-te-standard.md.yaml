@@ -144,7 +144,7 @@ hidden:
     - name: wait for the token exchange policy to be accepted
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: httpbin
             name: backend-token-exchange
@@ -230,7 +230,7 @@ hidden:
     - name: wait for the edge jwt policy to be accepted
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: httpbin
             name: jwt-edge

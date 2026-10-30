@@ -1,0 +1,81 @@
+format: 1
+source: assets/agw-docs/snippets/sts-enable-kubernetes.md
+blocks:
+- 4850793503f14c5e sh
+- 83937f7325365ae5 sh
+- a1d52a5aeebf0d70 sh
+- 9aaafb1fb6c2dbc6 sh
+- 2caa8e47d164228c console
+tags:
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 0
+  fingerprint: 4850793503f14c5e
+  lang: sh
+  lines: '48507935'
+  preview: helm get values {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< r
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 1
+  fingerprint: 83937f7325365ae5
+  lang: sh
+  lines: 1f40c72a 835aaff5 ff7360cf c5898bf6 0c1d87f8 62a0ff5d 64c17556 312e2a24 dc7eaa0a f19d2cb2 8aee31e1 998560fe 64c17556 312e2a24 dc7eaa0a a823082e ff7360cf abc56510
+  preview: cat > sts-values.yaml <<EOF
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 2
+  fingerprint: a1d52a5aeebf0d70
+  lang: sh
+  lines: ad8da71a fde80217 2a24ff0e 736e1ed1 334d944b
+  preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-interactive-setup,te-impersonation
+  block: 3
+  fingerprint: 9aaafb1fb6c2dbc6
+  lang: sh
+  lines: 540215cd 2cb723a2
+  preview: kubectl get deploy -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "
+  form:
+    attr: paths="mcp-elicitation-interactive-setup,te-impersonation"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: a1d52a5aeebf0d70
+    lang: sh
+    lines: ad8da71a fde80217 2a24ff0e 736e1ed1 334d944b
+    preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-interactive-setup" >}}
+       kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deployment/{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: a1d52a5aeebf0d70
+    lang: sh
+    lines: ad8da71a fde80217 2a24ff0e 736e1ed1 334d944b
+    preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
+  content: |2-
+       {{< doc-test paths="te-impersonation" >}}
+       kubectl rollout status deployment/{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 2caa8e47d164228c
+    lang: console
+    lines: 62f1380c 7732f578 af1d09fa ce6976d2
+    preview: NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+  content: |2-
+       {{< doc-test paths="te-impersonation" >}}
+       kubectl get svc {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.ports[*].port}' | tr ' ' '\n' | grep -x 7777 >/dev/null \
+         || { echo "the control plane service does not expose the STS port 7777"; exit 1; }
+       {{< /doc-test >}}

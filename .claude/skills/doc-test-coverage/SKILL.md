@@ -10,7 +10,7 @@ This skill builds one HTML page that compares every product's test manifests
 content repo. For each page it shows:
 
 - the test types the page has (schema + functional, functional only, schema
-  only, or none), plus any `live` or `credentialed` scenarios
+  only, or none)
 - whether the page is under `skip:` on purpose
 - the result from the newest scheduled or manual run of the content repo's
   doc-test workflow
@@ -92,7 +92,7 @@ Give the user the link, then a short summary:
 
 | Column | Meaning |
 |---|---|
-| Schema + functional | At least one scenario on the page runs it (functional, live, or credentialed), and one compares its YAML against the schema. |
+| Schema + functional | At least one scenario on the page runs it (functional), and one compares its YAML against the schema. |
 | Functional only | Scenarios run the page, but none checks the schema. |
 | Schema only | Only schema scenarios. |
 | No test yet | No scenario resolves to the page, and it isn't under `skip:`. |

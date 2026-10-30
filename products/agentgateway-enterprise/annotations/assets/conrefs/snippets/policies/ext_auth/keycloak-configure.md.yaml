@@ -1,0 +1,50 @@
+format: 1
+source: assets/conrefs/snippets/policies/ext_auth/keycloak-configure.md
+blocks:
+- 6e741862f5e540b6 shell
+- bf4d19b1cca1dba6 shell
+- 9a24991a75d1ace7 shell
+- 6ebc17e8b7eba791 shell
+- bf4d19b1cca1dba6 shell
+- ad45e19f9d631c28 shell
+- 2821c07a8b84ec9f shell
+tags:
+- paths: oauth-keycloak,oauth-keycloak-setup
+  block: 0
+  fingerprint: 6e741862f5e540b6
+  lang: shell
+  lines: ddce3fc8 41752bd2
+  preview: echo $KEYCLOAK_CLIENT
+  form:
+    attr: paths="oauth-keycloak,oauth-keycloak-setup"
+    only: true
+    lead: ' '
+- paths: oauth-keycloak,oauth-keycloak-setup
+  block: 1
+  fingerprint: bf4d19b1cca1dba6
+  lang: shell
+  lines: bf4d19b1
+  preview: export TOKEN_ENDPOINT=$KEYCLOAK_URL/realms/master/protocol/openid-connect/token
+  form:
+    attr: paths="oauth-keycloak,oauth-keycloak-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 9a24991a75d1ace7
+    lang: shell
+    lines: 9a24991a
+    preview: export KEYCLOAK_JWKS_URI=<jwks_uri>
+  blank_before: []
+  content: |2-
+           {{< doc-test paths="oauth-keycloak,oauth-keycloak-setup" >}}
+           # The visible steps copy these values from a browser and use placeholders.
+           # Read the real values from the realm's OpenID configuration instead.
+           export KEYCLOAK_JWKS_URI=$(curl -fsS "$KEYCLOAK_URL/realms/master/.well-known/openid-configuration" | jq -r .jwks_uri)
+           test "$(curl -fsS "$KEYCLOAK_URL/realms/master/.well-known/openid-configuration" | jq -r .token_endpoint)" = "$TOKEN_ENDPOINT" \
+             || { echo "TOKEN_ENDPOINT does not match the realm's token_endpoint"; exit 1; }
+           export KEYCLOAK_CERT_KEYS=$(curl -fsS "$KEYCLOAK_JWKS_URI" | jq -c .)
+           echo "$KEYCLOAK_CERT_KEYS" | jq -e '.keys | map(select(.use == "sig")) | length > 0' >/dev/null \
+             || { echo "the realm JWKS has no signing key"; exit 1; }
+           {{< /doc-test >}}

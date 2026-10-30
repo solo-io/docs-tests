@@ -83,10 +83,12 @@ hidden:
        r = json.load(open("claude-code-resp.json"))
        assert r.get("type") == "message" and r["content"][0]["text"] == "mock completion", r
        up = json.load(open("/tmp/doc-test-claude-code-last.json"))
-       assert up["path"] == "/v1/chat/completions", up["path"]
+       # Builds differ in the OpenAI format they convert Messages to: Chat Completions
+       # or Responses. Either one is a valid upstream for this configuration.
+       assert up["path"] in ("/v1/chat/completions", "/v1/responses"), up["path"]
        assert up["body"]["model"] == "Qwen/Qwen3-32B", up["body"].get("model")
        assert up["headers"].get("authorization") == "Bearer mock-key", up["headers"].get("authorization")
-       print("ok: Messages converted to Chat Completions for Qwen/Qwen3-32B, answer returned as a message")
+       print("ok: Messages converted for", up["path"], "with Qwen/Qwen3-32B, answer returned as a message")
        PY
        stop_agw
        {{< /doc-test >}}

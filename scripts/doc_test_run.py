@@ -52,6 +52,9 @@ class TestCase:
 
 
 RUNNERS = ("linux", "macos", "windows")
+# The test types a scenario can declare. A `type:` outside this list is an
+# error, so a leftover or misspelled type fails loudly instead of being skipped.
+TEST_TYPES = ("schema", "functional")
 SHELLS = ("bash", "pwsh")
 
 
@@ -206,6 +209,11 @@ def build_test_cases_from_file(
         test_types = [t for t in test_types if isinstance(t, str) and t]
         if not test_types:
             continue
+        unknown = [t for t in test_types if t not in TEST_TYPES]
+        if unknown:
+            raise RuntimeError(
+                f"{rel_doc}: test '{test_name}' has `type: {', '.join(unknown)}`; use {' or '.join(TEST_TYPES)}."
+            )
 
         sources: List[Dict[str, Any]] = []
         tokens = version_path_tokens(rel_doc)
@@ -290,12 +298,16 @@ TESTED_VERSIONS = ("latest", "main")
 
 
 def _mode_segment(doc_path: str) -> str:
-    """Extract the deployment mode ('kubernetes', 'standalone') from a doc path."""
+    """Extract the deployment mode ('kubernetes', 'standalone') from a doc path.
+
+    A site with its own content_root (content/en/agentgateway/<mode>/...) has
+    no `docs` segment, so the mode is the first segment that names one.
+    """
     parts = doc_path.replace("\\", "/").split("/")
     try:
         idx = parts.index("docs")
     except ValueError:
-        return ""
+        return next((p for p in parts if p in ("kubernetes", "standalone")), "")
     return parts[idx + 1] if len(parts) > idx + 1 else ""
 
 
@@ -476,6 +488,11 @@ def build_test_cases_from_manifests(
             test_types = [t for t in test_types if isinstance(t, str) and t]
             if not test_types:
                 raise RuntimeError(f"{mpath}: scenario '{name}' has an empty `type:`.")
+            unknown = [t for t in test_types if t not in TEST_TYPES]
+            if unknown:
+                raise RuntimeError(
+                    f"{mpath}: scenario '{name}' has `type: {', '.join(unknown)}`; use {' or '.join(TEST_TYPES)}."
+                )
 
             for version in TESTED_VERSIONS:
                 if not (repo_root / content_root / mode / version).is_dir():
@@ -1268,6 +1285,15 @@ def main() -> int:
     parser.add_argument("--version", default="2.2.x", help="Default context.version")
     parser.add_argument("--product", default="kubernetes", help="Default context.product")
     parser.add_argument(
+        "--condition",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="Also match {{< conditional-text include-if/exclude-if >}} gates that name NAME, "
+        "besides the product (e.g. agentgateway, for a site whose gates name the product). "
+        "Repeatable.",
+    )
+    parser.add_argument(
         "--generated-dir",
         default="out/tests/generated",
         help="Directory where generated scripts/manifests are written",
@@ -1282,12 +1308,10 @@ def main() -> int:
         "--types",
         default=None,
         metavar="LIST",
-        help="Comma-separated test types to run, e.g. 'functional,live'. Default: all types. "
-        "'schema' = config-vs-schema comparison, no execution. 'functional' = static "
-        "validation against a real cluster, always runs, no vendor dependency (the default "
-        "for any scenario that doesn't declare a type). 'live' = reachable-but-unauthenticated "
-        "check against a real external endpoint. 'credentialed' = check against a real "
-        "vendor; run this on its own non-blocking schedule, never on a doc PR.",
+        help="Comma-separated test types to run, e.g. 'functional'. Default: all types. "
+        "'schema' = config-vs-schema comparison, no execution. 'functional' = real behavior "
+        "in a real cluster, with in-cluster stand-ins for external services (the default for "
+        "any scenario that doesn't declare a type).",
     )
     parser.add_argument(
         "--verbose",
@@ -1441,6 +1465,13 @@ def main() -> int:
 
     if args.types:
         allowed_types = {t.strip() for t in args.types.split(",") if t.strip()}
+        # A warning, not an error: a content repo's workflow can still pass a
+        # removed type (`functional,live`) for as long as it takes to update it,
+        # and no scenario can declare one, so ignoring it changes nothing.
+        unknown_types = sorted(allowed_types - set(TEST_TYPES))
+        if unknown_types:
+            logger.warning("--types names %s, which no scenario can have; ignoring. Use %s.",
+                           ", ".join(unknown_types), " or ".join(TEST_TYPES))
         skipped = [tc for tc in test_cases if tc.type not in allowed_types]
         test_cases = [tc for tc in test_cases if tc.type in allowed_types]
         for tc in skipped:
@@ -1483,6 +1514,7 @@ def main() -> int:
             "context": {
                 "version": inferred_version,
                 "product": args.product,
+                "conditions": args.condition,
             },
             "options": DEFAULT_OPTIONS,
             "shell": test_case.shell,

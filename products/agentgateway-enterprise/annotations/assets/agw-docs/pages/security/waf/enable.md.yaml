@@ -1,0 +1,53 @@
+format: 1
+source: assets/agw-docs/pages/security/waf/enable.md
+blocks:
+- cdcafcc0ff22aad8 yaml
+- 41aa9949cb89a9c6 yaml
+- 4b00929c4c8fb5b8 bash
+- 6b5d573b38f910e0
+tags:
+- paths: waf-enable
+  block: 0
+  fingerprint: cdcafcc0ff22aad8
+  lang: yaml
+  lines: 16c71da1 00c69c65 98f7f300 8c8c4228 3adefa17 f497f0e2 36184fa5 356067ee 9eb3a28d ff7360cf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-enable"
+    only: true
+    lead: ' '
+- paths: waf-enable
+  block: 1
+  fingerprint: 41aa9949cb89a9c6
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 3e078275 36184fa5 173c3dfa 3f04fdd7 b8ac8874 98f7f300 3adefa17 f497f0e2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-enable"
+    only: true
+    lead: ' '
+- paths: waf-enable
+  block: 2
+  fingerprint: 4b00929c4c8fb5b8
+  lang: bash
+  lines: 4b00929c
+  preview: kubectl get deploy waf-server-enterprise-agentgateway -n agentgateway-system
+  form:
+    attr: paths="waf-enable"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 41aa9949cb89a9c6
+    lang: yaml
+    lines: 16c71da1 8c67597e 9730d414 8c8c4228 3e078275 36184fa5 173c3dfa 3f04fdd7 b8ac8874 98f7f300 3adefa17 f497f0e2 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="waf-enable" >}}
+       for i in $(seq 1 60); do
+         kubectl get deploy waf-server-enterprise-agentgateway -n agentgateway-system >/dev/null 2>&1 && break
+         sleep 5
+       done
+       kubectl rollout status deploy/waf-server-enterprise-agentgateway -n agentgateway-system --timeout=180s
+       {{< /doc-test >}}

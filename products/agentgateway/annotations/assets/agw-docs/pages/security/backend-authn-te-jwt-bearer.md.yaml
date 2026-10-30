@@ -104,7 +104,7 @@ hidden:
     - name: wait for the jwt bearer token exchange policy to be accepted
       wait:
         target:
-          kind: AgentgatewayPolicy
+          kind: {{< reuse "agw-docs/snippets/policy.md" >}}
           metadata:
             namespace: httpbin
             name: backend-token-exchange

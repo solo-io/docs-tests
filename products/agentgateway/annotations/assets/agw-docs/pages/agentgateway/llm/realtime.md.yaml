@@ -52,7 +52,7 @@ hidden:
     - name: wait for openai backend with realtime route to be ready
       wait:
         target:
-          kind: AgentgatewayBackend
+          kind: {{< reuse "agw-docs/snippets/backend.md" >}}
           metadata:
             namespace: agentgateway-system
             name: openai
@@ -77,7 +77,7 @@ hidden:
        - name: wait for realtime-strip-websocket-extensions policy to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: agentgateway-system
                name: realtime-strip-websocket-extensions

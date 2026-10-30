@@ -29,7 +29,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: agentgateway-system
-            name: agentgateway
+            name: {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}
       expect:
         statusCode: 200
     EOF

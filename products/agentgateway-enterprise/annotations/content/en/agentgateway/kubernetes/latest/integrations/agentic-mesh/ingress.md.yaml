@@ -1,0 +1,121 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/integrations/agentic-mesh/ingress.md
+blocks:
+- acf87bc841d852fa sh
+- 8d47f23e4ac8d132 sh
+- 1334baf3b4ec3970 yaml
+- 074e2652d402c8ca sh
+- 0002bfad8aa5a54e sh
+- bc301435461a35af
+- 0f795331b0c14df0 sh
+tags:
+- paths: integrations-agentic-mesh-ingress
+  block: 0
+  fingerprint: acf87bc841d852fa
+  lang: sh
+  lines: eed9279f 56636913 f82702aa 09709669 cd85f142
+  preview: helm get values enterprise-agentgateway -n agentgateway-system -o yaml > values.
+  form:
+    attr: paths="integrations-agentic-mesh-ingress"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-ingress
+  block: 1
+  fingerprint: 8d47f23e4ac8d132
+  lang: sh
+  lines: bad086bc 13bfeb78
+  preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  form:
+    attr: paths="integrations-agentic-mesh-ingress"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-ingress
+  block: 2
+  fingerprint: 1334baf3b4ec3970
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 af4ee5f4 8d7577a7 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 2836fc17 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="integrations-agentic-mesh-ingress"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-ingress
+  block: 3
+  fingerprint: 074e2652d402c8ca
+  lang: sh
+  lines: 074e2652
+  preview: 'curl -H "Host: www.example.com" http://${INGRESS_GW_ADDRESS}:8080/get'
+  form:
+    attr: paths="integrations-agentic-mesh-ingress"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-ingress
+  block: 4
+  fingerprint: 0002bfad8aa5a54e
+  lang: sh
+  lines: 0002bfad
+  preview: istioctl ztunnel-config connections --namespace httpbin
+  form:
+    attr: paths="integrations-agentic-mesh-ingress"
+    only: true
+    lead: ' '
+- paths: integrations-agentic-mesh-ingress
+  block: 6
+  fingerprint: 0f795331b0c14df0
+  lang: sh
+  lines: cb36d864 11d484a1
+  preview: kubectl delete httproute httpbin -n httpbin
+  form:
+    attr: paths="integrations-agentic-mesh-ingress"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: acf87bc841d852fa
+    lang: sh
+    lines: eed9279f 56636913 f82702aa 09709669 cd85f142
+    preview: helm get values enterprise-agentgateway -n agentgateway-system -o yaml > values.
+  blank_before: []
+  content: |2-
+      {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
+      kubectl -n agentgateway-system rollout status deploy/enterprise-agentgateway --timeout=300s
+      helm get values enterprise-agentgateway -n agentgateway-system -o yaml | grep 'autoEnabled: true' >/dev/null \
+        || { echo "istio.autoEnabled is not set on the release (ingress)"; exit 1; }
+      {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 8d47f23e4ac8d132
+    lang: sh
+    lines: bad086bc 13bfeb78
+    preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
+       kubectl -n httpbin rollout status deploy/httpbin --timeout=180s
+       {{< /doc-test >}}
+- after:
+    section: Route traffic with HTTPRoute
+    line: f9b2c9cabb0179f2
+    occurrence: 0
+    words: 4e074085 27ce1d1b ca978112 1f58b914 663ea1bf b9776d7d 487a0a9a 4ea5ee68 663ea1bf a12dd3a7 8e7fc023 075f4ab8 b080c643 b9776d7d a172cedc
+    block_before:
+      block: 2
+      fingerprint: 1334baf3b4ec3970
+      lang: yaml
+      lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 af4ee5f4 8d7577a7 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 2836fc17 94ae491e 80e9487c bca8e5f7 abc56510
+      preview: kubectl apply -f - <<EOF
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
+       # Claim: a 200 OK with a JSON body from httpbin.
+       code=""
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /tmp/agw-ingress-body.json -m 10 -w '%{http_code}' -H "Host: www.example.com" http://${INGRESS_GW_ADDRESS}:8080/get || true)
+         [ "$code" = "200" ] && break
+         sleep 2
+       done
+       [ "$code" = "200" ] || { echo "expected 200 through the ingress gateway, got ${code}"; exit 1; }
+       host=$(jq -r '.headers.Host[0]' /tmp/agw-ingress-body.json)
+       [ "$host" = "www.example.com" ] || { echo "httpbin echoed Host '${host}', expected www.example.com"; exit 1; }
+       {{< /doc-test >}}

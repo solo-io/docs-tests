@@ -1,0 +1,103 @@
+format: 1
+source: assets/agw-docs/pages/standalone/license.md
+blocks:
+- b59805ebfa275b65 yaml
+- b7ccfc94fa5b2356 yaml
+- fd10d0804ead80a8 sh
+- 015bff53acfbba99 sh
+- 323bf5d83a484ecd yaml
+- aec44613e5367b21 sh
+- 015bff53acfbba99 sh
+- 01fef07a87c618ba yaml
+- 3cea3616050441dd sh
+- 2686e5ea737c4b48 sh
+- ff47eef6824beb6b yaml
+- 57cbc46113d03d90 sh
+- 04476df074fc2be9 sh
+- 0ff6d96fadee3ad4 sh
+- d81991507712c321 sh
+- 0ff6d96fadee3ad4 sh
+- ab11f36438ebe613 json
+- 8faf4cb18f5fe242 json
+- 135816cbc4a0c1bf sh
+tags:
+- paths: license
+  block: 13
+  fingerprint: 0ff6d96fadee3ad4
+  lang: sh
+  lines: 0ff6d96f
+  preview: curl -s localhost:15000/api/runtime | jq .license
+  form:
+    attr: paths="license"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="license" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The config.license.key.file form: with the environment variable unset,
+    #     the proxy starts from a config file that points at a key file.
+    #   * "Verify the license": /api/runtime reports license.state "running".
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The placeholder blocks (<license-key>) are never run; the key comes from
+    #     ENTERPRISE_AGENTGATEWAY_LICENSE_KEY, which CI sets from a secret.
+    #   * Docker and Helm tabs: the standalone binary test env has neither.
+    #   * The grace state: it needs an expired key.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< /doc-test >}}
+- after:
+    section: Verify the license
+    line: 827caeaa10c43679
+    occurrence: 0
+    words: 663ea1bf 3f267c2a 77bc06c5 2c70e12b ca978112 c071cf5f 1241936d e4c05c56 2cab953f 3316348d 14c2529e d92c6a81 d1ffaf02 7383711c b9776d7d b7d64a92 3b9c358f ca978112 1241936d 8e7fc023 b63b99f6 03494afd 0695b563 b9776d7d ba528516 3b325109 6ee0eb49 7f26104f 8e7fc023 2c70e12b ec38063c 935f6831 b9776d7d b7d64a92 3b9c358f 9150c74c ca978112 9d6f965a cd42404d
+    block_before:
+      block: 12
+      fingerprint: 04476df074fc2be9
+      lang: sh
+      lines: d161b8e5 75e40a19 3a26b6d2 2a24ff0e 736e1ed1 ec7ae09e 96064311 0e1a9b32
+      preview: helm upgrade -i {{< reuse "agw-docs/standalone/helm-standalone-release.md" >}} \
+  content: |-
+    {{< doc-test paths="license" >}}
+    # Write the real key (from the CI secret) to the file the File reference tab uses,
+    # then start the proxy WITHOUT the env var so only config.license.key.file can license it.
+    umask 077
+    printf '%s' "$ENTERPRISE_AGENTGATEWAY_LICENSE_KEY" > license.key
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    config:
+      license:
+        key:
+          file: ./license.key
+    gateways:
+      default:
+        port: 4000
+    EOF
+    agentgateway -f config.yaml --validate-only
+    env -u ENTERPRISE_AGENTGATEWAY_LICENSE_KEY agentgateway -f config.yaml > agw.log 2>&1 &
+    AGW_PID=$!
+    trap 'kill $AGW_PID 2>/dev/null; rm -f license.key' EXIT
+    for _ in $(seq 1 30); do curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && break; sleep 1; done
+    curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready || { echo "agentgateway did not become ready within 30 s"; cat agw.log; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 0ff6d96fadee3ad4
+    lang: sh
+    lines: 0ff6d96f
+    preview: curl -s localhost:15000/api/runtime | jq .license
+  content: |-
+    {{< doc-test paths="license" >}}
+    curl -sf localhost:15000/api/runtime | python3 -c '
+    import json, sys
+    lic = json.load(sys.stdin).get("license") or {}
+    assert lic.get("state") == "running", f"expected license state running, got {lic}"
+    assert lic.get("product") == "agentgateway", lic
+    print("license:", lic)
+    '
+    {{< /doc-test >}}

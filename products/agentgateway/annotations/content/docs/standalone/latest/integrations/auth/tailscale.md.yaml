@@ -214,6 +214,10 @@ hidden:
                self.send_header("content-length", str(len(body)))
                self.end_headers()
                self.wfile.write(body)
+           # ext auth forwards the original method, so an MCP POST arrives as a POST.
+           def do_POST(self):
+               self.rfile.read(int(self.headers.get("content-length") or 0))
+               self.do_GET()
            def address_string(self):
                return "unix"
            def log_message(self, *a):

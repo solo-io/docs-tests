@@ -1,0 +1,214 @@
+format: 1
+source: assets/agw-docs/pages/guardrails/conditional-reversible.md
+blocks:
+- 4832e8c743f407d1 yaml
+- 93e3fcc57e050312 sh
+- e3aca340fa7384bd console
+- 42fd6883f42e16c4 sh
+- 5bbc58dd3cbf8ecd sh
+- 09f2e42611f5fc28 sh
+- 92413e9787e7d079 console
+- 2983c60281d2e914 sh
+- 4770c2e3a907852d sh
+- 4bebcb655a922973 console
+- 2272d66c4d6a937d yaml
+- 20cae86a626702eb sh
+- e0607ee09e15d4db sh
+- c7c4a4a9790d6c86 sh
+tags:
+- paths: guardrails-conditional-reversible
+  block: 0
+  fingerprint: 4832e8c743f407d1
+  lang: yaml
+  lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 a432b5b0 8af957d1 36184fa5 588a5d84 94ae49d1 450c56e0 6666820d bb85cefe ad3afdb1 328d5627 14ddcd05 47639ec2 eeb7e2a3 ceea3490 eaaad965 ce8bc56a 99c83b01 c021ba1c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="guardrails-conditional-reversible"
+    only: true
+    lead: ' '
+- paths: guardrails-conditional-reversible
+  block: 1
+  fingerprint: 93e3fcc57e050312
+  lang: sh
+  lines: a4ac09c1 262a9857
+  preview: kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} prompt-guard -n {{< reus
+  form:
+    attr: paths="guardrails-conditional-reversible"
+    only: true
+    lead: ' '
+- paths: guardrails-conditional-reversible
+  block: 3
+  fingerprint: 42fd6883f42e16c4
+  lang: sh
+  lines: 5a09f03a fc68f389 eb2638bc
+  preview: curl -i "$INGRESS_GW_ADDRESS/openai" \
+  form:
+    attr: paths="guardrails-conditional-reversible"
+    only: true
+    lead: ' '
+- paths: guardrails-conditional-reversible
+  block: 7
+  fingerprint: 2983c60281d2e914
+  lang: sh
+  lines: 5a09f03a fc68f389 e3c45d9b eb2638bc
+  preview: curl -i "$INGRESS_GW_ADDRESS/openai" \
+  form:
+    attr: paths="guardrails-conditional-reversible"
+    only: true
+    lead: ' '
+- paths: guardrails-conditional-reversible
+  block: 10
+  fingerprint: 2272d66c4d6a937d
+  lang: yaml
+  lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 a432b5b0 8af957d1 36184fa5 588a5d84 94ae49d1 450c56e0 6666820d bb85cefe ad3afdb1 328d5627 14ddcd05 07ba09f8 eeb7e2a3 f51fdba0 8096ca96 8693faa9 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="guardrails-conditional-reversible"
+    only: true
+    lead: ' '
+- paths: guardrails-conditional-reversible
+  block: 11
+  fingerprint: 20cae86a626702eb
+  lang: sh
+  lines: b7e1aadf fc68f389 8c8fb8e2
+  preview: curl "$INGRESS_GW_ADDRESS/openai" \
+  form:
+    attr: paths="guardrails-conditional-reversible"
+    only: true
+    lead: ' '
+- paths: guardrails-conditional-reversible
+  block: 13
+  fingerprint: c7c4a4a9790d6c86
+  lang: sh
+  lines: c7c4a4a9
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} prompt-guard -n {{< r
+  form:
+    attr: paths="guardrails-conditional-reversible"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 4832e8c743f407d1
+    lang: yaml
+    lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 a432b5b0 8af957d1 36184fa5 588a5d84 94ae49d1 450c56e0 6666820d bb85cefe ad3afdb1 328d5627 14ddcd05 47639ec2 eeb7e2a3 ceea3490 eaaad965 ce8bc56a 99c83b01 c021ba1c abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="guardrails-conditional-reversible" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the prompt-guard policy is accepted with the Valid reason
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: prompt-guard
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Valid"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 42fd6883f42e16c4
+    lang: sh
+    lines: 5a09f03a fc68f389 eb2638bc
+    preview: curl -i "$INGRESS_GW_ADDRESS/openai" \
+  content: |2-
+       {{< doc-test paths="guardrails-conditional-reversible" >}}
+       YAMLTest -f - <<'EOF'
+       - name: without the x-guardrail header the guard is skipped and the request reaches the LLM
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: /openai
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model":"gpt-4o-mini","messages":[{"role":"user","content":"Tell me about the secret project"}]}
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 2983c60281d2e914
+    lang: sh
+    lines: 5a09f03a fc68f389 e3c45d9b eb2638bc
+    preview: curl -i "$INGRESS_GW_ADDRESS/openai" \
+  content: |2-
+       {{< doc-test paths="guardrails-conditional-reversible" >}}
+       YAMLTest -f - <<'EOF'
+       - name: with x-guardrail strict the regex guard rejects the prompt
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: /openai
+           method: POST
+           headers:
+             content-type: application/json
+             x-guardrail: strict
+           body: |
+             {"model":"gpt-4o-mini","messages":[{"role":"user","content":"Tell me about the secret project"}]}
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 403
+           bodyContains: Rejected by the strict guard
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 2272d66c4d6a937d
+    lang: yaml
+    lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 a432b5b0 8af957d1 36184fa5 588a5d84 94ae49d1 450c56e0 6666820d bb85cefe ad3afdb1 328d5627 14ddcd05 07ba09f8 eeb7e2a3 f51fdba0 8096ca96 8693faa9 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="guardrails-conditional-reversible" >}}
+       YAMLTest -f - <<'EOF'
+       - name: the reversible masking policy is accepted with the Valid reason
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: prompt-guard
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Valid"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 20cae86a626702eb
+    lang: sh
+    lines: b7e1aadf fc68f389 8c8fb8e2
+    preview: curl "$INGRESS_GW_ADDRESS/openai" \
+  content: |2-
+       {{< doc-test paths="guardrails-conditional-reversible" >}}
+       # The backend is the in-cluster httpbun mock (see openai-setup), which does not
+       # reliably repeat the prompt, so the restored address cannot be asserted. Check
+       # that the masked request succeeds and that no unique placeholder leaks to the client.
+       RESP=""
+       for attempt in $(seq 1 15); do
+         RESP=$(curl -s --max-time 30 -w '\n%{http_code}' "$INGRESS_GW_ADDRESS/openai" \
+           -H "content-type: application/json" \
+           -d '{"model":"gpt-4o-mini","messages":[{"role":"user","content":"Repeat this address: jane.doe@example.com"}]}')
+         [ "$(tail -n1 <<<"$RESP")" = "200" ] && break
+         sleep 2
+       done
+       echo "$RESP"
+       [ "$(tail -n1 <<<"$RESP")" = "200" ] || { echo "expected HTTP 200"; exit 1; }
+       if grep -q '<agw_' <<<"$RESP"; then echo "a reversible placeholder reached the client"; exit 1; fi
+       {{< /doc-test >}}

@@ -1,0 +1,103 @@
+format: 1
+source: assets/agw-docs/pages/standalone/sts-token-exchange/elicitations/downstream-only.md
+blocks:
+- ed67b71320275cfc yaml
+- 17474c0de835f173 yaml
+- e0cbc66f3840b0d0 sh
+- 9cdc439862bd5a8e console
+- f8015802a1e97814 sh
+- d4354f515c911080 json
+- ba81df982e4a85c5 sh
+- 1843beef398d3e5f json
+tags:
+- paths: mcp-elicitation-brokered-downstream-only
+  block: 2
+  fingerprint: e0cbc66f3840b0d0
+  lang: sh
+  lines: e0cbc66f
+  preview: curl -i http://localhost:3000/mcp
+  form:
+    attr: paths="mcp-elicitation-brokered-downstream-only"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-downstream-only
+  block: 4
+  fingerprint: f8015802a1e97814
+  lang: sh
+  lines: f8015802
+  preview: curl -s http://localhost:3000/.well-known/oauth-protected-resource/mcp | jq '{re
+  form:
+    attr: paths="mcp-elicitation-brokered-downstream-only"
+    only: true
+    lead: ' '
+- paths: mcp-elicitation-brokered-downstream-only
+  block: 6
+  fingerprint: ba81df982e4a85c5
+  lang: sh
+  lines: ba81df98
+  preview: curl -s http://localhost:3000/.well-known/oauth-authorization-server/mcp | jq '{
+  form:
+    attr: paths="mcp-elicitation-brokered-downstream-only"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: 'Step 3: Sign in and call a tool'
+    line: 74f8eb1c59a76bdf
+    occurrence: 0
+    words: d9c0d341 ea62dcb6 21a355f1 56e57ada 2eace268
+    block_before:
+      block: 7
+      fingerprint: 1843beef398d3e5f
+      lang: json
+      lines: 021fb596 436b5498 cc0e23dc 5dcb6a31 77a8a270 d10b36aa
+      preview: '{'
+  content: |-
+    {{< doc-test paths="mcp-elicitation-brokered-downstream-only" >}}
+    # ============================================================================
+    # Doc test coverage for "Downstream-only login" (standalone; comments not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The discovery checks on the page (chained after brokered setup).
+    #   * Step 3 without a browser: the same OAuth requests that MCP Inspector
+    #     makes (registration, PKCE authorize, Keycloak login as alice, the
+    #     issuer's downstream callback, and the token request), then an MCP
+    #     initialize and an Echo tool call with the issued token, and the STS
+    #     log line that the page quotes.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * MCP Inspector itself and its UI (no browser in CI). The Keycloak login
+    #     form is posted with curl instead.
+    #   * The review-only YAML in Step 1 is checked by the schema test.
+    JAR=$(mktemp)
+    REDIRECT_URI="http://localhost:6274/oauth/callback"
+    curl -fsS -X POST http://localhost:3000/oauth-issuer/register -H 'Content-Type: application/json' \
+      -d "{\"client_name\":\"doc-test\",\"redirect_uris\":[\"${REDIRECT_URI}\"]}" >/dev/null
+    pkce_pair
+    AUTH_URL="http://localhost:3000/oauth-issuer/authorize?client_id=agw-issuer&response_type=code&state=doc-test-downstream&redirect_uri=$(urlenc "$REDIRECT_URI")&code_challenge=${PKCE_CHALLENGE}&code_challenge_method=S256&resource=$(urlenc http://localhost:3000/mcp)"
+    KC_PAGE=$(follow_redirects_until "http://localhost:8080/realms/downstream-mcp/" "$AUTH_URL" "$JAR")
+    AFTER_LOGIN=$(kc_form_login "$KC_PAGE" alice alice-password "$JAR")
+    CLIENT_CB=$(follow_redirects_until "$REDIRECT_URI" "$AFTER_LOGIN" "$JAR")
+    [ "$(query_param "$CLIENT_CB" state)" = "doc-test-downstream" ] || { echo "FAIL: state mismatch in $CLIENT_CB" >&2; exit 1; }
+    CODE=$(query_param "$CLIENT_CB" code)
+    TOKEN_RESP=$(curl -fsS -X POST http://localhost:3000/oauth-issuer/token \
+      --data-urlencode grant_type=authorization_code --data-urlencode "code=${CODE}" \
+      --data-urlencode client_id=agw-issuer --data-urlencode "redirect_uri=${REDIRECT_URI}" \
+      --data-urlencode "code_verifier=${PKCE_VERIFIER}")
+    DOWNSTREAM_TOKEN=$(jq -er .access_token <<<"$TOKEN_RESP")
+    HDRS=$(mktemp)
+    curl -fsS -D "$HDRS" -o /dev/null -X POST http://localhost:3000/mcp \
+      -H "Authorization: Bearer ${DOWNSTREAM_TOKEN}" -H 'Content-Type: application/json' \
+      -H 'Accept: application/json, text/event-stream' \
+      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"doc-test","version":"1"}}}'
+    SID=$(awk 'tolower($1) == "mcp-session-id:" {gsub("\r", "", $2); print $2}' "$HDRS")
+    [ -n "$SID" ] || { echo "FAIL: no mcp-session-id" >&2; cat "$HDRS" >&2; exit 1; }
+    curl -fsS -o /dev/null -X POST http://localhost:3000/mcp -H "Authorization: Bearer ${DOWNSTREAM_TOKEN}" \
+      -H "Mcp-Session-Id: ${SID}" -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+      -d '{"jsonrpc":"2.0","method":"notifications/initialized"}'
+    ECHO_OUT=$(curl -fsS -X POST http://localhost:3000/mcp -H "Authorization: Bearer ${DOWNSTREAM_TOKEN}" \
+      -H "Mcp-Session-Id: ${SID}" -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+      -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"echo","arguments":{"message":"Hello from downstream-only login"}}}')
+    grep -q 'Echo: Hello from downstream-only login' <<<"$ECHO_OUT" || { echo "FAIL: echo result" >&2; echo "$ECHO_OUT" >&2; exit 1; }
+    grep -F '"msg":"downstream callback processed, completing downstream-only flow"' "$DT_LOGS/sts.log" >/dev/null \
+      || { echo "FAIL: STS log line not found" >&2; tail -n 40 "$DT_LOGS/sts.log" >&2; exit 1; }
+    {{< /doc-test >}}

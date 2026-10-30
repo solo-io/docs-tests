@@ -2,7 +2,7 @@
 """'schema'-type doc test: statically validate the configuration a doc page shows
 a reader against the real schema it has to satisfy.
 
-Unlike the 'functional'/'live'/'credentialed' types, this never stands up a cluster
+Unlike the 'functional' type, this never stands up a cluster
 or executes anything. It catches renamed/removed/mistyped fields for near-zero
 cost, and runs on every PR regardless of vendor credentials or live infrastructure.
 
@@ -54,7 +54,6 @@ from doc_test_run import (
     DEFAULT_OPTIONS,
     _mode_segment,
     build_test_cases,
-    build_test_cases_from_file,
     infer_version_from_sources,
     load_annotation_reports,
     parse_front_matter,
@@ -335,17 +334,24 @@ class StepResult:
     read: Set[Path] = field(default_factory=set)
 
 
+# Set in main(), before the pool forks, from --upstream-root and
+# --upstream-versions: where a {{< rebase >}} shell's content comes from. Empty
+# for a site with no shells.
+_UPSTREAM: Dict[str, Any] = {}
+
+
 def _extractor(repo_root: Path, main_rel: str, sources: List[Dict[str, Any]], version: str, mode: str,
                docs_tests_root: Optional[Path]) -> Extractor:
     definition = {
         "name": "schema-check",
         "main_file": main_rel,
-        "context": {"version": version, "product": mode},
+        "context": {"version": version, "product": mode, "conditions": _UPSTREAM.get("conditions", [])},
         "options": SCHEMA_OPTIONS,
         "sources": sources,
         "output": {},
     }
-    extractor = Extractor(repo_root=repo_root, definition=definition, docs_tests_root=docs_tests_root)
+    extractor = Extractor(repo_root=repo_root, definition=definition, docs_tests_root=docs_tests_root,
+                          upstream_root=_UPSTREAM.get("root"), upstream_version_for=_UPSTREAM.get("versions"))
     extractor.walk()
     return extractor
 
@@ -591,6 +597,26 @@ def main() -> int:
         default=None,
         help="Path to a docs-tests checkout, for {{< doc-test file=\"...\" >}} external content.",
     )
+    parser.add_argument(
+        "--upstream-root",
+        default=None,
+        help="Checkout of the repo this site rebases its content from, as in doc_test_run.py. "
+        "Without it a {{< rebase >}} shell has nothing to check.",
+    )
+    parser.add_argument(
+        "--upstream-versions",
+        default=None,
+        metavar="JSON",
+        help="Which upstream version directory feeds each of this site's versions, as in "
+        "doc_test_run.py (e.g. '{\"latest\": \"main\"}'). Required with --upstream-root.",
+    )
+    parser.add_argument(
+        "--condition",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help="Also match conditional-text gates that name NAME, as in doc_test_run.py. Repeatable.",
+    )
     parser.add_argument("--docs-glob", default="content/docs/**/*.md", help="Glob to discover markdown docs")
     parser.add_argument("--file", nargs="+", default=None, metavar="FILE", help="Only check test scenarios declared on these file(s)")
     parser.add_argument(
@@ -628,6 +654,20 @@ def main() -> int:
 
     repo_root = Path(args.repo_root).resolve()
     docs_tests_root = resolve_docs_tests_root(args.docs_tests_root)
+    _UPSTREAM.clear()
+    _UPSTREAM["conditions"] = args.condition
+    if args.upstream_root:
+        if not args.upstream_versions:
+            # Same rule as doc_test_run.py: a shell with no version map expands
+            # to nothing, and would fail for the wrong reason.
+            logger.error("--upstream-root was given without --upstream-versions.")
+            return 1
+        try:
+            _UPSTREAM["versions"] = json.loads(args.upstream_versions)
+        except json.JSONDecodeError as exc:
+            logger.error("--upstream-versions is not valid JSON: %s", exc)
+            return 1
+        _UPSTREAM["root"] = Path(args.upstream_root).resolve()
     try:
         schemas_by_version = load_schemas(parse_versioned(args.crd_dir), parse_versioned(args.config_schema))
     except ValueError as exc:
@@ -639,17 +679,16 @@ def main() -> int:
                     "yes" if s.config is not None else "no")
     kubeconform = Kubeconform(args.kubeconform, args.kubernetes_version) if args.kubeconform else None
 
+    test_cases, _, _, _ = build_test_cases(
+        repo_root, args.docs_glob, generated_dir=repo_root / "out/tests/generated",
+        docs_tests_root=docs_tests_root,
+    )
     if args.file:
-        test_cases = []
-        for f in args.file:
-            md_file = repo_root / f if not Path(f).is_absolute() else Path(f)
-            cases, _ = build_test_cases_from_file(repo_root, md_file, generated_dir=repo_root / "out/tests/generated")
-            test_cases.extend(cases)
-    else:
-        test_cases, _, _, _ = build_test_cases(
-            repo_root, args.docs_glob, generated_dir=repo_root / "out/tests/generated",
-            docs_tests_root=docs_tests_root,
-        )
+        # Filter the full discovery rather than reading each file's front
+        # matter: most scenarios are declared in the manifests, and reading
+        # only front matter found none of them.
+        wanted = {(repo_root / f if not Path(f).is_absolute() else Path(f)).resolve() for f in args.file}
+        test_cases = [tc for tc in test_cases if Path(tc.document).resolve() in wanted]
 
     schema_cases = [tc for tc in test_cases if tc.type == "schema"]
     if not schema_cases:

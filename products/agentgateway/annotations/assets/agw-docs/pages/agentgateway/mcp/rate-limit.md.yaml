@@ -52,7 +52,7 @@ hidden:
        - name: wait for mcp-rate-limit policy to be accepted
          wait:
            target:
-             kind: AgentgatewayPolicy
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
              metadata:
                namespace: default
                name: mcp-rate-limit

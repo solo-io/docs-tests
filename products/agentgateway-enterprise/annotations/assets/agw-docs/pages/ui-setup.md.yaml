@@ -1,0 +1,116 @@
+format: 1
+source: assets/agw-docs/pages/ui-setup.md
+blocks:
+- 32352802a372cd3c sh
+- 5fba5f3bf561451f sh
+- 15d0eb531f2179ad
+- fc81a130b8fa922f sh
+- 5fba5f3bf561451f sh
+- d0f93d01a0df9ae9
+- 3241b92b3dbee908 yaml
+- 5fba5f3bf561451f sh
+- 544b3339c065d27a console
+- 3500bc45f649e4cb console
+- 2f6429b98181686d sh
+hidden:
+- after:
+    block: 3
+    fingerprint: fc81a130b8fa922f
+    lang: sh
+    lines: 2d065637 9d671c51 736e1ed1 f7ad5ab4 7ec6de79
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  content: |2-
+       {{< doc-test paths="enterprise-ui-setup" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       # The CPU request overrides are test-only. The CI kind node has 2 CPUs and is
+       # already full, and ClickHouse alone requests 2 CPUs by default, so the
+       # ClickHouse and telemetry collector pods could not be scheduled.
+       helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} \
+         --namespace {{< reuse "agw-docs/snippets/namespace.md" >}} \
+         --version {{< reuse "agw-docs/versions/helm-version-flag.md" >}} \
+         --reset-then-reuse-values \
+         --set ui.enabled=true \
+         --set ui.clickhouse.resources.requests.cpu=100m \
+         --set ui.clickhouse.resources.requests.memory=1Gi \
+         --set ui.backend.resources.requests.cpu=50m \
+         --set ui.telemetry.k8sobjects.resources.requests.cpu=50m \
+         --set ui.telemetry.collector.resources.requests.cpu=50m
+       # ============================================================================
+       # Doc test coverage for "Set up the UI" (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Install the UI": the enterprise-agentgateway release upgrades with the
+       #     enterprise-agentgateway-ui subchart turned on, and the UI, k8sobjects
+       #     collector, telemetry collector, and ClickHouse workloads roll out.
+       #   * "Configure tracing": the tracing policy is accepted.
+       #   * The UI Service answers HTTP inside the cluster.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * "Open the UI", "Generate traffic", "Review traces": port-forward and
+       #     browser steps. The CI runner has no browser and allows no port-forward.
+       #     Trace storage is checked by the traces setup scenario instead.
+       #   * The 2.3.x and 2026.7.1 management chart install (other version trees).
+       kubectl rollout status deployment/{{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
+       kubectl rollout status deployment/enterprise-agentgateway-ui-k8sobjects-collector -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
+       kubectl rollout status statefulset/{{< reuse "agw-docs/snippets/solo-ui/clickhouse-statefulset.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
+       kubectl rollout status statefulset/{{< reuse "agw-docs/snippets/solo-ui/telemetry-collector.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 3241b92b3dbee908
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 eb97063c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 390f7e12 70c97555 f9cdd0ae 0bebd850 0d6480f0 5a41b93f 3e371bf8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="enterprise-ui-setup" >}}
+       # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
+       # that the extractor renders empty unless it runs with --product agentgateway.
+       kubectl apply -f- <<EOF
+       apiVersion: {{< reuse "agw-docs/snippets/api-version.md" >}}
+       kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+       metadata:
+         name: tracing
+         namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+       spec:
+         targetRefs:
+         - group: gateway.networking.k8s.io
+           kind: Gateway
+           name: agentgateway-proxy
+         frontend:
+           tracing:
+             backendRef:
+               name: {{< reuse "agw-docs/snippets/solo-ui/telemetry-collector.md" >}}
+               namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+               kind: Service
+               port: 4317
+             randomSampling: "true"
+       EOF
+       # Policy check 1
+       YAMLTest -f - <<'EOF'
+       - name: the tracing policy is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: tracing
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Give the proxy a moment to load the new policy before the next request.
+       sleep 10
+       code=""
+       for i in $(seq 1 30); do
+         code=$(kubectl run ui-check-$RANDOM -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --quiet --image=curlimages/curl:8.11.1 -- \
+           curl -s -o /dev/null -w '%{http_code}' http://{{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}}.{{< reuse "agw-docs/snippets/namespace.md" >}}.svc.cluster.local:80/ 2>/dev/null || true)
+         if echo "$code" | grep -Eq '^[23][0-9][0-9]'; then break; fi
+         sleep 10
+       done
+       echo "UI returned: $code"
+       echo "$code" | grep -Eq '^[23][0-9][0-9]'
+       {{< /doc-test >}}
