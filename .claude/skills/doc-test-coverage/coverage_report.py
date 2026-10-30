@@ -101,7 +101,12 @@ def snapshot(checkout: Path, manifests: list[tuple[Path, str, dict]], dest: Path
 
 
 def fetch_results(slug: str, workflow: str, branch: str, tmp: Path) -> tuple[dict | None, dict | None]:
-    """The newest completed scheduled or manual run on the default branch.
+    """The newest completed scheduled or manual run on the default branch that
+    uploaded results.
+
+    A run that failed before testing anything, such as in discovery, uploads
+    no results. It is skipped rather than reported, because it says nothing
+    about the pages.
 
     Some workflows upload one merged doc-test-results artifact; others only
     upload a test-results.yaml per shard. Shards are merged when there is no
@@ -114,22 +119,23 @@ def fetch_results(slug: str, workflow: str, branch: str, tmp: Path) -> tuple[dic
     except subprocess.CalledProcessError as exc:
         print(f"  {slug}: could not list {workflow} runs: {exc.stderr.strip()}", file=sys.stderr)
         return None, None
-    picked = next(
-        (r for r in runs if r["status"] == "completed" and r["event"] in ("schedule", "workflow_dispatch")),
-        None,
-    )
+    candidates = [r for r in runs if r["status"] == "completed" and r["event"] in ("schedule", "workflow_dispatch")]
+    picked = None
+    for r in candidates:
+        rid = str(r["databaseId"])
+        out = tmp / f"results-{rid}"
+        try:
+            run(["gh", "run", "download", rid, "-R", slug, "-n", "doc-test-results", "-D", str(out)])
+        except subprocess.CalledProcessError:
+            try:
+                run(["gh", "run", "download", rid, "-R", slug, "-p", "test-result-*", "-D", str(out)])
+            except subprocess.CalledProcessError:
+                print(f"  {slug} run {rid}: no result artifacts, trying an older run", file=sys.stderr)
+                continue
+        picked = r
+        break
     if not picked:
         return None, None
-    out = tmp / f"results-{picked['databaseId']}"
-    rid = str(picked["databaseId"])
-    try:
-        run(["gh", "run", "download", rid, "-R", slug, "-n", "doc-test-results", "-D", str(out)])
-    except subprocess.CalledProcessError:
-        try:
-            run(["gh", "run", "download", rid, "-R", slug, "-p", "test-result-*", "-D", str(out)])
-        except subprocess.CalledProcessError as exc:
-            print(f"  {slug} run {rid}: no result artifacts: {exc.stderr.strip()}", file=sys.stderr)
-            return None, picked
     merged: dict = {"tests": {}, "skipped_needs_update": {}}
     for f in sorted(out.rglob("test-results.yaml")):
         data = runner.yaml.safe_load(f.read_text(encoding="utf-8")) or {}
