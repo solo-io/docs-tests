@@ -1,0 +1,488 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/health-checks/backend.md
+blocks:
+- 23e7170113efa0e1 yaml
+- 830f0218fe02c2f5 yaml
+- 999b2bd65b632383 yaml
+- e51594620064e89b sh
+- d3140f09c3dc4854 sh
+- deb38abd79a6ca4f console
+- 0ddf32bb7964ac1e yaml
+- ff25a4449f3ffdd8 sh
+- deda474c8fcdbf9a console
+- e51594620064e89b sh
+- d3140f09c3dc4854 sh
+- be4500c18affafa1 console
+- 8e6fe6ec71eb2589 yaml
+- ea168505da001e31 sh
+- f5e5ec23ceec9629 sh
+- 50a4c9b004e641e1 sh
+- c748eea8f5654f92 console
+- b2e2b80f8aae812a sh
+- 37315af7adcdbbb1 sh
+tags:
+- paths: health-checks-backend,health-checks-backend-panic-default
+  block: 1
+  fingerprint: 830f0218fe02c2f5
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 0f6ce08a 0f10c5bc 36184fa5 8432e015 5c64ae1c 0ff65a1a 82601aaa bca8e5f7 ad63f385 cb3f91d5 58584366 ab78925c 8c8c4228 3972a2e8 0f10c5bc 36184fa5 56fbcbf5 8432e015 839a5cac 5c64ae1c ba8da211 a58565b2 8c8c4228 fa1e8330 5c64ae1c ba8da211 36184fa5 04968f51 234b82cb 2d122599 0ff65a1a 11edf656 8db70061 11d29938 f6c28509 82e4a3b5 2d364cf4 eb134a4a 52f1a00e 33588bdc a12297ae cb3f91d5 58584366 ab78925c 8c8c4228 f379045b 0f10c5bc 36184fa5 eb3a3504 8432e015 839a5cac 5c64ae1c 81afc105 a58565b2 8c8c4228 fa1e8330 5c64ae1c 81afc105 36184fa5 04968f51 234b82cb 2d122599 0ff65a1a 11edf656 8db70061 11d29938 f6c28509 82e4a3b5 c7485f5f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="health-checks-backend,health-checks-backend-panic-default"
+    only: true
+    lead: ' '
+- paths: health-checks-backend,health-checks-backend-panic-default
+  block: 2
+  fingerprint: 999b2bd65b632383
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 0f6ce08a 0f10c5bc 36184fa5 d3d416e7 82601aaa 791ec828 301e1bfa 19975a45 3de9d845 a3b86ab6 15afb906 bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="health-checks-backend,health-checks-backend-panic-default"
+    only: true
+    lead: ' '
+- paths: health-checks-backend,health-checks-backend-panic-default
+  block: 6
+  fingerprint: 0ddf32bb7964ac1e
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 0f6ce08a 0f10c5bc 36184fa5 588a5d84 15afb906 9d5a3bb5 0d6480f0 43b04ed6 7bfef072 1c31dda0 7c781356 03586b0f 06cc006a fc9ea4b8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="health-checks-backend,health-checks-backend-panic-default"
+    only: true
+    lead: ' '
+- paths: health-checks-backend
+  block: 12
+  fingerprint: 8e6fe6ec71eb2589
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 0f6ce08a 0f10c5bc 36184fa5 588a5d84 15afb906 9d5a3bb5 0d6480f0 43b04ed6 7bfef072 1c31dda0 7c781356 03586b0f 06cc006a fc9ea4b8 5679d65b f34295ce 2b04ea41 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="health-checks-backend"
+    only: true
+    lead: ' '
+- paths: health-checks-backend,health-checks-backend-panic-default
+  block: 13
+  fingerprint: ea168505da001e31
+  lang: sh
+  lines: 90a627c3 6e636d09
+  preview: kubectl scale deployment health-check-demo-ok -n httpbin --replicas=0
+  form:
+    attr: paths="health-checks-backend,health-checks-backend-panic-default"
+    only: true
+    lead: ' '
+- paths: health-checks-backend,health-checks-backend-panic-default
+  block: 17
+  fingerprint: b2e2b80f8aae812a
+  lang: sh
+  lines: b2e2b80f
+  preview: kubectl scale deployment health-check-demo-ok -n httpbin --replicas=2
+  form:
+    attr: paths="health-checks-backend,health-checks-backend-panic-default"
+    only: true
+    lead: ' '
+- paths: health-checks-backend,health-checks-backend-panic-default
+  block: 18
+  fingerprint: 37315af7adcdbbb1
+  lang: sh
+  lines: 082ea5d7 701b0d22 da208c86 ff7324c3
+  preview: kubectl delete BackendConfigPolicy health-check-demo -n httpbin
+  form:
+    attr: paths="health-checks-backend,health-checks-backend-panic-default"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 830f0218fe02c2f5
+    lang: yaml
+    lines: 16c71da1 f1540154 0d6480f0 8c8c4228 0f6ce08a 0f10c5bc 36184fa5 8432e015 5c64ae1c 0ff65a1a 82601aaa bca8e5f7 ad63f385 cb3f91d5 58584366 ab78925c 8c8c4228 3972a2e8 0f10c5bc 36184fa5 56fbcbf5 8432e015 839a5cac 5c64ae1c ba8da211 a58565b2 8c8c4228 fa1e8330 5c64ae1c ba8da211 36184fa5 04968f51 234b82cb 2d122599 0ff65a1a 11edf656 8db70061 11d29938 f6c28509 82e4a3b5 2d364cf4 eb134a4a 52f1a00e 33588bdc a12297ae cb3f91d5 58584366 ab78925c 8c8c4228 f379045b 0f10c5bc 36184fa5 eb3a3504 8432e015 839a5cac 5c64ae1c 81afc105 a58565b2 8c8c4228 fa1e8330 5c64ae1c 81afc105 36184fa5 04968f51 234b82cb 2d122599 0ff65a1a 11edf656 8db70061 11d29938 f6c28509 82e4a3b5 c7485f5f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="health-checks-backend,health-checks-backend-panic-default" >}}
+    kubectl rollout status deployment/health-check-demo-failing -n httpbin --timeout=300s
+    kubectl rollout status deployment/health-check-demo-ok -n httpbin --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 999b2bd65b632383
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 0f6ce08a 0f10c5bc 36184fa5 d3d416e7 82601aaa 791ec828 301e1bfa 19975a45 3de9d845 a3b86ab6 15afb906 bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="health-checks-backend,health-checks-backend-panic-default" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the health-check-demo HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: health-check-demo
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the health-check-demo HTTPRoute backend reference to resolve
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: health-check-demo
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: deb38abd79a6ca4f
+    lang: console
+    lines: 739b4a81 be5b04f2
+    preview: 20 200
+  content: |-
+    {{< doc-test paths="health-checks-backend,health-checks-backend-panic-default" >}}
+    # Send 30 requests and count the response codes.
+    send30() {
+      for n in $(seq 1 30); do
+        curl -s -o /dev/null -w "%{http_code}\n" --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/" -H "host: healthcheck.example" || true
+      done
+    }
+    # Without a health check, some requests reach the failing pod: the 30 requests
+    # return both 200 and 503, and nothing else.
+    ok=0
+    for round in $(seq 1 30); do
+      codes=$(send30)
+      n200=$(grep -c '^200$' <<<"$codes" || true)
+      n503=$(grep -c '^503$' <<<"$codes" || true)
+      if [ "$n200" -gt 0 ] && [ "$n503" -gt 0 ] && [ $((n200 + n503)) -eq 30 ]; then ok=1; break; fi
+      echo "round $round: $n200 x 200 and $n503 x 503 of 30 requests; waiting for the route to reach all three pods"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "before the health check, expected a mix of 200 and 503 responses, got:"; sort <<<"$codes" | uniq -c; exit 1; }
+    echo "before the health check: $n200 x 200, $n503 x 503"
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 0ddf32bb7964ac1e
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 0f6ce08a 0f10c5bc 36184fa5 588a5d84 15afb906 9d5a3bb5 0d6480f0 43b04ed6 7bfef072 1c31dda0 7c781356 03586b0f 06cc006a fc9ea4b8 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="health-checks-backend,health-checks-backend-panic-default" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the health-check-demo BackendConfigPolicy (active HTTP health check) to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: health-check-demo
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: deda474c8fcdbf9a
+    lang: console
+    lines: 33cc0881 7fab37df 33cc0881
+    preview: kube_httpbin_health-check-demo_8000::10.XX.X.XX:8000::health_flags::healthy
+  content: |-
+    {{< doc-test paths="health-checks-backend,health-checks-backend-panic-default" >}}
+    # Envoy's health flags for the sample app's endpoints, read from the admin
+    # interface inside the proxy pod (127.0.0.1:19000; busybox wget in the image).
+    hc_flags() {
+      kubectl exec -n kgateway-system deploy/http -- wget -qO- http://127.0.0.1:19000/clusters 2>/dev/null \
+        | grep 'health-check-demo' | grep '::health_flags::' || true
+    }
+    # IPs of the running (not terminating) pods of one Deployment variant.
+    pod_ips() {
+      kubectl get pods -n httpbin -l "app=health-check-demo,variant=$1" -o json \
+        | jq -r '.items[] | select(.metadata.deletionTimestamp == null) | .status.podIP // empty'
+    }
+    # The health flags Envoy reports for one pod IP, from $flags.
+    flags_for() {
+      awk -F'::' -v host="$1:8000" '$2 == host {print $4}' <<<"$flags"
+    }
+    # The page's port-forward is not run. Envoy must mark exactly the failing pod
+    # /failed_active_hc and both pods of the ok Deployment healthy.
+    ok=0
+    for i in $(seq 1 60); do
+      flags=$(hc_flags)
+      failing=$(pod_ips failing)
+      healthy=$(pod_ips ok)
+      ok=1
+      { [ "$(wc -w <<<"$failing")" -eq 1 ] && [ "$(wc -w <<<"$healthy")" -eq 2 ]; } || ok=0
+      for ip in $failing; do [[ "$(flags_for "$ip")" == *failed_active_hc* ]] || ok=0; done
+      for ip in $healthy; do [ "$(flags_for "$ip")" = "healthy" ] || ok=0; done
+      [ "$ok" = "1" ] && break
+      echo "attempt $i: waiting for Envoy to mark only the failing pod (${failing:-none}) /failed_active_hc"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "Envoy health flags do not show only the failing pod as unhealthy:"; echo "$flags"; echo "failing pod: $failing; ok pods: $healthy"; exit 1; }
+    echo "$flags"
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: be4500c18affafa1
+    lang: console
+    lines: be4500c1
+    preview: 30 200
+  content: |-
+    {{< doc-test paths="health-checks-backend,health-checks-backend-panic-default" >}}
+    # Send 30 requests and count the response codes.
+    send30() {
+      for n in $(seq 1 30); do
+        curl -s -o /dev/null -w "%{http_code}\n" --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/" -H "host: healthcheck.example" || true
+      done
+    }
+    # With the health check, the gateway stops sending requests to the failing pod:
+    # all 30 requests return 200.
+    ok=0
+    for round in $(seq 1 30); do
+      codes=$(send30)
+      n200=$(grep -c '^200$' <<<"$codes" || true)
+      [ "$n200" -eq 30 ] && { ok=1; break; }
+      echo "round $round: $n200 of 30 requests returned 200 with the health check; retrying"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "with the health check, not all requests returned 200:"; sort <<<"$codes" | uniq -c; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 8e6fe6ec71eb2589
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 0f6ce08a 0f10c5bc 36184fa5 588a5d84 15afb906 9d5a3bb5 0d6480f0 43b04ed6 7bfef072 1c31dda0 7c781356 03586b0f 06cc006a fc9ea4b8 5679d65b f34295ce 2b04ea41 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="health-checks-backend" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the health-check-demo BackendConfigPolicy (roundRobin, healthyPanicThreshold 0) to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: health-check-demo
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 8e6fe6ec71eb2589
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 0f6ce08a 0f10c5bc 36184fa5 588a5d84 15afb906 9d5a3bb5 0d6480f0 43b04ed6 7bfef072 1c31dda0 7c781356 03586b0f 06cc006a fc9ea4b8 5679d65b f34295ce 2b04ea41 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="health-checks-backend" >}}
+    # Test-only: the updated policy reaches Envoy. The sample app's cluster now has
+    # common_lb_config.healthy_panic_threshold (0 prints as an empty object).
+    ok=0
+    for i in $(seq 1 60); do
+      has=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- 'http://127.0.0.1:19000/config_dump?resource=dynamic_active_clusters' 2>/dev/null \
+        | jq -r '[.configs[]?.cluster | select(.name | test("health-check-demo")) | .common_lb_config // {} | has("healthy_panic_threshold")] | any' 2>/dev/null) || true
+      [ "$has" = "true" ] && { ok=1; break; }
+      echo "attempt $i: healthy_panic_threshold not yet on the health-check-demo cluster; retrying"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "the health-check-demo cluster in Envoy has no healthy_panic_threshold"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: ea168505da001e31
+    lang: sh
+    lines: 90a627c3 6e636d09
+    preview: kubectl scale deployment health-check-demo-ok -n httpbin --replicas=0
+  content: |-
+    {{< doc-test paths="health-checks-backend,health-checks-backend-panic-default" >}}
+    # Envoy's health flags for the sample app's endpoints, read from the admin
+    # interface inside the proxy pod (127.0.0.1:19000; busybox wget in the image).
+    hc_flags() {
+      kubectl exec -n kgateway-system deploy/http -- wget -qO- http://127.0.0.1:19000/clusters 2>/dev/null \
+        | grep 'health-check-demo' | grep '::health_flags::' || true
+    }
+    # IPs of the running (not terminating) pods of one Deployment variant.
+    pod_ips() {
+      kubectl get pods -n httpbin -l "app=health-check-demo,variant=$1" -o json \
+        | jq -r '.items[] | select(.metadata.deletionTimestamp == null) | .status.podIP // empty'
+    }
+    # The health flags Envoy reports for one pod IP, from $flags.
+    flags_for() {
+      awk -F'::' -v host="$1:8000" '$2 == host {print $4}' <<<"$flags"
+    }
+    # After the scale-down, the failing pod is the only endpoint Envoy knows for
+    # the sample app, and it is marked /failed_active_hc.
+    ok=0
+    for i in $(seq 1 60); do
+      flags=$(hc_flags)
+      failing=$(pod_ips failing)
+      ok=1
+      [ "$(grep -c . <<<"$flags" || true)" -eq 1 ] || ok=0
+      for ip in $failing; do [[ "$(flags_for "$ip")" == *failed_active_hc* ]] || ok=0; done
+      [ -n "$failing" ] || ok=0
+      [ "$ok" = "1" ] && break
+      echo "attempt $i: waiting for the failing pod to be the only, unhealthy endpoint"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "after the scale-down, Envoy does not show the failing pod as the only, unhealthy endpoint:"; echo "$flags"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: c748eea8f5654f92
+    lang: console
+    lines: b12e448b ab5df625 7ac9c585
+    preview: HTTP/1.1 503 Service Unavailable
+  content: |-
+    {{< doc-test paths="health-checks-backend" >}}
+    # With healthyPanicThreshold 0, the proxy itself answers 503 "no healthy
+    # upstream" and does not fall back to the unhealthy pod.
+    ok=0
+    for i in $(seq 1 60); do
+      resp=$(curl -s --max-time 5 -w '\n%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/" -H "host: healthcheck.example") || true
+      code=$(tail -n1 <<<"$resp")
+      if [ "$code" = "503" ] && grep -q 'no healthy upstream' <<<"$resp"; then ok=1; break; fi
+      echo "attempt $i: got '$code', waiting for 503 no healthy upstream"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "expected 503 no healthy upstream with the panic threshold at 0, got:"; echo "$resp"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: c748eea8f5654f92
+    lang: console
+    lines: b12e448b ab5df625 7ac9c585
+    preview: HTTP/1.1 503 Service Unavailable
+  content: |-
+    {{< doc-test paths="health-checks-backend-panic-default" >}}
+    # With the default panic threshold (50%), Envoy is in panic mode and sends the
+    # request to the unhealthy pod anyway: the 503 is the app's error response,
+    # not the proxy's "no healthy upstream".
+    ok=0
+    for i in $(seq 1 60); do
+      resp=$(curl -s --max-time 5 -w '\n%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/" -H "host: healthcheck.example") || true
+      code=$(tail -n1 <<<"$resp")
+      if [ "$code" = "503" ] && ! grep -q 'no healthy upstream' <<<"$resp"; then ok=1; break; fi
+      echo "attempt $i: got '$code', waiting for the failing app's own 503"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "expected the failing app's 503 (panic mode) with the default panic threshold, got:"; echo "$resp"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: b2e2b80f8aae812a
+    lang: sh
+    lines: b2e2b80f
+    preview: kubectl scale deployment health-check-demo-ok -n httpbin --replicas=2
+  content: |-
+    {{< doc-test paths="health-checks-backend,health-checks-backend-panic-default" >}}
+    # Envoy's health flags for the sample app's endpoints, read from the admin
+    # interface inside the proxy pod (127.0.0.1:19000; busybox wget in the image).
+    hc_flags() {
+      kubectl exec -n kgateway-system deploy/http -- wget -qO- http://127.0.0.1:19000/clusters 2>/dev/null \
+        | grep 'health-check-demo' | grep '::health_flags::' || true
+    }
+    # IPs of the running (not terminating) pods of one Deployment variant.
+    pod_ips() {
+      kubectl get pods -n httpbin -l "app=health-check-demo,variant=$1" -o json \
+        | jq -r '.items[] | select(.metadata.deletionTimestamp == null) | .status.podIP // empty'
+    }
+    # The health flags Envoy reports for one pod IP, from $flags.
+    flags_for() {
+      awk -F'::' -v host="$1:8000" '$2 == host {print $4}' <<<"$flags"
+    }
+    # Send 30 requests and count the response codes.
+    send30() {
+      for n in $(seq 1 30); do
+        curl -s -o /dev/null -w "%{http_code}\n" --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/" -H "host: healthcheck.example" || true
+      done
+    }
+    # After the scale-up, the two new ok pods are marked healthy, the failing pod
+    # stays /failed_active_hc, and all requests return 200 again.
+    kubectl rollout status deployment/health-check-demo-ok -n httpbin --timeout=300s
+    ok=0
+    for i in $(seq 1 60); do
+      flags=$(hc_flags)
+      failing=$(pod_ips failing)
+      healthy=$(pod_ips ok)
+      ok=1
+      [ "$(wc -w <<<"$healthy")" -eq 2 ] || ok=0
+      for ip in $failing; do [[ "$(flags_for "$ip")" == *failed_active_hc* ]] || ok=0; done
+      for ip in $healthy; do [ "$(flags_for "$ip")" = "healthy" ] || ok=0; done
+      [ "$ok" = "1" ] && break
+      echo "attempt $i: waiting for Envoy to mark the scaled-up ok pods (${healthy:-none}) healthy"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "after the scale-up, Envoy health flags are not as expected:"; echo "$flags"; exit 1; }
+    ok=0
+    for round in $(seq 1 30); do
+      codes=$(send30)
+      n200=$(grep -c '^200$' <<<"$codes" || true)
+      [ "$n200" -eq 30 ] && { ok=1; break; }
+      echo "round $round: $n200 of 30 requests returned 200 after the scale-up; retrying"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "after the scale-up, not all requests returned 200:"; sort <<<"$codes" | uniq -c; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: b2e2b80f8aae812a
+    lang: sh
+    lines: b2e2b80f
+    preview: kubectl scale deployment health-check-demo-ok -n httpbin --replicas=2
+  content: |-
+    {{< doc-test paths="health-checks-backend" >}}
+    # Envoy's health flags for the sample app's endpoints, read from the admin
+    # interface inside the proxy pod (127.0.0.1:19000; busybox wget in the image).
+    hc_flags() {
+      kubectl exec -n kgateway-system deploy/http -- wget -qO- http://127.0.0.1:19000/clusters 2>/dev/null \
+        | grep 'health-check-demo' | grep '::health_flags::' || true
+    }
+    # IPs of the running (not terminating) pods of one Deployment variant.
+    pod_ips() {
+      kubectl get pods -n httpbin -l "app=health-check-demo,variant=$1" -o json \
+        | jq -r '.items[] | select(.metadata.deletionTimestamp == null) | .status.podIP // empty'
+    }
+    # The health flags Envoy reports for one pod IP, from $flags.
+    flags_for() {
+      awk -F'::' -v host="$1:8000" '$2 == host {print $4}' <<<"$flags"
+    }
+    # Test-only: fix the failing Deployment (no injected errors). Its replacement
+    # pod passes the health check, so Envoy marks every endpoint healthy and none
+    # /failed_active_hc.
+    kubectl set env deployment/health-check-demo-failing -n httpbin ERROR_RATE=0
+    kubectl rollout status deployment/health-check-demo-failing -n httpbin --timeout=300s
+    ok=0
+    for i in $(seq 1 60); do
+      flags=$(hc_flags)
+      all=$(pod_ips failing; pod_ips ok)
+      ok=1
+      [ "$(wc -w <<<"$all")" -eq 3 ] || ok=0
+      for ip in $all; do [ "$(flags_for "$ip")" = "healthy" ] || ok=0; done
+      grep -q 'failed_active_hc' <<<"$flags" && ok=0
+      [ "$ok" = "1" ] && break
+      echo "attempt $i: waiting for Envoy to mark all three endpoints healthy after the fix"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "after fixing the failing Deployment, Envoy does not mark every endpoint healthy:"; echo "$flags"; exit 1; }
+    echo "$flags"
+    {{< /doc-test >}}

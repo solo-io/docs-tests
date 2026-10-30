@@ -176,10 +176,60 @@ skip:
 - page: traffic-management/session-affinity/_index.md
 - page: traffic-management/transformations/_index.md
 scenarios:
-  access-logging-schema:
-    type: schema
+  access-logging:
+    # stdout fileSink with the page's jsonFormat: a request with a unique user
+    # agent must produce a JSON entry in the http proxy logs with every key from
+    # the format and values that match the request.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/access-logging2.2.md
     path: access-logging
+  access-logging-extauth-latency:
+    # Shown in main (2.5.x) only; in latest no page block applies and only the
+    # prerequisites run. A hidden step sets up the external auth guide's gRPC
+    # example (Istio ext-authz sample, basic-ext-auth GatewayExtension,
+    # Gateway-level TrafficPolicy). Allowed (200) and denied (403) requests must
+    # both log latency_us, bytesSent, and bytesReceived as digit strings.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/access-logging2.2.md
+    path: access-logging-extauth-latency
+  access-logging-route-source:
+    # Helm upgrade with enableRouteSourceMetadata: true, then route source
+    # metadata in the JSON access log: HTTPRoute httpbin/httpbin, with the rule
+    # format per version (2.4.x generated route name; 2.5.x _rule-0/_match-0).
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/access-logging2.2.md
+    path: access-logging-route-source
+  access-logging-string-format:
+    # stringFormat as a folded block scalar: each request is one plain-string
+    # line in the page's format in the http proxy logs.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/security/access-logging2.2.md
+    path: access-logging-string-format
+  access-logging-tcp:
+    # Shown in main (2.5.x) only; in latest no page block applies and only the
+    # prerequisite runs. A hidden step sets up the TCP listener guide's
+    # tcp-echo app, tcp-gateway, ReferenceGrant, and TCPRoute. One TCP
+    # connection must produce one JSON entry in the tcp-gateway proxy logs, and a
+    # statusCodeFilter on tcpSettings must be rejected with the page's message.
+    type: functional
+    needs:
+    - install-standard
+    source: kgw-docs/pages/security/access-logging2.2.md
+    path: access-logging-tcp
   acl:
     # Expected outcomes are computed from the client IP that the proxy sees (read
     # from X-Forwarded-For before any policy), because cloud-provider-kind and
@@ -388,10 +438,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/security/auth0/setup.md
     path: auth0-setup
-  backend-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/health-checks/backend.md
-    path: backend
   backend-tls-bcp:
     # The BackendConfigPolicy tabs, plus the TLS parameters snippet.
     type: functional
@@ -956,8 +1002,44 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/extproc.md
     path: header-manipulation
-  health-checks-gateway-schema:
-    type: schema
+  health-checks-backend:
+    # fake-service app behind one Service: 1 pod always returns 503, 2 pods OK.
+    # Before the policy, requests get a mix of 200 and 503; after it, Envoy's
+    # /clusters (read inside the proxy pod) marks only the failing pod
+    # /failed_active_hc and all requests return 200. Then the panic threshold 0
+    # section: with the ok pods scaled to 0, the proxy answers 503 "no healthy
+    # upstream". After the scale-up, a hidden step fixes the failing Deployment
+    # and every endpoint turns healthy.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/health-checks/backend.md
+    path: health-checks-backend
+  health-checks-backend-panic-default:
+    # Same steps without the panic threshold update: with the ok pods scaled to
+    # 0, Envoy is in panic mode and sends the request to the unhealthy pod, so
+    # the 503 is the app's own error, not "no healthy upstream".
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/traffic-management/health-checks/backend.md
+    path: health-checks-backend-panic-default
+  health-checks-gateway:
+    # ListenerPolicy health check path: 200 from the proxy with
+    # x-envoy-upstream-healthchecked-cluster, 503 with
+    # x-envoy-immediate-health-check-fail after /healthcheck/fail, 200 again
+    # after /healthcheck/ok, 404 after cleanup. The admin POSTs run inside the
+    # proxy pod instead of the page's port-forward.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/traffic-management/health-checks/gateway.md
     path: health-checks-gateway
   helm:

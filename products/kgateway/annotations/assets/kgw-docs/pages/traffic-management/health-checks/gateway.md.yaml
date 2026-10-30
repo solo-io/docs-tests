@@ -1,0 +1,169 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/health-checks/gateway.md
+blocks:
+- 2e4f311efd79eff0 yaml
+- 8eb669c342d6511d shell
+- 2b80723967c3bcb6 sh
+- 4b3fd10b69c6c262 sh
+- 5e677a2f65e8fb33 sh
+- 46ffe8973a1397fb console
+- 9b7fba87c908846e sh
+- 4b3fd10b69c6c262 sh
+- 5e677a2f65e8fb33 sh
+- 74c870f403fda76c console
+- 728b9bbe6b800597 sh
+- 98b7fd64272d078a sh
+tags:
+- paths: health-checks-gateway
+  block: 0
+  fingerprint: 2e4f311efd79eff0
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 bb9f9512 791ec828 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 43b04ed6 ff81837e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="health-checks-gateway"
+    only: true
+    lead: ' '
+- paths: health-checks-gateway
+  block: 11
+  fingerprint: 98b7fd64272d078a
+  lang: sh
+  lines: 98b7fd64
+  preview: kubectl delete listenerpolicy healthcheck -n {{< reuse "/kgw-docs/snippets/names
+  form:
+    attr: paths="health-checks-gateway"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 2e4f311efd79eff0
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 bb9f9512 791ec828 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 43b04ed6 ff81837e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="health-checks-gateway" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the healthcheck ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: healthcheck
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 2e4f311efd79eff0
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 bb9f9512 791ec828 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 43b04ed6 ff81837e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="health-checks-gateway" >}}
+    # Test-only: while Envoy is healthy, the proxy answers the health check path
+    # itself with 200 and the x-envoy-upstream-healthchecked-cluster header. No
+    # HTTPRoute matches this request (the Host is the bare address), so a 200 can
+    # only come from the health check filter.
+    ok=0
+    for i in $(seq 1 60); do
+      resp=$(curl -si --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/check/healthz" | tr -d '\r') || true
+      status=$(head -n1 <<<"$resp" | awk '{print $2}')
+      if [ "$status" = "200" ] && grep -qi '^x-envoy-upstream-healthchecked-cluster:' <<<"$resp"; then ok=1; break; fi
+      echo "attempt $i: /check/healthz returned '${status:-no response}', waiting for 200 from the health check filter"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "/check/healthz did not return 200 with x-envoy-upstream-healthchecked-cluster:"; echo "$resp"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 2b80723967c3bcb6
+    lang: sh
+    lines: 2b807239
+    preview: curl -X POST 127.0.0.1:19000/healthcheck/fail
+  content: |-
+    {{< doc-test paths="health-checks-gateway" >}}
+    # Test-only: the page's port-forward and curl to the admin port are not run.
+    # Send the same POST from inside the proxy pod instead (the admin interface
+    # listens on 127.0.0.1:19000; the proxy image ships busybox wget).
+    kubectl exec -n kgateway-system deploy/http -- wget -qO- --post-data '' http://127.0.0.1:19000/healthcheck/fail
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 46ffe8973a1397fb
+    lang: console
+    lines: b12e448b becb3645 a500e2dc a11cd6e7 5f7c6523 6caa5261 15357256
+    preview: HTTP/1.1 503 Service Unavailable
+  content: |-
+    {{< doc-test paths="health-checks-gateway" >}}
+    # Test-only: while Envoy fails health checks, the health check path returns 503
+    # with x-envoy-immediate-health-check-fail: true. Check right away: the proxy's
+    # readiness probe also fails now, and after about 30 seconds Kubernetes takes
+    # the pod out of the load balancer.
+    ok=0
+    for i in $(seq 1 15); do
+      resp=$(curl -si --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/check/healthz" | tr -d '\r') || true
+      status=$(head -n1 <<<"$resp" | awk '{print $2}')
+      if [ "$status" = "503" ] && grep -qi '^x-envoy-immediate-health-check-fail: true' <<<"$resp"; then ok=1; break; fi
+      echo "attempt $i: /check/healthz returned '${status:-no response}', waiting for 503 from the failed health check"
+      sleep 1
+    done
+    [ "$ok" = "1" ] || { echo "/check/healthz did not return 503 with x-envoy-immediate-health-check-fail: true:"; echo "$resp"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 9b7fba87c908846e
+    lang: sh
+    lines: 9b7fba87
+    preview: curl -X POST 127.0.0.1:19000/healthcheck/ok
+  content: |-
+    {{< doc-test paths="health-checks-gateway" >}}
+    # Test-only: same POST as the page, from inside the proxy pod.
+    kubectl exec -n kgateway-system deploy/http -- wget -qO- --post-data '' http://127.0.0.1:19000/healthcheck/ok
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 74c870f403fda76c
+    lang: console
+    lines: 92413e97 becb3645 03018b2e 5f7c6523 15357256
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="health-checks-gateway" >}}
+    # Test-only: after /healthcheck/ok, the health check path returns 200 again and
+    # no longer carries x-envoy-immediate-health-check-fail. The readiness probe
+    # can take up to 10 seconds to put the pod back in the load balancer.
+    ok=0
+    for i in $(seq 1 60); do
+      resp=$(curl -si --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/check/healthz" | tr -d '\r') || true
+      status=$(head -n1 <<<"$resp" | awk '{print $2}')
+      if [ "$status" = "200" ] && ! grep -qi '^x-envoy-immediate-health-check-fail:' <<<"$resp"; then ok=1; break; fi
+      echo "attempt $i: /check/healthz returned '${status:-no response}' after /healthcheck/ok, retrying"
+      sleep 2
+    done
+    [ "$ok" = "1" ] || { echo "/check/healthz did not return 200 after /healthcheck/ok:"; echo "$resp"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 98b7fd64272d078a
+    lang: sh
+    lines: 98b7fd64
+    preview: kubectl delete listenerpolicy healthcheck -n {{< reuse "/kgw-docs/snippets/names
+  content: |-
+    {{< doc-test paths="health-checks-gateway" >}}
+    # Test-only: without the ListenerPolicy, nothing answers /check/healthz for the
+    # bare address, so the proxy returns 404 (no route).
+    for i in $(seq 1 60); do
+      code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/check/healthz") || true
+      [ "$code" = "404" ] && break
+      echo "attempt $i: /check/healthz returned '${code:-no response}' after cleanup, waiting for 404"
+      sleep 2
+    done
+    [ "$code" = "404" ] || { echo "/check/healthz still answered after the ListenerPolicy was deleted (got '$code')"; exit 1; }
+    {{< /doc-test >}}

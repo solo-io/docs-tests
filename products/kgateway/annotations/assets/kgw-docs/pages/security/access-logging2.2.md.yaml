@@ -1,0 +1,751 @@
+format: 1
+source: assets/kgw-docs/pages/security/access-logging2.2.md
+blocks:
+- 74acb9f3a4bc5871 yaml
+- 4e84dcdef2af0e1f sh
+- da01ae4777a4103d sh
+- 7f0a11f58a74498a
+- c109fe138f333591 sh
+- dc0cbfda214d773b json
+- 9dd8175323730e15 yaml
+- c43f31afcd9766b8 sh
+- e726cf632ccd1ccc console
+- e7cd38cd980d0f6b yaml
+- 3e8d20a0cf06fd12 yaml
+- 5ab6fc377da321ca yaml
+- 4e84dcdef2af0e1f sh
+- da01ae4777a4103d sh
+- 7f0a11f58a74498a
+- 1e8825c84b93b770 sh
+- e3b0c44298fc1c14 txt
+- f79560ad75fe8d91 yaml
+- 4b28ff7f71c9864d sh
+- 45c6731cccc21557 sh
+- 7f0a11f58a74498a
+- 4b28ff7f71c9864d sh
+- 45c6731cccc21557 sh
+- 7f0a11f58a74498a
+- da81a330ce3d5dcf sh
+- dc0cbfda214d773b
+- 637a1aa2b6c4d8b7 sh
+- 6ad9ece0564cf0c6 yaml
+- 7d804fcf5000998d sh
+- dad2f1892635fa97 yaml
+- 52a10f08c1d2097c yaml
+- c109fe138f333591 sh
+- e8f063d907bc5005 json
+- 5fa0edfa5c9a8459 yaml
+- d08cffa83ac946d6 sh
+- c2f83f5009557e17 json
+- 05c7861b5893dbfc sh
+tags:
+- paths: access-logging
+  block: 0
+  fingerprint: 74acb9f3a4bc5871
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 54ccadac 92046d69 542b651c a99fad3a de1589be 1170ae18 ba0b9b83 4a6e079a a532a3cf 0b3361a3 4b3ddcf2 190df8ce 9fdf0bf6 f5806206 81914dc6 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-logging"
+    only: true
+    lead: ' '
+    tail: ' '
+- paths: access-logging-string-format
+  block: 6
+  fingerprint: 9dd8175323730e15
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 8b0ebd32 6000a08f cf441f8b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-logging-string-format"
+    only: true
+    lead: ' '
+- paths: access-logging-route-source
+  block: 28
+  fingerprint: 7d804fcf5000998d
+  lang: sh
+  lines: 87ff5769 f82702aa 0713159a
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="access-logging-route-source"
+    only: true
+    lead: ' '
+- paths: access-logging-route-source
+  block: 29
+  fingerprint: dad2f1892635fa97
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 54ccadac 92046d69 a99fad3a 02a5feed b97973e0 c11e6e4c d32a9620 2fe15ab5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-logging-route-source"
+    only: true
+    lead: ' '
+- paths: access-logging-extauth-latency
+  block: 30
+  fingerprint: 52a10f08c1d2097c
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b a99fad3a afad47c3 f55c8cf1 ba4e8c18 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-logging-extauth-latency"
+    only: true
+    lead: ' '
+- paths: access-logging-tcp
+  block: 33
+  fingerprint: 5fa0edfa5c9a8459
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 88521e28 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 7cfd31d9 0b02fb9c 0b6e3d69 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 a81a2e14 a43c7f35 1170ae18 ba0b9b83 478db328 de1589be abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="access-logging-tcp"
+    only: true
+    lead: ' '
+- paths: access-logging,access-logging-string-format,access-logging-route-source
+  block: 36
+  fingerprint: 05c7861b5893dbfc
+  lang: sh
+  lines: 05c7861b
+  preview: kubectl delete ListenerPolicy access-logs -n {{< reuse "kgw-docs/snippets/namesp
+  form:
+    attr: paths="access-logging,access-logging-string-format,access-logging-route-source"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 74acb9f3a4bc5871
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 54ccadac 92046d69 542b651c a99fad3a de1589be 1170ae18 ba0b9b83 4a6e079a a532a3cf 0b3361a3 4b3ddcf2 190df8ce 9fdf0bf6 f5806206 81914dc6 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="access-logging" >}}
+       YAMLTest -f - <<'EOF'
+       - name: access-logging - wait for the access-logs ListenerPolicy (jsonFormat to /dev/stdout) to be accepted
+         wait:
+           target:
+             kind: ListenerPolicy
+             metadata:
+               namespace: kgateway-system
+               name: access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       # Send the page's request with a unique user agent until the proxy writes a JSON
+       # access log entry for it to the stdout stream (kubectl logs on the proxy).
+       ua="doc-test-access-logging-${RANDOM}"
+       entry=""
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" -A "${ua}" || true)
+         sleep 1
+         logs=$(kubectl -n kgateway-system logs deployments/http --tail=500 2>/dev/null || true)
+         entry=$(jq -c -R --arg ua "${ua}" 'fromjson? | select(type == "object" and .user_agent == $ua)' <<<"${logs}" 2>/dev/null | tail -1 || true)
+         if [ "${code}" = "200" ] && [ -n "${entry}" ]; then break; fi
+         echo "access-logging attempt ${i}: HTTP ${code:-none}, no JSON access log entry with user_agent ${ua} yet"
+         sleep 2
+       done
+       if [ "${code}" != "200" ]; then echo "FAIL: GET /status/200 returned ${code:-no response}, not 200"; exit 1; fi
+       if [ -z "${entry}" ]; then
+         echo "FAIL: the http proxy logs have no JSON access log entry for the request"
+         kubectl -n kgateway-system logs deployments/http --tail=20 || true
+         exit 1
+       fi
+       jq . <<<"${entry}"
+       # Every key from the page's jsonFormat is in the entry.
+       for key in start_time method path protocol response_code response_flags bytes_received bytes_sent total_duration resp_backend_service_time req_x_forwarded_for user_agent request_id authority backendHost backendCluster; do
+         if ! jq -e --arg k "${key}" 'has($k)' <<<"${entry}" >/dev/null; then
+           echo "FAIL: the access log entry has no ${key} key"; exit 1
+         fi
+       done
+       # The values match the request, as in the page's example output.
+       if ! jq -e '.method == "GET" and .path == "/status/200" and .protocol == "HTTP/1.1"
+           and .response_code == 200 and .response_flags == "-"
+           and .authority == "www.example.com:8080"
+           and (.request_id | type == "string" and length > 0)
+           and (.start_time | type == "string" and length > 0)
+           and (.total_duration | type == "number")
+           and (.backendCluster | tostring | test("httpbin"))
+           and (.backendHost | tostring | test(":[0-9]+$"))' <<<"${entry}" >/dev/null; then
+         echo "FAIL: the access log entry values do not match GET /status/200 on www.example.com:8080 routed to httpbin"; exit 1
+       fi
+       echo "access-logging: the proxy wrote a JSON access log entry with the page's fields to stdout"
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 9dd8175323730e15
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 8b0ebd32 6000a08f cf441f8b abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="access-logging-string-format" >}}
+    YAMLTest -f - <<'EOF'
+    - name: access-logging-string-format - wait for the access-logs ListenerPolicy (stringFormat block scalar) to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: access-logs
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Send the request until the proxy writes plain-string entries in the page's
+    # format. The pattern is anchored at both ends, so it also confirms that the
+    # folded block scalar ends each entry with a newline (one entry per line).
+    pattern='^\[[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:.]+Z\] "GET /status/200" "HTTP/1\.1" "200" "-"$'
+    count=0
+    for i in $(seq 1 60); do
+      for n in 1 2; do
+        curl -s -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true
+      done
+      sleep 1
+      logs=$(kubectl -n kgateway-system logs deployments/http --tail=500 2>/dev/null || true)
+      count=$(grep -cE "${pattern}" <<<"${logs}" || true)
+      if [ "${count:-0}" -ge 2 ]; then break; fi
+      echo "access-logging-string-format attempt ${i}: ${count:-0} matching string entries so far"
+      sleep 2
+    done
+    if [ "${count:-0}" -lt 2 ]; then
+      echo "FAIL: the http proxy logs do not have separate lines like [<start time>] \"GET /status/200\" \"HTTP/1.1\" \"200\" \"-\""
+      kubectl -n kgateway-system logs deployments/http --tail=20 || true
+      exit 1
+    fi
+    grep -E "${pattern}" <<<"${logs}" | tail -2
+    echo "access-logging-string-format: ${count} string entries, one per line, in the page's format"
+    {{< /doc-test >}}
+- after:
+    block: 26
+    fingerprint: 637a1aa2b6c4d8b7
+    lang: sh
+    lines: b753e1e2 db51caed
+    preview: helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-
+  content: |2-
+       {{< doc-test paths="access-logging-route-source" >}}
+       # Test-only: step 1 also runs `open values.yaml`, which has no meaning on a CI
+       # runner, so save the current Helm values the same way without opening them.
+       helm get values kgateway -n kgateway-system -o yaml > values.yaml
+       cat values.yaml
+       {{< /doc-test >}}
+- after:
+    block: 27
+    fingerprint: 6ad9ece0564cf0c6
+    lang: yaml
+    lines: 6ad9ece0
+    preview: 'enableRouteSourceMetadata: true'
+  content: |2-
+       {{< doc-test paths="access-logging-route-source" >}}
+       # Test-only: add the step 2 setting to the values file. An install without
+       # user-supplied values saves `null`, which cannot take another key.
+       if [ "$(tr -d '[:space:]' < values.yaml)" = "null" ]; then : > values.yaml; fi
+       printf '%s\n' 'enableRouteSourceMetadata: true' >> values.yaml
+       cat values.yaml
+       {{< /doc-test >}}
+- after:
+    block: 28
+    fingerprint: 7d804fcf5000998d
+    lang: sh
+    lines: 87ff5769 f82702aa 0713159a
+    preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  content: |2-
+       {{< doc-test paths="access-logging-route-source" >}}
+       kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+       rsm=$(kubectl get deployment kgateway -n kgateway-system \
+         -o jsonpath='{.spec.template.spec.containers[*].env[?(@.name=="KGW_ENABLE_ROUTE_SOURCE_METADATA")].value}')
+       echo "KGW_ENABLE_ROUTE_SOURCE_METADATA=${rsm}"
+       if [ "${rsm}" != "true" ]; then
+         echo "FAIL: after the Helm upgrade with enableRouteSourceMetadata: true, the kgateway control plane does not have KGW_ENABLE_ROUTE_SOURCE_METADATA=true"; exit 1
+       fi
+       {{< /doc-test >}}
+- after:
+    block: 29
+    fingerprint: dad2f1892635fa97
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 54ccadac 92046d69 a99fad3a 02a5feed b97973e0 c11e6e4c d32a9620 2fe15ab5 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="access-logging-route-source" >}}
+       YAMLTest -f - <<'EOF'
+       - name: access-logging-route-source - wait for the access-logs ListenerPolicy with route source fields to be accepted
+         wait:
+           target:
+             kind: ListenerPolicy
+             metadata:
+               namespace: kgateway-system
+               name: access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       # The rule format differs by version: 2.4.x logs the generated Envoy route name
+       # (no `route_match` key in the page's format), later versions log `_rule-<i>`
+       # and `_match-<i>`. The httpbin HTTPRoute has one unnamed rule with one match.
+       has_match=$(kubectl get listenerpolicy access-logs -n kgateway-system \
+         -o jsonpath='{.spec.default.httpSettings.accessLog[0].fileSink.jsonFormat.route_match}')
+       entry=""
+       for i in $(seq 1 60); do
+         curl -s -o /dev/null --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true
+         sleep 1
+         logs=$(kubectl -n kgateway-system logs deployments/http --tail=500 2>/dev/null || true)
+         entry=$(jq -c -R 'fromjson? | select(type == "object" and .path == "/status/200" and .route_kind == "HTTPRoute")' <<<"${logs}" 2>/dev/null | tail -1 || true)
+         if [ -n "${entry}" ]; then break; fi
+         echo "access-logging-route-source attempt ${i}: no access log entry with route_kind HTTPRoute yet"
+         sleep 2
+       done
+       if [ -z "${entry}" ]; then
+         echo "FAIL: no access log entry carries the dev.kgateway.route_source metadata (route_kind HTTPRoute)"
+         kubectl -n kgateway-system logs deployments/http --tail=20 || true
+         exit 1
+       fi
+       jq . <<<"${entry}"
+       if ! jq -e '.method == "GET" and .response_code == 200 and .route_name == "httpbin" and .route_namespace == "httpbin"' <<<"${entry}" >/dev/null; then
+         echo "FAIL: route_name and route_namespace are not httpbin/httpbin for the httpbin HTTPRoute"; exit 1
+       fi
+       if [ -n "${has_match}" ]; then
+         if ! jq -e '.route_rule == "_rule-0" and .route_match == "_match-0"' <<<"${entry}" >/dev/null; then
+           echo "FAIL: expected route_rule _rule-0 and route_match _match-0 for the unnamed first rule of the httpbin HTTPRoute"; exit 1
+         fi
+       else
+         if ! jq -e '.route_rule == "httproute-httpbin-httpbin-0-0"' <<<"${entry}" >/dev/null; then
+           echo "FAIL: expected route_rule httproute-httpbin-httpbin-0-0 (<kind>-<name>-<namespace>-<rule_index>-<match_index>) for the unnamed rule"; exit 1
+         fi
+       fi
+       echo "access-logging-route-source: the access log entry names the httpbin HTTPRoute, its namespace, and its rule"
+       {{< /doc-test >}}
+- after:
+    section: Log ext-auth latency
+    line: 94532c5c99fdef9e
+    occurrence: 0
+    words: 6b86b273 6ee0eb49 75a288c0 3c462384 bdf49c3c 10c22bcf 4d040d3f 4ea5ee68 7175517a 8a84e406 10c22bcf 187897ce dea7111a aa9e9b5c 3c462384 bdf49c3c fa42bed0 a0af9f86 5d2d3ceb be1dcf5c
+    block_before:
+      block: 29
+      fingerprint: dad2f1892635fa97
+      lang: yaml
+      lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 54ccadac 92046d69 a99fad3a 02a5feed b97973e0 c11e6e4c d32a9620 2fe15ab5 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="access-logging-extauth-latency" >}}
+       # Test-only: step 1 points to the external auth guide. Set up its gRPC example
+       # here: the Istio ext-authz sample service (allows requests with the
+       # `x-ext-authz: allow` header), the basic-ext-auth GatewayExtension, and a
+       # Gateway-level TrafficPolicy on the http Gateway.
+       kubectl apply -f - <<EOF
+       apiVersion: apps/v1
+       kind: Deployment
+       metadata:
+         namespace: kgateway-system
+         name: ext-authz
+         labels:
+           app: ext-authz
+       spec:
+         replicas: 1
+         selector:
+           matchLabels:
+             app: ext-authz
+         template:
+           metadata:
+             labels:
+               app: ext-authz
+               app.kubernetes.io/name: ext-authz
+           spec:
+             containers:
+             - image: gcr.io/istio-testing/ext-authz:1.25-dev
+               name: ext-authz
+               ports:
+               - containerPort: 9000
+       ---
+       apiVersion: v1
+       kind: Service
+       metadata:
+         namespace: kgateway-system
+         name: ext-authz
+         labels:
+           app: ext-authz
+       spec:
+         ports:
+         - port: 4444
+           targetPort: 9000
+           protocol: TCP
+           appProtocol: kubernetes.io/h2c
+         selector:
+           app: ext-authz
+       ---
+       apiVersion: gateway.kgateway.dev/v1alpha1
+       kind: GatewayExtension
+       metadata:
+         namespace: kgateway-system
+         name: basic-ext-auth
+         labels:
+           app: ext-authz
+       spec:
+         type: ExtAuth
+         extAuth:
+           grpcService:
+             backendRef:
+               name: ext-authz
+               port: 4444
+       ---
+       apiVersion: gateway.kgateway.dev/v1alpha1
+       kind: TrafficPolicy
+       metadata:
+         namespace: kgateway-system
+         name: gateway-ext-auth-policy
+         labels:
+           app: ext-authz
+       spec:
+         targetRefs:
+         - group: gateway.networking.k8s.io
+           kind: Gateway
+           name: http
+         extAuth:
+           extensionRef:
+             name: basic-ext-auth
+       EOF
+       YAMLTest -f - <<'EOF'
+       - name: access-logging-extauth-latency - wait for the ext-authz Deployment to be available
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: kgateway-system
+               name: ext-authz
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: access-logging-extauth-latency - wait for the gateway-ext-auth-policy TrafficPolicy to be accepted
+         wait:
+           target:
+             kind: TrafficPolicy
+             metadata:
+               namespace: kgateway-system
+               name: gateway-ext-auth-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 30
+    fingerprint: 52a10f08c1d2097c
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b a99fad3a afad47c3 f55c8cf1 ba4e8c18 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="access-logging-extauth-latency" >}}
+       YAMLTest -f - <<'EOF'
+       - name: access-logging-extauth-latency - wait for the access-logs ListenerPolicy with ext-auth fields to be accepted
+         wait:
+           target:
+             kind: ListenerPolicy
+             metadata:
+               namespace: kgateway-system
+               name: access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       # Find an entry for a request that the service allows (200) and one that it
+       # denies (403); both made a check call, so both carry the ext-auth fields.
+       find_entry() {
+         # $1: expected response code; $2...: extra curl args
+         want="$1"; shift
+         entry=""
+         for i in $(seq 1 60); do
+           code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" "$@" || true)
+           sleep 1
+           logs=$(kubectl -n kgateway-system logs deployments/http --tail=500 2>/dev/null || true)
+           entry=$(jq -c -R --argjson want "${want}" 'fromjson? | select(type == "object" and .response_code == $want and .extauth_latency_us != null)' <<<"${logs}" 2>/dev/null | tail -1 || true)
+           if [ "${code}" = "${want}" ] && [ -n "${entry}" ]; then return 0; fi
+           echo "access-logging-extauth-latency attempt ${i}: HTTP ${code:-none}, no entry with response_code ${want} and ext-auth fields yet"
+           sleep 2
+         done
+         echo "FAIL: no access log entry with response_code ${want} and extauth_latency_us (last request returned ${code:-no response})"
+         kubectl -n kgateway-system logs deployments/http --tail=20 || true
+         exit 1
+       }
+       check_fields() {
+         jq . <<<"${entry}"
+         # The page says the ext-auth values are written as strings, and that
+         # bytesSent and bytesReceived are available for gRPC services (as here).
+         for key in extauth_latency_us extauth_bytes_sent extauth_bytes_received; do
+           if ! jq -e --arg k "${key}" '.[$k] | type == "string" and test("^[0-9]+$")' <<<"${entry}" >/dev/null; then
+             echo "FAIL: ${key} is $(jq -c --arg k "${key}" '.[$k]' <<<"${entry}"), not a string of digits"; exit 1
+           fi
+         done
+       }
+       find_entry 200 -H "x-ext-authz: allow"
+       check_fields
+       find_entry 403
+       check_fields
+       echo "access-logging-extauth-latency: allowed and denied requests both log the ext-auth latency and byte counts"
+       {{< /doc-test >}}
+- after:
+    section: Access logs for TCP and TLS listeners
+    line: ba09b87ab501dc25
+    occurrence: 0
+    words: 6b86b273 6ee0eb49 75a288c0 ca978112 00645195 c4c05d40 6201111b ca978112 5682d699 a5c935d1 f4bf9f7f 58296753 b9776d7d 00645195 c4c05d40 fa42bed0 a0af9f86 8fb6d5f3 0353e1fb 00645195 83ca68be
+    block_before:
+      block: 32
+      fingerprint: e8f063d907bc5005
+      lang: json
+      lines: 021fb596 25bb1b0a 4f2518d2 79460991 5d4a0011 d10b36aa
+      preview: '{'
+  content: |2-
+       {{< doc-test paths="access-logging-tcp" >}}
+       # Test-only: step 1 points to the TCP listener guide. Set up its Gateway
+       # listeners example here: the tcp-echo app, the tcp-gateway Gateway (TCP
+       # listener `tcp` on port 8000), the ReferenceGrant, and the tcp-route-echo TCPRoute.
+       kubectl apply -f- <<EOF
+       apiVersion: v1
+       kind: Pod
+       metadata:
+         labels:
+           app: tcp-echo
+         name: tcp-echo
+         namespace: default
+       spec:
+         containers:
+         - image: soloio/tcp-echo:latest
+           imagePullPolicy: IfNotPresent
+           name: tcp-echo
+         restartPolicy: Always
+       ---
+       apiVersion: v1
+       kind: Service
+       metadata:
+         labels:
+           app: tcp-echo
+         name: tcp-echo
+         namespace: default
+       spec:
+         ports:
+         - name: http
+           port: 1025
+           protocol: TCP
+           targetPort: 1025
+         selector:
+           app: tcp-echo
+       ---
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: Gateway
+       metadata:
+         name: tcp-gateway
+         namespace: kgateway-system
+         labels:
+           app: tcp-echo
+       spec:
+         gatewayClassName: kgateway
+         listeners:
+         - protocol: TCP
+           port: 8000
+           name: tcp
+           allowedRoutes:
+             kinds:
+             - kind: TCPRoute
+       ---
+       apiVersion: gateway.networking.k8s.io/v1beta1
+       kind: ReferenceGrant
+       metadata:
+         name: allow-tcp-route-to-echo
+         namespace: default
+       spec:
+         from:
+           - group: gateway.networking.k8s.io
+             kind: TCPRoute
+             namespace: kgateway-system
+         to:
+           - group: ""
+             kind: Service
+       ---
+       apiVersion: gateway.networking.k8s.io/v1
+       kind: TCPRoute
+       metadata:
+         name: tcp-route-echo
+         namespace: kgateway-system
+         labels:
+           app: tcp-echo
+       spec:
+         parentRefs:
+           - name: tcp-gateway
+             namespace: kgateway-system
+             sectionName: tcp
+         rules:
+           - backendRefs:
+               - name: tcp-echo
+                 namespace: default
+                 port: 1025
+       EOF
+       YAMLTest -f - <<'EOF'
+       - name: access-logging-tcp - wait for the tcp-echo pod to be ready
+         wait:
+           target:
+             kind: Pod
+             metadata:
+               namespace: default
+               name: tcp-echo
+           jsonPath: "$.status.containerStatuses[0].ready"
+           jsonPathExpectation:
+             comparator: equals
+             value: true
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: access-logging-tcp - wait for the tcp-gateway Gateway to be programmed
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: kgateway-system
+               name: tcp-gateway
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: access-logging-tcp - wait for the tcp-route-echo TCPRoute to be accepted
+         wait:
+           target:
+             kind: TCPRoute
+             metadata:
+               namespace: kgateway-system
+               name: tcp-route-echo
+           jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: access-logging-tcp - wait for the tcp-gateway service load balancer address
+         wait:
+           target:
+             kind: Service
+             metadata:
+               namespace: kgateway-system
+               name: tcp-gateway
+           jsonPath: "$.status.loadBalancer.ingress[0].ip"
+           jsonPathExpectation:
+             comparator: exists
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 33
+    fingerprint: 5fa0edfa5c9a8459
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 88521e28 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 7cfd31d9 0b02fb9c 0b6e3d69 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 a81a2e14 a43c7f35 1170ae18 ba0b9b83 478db328 de1589be abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="access-logging-tcp" >}}
+       YAMLTest -f - <<'EOF'
+       - name: access-logging-tcp - wait for the tcp-access-logs ListenerPolicy (tcpSettings.accessLog) to be accepted
+         wait:
+           target:
+             kind: ListenerPolicy
+             metadata:
+               namespace: kgateway-system
+               name: tcp-access-logs
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       # Step 3: open a TCP connection to port 8000 of tcp-gateway, send one line,
+       # read the echo, and close. The proxy writes one entry when the connection closes.
+       TCP_GW_ADDRESS=$(kubectl get svc -n kgateway-system tcp-gateway -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+       msg="hello-from-access-logging-tcp"
+       entry=""
+       for i in $(seq 1 60); do
+         reply=$(timeout 10 bash -c 'exec 3<>"/dev/tcp/$1/8000" || exit 1; printf "%s\n" "$2" >&3; IFS= read -r -t 5 line <&3; printf "%s" "$line"; exec 3>&-' _ "${TCP_GW_ADDRESS}" "${msg}" 2>/dev/null || true)
+         sleep 1
+         logs=$(kubectl logs deploy/tcp-gateway -n kgateway-system --tail=500 2>/dev/null || true)
+         entry=$(jq -c -R 'fromjson? | select(type == "object" and has("downstream_remote_address") and has("upstream_host") and (.bytes_received // 0) > 0)' <<<"${logs}" 2>/dev/null | tail -1 || true)
+         case "${reply}" in *"${msg}"*) [ -n "${entry}" ] && break ;; esac
+         echo "access-logging-tcp attempt ${i}: echo '${reply:-none}', no per-connection JSON entry yet"
+         sleep 2
+       done
+       case "${reply}" in *"${msg}"*) ;; *) echo "FAIL: no echo from tcp-echo through port 8000 of tcp-gateway"; exit 1 ;; esac
+       if [ -z "${entry}" ]; then
+         echo "FAIL: the tcp-gateway proxy logs have no JSON entry for the TCP connection"
+         kubectl logs deploy/tcp-gateway -n kgateway-system --tail=20 || true
+         exit 1
+       fi
+       jq . <<<"${entry}"
+       for key in start_time downstream_remote_address upstream_host bytes_received bytes_sent duration response_flags; do
+         if ! jq -e --arg k "${key}" 'has($k)' <<<"${entry}" >/dev/null; then
+           echo "FAIL: the TCP access log entry has no ${key} key"; exit 1
+         fi
+       done
+       if ! jq -e '(.upstream_host | tostring | test(":1025$")) and .bytes_sent > 0 and (.duration | type == "number")' <<<"${entry}" >/dev/null; then
+         echo "FAIL: the TCP access log entry does not show the tcp-echo upstream on port 1025 with bytes sent and a duration"; exit 1
+       fi
+       # Test-only: the page says HTTP-only filters are rejected, with a status that
+       # names the field. Apply one on a separate policy, check its status, remove it.
+       kubectl apply -f- <<EOF
+       apiVersion: gateway.kgateway.dev/v1alpha1
+       kind: ListenerPolicy
+       metadata:
+         name: doc-test-tcp-http-filter
+         namespace: kgateway-system
+       spec:
+         targetRefs:
+         - group: gateway.networking.k8s.io
+           kind: Gateway
+           name: tcp-gateway
+         default:
+           tcpSettings:
+             accessLog:
+             - fileSink:
+                 path: /dev/stdout
+                 stringFormat: "%START_TIME%\n"
+               filter:
+                 statusCodeFilter:
+                   op: GE
+                   value: 400
+       EOF
+       rejected=""
+       for i in $(seq 1 30); do
+         status=$(kubectl get listenerpolicy doc-test-tcp-http-filter -n kgateway-system -o json 2>/dev/null || true)
+         if jq -e '[.status.ancestors[]?.conditions[]? | select(.type == "Accepted" and .status == "False") | .message] | any(contains("filter.statusCodeFilter is not supported for TCP access logs"))' <<<"${status}" >/dev/null 2>&1; then
+           rejected=1; break
+         fi
+         sleep 3
+       done
+       jq '.status' <<<"${status}" || true
+       kubectl delete listenerpolicy doc-test-tcp-http-filter -n kgateway-system --ignore-not-found
+       if [ -z "${rejected}" ]; then
+         echo "FAIL: a ListenerPolicy with tcpSettings.accessLog[].filter.statusCodeFilter was not rejected with 'filter.statusCodeFilter is not supported for TCP access logs'"; exit 1
+       fi
+       echo "access-logging-tcp: one JSON entry per TCP connection, and HTTP-only filters are rejected"
+       {{< /doc-test >}}
