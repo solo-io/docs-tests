@@ -240,7 +240,6 @@ agentgateway -f config.yaml
 
 
 @unittest.skipUnless(importlib.util.find_spec("jsonschema"), "jsonschema is not installed")
-@unittest.skipUnless(importlib.util.find_spec("jsonschema"), "jsonschema is not installed")
 class RebaseShellTests(Base):
     """A site whose pages are {{< rebase >}} shells has its blocks in another
     repo. Without --upstream-root the shell has nothing to check."""
@@ -272,6 +271,7 @@ class RebaseShellTests(Base):
             self.assertEqual(quiet(doc_test_schema_check.main), 1)
 
 
+@unittest.skipUnless(importlib.util.find_spec("jsonschema"), "jsonschema is not installed")
 class MoreKindsTests(Base):
     """Gateway API kinds, core kinds, and standalone config files."""
 
