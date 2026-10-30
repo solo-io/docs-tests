@@ -99,6 +99,19 @@ class VerdictTests(unittest.TestCase):
         v = c.verdict(KEY, failed("page", OTHER), None, set())
         self.assertEqual(v["conclusion"], c.FAILURE)
 
+    def test_a_full_run_failure_main_has_never_run_is_not_the_prs(self):
+        """A workflow change runs tests added since the last nightly; main never showed them working."""
+        v = c.verdict(KEY, failed("page", PAGE), None, set(), {}, set())
+        self.assertEqual(v["conclusion"], c.SKIPPED)
+
+    def test_a_full_run_failure_main_ran_and_passed_is_the_prs(self):
+        v = c.verdict(KEY, failed("page", PAGE), None, set(), {}, {KEY})
+        self.assertEqual(v["conclusion"], c.FAILURE)
+
+    def test_a_changed_page_main_has_never_run_is_still_the_prs(self):
+        v = c.verdict(KEY, failed("page", PAGE), {PAGE}, set(), {}, set())
+        self.assertEqual(v["conclusion"], c.FAILURE)
+
     def test_a_failure_with_no_step_recorded_is_not_blamed_on_the_pr(self):
         v = c.verdict(KEY, {"status": "failed", "error": "kind create failed"}, {PAGE}, set())
         self.assertEqual(v["conclusion"], c.SKIPPED)

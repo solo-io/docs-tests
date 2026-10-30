@@ -109,7 +109,8 @@ def _main_got_past(ours: dict | None, theirs: dict | None) -> bool:
 
 
 def verdict(key: str, result: dict | None, affected: set[str] | None, known: set[str],
-            known_steps: dict[str, dict | None] | None = None) -> dict:
+            known_steps: dict[str, dict | None] | None = None,
+            main_ran: set[str] | None = None) -> dict:
     """One scenario's conclusion, title, and summary.
 
     ``affected`` is the content pages the PR reaches, from reuse_consumers.py.
@@ -119,6 +120,9 @@ def verdict(key: str, result: dict | None, affected: set[str] | None, known: set
     ``known`` is the scenarios failing in the nightly run on main;
     ``known_steps`` maps each to the step it failed at there (None when it
     failed before any step), when the nightly's results are available.
+
+    ``main_ran`` is every scenario the nightly ran, pass or fail, when its
+    results are available.
     """
     if key in known:
         # A PR that fixes the page or its test shows the pass.
@@ -140,6 +144,12 @@ def verdict(key: str, result: dict | None, affected: set[str] | None, known: set
         return {"conclusion": SUCCESS, "title": "Passed", "summary": "Every step in this guide worked."}
 
     step = result.get("failed_step") or {}
+    # A run with no affected set (the PR changed the workflow or site config)
+    # runs every scenario, including ones main has never run, such as tests
+    # added to docs-tests since the last nightly. Main never showed those
+    # working, so a failure is the PR's only when it changed the page.
+    if affected is None and main_ran is not None and key not in main_ran:
+        return {"conclusion": SKIPPED, "title": UPDATE_REQUIRED_TITLE, "summary": UPDATE_REQUIRED_SUMMARY}
     on_affected_page = affected is None or step.get("file") in affected
     if step.get("kind") in PAGE_KINDS and on_affected_page:
         page = step["file"]
@@ -163,7 +173,8 @@ def verdict(key: str, result: dict | None, affected: set[str] | None, known: set
 
 
 def classify(expected: list[dict], results: dict, affected: set[str] | None, known: set[str],
-             known_steps: dict[str, dict | None] | None = None) -> list[dict]:
+             known_steps: dict[str, dict | None] | None = None,
+             main_ran: set[str] | None = None) -> list[dict]:
     """``expected`` is every scenario the PR selected, run or not: {file, test}."""
     names = [e["test"] for e in expected]
     out = []
@@ -173,7 +184,7 @@ def classify(expected: list[dict], results: dict, affected: set[str] | None, kno
         if names.count(name) > 1:
             # The same scenario name on two pages; the check names must differ.
             name = f"{name} ({pathlib.PurePosixPath(entry['file']).stem})"
-        out.append({"key": key, "name": name, **verdict(key, results.get(key), affected, known, known_steps)})
+        out.append({"key": key, "name": name, **verdict(key, results.get(key), affected, known, known_steps, main_ran)})
     return out
 
 
@@ -272,13 +283,15 @@ def main() -> int:
     expected = json.loads(pathlib.Path(args.expected).read_text(encoding="utf-8"))
     known = _read_lines(args.known_failing) or set()
     known_steps = None
+    main_ran = None
     if args.known_results and pathlib.Path(args.known_results).exists():
         nightly = (yaml.safe_load(pathlib.Path(args.known_results).read_text(encoding="utf-8")) or {}).get("tests") or {}
         known_steps = {k: v.get("failed_step") for k, v in nightly.items() if v.get("status") != "passed"}
         known |= set(known_steps)
+        main_ran = set(nightly)
     verdicts = classify(
         expected, report.get("tests") or {},
-        _read_lines(args.affected_pages), known, known_steps,
+        _read_lines(args.affected_pages), known, known_steps, main_ran,
     )
     pathlib.Path(args.output).write_text(json.dumps(verdicts, indent=2), encoding="utf-8")
     if args.groups:
