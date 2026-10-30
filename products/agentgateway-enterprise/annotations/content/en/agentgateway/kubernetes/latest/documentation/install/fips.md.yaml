@@ -2,7 +2,7 @@ format: 1
 source: content/en/agentgateway/kubernetes/latest/documentation/install/fips.md
 blocks:
 - 628017b522cb98c2 yaml
-- 6322662b985cd4f7 sh
+- 408b1d2ffb0caf46 sh
 - 00d6ca5feb7fd260 yaml
 - 2053cd10e53e8059 sh
 - 29c7218e4c8278eb console
@@ -10,15 +10,15 @@ blocks:
 - 63f4f1b2a24b5db0 console
 - 743137bf3cac52bb sh
 - dc58387b39416823 console
-- 4124fa003345a0f2 sh
+- 1464986e6182b9f7 sh
 - 4b1a8d6bfb6615a0 sh
 - f01ad97ed32d664a console
 tags:
 - paths: enterprise-fips
   block: 1
-  fingerprint: 6322662b985cd4f7
+  fingerprint: 408b1d2ffb0caf46
   lang: sh
-  lines: 2d065637 4bee4e60 fde80217 0e1a9b32
+  lines: 2d065637 736e1ed1 fde80217 0e1a9b32
   preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   form:
     attr: paths="enterprise-fips"
@@ -56,9 +56,9 @@ tags:
     lead: ' '
 - paths: enterprise-fips
   block: 9
-  fingerprint: 4124fa003345a0f2
+  fingerprint: 1464986e6182b9f7
   lang: sh
-  lines: ec64944c 4bee4e60 96064311 2259ff40
+  lines: ec64944c 736e1ed1 96064311 2259ff40
   preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
   form:
     attr: paths="enterprise-fips"
@@ -119,9 +119,9 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: 6322662b985cd4f7
+    fingerprint: 408b1d2ffb0caf46
     lang: sh
-    lines: 2d065637 4bee4e60 fde80217 0e1a9b32
+    lines: 2d065637 736e1ed1 fde80217 0e1a9b32
     preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   blank_before: []
   content: |2-
@@ -175,9 +175,9 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 9
-    fingerprint: 4124fa003345a0f2
+    fingerprint: 1464986e6182b9f7
     lang: sh
-    lines: ec64944c 4bee4e60 96064311 2259ff40
+    lines: ec64944c 736e1ed1 96064311 2259ff40
     preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
   blank_before: []
   content: |-

@@ -135,16 +135,21 @@ hidden:
        {{< doc-test paths="llm-observability" >}}
        sleep 1
        metrics=$(curl -s -m 10 http://localhost:15020/metrics)
-       grep 'agentgateway_gen_ai_client_token_usage' <<<"$metrics" | grep 'gen_ai_token_type="input"' | grep -q 'gen_ai_request_model="gpt-4o"' \
+       # Filter into variables and grep -q only a here-string: under pipefail, a pipe
+       # into grep -q can fail on a match, because grep exits early and the writer gets SIGPIPE.
+       series=$(grep 'agentgateway_gen_ai_client_token_usage' <<<"$metrics" | grep 'gen_ai_token_type="input"' || true)
+       grep -q 'gen_ai_request_model="gpt-4o"' <<<"$series" \
          || { echo "FAIL: no input token usage series for gpt-4o"; grep gen_ai <<<"$metrics" || true; exit 1; }
        echo "ok: the token usage metric records the request"
-       grep 'gen_ai.request.model=gpt-4o' /tmp/doc-test-llm-observability-agw.log | grep -q 'http.status=200' \
+       reqlines=$(grep 'gen_ai.request.model=gpt-4o' /tmp/doc-test-llm-observability-agw.log || true)
+       grep -q 'http.status=200' <<<"$reqlines" \
          || { echo "FAIL: no request log line"; cat /tmp/doc-test-llm-observability-agw.log; exit 1; }
        echo "ok: the process log records the LLM request"
        # Jaeger: keep sending requests until the agentgateway service has reported spans.
        found=""
        for _ in $(seq 1 40); do
-         if curl -s -m 5 http://localhost:16686/api/services | grep -q '"agentgateway'; then found=yes; break; fi
+         services=$(curl -s -m 5 http://localhost:16686/api/services || true)
+         if grep -q '"agentgateway' <<<"$services"; then found=yes; break; fi
          curl -s -o /dev/null -m 10 http://localhost:4000/v1/chat/completions -H 'content-type: application/json' \
            -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "trace me"}]}' || true
          sleep 3
