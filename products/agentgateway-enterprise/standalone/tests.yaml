@@ -49,6 +49,7 @@ skip:
 - page: documentation/configuration/security/backend-authn/token-exchange/sts/_index.md
 - page: documentation/configuration/security/backend-authn/token-exchange/sts/about.md
 - page: documentation/configuration/security/backend-authn/token-exchange/sts/elicitation.md
+- page: documentation/configuration/security/ui-access-control/_index.md
 - page: documentation/configuration/traffic-management/_index.md
 - page: documentation/llm/_index.md
 - page: documentation/llm/about.md
@@ -106,6 +107,7 @@ skip:
 - page: documentation/setup/install/kubernetes.md
 - page: documentation/setup/storage.md
 - page: documentation/setup/ui/_index.md
+- page: documentation/setup/ui/access-control.md
 - page: documentation/setup/ui/expose-ui.md
 - page: documentation/setup/ui/secure-ui.md
 - page: documentation/setup/update.md
@@ -1096,6 +1098,18 @@ scenarios:
     - functional
     page: integrations/llm/providers/typesafe.md
     path: typesafe
+  ui-access-control-about:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/ui-access-control/about.md
+    path: enterprise-ui-access-control-about
+  ui-access-control-setup:
+    type:
+    - schema
+    - functional
+    page: documentation/configuration/security/ui-access-control/setup.md
+    path: enterprise-ui-access-control-setup
   ui-default-port:
     path: ui-standalone-default
     page: documentation/setup/ui/launch-ui.md

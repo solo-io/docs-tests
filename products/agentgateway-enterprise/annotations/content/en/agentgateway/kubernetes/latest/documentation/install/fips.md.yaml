@@ -1,0 +1,200 @@
+format: 1
+source: content/en/agentgateway/kubernetes/latest/documentation/install/fips.md
+blocks:
+- 628017b522cb98c2 yaml
+- 6322662b985cd4f7 sh
+- 00d6ca5feb7fd260 yaml
+- 2053cd10e53e8059 sh
+- 29c7218e4c8278eb console
+- c9effde9628ba6ee sh
+- 63f4f1b2a24b5db0 console
+- 743137bf3cac52bb sh
+- dc58387b39416823 console
+- 4124fa003345a0f2 sh
+- 4b1a8d6bfb6615a0 sh
+- f01ad97ed32d664a console
+tags:
+- paths: enterprise-fips
+  block: 1
+  fingerprint: 6322662b985cd4f7
+  lang: sh
+  lines: 2d065637 4bee4e60 fde80217 0e1a9b32
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="enterprise-fips"
+    only: true
+    lead: ' '
+- paths: enterprise-fips
+  block: 3
+  fingerprint: 2053cd10e53e8059
+  lang: sh
+  lines: 2053cd10
+  preview: kubectl get deploy -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath
+  form:
+    attr: paths="enterprise-fips"
+    only: true
+    lead: ' '
+- paths: enterprise-fips
+  block: 5
+  fingerprint: c9effde9628ba6ee
+  lang: sh
+  lines: c9effde9
+  preview: kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/agentgatew
+  form:
+    attr: paths="enterprise-fips"
+    only: true
+    lead: ' '
+- paths: enterprise-fips
+  block: 7
+  fingerprint: 743137bf3cac52bb
+  lang: sh
+  lines: 743137bf
+  preview: 'kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/{{< reuse '
+  form:
+    attr: paths="enterprise-fips"
+    only: true
+    lead: ' '
+- paths: enterprise-fips
+  block: 9
+  fingerprint: 4124fa003345a0f2
+  lang: sh
+  lines: ec64944c 4bee4e60 96064311 2259ff40
+  preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
+  form:
+    attr: paths="enterprise-fips"
+    only: true
+    lead: ' '
+- paths: enterprise-fips
+  block: 10
+  fingerprint: 4b1a8d6bfb6615a0
+  lang: sh
+  lines: 741c7850 1839e778
+  preview: kubectl get deploy {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{<
+  form:
+    attr: paths="enterprise-fips"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 628017b522cb98c2
+    lang: yaml
+    lines: a08a3033 494996ee
+    preview: 'image:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-fips" >}}
+       # ============================================================================
+       # Doc test coverage for "FIPS TLS profile" (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Controller and data plane proxy": the visible helm upgrade with
+       #     image.variant=fips pulls the published -fips controller and proxy images,
+       #     and both roll out.
+       #   * "Verify the profile at runtime": the visible kubectl commands run; the
+       #     controller and proxy images end in -fips; the proxy logs
+       #     crypto_backend aws-lc-rs-fips and crypto_fips true; the controller logs
+       #     the Go module in FIPS mode with fips140 on.
+       #   * "Strict FIPS mode": the visible helm upgrade sets GODEBUG=fips140=only,
+       #     the controller still rolls out (it fails closed if the module is off),
+       #     and the visible jsonpath query prints fips140=only.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * Shared extension images and EnterpriseAgentgatewayParameters overrides:
+       #     the extensions deploy only with policies that use them; the override is
+       #     a fragment.
+       #   * Air gap mirroring: needs a private registry.
+       #   * The TLS refusal table, RSA and JWT key rules: need non-FIPS TLS peers and
+       #     custom keys, beyond a single-node kind cluster.
+       #   * "Switch back to the standard images": prose steps with no commands.
+       # The reader's values file holds their existing install values plus the
+       # variant, so build it the same way: the current release values (license key
+       # included) merged with the visible snippet above.
+       helm get values {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o yaml > values.yaml
+       python3 - <<'EOF'
+       import yaml
+       values = yaml.safe_load(open("values.yaml")) or {}
+       values.setdefault("image", {})["variant"] = "fips"
+       yaml.safe_dump(values, open("values.yaml", "w"))
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 6322662b985cd4f7
+    lang: sh
+    lines: 2d065637 4bee4e60 fde80217 0e1a9b32
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-fips" >}}
+       kubectl rollout status deployment/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       # The controller re-renders the proxy Deployment with the -fips image; wait for
+       # that spec change before waiting for the rollout.
+       for i in $(seq 1 60); do
+         kubectl get deploy agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[0].image}' | grep -q -- '-fips$' && break
+         sleep 5
+       done
+       kubectl rollout status deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 2053cd10e53e8059
+    lang: sh
+    lines: 2053cd10
+    preview: kubectl get deploy -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-fips" >}}
+       images=$(kubectl get deploy -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{range .spec.template.spec.containers[*]}{.image}{" "}{end}{"\n"}{end}')
+       for d in {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} agentgateway-proxy; do
+         echo "$images" | grep -E "^$d[[:space:]].*:{{< reuse "agw-docs/versions/n-patch.md" >}}-fips( |$)" || { echo "$d does not run a -fips image"; echo "$images"; exit 1; }
+       done
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: c9effde9628ba6ee
+    lang: sh
+    lines: c9effde9
+    preview: kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/agentgatew
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-fips" >}}
+       proxy_log=$(kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/agentgateway-proxy)
+       echo "$proxy_log" | grep -Eq '"crypto_backend": *"aws-lc-rs-fips"' || { echo "proxy crypto_backend is not aws-lc-rs-fips"; echo "$proxy_log" | grep -E 'crypto_' || true; exit 1; }
+       echo "$proxy_log" | grep -Eq '"crypto_fips": *true' || { echo "proxy crypto_fips is not true"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 743137bf3cac52bb
+    lang: sh
+    lines: 743137bf
+    preview: 'kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/{{< reuse '
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-fips" >}}
+       kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} | grep 'cryptographic module in FIPS mode' | grep -q '"fips140":"on"' || { echo "controller does not log fips140 on"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 4124fa003345a0f2
+    lang: sh
+    lines: ec64944c 4bee4e60 96064311 2259ff40
+    preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-fips" >}}
+    # A FIPS controller fails closed when the module is not in FIPS mode, so a
+    # completed rollout shows that strict mode starts.
+    kubectl rollout status deployment/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 4b1a8d6bfb6615a0
+    lang: sh
+    lines: 741c7850 1839e778
+    preview: kubectl get deploy {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{<
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-fips" >}}
+    godebug=$(kubectl get deploy {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="GODEBUG")].value}')
+    [ "$godebug" = "fips140=only" ] || { echo "GODEBUG is '$godebug', expected fips140=only"; exit 1; }
+    {{< /doc-test >}}

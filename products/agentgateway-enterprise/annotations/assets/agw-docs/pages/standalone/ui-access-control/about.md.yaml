@@ -1,0 +1,68 @@
+format: 1
+source: assets/agw-docs/pages/standalone/ui-access-control/about.md
+blocks:
+- 97d559e8efdf3f10 yaml
+- ba40a12e59c9a502 yaml
+- fce6f78721220dcc yaml
+hidden:
+- after:
+    block: 2
+    fingerprint: fce6f78721220dcc
+    lang: yaml
+    lines: 84c31baf c719fdf4 c8f3f59a 64fd6953 46687890 55062eb7 afb2c7d0 5de05afb 46687890 6a77ca5c 96271915 e827fc81 46687890 b6068251 980fb345 6fff6416 46687890 c1d7121a d2629dbc 980fb345 d1c8af1c ce8f3492 ab4a1491 5614ea74 47397aad f6f27286
+    preview: 'rbac:'
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-ui-access-control-about" >}}
+    # ============================================================================
+    # Doc test coverage for "About UI access control" (these comments are not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Sample policies": the enterprise binary accepts the four-policy rbac
+    #     section, so every preset, resource key, access level, and scope in it is
+    #     one the gateway knows. The schema check covers field names; only the
+    #     binary rejects an unknown management resource.
+    #   * A misspelled resource key is rejected with the "unknown management
+    #     resource" error that the setup page shows.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * What each user can see: the setup page's test enforces the admin and
+    #     self-service presets with real tokens.
+    #   * The subjects fragments: they are partial, not a whole configuration file.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    # Mirror of the visible rbac section above.
+    cat <<'EOF' > config.yaml
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    rbac:
+      mode: fine-grained
+      policies:
+      - name: admins
+        subjects:
+        - group: platform-admins
+        preset: admin
+      - name: auditors
+        subjects:
+        - group: auditors
+        preset: viewer
+      - name: developers
+        subjects:
+        - group: developers
+        preset: self-service
+      - name: model-owners
+        subjects:
+        - group: ml-team
+        - user: alice@example.com
+        preset: self-service
+        grants:
+        - resource: llm.model
+          access: manage
+          scope:
+            names:
+            - gpt-4o
+    EOF
+    agentgateway --validate-only -f config.yaml
+    sed 's/resource: llm.model$/resource: llm.models/' config.yaml > bad.yaml
+    if agentgateway --validate-only -f bad.yaml > bad.log 2>&1; then
+      echo "a misspelled resource key was accepted"; exit 1
+    fi
+    grep -q 'unknown management resource "llm.models"' bad.log || { echo "unexpected error:"; cat bad.log; exit 1; }
+    {{< /doc-test >}}

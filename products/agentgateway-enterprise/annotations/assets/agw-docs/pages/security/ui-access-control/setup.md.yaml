@@ -1,0 +1,236 @@
+format: 1
+source: assets/agw-docs/pages/security/ui-access-control/setup.md
+blocks:
+- d933d5cd663ba8df yaml
+- afc1921048333f93 yaml
+- 4b914202e942b161 sh
+- c2e0ae940fe197c1 yaml
+- 2655be1c7779a923 yaml
+- 814df3463a797227 sh
+- 6bd4429e3ebcfe40 sh
+- a5f6610832cdbdb0 sh
+tags:
+- paths: enterprise-ui-access-control-setup
+  block: 2
+  fingerprint: 4b914202e942b161
+  lang: sh
+  lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 666811ac
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-ui-access-control-setup
+  block: 3
+  fingerprint: c2e0ae940fe197c1
+  lang: yaml
+  lines: 16c71da1 00c69c65 d458a0a9 8c8c4228 c8287c69 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 8f1ec67d d1c8af1c 233e460f 3b5f91f3 65e8ed0b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-ui-access-control-setup
+  block: 4
+  fingerprint: 2655be1c7779a923
+  lang: yaml
+  lines: 16c71da1 00c69c65 d458a0a9 8c8c4228 3fd5905a 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 31ffa78d d1c8af1c 8e06efdc a935af65 680e93de d6212102 90efcf47 ecff1b88 f394fda4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-ui-access-control-setup
+  block: 5
+  fingerprint: 814df3463a797227
+  lang: sh
+  lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 3a43a0c8
+  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-ui-access-control-setup
+  block: 6
+  fingerprint: 6bd4429e3ebcfe40
+  lang: sh
+  lines: 6bd4429e
+  preview: kubectl get enterpriseagentgatewayrbacpolicies -A
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: afc1921048333f93
+    lang: yaml
+    lines: 6cda733c 84c31baf ab71c7b8 21c7ae94 103ed1b8 fec3eeff 5d0ec020 aaa4f050 16da5de3 6bc2d087
+    preview: 'ui:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       # ============================================================================
+       # Doc test coverage for "Set up UI access control" (these comments are not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * "Configure coarse access": the two visible values snippets, saved to
+       #     ui-rbac-values.yaml, upgrade the release with the visible helm command;
+       #     the UI rolls out with the groups claim set; the rendered role mapping
+       #     holds the new groups, defaultRoles, and the chart's default admins,
+       #     writers, and readers entries that the page says Helm keeps.
+       #   * "Configure fine-grained access": the two visible policies apply; the
+       #     visible helm upgrade turns on fine-grained mode; both policies report
+       #     Accepted True; the visible kubectl get runs; a policy with a misspelled
+       #     resource key reports the UnknownResource reason that the page names.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * The login steps: they need a browser and an OIDC IdP with real groups.
+       #   * ui.rbac.subjectMapping.userClaim: with no ui.oidc.issuer the chart uses
+       #     the built-in IdP, which always maps users from sub.
+       #   * kubectl describe: its <name> and <namespace> are placeholders.
+       # Mirror of the two visible values snippets above, saved as the page says.
+       cat > ui-rbac-values.yaml <<'EOF'
+       ui:
+         rbac:
+           subjectMapping:
+             userClaim: email
+             groupsClaim: groups
+           roleMapping:
+             roleMapper: "has(claims.groups) ? claims.groups.transformList(i, v, v in rolesMap, rolesMap[v]) : []"
+             roleMappings:
+               platform-admins: global.Admin
+               finops: global.Writer
+               developers: global.Reader
+             defaultRoles:
+             - global.Reader
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 4b914202e942b161
+    lang: sh
+    lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 666811ac
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       kubectl rollout status deployment/{{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       groups_claim=$(kubectl get deploy {{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[*].env[?(@.name=="MANAGEMENT_RBAC_GROUPS_CLAIM")].value}')
+       [ "$groups_claim" = "groups" ] || { echo "groups claim is '$groups_claim', expected groups"; exit 1; }
+       rbac_config=$(kubectl get configmap {{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}}-rbac-config -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.config}')
+       echo "$rbac_config"
+       echo "$rbac_config" | python3 -c '
+       import json, sys
+       c = json.load(sys.stdin)
+       want = {"platform-admins": "global.Admin", "finops": "global.Writer", "developers": "global.Reader",
+               "admins": "global.Admin", "writers": "global.Writer", "readers": "global.Reader"}
+       missing = {k: v for k, v in want.items() if c["roleMappings"].get(k) != v}
+       assert not missing, f"roleMappings missing {missing}"
+       assert c["defaultRoles"] == ["global.Reader"], c["defaultRoles"]
+       assert "claims.groups" in c["roleMapper"], c["roleMapper"]
+       '
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 814df3463a797227
+    lang: sh
+    lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 3a43a0c8
+    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       kubectl rollout status deployment/{{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       mode=$(kubectl get deploy {{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[*].env[?(@.name=="MANAGEMENT_RBAC_MODE")].value}')
+       [ "$mode" = "fine-grained" ] || { echo "UI RBAC mode is '$mode', expected fine-grained"; exit 1; }
+       # --reset-then-reuse-values keeps the coarse step's role mapping.
+       kubectl get configmap {{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}}-rbac-config -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.config}' | grep -q platform-admins || { echo "role mapping was lost by the fine-grained upgrade"; exit 1; }
+       YAMLTest -f - <<'EOF'
+       - name: the admins policy is accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayRBACPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: admins
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 3
+       - name: the developers-routes policy is accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayRBACPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: developers-routes
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 3
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 6bd4429e3ebcfe40
+    lang: sh
+    lines: 6bd4429e
+    preview: kubectl get enterpriseagentgatewayrbacpolicies -A
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       # A misspelled resource key: the page says the REASON column names
+       # UnknownResource, and that the other policies still apply.
+       kubectl apply -f- <<EOF
+       apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+       kind: EnterpriseAgentgatewayRBACPolicy
+       metadata:
+         name: doc-test-misspelled
+         namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+       spec:
+         principals:
+         - all:
+           - attribute: groups
+             values: [developers]
+         grants:
+         - name: routes
+           resource: agentgateway:httproute
+           accessLevel: view
+       EOF
+       YAMLTest -f - <<'EOF'
+       - name: the misspelled policy reports UnknownResource
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayRBACPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: doc-test-misspelled
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+           jsonPathExpectation:
+             comparator: equals
+             value: UnknownResource
+           polling:
+             timeoutSeconds: 180
+             intervalSeconds: 3
+       - name: the admins policy is still accepted
+         wait:
+           target:
+             kind: EnterpriseAgentgatewayRBACPolicy
+             metadata:
+               namespace: agentgateway-system
+               name: admins
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 60
+             intervalSeconds: 3
+       EOF
+       kubectl delete enterpriseagentgatewayrbacpolicy doc-test-misspelled -n {{< reuse "agw-docs/snippets/namespace.md" >}}
+       {{< /doc-test >}}

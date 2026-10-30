@@ -1,0 +1,285 @@
+format: 1
+source: assets/agw-docs/pages/standalone/ui-access-control/setup.md
+blocks:
+- 9426b9aa0d196592 yaml
+- ac0daf49b20f2004 sh
+- dcaadad1cfce4377 console
+- 69dfde2bf7b35179 yaml
+- 19a9c2d542ac8455 yaml
+- 288c4af02a951261 sh
+- 90bc698625713d9f console
+- c41b24fd181d4658 sh
+- 3c1f3c65f6a7db2b yaml
+- 03c7b3490eef8365 sh
+- 162ea3ca5a4a4756 console
+- 8776cc91d7dc303e sh
+- c851ee9f2c86f321 console
+tags:
+- paths: enterprise-ui-access-control-setup
+  block: 1
+  fingerprint: ac0daf49b20f2004
+  lang: sh
+  lines: ac0daf49
+  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-ui-access-control-setup
+  block: 5
+  fingerprint: 288c4af02a951261
+  lang: sh
+  lines: 288c4af0
+  preview: agentgateway --validate-only -f config.yaml
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-ui-access-control-setup
+  block: 7
+  fingerprint: c41b24fd181d4658
+  lang: sh
+  lines: 54e9831d c2a7b015
+  preview: curl -s http://localhost:4001/api/permissions \
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-ui-access-control-setup
+  block: 9
+  fingerprint: 03c7b3490eef8365
+  lang: sh
+  lines: 54e9831d 694915c0
+  preview: curl -s http://localhost:4001/api/permissions \
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+- paths: enterprise-ui-access-control-setup
+  block: 11
+  fingerprint: 8776cc91d7dc303e
+  lang: sh
+  lines: 3c721379 694915c0
+  preview: curl -s -w "\n%{http_code}\n" http://localhost:4001/api/config \
+  form:
+    attr: paths="enterprise-ui-access-control-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+    # ============================================================================
+    # Doc test coverage for "Set up UI access control" (these comments are not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES (Config file tab):
+    #   * "Configure coarse access": with a strict jwtAuth policy in ui.policies, a
+    #     request to the UI gateway without credentials gets 401 (visible curl).
+    #   * "Configure fine-grained access": the visible standardAttributes and rbac
+    #     snippets load; the visible --validate-only accepts the file; the visible
+    #     /api/permissions call for an admin token shows the email as user, the
+    #     platform-admins group from jwt.realm_access.roles, and full manage access
+    #     in coarse mode; adding mode: fine-grained reloads without a restart.
+    #   * "Verify access": the developer token gets the self-service grants
+    #     (llm.apiKey manage, owner self), /api/config returns 403 with
+    #     "management access denied", the admin keeps access, and the admin
+    #     address still has full access without credentials.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The UI tab and the login steps: browser interactions.
+    #   * The misspelled-grant example output: it is an example, not a step.
+    #   * A real IdP: the test mints its own RSA key and JWTs, with the claims the
+    #     page reads (email, sub, groups, realm_access.roles).
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    openssl genrsa -out uiac.key 2048 2>/dev/null
+    python3 - <<'EOF'
+    import base64, json, subprocess, time
+    def b64(b): return base64.urlsafe_b64encode(b).rstrip(b"=").decode()
+    mod = subprocess.check_output(["openssl", "rsa", "-in", "uiac.key", "-noout", "-modulus"]).decode().strip().split("=", 1)[1]
+    jwk = {"kty": "RSA", "kid": "uiac", "use": "sig", "alg": "RS256", "n": b64(bytes.fromhex(mod)), "e": "AQAB"}
+    json.dump({"keys": [jwk]}, open("uiac-jwks.json", "w"))
+    def mint(name, claims):
+        claims = {"iss": "uiac.example.com", "aud": "agentgateway-ui", "exp": int(time.time()) + 7200, **claims}
+        head = b64(json.dumps({"alg": "RS256", "typ": "JWT", "kid": "uiac"}).encode())
+        body = b64(json.dumps(claims).encode())
+        sig = subprocess.run(["openssl", "dgst", "-sha256", "-sign", "uiac.key"], input=f"{head}.{body}".encode(), capture_output=True, check=True).stdout
+        open(name, "w").write(f"{head}.{body}.{b64(sig)}")
+    mint("admin.jwt", {"sub": "admin-sub", "email": "admin@example.com", "realm_access": {"roles": ["platform-admins"]}})
+    mint("dev.jwt", {"sub": "carol-sub", "email": "carol@example.com", "realm_access": {"roles": ["developers"]}})
+    EOF
+    export ADMIN_ID_TOKEN=$(cat admin.jwt)
+    export ID_TOKEN=$(cat dev.jwt)
+    # The UI on its own gateway, port 4001, as in "Expose the UI", with the strict
+    # jwtAuth policy that the page's first snippet sets.
+    UI_BASE='gateways:
+      ui-gateway:
+        port: 4001
+    ui:
+      gateways: [ui-gateway]
+      policies:
+        jwtAuth:
+          mode: strict
+          issuer: uiac.example.com
+          audiences: [agentgateway-ui]
+          jwks:
+            file: ./uiac-jwks.json'
+    write_config() {
+      { echo "# yaml-language-server: \$schema=https://agentgateway.dev/schema/config"; echo "$UI_BASE"; printf '%s\n' "$@"; } > config.yaml
+    }
+    start_agw() {
+      agentgateway -f config.yaml > agw.log 2>&1 &
+      AGW_PID=$!
+      for i in $(seq 1 30); do
+        curl -s -o /dev/null http://localhost:4001/api/config && return 0
+        sleep 1
+      done
+      echo "agentgateway did not start"; cat agw.log; exit 1
+    }
+    stop_agw() { kill $AGW_PID 2>/dev/null || true; wait $AGW_PID 2>/dev/null || true; }
+    trap 'stop_agw' EXIT
+    write_config
+    start_agw
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: ac0daf49b20f2004
+    lang: sh
+    lines: ac0daf49
+    preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:4001/api/config)
+       [ "$code" = "401" ] || { echo "UI without credentials returned $code, expected 401"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 69dfde2bf7b35179
+    lang: yaml
+    lines: 2180b199 14cbb6f6 4f221910 1228b865
+    preview: 'config:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       # Mirror of the visible snippet above. config settings apply at startup, so
+       # restart after adding them.
+       STD_ATTRS='config:
+         standardAttributes:
+           user: '"'"'has(jwt.email) ? jwt.email : jwt.sub'"'"'
+           group: jwt.realm_access.roles'
+       write_config "$STD_ATTRS"
+       stop_agw
+       start_agw
+       {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 19a9c2d542ac8455
+    lang: yaml
+    lines: 84c31baf c8f3f59a 64fd6953 46687890 55062eb7 afb2c7d0 e827fc81 46687890 b6068251 980fb345
+    preview: 'rbac:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       # Mirror of the visible rbac snippet above, added to the same file.
+       RBAC_POLICIES='  policies:
+         - name: admins
+           subjects:
+           - group: platform-admins
+           preset: admin
+         - name: developers
+           subjects:
+           - group: developers
+           preset: self-service'
+       write_config "$STD_ATTRS" "rbac:" "$RBAC_POLICIES"
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 288c4af02a951261
+    lang: sh
+    lines: 288c4af0
+    preview: agentgateway --validate-only -f config.yaml
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       # The running gateway reloads the file; give it a moment.
+       sleep 5
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: c41b24fd181d4658
+    lang: sh
+    lines: 54e9831d c2a7b015
+    preview: curl -s http://localhost:4001/api/permissions \
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       curl -s http://localhost:4001/api/permissions -H "Authorization: Bearer $ADMIN_ID_TOKEN" | python3 -c '
+       import json, sys
+       p = json.load(sys.stdin)
+       assert p["user"] == "admin@example.com", p
+       assert "platform-admins" in p["groups"], p
+       assert any(g["resource"] == "config" and g["access"] == "manage" for g in p["permissions"]), p
+       print("admin identified, coarse mode gives manage on config")
+       '
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 3c1f3c65f6a7db2b
+    lang: yaml
+    lines: 84c31baf c719fdf4 c8f3f59a b2724542
+    preview: 'rbac:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       # Mirror of the visible snippet above: the same policies, now enforced.
+       write_config "$STD_ATTRS" "rbac:" "  mode: fine-grained" "$RBAC_POLICIES"
+       # A running gateway reloads the file, so no restart. Wait for enforcement.
+       code=""
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:4001/api/config -H "Authorization: Bearer $ID_TOKEN")
+         [ "$code" = "403" ] && break
+         sleep 1
+       done
+       [ "$code" = "403" ] || { echo "fine-grained mode was not applied on reload (got $code)"; cat agw.log; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 03c7b3490eef8365
+    lang: sh
+    lines: 54e9831d 694915c0
+    preview: curl -s http://localhost:4001/api/permissions \
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       curl -s http://localhost:4001/api/permissions -H "Authorization: Bearer $ID_TOKEN" | python3 -c '
+       import json, sys
+       p = json.load(sys.stdin)
+       assert p["adminListener"] is False, p
+       assert p["user"] == "carol@example.com", p
+       assert p["groups"] == ["developers"], p
+       want = {("llm.apiKey", "manage"), ("logs", "view"), ("analytics", "view"), ("llm.budget", "view")}
+       got = {(g["resource"], g["access"]) for g in p["permissions"] if g.get("scope", {}).get("owner") == "self"}
+       assert want <= got, f"missing self-service grants: {want - got}"
+       assert not any(g["resource"] == "config" for g in p["permissions"]), p
+       print("developer has the self-service grants and no config access")
+       '
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 8776cc91d7dc303e
+    lang: sh
+    lines: 3c721379 694915c0
+    preview: curl -s -w "\n%{http_code}\n" http://localhost:4001/api/config \
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-ui-access-control-setup" >}}
+       out=$(curl -s -w "\n%{http_code}" http://localhost:4001/api/config -H "Authorization: Bearer $ID_TOKEN")
+       echo "$out" | tail -1 | grep -qx 403 || { echo "expected 403: $out"; exit 1; }
+       echo "$out" | head -1 | grep -q 'management access denied' || { echo "expected the access denied body: $out"; exit 1; }
+       # The admins policy keeps full access, and the admin address ignores RBAC.
+       code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:4001/api/config -H "Authorization: Bearer $ADMIN_ID_TOKEN")
+       [ "$code" = "200" ] || { echo "admin got $code on /api/config, expected 200"; exit 1; }
+       code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:15000/api/config)
+       [ "$code" = "200" ] || { echo "admin address got $code, expected 200"; exit 1; }
+       {{< /doc-test >}}

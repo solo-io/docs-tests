@@ -1,0 +1,117 @@
+format: 1
+source: assets/agw-docs/pages/security/ui-access-control/about.md
+blocks:
+- 1d817adfde42f713 yaml
+- 9eeaea702e7e8b47 yaml
+- 15d4f090aa06ef6a yaml
+- bf643dcbf6796a2e yaml
+- 0795d46ff84aabca yaml
+hidden:
+- after:
+    section: Sample policies
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 4
+      fingerprint: 0795d46ff84aabca
+      lang: yaml
+      lines: 00c69c65 d458a0a9 8c8c4228 4b022c7d 8af957d1 36184fa5 b430e67f 90efcf47 b820e4fb 3e69a81c d1c8af1c 31c77ae3 7cf07a71 65e8ed0b d6212102 90efcf47 ecff1b88 f394fda4
+      preview: 'apiVersion: enterpriseagentgateway.solo.io/v1alpha1'
+  content: |-
+    {{< doc-test paths="enterprise-ui-access-control-about" >}}
+    # ============================================================================
+    # Doc test coverage for "About UI access control" (these comments are not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Sample policies": all four policies apply, and in fine-grained mode the
+    #     UI accepts each one, so every resource key, access level, and constraint
+    #     attribute in the samples is one the UI knows. The schema check covers the
+    #     field names; only the UI catches a wrong resource key or attribute.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * What each user can see: needs a browser and an IdP with real groups.
+    #   * The principals fragment: it is a partial spec, not a resource.
+    # Mirror of the four visible tab blocks above.
+    kubectl apply -f- <<EOF
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayRBACPolicy
+    metadata:
+      name: admins
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      principals:
+      - all:
+        - attribute: groups
+          values: [platform-admins]
+      grants:
+      - name: everything
+        resource: "agentgateway:*"
+        accessLevel: manage
+    ---
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayRBACPolicy
+    metadata:
+      name: team-a-routes
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      principals:
+      - all:
+        - attribute: groups
+          values: [team-a]
+      grants:
+      - name: routes
+        resource: agentgateway:httproutes
+        accessLevel: view
+        constraints:
+        - all:
+          - attribute: namespace
+            values: [team-a]
+    ---
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayRBACPolicy
+    metadata:
+      name: finops
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      principals:
+      - all:
+        - attribute: groups
+          values: [finops]
+      grants:
+      - name: budgets
+        resource: agentgateway:budgets
+        accessLevel: manage
+      - name: budget-entries
+        resource: agentgateway:budgets:entries
+        accessLevel: view
+    ---
+    apiVersion: enterpriseagentgateway.solo.io/v1alpha1
+    kind: EnterpriseAgentgatewayRBACPolicy
+    metadata:
+      name: team-a-keys
+      namespace: {{< reuse "agw-docs/snippets/namespace.md" >}}
+    spec:
+      principals:
+      - all:
+        - attribute: groups
+          values: [team-a-leads]
+      grants:
+      - name: keys
+        resource: agentgateway:virtual-keys
+        accessLevel: manage
+        constraints:
+        - all:
+          - attribute: namespace
+            values: [team-a]
+    EOF
+    for p in admins team-a-routes finops team-a-keys; do
+      status=""
+      for i in $(seq 1 60); do
+        status=$(kubectl get enterpriseagentgatewayrbacpolicy "$p" -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.status.conditions[?(@.type=="Accepted")].status}')
+        [ "$status" = "True" ] && break
+        sleep 3
+      done
+      [ "$status" = "True" ] || { echo "policy $p is not accepted:"; kubectl describe enterpriseagentgatewayrbacpolicy "$p" -n {{< reuse "agw-docs/snippets/namespace.md" >}}; exit 1; }
+      echo "policy $p accepted"
+    done
+    {{< /doc-test >}}

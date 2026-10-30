@@ -153,6 +153,7 @@ skip:
 - page: documentation/security/jwt/_index.md
 - page: documentation/security/jwt/about.md
 - page: documentation/security/jwt/mcp.md
+- page: documentation/security/ui-access-control/_index.md
 - page: documentation/security/waf/_index.md
 - page: documentation/setup/_index.md
 - page: documentation/setup/customize/_index.md
@@ -737,6 +738,12 @@ scenarios:
     - gateway
     page: documentation/security/external-secrets/file-csi.md
     path: enterprise-file-csi
+  enterprise-fips:
+    needs:
+    - install-standard
+    - gateway
+    page: documentation/install/fips.md
+    path: enterprise-fips
   enterprise-licensing:
     needs:
     - install-standard
@@ -803,6 +810,32 @@ scenarios:
       path: openai-setup
     page: documentation/observability/traces/setup.md
     path: enterprise-traces-setup
+  enterprise-ui-access-control-about:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/install/ui/setup.md
+      path: enterprise-ui-setup
+    - page: documentation/security/ui-access-control/setup.md
+      path: enterprise-ui-access-control-setup
+    page: documentation/security/ui-access-control/about.md
+    path: enterprise-ui-access-control-about
+  enterprise-ui-access-control-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - gateway
+    before:
+    - page: documentation/install/ui/setup.md
+      path: enterprise-ui-setup
+    page: documentation/security/ui-access-control/setup.md
+    path: enterprise-ui-access-control-setup
   enterprise-ui-https:
     needs:
     - install-standard
