@@ -1,7 +1,13 @@
 # Doc-test scenario definitions for kgateway (kgateway-dev/kgateway.dev), envoy mode.
 #
-# PILOT: one traffic-management guide, direct responses. Widen one guide at a
-# time once this scenario is stable.
+# Every page in the latest and main trees is either skipped (indexes, concept
+# and reference pages, stubs), checked with a `schema` scenario (the
+# kgateway and Gateway API resources on the page, no cluster), or still on the
+# functional backlog. Functional scenarios are added in batches by section.
+#
+# A `schema` scenario needs no annotation markup: doc_test_schema_check.py
+# checks every visible block on the scenario's own page. Its `path` names the
+# tag a later functional scenario on the same page would use.
 #
 # Same shape as ../../agentgateway/kubernetes/tests.yaml. What differs:
 #
@@ -34,6 +40,102 @@ prerequisites:
   httpbin:
     page: install/sample-app.md
     path: install-httpbin
+# Pages with deliberately no test: section indexes, concept and reference
+# pages, and stubs that point to a guide elsewhere. They count as covered.
+skip:
+- page: _index.md
+- page: about/_index.md
+- page: ai/_index.md
+- page: install/_index.md
+- page: integrations/_index.md
+- page: integrations/aws-elb/_index.md
+- page: integrations/istio/_index.md
+- page: integrations/istio/ambient/_index.md
+- page: integrations/istio/sidecar/_index.md
+- source: kgw-docs/pages/about/architecture.md
+- source: kgw-docs/pages/about/custom-resources.md
+- source: kgw-docs/pages/about/deployment-patterns.md
+- source: kgw-docs/pages/about/overview.md
+- source: kgw-docs/pages/about/policies-index.md
+- source: kgw-docs/pages/about/policy-merging.md
+- source: kgw-docs/pages/about/proxies.md
+- source: kgw-docs/pages/faqs.md
+- source: kgw-docs/pages/integrations/istio/ambient/additional-settings.md
+- source: kgw-docs/pages/reference/add-docs.md
+- source: kgw-docs/pages/reference/contribution/preview.md
+- source: kgw-docs/pages/reference/contribution/styleguide.md
+- source: kgw-docs/pages/reference/feature-maturity.md
+- source: kgw-docs/pages/reference/glossary.md
+- page: reference/helm/kgateway-crds.md
+- page: reference/helm/kgateway.md
+- source: kgw-docs/pages/reference/ports.md
+- source: kgw-docs/pages/reference/versions.md
+- source: kgw-docs/pages/reference/vulnerabilities.md
+- source: kgw-docs/pages/resiliency/retry/about.md
+- source: kgw-docs/pages/resiliency/timeouts/about.md
+- source: kgw-docs/pages/security/oauth2-overview.md
+- source: kgw-docs/pages/setup/customize/options.md
+- source: kgw-docs/pages/traffic-management/route-delegation/overview.md
+- source: kgw-docs/pages/traffic-management/transformations/engines-23x.md
+- page: migrate/_index.md
+- page: migrate/emitters/_index.md
+- page: migrate/emitters/kgateway/_index.md
+- page: migrate/examples/_index.md
+- page: migrate/install/_index.md
+- page: migrate/providers/_index.md
+- page: migrate/providers/ingressnginx/_index.md
+- page: migrate/reference/_index.md
+- page: migrate/reference/cli/_index.md
+- page: observability/_index.md
+- page: operations/_index.md
+- page: reference/_index.md
+- page: reference/api.md
+- page: reference/contribution/_index.md
+- page: reference/helm/_index.md
+- page: reference/osa.md
+- page: reference/release-notes.md
+- page: resiliency/_index.md
+- page: resiliency/keepalive/_index.md
+- page: resiliency/retry/_index.md
+- page: resiliency/timeouts/_index.md
+- page: resiliency/timeouts/per-try-timeout.md
+- page: security/_index.md
+- page: security/dns-certs.md
+- page: security/extauth/_index.md
+- page: security/extauth/byo-ext-auth-service/_index.md
+- page: security/https-listener.md
+- page: security/istio-mtls.md
+- page: security/jwt/_index.md
+- page: security/jwt/simple/_index.md
+- page: security/mtls-listener.md
+- page: security/oauth/_index.md
+- page: security/oauth/auth0/_index.md
+- page: security/oauth/keycloak/_index.md
+- page: security/oauth/okta/_index.md
+- page: security/ratelimit/_index.md
+- page: security/sni-listener.md
+- page: security/tls-passthrough.md
+- page: setup/_index.md
+- page: setup/customize/_index.md
+- page: setup/customize/envoy/_index.md
+- page: setup/listeners/_index.md
+- page: setup/listeners/overview.md
+- page: traffic-management/_index.md
+- page: traffic-management/destination-types/_index.md
+- page: traffic-management/destination-types/backends/_index.md
+- page: traffic-management/destination-types/backends/dfp.md
+- page: traffic-management/destination-types/backends/lambda/_index.md
+- page: traffic-management/destination-types/kube-services/_index.md
+- page: traffic-management/extproc/_index.md
+- page: traffic-management/header-control/_index.md
+- page: traffic-management/health-checks/_index.md
+- page: traffic-management/match/_index.md
+- page: traffic-management/redirect/_index.md
+- page: traffic-management/rewrite/_index.md
+- page: traffic-management/route-delegation/_index.md
+- page: traffic-management/route-delegation/inheritance/_index.md
+- page: traffic-management/session-affinity/_index.md
+- page: traffic-management/transformations/_index.md
 scenarios:
   direct-response:
     type: functional
@@ -42,3 +144,563 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/direct-response.md
     path: direct-response
+  acl-schema:
+    type: schema
+    source: kgw-docs/pages/security/acl.md
+    path: acl
+  advanced-schema:
+    type: schema
+    source: kgw-docs/pages/install/advanced.md
+    path: advanced
+  alb-schema:
+    type: schema
+    source: kgw-docs/pages/integrations/aws-elb/alb.md
+    path: alb
+  api-key-auth-schema:
+    type: schema
+    page: migrate/examples/api-key-auth.md
+    path: api-key-auth
+  apikey-schema:
+    type: schema
+    source: kgw-docs/pages/security/apikey-auth.md
+    path: apikey
+  argo-schema:
+    type: schema
+    source: kgw-docs/pages/integrations/argo.md
+    path: argo
+  auth0-access-token-schema:
+    type: schema
+    source: kgw-docs/pages/security/auth0/access-token.md
+    path: auth0-access-token
+  auth0-setup-schema:
+    type: schema
+    source: kgw-docs/pages/security/auth0/setup.md
+    path: auth0-setup
+  authorization-code-schema:
+    type: schema
+    source: kgw-docs/pages/security/keycloak/authorization-code.md
+    path: authorization-code
+  backend-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/health-checks/backend.md
+    path: backend
+  backend-tls-schema:
+    type: schema
+    source: kgw-docs/pages/security/backend-tls.md
+    path: backend-tls
+  backendconfigpolicy-schema:
+    type: schema
+    source: kgw-docs/pages/about/backendconfigpolicy.md
+    path: backendconfigpolicy
+  basic-auth-schema:
+    type: schema
+    page: migrate/examples/basic-auth.md
+    path: basic-auth
+  buffering-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/buffering2.2-body.md
+    path: buffering
+  byo-ext-auth-service-grpc-schema:
+    type: schema
+    source: kgw-docs/pages/security/external-auth.md
+    path: byo-ext-auth-service-grpc
+  byo-ext-auth-service-http-schema:
+    type: schema
+    source: kgw-docs/pages/security/external-auth-http.md
+    path: byo-ext-auth-service-http
+  canary-schema:
+    type: schema
+    page: migrate/examples/canary.md
+    path: canary
+  change-response-status-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/transformations/change-response-status.md
+    path: change-response-status
+  circuit-breakers-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/circuit-breakers.md
+    path: circuit-breakers
+  claim-based-rbac-schema:
+    type: schema
+    source: kgw-docs/pages/security/jwt/claim-based-rbac.md
+    path: claim-based-rbac
+  compression-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/compression.md
+    path: compression
+  configs-schema:
+    type: schema
+    source: kgw-docs/pages/setup/customize/configs.md
+    path: configs
+  connection-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/connection.md
+    path: connection
+  consistent-hashing-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/session-affinity/consistent-hashing.md
+    path: consistent-hashing
+  cors-schema:
+    type: schema
+    source: kgw-docs/pages/security/cors.md
+    path: cors
+  creds-secret-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/destination-types/backends/lambda/creds-secret.md
+    path: creds-secret
+  csrf-schema:
+    type: schema
+    source: kgw-docs/pages/security/csrf.md
+    path: csrf
+  custom-bootstrap-schema:
+    type: schema
+    source: kgw-docs/pages/setup/customize/custom-bootstrap.md
+    path: custom-bootstrap
+  custom-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/redirect/custom.md
+    path: custom
+  customize-gateway-schema:
+    type: schema
+    source: kgw-docs/pages/setup/customize/gateway.md
+    path: customize-gateway
+  debug-schema:
+    type: schema
+    source: kgw-docs/pages/operations/debug.md
+    path: debug
+  decode-base64-headers-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/transformations/decode-base64-headers.md
+    path: decode-base64-headers
+  default-schema:
+    type: schema
+    source: kgw-docs/pages/setup/default.md
+    path: default
+  dfp-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/dfp.md
+    path: dfp
+  early-request-header-modifier-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/early-request-header-modifier.md
+    path: early-request-header-modifier
+  ec2-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/destination-types/backends/ec2.md
+    path: ec2
+  envoy-image-schema:
+    type: schema
+    source: kgw-docs/pages/setup/customize/envoy-image.md
+    path: envoy-image
+  examples-basic-schema:
+    type: schema
+    page: migrate/examples/basic.md
+    path: examples-basic
+  extauth-basic-schema:
+    type: schema
+    source: kgw-docs/pages/security/basic-auth.md
+    path: extauth-basic
+  external-dns-cert-manager-schema:
+    type: schema
+    source: kgw-docs/pages/integrations/external-dns-cert-manager.md
+    path: external-dns-cert-manager
+  fault-injection-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/fault-injection.md
+    path: fault-injection
+  filter-stages-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/extproc-filter-stages.md
+    path: filter-stages
+  forward-xfcc-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/forward-xfcc.md
+    path: forward-xfcc
+  gateway-metrics-schema:
+    type: schema
+    source: kgw-docs/pages/observability/gateway-metrics.md
+    path: gateway-metrics
+  global-attachment-schema:
+    type: schema
+    page: about/policies/global-attachment.md
+    path: global-attachment
+  global-schema:
+    type: schema
+    source: kgw-docs/pages/security/ratelimit/global.md
+    path: global
+  grpc-services-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/destination-types/kube-services/grpc-services.md
+    path: grpc-services
+  grpc-statistics-schema:
+    type: schema
+    page: traffic-management/grpc-statistics.md
+    path: grpc-statistics
+  header-manipulation-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/extproc.md
+    path: header-manipulation
+  header-modifiers-schema:
+    type: schema
+    page: migrate/examples/header-modifiers.md
+    path: header-modifiers
+  header-query-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/route-delegation/header-query.md
+    path: header-query
+  header-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/match/header.md
+    path: header
+  http-connect-tunnels-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/http-connect-tunnels.md
+    path: http-connect-tunnels
+  http-services-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/destination-types/kube-services/http-services.md
+    path: http-services
+  http-upgrades-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/http-upgrades.md
+    path: http-upgrades
+  http10-schema:
+    type: schema
+    source: kgw-docs/pages/setup/http10.md
+    path: http10
+  http2-downstream-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/http2-downstream.md
+    path: http2-downstream
+  idle-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/timeouts/idle.md
+    path: idle
+  idle-stream-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/timeouts/idle-stream.md
+    path: idle-stream
+  ingress-schema:
+    type: schema
+    source: kgw-docs/pages/integrations/istio/sidecar/ingress.md
+    path: ingress
+  inject-response-headers-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/transformations/inject-response-headers.md
+    path: inject-response-headers
+  internal-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/redirect/internal.md
+    path: internal
+  keepalive-http2-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/keepalive/http2.md
+    path: keepalive-http2
+  keepalive-tcp-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/keepalive/tcp.md
+    path: keepalive-tcp
+  keycloak-access-token-schema:
+    type: schema
+    source: kgw-docs/pages/security/keycloak/access-token.md
+    path: keycloak-access-token
+  keycloak-setup-schema:
+    type: schema
+    source: kgw-docs/pages/security/keycloak/setup.md
+    path: keycloak-setup
+  kgateway-policies-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/route-delegation/inheritance/kgateway-policies.md
+    path: kgateway-policies
+  label-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/route-delegation/label.md
+    path: label
+  listenerpolicy-schema:
+    type: schema
+    page: about/policies/listenerpolicy.md
+    path: listenerpolicy
+  listeners-http-schema:
+    type: schema
+    page: setup/listeners/http.md
+    path: listeners-http
+  listeners-https-schema:
+    type: schema
+    page: setup/listeners/https.md
+    path: listeners-https
+  listeners-tcp-schema:
+    type: schema
+    page: setup/listeners/tcp.md
+    path: listeners-tcp
+  loadbalancing-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/session-affinity/loadbalancing.md
+    path: loadbalancing
+  local-replies-schema:
+    type: schema
+    page: traffic-management/local-replies.md
+    path: local-replies
+  local-schema:
+    type: schema
+    source: kgw-docs/pages/security/ratelimit/local.md
+    path: local
+  match-host-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/match/host.md
+    path: match-host
+  match-path-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/match/path.md
+    path: match-path
+  max-connection-duration-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/timeouts/max-connection-duration.md
+    path: max-connection-duration
+  max-headers-count-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/max-headers-count.md
+    path: max-headers-count
+  method-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/match/method.md
+    path: method
+  mirroring-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/mirroring.md
+    path: mirroring
+  mtls-schema:
+    type: schema
+    source: kgw-docs/pages/setup/listeners/mtls.md
+    path: mtls
+  multi-level-delegation-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/route-delegation/multi-level-delegation.md
+    path: multi-level-delegation
+  multi-parent-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/route-delegation/multi-parent.md
+    path: multi-parent
+  native-policies-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/route-delegation/inheritance/native-policies.md
+    path: native-policies
+  nlb-schema:
+    type: schema
+    source: kgw-docs/pages/integrations/aws-elb/nlb.md
+    path: nlb
+  okta-access-token-schema:
+    type: schema
+    source: kgw-docs/pages/security/okta/access-token.md
+    path: okta-access-token
+  okta-setup-schema:
+    type: schema
+    source: kgw-docs/pages/security/okta/setup.md
+    path: okta-setup
+  otel-stack-schema:
+    type: schema
+    source: kgw-docs/pages/observability/otel-stack.md
+    path: otel-stack
+  outlier-detection-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/outlier-detection.md
+    path: outlier-detection
+  per-try-timeout-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/retry/per-try-timeout.md
+    path: per-try-timeout
+  preserve-request-paths-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/preserve-request-paths.md
+    path: preserve-request-paths
+  priority-groups-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/priority-groups.md
+    path: priority-groups
+  proxy-100-continue-schema:
+    type: schema
+    source: kgw-docs/pages/setup/proxy-100-continue.md
+    path: proxy-100-continue
+  proxy-protocol-schema:
+    type: schema
+    page: traffic-management/proxy-protocol.md
+    path: proxy-protocol
+  query-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/match/query.md
+    path: query
+  rate-limiting-schema:
+    type: schema
+    page: migrate/examples/rate-limiting.md
+    path: rate-limiting
+  redirect-host-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/redirect/host.md
+    path: redirect-host
+  redirect-https-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/redirect/https.md
+    path: redirect-https
+  redirect-path-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/redirect/path.md
+    path: redirect-path
+  redirect-url-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/transformations/redirect-url.md
+    path: redirect-url
+  request-buffering-schema:
+    type: schema
+    page: migrate/examples/request-buffering.md
+    path: request-buffering
+  request-header-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/request-header.md
+    path: request-header
+  request-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/timeouts/request.md
+    path: request
+  response-header-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/response-header.md
+    path: response-header
+  retry-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/retry/retry.md
+    path: retry
+  rewrite-host-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/rewrite/host.md
+    path: rewrite-host
+  rewrite-path-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/rewrite/path.md
+    path: rewrite-path
+  route-delegation-basic-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/route-delegation/basic.md
+    path: route-delegation-basic
+  route-ordering-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/match/route-ordering.md
+    path: route-ordering
+  sample-app-schema:
+    type: schema
+    page: install/sample-app.md
+    path: sample-app
+  selfmanaged-schema:
+    type: schema
+    source: kgw-docs/pages/setup/selfmanaged.md
+    path: selfmanaged
+  service-accounts-schema:
+    type: schema
+    page: traffic-management/destination-types/backends/lambda/service-accounts.md
+    path: service-accounts
+  session-affinity-schema:
+    type: schema
+    page: migrate/examples/session-affinity.md
+    path: session-affinity
+  session-persistence-schema:
+    type: schema
+    page: traffic-management/session-affinity/session-persistence.md
+    path: session-persistence
+  setup-gateway-schema:
+    type: schema
+    page: setup/gateway.md
+    path: setup-gateway
+  simple-basic-schema:
+    type: schema
+    source: kgw-docs/pages/security/jwt/basic.md
+    path: simple-basic
+  sni-schema:
+    type: schema
+    page: setup/listeners/sni.md
+    path: sni
+  ssl-redirect-schema:
+    type: schema
+    page: migrate/examples/ssl-redirect.md
+    path: ssl-redirect
+  static-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/static.md
+    path: static
+  strip-port-host-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/strip-port-host.md
+    path: strip-port-host
+  strip-trailing-host-dot-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/strip-trailing-host-dot.md
+    path: strip-trailing-host-dot
+  timeouts-schema:
+    type: schema
+    page: migrate/examples/timeouts.md
+    path: timeouts
+  tls-handshake-schema:
+    type: schema
+    source: kgw-docs/pages/resiliency/timeouts/tls-handshake.md
+    path: tls-handshake
+  tls-passthrough-schema:
+    type: schema
+    page: setup/listeners/tls-passthrough.md
+    path: tls-passthrough
+  tls-settings-schema:
+    type: schema
+    page: setup/listeners/tls-settings.md
+    path: tls-settings
+  tls-termination-schema:
+    type: schema
+    page: setup/listeners/tls-termination.md
+    path: tls-termination
+  tls-termination-tcproute-schema:
+    type: schema
+    page: setup/listeners/tls-termination-tcproute.md
+    path: tls-termination-tcproute
+  tracing-schema:
+    type: schema
+    source: kgw-docs/pages/observability/tracing.md
+    path: tracing
+  traffic-management-grpc-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/grpc.md
+    path: traffic-management-grpc
+  traffic-management-http2-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/http2.md
+    path: traffic-management-http2
+  traffic-mirroring-schema:
+    type: schema
+    page: migrate/examples/traffic-mirroring.md
+    path: traffic-mirroring
+  traffic-split-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/traffic-split.md
+    path: traffic-split
+  trafficpolicy-schema:
+    type: schema
+    source: kgw-docs/pages/about/trafficpolicy.md
+    path: trafficpolicy
+  two-backends-schema:
+    type: schema
+    source: kgw-docs/pages/security/oauth/two-backends.md
+    path: two-backends
+  update-request-path-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/transformations/update-request-path.md
+    path: update-request-path
+  update-response-body-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/transformations/update-response-body.md
+    path: update-response-body
+  url-rewriting-schema:
+    type: schema
+    page: migrate/examples/url-rewriting.md
+    path: url-rewriting
+  weighted-routes-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/weighted-routes.md
+    path: weighted-routes
+  zone-routing-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/zone-routing.md
+    path: zone-routing

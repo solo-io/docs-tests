@@ -136,7 +136,7 @@ hidden:
       done
       echo "agentgateway did not start"; cat agw.log; exit 1
     }
-    stop_agw() { kill $AGW_PID 2>/dev/null || true; wait $AGW_PID 2>/dev/null || true; }
+    stop_agw() { [ -n "${AGW_PID:-}" ] || return 0; kill "$AGW_PID" 2>/dev/null || true; wait "$AGW_PID" 2>/dev/null || true; }
     trap 'stop_agw' EXIT
     write_config
     start_agw

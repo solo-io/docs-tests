@@ -330,6 +330,9 @@ class MoreKindsTests(Base):
         # Helm values for the standalone chart nest the whole config.
         self.assertFalse(S.is_config_file({"config": {"binds": []}}, v))
         self.assertFalse(S.is_config_file({"binds": [{"port": 1}]}, v, "binds:\n- port: 1\n  # ...\n"))
+        self.assertFalse(S.is_config_file({"binds": [{"port": 1}]}, v, "binds:\n- port: 1\n  # ... your listeners ...\n"))
+        # A comment that only mentions an ellipsis later is not an elision.
+        self.assertTrue(S.is_config_file({"binds": [{"port": 1}]}, v, "binds:\n- port: 1  # see ... below\n"))
 
     def test_shell_variable_is_not_judged(self):
         key = self.write("main", route("gateway.networking.k8s.io/v1", "hostnames: [\"${DOMAIN}\"]"))

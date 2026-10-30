@@ -207,8 +207,9 @@ def check_manifest(manifest: dict, crds: CrdValidators) -> Optional[str]:
     return f"{kind} {err}" if err else None
 
 
-# A line that is only `...` or `# ...` stands in for fields an example leaves out.
-ELISION_RE = re.compile(r"^\s*(#\s*)?\.\.\.\s*$", re.MULTILINE)
+# A line that is only `...`, or a comment that starts with `...` (`# ...`,
+# `# ... your policies ...`), stands in for fields an example leaves out.
+ELISION_RE = re.compile(r"^\s*(#\s*\.\.\..*|\.\.\.\s*)$", re.MULTILINE)
 JSON_TYPES = {"array": list, "object": dict}
 
 
