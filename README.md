@@ -787,6 +787,12 @@ python3 docs-tests/scripts/doc_test_type_check.py --repo-root . \
   --summary "$GITHUB_STEP_SUMMARY"
 ```
 
+For a site made of `{{< rebase >}}` shells, such as agentgateway-enterprise, pass the
+same `--upstream-root`, `--upstream-versions`, and `--condition` values as the schema
+check. Only the versions in the upstream map are checked. Pass the config schema the
+site's own schema check uses, here the enterprise `config.json`. With the open source
+one, enterprise-only keys make whole config files look like fragments.
+
 Errors listed in `products/<product>/type-check-baseline.yaml` are reported as
 `baselined` and don't fail the run. Use the baseline for a finding `--apply` would get
 wrong. For example, `install/argocd.md` shows an Argo CD `Application`, which the schema

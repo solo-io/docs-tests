@@ -57,6 +57,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from doc_test_extract import resolve_docs_tests_root  # noqa: E402
 from doc_test_run import TESTED_VERSIONS, _resolve_manifest_ref, load_test_manifests  # noqa: E402
+import doc_test_schema_check  # noqa: E402
 from doc_test_schema_check import (  # noqa: E402
     HEREDOC_RE, LANGS, _extractor, extract_yaml_documents, is_config_file, load_config_schema,
 )
@@ -167,7 +168,12 @@ def _facts_by_version(repo_root: Path, mpath: Path, mode: str, content_root: str
                       path: Optional[str], reverse_index, docs_tests_root: Path, config_validator,
                       cache: Dict[Any, Facts]) -> Dict[str, Facts]:
     out: Dict[str, Facts] = {}
+    # A site that rebases another (the enterprise hub) can only resolve the
+    # versions its upstream map names, as in the schema check.
+    upstream = doc_test_schema_check._UPSTREAM.get("versions")
     for version in TESTED_VERSIONS:
+        if upstream is not None and version not in upstream:
+            continue
         if not (repo_root / content_root / mode / version).is_dir():
             continue
         try:
@@ -455,6 +461,13 @@ def main() -> int:
     parser.add_argument("--docs-tests-root", default=None)
     parser.add_argument("--product", action="append", default=[],
                         help="Only this product's manifests (products/<product>/). Repeatable.")
+    parser.add_argument("--upstream-root", default=None,
+                        help="Where {{< rebase >}} shells' content comes from, as in doc_test_schema_check.py")
+    parser.add_argument("--upstream-versions", default=None,
+                        help="JSON map of this site's versions to upstream version directories. Only these "
+                        "versions are checked. Required with --upstream-root.")
+    parser.add_argument("--condition", action="append", default=[], metavar="NAME",
+                        help="Also match conditional-text gates that name NAME. Repeatable.")
     parser.add_argument("--config-schema", default=None,
                         help="agentgateway schema/config.json, to recognize standalone config files exactly")
     parser.add_argument("--baseline", default=None,
@@ -473,6 +486,13 @@ def main() -> int:
     repo_root = Path(args.repo_root).resolve()
     docs_tests_root = resolve_docs_tests_root(args.docs_tests_root)
     config_validator = load_config_schema(Path(args.config_schema)) if args.config_schema else None
+    # The schema check's extractor reads these, so a shell resolves the same way here.
+    doc_test_schema_check._UPSTREAM["conditions"] = args.condition
+    if args.upstream_root:
+        if not args.upstream_versions:
+            parser.error("--upstream-root needs --upstream-versions")
+        doc_test_schema_check._UPSTREAM["root"] = Path(args.upstream_root).resolve()
+        doc_test_schema_check._UPSTREAM["versions"] = json.loads(args.upstream_versions)
     reverse_index = build_reverse_index(repo_root)
     baseline_path = args.baseline or (
         str(docs_tests_root / "products" / args.product[0] / "type-check-baseline.yaml")
