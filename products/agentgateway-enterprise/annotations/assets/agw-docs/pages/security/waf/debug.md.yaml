@@ -130,19 +130,17 @@ hidden:
        sleep 5
        kubectl rollout status deploy/waf-server-enterprise-agentgateway -n agentgateway-system --timeout=180s
        # The admin server listens on localhost in the pod, which the API server pod
-       # proxy cannot reach, so use the same port-forward as the page.
+       # proxy cannot reach. The runner does not allow the page's port-forward, so
+       # attach an ephemeral curl container, which shares the pod's network namespace.
+       WAF_POD=$(kubectl get pod -n agentgateway-system -o name | grep 'waf-server-enterprise-agentgateway' | head -1 | sed 's#^pod/##')
+       test -n "$WAF_POD" || { echo "no waf-server pod"; exit 1; }
+       kubectl debug -n agentgateway-system "pod/$WAF_POD" --image=curlimages/curl:8.10.1 -c pprof-probe -- sleep 600
        : > /tmp/waf-out.txt
        for i in $(seq 1 30); do
-         kubectl port-forward -n agentgateway-system deploy/waf-server-enterprise-agentgateway 9095:9095 >/tmp/waf-pf.log 2>&1 &
-         PF_PID=$!
-         sleep 3
-         curl -s http://127.0.0.1:9095/debug/pprof/ > /tmp/waf-out.txt || true
-         kill "$PF_PID" 2>/dev/null || true
-         wait "$PF_PID" 2>/dev/null || true
+         kubectl exec -n agentgateway-system "$WAF_POD" -c pprof-probe -- curl -s http://127.0.0.1:9095/debug/pprof/ > /tmp/waf-out.txt 2>/dev/null || true
          grep 'goroutine' /tmp/waf-out.txt >/dev/null && break
          sleep 2
        done
-       cat /tmp/waf-pf.log
        grep -c 'goroutine' /tmp/waf-out.txt
        {{< /doc-test >}}
 - after:

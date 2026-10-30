@@ -88,6 +88,8 @@ hidden:
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup" >}}
        kubectl -n ${NAMESPACE} wait gateway/agentgateway-waypoint --for=condition=Programmed --timeout=300s
+       # The controller creates the Deployment shortly after the Gateway is Programmed.
+       for i in $(seq 1 60); do kubectl -n ${NAMESPACE} get deploy/agentgateway-waypoint >/dev/null 2>&1 && break; sleep 2; done
        kubectl -n ${NAMESPACE} rollout status deploy/agentgateway-waypoint --timeout=300s
        {{< /doc-test >}}
 - after:

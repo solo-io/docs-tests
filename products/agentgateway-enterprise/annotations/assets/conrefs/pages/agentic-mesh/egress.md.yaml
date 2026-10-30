@@ -160,6 +160,8 @@ hidden:
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-egress" >}}
        kubectl -n ${NAMESPACE} wait gateway/egress-waypoint --for=condition=Programmed --timeout=300s
+       # The controller creates the Deployment shortly after the Gateway is Programmed.
+       for i in $(seq 1 60); do kubectl -n ${NAMESPACE} get deploy/egress-waypoint >/dev/null 2>&1 && break; sleep 2; done
        kubectl -n ${NAMESPACE} rollout status deploy/egress-waypoint --timeout=300s
        {{< /doc-test >}}
 - after:

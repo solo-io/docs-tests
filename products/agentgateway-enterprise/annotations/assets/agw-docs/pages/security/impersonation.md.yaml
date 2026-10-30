@@ -122,10 +122,15 @@ hidden:
     #     browser and allows no port-forward.
     #   * That the MCP server received the STS-minted token rather than the original:
     #     the sample MCP server does not echo request headers.
+    # The controller reconciles the Gateway a few seconds after the apply, so wait
+    # for the new env before checking the rollout.
+    sts_env_set() {
+      kubectl get deployment agentgateway-proxy -n agentgateway-system -o json \
+        | jq -e '[.spec.template.spec.containers[].env[]? | select(.name == "STS_URI")] | length > 0' >/dev/null
+    }
+    for i in $(seq 1 60); do sts_env_set && break; sleep 2; done
+    sts_env_set || { echo "the proxy deployment did not pick up STS_URI from agw-params"; exit 1; }
     kubectl rollout status deployment/agentgateway-proxy -n agentgateway-system --timeout=300s
-    kubectl get deployment agentgateway-proxy -n agentgateway-system -o json \
-      | jq -e '[.spec.template.spec.containers[].env[]? | select(.name == "STS_URI")] | length > 0' >/dev/null \
-      || { echo "the proxy deployment did not pick up STS_URI from agw-params"; exit 1; }
     YAMLTest -f - <<'EOF'
     - name: agentgateway-proxy is programmed with agw-params
       wait:

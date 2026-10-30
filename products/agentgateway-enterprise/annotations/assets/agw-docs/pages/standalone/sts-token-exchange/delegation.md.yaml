@@ -15,7 +15,7 @@ blocks:
 - ecbd08ad6b03045e json
 - 52152e8eb0c53b77 sh
 - 707d7dd35c512e45 sh
-- 65cc293f697bac7c json
+- d2e3d02326468d83 json
 - 2eef79f2b6e7dbea sh
 - 221bafca101e53bb json
 tags:
@@ -167,7 +167,7 @@ hidden:
          -d "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
          -d "subject_token=${USER_TOKEN}" -d "subject_token_type=urn:ietf:params:oauth:token-type:jwt" \
          -d "actor_token=${AGENT_TOKEN}" -d "actor_token_type=urn:ietf:params:oauth:token-type:jwt")
-       echo "$DELEGATED" | jq -e '.issued_token_type == "urn:ietf:params:oauth:token-type:jwt" and .token_type == "Bearer"' >/dev/null \
+       echo "$DELEGATED" | jq -e '.issued_token_type == "urn:ietf:params:oauth:token-type:jwt" and .token_type == "N_A"' >/dev/null \
          || { echo "unexpected delegation response: $DELEGATED"; exit 1; }
        {{< /doc-test >}}
 - after:

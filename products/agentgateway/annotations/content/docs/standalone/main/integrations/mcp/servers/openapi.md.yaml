@@ -10,7 +10,9 @@ blocks:
 - 724cb00dd0e6631c sh
 - bd924c5a78947b1c sh
 - 2a9be9d48ba04efe sh
-- 1774fafac6326c74 yaml
+- 1f6de6ed0df0968f sh
+- c803bc6d053cfe79 sh
+- f1aca748dd9ef042 yaml
 - f6931a7b2e59dbc5 sh
 - b4c997338c63b42d json
 - 21162d5dd59e0f43 json
@@ -54,16 +56,6 @@ tags:
   lang: sh
   lines: bd924c5a
   preview: curl http://localhost:8080/api/v3/openapi.json > openapi.json
-  form:
-    attr: paths="mcp-openapi"
-    only: true
-    lead: ' '
-- paths: mcp-openapi
-  block: 9
-  fingerprint: 1774fafac6326c74
-  lang: yaml
-  lines: 2a7b4933 a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 ead663af 9d7e2b17 fd12af70 9d7e2b17 3035507a a7ec89ea 2a783db0 4f369ea9 7e743532 de164bdf abc56510
-  preview: cat <<'EOF' > config.yaml
   form:
     attr: paths="mcp-openapi"
     only: true
@@ -115,11 +107,11 @@ hidden:
        curl -sf -o /dev/null http://localhost:8080/api/v3/openapi.json
        {{< /doc-test >}}
 - after:
-    block: 9
-    fingerprint: 1774fafac6326c74
+    block: 11
+    fingerprint: f1aca748dd9ef042
     lang: yaml
-    lines: 2a7b4933 a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 ead663af 9d7e2b17 fd12af70 9d7e2b17 3035507a a7ec89ea 2a783db0 4f369ea9 7e743532 de164bdf abc56510
-    preview: cat <<'EOF' > config.yaml
+    lines: a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 ead663af 9d7e2b17 fd12af70 9d7e2b17 3035507a a7ec89ea 2a783db0 4f369ea9 7e743532 de164bdf
+    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |2-
        {{< doc-test paths="mcp-openapi" >}}
        # Run agentgateway in the background. Never call start_gateway inside $( ): the PID

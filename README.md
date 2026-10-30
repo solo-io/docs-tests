@@ -773,7 +773,7 @@ nothing else notices. `scripts/doc_test_type_check.py` compares each scenario's
 | Finding | Severity | What `--apply` does |
 |---|---|---|
 | `schema-empty`: `schema`, but the page shows no resource or config file. The check passes only on its prerequisites' resources. | Error | Drops `schema`. A scenario left with no type moves to `skip:`. |
-| `functional-empty`: a run type, but the page has no visible yaml or shell block left | Error | Drops the run type, keeping or adding `schema` if the page shows resources |
+| `functional-empty`: `functional`, but the page has no visible yaml or shell block left | Error | Drops `functional`, keeping or adding `schema` if the page shows resources |
 | `skip-checkable`: under `skip:`, but the page shows resources | Error | Adds a `<page>-schema` scenario and removes the `skip:` entry |
 | `schema-unreadable`: `schema`, but no resource on the page parses as YAML, often `\$` in a heredoc | Warning | Nothing |
 | `could-be-functional`: `schema` only or `skip:`, but the page has commands to run | Warning | Nothing. A functional test needs prerequisites and assertions, so a person writes it. |

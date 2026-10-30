@@ -1,0 +1,11 @@
+# Doc test type check findings that predate the check (doc_test_type_check.py).
+# A run fails only on an error not listed here. Regenerate with --write-baseline.
+# Each is a skip: page whose new schema test would fail, so it stays skipped:
+# argocd.md shows an Argo CD Application (no schema); config-resources.md and
+# storage.md show `kind:` resources with no apiVersion; arize.md and axiom.md
+# fail the config schema at frontendPolicies.tracing.
+- products/agentgateway/kubernetes/tests.yaml skip-checkable skip documentation/install/argocd.md
+- products/agentgateway/standalone/tests.yaml skip-checkable skip documentation/operations/config-resources.md
+- products/agentgateway/standalone/tests.yaml skip-checkable skip documentation/setup/storage.md
+- products/agentgateway/standalone/tests.yaml skip-checkable skip integrations/llm/observability/arize.md
+- products/agentgateway/standalone/tests.yaml skip-checkable skip integrations/llm/observability/axiom.md

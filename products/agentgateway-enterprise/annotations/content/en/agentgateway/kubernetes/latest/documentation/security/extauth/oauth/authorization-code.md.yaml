@@ -188,9 +188,9 @@ hidden:
          "http://${INGRESS_GW_ADDRESS}:80/openai?"*code=*|"http://${INGRESS_GW_ADDRESS}/openai?"*code=*) ;;
          *) echo "Keycloak did not redirect to the callback with a code: $CALLBACK"; exit 1;;
        esac
-       curl -s -o /dev/null -c "$AUTHZ_JAR" -b "$AUTHZ_JAR" "$CALLBACK"
+       CALLBACK_HDRS=$(curl -s -o /dev/null -D - -c "$AUTHZ_JAR" -b "$AUTHZ_JAR" "$CALLBACK")
        COOKIE=$(awk '$6 == "keycloak-session" {print $6"="$7}' "$AUTHZ_JAR" | tail -1)
-       test -n "$COOKIE" || { echo "the callback did not set the keycloak-session cookie"; exit 1; }
+       test -n "$COOKIE" || { echo "the callback did not set the keycloak-session cookie"; echo "$CALLBACK_HDRS"; kubectl logs -n agentgateway-system deploy/ext-auth-service-enterprise-agentgateway --tail=30 || true; exit 1; }
        export COOKIE
        {{< /doc-test >}}
 - after:

@@ -115,7 +115,7 @@ hidden:
   content: |-
     {{< doc-test paths="cost-tracking" >}}
     # Verify metrics endpoint is accessible and contains token usage metrics
-    kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/$(kubectl get pods -n agentgateway-system -l gateway.networking.k8s.io/gateway-name=agentgateway-proxy -o jsonpath='{.items[0].metadata.name}'):15020/proxy/metrics" | grep -q "agentgateway_gen_ai_client_token_usage"
+    kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/$(kubectl get pods -n agentgateway-system -l gateway.networking.k8s.io/gateway-name=agentgateway-proxy -o jsonpath='{.items[0].metadata.name}'):15020/proxy/metrics" | grep "agentgateway_gen_ai_client_token_usage" >/dev/null
     if [ $? -eq 0 ]; then
       echo "✓ Token usage metrics found"
     else

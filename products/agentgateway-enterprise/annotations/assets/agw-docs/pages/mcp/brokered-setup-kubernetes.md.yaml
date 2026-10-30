@@ -268,6 +268,27 @@ hidden:
        echo "$GATEWAY_URL"
        {{< /doc-test >}}
 - after:
+    section: 'Step 2: Set up Keycloak'
+    line: 29b89ff04ada5ddc
+    occurrence: 0
+    words: 4b227777 716ecabb 10c22bcf d63f4a0c 6201111b 14a60637 ea103d6c fa44132b 43cc23fa
+    block_before:
+      block: 6
+      fingerprint: a49ccc57370a97d2
+      lang: sh
+      lines: 16c71da1 f1540154 033792b5 8c8c4228 4c2f12b9 8af957d1 ff72caa3 3f6f9a0c 021fb596 fe324177 afa07114 469bd28a 4002a67b 021fb596 3012c0e0 a5bd813a fe4ada09 59693229 3f42e715 41d04d50 71ebd194 39d4b54e a61b93ea 021fb596 f34b9f6a d15de3c7 aab74b88 6685a21a 4fe4e563 7d170475 a39bb952 d10b36aa d10b36aa cfae0d42 d10b36aa 39d4b54e 55d0c79c 021fb596 32990666 afa07114 09db9566 07f50448 e50d678d e9532c63 2cb1ea16 021fb596 9c5ab799 ffaab9ac d69e1824 d10b36aa cfae0d42 d10b36aa cfae0d42 d10b36aa cb3f91d5 58584366 ab78925c 8c8c4228 2e22627e 8af957d1 36184fa5 97bcd5e0 8432e015 839a5cac 4b905679 a58565b2 8c8c4228 fa1e8330 4b905679 36184fa5 04968f51 a5b107cc c636bdd4 15063a82 8db70061 37ad689e 1793f584 4c4631fd 1793f584 1a0cef8e 41530354 0ff65a1a a46d7c6d 82f2bc7e 69d7f213 de47da19 c095a45d f98c047b 79bb435b fcd8c64a 5b30a123 d7e88210 4fb8b4ed c5d7714b 5b30a123 889016e3 4c2f12b9 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
+       # The Deployment can report ready before the cloud-provider-kind LoadBalancer
+       # forwards to Keycloak, so wait until the discovery URL answers.
+       kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deployment/brokered-keycloak --timeout=180s
+       for i in $(seq 1 60); do
+         curl -fsS -o /dev/null "${KEYCLOAK_ISSUER}/.well-known/openid-configuration" && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
     block: 11
     fingerprint: 3deef2f9bc10664d
     lang: sh
@@ -391,11 +412,12 @@ hidden:
        [ "$(jq -r .authorization_endpoint <<<"$ASM")" = "${GATEWAY_URL}/oauth-issuer/authorize" ] || { echo "FAIL: authorization_endpoint" >&2; echo "$ASM" >&2; exit 1; }
        [ "$(jq -r .registration_endpoint <<<"$ASM")" = "${GATEWAY_URL}/oauth-issuer/register" ] || { echo "FAIL: registration_endpoint" >&2; echo "$ASM" >&2; exit 1; }
        # Dynamic client registration: an allowlisted Inspector callback is accepted,
-       # and a callback that is not on the allowlist is rejected.
+       # and a callback that is not on the allowlist is rejected. Loopback callbacks
+       # match on any port (RFC 8252), so the rejected one differs by path.
        DCR=$(curl -fsS -X POST "${GATEWAY_URL}/oauth-issuer/register" -H 'Content-Type: application/json' \
          -d '{"client_name":"doc-test","redirect_uris":["http://localhost:6274/oauth/callback"]}')
        [ "$(jq -r .client_id <<<"$DCR")" = "${ISSUER_CLIENT_ID}" ] || { echo "FAIL: DCR client_id" >&2; echo "$DCR" >&2; exit 1; }
        DCR_BAD=$(curl -s -o /dev/null -w '%{http_code}' -X POST "${GATEWAY_URL}/oauth-issuer/register" -H 'Content-Type: application/json' \
-         -d '{"client_name":"doc-test","redirect_uris":["http://localhost:9999/oauth/callback"]}')
+         -d '{"client_name":"doc-test","redirect_uris":["http://localhost:6274/not-allowlisted/callback"]}')
        [ "$DCR_BAD" = "400" ] || { echo "FAIL: unlisted redirect_uri returned $DCR_BAD, want 400" >&2; exit 1; }
        {{< /doc-test >}}

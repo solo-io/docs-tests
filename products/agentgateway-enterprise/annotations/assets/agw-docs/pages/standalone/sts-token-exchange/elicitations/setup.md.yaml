@@ -222,7 +222,8 @@ hidden:
        # Hidden equivalent of the STS terminal, from the working directory.
        cd "$HOME/agentgateway-brokered-elicitation"
        start_sts
-       grep -F '"msg":"MCP resource paths declared as issuer-proxy handled","paths":["/mcp"]' "$DT_LOGS/sts.log" >/dev/null \
+       # Match on fields: the log line also carries other keys, such as "component".
+       jq -e -R 'fromjson? | select(.msg == "MCP resource paths declared as issuer-proxy handled" and .paths == ["/mcp"])' "$DT_LOGS/sts.log" >/dev/null \
          || { echo "FAIL: STS did not declare /mcp" >&2; cat "$DT_LOGS/sts.log" >&2; exit 1; }
        grep -F '"address":"127.0.0.1:7777"' "$DT_LOGS/sts.log" >/dev/null \
          || { echo "FAIL: STS not on 127.0.0.1:7777" >&2; exit 1; }
@@ -270,11 +271,12 @@ hidden:
          [ "$(jq -r ".${k%%:*}" <<<"$ASM")" = "http://localhost:3000/oauth-issuer/${k#*:}" ] || { echo "FAIL: ${k%%:*}" >&2; echo "$ASM" >&2; exit 1; }
        done
        # Dynamic client registration: an allowlisted Inspector callback is accepted,
-       # and a callback that is not on the allowlist is rejected.
+       # and a callback that is not on the allowlist is rejected. Loopback callbacks
+       # match on any port (RFC 8252), so the rejected one differs by path.
        DCR=$(curl -fsS -X POST http://localhost:3000/oauth-issuer/register -H 'Content-Type: application/json' \
          -d '{"client_name":"doc-test","redirect_uris":["http://localhost:6274/oauth/callback"]}')
        [ "$(jq -r .client_id <<<"$DCR")" = "${ISSUER_CLIENT_ID}" ] || { echo "FAIL: DCR client_id" >&2; echo "$DCR" >&2; exit 1; }
        DCR_BAD=$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3000/oauth-issuer/register -H 'Content-Type: application/json' \
-         -d '{"client_name":"doc-test","redirect_uris":["http://localhost:9999/oauth/callback"]}')
+         -d '{"client_name":"doc-test","redirect_uris":["http://localhost:6274/not-allowlisted/callback"]}')
        [ "$DCR_BAD" = "400" ] || { echo "FAIL: unlisted redirect_uri returned $DCR_BAD, want 400" >&2; exit 1; }
        {{< /doc-test >}}

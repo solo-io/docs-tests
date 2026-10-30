@@ -39,6 +39,7 @@ hidden:
     VERSION="v{{< reuse "agw-docs/versions/n-patch.md" >}}"
     case "$VERSION" in
       *latest-dev*) echo "main docs version has no release tag; skipping the version-specific URL" ;;
+      v20[0-9][0-9].*) echo "$VERSION is a calendar-versioned enterprise release with no tag in this repo; skipping the version-specific URL" ;;
       *) check_schema "https://raw.githubusercontent.com/agentgateway/agentgateway/refs/tags/${VERSION}/schema/config.json" ;;
     esac
     check_schema "https://raw.githubusercontent.com/agentgateway/agentgateway/refs/tags/v0.12.0/schema/config.json"
