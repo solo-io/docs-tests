@@ -176,7 +176,10 @@ hidden:
     preview: docker logs oauth2-proxy
   content: |2-
        {{< doc-test paths="oauth2-proxy" >}}
-       docker logs oauth2-proxy 2>&1 | grep -q 'OAuthProxy configured for GitHub' \
+       # Logs go to a file first: under pipefail, `docker logs | grep -q` can fail even on a
+       # match, because grep exits early and docker logs gets SIGPIPE.
+       docker logs oauth2-proxy > oauth2-proxy-docker.log 2>&1
+       grep -q 'OAuthProxy configured for GitHub' oauth2-proxy-docker.log \
          || { echo "FAIL: OAuth2 Proxy is not configured for GitHub"; exit 1; }
        echo "ok: OAuth2 Proxy configured for GitHub"
        {{< /doc-test >}}

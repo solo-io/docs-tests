@@ -121,7 +121,9 @@ hidden:
        echo "$phase" | grep -q Bound
        # The UI re-creates the schema on the empty database (see the restart note above).
        for i in $(seq 1 60); do
-         kubectl logs -l app={{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -c ui-backend --tail=-1 -n {{< reuse "agw-docs/snippets/namespace.md" >}} | grep -q "recovered successfully" && break
+         # Capture the logs first: under pipefail, `kubectl logs | grep -q` can miss a match.
+         logs=$(kubectl logs -l app={{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -c ui-backend --tail=-1 -n {{< reuse "agw-docs/snippets/namespace.md" >}} 2>/dev/null || true)
+         grep -q "recovered successfully" <<<"$logs" && break
          sleep 5
        done
        {{< /doc-test >}}
