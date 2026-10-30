@@ -13,6 +13,17 @@ blocks:
 - 778d79482abf44de yaml
 - f446e27703e0e2c8 sh
 - e572114b83978b8c json
+tags:
+- paths: mcp-virtual
+  block: 3
+  fingerprint: cc767b77648f7253
+  lang: yaml
+  lines: cc767b77
+  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.7.0/examp
+  form:
+    attr: paths="mcp-virtual"
+    only: true
+    lead: ' '
 hidden:
 - after:
     section: (top of page)
@@ -124,6 +135,22 @@ hidden:
 
     trap 'stop_gateway' EXIT
     {{< /doc-test >}}
+- after:
+    section: Configure the agentgateway
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 6
+      fingerprint: f6931a7b2e59dbc5
+      lang: sh
+      lines: f6931a7b
+      preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="mcp-virtual" >}}
+       # Step 1: the documented multiplex config downloads and is accepted
+       agentgateway -f config.yaml --validate-only
+       {{< /doc-test >}}
 - after:
     section: Next steps
     line: 4b10730f3ec88b5d
@@ -252,32 +279,3 @@ hidden:
       *) echo "FAIL: prefixMode never did not expose the echo tool"; echo "$NAMES"; exit 1 ;;
     esac
     {{< /doc-test >}}
-- after:
-    section: Configure the agentgateway
-    line: 600fe1bb59e46b50
-    occurrence: 0
-    words: 32d3feda
-    block_before:
-      block: 6
-      fingerprint: f6931a7b2e59dbc5
-      lang: sh
-      lines: f6931a7b
-      preview: agentgateway -f config.yaml
-  content: |2-
-       {{< doc-test paths="mcp-virtual" >}}
-       # Step 1: the documented multiplex config downloads and is accepted
-       agentgateway -f config.yaml --validate-only
-       {{< /doc-test >}}
-  blank_before:
-  - ''
-tags:
-- paths: mcp-virtual
-  block: 3
-  fingerprint: cc767b77648f7253
-  lang: yaml
-  lines: cc767b77
-  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.7.0/examp
-  form:
-    attr: paths="mcp-virtual"
-    only: true
-    lead: ' '

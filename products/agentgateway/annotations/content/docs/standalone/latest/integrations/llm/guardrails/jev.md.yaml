@@ -17,6 +17,17 @@ blocks:
 - 065c00ea49da206f sh
 - 99bb48033afb5222
 - 84766e18b74e3a8d console
+tags:
+- paths: jev
+  block: 2
+  fingerprint: 16c7553942758ae5
+  lang: sh
+  lines: 16c75539
+  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.7.0/examp
+  form:
+    attr: paths="jev"
+    only: true
+    lead: ' '
 hidden:
 - after:
     block: 1
@@ -66,14 +77,3 @@ hidden:
     # that the page displays, not a transcription of it.
     agentgateway -f config.yaml --validate-only
     {{< /doc-test >}}
-tags:
-- paths: jev
-  block: 2
-  fingerprint: 16c7553942758ae5
-  lang: sh
-  lines: 16c75539
-  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.7.0/examp
-  form:
-    attr: paths="jev"
-    only: true
-    lead: ' '

@@ -5,6 +5,17 @@ blocks:
 - 5ec861caf294636e yaml
 - 4f16505db12973ac
 - f6931a7b2e59dbc5 sh
+tags:
+- paths: mcp-stdio
+  block: 1
+  fingerprint: 5ec861caf294636e
+  lang: yaml
+  lines: 5ec861ca
+  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.7.0/examp
+  form:
+    attr: paths="mcp-stdio"
+    only: true
+    lead: ' '
 hidden:
 - after:
     section: (top of page)
@@ -54,6 +65,21 @@ hidden:
         -d "$2" | sed -n 's/^data: //p'
     }
     {{< /doc-test >}}
+- after:
+    section: Configure the agentgateway
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 3
+      fingerprint: f6931a7b2e59dbc5
+      lang: sh
+      lines: f6931a7b
+      preview: agentgateway -f config.yaml
+  content: |2-
+       {{< doc-test paths="mcp-stdio" >}}
+       agentgateway -f config.yaml --validate-only
+       {{< /doc-test >}}
 - after:
     section: Verify access to tools
     line: 3b153e054f1e73cd
@@ -128,31 +154,3 @@ hidden:
         exit 1 ;;
     esac
     {{< /doc-test >}}
-- after:
-    section: Configure the agentgateway
-    line: 600fe1bb59e46b50
-    occurrence: 0
-    words: 32d3feda
-    block_before:
-      block: 3
-      fingerprint: f6931a7b2e59dbc5
-      lang: sh
-      lines: f6931a7b
-      preview: agentgateway -f config.yaml
-  content: |2-
-       {{< doc-test paths="mcp-stdio" >}}
-       agentgateway -f config.yaml --validate-only
-       {{< /doc-test >}}
-  blank_before:
-  - ''
-tags:
-- paths: mcp-stdio
-  block: 1
-  fingerprint: 5ec861caf294636e
-  lang: yaml
-  lines: 5ec861ca
-  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.7.0/examp
-  form:
-    attr: paths="mcp-stdio"
-    only: true
-    lead: ' '

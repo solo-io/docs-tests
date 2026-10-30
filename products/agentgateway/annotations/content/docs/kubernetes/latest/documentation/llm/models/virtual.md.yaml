@@ -208,32 +208,6 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 25
-    fingerprint: 7330fd65239733ec
-    lang: json
-    lines: 021fb596 d90ae9ee 6c993a4e 73fc0dc9 95297a1b caf8053e 39d4b54e 7738d670 d10b36aa
-    preview: '{'
-  content: |-
-    {{< doc-test paths="virtual-models" >}}
-    # Assert on the raw /v1/models body instead of YAMLTest bodyJsonPath: YAMLTest's
-    # "$.data[*].id" only evaluates the first array element, and the serve-model
-    # prerequisite also registers gpt-4/gpt-5-mini, so a JSONPath `contains` cannot
-    # reach the virtual model IDs. Grep the response so we can verify every virtual
-    # model is listed and that the Internal targets stay hidden.
-    for i in $(seq 1 30); do
-      models=$(curl -s "http://${INGRESS_GW_ADDRESS}/v1/models")
-      if echo "$models" | grep -q '"balanced"' && echo "$models" | grep -q '"resilient"' && echo "$models" | grep -q '"smart"'; then break; fi
-      sleep 2
-    done
-    echo "$models"
-    echo "$models" | grep -q '"balanced"'
-    echo "$models" | grep -q '"resilient"'
-    echo "$models" | grep -q '"smart"'
-    if echo "$models" | grep -qE '"(internal-fast|internal-premium|primary-down|unreachable-llm)"'; then
-      echo "ERROR: an Internal model target appeared in /v1/models"; exit 1
-    fi
-    {{< /doc-test >}}
-- after:
     block: 17
     fingerprint: 7042d6a1b2bcb1e7
     lang: ''
@@ -279,5 +253,29 @@ hidden:
                value: "resolved-internal-fast"
        EOF
        {{< /doc-test >}}
-  blank_before:
-  - ''
+- after:
+    block: 25
+    fingerprint: 7330fd65239733ec
+    lang: json
+    lines: 021fb596 d90ae9ee 6c993a4e 73fc0dc9 95297a1b caf8053e 39d4b54e 7738d670 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="virtual-models" >}}
+    # Assert on the raw /v1/models body instead of YAMLTest bodyJsonPath: YAMLTest's
+    # "$.data[*].id" only evaluates the first array element, and the serve-model
+    # prerequisite also registers gpt-4/gpt-5-mini, so a JSONPath `contains` cannot
+    # reach the virtual model IDs. Grep the response so we can verify every virtual
+    # model is listed and that the Internal targets stay hidden.
+    for i in $(seq 1 30); do
+      models=$(curl -s "http://${INGRESS_GW_ADDRESS}/v1/models")
+      if echo "$models" | grep -q '"balanced"' && echo "$models" | grep -q '"resilient"' && echo "$models" | grep -q '"smart"'; then break; fi
+      sleep 2
+    done
+    echo "$models"
+    echo "$models" | grep -q '"balanced"'
+    echo "$models" | grep -q '"resilient"'
+    echo "$models" | grep -q '"smart"'
+    if echo "$models" | grep -qE '"(internal-fast|internal-premium|primary-down|unreachable-llm)"'; then
+      echo "ERROR: an Internal model target appeared in /v1/models"; exit 1
+    fi
+    {{< /doc-test >}}

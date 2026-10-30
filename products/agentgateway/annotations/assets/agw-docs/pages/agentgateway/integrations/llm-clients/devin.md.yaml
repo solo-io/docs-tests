@@ -1,47 +1,7 @@
 format: 1
 source: assets/agw-docs/pages/agentgateway/integrations/llm-clients/devin.md
 blocks:
-- 90dc93d83d09bd7b sh
-- 08e1625ddc56e5b6 yaml
-- e75c69583a14c3d2 sh
-- bbe607456c831dab sh
-- 2476110bb59a2872 console
-- 3571beaa7870c38c sh
-- 92413e9787e7d079 console
-- 0398673719884a62
-- ee84b2556fd9d156 console
-- 87fe3e4ca4261df3 yaml
-tags:
-- paths: devin-egress
-  block: 0
-  fingerprint: 90dc93d83d09bd7b
-  lang: sh
-  lines: 90dc93d8
-  preview: printf 'devin:%s\n' "$(openssl passwd -apr1 'secretpw')" > htpasswd.txt
-  form:
-    attr: paths="devin-egress"
-    only: true
-    lead: ' '
-- paths: devin-egress
-  block: 1
-  fingerprint: 08e1625ddc56e5b6
-  lang: yaml
-  lines: 7ae3abc0 f4a9035a 1b6c26b3 315099db d6a0daf6 05ca4235 796eea4c c10d7538 e3c53dc8 069de162 c8f3f59a de77b3a7 80428c42 9106ce1d b0299c0e 0d241db7 b4026c96 30ff4d98 ced07ec1 06fe1038 d67b54bf a0c2f059 d72f261d 88755831 abc56510
-  preview: cat <<EOF > devin-proxy.yaml
-  form:
-    attr: paths="devin-egress"
-    only: true
-    lead: ' '
-- paths: devin-egress
-  block: 5
-  fingerprint: 3571beaa7870c38c
-  lang: sh
-  lines: 3571beaa
-  preview: curl --proxy http://127.0.0.1:3000 --proxy-user devin:secretpw --head https://ex
-  form:
-    attr: paths="devin-egress"
-    only: true
-    lead: ' '
+- f1de9e489ba88cb1
 hidden:
 - after:
     start: true
@@ -50,7 +10,6 @@ hidden:
     {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
     {{< /doc-test >}}
 - after:
-    block: 1
     fingerprint: 08e1625ddc56e5b6
     lang: yaml
     lines: 7ae3abc0 f4a9035a 1b6c26b3 315099db d6a0daf6 05ca4235 796eea4c c10d7538 e3c53dc8 069de162 c8f3f59a de77b3a7 80428c42 9106ce1d b0299c0e 0d241db7 b4026c96 30ff4d98 ced07ec1 06fe1038 d67b54bf a0c2f059 d72f261d 88755831 abc56510
@@ -75,8 +34,8 @@ hidden:
        grep -qi '< proxy-authenticate: Basic realm="agentgateway-egress"' <<<"$out" \
          || { echo "FAIL: expected the Basic realm challenge"; echo "$out"; exit 1; }
        {{< /doc-test >}}
+  status: needs-update
 - after:
-    block: 5
     fingerprint: 3571beaa7870c38c
     lang: sh
     lines: 3571beaa
@@ -92,3 +51,35 @@ hidden:
        wait "$AGW_PID" 2>/dev/null || true
        rm -f htpasswd.txt devin-proxy.yaml
        {{< /doc-test >}}
+  status: needs-update
+tags:
+- paths: devin-egress
+  fingerprint: 90dc93d83d09bd7b
+  lang: sh
+  lines: 90dc93d8
+  preview: printf 'devin:%s\n' "$(openssl passwd -apr1 'secretpw')" > htpasswd.txt
+  form:
+    attr: paths="devin-egress"
+    only: true
+    lead: ' '
+  status: needs-update
+- paths: devin-egress
+  fingerprint: 08e1625ddc56e5b6
+  lang: yaml
+  lines: 7ae3abc0 f4a9035a 1b6c26b3 315099db d6a0daf6 05ca4235 796eea4c c10d7538 e3c53dc8 069de162 c8f3f59a de77b3a7 80428c42 9106ce1d b0299c0e 0d241db7 b4026c96 30ff4d98 ced07ec1 06fe1038 d67b54bf a0c2f059 d72f261d 88755831 abc56510
+  preview: cat <<EOF > devin-proxy.yaml
+  form:
+    attr: paths="devin-egress"
+    only: true
+    lead: ' '
+  status: needs-update
+- paths: devin-egress
+  fingerprint: 3571beaa7870c38c
+  lang: sh
+  lines: 3571beaa
+  preview: curl --proxy http://127.0.0.1:3000 --proxy-user devin:secretpw --head https://ex
+  form:
+    attr: paths="devin-egress"
+    only: true
+    lead: ' '
+  status: needs-update

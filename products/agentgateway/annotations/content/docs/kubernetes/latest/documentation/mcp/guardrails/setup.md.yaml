@@ -111,6 +111,36 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
+    section: 'Step 5: Apply the guardrails policy'
+    line: 6c2a4451550902cc
+    occurrence: 0
+    words: 3f386731 10182ab8 3f386731 6201111b 865bbcf9 663ea1bf 27ce1d1b 663ea1bf b9776d7d 823412d1 b3eacd33 f9d35d43 7edb360f 1f58b914 961f787b 7c9bbe5e f46f5990 6db7d803 8b7523ec c9a8dc33 f9d35d43 a330395c a9f4b3d2 47e22767 7175517a 1ac5ebaa 7c9bbe5e 4c14c4a4 f3959239 b9776d7d 10e08a41 bbd97555 aa9e9b5c 3f386731 6201111b 865bbcf9 fa42bed0 a0af9f86 caf9f906 10182ab8 5dc897f8 b639eb91 3f386731
+    block_before:
+      block: 4
+      fingerprint: 0a478760ceb4468e
+      lang: yaml
+      lines: 16c71da1 fbc30693 7f57603a 8c8c4228 08033dc1 36184fa5 588a5d84 453bdfd0 99d7dba1 fe9784a0 bb85cefe 82726b6f e8bd2b8e 3e81ada3 2ba13e7e 70c97555 ed586721 5fb81848 f14f4904 b36fa061 278b4a2d 8d812f16 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mcp-guardrails" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for mcp-guardrails policy to be accepted
+      wait:
+        target:
+          kind: AgentgatewayPolicy
+          metadata:
+            namespace: default
+            name: mcp-guardrails
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
     block: 15
     fingerprint: 4ccf4918d63eb5f0
     lang: console
@@ -180,35 +210,3 @@ hidden:
 
     echo "PASS: MCP guardrails mutate, deny, and allow behaviors verified"
     {{< /doc-test >}}
-- after:
-    section: 'Step 5: Apply the guardrails policy'
-    line: 6c2a4451550902cc
-    occurrence: 0
-    words: 3f386731 10182ab8 3f386731 6201111b 865bbcf9 663ea1bf 27ce1d1b 663ea1bf b9776d7d 823412d1 b3eacd33 f9d35d43 7edb360f 1f58b914 961f787b 7c9bbe5e f46f5990 6db7d803 8b7523ec c9a8dc33 f9d35d43 a330395c a9f4b3d2 47e22767 7175517a 1ac5ebaa 7c9bbe5e 4c14c4a4 f3959239 b9776d7d 10e08a41 bbd97555 aa9e9b5c 3f386731 6201111b 865bbcf9 fa42bed0 a0af9f86 caf9f906 10182ab8 5dc897f8 b639eb91 3f386731
-    block_before:
-      block: 4
-      fingerprint: 0a478760ceb4468e
-      lang: yaml
-      lines: 16c71da1 fbc30693 7f57603a 8c8c4228 08033dc1 36184fa5 588a5d84 453bdfd0 99d7dba1 fe9784a0 bb85cefe 82726b6f e8bd2b8e 3e81ada3 2ba13e7e 70c97555 ed586721 5fb81848 f14f4904 b36fa061 278b4a2d 8d812f16 abc56510
-      preview: kubectl apply -f- <<EOF
-  content: |-
-    {{< doc-test paths="mcp-guardrails" >}}
-    YAMLTest -f - <<'EOF'
-    - name: wait for mcp-guardrails policy to be accepted
-      wait:
-        target:
-          kind: AgentgatewayPolicy
-          metadata:
-            namespace: default
-            name: mcp-guardrails
-        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
-        jsonPathExpectation:
-          comparator: equals
-          value: "True"
-        polling:
-          timeoutSeconds: 120
-          intervalSeconds: 2
-    EOF
-    {{< /doc-test >}}
-  blank_before:
-  - ''
