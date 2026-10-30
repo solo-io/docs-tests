@@ -189,7 +189,10 @@ hidden:
          *) echo "Keycloak did not redirect to the callback with a code: $CALLBACK"; exit 1;;
        esac
        CALLBACK_HDRS=$(curl -s -o /dev/null -D - -c "$AUTHZ_JAR" -b "$AUTHZ_JAR" "$CALLBACK")
-       COOKIE=$(awk '$6 == "keycloak-session" {print $6"="$7}' "$AUTHZ_JAR" | tail -1)
+       # Read the cookie from the response headers, not the cookie jar: ext auth
+       # marks it Secure, and curl does not store a Secure cookie that arrives
+       # over plain http.
+       COOKIE=$(sed -n 's/^[Ss]et-[Cc]ookie: *\(keycloak-session=[^;]*\).*/\1/p' <<<"$CALLBACK_HDRS" | tr -d '\r' | tail -1)
        test -n "$COOKIE" || { echo "the callback did not set the keycloak-session cookie"; echo "$CALLBACK_HDRS"; kubectl logs -n agentgateway-system deploy/ext-auth-service-enterprise-agentgateway --tail=30 || true; exit 1; }
        export COOKIE
        {{< /doc-test >}}
