@@ -7,7 +7,7 @@ blocks:
 - 67b6a24692cbcf9b sh
 - 1daf17b176264fe3 sh
 - 389aca25f9f6b573 sql
-- 5f84d4415ead85a6 sql
+- e6df1f95df1bac04 sql
 - 5c58c0c468cc505d sql
 - 0016bbb9d53118be yaml
 - 0464a7c30afbff50 sh
@@ -16,16 +16,16 @@ blocks:
 - 177cd1fe9bf38e62 sh
 - 1daf17b176264fe3 sh
 - 389aca25f9f6b573 sql
-- 9164aaa232af4f15 console
+- 6132e6f840faf807 console
 - 9c5e5e9f018dacdc sh
 - a54409387001605c console
-- 46e70e35e3d4f9f1 yaml
+- 02344dc0655a136b yaml
 - 0ce516776ddf1110 sh
 - 2060ea3dff20ebb0 sh
 - f956fb9f83df700f sh
 - 962ed85a07386f97 console
 - 3c8432802d54c212 sh
-- 97def03d923888bb console
+- 1775becd01014e0e console
 - 5a85429987ce9aa1 sh
 tags:
 - paths: access-log-otlp
@@ -100,9 +100,9 @@ tags:
     lead: ' '
 - paths: access-log-otlp
   block: 18
-  fingerprint: 46e70e35e3d4f9f1
+  fingerprint: 02344dc0655a136b
   lang: yaml
-  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 521b7d5f abc56510
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 d532a41e abc56510
   preview: kubectl apply -f- <<EOF
   form:
     attr: paths="access-log-otlp"
@@ -207,13 +207,14 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 6
-    fingerprint: 5f84d4415ead85a6
+    fingerprint: e6df1f95df1bac04
     lang: sql
-    lines: 57ca61ba 7cd4ce96 39c46c94
+    lines: 57ca61ba f9c6652d 39c46c94
     preview: SELECT Timestamp, LogAttributes FROM {{< reuse "agw-docs/snippets/solo-ui/clickh
+  blank_before: []
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
-       chq "SELECT Timestamp, LogAttributes FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE JSONExtractInt(LogAttributes, 'http', 'status') >= 400 ORDER BY Timestamp DESC LIMIT 20"
+       chq "SELECT Timestamp, LogAttributes FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE JSONExtractInt(LogAttributes, 'http', 'response', 'status_code') >= 400 ORDER BY Timestamp DESC LIMIT 20"
        {{< /doc-test >}}
 - after:
     block: 8
@@ -247,13 +248,13 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 15
-    fingerprint: 9164aaa232af4f15
+    fingerprint: 6132e6f840faf807
     lang: console
-    lines: ab5df625 6616497a 972c27bb 5c71768c ab5df625
+    lines: ab5df625 6616497a 972c27bb e948fc79 ab5df625
     preview: '...'
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
-       ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE JSONExtractInt(LogAttributes, 'http', 'status') = 500"
+       ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE JSONExtractInt(LogAttributes, 'http', 'response', 'status_code') = 500"
        {{< /doc-test >}}
 - after:
     block: 16
@@ -270,9 +271,9 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 18
-    fingerprint: 46e70e35e3d4f9f1
+    fingerprint: 02344dc0655a136b
     lang: yaml
-    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 521b7d5f abc56510
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 d532a41e abc56510
     preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
@@ -305,6 +306,6 @@ hidden:
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
        ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE position(toString(LogAttributes), 'abc123') > 0"
-       # http.host is removed from the export only.
+       # The host (server.address in the OTLP export) is removed from the export only.
        test "$(chq "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE position(toString(LogAttributes), 'abc123') > 0 AND position(toString(LogAttributes), 'www.example.com') > 0")" = "0"
        {{< /doc-test >}}

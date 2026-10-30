@@ -130,10 +130,21 @@ hidden:
        # The controller re-renders the proxy Deployment with the -fips image; wait for
        # that spec change before waiting for the rollout.
        for i in $(seq 1 60); do
-         kubectl get deploy agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[0].image}' | grep -q -- '-fips$' && break
+         img=$(kubectl get deploy agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[0].image}' || true)
+         grep -q -- '-fips$' <<<"$img" && break
          sleep 5
        done
        kubectl rollout status deployment/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
+       # rollout status returns while old pods are still terminating, and
+       # `kubectl logs deploy/...` can then read an old, non-FIPS pod. Wait until no
+       # controller or proxy pod still runs an image without the -fips suffix.
+       for i in $(seq 1 60); do
+         pods=$(kubectl get pods -n {{< reuse "agw-docs/snippets/namespace.md" >}} --no-headers -o custom-columns=NAME:.metadata.name,IMAGE:.spec.containers[0].image || true)
+         old=$(grep -E '^({{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}|agentgateway-proxy)-[a-z0-9]+-[a-z0-9]+ ' <<<"$pods" | grep -v -- '-fips$' || true)
+         [ -z "$old" ] && break
+         sleep 5
+       done
+       [ -z "$old" ] || { echo "old non-FIPS pods are still running:"; echo "$old"; exit 1; }
        {{< /doc-test >}}
 - after:
     block: 3
@@ -171,7 +182,9 @@ hidden:
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-fips" >}}
-       kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} | grep 'cryptographic module in FIPS mode' | grep -q '"fips140":"on"' || { echo "controller does not log fips140 on"; exit 1; }
+       controller_log=$(kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/{{< reuse "agw-docs/snippets/helm-agentgateway.md" >}})
+       fips_lines=$(grep 'cryptographic module in FIPS mode' <<<"$controller_log" || true)
+       grep -q '"fips140":"on"' <<<"$fips_lines" || { echo "controller does not log fips140 on"; echo "$fips_lines"; exit 1; }
        {{< /doc-test >}}
 - after:
     block: 9
