@@ -12,7 +12,7 @@ so a page counts as tested here exactly when the runner would test it.
 
 Usage:
     python3 .claude/skills/doc-test-coverage/coverage_report.py \\
-        --checkout agentgateway=../agentgateway-oss-website \\
+        --checkout agentgateway=<path to the agentgateway/website checkout> \\
         --checkout agentgateway-enterprise=<path to the enterprise docs checkout> \\
         --checkout kgateway=../kgateway-oss
 

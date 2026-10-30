@@ -9,7 +9,7 @@ This repo currently holds two things:
 - `scripts/` — the extractor/runner tooling (`doc_test_extract.py`, `doc_test_run.py`,
   `doc_test_schema_check.py`, `doc_test_inject_status.py`, `doc_test_fetch_artifacts.sh`,
   `merge_test_results.py`, `report_summary.py`, `list_untested_docs.py`). This is the
-  canonical copy — `agentgateway-oss-website`'s CI and Makefile check this repo out and
+  canonical copy — `agentgateway/website`'s CI and Makefile check this repo out and
   invoke these scripts directly (`docs-tests/scripts/doc_test_run.py --repo-root .`, etc.);
   it no longer keeps its own copies.
 - `products/` — the actual test content, one directory per product. For agentgateway,

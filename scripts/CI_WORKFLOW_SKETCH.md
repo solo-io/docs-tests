@@ -2,7 +2,7 @@
 
 This sketch's original scope (checkout `docs-tests` for its `products/` *content*,
 pass `DOCS_TESTS_ROOT`, keep invoking the consumer repo's own script copy) was applied
-in Phase C and is now superseded by a further step: `agentgateway-oss-website` no
+in Phase C and is now superseded by a further step: `agentgateway/website` no
 longer keeps its own copy of the scripts at all. Every job in
 `.github/workflows/doc-tests.yaml` and every `Makefile` doc-test target now checks out
 `docs-tests` and invokes its scripts directly —
