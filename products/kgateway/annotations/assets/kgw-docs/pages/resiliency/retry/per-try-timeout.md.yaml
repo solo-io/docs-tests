@@ -1,0 +1,258 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/retry/per-try-timeout.md
+blocks:
+- b267eac60a2c273b sh
+- f0ba7da3330f42a7 yaml
+- 18a3df53fa6dcb2f yaml
+- 4fbacca4fb2c524f yaml
+- 245a589f27fdc6e3 yaml
+- 66a23aaa380bd37c yaml
+- 4edd5fd8b2854558 sh
+- e4b852db5ed35503 sh
+- 390d436c42880ce8 console
+- d2489beaf273ef09 sh
+- 2375cb3b5f7ebb64 sh
+- eb76f36bca5a59a1 sh
+- 91d84920d0491369 console
+- d94b36c42fdafa54 sh
+tags:
+- paths: per-try-timeout
+  block: 1
+  fingerprint: f0ba7da3330f42a7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 b5a028c9 cd44d8cd 9278ed91 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 7f8a9998 7be3ae06 67c4b1f3 dbf95901 6d3f1ba3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout"
+    only: true
+    lead: ' '
+- paths: per-try-timeout-trafficpolicy
+  block: 2
+  fingerprint: 18a3df53fa6dcb2f
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 b5a028c9 cd44d8cd 9278ed91 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 84e04f5f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout-trafficpolicy"
+    only: true
+    lead: ' '
+- paths: per-try-timeout-trafficpolicy
+  block: 3
+  fingerprint: 4fbacca4fb2c524f
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 7c7a9799 0f10c5bc 36184fa5 588a5d84 d6b03630 350955ef 7c7a9799 7746f3e7 7f8a9998 7be3ae06 b67052d0 99746bab b3e24dad abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout-trafficpolicy"
+    only: true
+    lead: ' '
+- paths: per-try-timeout-gateway-listener
+  block: 4
+  fingerprint: 245a589f27fdc6e3
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 b5a028c9 cd44d8cd 9278ed91 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout-gateway-listener"
+    only: true
+    lead: ' '
+- paths: per-try-timeout-gateway-listener
+  block: 5
+  fingerprint: 66a23aaa380bd37c
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 7c7a9799 0bebd850 36184fa5 588a5d84 7115e129 350955ef 9278ed91 e4741808 7f8a9998 5a64a4ea b67052d0 99746bab b3e24dad abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="per-try-timeout-gateway-listener"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: f0ba7da3330f42a7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7c7a9799 0f10c5bc 36184fa5 301e1bfa eef3b5c2 d3d416e7 b5a028c9 cd44d8cd 9278ed91 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 7f8a9998 7be3ae06 67c4b1f3 dbf95901 6d3f1ba3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="per-try-timeout" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the retry HTTPRoute with timeouts.backendRequest to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: retry
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 4fbacca4fb2c524f
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 7c7a9799 0f10c5bc 36184fa5 588a5d84 d6b03630 350955ef 7c7a9799 7746f3e7 7f8a9998 7be3ae06 b67052d0 99746bab b3e24dad abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="per-try-timeout-trafficpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the retry HTTPRoute with the timeout rule name to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: retry
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the retry TrafficPolicy with perTryTimeout on the timeout rule to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: retry
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 66a23aaa380bd37c
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 7c7a9799 0bebd850 36184fa5 588a5d84 7115e129 350955ef 9278ed91 e4741808 7f8a9998 5a64a4ea b67052d0 99746bab b3e24dad abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="per-try-timeout-gateway-listener" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the retry HTTPRoute for retry.example to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: retry
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the retry TrafficPolicy with perTryTimeout on the http listener to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: retry
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 390d436c42880ce8
+    lang: console
+    lines: ab5df625 021fb596 1efe1dd8 2e253c22 c7197869 817ad316 39d4b54e 6056662a 41566b36 39d4b54e 0653176f f538f08a 39d4b54e cf93d32e 80485632 39d4b54e 45bf2c44 88270499 39d4b54e 59bc501f 4d1a7105 39d4b54e cfa27b48 a321f717 39d4b54e b467788d eabaed44 cfae0d42 e52a1813
+    preview: '...'
+  content: |-
+    {{< doc-test paths="per-try-timeout,per-try-timeout-trafficpolicy,per-try-timeout-gateway-listener" >}}
+    YAMLTest -f - <<'EOF'
+    - name: per-try-timeout - retry.example requests carry the 5 second per-try timeout header
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /anything
+        method: GET
+        headers:
+          host: "retry.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Envoy-Expected-Rq-Timeout-Ms'][0]"
+          comparator: equals
+          value: "5000"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 91d84920d0491369
+    lang: console
+    lines: d1233102 021fb596 83af6e88 c1cb8417 e52a1813 2709e273 90fa1071 cf57ae84 e21147f9 08865263 f5b09196 8783321e 21ef32e4 f3be1e17 d10b36aa e52a1813 b39c683e e52a1813 b57cbcc5 d10b36aa cfae0d42
+    preview: '"routes": ['
+  content: |-
+    {{< doc-test paths="per-try-timeout,per-try-timeout-trafficpolicy,per-try-timeout-gateway-listener" >}}
+    # Test-only: replaces the reader's port-forward and config dump steps, and
+    # checks that the per-try timeout fires. Uses the Envoy admin API through
+    # kubectl exec.
+    ptt_admin() {
+      kubectl exec deploy/http -n kgateway-system -- wget -qO- "127.0.0.1:19000/$1" 2>/dev/null
+    }
+    # Value of the upstream_rq_per_try_timeout counter on the httpbin cluster, 0 when unset.
+    ptt_count() {
+      local v
+      v=$(ptt_admin "stats?filter=upstream_rq_per_try_timeout" | grep -E '^cluster\.[^ ]*httpbin_8000\.upstream_rq_per_try_timeout: ' | head -1 | sed 's/.*: //' || true)
+      echo "${v:-0}"
+    }
+    policy=""
+    for i in $(seq 1 60); do
+      policy=$(ptt_admin "config_dump?resource=dynamic_route_configs" \
+        | jq -c '[.configs[]?.route_config.virtual_hosts[]? | select(any(.domains[]?; startswith("retry.example"))) | .. | objects | select(has("per_try_timeout"))] | first // empty' 2>/dev/null) || true
+      if [ -n "$policy" ]; then break; fi
+      echo "per_try_timeout for retry.example not in the Envoy config yet ($i/60)"; sleep 5
+    done
+    if [ -z "$policy" ] || [ "$(jq -r '.per_try_timeout // empty' <<<"$policy")" != "5s" ]; then
+      echo "per-try-timeout: expected a retry policy with per_try_timeout 5s on the retry.example virtual host, got: ${policy:-none}"
+      exit 1
+    fi
+    echo "per-try-timeout: Envoy retry policy $policy"
+
+    # A response faster than the per-try timeout succeeds.
+    code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "http://${INGRESS_GW_ADDRESS}:8080/delay/2" -H "host: retry.example:8080" || true)
+    if [ "$code" != "200" ]; then
+      echo "per-try-timeout: expected 200 from /delay/2, which is shorter than the 5s per-try timeout, got ${code:-no response}"
+      exit 1
+    fi
+    # A response slower than the per-try timeout fails with 504 once the timeout fires.
+    before=$(ptt_count)
+    result=$(curl -s -o /dev/null -w '%{http_code} %{time_total}' --max-time 40 "http://${INGRESS_GW_ADDRESS}:8080/delay/7" -H "host: retry.example:8080" || true)
+    after=$(ptt_count)
+    code=${result%% *}
+    elapsed=${result#* }
+    if [ "$code" != "504" ]; then
+      echo "per-try-timeout: expected 504 from /delay/7, which is longer than the 5s per-try timeout, got ${result:-no response}"
+      exit 1
+    fi
+    if ! awk -v t="$elapsed" 'BEGIN { exit !(t >= 4.5 && t <= 17) }'; then
+      echo "per-try-timeout: expected the 504 between 4.5s (one 5s try) and 17s (the 15s route timeout), took ${elapsed}s"
+      exit 1
+    fi
+    if [ "$after" -le "$before" ]; then
+      echo "per-try-timeout: expected upstream_rq_per_try_timeout on the httpbin cluster to rise, got $before -> $after"
+      exit 1
+    fi
+    echo "per-try-timeout: /delay/7 returned 504 after ${elapsed}s; upstream_rq_per_try_timeout $before -> $after"
+    {{< /doc-test >}}

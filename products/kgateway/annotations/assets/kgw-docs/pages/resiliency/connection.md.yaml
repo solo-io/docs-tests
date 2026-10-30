@@ -1,0 +1,142 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/connection.md
+blocks:
+- e15dbe7a7fe5259e yaml
+- 0119cd3ca5b90e81 yaml
+- e903a0e7e0ea48e2 yaml
+- f7395d05fb7ad54f yaml
+- d2489beaf273ef09 sh
+- 2375cb3b5f7ebb64 sh
+- 07dd57d7e0b6206d console
+- 9b88c21c5ea3b487 sh
+tags:
+- paths: connection
+  block: 3
+  fingerprint: f7395d05fb7ad54f
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 686b7ec0 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 f83be80b 283ff893 796f552b 123f3a19 49baa381 2944af14 5d4f9bf8 5d06c529 9d285304 bf7b6e67 4481c486 be9c066e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="connection"
+    only: true
+    lead: ' '
+    tail: ' '
+- paths: connection
+  block: 7
+  fingerprint: 9b88c21c5ea3b487
+  lang: sh
+  lines: 9b88c21c
+  preview: kubectl delete backendconfigpolicy httpbin-connection -n httpbin
+  form:
+    attr: paths="connection"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: f7395d05fb7ad54f
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 686b7ec0 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 f83be80b 283ff893 796f552b 123f3a19 49baa381 2944af14 5d4f9bf8 5d06c529 9d285304 bf7b6e67 4481c486 be9c066e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="connection" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-connection BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-connection
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: connection - requests to httpbin still succeed with the connection settings
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    # Test-only: the page reads config_dump through a port-forward, which the test
+    # cannot use. The proxy's admin port listens on 127.0.0.1:19000 inside the pod,
+    # so read it with kubectl exec instead, and check every setting from the policy
+    # on the kube_httpbin_httpbin_8000 cluster. maxConnectionDuration is only in the
+    # policy on versions that support it, so check it only when the applied policy
+    # sets it.
+    cn_mcd=$(kubectl get backendconfigpolicy httpbin-connection -n httpbin -o jsonpath='{.spec.commonHttpProtocolOptions.maxConnectionDuration}' 2>/dev/null || true)
+    cn_ok=0
+    cn_msg=""
+    for attempt in $(seq 1 60); do
+      cn_msg=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_active_clusters" 2>/dev/null | python3 -c '
+    import json, sys
+    want_mcd = sys.argv[1]
+    def find(o, name):
+        # First dict under o with this cluster name and a connect_timeout field.
+        if isinstance(o, dict):
+            if o.get("name") == name and "connect_timeout" in o:
+                return o
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = find(v, name)
+                if r is not None:
+                    return r
+        return None
+    try:
+        c = find(json.load(sys.stdin), "kube_httpbin_httpbin_8000")
+        opts = c["typed_extension_protocol_options"]["envoy.extensions.upstreams.http.v3.HttpProtocolOptions"]
+        common = opts["common_http_protocol_options"]
+        h1 = opts["explicit_http_config"]["http_protocol_options"]
+    except Exception as e:
+        print("httpbin cluster or its HttpProtocolOptions not found: %r" % e)
+        sys.exit(1)
+    got = {
+        "connect_timeout": c.get("connect_timeout"),
+        "per_connection_buffer_limit_bytes": c.get("per_connection_buffer_limit_bytes"),
+        "idle_timeout": common.get("idle_timeout"),
+        "max_headers_count": common.get("max_headers_count"),
+        "max_stream_duration": common.get("max_stream_duration"),
+        "max_requests_per_connection": common.get("max_requests_per_connection"),
+        "enable_trailers": h1.get("enable_trailers"),
+        "override_stream_error_on_invalid_http_message": h1.get("override_stream_error_on_invalid_http_message"),
+        "header_key_format": h1.get("header_key_format", {}).get("stateful_formatter", {}).get("name"),
+    }
+    want = {
+        "connect_timeout": "5s",
+        "per_connection_buffer_limit_bytes": 1024,
+        "idle_timeout": "10s",
+        "max_headers_count": 15,
+        "max_stream_duration": "30s",
+        "max_requests_per_connection": 100,
+        "enable_trailers": True,
+        "override_stream_error_on_invalid_http_message": True,
+        "header_key_format": "envoy.http.stateful_header_formatters.preserve_case",
+    }
+    if want_mcd:
+        got["max_connection_duration"] = common.get("max_connection_duration")
+        want["max_connection_duration"] = "600s"
+    bad = {k: got[k] for k in want if got[k] != want[k]}
+    if bad:
+        print("mismatched settings: %s" % json.dumps(bad, sort_keys=True))
+        sys.exit(1)
+    print("all settings match: %s" % json.dumps(got, sort_keys=True))
+    ' "$cn_mcd" 2>&1) && { cn_ok=1; break; }
+      sleep 2
+    done
+    echo "connection: ${cn_msg}"
+    if [ "$cn_ok" != "1" ]; then
+      echo "connection: expected the httpbin-connection settings on cluster kube_httpbin_httpbin_8000 in config_dump"
+      exit 1
+    fi
+    {{< /doc-test >}}

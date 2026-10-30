@@ -1,0 +1,130 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/timeouts/idle.md
+blocks:
+- e3b8b746baa395b8 yaml
+- d2489beaf273ef09 sh
+- f4559f5c245549e6 sh
+- 5d0533266b6fa811 console
+- d234251e2e3456da sh
+tags:
+- paths: timeout-idle
+  block: 0
+  fingerprint: e3b8b746baa395b8
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 cedff171 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 1c4da3ed abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="timeout-idle"
+    only: true
+    lead: ' '
+- paths: timeout-idle
+  block: 4
+  fingerprint: d234251e2e3456da
+  lang: sh
+  lines: d234251e
+  preview: kubectl delete listenerpolicy idle-time -n {{< reuse "kgw-docs/snippets/namespac
+  form:
+    attr: paths="timeout-idle"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: e3b8b746baa395b8
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 cedff171 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 1c4da3ed abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="timeout-idle" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the idle-time ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: idle-time
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only check. The page port-forwards the admin port of the http gateway
+    # proxy; the test reads the same config dump with kubectl exec instead. Every
+    # http_connection_manager on the active listeners must carry idle_timeout 30s.
+    idle_ok=false
+    idle_out=""
+    for i in $(seq 1 60); do
+      idle_out=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_listeners" 2>/dev/null | python3 -c '
+    import json, sys
+    try:
+        d = json.load(sys.stdin)
+    except Exception:
+        sys.exit(0)
+    vals = []
+    def walk(o):
+        if isinstance(o, dict):
+            if o.get("name") == "envoy.filters.network.http_connection_manager":
+                opts = (o.get("typed_config") or {}).get("common_http_protocol_options") or {}
+                vals.append(opts.get("idle_timeout", "unset"))
+            for x in o.values():
+                walk(x)
+        elif isinstance(o, list):
+            for x in o:
+                walk(x)
+    for c in d.get("configs", []):
+        # With ?resource=dynamic_listeners each config is one DynamicListener.
+        for l in c.get("dynamic_listeners", [c]):
+            walk((l.get("active_state") or {}).get("listener") or {})
+    print(" ".join(sorted(set(vals))))
+    ' || true)
+      if [ "$idle_out" = "30s" ]; then
+        idle_ok=true
+        break
+      fi
+      sleep 5
+    done
+    if [ "$idle_ok" != true ]; then
+      echo "timeout-idle: expected idle_timeout 30s in common_http_protocol_options of every http_connection_manager, got '${idle_out:-no listener config}'"
+      exit 1
+    fi
+    echo "timeout-idle: http_connection_manager common_http_protocol_options.idle_timeout is 30s"
+    # Behavior check: open one keep-alive HTTP/1.1 connection, send one request,
+    # then leave the connection idle. With the 30s idle timeout, the gateway closes
+    # it after about 30 seconds (the default is 1 hour). The window is loose on
+    # purpose: closed after 20s and before 100s counts as a pass.
+    idle_close_ok=false
+    idle_msg=""
+    for attempt in 1 2 3; do
+      if ! { exec 3<>"/dev/tcp/${INGRESS_GW_ADDRESS}/8080"; } 2>/dev/null; then
+        idle_msg="could not open a TCP connection to ${INGRESS_GW_ADDRESS}:8080"
+        sleep 5
+        continue
+      fi
+      printf 'GET /status/200 HTTP/1.1\r\nHost: www.example.com\r\nConnection: keep-alive\r\n\r\n' >&3
+      idle_start=$(date +%s)
+      idle_rc=0
+      timeout 120 cat <&3 > /tmp/timeout-idle-response.txt || idle_rc=$?
+      idle_elapsed=$(( $(date +%s) - idle_start ))
+      exec 3<&- || true
+      if ! grep -q "^HTTP/1.1 200" /tmp/timeout-idle-response.txt; then
+        idle_msg="no HTTP/1.1 200 response on the connection: $(head -c 300 /tmp/timeout-idle-response.txt)"
+      elif [ "$idle_rc" -eq 124 ]; then
+        idle_msg="the gateway kept the idle connection open for 120s"
+      elif [ "$idle_elapsed" -lt 20 ] || [ "$idle_elapsed" -gt 100 ]; then
+        idle_msg="the gateway closed the idle connection after ${idle_elapsed}s, expected about 30s"
+      else
+        idle_close_ok=true
+        break
+      fi
+      sleep 2
+    done
+    if [ "$idle_close_ok" != true ]; then
+      echo "timeout-idle: $idle_msg"
+      exit 1
+    fi
+    echo "timeout-idle: the gateway closed the idle keep-alive connection after ${idle_elapsed}s"
+    {{< /doc-test >}}

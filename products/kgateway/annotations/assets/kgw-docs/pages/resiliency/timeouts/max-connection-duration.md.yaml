@@ -1,0 +1,174 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/timeouts/max-connection-duration.md
+blocks:
+- cb9eefd52282cb9e yaml
+- eda9dd48d24ee0cb sh
+- 5cc4e2ca52302e45 console
+- b507a4116b315160 yaml
+- eb22dc3a04d51a28 sh
+- 3c13966370f96b08 console
+- 49a69b3f42da8a94 sh
+tags:
+- paths: timeout-max-connection-duration
+  block: 0
+  fingerprint: cb9eefd52282cb9e
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 a692312c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 e0e4f02f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="timeout-max-connection-duration"
+    only: true
+    lead: ' '
+- paths: timeout-max-connection-duration
+  block: 3
+  fingerprint: b507a4116b315160
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 a692312c 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 796f552b acfd91cf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="timeout-max-connection-duration"
+    only: true
+    lead: ' '
+- paths: timeout-max-connection-duration
+  block: 6
+  fingerprint: 49a69b3f42da8a94
+  lang: sh
+  lines: acab4bcd 7f3dad26
+  preview: kubectl delete listenerpolicy max-connection-duration -n {{< reuse "kgw-docs/sni
+  form:
+    attr: paths="timeout-max-connection-duration"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: cb9eefd52282cb9e
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 a692312c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 e0e4f02f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="timeout-max-connection-duration" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the max-connection-duration ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: max-connection-duration
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only check. The page port-forwards the admin port of the http gateway
+    # proxy; the test reads the same config dump with kubectl exec instead. Every
+    # http_connection_manager on the active listeners must carry
+    # max_connection_duration 600s (10m).
+    mcd_listener_ok=false
+    mcd_listener_out=""
+    for i in $(seq 1 60); do
+      mcd_listener_out=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_listeners" 2>/dev/null | python3 -c '
+    import json, sys
+    try:
+        d = json.load(sys.stdin)
+    except Exception:
+        sys.exit(0)
+    vals = []
+    def walk(o):
+        if isinstance(o, dict):
+            if o.get("name") == "envoy.filters.network.http_connection_manager":
+                opts = (o.get("typed_config") or {}).get("common_http_protocol_options") or {}
+                vals.append(opts.get("max_connection_duration", "unset"))
+            for x in o.values():
+                walk(x)
+        elif isinstance(o, list):
+            for x in o:
+                walk(x)
+    for c in d.get("configs", []):
+        # With ?resource=dynamic_listeners each config is one DynamicListener.
+        for l in c.get("dynamic_listeners", [c]):
+            walk((l.get("active_state") or {}).get("listener") or {})
+    print(" ".join(sorted(set(vals))))
+    ' || true)
+      if [ "$mcd_listener_out" = "600s" ]; then
+        mcd_listener_ok=true
+        break
+      fi
+      sleep 5
+    done
+    if [ "$mcd_listener_ok" != true ]; then
+      echo "timeout-max-connection-duration: expected max_connection_duration 600s in common_http_protocol_options of every http_connection_manager, got '${mcd_listener_out:-no listener config}'"
+      exit 1
+    fi
+    echo "timeout-max-connection-duration: listener common_http_protocol_options.max_connection_duration is 600s"
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: b507a4116b315160
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 a692312c 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 796f552b acfd91cf abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="timeout-max-connection-duration" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the max-connection-duration BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: max-connection-duration
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only check: the kube_httpbin_httpbin_8000 cluster must carry
+    # max_connection_duration 600s in its upstream HttpProtocolOptions.
+    mcd_cluster_ok=false
+    mcd_cluster_out=""
+    for i in $(seq 1 60); do
+      mcd_cluster_out=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_active_clusters" 2>/dev/null | python3 -c '
+    import json, sys
+    try:
+        d = json.load(sys.stdin)
+    except Exception:
+        sys.exit(0)
+    for c in d.get("configs", []):
+        cl = c.get("cluster") or {}
+        if cl.get("name") != "kube_httpbin_httpbin_8000":
+            continue
+        opts = (cl.get("typed_extension_protocol_options") or {}).get("envoy.extensions.upstreams.http.v3.HttpProtocolOptions") or {}
+        print((opts.get("common_http_protocol_options") or {}).get("max_connection_duration", "unset"))
+    ' || true)
+      if [ "$mcd_cluster_out" = "600s" ]; then
+        mcd_cluster_ok=true
+        break
+      fi
+      sleep 5
+    done
+    if [ "$mcd_cluster_ok" != true ]; then
+      echo "timeout-max-connection-duration: expected max_connection_duration 600s on cluster kube_httpbin_httpbin_8000, got '${mcd_cluster_out:-cluster not found}'"
+      exit 1
+    fi
+    echo "timeout-max-connection-duration: cluster kube_httpbin_httpbin_8000 has max_connection_duration 600s"
+    # Traffic through the gateway to httpbin still works with both policies attached.
+    mcd_code=""
+    for i in $(seq 1 30); do
+      mcd_code=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true)
+      [ "$mcd_code" = "200" ] && break
+      sleep 2
+    done
+    if [ "$mcd_code" != "200" ]; then
+      echo "timeout-max-connection-duration: expected HTTP 200 from www.example.com/status/200, got '${mcd_code:-no response}'"
+      exit 1
+    fi
+    echo "timeout-max-connection-duration: www.example.com/status/200 returned 200"
+    {{< /doc-test >}}

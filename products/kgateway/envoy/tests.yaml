@@ -306,8 +306,13 @@ scenarios:
     type: schema
     page: migrate/examples/canary.md
     path: canary
-  circuit-breakers-schema:
-    type: schema
+  circuit-breakers:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/resiliency/circuit-breakers.md
     path: circuit-breakers
   claim-based-rbac-schema:
@@ -327,8 +332,13 @@ scenarios:
     type: schema
     source: kgw-docs/pages/setup/customize/configs.md
     path: configs
-  connection-schema:
-    type: schema
+  connection:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/resiliency/connection.md
     path: connection
   cors-schema:
@@ -509,8 +519,20 @@ scenarios:
     type: schema
     source: kgw-docs/pages/integrations/external-dns-cert-manager.md
     path: external-dns-cert-manager
-  fault-injection-schema:
-    type: schema
+  fault-injection-gateway:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/resiliency/fault-injection.md
+    path: fault-injection-gateway
+  fault-injection:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/resiliency/fault-injection.md
     path: fault-injection
   filter-stages-schema:
@@ -624,14 +646,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/http2.md
     path: http2
-  idle-schema:
-    type: schema
-    source: kgw-docs/pages/resiliency/timeouts/idle.md
-    path: idle
-  idle-stream-schema:
-    type: schema
-    source: kgw-docs/pages/resiliency/timeouts/idle-stream.md
-    path: idle-stream
   ingress-schema:
     type: schema
     source: kgw-docs/pages/integrations/istio/sidecar/ingress.md
@@ -640,12 +654,22 @@ scenarios:
     type: schema
     source: kgw-docs/pages/security/jwt/jwt-claim-extraction.md
     path: jwt-claim-extraction
-  keepalive-http2-schema:
-    type: schema
+  keepalive-http2:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/resiliency/keepalive/http2.md
     path: keepalive-http2
-  keepalive-tcp-schema:
-    type: schema
+  keepalive-tcp:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/resiliency/keepalive/tcp.md
     path: keepalive-tcp
   keycloak-access-token-schema:
@@ -739,10 +763,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/match/query.md
     path: match-query
-  max-connection-duration-schema:
-    type: schema
-    source: kgw-docs/pages/resiliency/timeouts/max-connection-duration.md
-    path: max-connection-duration
   max-headers-count:
     type:
     - schema
@@ -776,8 +796,13 @@ scenarios:
     type: schema
     page: migrate/examples/oidc-auth.md
     path: migrate-oidc-auth
-  mirroring-schema:
-    type: schema
+  mirroring:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/resiliency/mirroring.md
     path: mirroring
   mtls-schema:
@@ -800,12 +825,38 @@ scenarios:
     type: schema
     source: kgw-docs/pages/observability/otel-stack.md
     path: otel-stack
-  outlier-detection-schema:
-    type: schema
+  outlier-detection:
+    # The local-origin and gateway failure sections are main only, so the main
+    # tree runs more steps.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/resiliency/outlier-detection.md
     path: outlier-detection
-  per-try-timeout-schema:
-    type: schema
+  per-try-timeout-gateway-listener:
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    source: kgw-docs/pages/resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-gateway-listener
+  per-try-timeout-trafficpolicy:
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    source: kgw-docs/pages/resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-trafficpolicy
+  per-try-timeout:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - httpbin
     source: kgw-docs/pages/resiliency/retry/per-try-timeout.md
     path: per-try-timeout
   preserve-request-paths:
@@ -927,10 +978,6 @@ scenarios:
     type: schema
     page: migrate/examples/request-buffering.md
     path: request-buffering
-  request-schema:
-    type: schema
-    source: kgw-docs/pages/resiliency/timeouts/request.md
-    path: request
   response-header-from-secret:
     type:
     - schema
@@ -940,8 +987,29 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/response-header.md
     path: response-header-from-secret
-  retry-schema:
-    type: schema
+  retry-gateway-listener:
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    source: kgw-docs/pages/resiliency/retry/retry.md
+    path: retry-gateway-listener
+  retry-trafficpolicy:
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    source: kgw-docs/pages/resiliency/retry/retry.md
+    path: retry-trafficpolicy
+  retry:
+    # The HTTPRoute retry field is experimental in Gateway API 1.6 (latest) and
+    # standard from 1.7 (main); the experimental channel covers both trees.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - httpbin
     source: kgw-docs/pages/resiliency/retry/retry.md
     path: retry
   rewrite-host-external:
@@ -1093,14 +1161,63 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/strip-trailing-host-dot.md
     path: strip-trailing-host-dot
+  timeout-idle-stream:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/resiliency/timeouts/idle-stream.md
+    path: timeout-idle-stream
+  timeout-idle:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/resiliency/timeouts/idle.md
+    path: timeout-idle
+  timeout-max-connection-duration:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/resiliency/timeouts/max-connection-duration.md
+    path: timeout-max-connection-duration
+  timeout-request-trafficpolicy:
+    # Rule names for sectionName need the experimental channel on 2.4.x and earlier.
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    source: kgw-docs/pages/resiliency/timeouts/request.md
+    path: timeout-request-trafficpolicy
+  timeout-request:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/resiliency/timeouts/request.md
+    path: timeout-request
+  timeout-tls-handshake:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/resiliency/timeouts/tls-handshake.md
+    path: timeout-tls-handshake
   timeouts-schema:
     type: schema
     page: migrate/examples/timeouts.md
     path: timeouts
-  tls-handshake-schema:
-    type: schema
-    source: kgw-docs/pages/resiliency/timeouts/tls-handshake.md
-    path: tls-handshake
   tls-passthrough-schema:
     type: schema
     page: setup/listeners/tls-passthrough.md

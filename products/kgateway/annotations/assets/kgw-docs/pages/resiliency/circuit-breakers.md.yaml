@@ -1,0 +1,190 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/circuit-breakers.md
+blocks:
+- 2380903ae27052f1 yaml
+- 1615423d8014e53c sh
+- 94d28b9252b16700
+- 1669c59703927f95 yaml
+- da318fb62ca0c43c sh
+- 13606e543d04abe9
+- 2cf036d6ad3e91e7 sh
+tags:
+- paths: circuit-breakers
+  block: 0
+  fingerprint: 2380903ae27052f1
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 97f94a79 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 61b86c5d 813ab1bf 9fcd9aa5 fb163067 2a116cbf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="circuit-breakers"
+    only: true
+    lead: ' '
+- paths: circuit-breakers
+  block: 3
+  fingerprint: 1669c59703927f95
+  lang: yaml
+  lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 97f94a79 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 61b86c5d 813ab1bf 9fcd9aa5 fb163067 2a116cbf 86f9cd36 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="circuit-breakers"
+    only: true
+    lead: ' '
+- paths: circuit-breakers
+  block: 6
+  fingerprint: 2cf036d6ad3e91e7
+  lang: sh
+  lines: 2cf036d6
+  preview: kubectl delete backendconfigpolicy httpbin-circuit-breakers -n httpbin
+  form:
+    attr: paths="circuit-breakers"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 2380903ae27052f1
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 97f94a79 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 61b86c5d 813ab1bf 9fcd9aa5 fb163067 2a116cbf abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="circuit-breakers" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-circuit-breakers BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-circuit-breakers
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the page reads config_dump through a port-forward, which the test
+    # cannot use. The proxy's admin port listens on 127.0.0.1:19000 inside the pod,
+    # so read it with kubectl exec instead. cb_thresholds prints the first
+    # circuit_breakers threshold of the httpbin cluster as
+    # "max_connections max_pending_requests max_requests max_retries track_remaining",
+    # or "none" when the cluster has no circuit breakers yet.
+    cb_thresholds() {
+      kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_active_clusters" 2>/dev/null | python3 -c '
+    import json, sys
+    def find(o, name):
+        # First dict under o with this cluster name and a circuit_breakers field.
+        if isinstance(o, dict):
+            if o.get("name") == name and "circuit_breakers" in o:
+                return o
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = find(v, name)
+                if r is not None:
+                    return r
+        return None
+    try:
+        t = find(json.load(sys.stdin), "kube_httpbin_httpbin_8000")["circuit_breakers"]["thresholds"][0]
+        print(" ".join(str(t.get(k)) for k in ("max_connections", "max_pending_requests", "max_requests", "max_retries", "track_remaining")))
+    except Exception:
+        print("none")
+    ' || true
+    }
+    cb_got=""
+    for attempt in $(seq 1 60); do
+      cb_got=$(cb_thresholds)
+      [ "$cb_got" = "1000 500 2000 10 None" ] && break
+      sleep 2
+    done
+    if [ "$cb_got" != "1000 500 2000 10 None" ]; then
+      echo "circuit-breakers: expected thresholds 1000 500 2000 10 on cluster kube_httpbin_httpbin_8000, got '${cb_got}'"
+      exit 1
+    fi
+    echo "circuit-breakers: config_dump thresholds are ${cb_got}"
+
+    # Test-only: the page's limits (1000 connections, 500 pending requests) are too
+    # high to reach in a test. Lower them on the same policy, send 20 slow requests
+    # at once, and check that the gateway rejects the overflow with a 503 and counts
+    # it in upstream_rq_pending_overflow. The next section of the page re-applies
+    # the page's limits.
+    kubectl patch backendconfigpolicy httpbin-circuit-breakers -n httpbin --type merge \
+      -p '{"spec":{"circuitBreakers":{"maxConnections":1,"maxPendingRequests":1,"maxRequests":1}}}'
+    for attempt in $(seq 1 60); do
+      cb_got=$(cb_thresholds)
+      [ "$cb_got" = "1 1 1 10 None" ] && break
+      sleep 2
+    done
+    if [ "$cb_got" != "1 1 1 10 None" ]; then
+      echo "circuit-breakers: expected the lowered thresholds 1 1 1 10, got '${cb_got}'"
+      exit 1
+    fi
+    cb_dir=$(mktemp -d)
+    cb_503=0; cb_200=0
+    for round in 1 2 3; do
+      cb_pids=""
+      for i in $(seq 1 20); do
+        curl -s -o /dev/null -w '%{http_code}\n' --max-time 30 "http://${INGRESS_GW_ADDRESS}:8080/delay/2" \
+          -H "host: www.example.com:8080" > "$cb_dir/$round-$i" 2>/dev/null &
+        cb_pids="$cb_pids $!"
+      done
+      wait $cb_pids || true
+      cb_503=$(cat "$cb_dir"/* | grep -c '^503$' || true)
+      cb_200=$(cat "$cb_dir"/* | grep -c '^200$' || true)
+      [ "$cb_503" -ge 1 ] && [ "$cb_200" -ge 1 ] && break
+    done
+    echo "circuit-breakers: ${cb_200} requests returned 200 and ${cb_503} returned 503"
+    if [ "$cb_503" -lt 1 ] || [ "$cb_200" -lt 1 ]; then
+      echo "circuit-breakers: expected concurrent requests to return both 200 (within the limit) and 503 (circuit breaker overflow)"
+      exit 1
+    fi
+    cb_overflow=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/stats" 2>/dev/null \
+      | grep '^cluster\.kube_httpbin_httpbin_8000\.upstream_rq_pending_overflow:' | awk '{print $2}' || true)
+    echo "circuit-breakers: upstream_rq_pending_overflow is '${cb_overflow}'"
+    if [ -z "$cb_overflow" ] || [ "$cb_overflow" -lt 1 ]; then
+      echo "circuit-breakers: expected cluster.kube_httpbin_httpbin_8000.upstream_rq_pending_overflow to be at least 1"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 1669c59703927f95
+    lang: yaml
+    lines: 16c71da1 d664f32c 3f173fd2 8c8c4228 97f94a79 0f10c5bc 36184fa5 588a5d84 e6365cc1 0d6480f0 d217c891 61b86c5d 813ab1bf 9fcd9aa5 fb163067 2a116cbf 86f9cd36 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="circuit-breakers" >}}
+    # Test-only: the page re-applied its own limits with trackRemaining: true, which
+    # replaces the lowered test-only limits. Check that the old limits are gone and
+    # track_remaining is set, then read /stats with kubectl exec instead of the
+    # page's port-forward.
+    for attempt in $(seq 1 60); do
+      cb_got=$(cb_thresholds)
+      [ "$cb_got" = "1000 500 2000 10 True" ] && break
+      sleep 2
+    done
+    if [ "$cb_got" != "1000 500 2000 10 True" ]; then
+      echo "circuit-breakers: expected thresholds 1000 500 2000 10 with track_remaining true after the trackRemaining update, got '${cb_got}'"
+      exit 1
+    fi
+    cb_stats=""
+    for attempt in $(seq 1 30); do
+      cb_stats=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/stats" 2>/dev/null \
+        | grep "kube_httpbin_httpbin_8000.*remaining" || true)
+      printf '%s\n' "$cb_stats" | grep -q '\.remaining_pending: 500$' \
+        && printf '%s\n' "$cb_stats" | grep -q '\.remaining_rq: 2000$' \
+        && printf '%s\n' "$cb_stats" | grep -q '\.remaining_retries: 10$' \
+        && printf '%s\n' "$cb_stats" | grep -q '\.remaining_cx: [0-9]' \
+        && break
+      sleep 2
+    done
+    printf '%s\n' "$cb_stats"
+    # remaining_cx is 1000 minus the open upstream connections, so only check it exists.
+    for cb_metric in 'remaining_cx: [0-9]' 'remaining_pending: 500$' 'remaining_rq: 2000$' 'remaining_retries: 10$'; do
+      if ! printf '%s\n' "$cb_stats" | grep -q "circuit_breakers\.default\.${cb_metric}"; then
+        echo "circuit-breakers: expected a cluster.kube_httpbin_httpbin_8000.circuit_breakers.default.${cb_metric} stat"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}

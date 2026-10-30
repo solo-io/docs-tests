@@ -1,0 +1,163 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/keepalive/tcp.md
+blocks:
+- afaa56c6e7701538 yaml
+- 211510309225df8f sh
+- 8602d2bc1556d569 console
+- 9aec3751ea4f3a87 yaml
+- d2489beaf273ef09 sh
+- 2375cb3b5f7ebb64 sh
+- b6f56ad278199cdc console
+- 48ead81a0738f4e1 sh
+tags:
+- paths: keepalive-tcp
+  block: 0
+  fingerprint: afaa56c6e7701538
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 6b9c1e88 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 5d627afe 72b9fe64 53b4cbf5 1d38f1c4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keepalive-tcp"
+    only: true
+    lead: ' '
+- paths: keepalive-tcp
+  block: 3
+  fingerprint: 9aec3751ea4f3a87
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 eb7d9e34 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 5d627afe 72b9fe64 9e49045f 0d70b9ba abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keepalive-tcp"
+    only: true
+    lead: ' '
+- paths: keepalive-tcp
+  block: 7
+  fingerprint: 48ead81a0738f4e1
+  lang: sh
+  lines: de304bf8 cf187c16
+  preview: kubectl delete listenerpolicy listener-keepalive -n {{< reuse "kgw-docs/snippets
+  form:
+    attr: paths="keepalive-tcp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 8602d2bc1556d569
+    lang: console
+    lines: 021fb596 c8695855 e9b880e4 248368ae 8df8bf74 742711b2 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="keepalive-tcp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the listener-keepalive ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: listener-keepalive
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the page reads config_dump through a port-forward, which the test
+    # cannot use. The proxy's admin port listens on 127.0.0.1:19000 inside the pod,
+    # so read it with kubectl exec instead.
+    # tcpka_dump <jq-like selector name>: print one keepalive object as compact
+    # JSON with sorted keys, or nothing. "listener" reads the tcp_keepalive of the
+    # gateway listeners (listener~...), "cluster" reads the
+    # upstream_connection_options.tcp_keepalive of the httpbin cluster.
+    tcpka_dump() {
+      kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump" 2>/dev/null | python3 -c '
+    import json, sys
+    what = sys.argv[1]
+    def walk(o):
+        if isinstance(o, dict):
+            yield o
+            for v in o.values():
+                yield from walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                yield from walk(v)
+    try:
+        dump = json.load(sys.stdin)
+    except Exception:
+        sys.exit(0)
+    found = []
+    for o in walk(dump):
+        name = o.get("name")
+        if not isinstance(name, str):
+            continue
+        if what == "listener" and name.startswith("listener~") and "address" in o:
+            found.append(o.get("tcp_keepalive"))
+        if what == "cluster" and name == "kube_httpbin_httpbin_8000" and "connect_timeout" in o:
+            found.append((o.get("upstream_connection_options") or {}).get("tcp_keepalive"))
+    found = [f for f in found if f is not None]
+    if found:
+        print(json.dumps(found[0], sort_keys=True, separators=(",", ":")))
+    ' "$1" || true
+    }
+    # tcpka_expect <label> <listener|cluster> <expected JSON>: wait until the
+    # keepalive object matches.
+    tcpka_expect() {
+      local label="$1" what="$2" want="$3" got="" attempt
+      for attempt in $(seq 1 60); do
+        got=$(tcpka_dump "$what")
+        if [ "$got" = "$want" ]; then
+          echo "keepalive-tcp: $label tcp_keepalive is $got"
+          return 0
+        fi
+        sleep 2
+      done
+      echo "keepalive-tcp: expected $label tcp_keepalive $want, got '${got:-nothing}'"
+      exit 1
+    }
+    # tcpka_request <label>: a request through the gateway still returns 200.
+    tcpka_request() {
+      local label="$1" code="" attempt
+      for attempt in $(seq 1 30); do
+        code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true)
+        if [ "$code" = "200" ]; then
+          echo "keepalive-tcp: $label - httpbin returned 200 through the gateway"
+          return 0
+        fi
+        sleep 2
+      done
+      echo "keepalive-tcp: $label - expected 200 from httpbin through the gateway, got '${code:-no response}'"
+      exit 1
+    }
+    tcpka_expect "gateway listener" listener '{"keepalive_interval":60,"keepalive_probes":3,"keepalive_time":1200}'
+    tcpka_request "downstream keepalive"
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: b6f56ad278199cdc
+    lang: console
+    lines: ab5df625 66d0047f 1f8a6f40 4ded3b95 e9b880e4 248368ae 9b4cf1cf 5b9dfff3 d10b36aa d10b36aa e52a1813 ab5df625
+    preview: '...'
+  content: |-
+    {{< doc-test paths="keepalive-tcp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-keepalive BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-keepalive
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    tcpka_expect "cluster kube_httpbin_httpbin_8000 upstream" cluster '{"keepalive_interval":5,"keepalive_probes":3,"keepalive_time":30}'
+    tcpka_request "upstream keepalive"
+    {{< /doc-test >}}

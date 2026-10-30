@@ -1,0 +1,101 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/timeouts/tls-handshake.md
+blocks:
+- a525aa50ccbff030 yaml
+- fb5c4ad522d69c7b sh
+- 4fc2da2c5ad0c1eb console
+- b02871ffa95c32e5 sh
+tags:
+- paths: timeout-tls-handshake
+  block: 0
+  fingerprint: a525aa50ccbff030
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 752d0446 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 68c98c0e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="timeout-tls-handshake"
+    only: true
+    lead: ' '
+- paths: timeout-tls-handshake
+  block: 3
+  fingerprint: b02871ffa95c32e5
+  lang: sh
+  lines: b02871ff
+  preview: kubectl delete listenerpolicy tls-handshake-timeout -n {{< reuse "kgw-docs/snipp
+  form:
+    attr: paths="timeout-tls-handshake"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: a525aa50ccbff030
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 752d0446 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 68c98c0e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="timeout-tls-handshake" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tls-handshake-timeout ListenerPolicy to be accepted
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: kgateway-system
+            name: tls-handshake-timeout
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only check. The page port-forwards the admin port of the http gateway
+    # proxy; the test reads the same config dump with kubectl exec instead. Every
+    # filter chain of the active listener~ listeners must carry
+    # transport_socket_connect_timeout 10s.
+    tls_hs_ok=false
+    tls_hs_out=""
+    for i in $(seq 1 60); do
+      tls_hs_out=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_listeners" 2>/dev/null | python3 -c '
+    import json, sys
+    try:
+        d = json.load(sys.stdin)
+    except Exception:
+        sys.exit(0)
+    vals = []
+    for c in d.get("configs", []):
+        # With ?resource=dynamic_listeners each config is one DynamicListener.
+        for l in c.get("dynamic_listeners", [c]):
+            lis = (l.get("active_state") or {}).get("listener") or {}
+            if not str(lis.get("name", "")).startswith("listener~"):
+                continue
+            for fc in lis.get("filter_chains", []):
+                vals.append(fc.get("transport_socket_connect_timeout", "unset"))
+    print(" ".join(sorted(set(vals))))
+    ' || true)
+      if [ "$tls_hs_out" = "10s" ]; then
+        tls_hs_ok=true
+        break
+      fi
+      sleep 5
+    done
+    if [ "$tls_hs_ok" != true ]; then
+      echo "timeout-tls-handshake: expected transport_socket_connect_timeout 10s on every filter chain of the listener~ listeners, got '${tls_hs_out:-no listener config}'"
+      exit 1
+    fi
+    echo "timeout-tls-handshake: every filter chain has transport_socket_connect_timeout 10s"
+    # Traffic through the plain HTTP listener still works with the policy attached.
+    tls_hs_code=""
+    for i in $(seq 1 30); do
+      tls_hs_code=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true)
+      [ "$tls_hs_code" = "200" ] && break
+      sleep 2
+    done
+    if [ "$tls_hs_code" != "200" ]; then
+      echo "timeout-tls-handshake: expected HTTP 200 from www.example.com/status/200, got '${tls_hs_code:-no response}'"
+      exit 1
+    fi
+    echo "timeout-tls-handshake: www.example.com/status/200 returned 200"
+    {{< /doc-test >}}

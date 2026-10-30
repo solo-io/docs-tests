@@ -1,0 +1,101 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/timeouts/idle-stream.md
+blocks:
+- 8916c5c44a0b801b yaml
+- d2489beaf273ef09 sh
+- 2375cb3b5f7ebb64 sh
+- eb76f36bca5a59a1 sh
+- e31a9a88258cc5ca console
+- f05bafc8e1e588b8 sh
+tags:
+- paths: timeout-idle-stream
+  block: 0
+  fingerprint: 8916c5c44a0b801b
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 84e04f5f 0f10c5bc 36184fa5 588a5d84 d6b03630 350955ef d217c891 dbf95901 800594b4 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="timeout-idle-stream"
+    only: true
+    lead: ' '
+- paths: timeout-idle-stream
+  block: 5
+  fingerprint: f05bafc8e1e588b8
+  lang: sh
+  lines: f05bafc8
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} timeout -n htt
+  form:
+    attr: paths="timeout-idle-stream"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 8916c5c44a0b801b
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 84e04f5f 0f10c5bc 36184fa5 588a5d84 d6b03630 350955ef d217c891 dbf95901 800594b4 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="timeout-idle-stream" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the timeout TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: timeout
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only check. The page port-forwards the admin port of the http gateway
+    # proxy; the test reads the same config dump with kubectl exec instead. Every
+    # route to the kube_httpbin_httpbin_8000 cluster must carry idle_timeout 600s.
+    idle_stream_ok=false
+    idle_stream_out=""
+    for i in $(seq 1 60); do
+      idle_stream_out=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_route_configs" 2>/dev/null | python3 -c '
+    import json, sys
+    try:
+        d = json.load(sys.stdin)
+    except Exception:
+        sys.exit(0)
+    vals = []
+    for c in d.get("configs", []):
+        rc = c.get("route_config") or {}
+        for vh in rc.get("virtual_hosts", []):
+            for r in vh.get("routes", []):
+                route = r.get("route") or {}
+                if route.get("cluster") == "kube_httpbin_httpbin_8000":
+                    vals.append(route.get("idle_timeout", "unset"))
+    print(" ".join(sorted(set(vals))))
+    ' || true)
+      if [ "$idle_stream_out" = "600s" ]; then
+        idle_stream_ok=true
+        break
+      fi
+      sleep 5
+    done
+    if [ "$idle_stream_ok" != true ]; then
+      echo "timeout-idle-stream: expected route idle_timeout 600s on every route to kube_httpbin_httpbin_8000, got '${idle_stream_out:-no httpbin route}'"
+      exit 1
+    fi
+    echo "timeout-idle-stream: routes to kube_httpbin_httpbin_8000 have idle_timeout 600s"
+    # Traffic through the httpbin route still works with the policy attached.
+    idle_stream_code=""
+    for i in $(seq 1 30); do
+      idle_stream_code=$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true)
+      [ "$idle_stream_code" = "200" ] && break
+      sleep 2
+    done
+    if [ "$idle_stream_code" != "200" ]; then
+      echo "timeout-idle-stream: expected HTTP 200 from www.example.com/status/200, got '${idle_stream_code:-no response}'"
+      exit 1
+    fi
+    echo "timeout-idle-stream: www.example.com/status/200 returned 200"
+    {{< /doc-test >}}

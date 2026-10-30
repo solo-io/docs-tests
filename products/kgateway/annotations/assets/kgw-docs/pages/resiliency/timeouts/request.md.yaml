@@ -1,0 +1,164 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/timeouts/request.md
+blocks:
+- d472b3cf922a7eb5 yaml
+- e1186c8fff0992ad sh
+- da0388e4a6526dbe yaml
+- af35acb6ff2dbb25 yaml
+- 3d3832ba6cba05b1 sh
+- cc77b77e901eeced sh
+- ba8b417ab977c430 console
+- e14bc192069712aa sh
+- ee45fbaa64203bd9 sh
+- cffd3ee7baa675ee console
+- d11e2c5f3fea6b5e sh
+tags:
+- paths: timeout-request
+  block: 0
+  fingerprint: d472b3cf922a7eb5
+  lang: yaml
+  lines: 0859a758 8c67597e 56bf9360 8c8c4228 ddf6cde1 36184fa5 301e1bfa 21d73962 d3d416e7 b5a028c9 cd44d8cd 9278ed91 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 dbf95901 d5c39941 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 abc56510
+  preview: kubectl apply -n httpbin -f- <<EOF
+  form:
+    attr: paths="timeout-request"
+    only: true
+    lead: ' '
+- paths: timeout-request-trafficpolicy
+  block: 2
+  fingerprint: da0388e4a6526dbe
+  lang: yaml
+  lines: 0859a758 8c67597e 56bf9360 8c8c4228 ddf6cde1 36184fa5 301e1bfa 21d73962 d3d416e7 b5a028c9 cd44d8cd 9278ed91 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 84e04f5f b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 435e449d abc56510
+  preview: kubectl apply -n httpbin -f- <<EOF
+  form:
+    attr: paths="timeout-request-trafficpolicy"
+    only: true
+    lead: ' '
+- paths: timeout-request-trafficpolicy
+  block: 3
+  fingerprint: af35acb6ff2dbb25
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 84e04f5f 0f10c5bc 36184fa5 588a5d84 d6b03630 350955ef ddf6cde1 7746f3e7 dbf95901 a9ad938e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="timeout-request-trafficpolicy"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: d472b3cf922a7eb5
+    lang: yaml
+    lines: 0859a758 8c67597e 56bf9360 8c8c4228 ddf6cde1 36184fa5 301e1bfa 21d73962 d3d416e7 b5a028c9 cd44d8cd 9278ed91 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 1c6d9f9c 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 dbf95901 d5c39941 b733d726 aeca2b3d bf068a96 d0b923cb 94ae491e e6365cc1 0d6480f0 d217c891 bca8e5f7 abc56510
+    preview: kubectl apply -n httpbin -f- <<EOF
+  content: |-
+    {{< doc-test paths="timeout-request" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-timeout HTTPRoute with timeouts.request to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-timeout
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: af35acb6ff2dbb25
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 84e04f5f 0f10c5bc 36184fa5 588a5d84 d6b03630 350955ef ddf6cde1 7746f3e7 dbf95901 a9ad938e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="timeout-request-trafficpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-timeout HTTPRoute with rule names to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-timeout
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the timeout TrafficPolicy on the timeout rule to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: timeout
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: ba8b417ab977c430
+    lang: console
+    lines: 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a f0120b44 39d4b54e 0653176f 031a60ef 39d4b54e cf93d32e 3cbacc98 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 0c0008e4 cfae0d42 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="timeout-request,timeout-request-trafficpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: timeout-request - the /headers route carries the custom 20 second timeout
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "timeout.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Envoy-Expected-Rq-Timeout-Ms'][0]"
+          comparator: equals
+          value: "20000"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: cffd3ee7baa675ee
+    lang: console
+    lines: 021fb596 2e253c22 c7197869 817ad316 39d4b54e 6056662a f0120b44 39d4b54e 0653176f 031a60ef 39d4b54e cf93d32e 3bc0f6e2 39d4b54e cfa27b48 a321f717 39d4b54e b467788d 0c0008e4 cfae0d42 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="timeout-request,timeout-request-trafficpolicy" >}}
+    YAMLTest -f - <<'EOF'
+    - name: timeout-request - the /anything route keeps the default 15 second timeout
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /anything
+        method: GET
+        headers:
+          host: "timeout.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.headers['X-Envoy-Expected-Rq-Timeout-Ms'][0]"
+          comparator: equals
+          value: "15000"
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,410 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/fault-injection.md
+blocks:
+- 204d3d0a540d4a45 yaml
+- ae18615e8572e27e sh
+- 48c688279dfdac45 sh
+- aea541a8b6a322aa
+- 290305458f80d7a7 yaml
+- 1561e26882144cd4 sh
+- da1782b1b4d7ea03 sh
+- ad41a4047277cdda
+- 3aa07d0b8664be73 sh
+- 472ce5d73cbc1228 yaml
+- 23d05ae3fa3279db sh
+- f9146e4fb0d5e9ff sh
+- d85db5713b117fae
+- ec584b824db46c57 sh
+- 6a2318ff1c670edb sh
+- 4e7c1ef195ef3202
+- a27378af09672531 yaml
+- 255a580d651edf17 yaml
+tags:
+- paths: fault-injection
+  block: 0
+  fingerprint: 204d3d0a540d4a45
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 6af1cc4a 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 c17e367d 6c474e8d 74e3e07e cc924da1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="fault-injection"
+    only: true
+    lead: ' '
+- paths: fault-injection
+  block: 4
+  fingerprint: 290305458f80d7a7
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 6af1cc4a 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 c17e367d 9736005e 6cd751dc 3e7a963e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="fault-injection"
+    only: true
+    lead: ' '
+- paths: fault-injection
+  block: 8
+  fingerprint: 3aa07d0b8664be73
+  lang: sh
+  lines: 3aa07d0b
+  preview: 'kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} httpbin-fault '
+  form:
+    attr: paths="fault-injection"
+    only: true
+    lead: ' '
+- paths: fault-injection
+  block: 9
+  fingerprint: 472ce5d73cbc1228
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 6af1cc4a 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 c17e367d 80d9bacd c40534f2 3e7a963e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="fault-injection"
+    only: true
+    lead: ' '
+- paths: fault-injection
+  block: 13
+  fingerprint: ec584b824db46c57
+  lang: sh
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 6af1cc4a 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 c17e367d 80d9bacd 02cbda5c 3e7a963e abc56510 0fb7f1dc 93236379
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="fault-injection"
+    only: true
+    lead: ' '
+- paths: fault-injection-gateway
+  block: 16
+  fingerprint: a27378af09672531
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 5e13af5d 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 c17e367d 9736005e 6cd751dc 3e7a963e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="fault-injection-gateway"
+    only: true
+    lead: ' '
+- paths: fault-injection-gateway
+  block: 17
+  fingerprint: 255a580d651edf17
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 6d511470 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 6af1cc4a c17e367d cfd701cc abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="fault-injection-gateway"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: aea541a8b6a322aa
+    lang: ''
+    lines: 34b03d0e 1cb4e469 bbdc974d cff1483e 1727779c 43c94aad
+    preview: 'curl -s -o /dev/null localhost:8080/status/200 -H "host: www.example.com"  0.00s'
+  content: |-
+    {{< doc-test paths="fault-injection" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-fault TrafficPolicy with the delay to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-fault
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: fi_req prints "<status code> <seconds>" for one request to the
+    # httpbin route, and fi_at_least checks a time in seconds against a minimum.
+    fi_req() {
+      curl -s -o /dev/null -w '%{http_code} %{time_total}' --max-time 30 \
+        "http://${INGRESS_GW_ADDRESS}:8080${1:-/status/200}" -H "host: www.example.com:8080" || echo "000 0"
+    }
+    fi_at_least() { awk -v t="$1" -v m="$2" 'BEGIN { exit !(t >= m) }'; }
+    # The delay applies to 50% of requests, so wait until one request is delayed
+    # (the policy is in effect), then send 16 more. Every request must return 200,
+    # and both delayed (at least 4.5s) and undelayed (under 2s) requests must
+    # appear. The odds that 16 requests all land on the same side are about 3 in
+    # 100,000.
+    fi_seen=0
+    for attempt in $(seq 1 60); do
+      fi_out=$(fi_req)
+      if [ "${fi_out%% *}" = "200" ] && fi_at_least "${fi_out#* }" 4.5; then fi_seen=1; break; fi
+      sleep 1
+    done
+    if [ "$fi_seen" != "1" ]; then
+      echo "fault-injection: no request was delayed by 5s within 60 attempts; last result '${fi_out}'"
+      exit 1
+    fi
+    fi_slow=0; fi_fast=0
+    for i in $(seq 1 16); do
+      fi_out=$(fi_req)
+      if [ "${fi_out%% *}" != "200" ]; then
+        echo "fault-injection: expected 200 from a delayed or undelayed request, got '${fi_out}'"
+        exit 1
+      fi
+      if fi_at_least "${fi_out#* }" 4.5; then fi_slow=$((fi_slow+1));
+      elif ! fi_at_least "${fi_out#* }" 2; then fi_fast=$((fi_fast+1)); fi
+    done
+    echo "fault-injection: ${fi_slow} of 16 requests were delayed by at least 4.5s, ${fi_fast} answered in under 2s"
+    if [ "$fi_slow" -lt 1 ] || [ "$fi_fast" -lt 1 ]; then
+      echo "fault-injection: expected a 50% delay to slow some requests but not all"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: ad41a4047277cdda
+    lang: ''
+    lines: b12e448b ab5df625 4ff444d1
+    preview: HTTP/1.1 503 Service Unavailable
+  content: |-
+    {{< doc-test paths="fault-injection" >}}
+    # Test-only: the abort policy replaces the delay policy (same name). Wait until
+    # requests are aborted with 503 and the fault filter body, then check that every
+    # request is aborted and none is still delayed.
+    fi_abort_ok=0
+    for attempt in $(seq 1 60); do
+      fi_body=$(curl -s --max-time 30 "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" -w ' %{http_code}' || true)
+      case "$fi_body" in *"fault filter abort"*" 503") fi_abort_ok=1; break ;; esac
+      sleep 2
+    done
+    if [ "$fi_abort_ok" != "1" ]; then
+      echo "fault-injection: expected 503 with 'fault filter abort' after the abort update, got '${fi_body}'"
+      exit 1
+    fi
+    for i in $(seq 1 10); do
+      fi_out=$(fi_req)
+      if [ "${fi_out%% *}" != "503" ] || fi_at_least "${fi_out#* }" 2; then
+        echo "fault-injection: expected every request to be aborted with 503 and no delay, got '${fi_out}'"
+        exit 1
+      fi
+    done
+    echo "fault-injection: 10 of 10 requests were aborted with 503 without a delay"
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 3aa07d0b8664be73
+    lang: sh
+    lines: 3aa07d0b
+    preview: 'kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} httpbin-fault '
+  content: |-
+    {{< doc-test paths="fault-injection" >}}
+    # Test-only: after the cleanup, the abort is gone and requests succeed again.
+    for attempt in $(seq 1 60); do
+      fi_out=$(fi_req)
+      [ "${fi_out%% *}" = "200" ] && break
+      sleep 2
+    done
+    if [ "${fi_out%% *}" != "200" ]; then
+      echo "fault-injection: expected 200 after deleting httpbin-fault, got '${fi_out}'"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 472ce5d73cbc1228
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 6af1cc4a 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 c17e367d 80d9bacd c40534f2 3e7a963e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="fault-injection" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-fault TrafficPolicy with the response rate limit to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-fault
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the page times the download with `time`. Measure it with curl
+    # instead and wait until the 500 KB download is throttled (at least 3s; at a
+    # 64 rate limit it takes several seconds, an unthrottled download takes well
+    # under one). The download must still complete with all 500000 bytes.
+    fi_dl() {
+      curl -s -o /dev/null -w '%{http_code} %{time_total} %{size_download}' --max-time 150 \
+        "http://${INGRESS_GW_ADDRESS}:8080/bytes/500000" -H "host: www.example.com:8080" || echo "000 0 0"
+    }
+    fi_t64=""
+    for attempt in $(seq 1 30); do
+      fi_out=$(fi_dl)
+      set -- $fi_out
+      if [ "$1" = "200" ] && [ "$3" = "500000" ] && fi_at_least "$2" 3; then fi_t64="$2"; break; fi
+      sleep 2
+    done
+    if [ -z "$fi_t64" ]; then
+      echo "fault-injection: expected the 500 KB download to be throttled (200, 500000 bytes, at least 3s), got '${fi_out}'"
+      exit 1
+    fi
+    echo "fault-injection: 500 KB download with kbitsPerSecond 64 took ${fi_t64}s"
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 4e7c1ef195ef3202
+    lang: ''
+    lines: 4e7c1ef1
+    preview: 0.01s user 0.02s system 0% cpu 12.476 total
+  content: |-
+    {{< doc-test paths="fault-injection" >}}
+    # Test-only: with kbitsPerSecond 8 the same download must take clearly longer
+    # than with 64. Retry in case the first request still used the old limit.
+    fi_t8=""
+    for attempt in $(seq 1 5); do
+      fi_out=$(fi_dl)
+      set -- $fi_out
+      if [ "$1" = "200" ] && fi_at_least "$2" "$(awk -v t="$fi_t64" 'BEGIN { print t * 2 }')"; then fi_t8="$2"; break; fi
+      sleep 2
+    done
+    echo "fault-injection: last 500 KB download with kbitsPerSecond 8: '${fi_out}' (code seconds bytes)"
+    if [ -z "$fi_t8" ]; then
+      echo "fault-injection: expected the download with kbitsPerSecond 8 to take at least twice the ${fi_t64}s it took with 64"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: a27378af09672531
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 5e13af5d 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 c17e367d 9736005e 6cd751dc 3e7a963e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="fault-injection-gateway" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the fault-gateway TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: kgateway-system
+            name: fault-gateway
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: fault-injection-gateway - requests on the httpbin route are aborted by the gateway-level policy
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /status/200
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 503
+        bodyContains: "fault filter abort"
+    EOF
+    # Test-only: the next example targets an HTTPRoute named httpbin-fault, which
+    # no step on the page creates. Create it here (host fault.example, same httpbin
+    # backend) so that the disable policy has a route to attach to, and check that
+    # the gateway-level abort applies to it too before it is disabled.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: httpbin-fault
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - fault.example
+      rules:
+      - backendRefs:
+        - name: httpbin
+          port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: wait for the test-only httpbin-fault HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-fault
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: fault-injection-gateway - requests on the httpbin-fault route are aborted by the gateway-level policy
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /status/200
+        method: GET
+        headers:
+          host: "fault.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 503
+        bodyContains: "fault filter abort"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 255a580d651edf17
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 6d511470 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 6af1cc4a c17e367d cfd701cc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="fault-injection-gateway" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the fault-disable TrafficPolicy to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: fault-disable
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: fault-injection-gateway - the httpbin-fault route is exempt from the gateway-level abort
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /status/200
+        method: GET
+        headers:
+          host: "fault.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: fault-injection-gateway - the httpbin route without the disable policy is still aborted
+      retries: 5
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /status/200
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 503
+        bodyContains: "fault filter abort"
+    EOF
+    {{< /doc-test >}}

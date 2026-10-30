@@ -1,0 +1,255 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/mirroring.md
+blocks:
+- 5280aae6a5e1d064 sh
+- 73bcdb60d0cd9d03 yaml
+- 0e2cb4c4905b9f20 sh
+- adac6fd219fc4fed yaml
+- 62824cc744a04a77 sh
+- f0f087a84366f823 sh
+- e78cb794db3febc3 sh
+- ba1aa68776ea42ba
+- 1457ff6f295e8cdd sh
+- 2619c526b6d2e29a
+- 3ed4774e8365d0f8 yaml
+- a9c5bfdff5db5680 yaml
+- 904b9421a08776e5 sh
+tags:
+- paths: mirroring
+  block: 0
+  fingerprint: 5280aae6a5e1d064
+  lang: sh
+  lines: 5280aae6
+  preview: 'kubectl patch service httpbin -n httpbin --type=''json'' -p=''[{"op": "add", "path"'
+  form:
+    attr: paths="mirroring"
+    only: true
+    lead: ' '
+- paths: mirroring
+  block: 1
+  fingerprint: 73bcdb60d0cd9d03
+  lang: yaml
+  lines: 16c71da1 f1540154 0d6480f0 8c8c4228 3ab91ae6 0f10c5bc fa1e8330 c2e1f378 ffbeeb2c 36184fa5 0ff65a1a 82601aaa bca8e5f7 b1d5c800 ffe3e3d3 102f028c 8432e015 c2e1f378 c8a4ac81 cb3f91d5 58584366 ab78925c 8c8c4228 3ab91ae6 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac c2e1f378 c8a4ac81 a58565b2 8c8c4228 fa1e8330 c2e1f378 c8a4ac81 36184fa5 52da62ae 04968f51 3e938412 ff42c2c6 d217c891 26d23b03 7c9dace4 557b93ba 80523263 30ad1328 f494f0ee 0ff65a1a a46d7c6d a5c98084 e76618e7 d4f9becb cab2be2b 77f1ea54 f8b19219 2629ac0e eda7e50f ff42c2c6 8ff7327f 7bc2ad0b e81fa1ba 1ae75efb a9f768bd 17268394 ff42c2c6 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mirroring"
+    only: true
+    lead: ' '
+- paths: mirroring
+  block: 3
+  fingerprint: adac6fd219fc4fed
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 14aa3ca1 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 5ddebfe1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 ae6b70e3 e755a6d9 1e49dbf3 70c97555 0d6480f0 3ab91ae6 bca8e5f7 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mirroring"
+    only: true
+    lead: ' '
+- paths: mirroring
+  block: 10
+  fingerprint: 3ed4774e8365d0f8
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 14aa3ca1 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 14aa3ca1 1e49dbf3 0449b8df abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mirroring"
+    only: true
+    lead: ' '
+- paths: mirroring
+  block: 11
+  fingerprint: a9c5bfdff5db5680
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 14aa3ca1 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 14aa3ca1 1e49dbf3 db25248b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="mirroring"
+    only: true
+    lead: ' '
+- paths: mirroring
+  block: 12
+  fingerprint: 904b9421a08776e5
+  lang: sh
+  lines: 86d88893 da5c6096 835a8eef
+  preview: kubectl delete service httpbin2 -n httpbin
+  form:
+    attr: paths="mirroring"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 0e2cb4c4905b9f20
+    lang: sh
+    lines: 0e2cb4c4
+    preview: kubectl get pods -n httpbin
+  content: |-
+    {{< doc-test paths="mirroring" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin2 deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: httpbin
+            name: httpbin2
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: adac6fd219fc4fed
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 14aa3ca1 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 5ddebfe1 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 ae6b70e3 e755a6d9 1e49dbf3 70c97555 0d6480f0 3ab91ae6 bca8e5f7 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mirroring" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-mirror HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-mirror
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: mirroring - requests on mirror.example reach httpbin
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "mirror.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    # Test-only: mr_check sends 5 requests on mirror.example to a unique path, then
+    # checks that both httpbin (v1, the backend) and httpbin2 (v2, the mirror) log
+    # all 5 of them. The mirror copy is sent asynchronously, so retry the log check.
+    mr_check() {
+      mr_marker="$1"
+      for i in 1 2 3 4 5; do
+        mr_code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "http://${INGRESS_GW_ADDRESS}:8080/anything/${mr_marker}" -H "host: mirror.example:8080" || true)
+        if [ "$mr_code" != "200" ]; then
+          echo "mirroring: expected 200 for /anything/${mr_marker} on mirror.example, got '${mr_code}'"
+          return 1
+        fi
+      done
+      mr_v1=0; mr_v2=0
+      for attempt in $(seq 1 30); do
+        mr_v1=$(kubectl logs -l version=v1 -n httpbin -c httpbin --tail=-1 2>/dev/null | grep -c "/anything/${mr_marker}" || true)
+        mr_v2=$(kubectl logs deploy/httpbin2 -n httpbin -c httpbin --tail=-1 2>/dev/null | grep -c "/anything/${mr_marker}" || true)
+        [ "$mr_v1" -ge 5 ] && [ "$mr_v2" -ge 5 ] && break
+        sleep 2
+      done
+      echo "mirroring: /anything/${mr_marker} logged ${mr_v1} times by httpbin (v1) and ${mr_v2} times by httpbin2 (v2)"
+      if [ "$mr_v1" -lt 5 ] || [ "$mr_v2" -lt 5 ]; then
+        echo "mirroring: expected both httpbin and the httpbin2 mirror to log all 5 requests"
+        return 1
+      fi
+    }
+    mr_check kgw-mirror-route || exit 1
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 3ed4774e8365d0f8
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 14aa3ca1 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 14aa3ca1 1e49dbf3 0449b8df abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mirroring" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-mirror TrafficPolicy with disableShadowHostSuffixAppend to be accepted
+      wait:
+        target:
+          kind: TrafficPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-mirror
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: mr_policy prints the route's mirror policy for the httpbin2 cluster
+    # from config_dump as JSON, or "none". The page has no step to read it, so read
+    # the admin port with kubectl exec.
+    mr_policy() {
+      kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_route_configs" 2>/dev/null | python3 -c '
+    import json, sys
+    def walk(o):
+        if isinstance(o, dict):
+            for p in o.get("request_mirror_policies", []) or []:
+                if "httpbin2" in str(p.get("cluster", "")):
+                    return p
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = walk(v)
+                if r is not None:
+                    return r
+        return None
+    try:
+        p = walk(json.load(sys.stdin))
+        print(json.dumps(p, sort_keys=True, separators=(",", ":")) if p else "none")
+    except Exception:
+        print("none")
+    ' || true
+    }
+    mr_got=""
+    for attempt in $(seq 1 60); do
+      mr_got=$(mr_policy)
+      case "$mr_got" in *'"disable_shadow_host_suffix_append":true'*) break ;; esac
+      sleep 2
+    done
+    echo "mirroring: httpbin2 mirror policy is ${mr_got}"
+    case "$mr_got" in
+      *'"disable_shadow_host_suffix_append":true'*) ;;
+      *) echo "mirroring: expected disable_shadow_host_suffix_append true on the httpbin2 mirror policy"; exit 1 ;;
+    esac
+    mr_check kgw-mirror-no-suffix || exit 1
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: a9c5bfdff5db5680
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 14aa3ca1 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 14aa3ca1 1e49dbf3 db25248b abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="mirroring" >}}
+    # Test-only: the hostRewriteLiteral policy replaces the disableShadowHostSuffixAppend
+    # one (same name). Wait until the old setting is gone and the host rewrite is set.
+    for attempt in $(seq 1 60); do
+      mr_got=$(mr_policy)
+      case "$mr_got" in
+        *'"disable_shadow_host_suffix_append":true'*) ;;
+        *'"host_rewrite_literal":"shadow.example:8080"'*) break ;;
+      esac
+      sleep 2
+    done
+    echo "mirroring: httpbin2 mirror policy after the hostRewriteLiteral update is ${mr_got}"
+    case "$mr_got" in
+      *'"disable_shadow_host_suffix_append":true'*)
+        echo "mirroring: expected disable_shadow_host_suffix_append to be gone after the hostRewriteLiteral update"; exit 1 ;;
+      *'"host_rewrite_literal":"shadow.example:8080"'*) ;;
+      *) echo "mirroring: expected host_rewrite_literal shadow.example:8080 on the httpbin2 mirror policy"; exit 1 ;;
+    esac
+    mr_check kgw-mirror-host-rewrite || exit 1
+    {{< /doc-test >}}

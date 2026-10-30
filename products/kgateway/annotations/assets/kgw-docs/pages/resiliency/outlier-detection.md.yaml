@@ -1,0 +1,705 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/outlier-detection.md
+blocks:
+- 6a61d6f6ae53fa75 sh
+- 0e2cb4c4905b9f20 sh
+- c19231abc9fa9b4e console
+- d858bb1c61a7d5d3 sh
+- 9ddcc903ba123f91 sh
+- 3bf335974efd477b console
+- b0ed86ff7cea1687 sh
+- fd0f899112b78e67 console
+- bb41a8dc08024a46 yaml
+- d858bb1c61a7d5d3 sh
+- 9ddcc903ba123f91 sh
+- e996c9e7d98fc95e sh
+- 6cda70958384b234 sh
+- 82738f24d0252643 console
+- dc1c2d5784ca664a sh
+- 9ddcc903ba123f91 sh
+- 1c4f2d586ed1d35d console
+- b28fafdf070ef0f1 console
+- e996c9e7d98fc95e sh
+- 6cda70958384b234 sh
+- 229934d3b7ba3f68 console
+- dc1c2d5784ca664a sh
+- 9ddcc903ba123f91 sh
+- 7972263f12c274dc console
+- 462089c2279859fa console
+- 94818e4ddb3a174a yaml
+- 4e48f969f941640b sh
+- f3e9cbb77120e4d1 console
+- 2789c1eecaee73f7 sh
+- 4244be03a4c9107c sh
+- e8fa97d44557c2b3 sh
+- 434795ebcab657c5 sh
+- 3410ee7736a1e19b sh
+- 0e06beb2e3f457a8 yaml
+- 8eb3a27328f14a72 sh
+- 352dfcb9d0a5b37f sh
+- f420a4cefb8fc543 sh
+- 6fc5f2c900c6dbd1 console
+- b6223cccf8a6e364 yaml
+- d0fe3b6c6cbdb562 sh
+- 849b47bfdc240b3e sh
+- 17cc756c2872a345 console
+- 38ffa7f44118cbe7 sh
+- d932dd9dedf5a200 sh
+- 4f59c2b55e00a20b console
+- f420a4cefb8fc543 sh
+- dcb58fc2ae82caff console
+- ea75f949d0794e67 sh
+- b65adec1dfbd110e sh
+- 1fb847922355838e sh
+tags:
+- paths: outlier-detection
+  block: 0
+  fingerprint: 6a61d6f6ae53fa75
+  lang: sh
+  lines: 6a61d6f6
+  preview: kubectl scale deploy/httpbin -n httpbin --replicas=2
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 3
+  fingerprint: d858bb1c61a7d5d3
+  lang: sh
+  lines: d858bb1c
+  preview: for i in {1..5}; do curl -vi http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 8
+  fingerprint: bb41a8dc08024a46
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f d90fbab6 c5761aff c0993c3b abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 11
+  fingerprint: e996c9e7d98fc95e
+  lang: sh
+  lines: e996c9e7
+  preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/status/503 -H "host: www.example.com:8'
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 14
+  fingerprint: dc1c2d5784ca664a
+  lang: sh
+  lines: dc1c2d57
+  preview: 'for i in {1..5}; do curl http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ww'
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 25
+  fingerprint: 94818e4ddb3a174a
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f c5761aff c0993c3b d90fbab6 2b13d484 3dbef168 7465b9e8 36257ac7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 28
+  fingerprint: 2789c1eecaee73f7
+  lang: sh
+  lines: 2789c1ee
+  preview: for i in {1..3}; do curl -vik http://$INGRESS_GW_ADDRESS:8080/status/503 -H "hos
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 30
+  fingerprint: e8fa97d44557c2b3
+  lang: sh
+  lines: e8fa97d4
+  preview: 'for i in {1..10}; do curl http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: w'
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 33
+  fingerprint: 0e06beb2e3f457a8
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 47c9e2df 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa bf0611ca 3de9d845 b733d726 aeca2b3d bf068a96 4daf385c 94ae491e 80e9487c 102f028c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 34
+  fingerprint: 8eb3a27328f14a72
+  lang: sh
+  lines: 8eb3a273
+  preview: for i in {1..30}; do curl -s -o /dev/null -w "%{http_code}\n" http://$INGRESS_GW
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 38
+  fingerprint: b6223cccf8a6e364
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f c5761aff c0993c3b c8823a0a 7c674794 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 39
+  fingerprint: d0fe3b6c6cbdb562
+  lang: sh
+  lines: d0fe3b6c
+  preview: for i in {1..10}; do curl -s -o /dev/null -w "%{http_code}\n" http://$INGRESS_GW
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 42
+  fingerprint: 38ffa7f44118cbe7
+  lang: sh
+  lines: 38ffa7f4
+  preview: for i in {1..10}; do curl -s -o /dev/null -w "%{http_code}\n" http://$INGRESS_GW
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 47
+  fingerprint: ea75f949d0794e67
+  lang: sh
+  lines: ea75f949
+  preview: kubectl scale deploy/httpbin -n httpbin --replicas=1
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 48
+  fingerprint: b65adec1dfbd110e
+  lang: sh
+  lines: b65adec1
+  preview: kubectl delete backendconfigpolicy httpbin-policy -n httpbin
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+- paths: outlier-detection
+  block: 49
+  fingerprint: 1fb847922355838e
+  lang: sh
+  lines: 1fb84792
+  preview: kubectl delete httproute httpbin-refused -n httpbin
+  form:
+    attr: paths="outlier-detection"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 6a61d6f6ae53fa75
+    lang: sh
+    lines: 6a61d6f6
+    preview: kubectl scale deploy/httpbin -n httpbin --replicas=2
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    kubectl rollout status deploy/httpbin -n httpbin --timeout=300s
+    # Test-only: the page reads pod logs and uses a port-forward to read Envoy stats.
+    # The test reads the proxy's admin endpoints with kubectl exec instead: /clusters
+    # for per-host request counts and outlier flags, /stats for outlier detection
+    # counters, and config_dump for the outlier_detection config of a cluster.
+    od_admin() {
+      kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/$1" 2>/dev/null || true
+    }
+    # od_hosts <cluster>: one host address per line.
+    od_hosts() {
+      od_admin clusters | awk -F'::' -v c="$1" '$1==c && $3=="health_flags" {print $2}' | sort -u
+    }
+    # od_ejected <cluster>: the hosts that carry the failed_outlier_check flag.
+    od_ejected() {
+      od_admin clusters | awk -F'::' -v c="$1" '$1==c && $3=="health_flags" && $4 ~ /failed_outlier_check/ {print $2}' | sort -u
+    }
+    # od_rq <cluster> <host>: the host's rq_total counter.
+    od_rq() {
+      local v
+      v=$(od_admin clusters | awk -F'::' -v c="$1" -v h="$2" '$1==c && $2==h && $3=="rq_total" {print $4; exit}')
+      echo "${v:-0}"
+    }
+    # od_stat <cluster> <stat>: an outlier_detection stat of the cluster, 0 if absent.
+    od_stat() {
+      local v
+      v=$(od_admin "stats?filter=outlier_detection" | awk -v n="cluster.$1.outlier_detection.$2:" '$1==n {print $2; exit}')
+      echo "${v:-0}"
+    }
+    # od_send <path> <count> <code>: send requests through the gateway and print
+    # how many did not return the expected status code.
+    od_send() {
+      local path="$1" n="$2" want="$3" i code bad=0
+      for i in $(seq 1 "$n"); do
+        code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080${path}" -H "host: www.example.com:8080" || true)
+        [ "$code" = "$want" ] || bad=$((bad + 1))
+      done
+      echo "$bad"
+    }
+    # od_outlier_expect <label> <cluster> <key=json>|<!key>...: wait until the
+    # cluster's outlier_detection config has every key=value and none of the !keys.
+    od_outlier_expect() {
+      local label="$1" cluster="$2" attempt got=""
+      shift 2
+      for attempt in $(seq 1 60); do
+        got=$(od_admin "config_dump?resource=dynamic_active_clusters" | python3 -c '
+    import json, sys
+    name, checks = sys.argv[1], sys.argv[2:]
+    def find(o):
+        if isinstance(o, dict):
+            if o.get("name") == name:
+                return o
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = find(v)
+                if r is not None:
+                    return r
+        return None
+    try:
+        c = find(json.load(sys.stdin))
+    except Exception:
+        c = None
+    od = (c or {}).get("outlier_detection")
+    if od is None:
+        print("missing")
+        sys.exit(0)
+    for chk in checks:
+        if chk.startswith("!"):
+            if chk[1:] in od:
+                print("unexpected " + chk[1:] + " in " + json.dumps(od, sort_keys=True))
+                sys.exit(0)
+        else:
+            k, v = chk.split("=", 1)
+            if od.get(k) != json.loads(v):
+                print("want " + chk + " in " + json.dumps(od, sort_keys=True))
+                sys.exit(0)
+    print("ok " + json.dumps(od, sort_keys=True, separators=(",", ":")))
+    ' "$cluster" "$@" || true)
+        case "$got" in
+          ok*)
+            echo "outlier-detection: $label - $cluster ${got#ok }"
+            return 0
+            ;;
+        esac
+        sleep 2
+      done
+      echo "outlier-detection: $label - outlier_detection of $cluster does not match: ${got:-no config_dump}"
+      exit 1
+    }
+    # od_spread <label>: send 20 requests and check that both httpbin hosts served some.
+    od_spread() {
+      local label="$1" attempt h1 h2 a0 b0 a1 b1 bad=""
+      for attempt in $(seq 1 5); do
+        h1=$(od_hosts kube_httpbin_httpbin_8000 | sed -n 1p)
+        h2=$(od_hosts kube_httpbin_httpbin_8000 | sed -n 2p)
+        a0=$(od_rq kube_httpbin_httpbin_8000 "$h1")
+        b0=$(od_rq kube_httpbin_httpbin_8000 "$h2")
+        bad=$(od_send /status/200 20 200)
+        a1=$(od_rq kube_httpbin_httpbin_8000 "$h1")
+        b1=$(od_rq kube_httpbin_httpbin_8000 "$h2")
+        if [ "$bad" = 0 ] && [ -n "$h1" ] && [ -n "$h2" ] && [ "$a1" -gt "$a0" ] && [ "$b1" -gt "$b0" ]; then
+          echo "outlier-detection: $label - both httpbin hosts served requests ($h1 rq_total $a0 -> $a1, $h2 rq_total $b0 -> $b1)"
+          return 0
+        fi
+        sleep 2
+      done
+      echo "outlier-detection: $label - expected 20 x 200 spread over 2 httpbin hosts; non-200: $bad, ${h1:-no host} rq_total $a0 -> $a1, ${h2:-no host} rq_total $b0 -> $b1"
+      exit 1
+    }
+    # Wait until the gateway proxy sees both httpbin replicas.
+    od_n=0
+    for i in $(seq 1 60); do
+      od_n=$(od_hosts kube_httpbin_httpbin_8000 | wc -l | tr -d ' ')
+      [ "$od_n" = 2 ] && break
+      sleep 2
+    done
+    if [ "$od_n" != 2 ]; then
+      echo "outlier-detection: expected 2 hosts in cluster kube_httpbin_httpbin_8000 after scaling httpbin, got $od_n"
+      od_admin clusters | grep '^kube_httpbin_httpbin_8000::' | grep health_flags || true
+      exit 1
+    fi
+    echo "outlier-detection: cluster kube_httpbin_httpbin_8000 has 2 hosts"
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: fd0f899112b78e67
+    lang: console
+    lines: def9a55a 1d782e6e
+    preview: time="2025-09-15T21:11:52.8514" status=200 method="GET" uri="/status/200"
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    od_spread "before the outlier detection policy"
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: bb41a8dc08024a46
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f d90fbab6 c5761aff c0993c3b abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-policy BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    od_outlier_expect "consecutive 5xx policy" kube_httpbin_httpbin_8000 'consecutive_5xx=1' 'interval="2s"' 'base_ejection_time="3600s"' 'max_ejection_percent=80'
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 82738f24d0252643
+    lang: console
+    lines: 5b07bb0e 7db3bfc0 b12e448b 32cf5997 a152bc23 b8fcb227 ab5df625
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    # One 503 ejects the host that returned it. Wait for exactly one ejected host.
+    OD_EJECTED=""
+    for i in $(seq 1 30); do
+      OD_EJECTED=$(od_ejected kube_httpbin_httpbin_8000)
+      [ "$(echo "$OD_EJECTED" | wc -w | tr -d ' ')" = 1 ] && break
+      sleep 2
+    done
+    if [ "$(echo "$OD_EJECTED" | wc -w | tr -d ' ')" != 1 ]; then
+      echo "outlier-detection: expected 1 ejected host (failed_outlier_check) in kube_httpbin_httpbin_8000 after one 503, got '${OD_EJECTED:-none}'"
+      od_admin clusters | grep '^kube_httpbin_httpbin_8000::' | grep health_flags || true
+      exit 1
+    fi
+    if [ "$(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_5xx)" -lt 1 ]; then
+      echo "outlier-detection: expected ejections_enforced_consecutive_5xx >= 1 for kube_httpbin_httpbin_8000"
+      exit 1
+    fi
+    OD_HEALTHY=$(od_hosts kube_httpbin_httpbin_8000 | grep -v -x -F "$OD_EJECTED" || true)
+    echo "outlier-detection: ejected host $OD_EJECTED, healthy host $OD_HEALTHY"
+    # od_only_healthy <label>: 10 requests all return 200 and all go to the host
+    # that was not ejected.
+    od_only_healthy() {
+      local label="$1" e0 h0 e1 h1 bad
+      e0=$(od_rq kube_httpbin_httpbin_8000 "$OD_EJECTED")
+      h0=$(od_rq kube_httpbin_httpbin_8000 "$OD_HEALTHY")
+      bad=$(od_send /status/200 10 200)
+      e1=$(od_rq kube_httpbin_httpbin_8000 "$OD_EJECTED")
+      h1=$(od_rq kube_httpbin_httpbin_8000 "$OD_HEALTHY")
+      if [ "$bad" != 0 ] || [ "$e1" != "$e0" ] || [ "$h1" -le "$h0" ]; then
+        echo "outlier-detection: $label - expected 10 x 200 all on $OD_HEALTHY; non-200: $bad, ejected host rq_total $e0 -> $e1, healthy host rq_total $h0 -> $h1"
+        exit 1
+      fi
+      echo "outlier-detection: $label - all requests went to $OD_HEALTHY (rq_total $h0 -> $h1), ejected host $OD_EJECTED stayed at $e0"
+    }
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: b28fafdf070ef0f1
+    lang: console
+    lines: b28fafdf
+    preview: time="2025-09-15T21:17:25.4035" status=503 method="GET" uri="/status/503" size_b
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    od_only_healthy "after the first host is ejected"
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: 229934d3b7ba3f68
+    lang: console
+    lines: 229934d3
+    preview: time="2025-09-15T21:20:27.1117" status=503 method="GET" uri="/status/503" size_b
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    # The page's step 9 command is identical to step 7, so the extractor drops it
+    # from the script. Send the second 503 here; it can only reach the healthy host.
+    # The 503 qualifies that host for ejection, but maxEjectionPercent 80 keeps it
+    # in the pool: the overflow counter goes up, and still only the first host is
+    # ejected.
+    if [ "$(od_send /status/503 1 503)" != 0 ]; then
+      echo "outlier-detection: expected /status/503 to return 503 from the remaining host"
+      exit 1
+    fi
+    od_overflow_ok=false
+    for i in $(seq 1 30); do
+      od_now=$(od_ejected kube_httpbin_httpbin_8000)
+      if [ "$od_now" = "$OD_EJECTED" ] && [ "$(od_stat kube_httpbin_httpbin_8000 ejections_overflow)" -ge 1 ]; then
+        od_overflow_ok=true
+        break
+      fi
+      sleep 2
+    done
+    if [ "$od_overflow_ok" != true ]; then
+      echo "outlier-detection: expected only $OD_EJECTED ejected and ejections_overflow >= 1 after the second 503, got ejected '${od_now:-none}', ejections_overflow $(od_stat kube_httpbin_httpbin_8000 ejections_overflow)"
+      exit 1
+    fi
+    echo "outlier-detection: second host stayed in the pool (ejections_overflow $(od_stat kube_httpbin_httpbin_8000 ejections_overflow))"
+    {{< /doc-test >}}
+- after:
+    section: Set up outlier detection
+    line: 600fe1bb59e46b50
+    occurrence: 5
+    words: 32d3feda
+    block_before:
+      block: 22
+      fingerprint: 9ddcc903ba123f91
+      lang: sh
+      lines: 9ddcc903
+      preview: 'for i in {1..5}; do curl -vi localhost:8080/status/200 -H "host: www.example.com'
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    od_only_healthy "after the second host returned a 503"
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: 462089c2279859fa
+    lang: console
+    lines: 6ffcbf42 012dd3f7
+    preview: envoy_cluster_outlier_detection_ejections_consecutive_5xx{envoy_cluster_name="ku
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    od_c5=$(od_stat kube_httpbin_httpbin_8000 ejections_consecutive_5xx)
+    od_e5=$(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_5xx)
+    od_act=$(od_stat kube_httpbin_httpbin_8000 ejections_active)
+    if [ "$od_c5" -lt 2 ] || [ "$od_e5" != 1 ] || [ "$od_act" != 1 ]; then
+      echo "outlier-detection: expected ejections_consecutive_5xx >= 2, ejections_enforced_consecutive_5xx 1, ejections_active 1 for kube_httpbin_httpbin_8000; got $od_c5, $od_e5, $od_act"
+      od_admin "stats?filter=kube_httpbin_httpbin_8000.outlier_detection" || true
+      exit 1
+    fi
+    OD_ENFORCED_5XX="$od_e5"
+    echo "outlier-detection: ejections_consecutive_5xx $od_c5, ejections_enforced_consecutive_5xx $od_e5, ejections_active $od_act"
+    {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: 94818e4ddb3a174a
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f c5761aff c0993c3b d90fbab6 2b13d484 3dbef168 7465b9e8 36257ac7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    od_outlier_expect "local-origin policy" kube_httpbin_httpbin_8000 'split_external_local_origin_errors=true' 'consecutive_local_origin_failure=10' 'enforcing_consecutive_local_origin_failure=100' 'enforcing_consecutive_5xx=0' 'consecutive_5xx=1'
+    {{< /doc-test >}}
+- after:
+    block: 32
+    fingerprint: 3410ee7736a1e19b
+    lang: sh
+    lines: 3410ee77
+    preview: kubectl logs -l app=httpbin -n httpbin --prefix
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    # The updated policy replaces the cluster's outlier detector, so no host is
+    # ejected now, and the 503s above do not eject one (enforcingConsecutive5xx 0).
+    od_none=""
+    for i in $(seq 1 30); do
+      od_none=$(od_ejected kube_httpbin_httpbin_8000)
+      [ -z "$od_none" ] && break
+      sleep 2
+    done
+    if [ -n "$od_none" ]; then
+      echo "outlier-detection: expected no ejected host in kube_httpbin_httpbin_8000 with enforcingConsecutive5xx 0, got '$od_none'"
+      exit 1
+    fi
+    if [ "$(od_send /status/503 3 503)" != 0 ]; then
+      echo "outlier-detection: expected /status/503 to return 503"
+      exit 1
+    fi
+    od_spread "external 503s with enforcingConsecutive5xx 0"
+    if [ "$(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_5xx)" -gt "$OD_ENFORCED_5XX" ]; then
+      echo "outlier-detection: ejections_enforced_consecutive_5xx went up from $OD_ENFORCED_5XX to $(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_5xx) although enforcingConsecutive5xx is 0"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 33
+    fingerprint: 0e06beb2e3f457a8
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 47c9e2df 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa bf0611ca 3de9d845 b733d726 aeca2b3d bf068a96 4daf385c 94ae491e 80e9487c 102f028c abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-refused HTTPRoute to be accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-refused
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    od_n9=0
+    for i in $(seq 1 60); do
+      od_n9=$(od_hosts kube_httpbin_httpbin_9000 | wc -l | tr -d ' ')
+      [ "$od_n9" = 2 ] && break
+      sleep 2
+    done
+    if [ "$od_n9" != 2 ]; then
+      echo "outlier-detection: expected 2 hosts in cluster kube_httpbin_httpbin_9000, got $od_n9"
+      exit 1
+    fi
+    od_outlier_expect "local-origin policy on port 9000" kube_httpbin_httpbin_9000 'split_external_local_origin_errors=true' 'consecutive_local_origin_failure=10'
+    {{< /doc-test >}}
+- after:
+    block: 37
+    fingerprint: 6fc5f2c900c6dbd1
+    lang: console
+    lines: 012dd3f7 1ab12d32 62b46ab6
+    preview: envoy_cluster_outlier_detection_ejections_enforced_consecutive_5xx{envoy_cluster
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    # Refused connections are local-origin failures: one 9000 host is ejected and
+    # the second one overflows maxEjectionPercent. Send more /refused requests if
+    # the thresholds are not reached yet.
+    od_lo_ok=false
+    for i in $(seq 1 6); do
+      od_lo_ej=$(od_ejected kube_httpbin_httpbin_9000)
+      od_lo_enf=$(od_stat kube_httpbin_httpbin_9000 ejections_enforced_consecutive_local_origin_failure)
+      od_lo_ovf=$(od_stat kube_httpbin_httpbin_9000 ejections_overflow)
+      if [ "$(echo "$od_lo_ej" | wc -w | tr -d ' ')" = 1 ] && [ "$od_lo_enf" -ge 1 ] && [ "$od_lo_ovf" -ge 1 ]; then
+        od_lo_ok=true
+        break
+      fi
+      od_lo_bad=$(od_send /refused 20 503)
+      if [ "$od_lo_bad" != 0 ]; then
+        echo "outlier-detection: expected every /refused request to return 503, $od_lo_bad did not"
+        exit 1
+      fi
+      sleep 2
+    done
+    if [ "$od_lo_ok" != true ]; then
+      echo "outlier-detection: expected 1 ejected host, ejections_enforced_consecutive_local_origin_failure >= 1, and ejections_overflow >= 1 for kube_httpbin_httpbin_9000; got ejected '${od_lo_ej:-none}', $od_lo_enf, $od_lo_ovf"
+      exit 1
+    fi
+    echo "outlier-detection: kube_httpbin_httpbin_9000 ejected $od_lo_ej (enforced local-origin $od_lo_enf, overflow $od_lo_ovf)"
+    {{< /doc-test >}}
+- after:
+    block: 38
+    fingerprint: b6223cccf8a6e364
+    lang: yaml
+    lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f c5761aff c0993c3b c8823a0a 7c674794 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    od_outlier_expect "gateway failure policy" kube_httpbin_httpbin_8000 'consecutive_gateway_failure=3' 'enforcing_consecutive_gateway_failure=100' 'consecutive_5xx=0' '!split_external_local_origin_errors' '!consecutive_local_origin_failure'
+    OD_GF_5XX_BASE=$(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_5xx)
+    OD_GF_BASE=$(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_gateway_failure)
+    od_gf_none=""
+    for i in $(seq 1 30); do
+      od_gf_none=$(od_ejected kube_httpbin_httpbin_8000)
+      [ -z "$od_gf_none" ] && break
+      sleep 2
+    done
+    if [ -n "$od_gf_none" ]; then
+      echo "outlier-detection: expected no ejected host in kube_httpbin_httpbin_8000 after the gateway failure policy replaced the old one, got '$od_gf_none'"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 41
+    fingerprint: 17cc756c2872a345
+    lang: console
+    lines: 0604cd31 0604cd31 0604cd31 ab5df625
+    preview: '500'
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    # 500 is not a gateway failure and consecutive5xx is 0: nothing is ejected.
+    if [ "$(od_send /status/500 10 500)" != 0 ]; then
+      echo "outlier-detection: expected every /status/500 request to return 500"
+      exit 1
+    fi
+    sleep 3
+    od_gf_500=$(od_ejected kube_httpbin_httpbin_8000)
+    if [ -n "$od_gf_500" ] || [ "$(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_5xx)" != "$OD_GF_5XX_BASE" ]; then
+      echo "outlier-detection: expected no ejection after 500 responses, got ejected '${od_gf_500:-none}', ejections_enforced_consecutive_5xx $(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_5xx) (was $OD_GF_5XX_BASE)"
+      exit 1
+    fi
+    echo "outlier-detection: 500 responses ejected no host"
+    {{< /doc-test >}}
+- after:
+    block: 44
+    fingerprint: 4f59c2b55e00a20b
+    lang: console
+    lines: 7182dd43 7182dd43 7182dd43 ab5df625
+    preview: '503'
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    # 503 is a gateway failure: after 3 in a row a host is ejected, and only one of
+    # the two can be ejected. Send more 503s if the threshold is not reached yet.
+    od_gf_ok=false
+    for i in $(seq 1 6); do
+      od_gf_ej=$(od_ejected kube_httpbin_httpbin_8000)
+      od_gf_enf=$(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_gateway_failure)
+      if [ "$(echo "$od_gf_ej" | wc -w | tr -d ' ')" = 1 ] && [ "$od_gf_enf" -gt "$OD_GF_BASE" ]; then
+        od_gf_ok=true
+        break
+      fi
+      if [ "$(od_send /status/503 10 503)" != 0 ]; then
+        echo "outlier-detection: expected every /status/503 request to return 503"
+        exit 1
+      fi
+      sleep 2
+    done
+    if [ "$od_gf_ok" != true ]; then
+      echo "outlier-detection: expected 1 ejected host and ejections_enforced_consecutive_gateway_failure above $OD_GF_BASE for kube_httpbin_httpbin_8000, got ejected '${od_gf_ej:-none}', $od_gf_enf"
+      exit 1
+    fi
+    echo "outlier-detection: gateway failures ejected $od_gf_ej (ejections_enforced_consecutive_gateway_failure $od_gf_enf)"
+    {{< /doc-test >}}
+- after:
+    block: 46
+    fingerprint: dcb58fc2ae82caff
+    lang: console
+    lines: 29a1462f f900e2d2 f3fd27b9
+    preview: envoy_cluster_outlier_detection_ejections_enforced_consecutive_gateway_failure{e
+  content: |-
+    {{< doc-test paths="outlier-detection" >}}
+    od_gf_act=""
+    for i in $(seq 1 15); do
+      od_gf_act=$(od_stat kube_httpbin_httpbin_8000 ejections_active)
+      [ "$od_gf_act" = 1 ] && break
+      sleep 2
+    done
+    od_gf_e5=$(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_5xx)
+    od_gf_eg=$(od_stat kube_httpbin_httpbin_8000 ejections_enforced_consecutive_gateway_failure)
+    if [ "$od_gf_act" != 1 ] || [ "$od_gf_e5" != "$OD_GF_5XX_BASE" ] || [ "$od_gf_eg" -lt 1 ]; then
+      echo "outlier-detection: expected ejections_active 1, ejections_enforced_consecutive_5xx unchanged at $OD_GF_5XX_BASE, ejections_enforced_consecutive_gateway_failure >= 1; got $od_gf_act, $od_gf_e5, $od_gf_eg"
+      od_admin "stats?filter=kube_httpbin_httpbin_8000.outlier_detection" || true
+      exit 1
+    fi
+    echo "outlier-detection: ejections_active $od_gf_act, ejections_enforced_consecutive_gateway_failure $od_gf_eg, ejections_enforced_consecutive_5xx $od_gf_e5"
+    {{< /doc-test >}}

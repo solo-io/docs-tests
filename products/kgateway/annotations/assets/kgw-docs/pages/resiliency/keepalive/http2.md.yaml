@@ -1,0 +1,136 @@
+format: 1
+source: assets/kgw-docs/pages/resiliency/keepalive/http2.md
+blocks:
+- 48fbe32da6947e4f sh
+- aae3c6d14056678c yaml
+- e1776f2aba5cf4e6 sh
+- 934e2f4ecdf1ae76 console
+- 1cc11f858c6b50e7 sh
+tags:
+- paths: keepalive-http2
+  block: 0
+  fingerprint: 48fbe32da6947e4f
+  lang: sh
+  lines: 0b664a1c 2ba95025
+  preview: kubectl patch service httpbin -n httpbin --type='json' \
+  form:
+    attr: paths="keepalive-http2"
+    only: true
+    lead: ' '
+- paths: keepalive-http2
+  block: 1
+  fingerprint: aae3c6d14056678c
+  lang: yaml
+  lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 e3d35fae 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 252381c1 7ee1c7f8 2b1d90ef cae8479a 965c909e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="keepalive-http2"
+    only: true
+    lead: ' '
+- paths: keepalive-http2
+  block: 4
+  fingerprint: 1cc11f858c6b50e7
+  lang: sh
+  lines: 71b5c022 0b664a1c 43757024
+  preview: kubectl delete backendconfigpolicy httpbin-http2-keepalive -n httpbin --ignore-n
+  form:
+    attr: paths="keepalive-http2"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 934e2f4ecdf1ae76
+    lang: console
+    lines: 021fb596 b75d79b7 cf57ae84 3bc2dbf9 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="keepalive-http2" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the httpbin-http2-keepalive BackendConfigPolicy to be accepted
+      wait:
+        target:
+          kind: BackendConfigPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-http2-keepalive
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # Test-only: the page reads config_dump through a port-forward, which the test
+    # cannot use. The proxy's admin port listens on 127.0.0.1:19000 inside the pod,
+    # so read it with kubectl exec instead. Print the connection_keepalive of the
+    # httpbin cluster as compact JSON with sorted keys.
+    h2ka_ok=false
+    h2ka=""
+    for i in $(seq 1 60); do
+      h2ka=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/config_dump?resource=dynamic_active_clusters" 2>/dev/null | python3 -c '
+    import json, sys
+    def find(o, key):
+        if isinstance(o, dict):
+            if key in o:
+                return o[key]
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = find(v, key)
+                if r is not None:
+                    return r
+        return None
+    def cluster(o):
+        if isinstance(o, dict):
+            if o.get("name") == "kube_httpbin_httpbin_8000":
+                return o
+            o = list(o.values())
+        if isinstance(o, list):
+            for v in o:
+                r = cluster(v)
+                if r is not None:
+                    return r
+        return None
+    try:
+        c = cluster(json.load(sys.stdin))
+        ka = find(c, "connection_keepalive") if c else None
+        print(json.dumps(ka, sort_keys=True, separators=(",", ":")) if ka is not None else "")
+    except Exception:
+        print("")
+    ' || true)
+      if [ "$h2ka" = '{"connection_idle_interval":"60s","interval":"30s","timeout":"5s"}' ]; then
+        h2ka_ok=true
+        break
+      fi
+      sleep 2
+    done
+    if [ "$h2ka_ok" != true ]; then
+      echo "keepalive-http2: expected connection_keepalive {interval 30s, timeout 5s, connection_idle_interval 60s} on cluster kube_httpbin_httpbin_8000, got '${h2ka:-nothing}'"
+      exit 1
+    fi
+    echo "keepalive-http2: cluster kube_httpbin_httpbin_8000 connection_keepalive is $h2ka"
+    # The page makes httpbin an HTTP/2 (h2c) backend. Check that requests through
+    # the gateway still succeed and that the proxy opened HTTP/2 upstream connections.
+    h2ka_req_ok=false
+    h2ka_code=""
+    for i in $(seq 1 30); do
+      h2ka_code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/status/200" -H "host: www.example.com:8080" || true)
+      if [ "$h2ka_code" = "200" ]; then
+        h2ka_req_ok=true
+        break
+      fi
+      sleep 2
+    done
+    if [ "$h2ka_req_ok" != true ]; then
+      echo "keepalive-http2: expected 200 from httpbin through the gateway after the h2c patch, got '${h2ka_code:-no response}' (the httpbin app might not accept HTTP/2 cleartext)"
+      exit 1
+    fi
+    h2ka_cx=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/stats?filter=kube_httpbin_httpbin_8000" 2>/dev/null | awk '$1=="cluster.kube_httpbin_httpbin_8000.upstream_cx_http2_total:" {print $2; exit}' || true)
+    if [ "${h2ka_cx:-0}" -lt 1 ]; then
+      echo "keepalive-http2: expected upstream_cx_http2_total > 0 for cluster kube_httpbin_httpbin_8000, got '${h2ka_cx:-missing}'"
+      exit 1
+    fi
+    echo "keepalive-http2: httpbin returned 200 over $h2ka_cx HTTP/2 upstream connection(s)"
+    {{< /doc-test >}}
