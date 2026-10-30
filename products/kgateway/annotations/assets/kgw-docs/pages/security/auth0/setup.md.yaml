@@ -130,13 +130,12 @@ hidden:
       issuer: BASE + '/oauth2/default', prefix: '/oauth2/default',
       jwks: '/oauth2/default/v1/keys', authorize: '/oauth2/default/v1/authorize',
       token: '/oauth2/default/v1/token', logout: '/oauth2/default/v1/logout',
-      userinfo: '/oauth2/default/v1/userinfo',
       grants: ['authorization_code', 'client_credentials'],
       badRedirect: "The 'redirect_uri' parameter must be a Login redirect URI in the client app settings",
     } : {
       issuer: BASE + '/', prefix: '',
       jwks: '/.well-known/jwks.json', authorize: '/authorize',
-      token: '/oauth/token', logout: '/v2/logout', userinfo: '/userinfo',
+      token: '/oauth/token', logout: '/v2/logout',
       grants: ['authorization_code', 'client_credentials', 'password'],
       badRedirect: 'Callback URL mismatch',
     };
@@ -254,7 +253,7 @@ hidden:
         if (req.method === 'GET' && path === DISCOVERY) {
           return send(res, 200, {
             issuer: P.issuer, authorization_endpoint: BASE + P.authorize, token_endpoint: BASE + P.token,
-            end_session_endpoint: BASE + P.logout, jwks_uri: BASE + P.jwks, userinfo_endpoint: BASE + P.userinfo,
+            end_session_endpoint: BASE + P.logout, jwks_uri: BASE + P.jwks,
             response_types_supported: ['code'], grant_types_supported: P.grants, subject_types_supported: ['public'],
             id_token_signing_alg_values_supported: ['RS256'], code_challenge_methods_supported: ['S256', 'plain'],
             token_endpoint_auth_methods_supported: ['client_secret_post', 'client_secret_basic'],
@@ -482,14 +481,14 @@ hidden:
           urlRewrite:
             hostname: auth0.idp-standin.test
     EOF
-    code=""; body=""
+    code=""; body=""; ok=false
     for i in $(seq 1 60); do
       body=$(curl -s --max-time 5 -w '\n%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/.well-known/openid-configuration" -H "host: idp-check.example.com" || true)
       code=${body##*$'\n'}
-      if [ "$code" = 200 ] && grep -qF '"issuer":"https://auth0.idp-standin.test/"' <<<"$body"; then break; fi
+      if [ "$code" = 200 ] && grep -qF '"issuer":"https://auth0.idp-standin.test/"' <<<"$body"; then ok=true; break; fi
       echo "GET /.well-known/openid-configuration through the auth0 Backend returned '$code', want 200 with issuer https://auth0.idp-standin.test/ ($i/60)"; sleep 2
     done
-    if [ "$code" != 200 ]; then
+    if [ "$ok" != true ]; then
       echo "FAIL: the gateway did not reach the Auth0 stand-in through the auth0 Backend and the auth0-tls BackendConfigPolicy"
       echo "$body"; exit 1
     fi

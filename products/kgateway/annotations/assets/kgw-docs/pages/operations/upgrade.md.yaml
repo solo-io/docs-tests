@@ -2,7 +2,7 @@ format: 1
 source: assets/kgw-docs/pages/operations/upgrade.md
 blocks:
 - 189bf76bb4d0140a sh
-- b267eac60a2c273b sh
+- 09cea3396998dcf6 sh
 - b692d08807a1dcd1 txt
 - c9e100a6e1ee7dd8 sh
 - 61f1493caddc938a txt
@@ -14,7 +14,7 @@ blocks:
 - adaecfb55a637023 sh
 - b47f9628f81808f1 sh
 - 0e7cd6e1f4babe78 sh
-- 91409cd375597f94
+- 8cc14a5401b29e12
 - 5fba5f3bf561451f sh
 tags:
 - paths: upgrade
@@ -29,10 +29,10 @@ tags:
     lead: ' '
 - paths: upgrade-experimental
   block: 1
-  fingerprint: b267eac60a2c273b
+  fingerprint: 09cea3396998dcf6
   lang: sh
-  lines: b267eac6
-  preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  lines: 09cea339
+  preview: kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
   form:
     attr: paths="upgrade-experimental"
     only: true
@@ -398,10 +398,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 13
-    fingerprint: 91409cd375597f94
+    fingerprint: 8cc14a5401b29e12
     lang: ''
-    lines: 91409cd3
-    preview: cr.{{< reuse "kgw-docs/snippets/kgateway.md" >}}.dev/controller:{{< reuse "kgw-d
+    lines: 8cc14a54
+    preview: 'cr.kgateway.dev/kgateway-dev/kgateway:v{{< reuse "kgw-docs/versions/n-patch.md" '
   content: |-
     {{< doc-test paths="upgrade,upgrade-experimental" >}}
     # The control plane pod runs the image with the new version tag.

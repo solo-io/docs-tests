@@ -52,6 +52,18 @@ prerequisites:
   grpc-routing:
     page: traffic-management/grpc.md
     path: grpc
+  # Test-only OIDC stand-ins for Auth0 and Okta (CI has no account): a Node.js
+  # server in namespace idp-standin on the provider's paths and issuer format,
+  # a CoreDNS rewrite for auth0.idp-standin.test / okta.idp-standin.test, the
+  # test CA mounted over the `http` proxy's system CA file, and a kubectl
+  # function that swaps YOUR_<X>_DOMAIN for the stand-in host in applied YAML.
+  # Then the setup page's own Backend and BackendConfigPolicy. Needs `httpbin`.
+  auth0-idp:
+    page: security/oauth/auth0/setup.md
+    path: auth0-idp
+  okta-idp:
+    page: security/oauth/okta/setup.md
+    path: okta-idp
   # Keycloak in the keycloak namespace from the setup page's ConfigMap path
   # (realm myrealm, client kgateway-client with secret kgateway-client-secret,
   # user testuser/password, audience mapper), the keycloak Backend and its
@@ -333,12 +345,47 @@ scenarios:
     type: functional
     source: kgw-docs/pages/install/argocd.md
     path: argocd
-  auth0-access-token-schema:
-    type: schema
+  auth0-access-token:
+    # Password-grant token from the Auth0 stand-in (auth0-idp prerequisite);
+    # 401 without a token, 200 with it, 403 for another audience.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    - auth0-idp
     source: kgw-docs/pages/security/auth0/access-token.md
     path: auth0-access-token
-  auth0-setup-schema:
-    type: schema
+  auth0-authorization-code:
+    # Functional only: the page's YOUR_AUTH0_DOMAIN placeholders fail the
+    # issuerURI and endpoint URL patterns in the schema check. A hidden step adds
+    # an HTTPS listener on 8443; curl with a cookie jar signs in to the stand-in.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - auth0-idp
+    source: kgw-docs/pages/security/auth0/authorization-code.md
+    path: auth0-authorization-code
+  auth0-authorization-code-deny-redirect:
+    # The full GatewayExtension with denyRedirect, and verify step 5.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - auth0-idp
+    source: kgw-docs/pages/security/auth0/authorization-code.md
+    path: auth0-authorization-code-deny-redirect
+  auth0-setup:
+    # The Auth0 stand-in, the page's Backend and BackendConfigPolicy, and a
+    # temporary route that reaches the stand-in through them over TLS.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/auth0/setup.md
     path: auth0-setup
   backend-schema:
@@ -1424,12 +1471,43 @@ scenarios:
     type: schema
     source: kgw-docs/pages/integrations/aws-elb/nlb.md
     path: nlb
-  okta-access-token-schema:
-    type: schema
+  okta-access-token:
+    # Client-credentials token from the Okta stand-in (okta-idp prerequisite);
+    # 200 with it, and the three rejection messages from the page's table.
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    - okta-idp
     source: kgw-docs/pages/security/okta/access-token.md
     path: okta-access-token
-  okta-setup-schema:
-    type: schema
+  okta-authorization-code:
+    # Functional only: the page's YOUR_OKTA_DOMAIN placeholders fail the
+    # issuerURI and endpoint URL patterns in the schema check.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - okta-idp
+    source: kgw-docs/pages/security/okta/authorization-code.md
+    path: okta-authorization-code
+  okta-authorization-code-deny-redirect:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - okta-idp
+    source: kgw-docs/pages/security/okta/authorization-code.md
+    path: okta-authorization-code-deny-redirect
+  okta-setup:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     source: kgw-docs/pages/security/okta/setup.md
     path: okta-setup
   otel-stack:

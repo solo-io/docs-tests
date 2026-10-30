@@ -5,7 +5,7 @@ blocks:
 - e0efc864c41025c5 yaml
 - 6c1971e3ccdc1a35 yaml
 - 7f4b46cafd7d1d0e sh
-- 10b5ba93995b384f yaml
+- be720c32ae03e08e yaml
 - 5210a893155146af sh
 - 96f49b2f44c13034 sh
 - aba7345e2b6b08af sh
@@ -51,9 +51,9 @@ tags:
     lead: ' '
 - paths: debug
   block: 4
-  fingerprint: 10b5ba93995b384f
+  fingerprint: be720c32ae03e08e
   lang: yaml
-  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 3b9179af 0bebd850 301e1bfa 07d38795 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 44404b1a 0f10c5bc 36184fa5 d3d416e7 3b9179af 0bebd850 301e1bfa 07d38795 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
   preview: kubectl apply -f- <<EOF
   form:
     attr: paths="debug"
@@ -192,20 +192,20 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 4
-    fingerprint: 10b5ba93995b384f
+    fingerprint: be720c32ae03e08e
     lang: yaml
-    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 3b9179af 0bebd850 301e1bfa 07d38795 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 44404b1a 0f10c5bc 36184fa5 d3d416e7 3b9179af 0bebd850 301e1bfa 07d38795 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
     preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="debug" >}}
     YAMLTest -f - <<'EOF'
-    - name: debug - wait for the httpbin HTTPRoute to be accepted by the debug-gateway
+    - name: debug - wait for the debug-httpbin HTTPRoute to be accepted by the debug-gateway
       wait:
         target:
           kind: HTTPRoute
           metadata:
             namespace: httpbin
-            name: httpbin
+            name: debug-httpbin
         jsonPath: "$.status.parents[?(@.parentRef.name=='debug-gateway')].conditions[?(@.type=='Accepted')].status"
         jsonPathExpectation:
           comparator: equals

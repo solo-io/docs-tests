@@ -166,10 +166,10 @@ hidden:
       [ "$status" = 302 ] && break
       echo "unauthenticated GET /headers on 8443 returned '$status', want 302 ($i/60)"; sleep 2
     done
-    location=$(grep -i '^location:' <<<"$hdrs" | head -n 1 | sed 's/^[Ll]ocation: *//')
-    nonce=$(grep -i '^set-cookie: OauthNonce-' <<<"$hdrs" | head -n 1 || true)
-    echo "location: $location"; echo "$nonce"
     [ "$status" = 302 ] || { echo "FAIL: want 302, got '$status'"; echo "$hdrs"; exit 1; }
+    location=$(grep -i '^location:' <<<"$hdrs" | sed -n '1s/^[Ll]ocation: *//p' || true)
+    nonce=$(grep -i '^set-cookie: OauthNonce-' <<<"$hdrs" | sed -n 1p || true)
+    echo "location: $location"; echo "$nonce"
     case "$location" in "${IDP_AUTHORIZE_URL}?"*) ;; *) echo "FAIL: location is not ${IDP_AUTHORIZE_URL}"; exit 1 ;; esac
     grep -q 'client_id=YOUR_CLIENT_ID' <<<"$location" || { echo "FAIL: location has no client_id=YOUR_CLIENT_ID"; exit 1; }
     grep -q 'redirect_uri=https%3A%2F%2Fwww.example.com%2Foauth2%2Fredirect' <<<"$location" || { echo "FAIL: location has the wrong redirect_uri"; exit 1; }
@@ -205,24 +205,24 @@ hidden:
     done
     case "$login_url" in "${IDP_AUTHORIZE_URL}?"*) ;; *) echo "FAIL: no redirect to ${IDP_AUTHORIZE_URL}"; exit 1 ;; esac
     # Step 2: the sign-in page.
-    code=$(browser -o "$IDP_DIR/login.html" -w '%{http_code}' "$login_url")
+    code=$(browser -o "$IDP_DIR/login.html" -w '%{http_code}' "$login_url" || true)
     [ "$code" = 200 ] || { echo "FAIL: the sign-in page returned $code"; cat "$IDP_DIR/login.html"; exit 1; }
     tx=$(sed -n 's/.*name="tx" value="\([^"]*\)".*/\1/p' "$IDP_DIR/login.html")
     action=$(sed -n 's/.*action="\([^"]*\)".*/\1/p' "$IDP_DIR/login.html")
     # Step 3: sign in as the test user. The provider redirects to redirect_uri with a code.
     callback=$(browser -o /dev/null -w '%{redirect_url}' "https://${IDP_HOST}${action}" \
-      --data-urlencode "tx=${tx}" --data-urlencode "username=testuser@example.com" --data-urlencode "password=YOUR_PASSWORD")
+      --data-urlencode "tx=${tx}" --data-urlencode "username=testuser@example.com" --data-urlencode "password=YOUR_PASSWORD" || true)
     case "$callback" in "https://www.example.com/oauth2/redirect?code="*) ;; *) echo "FAIL: sign-in did not redirect to the callback: '$callback'"; exit 1 ;; esac
     # Step 4: the gateway exchanges the code for tokens through the okta Backend, sets
     # the session cookies, and sends the browser back to /headers.
-    back=$(browser -o "$IDP_DIR/callback.txt" -w '%{http_code} %{redirect_url}' "$callback")
+    back=$(browser -o "$IDP_DIR/callback.txt" -w '%{http_code} %{redirect_url}' "$callback" || true)
     case "$back" in "302 https://www.example.com/headers"*) ;; *)
       echo "FAIL: the callback returned '$back', want 302 to https://www.example.com/headers"; cat "$IDP_DIR/callback.txt"
       command kubectl logs -n idp-standin deploy/idp-standin --tail=20 || true; exit 1 ;; esac
     for cookie in AccessToken- IdToken- OauthHMAC-; do
       grep -q "$(printf '\t')${cookie}" "$JAR" || { echo "FAIL: no ${cookie}* session cookie after the callback"; cat "$JAR"; exit 1; }
     done
-    code=$(browser -o "$IDP_DIR/headers.json" -w '%{http_code}' "https://www.example.com/headers")
+    code=$(browser -o "$IDP_DIR/headers.json" -w '%{http_code}' "https://www.example.com/headers" || true)
     [ "$code" = 200 ] || { echo "FAIL: with the session cookies, /headers returned $code, want 200"; cat "$IDP_DIR/headers.json"; exit 1; }
     jq -e '.headers.Host[0] == "www.example.com"' "$IDP_DIR/headers.json" >/dev/null || { echo "FAIL: the response is not the httpbin output"; cat "$IDP_DIR/headers.json"; exit 1; }
     {{< /doc-test >}}
