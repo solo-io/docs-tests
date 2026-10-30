@@ -363,14 +363,18 @@ hidden:
          || { echo "FAIL: log does not record the reason"; cat /tmp/doc-test-egress-agw.log; exit 1; }
        echo "ok: a dynamic backend refuses loopback by default"
        stop_agw
-       # Step 4: add config.backend.allowDynamicLoopback to the top of the file.
-       # Skip the prepend if the file already has a top-level config key, and print the
-       # file if it doesn't validate (a nightly once failed here with "duplicate field
-       # `config`" that did not reproduce locally).
-       if ! grep -q '^config:' egress-loopback.yaml; then
-         { printf 'config:\n  backend:\n    allowDynamicLoopback: true\n'; cat egress-loopback.yaml; } > egress-loopback.tmp
-         mv egress-loopback.tmp egress-loopback.yaml
-       fi
+       # Step 4: add config.backend.allowDynamicLoopback. The first start wrote a
+       # config.session.key to the end of the file, so the file already has a
+       # top-level config key: add backend under it, or the file has two config
+       # keys ("duplicate field `config`"). Prepend a new config key only if none.
+       python3 - <<'PY'
+       import pathlib, re
+       p = pathlib.Path("egress-loopback.yaml")
+       src = p.read_text()
+       add = "  backend:\n    allowDynamicLoopback: true\n"
+       out, n = re.subn(r"^config:[ \t]*\n", lambda m: m.group(0) + add, src, count=1, flags=re.M)
+       p.write_text(out if n else "config:\n" + add + src)
+       PY
        agentgateway -f egress-loopback.yaml --validate-only \
          || { echo "FAIL: egress-loopback.yaml does not validate:"; cat egress-loopback.yaml; exit 1; }
        start_agw egress-loopback.yaml

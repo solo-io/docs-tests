@@ -136,12 +136,13 @@ hidden:
     preview: export ANTHROPIC_BASE_URL="http://localhost:4001/"
   content: |2-
        {{< doc-test paths="claude-code" >}}
-       # Point the Teams configuration at the mock instead of api.anthropic.com.
+       # Point the Teams configuration at the mock instead of api.anthropic.com. An
+       # Anthropic baseUrl path replaces the default /v1, so keep /v1 in it.
        python3 - <<'PY'
        src = open("config.yaml").read()
        assert "  provider: anthropic\n" in src
        open("claude-code-teams-mock.yaml", "w").write(
-           src.replace("  provider: anthropic\n", "  provider: anthropic\n    params:\n      baseUrl: http://127.0.0.1:8000\n"))
+           src.replace("  provider: anthropic\n", "  provider: anthropic\n    params:\n      baseUrl: http://127.0.0.1:8000/v1\n"))
        PY
        agentgateway -f config.yaml --validate-only
        start_agw claude-code-teams-mock.yaml claude-code-teams http://localhost:4001/

@@ -24,6 +24,7 @@ hidden:
   content: |2-
        {{< doc-test paths="claude-code" >}}
        agentgateway -f config.yaml --validate-only
-       to_mock config.yaml claude-code-anthropic-mock.yaml http://127.0.0.1:8000
+       # An Anthropic baseUrl path replaces the default /v1, so keep /v1 in it.
+       to_mock config.yaml claude-code-anthropic-mock.yaml http://127.0.0.1:8000/v1
        start_agw claude-code-anthropic-mock.yaml claude-code-anthropic http://localhost:4000/
        {{< /doc-test >}}
