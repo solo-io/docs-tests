@@ -125,6 +125,7 @@ skip:
 - page: migrate/providers/ingressnginx/_index.md
 - page: migrate/reference/_index.md
 - page: migrate/reference/cli/_index.md
+- page: not-in-version.md
 - page: observability/_index.md
 - page: operations/_index.md
 - page: reference/_index.md
@@ -175,6 +176,9 @@ skip:
 - page: traffic-management/route-delegation/inheritance/_index.md
 - page: traffic-management/session-affinity/_index.md
 - page: traffic-management/transformations/_index.md
+# A reference page. Its only resource is a TrafficPolicy with every field
+# left empty to show the structure, which no schema check can pass.
+- page: traffic-management/transformations/templating-language.md
 scenarios:
   access-logging:
     # stdout fileSink with the page's jsonFormat: a request with a unique user
@@ -1121,6 +1125,25 @@ scenarios:
     type: functional
     page: migrate/install/linux/_index.md
     path: install-ingress2gateway
+  ingress2gateway-install-macos:
+    # Runs on a macOS runner with no cluster; see `runner:` in the README.
+    type: functional
+    runner: macos
+    page: migrate/install/macos/_index.md
+    path: migrate-install-macos
+  ingress2gateway-install-windows:
+    # Runs on a Windows runner with no cluster, as a PowerShell script.
+    type: functional
+    runner: windows
+    shell: pwsh
+    page: migrate/install/windows/_index.md
+    path: migrate-install-windows
+  ingress2gateway-install-windows-bash:
+    # The page's Git Bash tab, on a Windows runner with no cluster.
+    type: functional
+    runner: windows
+    page: migrate/install/windows/_index.md
+    path: migrate-install-windows-bash
   install-tls:
     # cert-manager, the xDS CA and server certificate, and a helm upgrade with
     # controller.xds.tls.enabled. The page's port-forward checks run from pods
@@ -1131,6 +1154,17 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/install/tls.md
     path: install-tls
+  istio-ambient-ingress:
+    # Installs Istio in ambient mode with istioctl (the page links out to the
+    # ambientmesh.io quickstart for that), turns on the Istio integration
+    # through the istio-integration.md snippet, and checks the ztunnel logs
+    # for mTLS between the gateway and httpbin.
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    source: kgw-docs/pages/integrations/istio/ambient/ambient-ingress.md
+    path: istio-ambient-ingress
   jwt-claim-extraction:
     # auth.example.com is a placeholder, so a hidden step runs a test-only JWKS
     # server over TLS with a CoreDNS rewrite and tokens signed with its key.

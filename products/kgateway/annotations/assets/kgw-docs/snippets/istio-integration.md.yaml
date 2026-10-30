@@ -1,0 +1,52 @@
+format: 1
+source: assets/kgw-docs/snippets/istio-integration.md
+blocks:
+- 0194c35f2559fa8d sh
+- 65365beef0fb8353 yaml
+- 64d586bc1791b40f sh
+tags:
+- paths: istio-ambient-ingress
+  block: 2
+  fingerprint: 64d586bc1791b40f
+  lang: sh
+  lines: 64d586bc
+  preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 65365beef0fb8353
+    lang: yaml
+    lines: adc43cf7 6c077fe9 a823782b
+    preview: 'controller:'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="istio-ambient-ingress" >}}
+       # Step 1 opens the values file in an editor, which a test cannot do. Write
+       # the same file: the current release values merged with the snippet above.
+       helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yaml > {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml
+       python3 - {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml <<'EOF'
+       import sys, yaml
+       path = sys.argv[1]
+       values = yaml.safe_load(open(path)) or {}
+       values.setdefault("controller", {}).setdefault("extraEnv", {})["KGW_ENABLE_ISTIO_INTEGRATION"] = True
+       yaml.safe_dump(values, open(path, "w"))
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 64d586bc1791b40f
+    lang: sh
+    lines: 64d586bc
+    preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="istio-ambient-ingress" >}}
+       # Claim: the upgrade turns the Istio integration on in the controller.
+       kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=300s
+       env=$(kubectl get deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_ENABLE_ISTIO_INTEGRATION")].value}')
+       [ "$env" = "true" ] || { echo "KGW_ENABLE_ISTIO_INTEGRATION is '$env', expected true"; exit 1; }
+       {{< /doc-test >}}

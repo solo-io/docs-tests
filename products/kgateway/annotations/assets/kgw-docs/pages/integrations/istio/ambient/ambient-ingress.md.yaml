@@ -1,0 +1,159 @@
+format: 1
+source: assets/kgw-docs/pages/integrations/istio/ambient/ambient-ingress.md
+blocks:
+- b3f63658c7b54a4a sh
+- 203d0729f7bae309 sh
+- a76af35b69653a3d console
+- 1a1d7641506a4ebb sh
+- afda8e4f7b6d2cdd
+- 38158319851ff722 sh
+- 9366ea4800de3a1e
+- bb4c073ba2bb59cf sh
+- 06744cc248d5d9a1 sh
+- 19459bd00eee72dd
+tags:
+- paths: istio-ambient-ingress
+  block: 0
+  fingerprint: b3f63658c7b54a4a
+  lang: sh
+  lines: 0d248563 58da2c6a
+  preview: kubectl label ns {{< reuse "kgw-docs/snippets/namespace.md" >}} istio.io/datapla
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+- paths: istio-ambient-ingress
+  block: 1
+  fingerprint: 203d0729f7bae309
+  lang: sh
+  lines: 203d0729
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080"'
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+- paths: istio-ambient-ingress
+  block: 5
+  fingerprint: 38158319851ff722
+  lang: sh
+  lines: '38158319'
+  preview: kubectl get pods -n httpbin -o wide
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+- paths: istio-ambient-ingress
+  block: 7
+  fingerprint: bb4c073ba2bb59cf
+  lang: sh
+  lines: bb4c073b
+  preview: kubectl get pods -n istio-system -o wide | grep ztunnel
+  form:
+    attr: paths="istio-ambient-ingress"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: 'Step 2: Set up an ambient mesh'
+    line: 38a08e46f9e5a663
+    occurrence: 0
+    words: d9c0d341 9edd6d99 21a355f1 60a51d45
+    block_before: null
+  content: |-
+    {{< doc-test paths="istio-ambient-ingress" >}}
+    # Step 2 links out to the ambientmesh.io quickstart; install Istio in ambient
+    # mode the same way, with istioctl in a throwaway dir. Same version as the
+    # agentgateway ambient ingress test.
+    ISTIO_VERSION="${ISTIO_VERSION:-1.31.3}"
+    istio_arch=$(uname -m)
+    case "$istio_arch" in x86_64) istio_arch=amd64 ;; aarch64) istio_arch=arm64 ;; esac
+    istio_os=$(uname -s | tr '[:upper:]' '[:lower:]')
+    [ "$istio_os" = "darwin" ] && istio_os=osx
+    ISTIO_BIN="${TMPDIR:-/tmp}/doc-test-istioctl-${ISTIO_VERSION}"
+    mkdir -p "$ISTIO_BIN"
+    export PATH="$ISTIO_BIN:$PATH"
+    if [ ! -x "$ISTIO_BIN/istioctl" ]; then
+      curl -fsSL "https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istioctl-${ISTIO_VERSION}-${istio_os}-${istio_arch}.tar.gz" \
+        | tar -xz -C "$ISTIO_BIN" istioctl
+    fi
+    istioctl install --set profile=ambient --skip-confirmation
+    kubectl -n istio-system rollout status deploy/istiod --timeout=300s
+    kubectl -n istio-system rollout status ds/ztunnel --timeout=300s
+    kubectl -n istio-system rollout status ds/istio-cni-node --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: b3f63658c7b54a4a
+    lang: sh
+    lines: 0d248563 58da2c6a
+    preview: kubectl label ns {{< reuse "kgw-docs/snippets/namespace.md" >}} istio.io/datapla
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="istio-ambient-ingress" >}}
+       # Ambient picks up running pods without a restart, but not instantly. Wait
+       # until the gateway reaches httpbin again before the page's request.
+       for i in $(seq 1 60); do
+         code=$(curl -s -o /dev/null -m 5 -w "%{http_code}" "http://$INGRESS_GW_ADDRESS:8080/headers" -H "host: www.example.com:8080" || true)
+         [ "$code" = "200" ] && break
+         sleep 2
+       done
+       {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 203d0729f7bae309
+    lang: sh
+    lines: 203d0729
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080"'
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="istio-ambient-ingress" >}}
+       # Claims: status 200, and httpbin echoes Host: www.example.com:8080.
+       resp=$(curl -sS -m 10 -w '\n%{http_code}' "http://$INGRESS_GW_ADDRESS:8080/headers" -H "host: www.example.com:8080")
+       code=$(tail -n1 <<<"$resp")
+       body=$(sed '$d' <<<"$resp")
+       [ "$code" = "200" ] || { echo "expected 200 through the ambient ingress, got ${code}"; exit 1; }
+       host=$(jq -r '.headers.Host[0]' <<<"$body")
+       [ "$host" = "www.example.com:8080" ] || { echo "httpbin echoed Host '${host}', expected www.example.com:8080"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 19459bd00eee72dd
+    lang: ''
+    lines: 780ac344 72e2d796
+    preview: "2025-03-19T17:32:42.762545Z\tinfo\thttp access\trequest complete\tsrc.addr=10.0.71.1"
+  blank_before: []
+  content: |2-
+          {{< doc-test paths="istio-ambient-ingress" >}}
+          # The page reads the log of one ztunnel by name; read them all. ztunnel
+          # logs a connection when it completes, and the gateway keeps its upstream
+          # connection to httpbin pooled, so `connection: close` from the client
+          # does not end it. If no entry shows up after a few rounds, restart the
+          # gateway once so the pooled connection closes.
+          line=""
+          restarted=""
+          for i in $(seq 1 30); do
+            for j in 1 2 3; do
+              curl -sSI -m 10 "http://$INGRESS_GW_ADDRESS:8080/headers" -H "host: www.example.com:8080" -H "connection: close" > /dev/null || true
+            done
+            logs=$(kubectl -n istio-system logs -l app=ztunnel --since=5m --tail=-1 2>/dev/null || true)
+            line=$(grep 'dst.namespace="httpbin"' <<<"$logs" | grep 'src.namespace="{{< reuse "kgw-docs/snippets/namespace.md" >}}"' | tail -n1 || true)
+            [ -n "$line" ] && break
+            if [ "$i" -ge 5 ] && [ -z "$restarted" ]; then
+              kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout restart deployment/http
+              kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deployment/http --timeout=120s
+              restarted=yes
+            fi
+            sleep 4
+          done
+          [ -n "$line" ] || { echo "no ztunnel log line for {{< reuse "kgw-docs/snippets/namespace.md" >}} -> httpbin"; exit 1; }
+          echo "$line"
+          # Claims: both workloads have a SPIFFE ID, and the hop goes over HBONE (15008).
+          for want in 'src.identity="spiffe://cluster.local/ns/{{< reuse "kgw-docs/snippets/namespace.md" >}}/' \
+                      'dst.identity="spiffe://cluster.local/ns/httpbin/sa/httpbin"' \
+                      'dst.hbone_addr=' ':15008 '; do
+            case "$line" in
+              *"$want"*) ;;
+              *) echo "ztunnel log line is missing '${want}'"; exit 1 ;;
+            esac
+          done
+          {{< /doc-test >}}

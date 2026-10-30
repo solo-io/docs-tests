@@ -1,0 +1,116 @@
+format: 1
+source: content/docs/envoy/main/migrate/install/macos/_index.md
+blocks:
+- 271666ec3e3d38af bash
+- 58e2f3a385ae2e25 bash
+- 1b4d5a129d05077e bash
+- e7e93c8c95820e31 bash
+- e2a88555c13ba092 console
+- bea9765bd4e56982 bash
+- 8cfaade0d7b6699c bash
+- 896b20f5145ad524 bash
+tags:
+- paths: migrate-install-macos
+  block: 0
+  fingerprint: 271666ec3e3d38af
+  lang: bash
+  lines: 67d16d56 8647d0a2 7e69865f 5e386f28
+  preview: VERSION=v0.5.0
+  form:
+    attr: paths="migrate-install-macos"
+    only: true
+    lead: ' '
+- paths: migrate-install-macos
+  block: 1
+  fingerprint: 58e2f3a385ae2e25
+  lang: bash
+  lines: 58e2f3a3
+  preview: curl -LO "https://github.com/kgateway-dev/ingress2gateway/releases/download/${VE
+  form:
+    attr: paths="migrate-install-macos"
+    only: true
+    lead: ' '
+- paths: migrate-install-macos
+  block: 2
+  fingerprint: 1b4d5a129d05077e
+  lang: bash
+  lines: 1b4d5a12
+  preview: curl -LO https://github.com/kgateway-dev/ingress2gateway/releases/download/${VER
+  form:
+    attr: paths="migrate-install-macos"
+    only: true
+    lead: ' '
+- paths: migrate-install-macos
+  block: 3
+  fingerprint: e7e93c8c95820e31
+  lang: bash
+  lines: e7e93c8c
+  preview: grep -F "  ingress2gateway_${OS}_${ARCH}.tar.gz" checksums.txt | shasum -a 256 -
+  form:
+    attr: paths="migrate-install-macos"
+    only: true
+    lead: ' '
+- paths: migrate-install-macos
+  block: 5
+  fingerprint: bea9765bd4e56982
+  lang: bash
+  lines: bea9765b
+  preview: tar -xvf ingress2gateway_${OS}_${ARCH}.tar.gz
+  form:
+    attr: paths="migrate-install-macos"
+    only: true
+    lead: ' '
+- paths: migrate-install-macos
+  block: 6
+  fingerprint: 8cfaade0d7b6699c
+  lang: bash
+  lines: 3590f67b b8f785b4
+  preview: sudo mv ./ingress2gateway /usr/local/bin/ingress2gateway
+  form:
+    attr: paths="migrate-install-macos"
+    only: true
+    lead: ' '
+- paths: migrate-install-macos
+  block: 7
+  fingerprint: 896b20f5145ad524
+  lang: bash
+  lines: 896b20f5
+  preview: ingress2gateway version
+  form:
+    attr: paths="migrate-install-macos"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 271666ec3e3d38af
+    lang: bash
+    lines: 67d16d56 8647d0a2 7e69865f 5e386f28
+    preview: VERSION=v0.5.0
+  content: |2-
+        {{< doc-test paths="migrate-install-macos" >}}
+        # Runs on a macOS runner (runner: macos in tests.yaml). Work in a temp folder, and use
+        # this machine's architecture instead of the page's arm64 example.
+        case "$(uname -m)" in arm64) ARCH=arm64 ;; x86_64) ARCH=x86_64 ;; esac
+        DOC_TEST_DIR=$(mktemp -d)
+        cd "$DOC_TEST_DIR"
+        {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 896b20f5145ad524
+    lang: bash
+    lines: 896b20f5
+    preview: ingress2gateway version
+  content: |2-
+        {{< doc-test paths="migrate-install-macos" >}}
+        # The page says the checksum check prints OK; --check exits non-zero otherwise, and the
+        # tagged block above runs under set -e. Now confirm the installed binary is the one on
+        # PATH and reports the version that was downloaded.
+        command -v ingress2gateway | grep -qx /usr/local/bin/ingress2gateway \
+          || { echo "ingress2gateway on PATH is $(command -v ingress2gateway), not /usr/local/bin"; exit 1; }
+        out=$(ingress2gateway version 2>&1)
+        echo "$out"
+        echo "$out" | grep -q "${VERSION#v}" || { echo "version output does not mention ${VERSION}"; exit 1; }
+        sudo rm -f /usr/local/bin/ingress2gateway
+        cd / && rm -rf "$DOC_TEST_DIR"
+        {{< /doc-test >}}
