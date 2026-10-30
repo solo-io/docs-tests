@@ -298,7 +298,8 @@ hidden:
          || { echo "FAIL: initialize through the Tailscale IP returned $CODE"; cat tailscale-init.txt; exit 1; }
        echo "ok: initialize succeeded"
        for _ in $(seq 1 10); do grep -q 'tailscale.email=' /tmp/doc-test-agw-tailscale.log && break; sleep 1; done
-       grep 'tailscale.node=doc-test-node.tailnet.ts.net.' /tmp/doc-test-agw-tailscale.log | grep -q 'tailscale.email=doc-user@example.com' \
+       # String attributes are quoted in the access log (tailscale.email="..."), so allow quotes.
+       grep -E 'tailscale\.node="?doc-test-node\.tailnet\.ts\.net\."?' /tmp/doc-test-agw-tailscale.log | grep -qE 'tailscale\.email="?doc-user@example\.com"?' \
          || { echo "FAIL: the access log has no Tailscale identity"; cat /tmp/doc-test-agw-tailscale.log; exit 1; }
        echo "ok: access log records tailscale.node and tailscale.email"
        stop_agw
