@@ -401,54 +401,15 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 17
-    fingerprint: d9c5d1315293fe17
-    lang: yaml
-    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 63d6b1a1 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 8905bcef 99c83b01 8c8c4228 623e440b 0cfc9589 207d5e5e 60066f13 b3dd1d21 10e8f3d5 b274c160 698e3b56 c5bae784 abc56510
-    preview: kubectl apply -f- <<EOF
-  content: |2-
-       {{< doc-test paths="llm-model-headers" >}}
-       YAMLTest -f - <<'EOF'
-       - name: wait for llm-context-vars policy to be accepted
-         wait:
-           target:
-             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
-             metadata:
-               namespace: agentgateway-system
-               name: llm-context-vars
-           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
-           jsonPathExpectation:
-             comparator: equals
-             value: "True"
-           polling:
-             timeoutSeconds: 120
-             intervalSeconds: 2
-       EOF
-       {{< /doc-test >}}
-- after:
-    section: Cleanup
-    line: 559df0c1dd804193
-    occurrence: 2
-    words: 5ca4f385
-    block_before:
-      block: 22
-      fingerprint: fcdc4db11ed497be
-      lang: shell
-      lines: fcdc4db1
-      preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} cap-converted-tokens '
-  content: |-
-    {{< doc-test paths="llm-transformations,llm-model-headers,llm-final-transformations" >}}
-    kubectl delete httproute openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
-    {{< /doc-test >}}
-- after:
     section: Inject model headers from request and response bodies
     line: 600fe1bb59e46b50
     occurrence: 2
     words: 32d3feda
     block_before:
-      fingerprint: f9270cb8081191f5
+      block: 13
+      fingerprint: 9d36116fa8878916
       lang: sh
-      lines: 18e60893 67c5a3ac 3b98a2a4
+      lines: 18e60893 67c5a3ac 9777785d
       preview: curl -vi "http://localhost:8080/v1/chat/completions" \
   content: |2-
        {{< doc-test paths="llm-model-headers" >}}
@@ -474,16 +435,41 @@ hidden:
                value: gpt
        EOF
        {{< /doc-test >}}
-  status: needs-update
+- after:
+    block: 17
+    fingerprint: d9c5d1315293fe17
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 63d6b1a1 8af957d1 fa1e8330 7bf46955 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 8905bcef 99c83b01 8c8c4228 623e440b 0cfc9589 207d5e5e 60066f13 b3dd1d21 10e8f3d5 b274c160 698e3b56 c5bae784 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="llm-model-headers" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for llm-context-vars policy to be accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: agentgateway-system
+               name: llm-context-vars
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
 - after:
     section: Detect fallback with the llm context variables
     line: 600fe1bb59e46b50
     occurrence: 3
     words: 32d3feda
     block_before:
-      fingerprint: f9270cb8081191f5
+      block: 19
+      fingerprint: 9d36116fa8878916
       lang: sh
-      lines: 18e60893 67c5a3ac 3b98a2a4
+      lines: 18e60893 67c5a3ac 9777785d
       preview: curl -vi "http://localhost:8080/v1/chat/completions" \
   content: |2-
        {{< doc-test paths="llm-model-headers" >}}
@@ -511,4 +497,18 @@ hidden:
                comparator: exists
        EOF
        {{< /doc-test >}}
-  status: needs-update
+- after:
+    section: Cleanup
+    line: 559df0c1dd804193
+    occurrence: 2
+    words: 5ca4f385
+    block_before:
+      block: 22
+      fingerprint: fcdc4db11ed497be
+      lang: shell
+      lines: fcdc4db1
+      preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} cap-converted-tokens '
+  content: |-
+    {{< doc-test paths="llm-transformations,llm-model-headers,llm-final-transformations" >}}
+    kubectl delete httproute openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
+    {{< /doc-test >}}
