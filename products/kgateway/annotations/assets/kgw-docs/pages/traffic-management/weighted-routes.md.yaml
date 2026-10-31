@@ -10,7 +10,7 @@ blocks:
 - f3734993ccce5d2c sh
 - 0db9df7fb94177b8 txt
 - 61d2361cc9a569ad json
-- 0194c35f2559fa8d sh
+- dbf443f75f107641 sh
 - 76915ad1d89121b6 yaml
 - 64d586bc1791b40f sh
 - e29ece1ae9932314 yaml
@@ -18,7 +18,7 @@ blocks:
 - e25767e7e0e01633 sh
 - db4b465f4c7b1aaf txt
 - 5662fc539c3143bf txt
-- aa0c7321b20bd0d6 yaml
+- aa0c7321b20bd0d6 sh
 - a591b3d7068eaa6d sh
 - e25767e7e0e01633 sh
 - db4b465f4c7b1aaf txt
@@ -69,7 +69,7 @@ tags:
 - paths: weighted-routes
   block: 17
   fingerprint: aa0c7321b20bd0d6
-  lang: yaml
+  lang: sh
   lines: 95f0380a 088bae5f
   preview: kubectl annotate httproute -n httpbin httpbin kgateway.dev/route-weight=10
   form:
@@ -240,7 +240,7 @@ hidden:
 - after:
     block: 17
     fingerprint: aa0c7321b20bd0d6
-    lang: yaml
+    lang: sh
     lines: 95f0380a 088bae5f
     preview: kubectl annotate httproute -n httpbin httpbin kgateway.dev/route-weight=10
   content: |-

@@ -12,6 +12,7 @@ blocks:
 - 2e37c800a001d5d1 sh
 - 33568c13cac4dd5a yaml
 - 7f5f86136131147c yaml
+- 2113d81ff30e55d8 sh
 - 897722b268d28b4d yaml
 tags:
 - paths: tracing,tracing-disable
@@ -65,7 +66,7 @@ tags:
     only: true
     lead: ' '
 - paths: tracing-disable
-  block: 11
+  block: 12
   fingerprint: 897722b268d28b4d
   lang: yaml
   lines: 16c71da1 88b9492f c548623c 8c8c4228 9687521b 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 390f7e12 cfd701cc abc56510
@@ -198,7 +199,7 @@ hidden:
     [ -n "$ok" ] || { echo "the gateway spans do not carry the route-level route-tag and x-custom-header attributes"; exit 1; }
     {{< /doc-test >}}
 - after:
-    block: 11
+    block: 12
     fingerprint: 897722b268d28b4d
     lang: yaml
     lines: 16c71da1 88b9492f c548623c 8c8c4228 9687521b 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 390f7e12 cfd701cc abc56510
@@ -223,7 +224,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 11
+    block: 12
     fingerprint: 897722b268d28b4d
     lang: yaml
     lines: 16c71da1 88b9492f c548623c 8c8c4228 9687521b 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 390f7e12 cfd701cc abc56510

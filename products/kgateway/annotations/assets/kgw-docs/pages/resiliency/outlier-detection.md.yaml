@@ -24,7 +24,8 @@ blocks:
 - 229934d3b7ba3f68 console
 - dc1c2d5784ca664a sh
 - 9ddcc903ba123f91 sh
-- 7972263f12c274dc console
+- 703bcf0a991fa8f0 console
+- f420a4cefb8fc543 sh
 - 462089c2279859fa console
 - 94818e4ddb3a174a yaml
 - 4e48f969f941640b sh
@@ -103,7 +104,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 25
+  block: 26
   fingerprint: 94818e4ddb3a174a
   lang: yaml
   lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f c5761aff c0993c3b d90fbab6 2b13d484 3dbef168 7465b9e8 36257ac7 abc56510
@@ -113,7 +114,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 28
+  block: 29
   fingerprint: 2789c1eecaee73f7
   lang: sh
   lines: 2789c1ee
@@ -123,7 +124,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 30
+  block: 31
   fingerprint: e8fa97d44557c2b3
   lang: sh
   lines: e8fa97d4
@@ -133,7 +134,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 33
+  block: 34
   fingerprint: 0e06beb2e3f457a8
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 47c9e2df 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa bf0611ca 3de9d845 b733d726 aeca2b3d bf068a96 4daf385c 94ae491e 80e9487c 102f028c abc56510
@@ -143,7 +144,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 34
+  block: 35
   fingerprint: 8eb3a27328f14a72
   lang: sh
   lines: 8eb3a273
@@ -153,7 +154,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 38
+  block: 39
   fingerprint: b6223cccf8a6e364
   lang: yaml
   lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f c5761aff c0993c3b c8823a0a 7c674794 abc56510
@@ -163,7 +164,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 39
+  block: 40
   fingerprint: d0fe3b6c6cbdb562
   lang: sh
   lines: d0fe3b6c
@@ -173,7 +174,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 42
+  block: 43
   fingerprint: 38ffa7f44118cbe7
   lang: sh
   lines: 38ffa7f4
@@ -183,7 +184,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 47
+  block: 48
   fingerprint: ea75f949d0794e67
   lang: sh
   lines: ea75f949
@@ -193,7 +194,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 48
+  block: 49
   fingerprint: b65adec1dfbd110e
   lang: sh
   lines: b65adec1
@@ -203,7 +204,7 @@ tags:
     only: true
     lead: ' '
 - paths: outlier-detection
-  block: 49
+  block: 50
   fingerprint: 1fb847922355838e
   lang: sh
   lines: 1fb84792
@@ -480,7 +481,7 @@ hidden:
     od_only_healthy "after the second host returned a 503"
     {{< /doc-test >}}
 - after:
-    block: 24
+    block: 25
     fingerprint: 462089c2279859fa
     lang: console
     lines: 6ffcbf42 012dd3f7
@@ -499,7 +500,7 @@ hidden:
     echo "outlier-detection: ejections_consecutive_5xx $od_c5, ejections_enforced_consecutive_5xx $od_e5, ejections_active $od_act"
     {{< /doc-test >}}
 - after:
-    block: 25
+    block: 26
     fingerprint: 94818e4ddb3a174a
     lang: yaml
     lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f c5761aff c0993c3b d90fbab6 2b13d484 3dbef168 7465b9e8 36257ac7 abc56510
@@ -509,7 +510,7 @@ hidden:
     od_outlier_expect "local-origin policy" kube_httpbin_httpbin_8000 'split_external_local_origin_errors=true' 'consecutive_local_origin_failure=10' 'enforcing_consecutive_local_origin_failure=100' 'enforcing_consecutive_5xx=0' 'consecutive_5xx=1'
     {{< /doc-test >}}
 - after:
-    block: 32
+    block: 33
     fingerprint: 3410ee7736a1e19b
     lang: sh
     lines: 3410ee77
@@ -539,7 +540,7 @@ hidden:
     fi
     {{< /doc-test >}}
 - after:
-    block: 33
+    block: 34
     fingerprint: 0e06beb2e3f457a8
     lang: yaml
     lines: 16c71da1 8c67597e 56bf9360 8c8c4228 47c9e2df 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa bf0611ca 3de9d845 b733d726 aeca2b3d bf068a96 4daf385c 94ae491e 80e9487c 102f028c abc56510
@@ -575,7 +576,7 @@ hidden:
     od_outlier_expect "local-origin policy on port 9000" kube_httpbin_httpbin_9000 'split_external_local_origin_errors=true' 'consecutive_local_origin_failure=10'
     {{< /doc-test >}}
 - after:
-    block: 37
+    block: 38
     fingerprint: 6fc5f2c900c6dbd1
     lang: console
     lines: 012dd3f7 1ab12d32 62b46ab6
@@ -608,7 +609,7 @@ hidden:
     echo "outlier-detection: kube_httpbin_httpbin_9000 ejected $od_lo_ej (enforced local-origin $od_lo_enf, overflow $od_lo_ovf)"
     {{< /doc-test >}}
 - after:
-    block: 38
+    block: 39
     fingerprint: b6223cccf8a6e364
     lang: yaml
     lines: 16c71da1 3f173fd2 d664f32c 8c8c4228 c6cb5f78 0f10c5bc 36184fa5 588a5d84 80e9487c 9d5a3bb5 0d6480f0 dc5debbd 03586b0f c5761aff c0993c3b c8823a0a 7c674794 abc56510
@@ -630,7 +631,7 @@ hidden:
     fi
     {{< /doc-test >}}
 - after:
-    block: 41
+    block: 42
     fingerprint: 17cc756c2872a345
     lang: console
     lines: 0604cd31 0604cd31 0604cd31 ab5df625
@@ -651,7 +652,7 @@ hidden:
     echo "outlier-detection: 500 responses ejected no host"
     {{< /doc-test >}}
 - after:
-    block: 44
+    block: 45
     fingerprint: 4f59c2b55e00a20b
     lang: console
     lines: 7182dd43 7182dd43 7182dd43 ab5df625
@@ -681,7 +682,7 @@ hidden:
     echo "outlier-detection: gateway failures ejected $od_gf_ej (ejections_enforced_consecutive_gateway_failure $od_gf_enf)"
     {{< /doc-test >}}
 - after:
-    block: 46
+    block: 47
     fingerprint: dcb58fc2ae82caff
     lang: console
     lines: 29a1462f f900e2d2 f3fd27b9
