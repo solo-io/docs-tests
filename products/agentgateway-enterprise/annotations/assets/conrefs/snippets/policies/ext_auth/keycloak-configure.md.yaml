@@ -1,5 +1,6 @@
 format: 1
 source: assets/conrefs/snippets/policies/ext_auth/keycloak-configure.md
+previews: false
 blocks:
 - 6e741862f5e540b6 shell
 - bf4d19b1cca1dba6 shell
@@ -14,7 +15,6 @@ tags:
   fingerprint: 6e741862f5e540b6
   lang: shell
   lines: ddce3fc8 41752bd2
-  preview: echo $KEYCLOAK_CLIENT
   form:
     attr: paths="oauth-keycloak,oauth-keycloak-setup"
     only: true
@@ -24,7 +24,6 @@ tags:
   fingerprint: bf4d19b1cca1dba6
   lang: shell
   lines: bf4d19b1
-  preview: export TOKEN_ENDPOINT=$KEYCLOAK_URL/realms/master/protocol/openid-connect/token
   form:
     attr: paths="oauth-keycloak,oauth-keycloak-setup"
     only: true
@@ -35,7 +34,6 @@ hidden:
     fingerprint: 9a24991a75d1ace7
     lang: shell
     lines: 9a24991a
-    preview: export KEYCLOAK_JWKS_URI=<jwks_uri>
   blank_before: []
   content: |2-
            {{< doc-test paths="oauth-keycloak,oauth-keycloak-setup" >}}

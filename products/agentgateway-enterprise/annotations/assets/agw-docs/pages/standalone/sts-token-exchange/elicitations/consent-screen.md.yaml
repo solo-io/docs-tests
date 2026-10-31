@@ -1,12 +1,12 @@
 format: 1
 source: assets/agw-docs/pages/standalone/sts-token-exchange/elicitations/consent-screen.md
+previews: false
 blocks:
 - da3f97f72b0a4198 console
 - 6aeb87fac1f9b6de yaml
 - 425d04ba9847426c sh
 - 631087398930897a yaml
 - 759f7d7e5fd6581b yaml
-- df29423b7e63fddc sh
 - 9994b1c413069915 console
 - 429df50ee2ae0a03 console
 hidden:
@@ -15,7 +15,6 @@ hidden:
     fingerprint: 425d04ba9847426c
     lang: sh
     lines: 425d04ba
-    preview: agentgateway-sts sts --config-file config.yaml --address 127.0.0.1:7777
   content: |-
     {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
     # ============================================================================
@@ -130,11 +129,10 @@ hidden:
     [ "$(jq -r .resource <<<"$PRM")" = "http://localhost:3000/mcp/consent" ] || { echo "FAIL: resource" >&2; echo "$PRM" >&2; exit 1; }
     {{< /doc-test >}}
 - after:
-    block: 7
+    block: 6
     fingerprint: 429df50ee2ae0a03
     lang: console
     lines: 1dfbe0d4 a2338ea5
-    preview: '{"level":"info","msg":"request","method":"POST","path":"/oauth-issuer/consent","'
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
        # "Verify consent" against the local stand-ins, with curl in place of the browser.

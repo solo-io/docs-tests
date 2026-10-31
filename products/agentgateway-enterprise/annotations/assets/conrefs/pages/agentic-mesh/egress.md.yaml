@@ -1,5 +1,6 @@
 format: 1
 source: assets/conrefs/pages/agentic-mesh/egress.md
+previews: false
 blocks:
 - 32bf31282726b79d sh
 - 0b3353f89e5896aa yaml
@@ -16,7 +17,7 @@ blocks:
 - d36d0812b233b85e sh
 - 7320f86fea3e3ec1 sh
 - ebd00df345271b15 sh
-- 12d871782caa391e
+- 47a6ea57c3c90b3f
 - d2059d898a50ef0c sh
 - 6943d64a42aecdc8 yaml
 tags:
@@ -25,7 +26,6 @@ tags:
   fingerprint: 0b3353f89e5896aa
   lang: yaml
   lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 590b69e9 18d7aff9 fa1e8330 f1651cd1 36184fa5 a86d8611 c10d7538 326e54f2 572d5678 6d9c1787 abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -35,7 +35,6 @@ tags:
   fingerprint: bf79921f40cf74a5
   lang: sh
   lines: 13097a93 d3428e59
-  preview: kubectl get pods -n ${NAMESPACE} -l gateway.networking.k8s.io/gateway-name=egres
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -45,7 +44,6 @@ tags:
   fingerprint: c1ed1b319181640c
   lang: yaml
   lines: abbd1bdc e6494e6f 32b92192 8c8c4228 f6af1605 18d7aff9 36184fa5 bfce7f60 76f2f5cc 0ff65a1a d6f6a58a 9278ed91 069de162 5770c24c 0ed8bc35 b6e959f2 abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -55,7 +53,6 @@ tags:
   fingerprint: 73c41abf0b1445d4
   lang: sh
   lines: 9f7ef04b bfe2d76b 06ad5b44
-  preview: kubectl label serviceentry openai-api \
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -65,7 +62,6 @@ tags:
   fingerprint: 31bbdc746637e6ee
   lang: yaml
   lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 500b91dd 18d7aff9 36184fa5 588a5d84 519265a4 ca6fb638 f6af1605 bb85cefe 3195c5f5 a439ad4e abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -75,7 +71,6 @@ tags:
   fingerprint: e6e39707117a576d
   lang: yaml
   lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 06a02b2f 18d7aff9 36184fa5 588a5d84 519265a4 ca6fb638 f6af1605 e4f6a86d d48a6346 d25a61e1 1188488c 0a06a173 24fad889 abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -85,7 +80,6 @@ tags:
   fingerprint: 05343ad53db2fb55
   lang: sh
   lines: 05343ad5
-  preview: 'kubectl run curl-unauth -n ${NAMESPACE} --image=curlimages/curl --restart=Never '
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -95,7 +89,6 @@ tags:
   fingerprint: abb20ff4a3ab66a3
   lang: sh
   lines: 346a8b56 041d8c89 ab5cb401
-  preview: kubectl run curl-auth -n ${NAMESPACE} --image=curlimages/curl \
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -105,7 +98,6 @@ tags:
   fingerprint: d36d0812b233b85e
   lang: sh
   lines: 3900686d e603c7b6 fc68f389 cc34797f
-  preview: kubectl exec -n ${NAMESPACE} curl-unauth -- \
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -115,7 +107,6 @@ tags:
   fingerprint: 7320f86fea3e3ec1
   lang: sh
   lines: ccd604cb e603c7b6 fc68f389 cc34797f
-  preview: kubectl exec -n ${NAMESPACE} curl-auth -- \
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -125,7 +116,6 @@ tags:
   fingerprint: ebd00df345271b15
   lang: sh
   lines: ebd00df3
-  preview: istioctl ztunnel-config connections --workload-namespace ${NAMESPACE}
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -135,7 +125,6 @@ tags:
   fingerprint: d2059d898a50ef0c
   lang: sh
   lines: b576eb2e e7ade3f2 0cecb323 99af1116
-  preview: kubectl delete pod curl-unauth curl-auth -n ${NAMESPACE}
   form:
     attr: paths="integrations-agentic-mesh-egress"
     only: true
@@ -146,7 +135,6 @@ hidden:
     fingerprint: 32bf31282726b79d
     lang: sh
     lines: 32bf3128
-    preview: export NAMESPACE=<ns>
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-egress" >}}
@@ -157,7 +145,7 @@ hidden:
        kubectl label namespace ${NAMESPACE} istio.io/dataplane-mode=ambient --overwrite
        {{< /doc-test >}}
 - after:
-    section: Deploy an egress waypoint
+    section: h:ed38260d94955dc0
     line: 6ee7435eea8b1e16
     occurrence: 0
     words: 4e074085 a12dd3a7 8e7fc023 b9776d7d a3083687 bbb75229 425c89ed fa51fd49 c071cf5f 6201111b b9776d7d 4ea5ee68 fa51fd49 2de632d1
@@ -166,7 +154,6 @@ hidden:
       fingerprint: 0b3353f89e5896aa
       lang: yaml
       lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 590b69e9 18d7aff9 fa1e8330 f1651cd1 36184fa5 a86d8611 c10d7538 326e54f2 572d5678 6d9c1787 abc56510
-      preview: kubectl apply -f - <<EOF
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-egress" >}}
@@ -180,7 +167,6 @@ hidden:
     fingerprint: 016b0d3f5a53715b
     lang: sh
     lines: 016b0d3f
-    preview: export AGENT_SERVICE_ACCOUNT=<your_agent_sa>
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-egress" >}}
@@ -193,14 +179,13 @@ hidden:
     fingerprint: abb20ff4a3ab66a3
     lang: sh
     lines: 346a8b56 041d8c89 ab5cb401
-    preview: kubectl run curl-auth -n ${NAMESPACE} --image=curlimages/curl \
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-egress" >}}
        kubectl -n ${NAMESPACE} wait pod/curl-unauth pod/curl-auth --for=condition=Ready --timeout=180s
        {{< /doc-test >}}
 - after:
-    section: Restrict which agents can call the API
+    section: h:b93c3d9b142eddd3
     line: 089ddf4d6913ee03
     occurrence: 0
     words: ef2d127d a12dd3a7 8e7fc023 b9776d7d bbb75229 15d9aff9 b9776d7d 823412d1 a7e2d26e 86474ae6 ca978112 1f58b914 75857a45 b9776d7d e9d83f01 425c89ed b9776d7d bbb75229 153b2a38 ca978112 d26eae87 6db7d803 b9776d7d 1f58b914 b080c643 7d3194f7
@@ -209,7 +194,6 @@ hidden:
       fingerprint: abb20ff4a3ab66a3
       lang: sh
       lines: 346a8b56 041d8c89 ab5cb401
-      preview: kubectl run curl-auth -n ${NAMESPACE} --image=curlimages/curl \
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-egress" >}}
@@ -223,7 +207,7 @@ hidden:
        [ "$code" = "403" ] || { echo "expected 403 from the egress waypoint for curl-unauth, got ${code}"; exit 1; }
        {{< /doc-test >}}
 - after:
-    section: Restrict which agents can call the API
+    section: h:b93c3d9b142eddd3
     line: abad193db1b556f3
     occurrence: 0
     words: e7f6c011 3f267c2a 8e7fc023 b9776d7d 04dd9c7e 425c89ed 9f584196 ed4561f6 7d3194f7 b9776d7d 1f58b914 47e8d6fa 9390298f 14c2529e 2c70e12b a1d98908 7d3194f7 153b2a38 ca978112 dcaadad1 1eb79602 dcaadad1 10882c27 75857a45 7d3194f7 a1d98908 2ad8a704 a71dd3a9 8e7fc023 b9776d7d bbb75229 eabc01f1 b9776d7d 1f58b914
@@ -232,7 +216,6 @@ hidden:
       fingerprint: d36d0812b233b85e
       lang: sh
       lines: 3900686d e603c7b6 fc68f389 cc34797f
-      preview: kubectl exec -n ${NAMESPACE} curl-unauth -- \
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-egress" >}}

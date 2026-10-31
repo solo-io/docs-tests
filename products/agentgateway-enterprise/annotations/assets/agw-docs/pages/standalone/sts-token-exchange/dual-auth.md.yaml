@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/standalone/sts-token-exchange/dual-auth.md
+previews: false
 blocks:
 - 8da6e4c36674e667 mermaid
 - 1a997213d65922b1 yaml
@@ -19,7 +20,6 @@ tags:
   fingerprint: 03c120f654875717
   lang: sh
   lines: fbbd9aff 67c5a3ac 4347ff3f 12e9e4ba
-  preview: curl -s -i -X POST http://localhost:3000/mcp \
   form:
     attr: paths="sts-dual-auth"
     only: true
@@ -29,7 +29,6 @@ tags:
   fingerprint: 0466edb25f20cac8
   lang: sh
   lines: 0466edb2
-  preview: curl -s http://localhost:3000/.well-known/oauth-protected-resource/mcp
   form:
     attr: paths="sts-dual-auth"
     only: true
@@ -39,7 +38,6 @@ tags:
   fingerprint: 81fff1cecda8b58a
   lang: sh
   lines: 81fff1ce
-  preview: curl -s -X POST "http://127.0.0.1:15000/logging?level=debug"
   form:
     attr: paths="sts-dual-auth"
     only: true
@@ -49,14 +47,13 @@ tags:
   fingerprint: 1838431258068cdb
   lang: sh
   lines: 40c361b7 c225f7f4 67c5a3ac 4347ff3f f852aefa b60b34cf
-  preview: curl -s -X POST http://localhost:3000/mcp \
   form:
     attr: paths="sts-dual-auth"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: 'Step 2: Exchange the token for the backend'
+    section: h:fd0093ca8e5cc037
     line: aa90db8f7d63e739
     occurrence: 0
     words: 6ee0eb49 79bab860 d1ffaf02 7383711c ca978112 e910c860 b8bc0e4f 41cf6794 ff777205 3316348d b9776d7d e3e4aec3 3c469e9d cdc29937 ca978112 e910c860 41cf6794 d2a1edd6 b9776d7d 823412d1 762069bc 28391d3b b9776d7d b3cc0475 10182ab8 470ebe82 6f851dc6 a1d98908 b9776d7d 1241936d 25bc5635 9390298f 3c469e9d 76678e40 b9776d7d dfff30d1
@@ -65,7 +62,6 @@ hidden:
       fingerprint: 522c7d214e2222aa
       lang: yaml
       lines: a7f80a73 82726b6f 4b0e6312 828b98a8 c8f3f59a c873f373 3dcd08b8 9912ea23 b0299c0e 44ec9b74 f59d72d5 92db8240 3897a652 4aa31c6b 3035507a 778f11a8 82726b6f 0125d19b 0f05ad81 c8f3f59a 81b74571 0b661b52 b5065d4f bb58e0a2 896a06b7 e5da65ee 21cb419c de796895
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="sts-dual-auth" >}}
     # ============================================================================
@@ -215,7 +211,6 @@ hidden:
     fingerprint: 03c120f654875717
     lang: sh
     lines: fbbd9aff 67c5a3ac 4347ff3f 12e9e4ba
-    preview: curl -s -i -X POST http://localhost:3000/mcp \
   content: |2-
        {{< doc-test paths="sts-dual-auth" >}}
        INIT='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"curl","version":"1"}}}'
@@ -230,14 +225,12 @@ hidden:
     fingerprint: 0466edb25f20cac8
     lang: sh
     lines: 0466edb2
-    preview: curl -s http://localhost:3000/.well-known/oauth-protected-resource/mcp
   content: "   {{< doc-test paths=\"sts-dual-auth\" >}}\n   curl -fsS http://localhost:3000/.well-known/oauth-protected-resource/mcp \\\n     | jq -e --arg kc \"$KEYCLOAK_ISSUER\" '.resource == \"https://gateway.example.com/mcp\" and .authorization_servers == [$kc]' >/dev/null \\\n     || { echo \"protected resource metadata does not match the config\"; exit 1; }\n   # Step 3: the page's command with a token from the Keycloak stand-in.\n   export USER_TOKEN=$(get_user_token)\n   MCP_SESSION_ID=$(curl -s -D - -o /dev/null -X POST http://localhost:3000/mcp \\\n     -H \"Authorization: Bearer ${USER_TOKEN}\" \\\n     -H \"Content-Type: application/json\" -H \"Accept: application/json, text/event-stream\" -d \"$INIT\" \\\n     | grep -i '^mcp-session-id:' | awk '{print $2}' | tr -d '\\r')\n   test -n \"$MCP_SESSION_ID\" || { echo \"initialize with a token returned no mcp-session-id\"; exit 1; }\n   export MCP_SESSION_ID\n   curl -fsS -o /dev/null -X POST http://localhost:3000/mcp \\\n     -H \"Authorization: Bearer ${USER_TOKEN}\" -H \"Content-Type: application/json\" \\\n     -H \"Accept: application/json, text/event-stream\" -H \"Mcp-Session-Id: ${MCP_SESSION_ID}\" \\\n     -d '{\"jsonrpc\":\"2.0\",\"method\":\"notifications/initialized\"}' \n   {{< /doc-test >}}"
 - after:
     block: 10
     fingerprint: 1838431258068cdb
     lang: sh
     lines: 40c361b7 c225f7f4 67c5a3ac 4347ff3f f852aefa b60b34cf
-    preview: curl -s -X POST http://localhost:3000/mcp \
   content: |2-
        {{< doc-test paths="sts-dual-auth" >}}
        TOOLS=$(curl -fsS -X POST http://localhost:3000/mcp \

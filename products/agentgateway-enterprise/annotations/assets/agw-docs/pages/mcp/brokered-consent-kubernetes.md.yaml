@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/mcp/brokered-consent-kubernetes.md
+previews: false
 blocks:
 - f37130523764dc04 json
 - 077b589ca135fadd sh
@@ -19,7 +20,6 @@ tags:
   fingerprint: 077b589ca135fadd
   lang: sh
   lines: 2d065637 fde80217 736e1ed1 c425caf8 05ecc375
-  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   form:
     attr: paths="mcp-elicitation-brokered-consent"
     only: true
@@ -29,7 +29,6 @@ tags:
   fingerprint: ee6d588c8df2adef
   lang: yaml
   lines: 16c71da1 263e4531 f84e6062 8c8c4228 817abb92 8af957d1 36184fa5 82726b6f 3035507a cbd1477e 2efcbf93 75ddef3b ea727880 c6ba4159 c8f3f59a e8eb2c7f 82726b6f 85380355 d3cb008e 878ce673 837dc1fd fd691cf6 44ec9b74 70c97555 56331f31 22aec9ce f84e6062 62859254 4742b74a 92db8240 2882c123 29a656a6 2a5410bc bbbf6da4 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-elicitation-brokered-consent"
     only: true
@@ -39,7 +38,6 @@ tags:
   fingerprint: c5492973ddab80d1
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 abea0aff 8af957d1 36184fa5 588a5d84 e9a46ca1 f84e6062 817abb92 bb85cefe 7602c0a5 6f403570 4e266323 33d39895 ebeee92c 933673cc 61d9749c 369e8c71 9dcb65e5 a392ccda ed95cd9e 112b9466 6f0f0607 b4c2277e 79677ded 5614227e e8b1cb2e abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-elicitation-brokered-consent"
     only: true
@@ -49,7 +47,6 @@ tags:
   fingerprint: 93199ce3845897bd
   lang: sh
   lines: f3b5c1bd 8d8cc6d5
-  preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get enterpriseagentgat
   form:
     attr: paths="mcp-elicitation-brokered-consent"
     only: true
@@ -59,7 +56,6 @@ tags:
   fingerprint: 29ae1485ea20f4f0
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 817abb92 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd bee1b144 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 497096a9 aeca2b3d bf068a96 9bba30a0 aeca2b3d bf068a96 d41a32e0 94ae491e e9a46ca1 f84e6062 817abb92 368b1051 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-elicitation-brokered-consent"
     only: true
@@ -69,7 +65,6 @@ tags:
   fingerprint: 6769b819f5cde9bc
   lang: sh
   lines: 6769b819
-  preview: echo "${GATEWAY_URL}/mcp/atlassian"
   form:
     attr: paths="mcp-elicitation-brokered-consent"
     only: true
@@ -79,7 +74,6 @@ tags:
   fingerprint: 0eb5d445c5995452
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 957ce381 8af957d1 36184fa5 588a5d84 e9a46ca1 f84e6062 e5400058 bb85cefe 7602c0a5 6f403570 24435562 33d39895 ebeee92c 5118829e 61d9749c 4112252c d8541eca 4b6ae4b4 112b9466 526018c5 79677ded 5614227e e8b1cb2e abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-elicitation-brokered-consent"
     only: true
@@ -90,7 +84,6 @@ hidden:
     fingerprint: f37130523764dc04
     lang: json
     lines: cf9a680a afa07114 b45da64b 230de817 b45a926b f1363d5f d10b36aa
-    preview: '"consent": {'
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
        # ============================================================================
@@ -140,7 +133,6 @@ hidden:
     fingerprint: 29ae1485ea20f4f0
     lang: yaml
     lines: 16c71da1 8c67597e 56bf9360 8c8c4228 817abb92 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd bee1b144 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 497096a9 aeca2b3d bf068a96 9bba30a0 aeca2b3d bf068a96 d41a32e0 94ae491e e9a46ca1 f84e6062 817abb92 368b1051 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
        YAMLTest -f - <<'EOF'
@@ -213,7 +205,6 @@ hidden:
     fingerprint: 0eb5d445c5995452
     lang: yaml
     lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 957ce381 8af957d1 36184fa5 588a5d84 e9a46ca1 f84e6062 e5400058 bb85cefe 7602c0a5 6f403570 24435562 33d39895 ebeee92c 5118829e 61d9749c 4112252c d8541eca 4b6ae4b4 112b9466 526018c5 79677ded 5614227e e8b1cb2e abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="mcp-elicitation-brokered-consent" >}}
     kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} get enterpriseagentgatewaypolicy mcp-opt-out-consent \

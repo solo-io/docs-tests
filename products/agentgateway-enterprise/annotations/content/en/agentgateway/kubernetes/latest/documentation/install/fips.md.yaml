@@ -1,5 +1,6 @@
 format: 1
 source: content/en/agentgateway/kubernetes/latest/documentation/install/fips.md
+previews: false
 blocks:
 - 628017b522cb98c2 yaml
 - 408b1d2ffb0caf46 sh
@@ -19,7 +20,6 @@ tags:
   fingerprint: 408b1d2ffb0caf46
   lang: sh
   lines: 2d065637 736e1ed1 fde80217 0e1a9b32
-  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   form:
     attr: paths="enterprise-fips"
     only: true
@@ -29,7 +29,6 @@ tags:
   fingerprint: 2053cd10e53e8059
   lang: sh
   lines: 2053cd10
-  preview: kubectl get deploy -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath
   form:
     attr: paths="enterprise-fips"
     only: true
@@ -39,7 +38,6 @@ tags:
   fingerprint: c9effde9628ba6ee
   lang: sh
   lines: c9effde9
-  preview: kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/agentgatew
   form:
     attr: paths="enterprise-fips"
     only: true
@@ -49,7 +47,6 @@ tags:
   fingerprint: 743137bf3cac52bb
   lang: sh
   lines: 743137bf
-  preview: 'kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/{{< reuse '
   form:
     attr: paths="enterprise-fips"
     only: true
@@ -59,7 +56,6 @@ tags:
   fingerprint: 1464986e6182b9f7
   lang: sh
   lines: ec64944c 736e1ed1 96064311 2259ff40
-  preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
   form:
     attr: paths="enterprise-fips"
     only: true
@@ -69,7 +65,6 @@ tags:
   fingerprint: 4b1a8d6bfb6615a0
   lang: sh
   lines: 741c7850 1839e778
-  preview: kubectl get deploy {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{<
   form:
     attr: paths="enterprise-fips"
     only: true
@@ -80,7 +75,6 @@ hidden:
     fingerprint: 628017b522cb98c2
     lang: yaml
     lines: a08a3033 494996ee
-    preview: 'image:'
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-fips" >}}
@@ -122,7 +116,6 @@ hidden:
     fingerprint: 408b1d2ffb0caf46
     lang: sh
     lines: 2d065637 736e1ed1 fde80217 0e1a9b32
-    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-fips" >}}
@@ -151,7 +144,6 @@ hidden:
     fingerprint: 2053cd10e53e8059
     lang: sh
     lines: 2053cd10
-    preview: kubectl get deploy -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-fips" >}}
@@ -165,7 +157,6 @@ hidden:
     fingerprint: c9effde9628ba6ee
     lang: sh
     lines: c9effde9
-    preview: kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/agentgatew
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-fips" >}}
@@ -178,7 +169,6 @@ hidden:
     fingerprint: 743137bf3cac52bb
     lang: sh
     lines: 743137bf
-    preview: 'kubectl logs -n {{< reuse "agw-docs/snippets/namespace.md" >}} deploy/{{< reuse '
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-fips" >}}
@@ -191,7 +181,6 @@ hidden:
     fingerprint: 1464986e6182b9f7
     lang: sh
     lines: ec64944c 736e1ed1 96064311 2259ff40
-    preview: helm upgrade -i -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw
   blank_before: []
   content: |-
     {{< doc-test paths="enterprise-fips" >}}
@@ -204,7 +193,6 @@ hidden:
     fingerprint: 4b1a8d6bfb6615a0
     lang: sh
     lines: 741c7850 1839e778
-    preview: kubectl get deploy {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} -n {{<
   blank_before: []
   content: |-
     {{< doc-test paths="enterprise-fips" >}}

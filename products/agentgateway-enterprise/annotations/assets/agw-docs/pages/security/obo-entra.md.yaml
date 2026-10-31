@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/security/obo-entra.md
+previews: false
 blocks:
 - 5ba3bf57f210aebe mermaid
 - 19ca53c4c4ddc738 bash
@@ -35,7 +36,6 @@ tags:
   fingerprint: 19ca53c4c4ddc738
   lang: bash
   lines: aa3faafa 2cf26013 57e3a0d5
-  preview: echo $ENTRA_TENANT_ID
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -45,7 +45,6 @@ tags:
   fingerprint: 1d31a712eaccf8a3
   lang: bash
   lines: db575fc8 d462dca9 48889d58
-  preview: kubectl create secret generic entra-obo-client-secret \
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -55,7 +54,6 @@ tags:
   fingerprint: fc9d195d49419198
   lang: bash
   lines: fc9d195d
-  preview: helm get values {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< r
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -65,7 +63,6 @@ tags:
   fingerprint: bb80f94e1cbbe7b5
   lang: bash
   lines: fa055559 b2b13b5a 2a24ff0e 736e1ed1 0e1a9b32
-  preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -75,7 +72,6 @@ tags:
   fingerprint: 223db7a1f015fcb5
   lang: bash
   lines: 79888a7d 1d0fd62c
-  preview: 'kubectl get deploy -n {{< reuse "/agw-docs/snippets/namespace.md" >}} {{< reuse '
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -85,7 +81,6 @@ tags:
   fingerprint: cf2d6c57940f1f4d
   lang: yaml
   lines: 16c71da1 00c69c65 98f7f300 8c8c4228 161accc0 bb604ffa 36184fa5 8db70061 dae7531a 68126794 2e0cd96b e9f51d30 da3b967e dad9e804 5d28848c 2180b199 da3b967e 77493040 274fdf3f bad55260 37211890 83b9aa9c abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -95,7 +90,6 @@ tags:
   fingerprint: f4462f2cdd1ef38b
   lang: yaml
   lines: 16c71da1 263e4531 f84e6062 8c8c4228 de02dd5c bb604ffa 36184fa5 2efcbf93 ab1a39d7 c6ba4159 c8f3f59a e8eb2c7f abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -105,7 +99,6 @@ tags:
   fingerprint: 60a002ad13a2a25f
   lang: sh
   lines: 1442bb70 a6155c85 e7dd315a 12ef049f 6255055e 18384281 a49a99e4 b6d267ef fc1e288b ff3e4d4d 84cdb92b 35078920 de2abade 8b76fbd0 cb233d53 8ef232ad 6d015674 474e674a f7df34a5 c3bae37f 19ac3cd7 02ac97ce d10b36aa f0fdf56e 72f85eda 855ca9cc 359266b0 4f639fd9 7eec1561 578b7fdc 8d17a0d1 fe68bdce e52a1813 d10b36aa b05df2f1 e927adff e87d5299 8761c2f5 c63fd09b 54368cb1 b5a49725 7e36f8a4 bbe85768 3cb47738 f0bbda54 6d6e9cf1 e07dd4c4 346360ed 444b1ae7 40388e32 2acb1cd2 d6f34948 2c58b0f2 486086b4 688149d6 9f730a1a dd17f7f8 a56bb90d b352252a 7a3ae189 4828e4a7 301576e7 4f0053f0 444b1ae7 ede5f589 2c58b0f2 837bf2e4 f68aea75 55e180b3 eae9e4f7 acc0a724 9449d805 5b0f49fe 02bcbb44 453b9fb4 101e8e9b d2d9ce03 7187f067 c927a112 2f2bf7e4 e4441a9e c927a112 7187f067 10e7b1e3 8ff5d072 8761c2f5 93a5f08c 05481637 c5af90fd 7187f067 7c1fb5f5 41f17750 d9f21334 81e196cc a3a52af8 350bce74 7187f067 fc223f70 08582d54 3992a645 9d3de8a2 a3a52af8 350bce74 7187f067 c927a112 22ad0da4 989eba02 c144db91 8cf51dd4 63f714e0 350bce74 f0b7a6c2 3412809c 0aed18f3 067017ad 1b35fd68 abc56510
-  preview: cat > server.py <<'EOF'
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -115,7 +108,6 @@ tags:
   fingerprint: b7a76afc6371bbf1
   lang: sh
   lines: b7a76afc
-  preview: kubectl create configmap graph-me-tool --from-file=server.py -n {{< reuse "/agw-
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -125,7 +117,6 @@ tags:
   fingerprint: 59d0bb4cf1d70440
   lang: yaml
   lines: 16c71da1 f1540154 0d6480f0 8c8c4228 312ace76 bb604ffa 36184fa5 8432e015 e00beaae 0ff65a1a 4fc11012 b1d5c800 56c7990c cb3f91d5 58584366 ab78925c 8c8c4228 312ace76 bb604ffa 36184fa5 97bcd5e0 8432e015 839a5cac e00beaae a58565b2 8c8c4228 fa1e8330 e00beaae 36184fa5 04968f51 621ab08c 9540c128 32adc0da 0ff65a1a a46d7c6d 82f2bc7e 69d7f213 9d81d15a c095a45d ce075631 79bb435b fcd8c64a b308fec3 9b9c4d97 c5d7714b b308fec3 889016e3 312ace76 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -135,7 +126,6 @@ tags:
   fingerprint: 0b1ad4dd7bb4f586
   lang: bash
   lines: 0b1ad4dd
-  preview: kubectl get pods -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -l app=graph
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -145,7 +135,6 @@ tags:
   fingerprint: 53581a330c872d09
   lang: yaml
   lines: 16c71da1 00c69c65 450c56e0 8c8c4228 7274b181 bb604ffa 36184fa5 82726b6f 3035507a 1454e1b6 2efcbf93 19bf1758 c095a45d bc24674f 0998f548 cb3f91d5 8c67597e 56bf9360 8c8c4228 7274b181 bb604ffa 36184fa5 d3d416e7 2d157081 3de9d845 b733d726 aeca2b3d 6d88f925 cba5e386 94ae491e c65b9cfb b8ac8874 450c56e0 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -155,7 +144,6 @@ tags:
   fingerprint: 737724612c146876
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 77596d57 bb604ffa 36184fa5 588a5d84 94ae49d1 450c56e0 7274b181 bb85cefe 835aaff5 88303c33 e82d6457 08d19b62 09f5a495 a5dc7b76 e73ad6de 73d78483 9a821178 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -165,14 +153,13 @@ tags:
   fingerprint: d8e5ed71a646a628
   lang: bash
   lines: ef9a5fcf 01a9aac0 43969357 f24c6aa1 c0e76f50 66f4f01f 5aed277b 3362a242 33728a31
-  preview: kubectl delete enterpriseagentgatewaypolicy entra-obo-policy -n {{< reuse "/agw-
   form:
     attr: paths="te-idps-entra"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: 'Step 1: Set up MS Entra ID'
+    section: h:ddeae394a203c2fb
     line: 71c260ac02c2ca01
     occurrence: 0
     words: 6b86b273 87780fa5 ea325d76 a172cedc 58296753 7f3a98bc a5614527 6201111b d05aa2a1 c0cafcf0 663ea1bf fa8847b0 ca978112 948fe603 2bb80d53 edb46562 b9776d7d 8d0288f4 89445ea0
@@ -181,7 +168,6 @@ hidden:
       fingerprint: 5ba3bf57f210aebe
       lang: mermaid
       lines: 536f52ac 78f0367f 131e214d 2318a89e 8add3819 914d073c 2978f2d8 ad4762bd 32b3319d 92e479ef 8b231e1f d2593f88 ac6f6e61 07ad299a e37635ee 675ef301
-      preview: sequenceDiagram
   content: |2-
        {{< doc-test paths="te-idps-entra" >}}
        # ============================================================================
@@ -216,7 +202,6 @@ hidden:
     fingerprint: 19819c523ee39f47
     lang: yaml
     lines: 820e0e8e f55378ad b8ac8874 98f7f300 161accc0 bb604ffa 835aaff5 ff7360cf 7230b136 0c1d87f8 214e7b96 d03df935 312e2a24 d2d5db22 d60fbe86 d03df935 312e2a24 d2d5db22 7c4e882b e730e5c4 750ff088 f3fdc3cc
-    preview: 'gatewayClassParametersRefs:'
   content: |2-
        {{< doc-test paths="te-idps-entra" >}}
        # The block above is a fragment to paste into values.yaml. Append it, with the
@@ -251,7 +236,6 @@ hidden:
     fingerprint: bb80f94e1cbbe7b5
     lang: bash
     lines: fa055559 b2b13b5a 2a24ff0e 736e1ed1 0e1a9b32
-    preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
   content: |2-
        {{< doc-test paths="te-idps-entra" >}}
        kubectl rollout status deployment/{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} --timeout=300s
@@ -261,7 +245,6 @@ hidden:
     fingerprint: 26a27dddc7486e7b
     lang: console
     lines: 4610c79b 02b9691c af1d09fa 8f53813f
-    preview: NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
   content: |2-
        {{< doc-test paths="te-idps-entra" >}}
        kubectl get svc {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.ports[*].port}' | grep -w 7777 >/dev/null \
@@ -272,7 +255,6 @@ hidden:
     fingerprint: cf2d6c57940f1f4d
     lang: yaml
     lines: 16c71da1 00c69c65 98f7f300 8c8c4228 161accc0 bb604ffa 36184fa5 8db70061 dae7531a 68126794 2e0cd96b e9f51d30 da3b967e dad9e804 5d28848c 2180b199 da3b967e 77493040 274fdf3f bad55260 37211890 83b9aa9c abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="te-idps-entra" >}}
     # The Helm values bind the GatewayClass to agentgateway-params, so the existing
@@ -292,7 +274,6 @@ hidden:
     fingerprint: f4462f2cdd1ef38b
     lang: yaml
     lines: 16c71da1 263e4531 f84e6062 8c8c4228 de02dd5c bb604ffa 36184fa5 2efcbf93 ab1a39d7 c6ba4159 c8f3f59a e8eb2c7f abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="te-idps-entra" >}}
     YAMLTest -f - <<'EOF'
@@ -317,7 +298,6 @@ hidden:
     fingerprint: 59d0bb4cf1d70440
     lang: yaml
     lines: 16c71da1 f1540154 0d6480f0 8c8c4228 312ace76 bb604ffa 36184fa5 8432e015 e00beaae 0ff65a1a 4fc11012 b1d5c800 56c7990c cb3f91d5 58584366 ab78925c 8c8c4228 312ace76 bb604ffa 36184fa5 97bcd5e0 8432e015 839a5cac e00beaae a58565b2 8c8c4228 fa1e8330 e00beaae 36184fa5 04968f51 621ab08c 9540c128 32adc0da 0ff65a1a a46d7c6d 82f2bc7e 69d7f213 9d81d15a c095a45d ce075631 79bb435b fcd8c64a b308fec3 9b9c4d97 c5d7714b b308fec3 889016e3 312ace76 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="te-idps-entra" >}}
        kubectl rollout status deployment/graph-me-tool -n {{< reuse "/agw-docs/snippets/namespace.md" >}} --timeout=300s
@@ -327,7 +307,6 @@ hidden:
     fingerprint: 53581a330c872d09
     lang: yaml
     lines: 16c71da1 00c69c65 450c56e0 8c8c4228 7274b181 bb604ffa 36184fa5 82726b6f 3035507a 1454e1b6 2efcbf93 19bf1758 c095a45d bc24674f 0998f548 cb3f91d5 8c67597e 56bf9360 8c8c4228 7274b181 bb604ffa 36184fa5 d3d416e7 2d157081 3de9d845 b733d726 aeca2b3d 6d88f925 cba5e386 94ae491e c65b9cfb b8ac8874 450c56e0 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="te-idps-entra" >}}
        YAMLTest -f - <<'EOF'
@@ -389,7 +368,6 @@ hidden:
     fingerprint: 737724612c146876
     lang: yaml
     lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 77596d57 bb604ffa 36184fa5 588a5d84 94ae49d1 450c56e0 7274b181 bb85cefe 835aaff5 88303c33 e82d6457 08d19b62 09f5a495 a5dc7b76 e73ad6de 73d78483 9a821178 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="te-idps-entra" >}}
     YAMLTest -f - <<'EOF'

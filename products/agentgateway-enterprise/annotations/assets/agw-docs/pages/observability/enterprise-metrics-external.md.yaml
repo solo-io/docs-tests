@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/observability/enterprise-metrics-external.md
+previews: false
 blocks:
 - 6069bbd51f9db0fa yaml
 - 67492b4197446009 sh
@@ -18,7 +19,6 @@ tags:
   fingerprint: 67492b4197446009
   lang: sh
   lines: 67492b41
-  preview: kubectl get prometheus -A -o jsonpath='{.items[*].spec.serviceMonitorSelector}'
   form:
     attr: paths="enterprise-metrics-external"
     only: true
@@ -28,7 +28,6 @@ tags:
   fingerprint: 4d4d0aa7b92b47b3
   lang: sh
   lines: 2d065637 96064311 736e1ed1 b07f1c94 d9baa781 878ad6e0 3ba69cac
-  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   form:
     attr: paths="enterprise-metrics-external"
     only: true
@@ -38,7 +37,6 @@ tags:
   fingerprint: edd720f88a727deb
   lang: sh
   lines: edd720f8
-  preview: kubectl get servicemonitor,podmonitor -n {{< reuse "agw-docs/snippets/namespace.
   form:
     attr: paths="enterprise-metrics-external"
     only: true
@@ -48,7 +46,6 @@ tags:
   fingerprint: a8bd531dad182fba
   lang: sh
   lines: a8bd531d
-  preview: kubectl get configmap enterprise-agentgateway-dashboard -n {{< reuse "agw-docs/s
   form:
     attr: paths="enterprise-metrics-external"
     only: true
@@ -118,7 +115,6 @@ hidden:
     fingerprint: 4d4d0aa7b92b47b3
     lang: sh
     lines: 2d065637 96064311 736e1ed1 b07f1c94 d9baa781 878ad6e0 3ba69cac
-    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   content: |2-
        {{< doc-test paths="enterprise-metrics-external" >}}
        kubectl rollout status deployment/enterprise-agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
@@ -128,7 +124,6 @@ hidden:
     fingerprint: edd720f88a727deb
     lang: sh
     lines: edd720f8
-    preview: kubectl get servicemonitor,podmonitor -n {{< reuse "agw-docs/snippets/namespace.
   content: |2-
        {{< doc-test paths="enterprise-metrics-external" >}}
        kubectl get servicemonitor enterprise-agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}}
@@ -139,7 +134,6 @@ hidden:
     fingerprint: a8bd531dad182fba
     lang: sh
     lines: a8bd531d
-    preview: kubectl get configmap enterprise-agentgateway-dashboard -n {{< reuse "agw-docs/s
   content: |2-
        {{< doc-test paths="enterprise-metrics-external" >}}
        test "$(kubectl get configmap enterprise-agentgateway-dashboard -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.metadata.labels.grafana_dashboard}')" = "1"

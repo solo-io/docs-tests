@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/standalone/license.md
+previews: false
 blocks:
 - b59805ebfa275b65 yaml
 - b7ccfc94fa5b2356 yaml
@@ -26,7 +27,6 @@ tags:
   fingerprint: 0ff6d96fadee3ad4
   lang: sh
   lines: 0ff6d96f
-  preview: curl -s localhost:15000/api/runtime | jq .license
   form:
     attr: paths="license"
     only: true
@@ -52,7 +52,7 @@ hidden:
     {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
     {{< /doc-test >}}
 - after:
-    section: Verify the license
+    section: h:e18f704afde5f23f
     line: 827caeaa10c43679
     occurrence: 0
     words: 663ea1bf 3f267c2a 77bc06c5 2c70e12b ca978112 c071cf5f 1241936d e4c05c56 2cab953f 3316348d 14c2529e d92c6a81 d1ffaf02 7383711c b9776d7d b7d64a92 3b9c358f ca978112 1241936d 8e7fc023 b63b99f6 03494afd 0695b563 b9776d7d ba528516 3b325109 6ee0eb49 7f26104f 8e7fc023 2c70e12b ec38063c 935f6831 b9776d7d b7d64a92 3b9c358f 9150c74c ca978112 9d6f965a cd42404d
@@ -61,7 +61,6 @@ hidden:
       fingerprint: 04476df074fc2be9
       lang: sh
       lines: d161b8e5 75e40a19 3a26b6d2 2a24ff0e 736e1ed1 ec7ae09e 96064311 0e1a9b32
-      preview: helm upgrade -i {{< reuse "agw-docs/standalone/helm-standalone-release.md" >}} \
   content: |-
     {{< doc-test paths="license" >}}
     # Write the real key (from the CI secret) to the file the File reference tab uses,
@@ -90,7 +89,6 @@ hidden:
     fingerprint: 0ff6d96fadee3ad4
     lang: sh
     lines: 0ff6d96f
-    preview: curl -s localhost:15000/api/runtime | jq .license
   content: |-
     {{< doc-test paths="license" >}}
     curl -sf localhost:15000/api/runtime | python3 -c '

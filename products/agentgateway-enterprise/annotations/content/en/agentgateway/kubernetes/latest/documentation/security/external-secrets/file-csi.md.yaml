@@ -1,5 +1,6 @@
 format: 1
 source: content/en/agentgateway/kubernetes/latest/documentation/security/external-secrets/file-csi.md
+previews: false
 blocks:
 - 4d4135de65e65487 sh
 - d1856c701003d76d bash
@@ -35,7 +36,6 @@ tags:
   fingerprint: d1856c701003d76d
   lang: bash
   lines: 856c18d0 2d95e9b1
-  preview: helm repo add secrets-store-csi-driver https://kubernetes-sigs.github.io/secrets
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -45,7 +45,6 @@ tags:
   fingerprint: d05955580b212b3e
   lang: bash
   lines: 4304691c 7bde47f8 2a24ff0e 0d7afffd
-  preview: helm upgrade -i secrets-store-csi-driver secrets-store-csi-driver/secrets-store-
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -55,7 +54,6 @@ tags:
   fingerprint: 32cfb7aaed2004ac
   lang: bash
   lines: 32cfb7aa
-  preview: kubectl -n csi-secrets-store get pods -l app.kubernetes.io/name=secrets-store-cs
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -65,7 +63,6 @@ tags:
   fingerprint: 13730847cc5ce5a1
   lang: bash
   lines: 8e6277bd 2d95e9b1
-  preview: helm repo add hashicorp https://helm.releases.hashicorp.com
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -75,7 +72,6 @@ tags:
   fingerprint: 99c76599d8131f91
   lang: bash
   lines: 3402a2ce 106bd7c2 2a24ff0e d84f948d d2a9c9f0 18c83646 4f183439 c48449cd
-  preview: helm upgrade -i vault hashicorp/vault \
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -85,7 +81,6 @@ tags:
   fingerprint: 0813539432dd187a
   lang: bash
   lines: 08135394
-  preview: kubectl -n vault get pods
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -95,7 +90,6 @@ tags:
   fingerprint: fe0360d4d5be98cb
   lang: bash
   lines: 05ec9158 87b6d83b 24565331 3ad41746 af2177cb 0220d88f 539a6a06 f062025b ebb55bec 7fa08efc 81d10fbb 0bf7ae94 abc56510
-  preview: kubectl -n vault exec -i vault-0 -- sh <<EOF
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -105,7 +99,6 @@ tags:
   fingerprint: e7e81e10cfcaf639
   lang: yaml
   lines: 16c71da1 d7163b6d 16b7aef4 8c8c4228 9f49d62d bb604ffa 36184fa5 aee57da8 14ceaa99 b0617f9f 7bf1bd5c 410f74f4 1209b1e5 3f3d3cad d31d1306 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -115,7 +108,6 @@ tags:
   fingerprint: f97f7acb5ff01995
   lang: bash
   lines: ad8da71a b2b13b5a 7771d15b 96064311 be093508
-  preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -125,7 +117,6 @@ tags:
   fingerprint: 19697160f7bce09a
   lang: bash
   lines: 7a27825c 40759a4a
-  preview: kubectl -n {{< reuse "/agw-docs/snippets/namespace.md" >}} rollout status deploy
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -135,7 +126,6 @@ tags:
   fingerprint: f34dc544d0baf7ea
   lang: yaml
   lines: 16c71da1 00c69c65 ac226b54 8c8c4228 c18c2380 bb604ffa 36184fa5 a8be0810 26d32c0a 72857cc7 ff72caa3 596557ad 423ad982 d7d3408c abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -145,7 +135,6 @@ tags:
   fingerprint: f44e8488817778a2
   lang: bash
   lines: f44e8488
-  preview: kubectl -n {{< reuse "/agw-docs/snippets/namespace.md" >}} get enterpriseagentga
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -155,7 +144,6 @@ tags:
   fingerprint: 5870a81885ec62d0
   lang: sh
   lines: a9c3d305 4059cfa2 fa6cf653 0529ea41
-  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "/agw-docs/snippets/nam
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -165,7 +153,6 @@ tags:
   fingerprint: f7a0df19454645bf
   lang: bash
   lines: 858f8b8a 0100c022 4b3b16d3 41549bc5 c2346d63 cfae0d42 fc075a9d
-  preview: curl "$OPENAI_URL" -H content-type:application/json -d '{
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -175,7 +162,6 @@ tags:
   fingerprint: dfbf6ffe77ae101c
   lang: bash
   lines: a1df850b fff84218
-  preview: helm uninstall vault -n vault
   form:
     attr: paths="enterprise-file-csi"
     only: true
@@ -186,7 +172,6 @@ hidden:
     fingerprint: 4d4135de65e65487
     lang: sh
     lines: 4d4135de
-    preview: export OPENAI_API_KEY=<your-openai-api-key>
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-file-csi" >}}
@@ -261,7 +246,6 @@ hidden:
     fingerprint: 32cfb7aaed2004ac
     lang: bash
     lines: 32cfb7aa
-    preview: kubectl -n csi-secrets-store get pods -l app.kubernetes.io/name=secrets-store-cs
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-file-csi" >}}
@@ -272,7 +256,6 @@ hidden:
     fingerprint: 0813539432dd187a
     lang: bash
     lines: 08135394
-    preview: kubectl -n vault get pods
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-file-csi" >}}
@@ -284,7 +267,6 @@ hidden:
     fingerprint: 01342f3d720d07e5
     lang: yaml
     lines: 72c30c81 22852d59 db88665c 27604671 43047332 9984b162 adc43cf7 1b2589ea 93273aa3 27604671 6a73b616 eb66f59b 4fb8b4ed ba66678d d8e24c98 c079e389 27604671 93c6091a 4fb8b4ed
-    preview: 'externalSecrets:'
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-file-csi" >}}
@@ -314,7 +296,6 @@ hidden:
     fingerprint: 19697160f7bce09a
     lang: bash
     lines: 7a27825c 40759a4a
-    preview: kubectl -n {{< reuse "/agw-docs/snippets/namespace.md" >}} rollout status deploy
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-file-csi" >}}
@@ -325,7 +306,6 @@ hidden:
     fingerprint: f44e8488817778a2
     lang: bash
     lines: f44e8488
-    preview: kubectl -n {{< reuse "/agw-docs/snippets/namespace.md" >}} get enterpriseagentga
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-file-csi" >}}
@@ -351,7 +331,6 @@ hidden:
     fingerprint: d0bb7372d8db1d5f
     lang: yaml
     lines: 16c71da1 8c67597e 56bf9360 8c8c4228 6666820d bb604ffa 36184fa5 d3d416e7 2d157081 bb604ffa 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 bb604ffa 22aec9ce f84e6062 abc56510
-    preview: kubectl apply -f- <<EOF
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-file-csi" >}}
@@ -435,7 +414,6 @@ hidden:
     fingerprint: f7a0df19454645bf
     lang: bash
     lines: 858f8b8a 0100c022 4b3b16d3 41549bc5 c2346d63 cfae0d42 fc075a9d
-    preview: curl "$OPENAI_URL" -H content-type:application/json -d '{
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-file-csi" >}}
@@ -459,7 +437,6 @@ hidden:
     fingerprint: d46f3f4a1d4e8638
     lang: bash
     lines: 49e793c8 ac187ca5 60d34c18 fa2fb226
-    preview: kubectl -n {{< reuse "/agw-docs/snippets/namespace.md" >}} delete httproute open
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-file-csi" >}}

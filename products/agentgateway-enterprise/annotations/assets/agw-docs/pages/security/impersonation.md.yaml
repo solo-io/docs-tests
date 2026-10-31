@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/security/impersonation.md
+previews: false
 blocks:
 - d09f73af8f30e74e mermaid
 - 263362af69c62293 json
@@ -28,7 +29,6 @@ tags:
   fingerprint: c7f3f171827e5fd9
   lang: yaml
   lines: 16c71da1 00c69c65 98f7f300 8c8c4228 c392654c f497f0e2 36184fa5 8db70061 dae7531a c8230f24 2e0cd96b e9f51d30 cb3f91d5 8c67597e cd44d8cd 8c8c4228 89b06424 f497f0e2 36184fa5 2f2479a1 27a69ac8 3f04fdd7 b8ac8874 98f7f300 c392654c c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="te-impersonation"
     only: true
@@ -38,7 +38,6 @@ tags:
   fingerprint: 4a8fc24a44f204aa
   lang: sh
   lines: c946a6ef 6850d3e9 d7651c06 ab9343d3 daad1eb2
-  preview: export USER_TOKEN=$(curl -d 'client_id=fe-client-1' \
   form:
     attr: paths="te-impersonation"
     only: true
@@ -48,7 +47,6 @@ tags:
   fingerprint: 0d5c72fc59c93959
   lang: sh
   lines: 7ceca36d 256f967c 8670e633 c6c27d6d 5912454d 8a331fdd
-  preview: echo "$USER_TOKEN" | python3 -c "
   form:
     attr: paths="te-impersonation"
     only: true
@@ -58,7 +56,6 @@ tags:
   fingerprint: 75685c42a413a272
   lang: sh
   lines: 1d4892e1 8ef40c4b 256f967c 8670e633 c6c27d6d 5912454d 8a331fdd
-  preview: export NEW_TOKEN=$(echo "$STS_RESPONSE" | jq -r '.access_token')
   form:
     attr: paths="te-impersonation"
     only: true
@@ -68,7 +65,6 @@ tags:
   fingerprint: 545ac8375433109c
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 a1942e35 0ccc8edc 36184fa5 588a5d84 b394f6ea b6e1c19c cb03a015 bb85cefe 835aaff5 88303c33 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="te-impersonation"
     only: true
@@ -78,7 +74,6 @@ tags:
   fingerprint: e15d323d12f1feea
   lang: sh
   lines: e15d323d
-  preview: kubectl logs deploy/enterprise-agentgateway -n agentgateway-system | tail -3
   form:
     attr: paths="te-impersonation"
     only: true
@@ -88,7 +83,6 @@ tags:
   fingerprint: 92fe8c2eac647cae
   lang: sh
   lines: 92fe8c2e
-  preview: kubectl delete enterpriseagentgatewaypolicy impersonation
   form:
     attr: paths="te-impersonation"
     only: true
@@ -99,7 +93,6 @@ hidden:
     fingerprint: c7f3f171827e5fd9
     lang: yaml
     lines: 16c71da1 00c69c65 98f7f300 8c8c4228 c392654c f497f0e2 36184fa5 8db70061 dae7531a c8230f24 2e0cd96b e9f51d30 cb3f91d5 8c67597e cd44d8cd 8c8c4228 89b06424 f497f0e2 36184fa5 2f2479a1 27a69ac8 3f04fdd7 b8ac8874 98f7f300 c392654c c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="te-impersonation" >}}
     # ============================================================================
@@ -153,7 +146,6 @@ hidden:
     fingerprint: fecd70fbd82c9d05
     lang: sh
     lines: 1a06130f e98aebec 1f456632 c225f7f4 6d3424ff fc31e6dd 8cba5e5d 5ca0b669
-    preview: export STS_RESPONSE=$(curl -s -X POST "${STS_URL}/token" \
   content: |2-
        {{< doc-test paths="te-impersonation" >}}
        # The port-forward and localhost call above are not allowed in CI. Send the
@@ -182,7 +174,6 @@ hidden:
     fingerprint: 7de300ee32b02560
     lang: console
     lines: 021fb596 f3e219ec 6faff14c db7c3e40 3ea88a2f 3861b51c acda6d92 d10b36aa
-    preview: '{'
   content: |2-
        {{< doc-test paths="te-impersonation" >}}
        jwt_claims() { python3 -c 'import sys,json,base64; p=sys.argv[1].split(".")[1]; p+="="*(-len(p)%4); print(json.dumps(json.loads(base64.urlsafe_b64decode(p))))' "$1"; }
@@ -196,7 +187,6 @@ hidden:
     fingerprint: 545ac8375433109c
     lang: yaml
     lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 a1942e35 0ccc8edc 36184fa5 588a5d84 b394f6ea b6e1c19c cb03a015 bb85cefe 835aaff5 88303c33 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="te-impersonation" >}}
        YAMLTest -f - <<'EOF'
@@ -221,7 +211,6 @@ hidden:
     fingerprint: a917ad11b08066e9
     lang: console
     lines: 4a6ef22b 127e737f ab5df625 dabd3aff bed133f0 9a62b093
-    preview: < HTTP/1.1 500 Internal Server Error
   content: |2-
        {{< doc-test paths="te-impersonation" >}}
        # Same request through the gateway's LoadBalancer instead of localhost:8080.
@@ -239,7 +228,6 @@ hidden:
     fingerprint: 50e25101e043d386
     lang: ''
     lines: 6364ab47 92413e97 ab5df625 7fa0d0ad
-    preview: < HTTP/1.1 200 OK
   content: |2-
        {{< doc-test paths="te-impersonation" >}}
        # Same request through the gateway's LoadBalancer instead of localhost:8080.

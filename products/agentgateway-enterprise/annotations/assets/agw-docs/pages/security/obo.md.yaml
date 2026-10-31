@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/security/obo.md
+previews: false
 blocks:
 - 9928ef33074554cf mermaid
 - 79009a18f7d450df sh
@@ -35,7 +36,6 @@ tags:
   fingerprint: fc9d195d49419198
   lang: bash
   lines: fc9d195d
-  preview: helm get values {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< r
   form:
     attr: paths="te-delegation"
     only: true
@@ -45,7 +45,6 @@ tags:
   fingerprint: a96dd6c9496e942c
   lang: bash
   lines: ad8da71a b2b13b5a 2a24ff0e 7771d15b 0e1a9b32
-  preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
   form:
     attr: paths="te-delegation"
     only: true
@@ -55,7 +54,6 @@ tags:
   fingerprint: 223db7a1f015fcb5
   lang: bash
   lines: 79888a7d 1d0fd62c
-  preview: 'kubectl get deploy -n {{< reuse "/agw-docs/snippets/namespace.md" >}} {{< reuse '
   form:
     attr: paths="te-delegation"
     only: true
@@ -65,7 +63,6 @@ tags:
   fingerprint: c39d09bb115ebb39
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 b68b921b 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a9110e4f d3cb008e a1343bf6 ab6b78ec 44ec9b74 30ea0224 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="te-delegation"
     only: true
@@ -76,7 +73,6 @@ hidden:
     fingerprint: fc9d195d49419198
     lang: bash
     lines: fc9d195d
-    preview: helm get values {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< r
   content: |2-
        {{< doc-test paths="te-delegation" >}}
        # ============================================================================
@@ -109,7 +105,6 @@ hidden:
     fingerprint: 9b27fd32148befd5
     lang: yaml
     lines: 835aaff5 ff7360cf 7230b136 0c1d87f8 214e7b96 d03df935 312e2a24 dc7eaa0a 7c4e882b e730e5c4 d60fbe86 e730e5c4
-    preview: 'tokenExchange:'
   content: |2-
        {{< doc-test paths="te-delegation" >}}
        # The block above is a fragment to paste into values.yaml. Append it.
@@ -133,7 +128,6 @@ hidden:
     fingerprint: a96dd6c9496e942c
     lang: bash
     lines: ad8da71a b2b13b5a 2a24ff0e 7771d15b 0e1a9b32
-    preview: helm upgrade -i {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} oci://{{
   content: |2-
        {{< doc-test paths="te-delegation" >}}
        kubectl rollout status deployment/{{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} --timeout=300s
@@ -143,7 +137,6 @@ hidden:
     fingerprint: 719fc0a94382d42e
     lang: console
     lines: 89112877 c95847bc af1d09fa ce6976d2
-    preview: NAME                                                       READY   STATUS    RES
   content: |2-
        {{< doc-test paths="te-delegation" >}}
        kubectl get svc {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o json | jq -e '[.spec.ports[].port] | index(7777) != null' >/dev/null \
@@ -154,7 +147,6 @@ hidden:
     fingerprint: c39d09bb115ebb39
     lang: yaml
     lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 b68b921b 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a9110e4f d3cb008e a1343bf6 ab6b78ec 44ec9b74 30ea0224 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="te-delegation" >}}
        YAMLTest -f - <<'EOF'

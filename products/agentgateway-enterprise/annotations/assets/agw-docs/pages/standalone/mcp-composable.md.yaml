@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/standalone/mcp-composable.md
+previews: false
 blocks:
 - c91d0ac093d7fde2 yaml
 - dbb29a00057c2f1e yaml
@@ -20,7 +21,6 @@ tags:
   fingerprint: 288c4af02a951261
   lang: sh
   lines: 288c4af0
-  preview: agentgateway --validate-only -f config.yaml
   form:
     attr: paths="composable"
     only: true
@@ -30,7 +30,6 @@ tags:
   fingerprint: c8f5d513e8aa906e
   lang: sh
   lines: 591d254a 67c5a3ac 4347ff3f b0cead6d 362c024a d5a92ca7 9ed087af dc0575f0 8839ee90 84919319 322f9aac d10b36aa fc075a9d
-  preview: curl -sD - http://localhost:3000/mcp \
   form:
     attr: paths="composable"
     only: true
@@ -40,7 +39,6 @@ tags:
   fingerprint: d33eafc9d23c6734
   lang: sh
   lines: 2b185ce9 67c5a3ac 4347ff3f 5b5ecebc 3f897f1f
-  preview: curl -s http://localhost:3000/mcp \
   form:
     attr: paths="composable"
     only: true
@@ -50,7 +48,6 @@ tags:
   fingerprint: fd018ab0fb3dfe15
   lang: sh
   lines: 2b185ce9 67c5a3ac 4347ff3f 5b5ecebc b0cead6d 362c024a b81000bd 78c8c519 dc0575f0 f57e7a20 571f278b d10b36aa fc075a9d
-  preview: curl -s http://localhost:3000/mcp \
   form:
     attr: paths="composable"
     only: true
@@ -103,7 +100,7 @@ hidden:
       || { echo "GitHub stand-in did not start"; exit 1; }
     {{< /doc-test >}}
 - after:
-    section: 'Step 3: Start agentgateway'
+    section: h:0c879f766a102c7c
     line: a44ecebcd4826592
     occurrence: 0
     words: 3e64cc41 4e074085 cced28c6 56e57ada cced28c6
@@ -112,7 +109,6 @@ hidden:
       fingerprint: dbb29a00057c2f1e
       lang: yaml
       lines: a7f80a73 82726b6f 3035507a f93266b7 b6fb1fd3 7da63f38 f73ee7f5 85a3959b 61177ff2 97bebbb9 8afbd5a3 d0d6d503 fa248ef0 c1a4d738 56501c6b c7baa465 1abb110d 6670606d a57a3f8f 6a6768ed 38dc0152 3b194d85 858cb653 03775600 1b15fb3d c7baa465 7c282413 6670606d a57a3f8f f8f3f2ae 38dc0152 3b194d85 858cb653 03775600 1b15fb3d 7dbc49c1 44677d18 255a2038 738f8531
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="composable" >}}
     # "Combine both sections into one configuration file" (Steps 1 and 2 as written).
@@ -168,7 +164,6 @@ hidden:
     fingerprint: 288c4af02a951261
     lang: sh
     lines: 288c4af0
-    preview: agentgateway --validate-only -f config.yaml
   content: |-
     {{< doc-test paths="composable" >}}
     # Point the backend at the local stand-in (plaintext) for the run.
@@ -196,7 +191,6 @@ hidden:
     fingerprint: 4e20351861884ccf
     lang: sh
     lines: 4e203518
-    preview: export SESSION_ID=<mcp-session-id>
   content: |-
     {{< doc-test paths="composable" >}}
     export SESSION_ID=$(curl -sD - -o /dev/null http://localhost:3000/mcp \
@@ -211,7 +205,6 @@ hidden:
     fingerprint: d33eafc9d23c6734
     lang: sh
     lines: 2b185ce9 67c5a3ac 4347ff3f 5b5ecebc 3f897f1f
-    preview: curl -s http://localhost:3000/mcp \
   content: |-
     {{< doc-test paths="composable" >}}
     curl -s http://localhost:3000/mcp \
@@ -225,7 +218,6 @@ hidden:
     fingerprint: fd018ab0fb3dfe15
     lang: sh
     lines: 2b185ce9 67c5a3ac 4347ff3f 5b5ecebc b0cead6d 362c024a b81000bd 78c8c519 dc0575f0 f57e7a20 571f278b d10b36aa fc075a9d
-    preview: curl -s http://localhost:3000/mcp \
   content: |-
     {{< doc-test paths="composable" >}}
     out=$(curl -s http://localhost:3000/mcp \

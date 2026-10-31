@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/standalone/sts-token-exchange/elicitations/setup.md
+previews: false
 blocks:
 - ef6892a73c513eb7 sh
 - ae0712f40daace65 sh
@@ -14,7 +15,7 @@ blocks:
 - 425d04ba9847426c sh
 - 4aef058b3dac9351 console
 - 953b7069cb5c7fd5 sh
-- e46c857eec5d3e10
+- e46c857eec5d3e10 console
 - e0cbc66f3840b0d0 sh
 - 83cc8b799693c31e
 - f8015802a1e97814 sh
@@ -28,7 +29,6 @@ tags:
   fingerprint: ef6892a73c513eb7
   lang: sh
   lines: 2ade129a 62892a1d
-  preview: mkdir -p "$HOME/agentgateway-brokered-elicitation"
   form:
     attr: paths="mcp-elicitation-brokered-setup"
     only: true
@@ -38,7 +38,6 @@ tags:
   fingerprint: ae0712f40daace65
   lang: sh
   lines: 0b871ecf 021fb596 fe324177 afa07114 469bd28a 4002a67b 021fb596 3012c0e0 a5bd813a fe4ada09 59693229 3f42e715 41d04d50 7ed3c152 39d4b54e a61b93ea 021fb596 f34b9f6a d15de3c7 aab74b88 6685a21a 4fe4e563 7d170475 a39bb952 d10b36aa d10b36aa cfae0d42 d10b36aa 39d4b54e 55d0c79c 021fb596 32990666 afa07114 09db9566 07f50448 e50d678d e9532c63 2cb1ea16 021fb596 9c5ab799 ffaab9ac d69e1824 d10b36aa cfae0d42 d10b36aa cfae0d42 d10b36aa abc56510
-  preview: cat > realm.json <<'EOF'
   form:
     attr: paths="mcp-elicitation-brokered-setup"
     only: true
@@ -48,7 +47,6 @@ tags:
   fingerprint: c86c85415e29f8ac
   lang: sh
   lines: edfefa09 461e9c9e 33efe395 8d2fbad8 e988b5bc 2cbf41b0 5ba03e49
-  preview: docker run -d --name agentgateway-downstream-keycloak \
   form:
     attr: paths="mcp-elicitation-brokered-setup"
     only: true
@@ -58,7 +56,6 @@ tags:
   fingerprint: 3bc69a39b4283c3b
   lang: sh
   lines: 7c9cfeec fbb97a21 a4c3ed04 18e2d299
-  preview: until curl -fsS http://localhost:8080/realms/downstream-mcp/.well-known/openid-c
   form:
     attr: paths="mcp-elicitation-brokered-setup"
     only: true
@@ -68,7 +65,6 @@ tags:
   fingerprint: baff1ab9046f22cd
   lang: sh
   lines: 62892a1d 82def27f 943d11d8 0b02fb9c 2b6bc07a d67b54bf a56ac672 4b0e6312 eaaad965 5f783d11 7fa108bb 917a9ec2 c8f3f59a c873f373 60799967 b3abcad4 44ec9b74 03e4c030 92db8240 d1e0dc43 6a855af1 4a4bebf7 d72f261d df374e41 3035507a 233e460f 82726b6f 546787b2 4aee8d36 bc24674f 99dc25b8 4b0e6312 eaaad965 ed937048 d72f261d 17c05a12 7b1fc5bd ff7360cf 9a3ab873 62a0ff5d 64c17556 60799967 312e2a24 03e4c030 f19d2cb2 64c17556 60799967 312e2a24 03e4c030 998560fe 64c17556 60799967 312e2a24 03e4c030 19bcae4b 866a279a 6fdcdb03 e36eea14 b2c7d028 3b16dc47 ebf23a25 43047332 ff590013 e68ca7ba cab2be2b 4c9a2da4 6f403570 42d57a54 018ffb4c a2466ec4 7fd204aa aa11783a 28101486 617fd961 7e36a6e0 93e7008d 72d5b538 837dd2e9 03a368e3 c3f1f27e ba864438 216e5719 f4d98810 82ac5841 abc56510
-  preview: cd "$HOME/agentgateway-brokered-elicitation"
   form:
     attr: paths="mcp-elicitation-brokered-setup"
     only: true
@@ -78,7 +74,6 @@ tags:
   fingerprint: 288c4af02a951261
   lang: sh
   lines: 288c4af0
-  preview: agentgateway --validate-only -f config.yaml
   form:
     attr: paths="mcp-elicitation-brokered-setup"
     only: true
@@ -88,7 +83,6 @@ tags:
   fingerprint: e0cbc66f3840b0d0
   lang: sh
   lines: e0cbc66f
-  preview: curl -i http://localhost:3000/mcp
   form:
     attr: paths="mcp-elicitation-brokered-setup"
     only: true
@@ -98,7 +92,6 @@ tags:
   fingerprint: f8015802a1e97814
   lang: sh
   lines: f8015802
-  preview: curl -s http://localhost:3000/.well-known/oauth-protected-resource/mcp | jq '{re
   form:
     attr: paths="mcp-elicitation-brokered-setup"
     only: true
@@ -108,14 +101,13 @@ tags:
   fingerprint: ba81df982e4a85c5
   lang: sh
   lines: ba81df98
-  preview: curl -s http://localhost:3000/.well-known/oauth-authorization-server/mcp | jq '{
   form:
     attr: paths="mcp-elicitation-brokered-setup"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: 'Step 1: Set up Keycloak'
+    section: h:e7c50abbae13e5df
     line: 3eaff11cba8e1438
     occurrence: 0
     words: 6ee0eb49 75a288c0 d63f4a0c 58296753 d548c5b8 f4bf9f7f ea325d76 50d858e0 0c1eeccc fa8847b0 ca978112 7d4e02d3 0695b563 ca978112 31510842 6e306c51 948fe603 10c22bcf b9776d7d 4ea5ee68 6201111b ca978112 9f86d081 04f8996d b9776d7d 948fe603 e0ba89fd 7dfb4cf6 3c482346 663ea1bf b9776d7d 4ea5ee68 f3959239 42882135
@@ -203,7 +195,6 @@ hidden:
     fingerprint: 59c047b43ff0f413
     lang: sh
     lines: 59c047b4
-    preview: npx -y @modelcontextprotocol/server-everything@{{< reuse "agw-docs/versions/mcp-
   content: |-
     {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
     # Hidden equivalent of the separate terminal: run the MCP server in the background.
@@ -216,7 +207,6 @@ hidden:
     fingerprint: 425d04ba9847426c
     lang: sh
     lines: 425d04ba
-    preview: agentgateway-sts sts --config-file config.yaml --address 127.0.0.1:7777
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
        # Hidden equivalent of the STS terminal, from the working directory.
@@ -233,7 +223,6 @@ hidden:
     fingerprint: 953b7069cb5c7fd5
     lang: sh
     lines: 62892a1d 7c7b21fd f6931a7b
-    preview: cd "$HOME/agentgateway-brokered-elicitation"
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
        # Hidden equivalent of the proxy terminal.
@@ -254,7 +243,6 @@ hidden:
     fingerprint: 1843beef398d3e5f
     lang: json
     lines: 021fb596 436b5498 cc0e23dc 5dcb6a31 77a8a270 d10b36aa
-    preview: '{'
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-setup" >}}
        ISSUER_CLIENT_ID=agw-issuer

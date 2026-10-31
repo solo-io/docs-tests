@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/standalone/sts-token-exchange/impersonation.md
+previews: false
 blocks:
 - 5d03cde3882df446 json
 - 10b97f3c1ba8ec47 json
@@ -19,7 +20,6 @@ tags:
   fingerprint: 10d99a769198dd1d
   lang: sh
   lines: 10d99a76
-  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/
   form:
     attr: paths="sts-impersonation"
     only: true
@@ -29,7 +29,6 @@ tags:
   fingerprint: 976a65c69d102b1b
   lang: sh
   lines: d8e3e8e9 ab37a0a1
-  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/ \
   form:
     attr: paths="sts-impersonation"
     only: true
@@ -39,14 +38,13 @@ tags:
   fingerprint: 81fff1cecda8b58a
   lang: sh
   lines: 81fff1ce
-  preview: curl -s -X POST "http://127.0.0.1:15000/logging?level=debug"
   form:
     attr: paths="sts-impersonation"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: Before you begin
+    section: h:d5bfdd7d989dfc0b
     line: 2fb96247776cc45c
     occurrence: 0
     words: 6ee0eb49 75a288c0 b9776d7d 1e529d2f fa42bed0 a0af9f86 caf9f906 b7d64a92 5d2d3ceb ae08dbb2 2fad9ff8 1e529d2f 8fb6d5f3 6201111b 3f267c2a 8e7fc023 ca978112 d15690f0 3c469e9d ab27b729 df448a78
@@ -55,7 +53,6 @@ hidden:
       fingerprint: 10b97f3c1ba8ec47
       lang: json
       lines: 021fb596 3112e925 295ea2be 1dd9e76b 35587151 71434d9a bb27ffd7 d10b36aa
-      preview: '{'
   content: |-
     {{< doc-test paths="sts-impersonation" >}}
     # ============================================================================
@@ -210,7 +207,6 @@ hidden:
     fingerprint: 10d99a769198dd1d
     lang: sh
     lines: 10d99a76
-    preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/
   content: |2-
        {{< doc-test paths="sts-impersonation" >}}
        code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/)
@@ -221,7 +217,6 @@ hidden:
     fingerprint: 16d0ed81987470bc
     lang: sh
     lines: 16d0ed81
-    preview: export USER_TOKEN=<your-idp-jwt>
   content: |2-
        {{< doc-test paths="sts-impersonation" >}}
        export USER_TOKEN=$(get_user_token)
@@ -231,7 +226,6 @@ hidden:
     fingerprint: 976a65c69d102b1b
     lang: sh
     lines: d8e3e8e9 ab37a0a1
-    preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/ \
   content: |2-
        {{< doc-test paths="sts-impersonation" >}}
        code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/ -H "Authorization: Bearer ${USER_TOKEN}")
@@ -242,7 +236,6 @@ hidden:
     fingerprint: 81fff1cecda8b58a
     lang: sh
     lines: 81fff1ce
-    preview: curl -s -X POST "http://127.0.0.1:15000/logging?level=debug"
   content: |2-
        {{< doc-test paths="sts-impersonation" >}}
        USER_SUB=$(jwt_claims "$USER_TOKEN" | jq -r .sub)

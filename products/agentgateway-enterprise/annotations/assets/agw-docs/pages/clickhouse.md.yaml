@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/clickhouse.md
+previews: false
 blocks:
 - 068f92e37b835bbb yaml
 - 085439d6f6efc2c3 sh
@@ -29,7 +30,7 @@ blocks:
 - c5ccdb75bdb4a3b0 sh
 hidden:
 - after:
-    section: Enable persistent storage on an existing installation
+    section: h:1d9e25deaf924235
     line: 6bd5dbd22edee731
     occurrence: 0
     words: b9776d7d 3547cb11 3e64cc41 0ecbf1d2 b9776d7d 7e099f39 425c89ed 77bc06c5 6b0d1f6c b9776d7d fa2c10fb 259aa8ef 8e7fc023 b9776d7d 561f0a3d 74b01175 3b97260d 1eb79602 3a6eb079 fa51fd49 254bb97b 4e9e8bb9
@@ -38,7 +39,6 @@ hidden:
       fingerprint: 280927e6e9d10dfb
       lang: sh
       lines: 280927e6
-      preview: kubectl get pvc -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
   content: |-
     {{< doc-test paths="enterprise-clickhouse" >}}
     # ============================================================================
@@ -69,7 +69,6 @@ hidden:
     fingerprint: 1915d3d113a77ec2
     lang: sh
     lines: 1915d3d1
-    preview: kubectl delete statefulset {{< reuse "agw-docs/snippets/solo-ui/clickhouse-state
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
@@ -81,7 +80,6 @@ hidden:
     fingerprint: 085439d6f6efc2c3
     lang: sh
     lines: 2d065637 9d671c51 736e1ed1 f7ad5ab4 0e1a9b32
-    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
@@ -97,7 +95,6 @@ hidden:
     fingerprint: 9d82f2ca4face8cd
     lang: sh
     lines: 9d82f2ca
-    preview: kubectl delete pod {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
@@ -109,7 +106,6 @@ hidden:
     fingerprint: 9d82f2ca4face8cd
     lang: sh
     lines: 9d82f2ca
-    preview: kubectl delete pod {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        kubectl rollout status statefulset/{{< reuse "agw-docs/snippets/solo-ui/clickhouse-statefulset.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
@@ -132,7 +128,6 @@ hidden:
     fingerprint: 280927e6e9d10dfb
     lang: sh
     lines: 280927e6
-    preview: kubectl get pvc -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
@@ -144,7 +139,6 @@ hidden:
     fingerprint: 61b4caa9f9906407
     lang: sh
     lines: 503cab20 2e0ef943 9f1e5fdd
-    preview: export IMG=us-docker.pkg.dev/solo-public/solo-enterprise/solo-enterprise-migrati
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
@@ -159,7 +153,6 @@ hidden:
     fingerprint: cd255fffec0dbcc8
     lang: sh
     lines: cd255fff
-    preview: 'kubectl run retention -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --rm -i '
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
@@ -171,7 +164,6 @@ hidden:
     fingerprint: fa815ee1609d6693
     lang: sh
     lines: fa815ee1
-    preview: 'kubectl run retention -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --rm -i '
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
@@ -183,7 +175,6 @@ hidden:
     fingerprint: 73fc90c96d2d7099
     lang: sh
     lines: 73fc90c9
-    preview: 'kubectl run retention -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --rm -i '
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
@@ -195,7 +186,6 @@ hidden:
     fingerprint: bf725bff970f9272
     lang: sh
     lines: 915cc5f0 cb5b71f0
-    preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
@@ -208,7 +198,6 @@ hidden:
     fingerprint: 371a1ba879470377
     lang: sql
     lines: 371a1ba8
-    preview: SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.o
   content: |2-
        {{< doc-test paths="enterprise-clickhouse" >}}
        chq() { kubectl exec -n {{< reuse "agw-docs/snippets/namespace.md" >}} {{< reuse "agw-docs/snippets/solo-ui/clickhouse-pod.md" >}} -- clickhouse-client --user "$CH_USER" --password "$CH_PASS" --query "$1"; }
@@ -222,7 +211,6 @@ hidden:
     fingerprint: c5ccdb75bdb4a3b0
     lang: sh
     lines: 22282660 4cb4037b
-    preview: kubectl run migrate -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --rm -i --
   content: |-
     {{< doc-test paths="enterprise-clickhouse" >}}
     # Mirror of the visible step above. Its kgw-docs snippets are conditional-text

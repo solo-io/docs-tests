@@ -1,10 +1,11 @@
 format: 1
 source: assets/agw-docs/pages/standalone/sts-token-exchange/setup.md
+previews: false
 blocks:
 - 02b2261822ccec6d sh
 - b8804d0d31088fb9 sh
 - afdf617346cd6fa5 yaml
-- 3f035084d701e24c yaml
+- 6efc70ca50bf4df5 yaml
 - 25e2a9879142bff2 yaml
 - 2bf48270d6b89294 sh
 - c7653de32e8e2515 console
@@ -30,7 +31,6 @@ tags:
   fingerprint: 02b2261822ccec6d
   lang: sh
   lines: 0fd06783 02da8d8d
-  preview: openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out sts-jwt.pem
   form:
     attr: paths="sts-setup"
     only: true
@@ -40,7 +40,6 @@ tags:
   fingerprint: a3e227f3407d5e6b
   lang: sh
   lines: a3e227f3
-  preview: curl -s http://127.0.0.1:7777/healthz
   form:
     attr: paths="sts-setup"
     only: true
@@ -50,7 +49,6 @@ tags:
   fingerprint: 76acc311d01e6d2d
   lang: sh
   lines: 76acc311
-  preview: curl -s http://127.0.0.1:7777/.well-known/oauth-authorization-server
   form:
     attr: paths="sts-setup"
     only: true
@@ -60,7 +58,6 @@ tags:
   fingerprint: c9b5b9916d4ef05f
   lang: sh
   lines: c9b5b991
-  preview: curl -s http://127.0.0.1:7777/.well-known/jwks.json
   form:
     attr: paths="sts-setup"
     only: true
@@ -70,14 +67,13 @@ tags:
   fingerprint: 240b6fcfb16228a3
   lang: sh
   lines: 5f8a4a59 e98aebec 1f456632 6d3424ff fc31e6dd ceeccd72
-  preview: curl -s -X POST http://127.0.0.1:7777/token \
   form:
     attr: paths="sts-setup"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: Before you begin
+    section: h:d5bfdd7d989dfc0b
     line: c4ff93c5789ff6f0
     occurrence: 0
     words: ab14d3fa b9776d7d 1e6ed65d 6105d6cc f4bf9f7f ca978112 94abcb2d aee50b18 ab14d3fa 561f0a3d fa42bed0 a0af9f86 caf9f906 8fb6d5f3 1e142e62 ab14d3fa
@@ -155,7 +151,7 @@ hidden:
     test -n "$(get_user_token)" || { echo "user1 cannot get a token from Keycloak"; exit 1; }
     {{< /doc-test >}}
 - after:
-    section: Reach the STS with `config.stsUri`
+    section: h:5c4c6e21e9f6dea8
     line: f90162c19e507469
     occurrence: 0
     words: bb0347a4 9f584196 6ee0eb49 89ab3ee9 6201111b d6d09ad0 f4bf9f7f ba528516 7af0b3e4 99262a02 b9776d7d ba528516 7af0b3e4 d1905cf9 c1cc0ecc 5fb6a47e b9776d7d 3b9c358f
@@ -164,7 +160,6 @@ hidden:
       fingerprint: 25e2a9879142bff2
       lang: yaml
       lines: a7f80a73 2180b199 0ccc8edc cf080f56 449ac08a 23f9b930 0ccc8edc c9b52ea5 7114ef12 0ff65a1a 10145d22 a9b7fdf5 23f9b930 0ccc8edc 5c83871e 1deaefd3 3635d60a 449ac08a 2de4881e 10145d22
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="sts-setup" >}}
     # The page's entSts section (Step 2) and oauthTokenExchange policy (Step 3) in
@@ -229,7 +224,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    section: Launcher settings
+    section: h:c629a22c57fe5692
     line: 5a8ffa68c17dfc55
     occurrence: 0
     words: 9aa6a80b 7a746420 5bcaffed b9776d7d ec9a6e9f 504dbd7e 663ea1bf b9776d7d 3fc4ccfe fd647ce1
@@ -238,7 +233,6 @@ hidden:
       fingerprint: 3224a76ec61747d1
       lang: sh
       lines: 3224a76e
-      preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/
   content: |-
     {{< doc-test paths="sts-setup" >}}
     # Step 4, Binaries tab: the page's commands, run in the background. The
@@ -259,7 +253,6 @@ hidden:
     fingerprint: a3e227f3407d5e6b
     lang: sh
     lines: a3e227f3
-    preview: curl -s http://127.0.0.1:7777/healthz
   content: |2-
        {{< doc-test paths="sts-setup" >}}
        curl -fsS http://127.0.0.1:7777/healthz | jq -e '.status == "healthy"' >/dev/null \
@@ -271,7 +264,6 @@ hidden:
     fingerprint: 76acc311d01e6d2d
     lang: sh
     lines: 76acc311
-    preview: curl -s http://127.0.0.1:7777/.well-known/oauth-authorization-server
   content: |2-
        {{< doc-test paths="sts-setup" >}}
        curl -fsS http://127.0.0.1:7777/.well-known/oauth-authorization-server \
@@ -283,7 +275,6 @@ hidden:
     fingerprint: c9b5b9916d4ef05f
     lang: sh
     lines: c9b5b991
-    preview: curl -s http://127.0.0.1:7777/.well-known/jwks.json
   content: |2-
        {{< doc-test paths="sts-setup" >}}
        curl -fsS http://127.0.0.1:7777/.well-known/jwks.json | jq -e '.keys | length > 0' >/dev/null \
@@ -294,7 +285,6 @@ hidden:
     fingerprint: 16d0ed81987470bc
     lang: sh
     lines: 16d0ed81
-    preview: export USER_TOKEN=<your-idp-jwt>
   content: |2-
        {{< doc-test paths="sts-setup" >}}
        # Step 4: a real IdP token from the Keycloak stand-in, in place of the placeholder.
@@ -305,7 +295,6 @@ hidden:
     fingerprint: 240b6fcfb16228a3
     lang: sh
     lines: 5f8a4a59 e98aebec 1f456632 6d3424ff fc31e6dd ceeccd72
-    preview: curl -s -X POST http://127.0.0.1:7777/token \
   content: |2-
        {{< doc-test paths="sts-setup" >}}
        # Step 5 and 6: exchange, decode, and compare with the page's claims.

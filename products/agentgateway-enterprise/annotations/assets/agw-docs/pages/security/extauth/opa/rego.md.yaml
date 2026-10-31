@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/security/extauth/opa/rego.md
+previews: false
 blocks:
 - 986befcecb7c8e6b mermaid
 - 311cc4ee145585a5 yaml
@@ -34,7 +35,6 @@ tags:
   fingerprint: 311cc4ee145585a5
   lang: yaml
   lines: 16c71da1 f1540154 033792b5 8c8c4228 ee5074a9 f497f0e2 ff72caa3 558c3aa0 adb8db29 68c14ff3 a8c3a01e 47e67609 9e3fb78d b29fa646 5c03f1cd 8d02d24c a7cb81f3 d10b36aa 0b7dde59 45ba84b7 08062739 3a2c7b02 de956db6 141cc0c5 d1d66eeb a63d3226 5c03f1cd d10b36aa d10b36aa abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -44,7 +44,6 @@ tags:
   fingerprint: 3d16b9fe1f5eae0c
   lang: yaml
   lines: 16c71da1 98875768 efd325e8 8c8c4228 fb9d09af f497f0e2 36184fa5 d5ec3fae c19c90c1 b79ab3f2 483ba7fd f497f0e2 93f1dc71 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -54,7 +53,6 @@ tags:
   fingerprint: 85f6e75b906fa1fe
   lang: sh
   lines: 85f6e75b
-  preview: kubectl get authconfig llm-opa -n agentgateway-system -o jsonpath='{.status.stat
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -64,7 +62,6 @@ tags:
   fingerprint: 8d15afdf9d31c257
   lang: yaml
   lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f f497f0e2 1426decf 2f7c298d ef4d188c cb3f91d5 263e4531 f84e6062 8c8c4228 6666820d f497f0e2 36184fa5 ad3afdb1 93a4b62b da4aa5f1 6d88d930 c8f3f59a 146e11c6 9ebc4789 4df4f75f cb3f91d5 8c67597e 56bf9360 8c8c4228 6666820d f497f0e2 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 f497f0e2 22aec9ce f84e6062 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -74,7 +71,6 @@ tags:
   fingerprint: cfc685edf6a34139
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 ee5074a9 f497f0e2 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 2c3ea4d6 75674f79 fb9d09af f497f0e2 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -84,7 +80,6 @@ tags:
   fingerprint: 2a0155348c76b5ec
   lang: sh
   lines: 91d39c8e da957743
-  preview: export INGRESS_GW_ADDRESS=$(kubectl get gateway agentgateway-proxy \
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -94,7 +89,6 @@ tags:
   fingerprint: fce304658a1ae8b9
   lang: sh
   lines: 81db6b1b 67c5a3ac bdc304df
-  preview: curl -i $INGRESS_GW_ADDRESS/openai \
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -104,7 +98,6 @@ tags:
   fingerprint: 136895c1268d5077
   lang: sh
   lines: 81db6b1b 67c5a3ac 9e43ed35 977bc72c
-  preview: curl -i $INGRESS_GW_ADDRESS/openai \
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -114,7 +107,6 @@ tags:
   fingerprint: 6fdaaef397b1e7b1
   lang: yaml
   lines: 16c71da1 263e4531 f84e6062 8c8c4228 d2ace77c f497f0e2 36184fa5 82726b6f 3035507a f7b9d9c2 2efcbf93 738be9ea da480536 91f2837c cb3f91d5 8c67597e 56bf9360 8c8c4228 d2ace77c f497f0e2 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e f1be08d9 f497f0e2 22aec9ce f84e6062 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -124,7 +116,6 @@ tags:
   fingerprint: d98a94e44852d4b0
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 4dd43fed f497f0e2 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d 2c3ea4d6 75674f79 fb9d09af f497f0e2 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -134,7 +125,6 @@ tags:
   fingerprint: 226dc5f99cdf35f7
   lang: sh
   lines: 2174e1c3 67c5a3ac 4347ff3f 7f5f76a3
-  preview: curl -i $INGRESS_GW_ADDRESS/mcp \
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -144,7 +134,6 @@ tags:
   fingerprint: 75d9bf9eab8eb8be
   lang: sh
   lines: 1991dc82 6f3fdbd8 67c5a3ac 4347ff3f 9e43ed35 7f5f76a3 67515cfa
-  preview: HEADERS=$(mktemp)
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -154,7 +143,6 @@ tags:
   fingerprint: 8fc157bac56662e4
   lang: sh
   lines: 4b190ff7 67c5a3ac 4347ff3f 449b834b 9e43ed35 12994e67 4b190ff7 67c5a3ac 4347ff3f 449b834b 9e43ed35 456e4e82
-  preview: curl $INGRESS_GW_ADDRESS/mcp \
   form:
     attr: paths="extauth-opa-rego"
     only: true
@@ -164,14 +152,13 @@ tags:
   fingerprint: 801b7bcf5c7a1baf
   lang: sh
   lines: d6ae2181 05e28b27 a7824cd9 02759540 16acc686 a84b7153
-  preview: kubectl delete -n agentgateway-system EnterpriseAgentgatewayPolicy llm-opa-polic
   form:
     attr: paths="extauth-opa-rego"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: Create the Rego policy
+    section: h:e2182fe0493dba5f
     line: 0c1745d593bc3f8d
     occurrence: 0
     words: b9776d7d 8d0288f4 823412d1 ed64d1d1 5ef5ef03 ec72420d a7e2d26e 37a8eec1 6201111b 77f6a166 ec72420d 8e7fc023 c0cbff04 ca978112 54b759db 8c284055 1e0584a2 ff777205 dce19053 7187f067 ca978112 71d6a37f f6a214f7 2958d416 8e7fc023 1e2135d1 b9776d7d e0603c49 a9f4b3d2 b9776d7d 37a8eec1 7369949b fa51fd49 b9776d7d 3026a0ca f38c764c 6201111b b9776d7d 41008373 7369949b ab2dd33e 2ad8a704 15eaa752 b9776d7d 1e0584a2 a5408438
@@ -180,7 +167,6 @@ hidden:
       fingerprint: 986befcecb7c8e6b
       lang: mermaid
       lines: 536f52ac c962c5e5 36246e22 2d989573 f2a0af94 64379f8a c85e7182 08c34ac4 60fdd210 f2149324 ed4db21a 2ae41f29 630fea1c c166dbd1 745f6456 361e48d0
-      preview: sequenceDiagram
   content: |-
     {{< doc-test paths="extauth-opa-rego" >}}
     # ============================================================================
@@ -290,7 +276,6 @@ hidden:
     fingerprint: 85f6e75b906fa1fe
     lang: sh
     lines: 85f6e75b
-    preview: kubectl get authconfig llm-opa -n agentgateway-system -o jsonpath='{.status.stat
   content: |-
     {{< doc-test paths="extauth-opa-rego" >}}
     kubectl wait --for=jsonpath='{.status.state}'=Accepted authconfig/llm-opa -n agentgateway-system --timeout=120s
@@ -300,7 +285,6 @@ hidden:
     fingerprint: 8d15afdf9d31c257
     lang: yaml
     lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f f497f0e2 1426decf 2f7c298d ef4d188c cb3f91d5 263e4531 f84e6062 8c8c4228 6666820d f497f0e2 36184fa5 ad3afdb1 93a4b62b da4aa5f1 6d88d930 c8f3f59a 146e11c6 9ebc4789 4df4f75f cb3f91d5 8c67597e 56bf9360 8c8c4228 6666820d f497f0e2 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 f497f0e2 22aec9ce f84e6062 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="extauth-opa-rego" >}}
        kubectl patch AgentgatewayBackend openai -n agentgateway-system --type=merge --patch-file /dev/stdin <<EOF
@@ -347,7 +331,6 @@ hidden:
     fingerprint: cfc685edf6a34139
     lang: yaml
     lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 ee5074a9 f497f0e2 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 2c3ea4d6 75674f79 fb9d09af f497f0e2 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="extauth-opa-rego" >}}
        YAMLTest -f - <<'EOF'
@@ -372,7 +355,6 @@ hidden:
     fingerprint: fce304658a1ae8b9
     lang: sh
     lines: 81db6b1b 67c5a3ac bdc304df
-    preview: curl -i $INGRESS_GW_ADDRESS/openai \
   content: |2-
        {{< doc-test paths="extauth-opa-rego" >}}
        YAMLTest -f - <<'EOF'
@@ -401,7 +383,6 @@ hidden:
     fingerprint: 136895c1268d5077
     lang: sh
     lines: 81db6b1b 67c5a3ac 9e43ed35 977bc72c
-    preview: curl -i $INGRESS_GW_ADDRESS/openai \
   content: |2-
        {{< doc-test paths="extauth-opa-rego" >}}
        YAMLTest -f - <<'EOF'
@@ -430,7 +411,6 @@ hidden:
     fingerprint: 6fdaaef397b1e7b1
     lang: yaml
     lines: 16c71da1 263e4531 f84e6062 8c8c4228 d2ace77c f497f0e2 36184fa5 82726b6f 3035507a f7b9d9c2 2efcbf93 738be9ea da480536 91f2837c cb3f91d5 8c67597e 56bf9360 8c8c4228 d2ace77c f497f0e2 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e f1be08d9 f497f0e2 22aec9ce f84e6062 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="extauth-opa-rego" >}}
        YAMLTest -f - <<'EOF'
@@ -469,7 +449,6 @@ hidden:
     fingerprint: d98a94e44852d4b0
     lang: yaml
     lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 4dd43fed f497f0e2 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d 2c3ea4d6 75674f79 fb9d09af f497f0e2 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="extauth-opa-rego" >}}
        YAMLTest -f - <<'EOF'
@@ -494,7 +473,6 @@ hidden:
     fingerprint: 226dc5f99cdf35f7
     lang: sh
     lines: 2174e1c3 67c5a3ac 4347ff3f 7f5f76a3
-    preview: curl -i $INGRESS_GW_ADDRESS/mcp \
   content: |2-
        {{< doc-test paths="extauth-opa-rego" >}}
        YAMLTest -f - <<'EOF'
@@ -523,7 +501,6 @@ hidden:
     fingerprint: 75d9bf9eab8eb8be
     lang: sh
     lines: 1991dc82 6f3fdbd8 67c5a3ac 4347ff3f 9e43ed35 7f5f76a3 67515cfa
-    preview: HEADERS=$(mktemp)
   content: |2-
        {{< doc-test paths="extauth-opa-rego" >}}
        test -n "$SESSION" || { echo "initialize returned no mcp-session-id"; exit 1; }
@@ -533,7 +510,6 @@ hidden:
     fingerprint: 8fc157bac56662e4
     lang: sh
     lines: 4b190ff7 67c5a3ac 4347ff3f 449b834b 9e43ed35 12994e67 4b190ff7 67c5a3ac 4347ff3f 449b834b 9e43ed35 456e4e82
-    preview: curl $INGRESS_GW_ADDRESS/mcp \
   content: |2-
        {{< doc-test paths="extauth-opa-rego" >}}
        curl -s $INGRESS_GW_ADDRESS/mcp \
@@ -548,7 +524,6 @@ hidden:
     fingerprint: 801b7bcf5c7a1baf
     lang: sh
     lines: d6ae2181 05e28b27 a7824cd9 02759540 16acc686 a84b7153
-    preview: kubectl delete -n agentgateway-system EnterpriseAgentgatewayPolicy llm-opa-polic
   content: |-
     {{< doc-test paths="extauth-opa-rego" >}}
     # Remove the helpers this test added.

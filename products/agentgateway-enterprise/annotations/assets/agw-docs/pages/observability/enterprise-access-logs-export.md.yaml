@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/observability/enterprise-access-logs-export.md
+previews: false
 blocks:
 - e2c21751abc07c4d yaml
 - 0464a7c30afbff50 sh
@@ -33,7 +34,6 @@ tags:
   fingerprint: e2c21751abc07c4d
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -43,7 +43,6 @@ tags:
   fingerprint: 0464a7c30afbff50
   lang: sh
   lines: 0464a7c3
-  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com"'
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -53,7 +52,6 @@ tags:
   fingerprint: 67b6a24692cbcf9b
   lang: sh
   lines: 03784a74 26d8a4ad
-  preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -63,7 +61,6 @@ tags:
   fingerprint: 0016bbb9d53118be
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee b2a76230 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -73,7 +70,6 @@ tags:
   fingerprint: 0464a7c30afbff50
   lang: sh
   lines: 0464a7c3
-  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com"'
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -83,7 +79,6 @@ tags:
   fingerprint: c158609e1a699367
   lang: sh
   lines: c158609e
-  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/status/500 -H "host: www.example.com"'
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -93,7 +88,6 @@ tags:
   fingerprint: 9c5e5e9f018dacdc
   lang: sh
   lines: 9c5e5e9f
-  preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agent
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -103,7 +97,6 @@ tags:
   fingerprint: 02344dc0655a136b
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 d532a41e abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -113,7 +106,6 @@ tags:
   fingerprint: 0ce516776ddf1110
   lang: sh
   lines: 0ce51677
-  preview: 'curl -i http://$INGRESS_GW_ADDRESS:80/get -H "host: www.example.com" -H "x-trace'
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -123,7 +115,6 @@ tags:
   fingerprint: f956fb9f83df700f
   lang: sh
   lines: f956fb9f
-  preview: kubectl logs deploy/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -133,7 +124,6 @@ tags:
   fingerprint: 5a85429987ce9aa1
   lang: sh
   lines: 5a854299
-  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< re
   form:
     attr: paths="access-log-otlp"
     only: true
@@ -144,7 +134,6 @@ hidden:
     fingerprint: e2c21751abc07c4d
     lang: yaml
     lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="access-log-otlp" >}}
     # ============================================================================
@@ -187,7 +176,6 @@ hidden:
     fingerprint: 67b6a24692cbcf9b
     lang: sh
     lines: 03784a74 26d8a4ad
-    preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
        export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.username}' | base64 -d)
@@ -210,7 +198,6 @@ hidden:
     fingerprint: e6df1f95df1bac04
     lang: sql
     lines: 57ca61ba f9c6652d 39c46c94
-    preview: SELECT Timestamp, LogAttributes FROM {{< reuse "agw-docs/snippets/solo-ui/clickh
   blank_before: []
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
@@ -221,7 +208,6 @@ hidden:
     fingerprint: 0016bbb9d53118be
     lang: yaml
     lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee b2a76230 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
        # Policy check 12
@@ -251,7 +237,6 @@ hidden:
     fingerprint: 6132e6f840faf807
     lang: console
     lines: ab5df625 6616497a 972c27bb e948fc79 ab5df625
-    preview: '...'
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
        ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE JSONExtractInt(LogAttributes, 'http', 'response', 'status_code') = 500"
@@ -261,7 +246,6 @@ hidden:
     fingerprint: 9c5e5e9f018dacdc
     lang: sh
     lines: 9c5e5e9f
-    preview: kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agent
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
        out=$(kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} logs deployments/agentgateway-proxy | grep 'request ' | tail -2)
@@ -274,7 +258,6 @@ hidden:
     fingerprint: 02344dc0655a136b
     lang: yaml
     lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 f9cdd0ae 8af957d1 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 d532a41e abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
        # Policy check 13
@@ -302,7 +285,6 @@ hidden:
     fingerprint: f956fb9f83df700f
     lang: sh
     lines: f956fb9f
-    preview: kubectl logs deploy/agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace
   content: |2-
        {{< doc-test paths="access-log-otlp" >}}
        ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE position(toString(LogAttributes), 'abc123') > 0"

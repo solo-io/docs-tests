@@ -1,5 +1,6 @@
 format: 1
 source: content/en/agentgateway/kubernetes/latest/documentation/mcp/composable.md
+previews: false
 blocks:
 - 154e6feb2e32bac7 json
 - 6799835b5336722b yaml
@@ -29,14 +30,13 @@ blocks:
 - 9423834d6a1c20d6 yaml
 - 52f8ae90f7675a35 console
 - cb8b1bd1aed085de yaml
-- dcc88c4a05f93b44 sh
+- ddc418a4dc183fb6 sh
 tags:
 - paths: mcp-composable
   block: 4
   fingerprint: a9ccd39dd6c0b598
   lang: yaml
   lines: 16c71da1 00c69c65 450c56e0 8c8c4228 8f1e6870 0ccc8edc 36184fa5 2efcbf93 ac07a2ef c6ba4159 cb3f91d5 00c69c65 5cad5c90 8c8c4228 6bb3de0c 0ccc8edc 36184fa5 588a5d84 94ae49d1 450c56e0 8f1e6870 bb85cefe e8eb2c7f abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-composable"
     only: true
@@ -46,7 +46,6 @@ tags:
   fingerprint: 7da457a42942144a
   lang: yaml
   lines: 16c71da1 00c69c65 450c56e0 8c8c4228 f98361ef 0ccc8edc 36184fa5 425ef23b 3035507a f93266b7 b6fb1fd3 7da63f38 f73ee7f5 85a3959b 61177ff2 97bebbb9 8afbd5a3 d0d6d503 fa248ef0 c1a4d738 56501c6b dce6d1fa 1c31dda0 70c97555 b8ac8874 450c56e0 8f1e6870 a57a3f8f 6a6768ed 38dc0152 3b194d85 858cb653 03775600 1b15fb3d 88587dc9 1c31dda0 70c97555 b8ac8874 450c56e0 8f1e6870 a57a3f8f f8f3f2ae 38dc0152 3b194d85 858cb653 03775600 1b15fb3d 7dbc49c1 44677d18 255a2038 738f8531 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-composable"
     only: true
@@ -56,7 +55,6 @@ tags:
   fingerprint: 3be3859d0f93cc3e
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f98361ef 0ccc8edc 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e d43ba700 b8ac8874 450c56e0 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-composable"
     only: true
@@ -66,7 +64,6 @@ tags:
   fingerprint: 58ba144377af68a7
   lang: sh
   lines: 0ad8dbfc 4059cfa2
-  preview: export INGRESS_GW_ADDRESS=$(kubectl get gateway agentgateway-proxy -n agentgatew
   form:
     attr: paths="mcp-composable"
     only: true
@@ -76,7 +73,6 @@ tags:
   fingerprint: 7711c3de72925137
   lang: sh
   lines: f7503a49 67c5a3ac 4347ff3f b0cead6d 362c024a d5a92ca7 9ed087af dc0575f0 8839ee90 84919319 322f9aac d10b36aa fc075a9d
-  preview: curl -sD - "http://${INGRESS_GW_ADDRESS}/mcp" \
   form:
     attr: paths="mcp-composable"
     only: true
@@ -86,7 +82,6 @@ tags:
   fingerprint: 76d2a4cca521679a
   lang: sh
   lines: fe010736 67c5a3ac 4347ff3f 5b5ecebc 3f897f1f
-  preview: curl -s "http://${INGRESS_GW_ADDRESS}/mcp" \
   form:
     attr: paths="mcp-composable"
     only: true
@@ -96,7 +91,6 @@ tags:
   fingerprint: 9991f8a65e640864
   lang: sh
   lines: fe010736 67c5a3ac 4347ff3f 5b5ecebc b0cead6d 362c024a b81000bd 78c8c519 dc0575f0 f57e7a20 571f278b d10b36aa fc075a9d
-  preview: curl -s "http://${INGRESS_GW_ADDRESS}/mcp" \
   form:
     attr: paths="mcp-composable"
     only: true
@@ -107,7 +101,6 @@ hidden:
     fingerprint: 3be3859d0f93cc3e
     lang: yaml
     lines: 16c71da1 8c67597e 56bf9360 8c8c4228 f98361ef 0ccc8edc 36184fa5 d3d416e7 2d157081 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e d43ba700 b8ac8874 450c56e0 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="mcp-composable" >}}
     YAMLTest -f - <<'EOF'
@@ -174,7 +167,6 @@ hidden:
     fingerprint: 58ba144377af68a7
     lang: sh
     lines: 0ad8dbfc 4059cfa2
-    preview: export INGRESS_GW_ADDRESS=$(kubectl get gateway agentgateway-proxy -n agentgatew
   content: |2-
        {{< doc-test paths="mcp-composable" >}}
        # Wait until the route answers an MCP initialize with a session ID.
@@ -191,7 +183,6 @@ hidden:
     fingerprint: 387ad3cdc9d90651
     lang: ''
     lines: 387ad3cd
-    preview: export SESSION_ID=eyJ0Ij...
   content: |2-
        {{< doc-test paths="mcp-composable" >}}
        # The visible export is a placeholder. Start a session and capture its real ID.
@@ -210,7 +201,6 @@ hidden:
     fingerprint: 76d2a4cca521679a
     lang: sh
     lines: fe010736 67c5a3ac 4347ff3f 5b5ecebc 3f897f1f
-    preview: curl -s "http://${INGRESS_GW_ADDRESS}/mcp" \
   content: |2-
        {{< doc-test paths="mcp-composable" >}}
        LIST=$(curl -s --max-time 30 "http://${INGRESS_GW_ADDRESS}/mcp" \
@@ -226,7 +216,6 @@ hidden:
     fingerprint: 9991f8a65e640864
     lang: sh
     lines: fe010736 67c5a3ac 4347ff3f 5b5ecebc b0cead6d 362c024a b81000bd 78c8c519 dc0575f0 f57e7a20 571f278b d10b36aa fc075a9d
-    preview: curl -s "http://${INGRESS_GW_ADDRESS}/mcp" \
   content: |2-
        {{< doc-test paths="mcp-composable" >}}
        # The tool calls the public GitHub API, which rate-limits unauthenticated callers,

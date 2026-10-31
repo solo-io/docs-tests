@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/standalone/sts-token-exchange/delegation.md
+previews: false
 blocks:
 - a9a28385591f44d0 json
 - 305fac9b81f87db5 json
@@ -24,14 +25,13 @@ tags:
   fingerprint: 707d7dd35c512e45
   lang: sh
   lines: e02cc0ad e98aebec 1f456632 6d3424ff fc31e6dd df60e4fe 45d715c0 0343c6ba
-  preview: curl -s -X POST http://localhost:7777/token \
   form:
     attr: paths="sts-delegation"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: Before you begin
+    section: h:d5bfdd7d989dfc0b
     line: cda76d51cab55c2a
     occurrence: 0
     words: 4e074085 90d08e58 4d040d3f 0c1eeccc 663ea1bf 7e9e5ac3 ca978112 a60bf7f5 dd1b3c31 663ea1bf 04f8996d c51e455b f4bf9f7f 4249a1a0 58296753 b9776d7d a60bf7f5 dd1b3c31 b567d8e7
@@ -40,7 +40,6 @@ hidden:
       fingerprint: e913fbad89f1bb72
       lang: json
       lines: 021fb596 91309804 8f063bdd d10b36aa
-      preview: '{'
   content: |-
     {{< doc-test paths="sts-delegation" >}}
     # ============================================================================
@@ -146,7 +145,6 @@ hidden:
     fingerprint: 52152e8eb0c53b77
     lang: sh
     lines: 561f1bee dbbd6ee4
-    preview: export USER_TOKEN=<user-idp-jwt-with-may-act>
   content: |2-
        {{< doc-test paths="sts-delegation" >}}
        export USER_TOKEN=$(get_user_token)
@@ -159,7 +157,6 @@ hidden:
     fingerprint: 707d7dd35c512e45
     lang: sh
     lines: e02cc0ad e98aebec 1f456632 6d3424ff fc31e6dd df60e4fe 45d715c0 0343c6ba
-    preview: curl -s -X POST http://localhost:7777/token \
   content: |2-
        {{< doc-test paths="sts-delegation" >}}
        DELEGATED=$(curl -fsS -X POST http://localhost:7777/token \
@@ -175,7 +172,6 @@ hidden:
     fingerprint: 221bafca101e53bb
     lang: json
     lines: 021fb596 295ea2be 0849a390 bf619f17 51b06a59 e52a1813 746faf32 51b06a59 e52a1813 3112e925 1dd9e76b 4929ac3e 17efc7f7 eda7ed3d d10b36aa
-    preview: '{'
   content: |-
     {{< doc-test paths="sts-delegation" >}}
     # Step 4: the delegated claims.

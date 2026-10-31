@@ -1,5 +1,6 @@
 format: 1
 source: content/en/agentgateway/kubernetes/latest/documentation/security/extauth/oauth/authorization-code.md
+previews: false
 blocks:
 - 937e29fdce59ed16 yaml
 - 22534b75bf3f2eda yaml
@@ -19,7 +20,6 @@ tags:
   fingerprint: 22534b75bf3f2eda
   lang: yaml
   lines: 16c71da1 98875768 efd325e8 8c8c4228 a23af473 8af957d1 36184fa5 d5ec3fae afba47a2 f1c7325d baeb199d 643f8ded 5caedf2d e73ad6de c35a37c3 8af957d1 61d0946d 61d9749c 9519f874 0bc8506e e8a6bb4b ba77f9b0 3a604046 fa579f78 ced79e71 38dc0152 73535c78 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="oauth-authorization-code"
     only: true
@@ -29,7 +29,6 @@ tags:
   fingerprint: f3e260063641c711
   lang: yaml
   lines: abbd1bdc fbc30693 7f57603a 8c8c4228 a23af473 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 2c3ea4d6 75674f79 a23af473 8af957d1 70c97555 aaecb171 8af957d1 fe80e1dd abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="oauth-authorization-code"
     only: true
@@ -39,7 +38,6 @@ tags:
   fingerprint: 40e5d266fe21a352
   lang: sh
   lines: 40e5d266
-  preview: kubectl get authconfig oauth-authorization-code -n {{< reuse "agw-docs/snippets/
   form:
     attr: paths="oauth-authorization-code"
     only: true
@@ -49,7 +47,6 @@ tags:
   fingerprint: bf33764833294085
   lang: sh
   lines: aa5427a1 cccd33ed 363ffe45
-  preview: kubectl delete authconfig oauth-authorization-code -n {{< reuse "agw-docs/snippe
   form:
     attr: paths="oauth-authorization-code"
     only: true
@@ -60,7 +57,6 @@ hidden:
     fingerprint: 937e29fdce59ed16
     lang: yaml
     lines: abbd1bdc f1540154 a67acb0a 8c8c4228 c35a37c3 8af957d1 170ac459 2f7c298d 8ba30b95 abc56510
-    preview: kubectl apply -f - <<EOF
   content: |2-
        {{< doc-test paths="oauth-authorization-code" >}}
        kubectl apply -f - <<EOF
@@ -79,7 +75,6 @@ hidden:
     fingerprint: 22534b75bf3f2eda
     lang: yaml
     lines: 16c71da1 98875768 efd325e8 8c8c4228 a23af473 8af957d1 36184fa5 d5ec3fae afba47a2 f1c7325d baeb199d 643f8ded 5caedf2d e73ad6de c35a37c3 8af957d1 61d0946d 61d9749c 9519f874 0bc8506e e8a6bb4b ba77f9b0 3a604046 fa579f78 ced79e71 38dc0152 73535c78 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="oauth-authorization-code" >}}
        # ============================================================================
@@ -112,7 +107,6 @@ hidden:
     fingerprint: 40e5d266fe21a352
     lang: sh
     lines: 40e5d266
-    preview: kubectl get authconfig oauth-authorization-code -n {{< reuse "agw-docs/snippets/
   content: |2-
        {{< doc-test paths="oauth-authorization-code" >}}
        kubectl wait --for=jsonpath='{.status.state}'=Accepted authconfig/oauth-authorization-code -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=120s
@@ -138,7 +132,6 @@ hidden:
     fingerprint: 04049f99a13a87c5
     lang: ''
     lines: 7dc9d89c f9d8b2a7
-    preview: HTTP/1.1 302 Found
   content: |2-
        {{< doc-test paths="oauth-authorization-code" >}}
        # A request without a session cookie gets a 302 to the Keycloak login.
@@ -164,7 +157,6 @@ hidden:
     fingerprint: e739ddbda52be16b
     lang: sh
     lines: e739ddbd
-    preview: export COOKIE="<keycloak-session-id>"
   content: |2-
        {{< doc-test paths="oauth-authorization-code" >}}
        # The visible steps sign in through a browser and copy the cookie by hand.
@@ -197,7 +189,7 @@ hidden:
        export COOKIE
        {{< /doc-test >}}
 - after:
-    section: 'Step 3: Verify access token validation'
+    section: h:8ae28c77b23f4d49
     line: 600fe1bb59e46b50
     occurrence: 1
     words: 32d3feda
@@ -206,7 +198,6 @@ hidden:
       fingerprint: 4a960f02a001cc8d
       lang: sh
       lines: 73e22635 966919ec b0cead6d a90f7a89 4b3b16d3 021fb596 23c01049 29fe507d e52a1813 021fb596 09d1b3dd 4bbbd315 d10b36aa cfae0d42 fc075a9d
-      preview: curl -v "localhost:8080/openai" -H content-type:application/json \
   content: |2-
        {{< doc-test paths="oauth-authorization-code" >}}
        # The LoadBalancer tab above leaves out the Cookie header, so it is not run.

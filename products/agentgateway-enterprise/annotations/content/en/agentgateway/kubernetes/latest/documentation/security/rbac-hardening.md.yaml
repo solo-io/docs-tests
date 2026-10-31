@@ -1,12 +1,13 @@
 format: 1
 source: content/en/agentgateway/kubernetes/latest/documentation/security/rbac-hardening.md
+previews: false
 blocks:
 - 12b600cdd5bcbe88 yaml
 - f9d3bab05fea34de bash
 - bbd08ebad3c901e0 yaml
-- d5f452c2f03b3602 bash
+- abc6ac695f695a08 bash
 - e6c83fd02ccb2807 yaml
-- 3bdef44358984e1c yaml
+- fec3c62bbd69fdc3 yaml
 - d19500d11a7c200b yaml
 hidden:
 - after:
@@ -14,7 +15,6 @@ hidden:
     fingerprint: f9d3bab05fea34de
     lang: bash
     lines: 1416474b f1541fb2
-    preview: kubectl label namespace {{< reuse "agw-docs/snippets/namespace.md" >}} agentgate
   content: |-
     {{< doc-test paths="rbac-hardening" >}}
     # ============================================================================
@@ -67,7 +67,6 @@ hidden:
     fingerprint: d19500d11a7c200b
     lang: yaml
     lines: ebb5b2df 6af097a5 e4bc2178 f208494d 835aaff5 e4bc2178 8b65a355 a543e233 e4bc2178
-    preview: '# Disable inference extension if not routing to local AI inference workloads'
   content: |-
     {{< doc-test paths="rbac-hardening" >}}
     CHART_VERSION=$(helm get metadata {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o json | jq -r .version)

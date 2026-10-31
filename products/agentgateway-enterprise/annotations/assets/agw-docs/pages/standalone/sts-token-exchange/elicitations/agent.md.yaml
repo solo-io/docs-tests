@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/standalone/sts-token-exchange/elicitations/agent.md
+previews: false
 blocks:
 - 972baa580ddf0a61 sh
 - 8fe8a9aa19d3407c sh
@@ -8,7 +9,7 @@ blocks:
 - a4b0bf2a81885dd2 sh
 - 28d29fed0c0f1bb3 sh
 - 810658432d1132d9 sh
-- d2f2aace362e82aa
+- d2f2aace362e82aa sh
 - 41f1559bc8062246 yaml
 - f93d0f96fc8d42e3 yaml
 - 97de6e9d5f7e34f0 console
@@ -26,7 +27,6 @@ tags:
   fingerprint: 972baa580ddf0a61
   lang: sh
   lines: 62892a1d 3db7a8c9
-  preview: cd "$HOME/agentgateway-brokered-elicitation"
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -36,7 +36,6 @@ tags:
   fingerprint: 8fe8a9aa19d3407c
   lang: sh
   lines: 49d727d1 08167823 8ce5be2f 96abd8de 67c5a3ac 391e00e8 021fb596 7ff70646 afa07114 469bd28a 4002a67b 021fb596 acac5baa c4945f11 fe4ada09 59693229 3f42e715 2bd9c71c d10b36aa 39d4b54e 55d0c79c 021fb596 32990666 afa07114 09db9566 07f50448 e50d678d 85e448c4 2cb1ea16 a73ab379 cfae0d42 d10b36aa cfae0d42 d10b36aa abc56510
-  preview: ADMIN_TOKEN=$(curl -fsS -X POST http://localhost:8080/realms/master/protocol/ope
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -46,7 +45,6 @@ tags:
   fingerprint: dde0eba159f243fe
   lang: sh
   lines: dde0eba1
-  preview: curl -s http://localhost:8080/realms/upstream-mcp/.well-known/openid-configurati
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -56,7 +54,6 @@ tags:
   fingerprint: a4b0bf2a81885dd2
   lang: sh
   lines: 49d727d1 08167823 830f9f3a 96abd8de 67c5a3ac 391e00e8 021fb596 654a7d14 8c92794d 1ec16f50 be1075b9 a61b93ea 021fb596 f34b9f6a d15de3c7 aab74b88 6685a21a 4fe4e563 26427009 d10b36aa d10b36aa cfae0d42 d10b36aa abc56510
-  preview: ADMIN_TOKEN=$(curl -fsS -X POST http://localhost:8080/realms/master/protocol/ope
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -66,7 +63,6 @@ tags:
   fingerprint: 28d29fed0c0f1bb3
   lang: sh
   lines: 45677844 c0f3d62a 1fb80000
-  preview: export AGENT_TOKEN=$(curl -fsS -X POST http://localhost:8080/realms/downstream-m
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -76,7 +72,6 @@ tags:
   fingerprint: 810658432d1132d9
   lang: sh
   lines: 62892a1d 78b513fe 620c682b
-  preview: cd "$HOME/agentgateway-brokered-elicitation"
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -86,7 +81,6 @@ tags:
   fingerprint: 4e835ac68958197c
   lang: sh
   lines: be262e4c 4877c191 67c5a3ac 4347ff3f af835a62
-  preview: curl -s -i -X POST http://localhost:3000/mcp/agent \
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -96,7 +90,6 @@ tags:
   fingerprint: fd540d594328e17b
   lang: sh
   lines: bcbf316b 4877c191 67c5a3ac 4347ff3f 048a7122 22dd591a 6beaefef
-  preview: export MCP_SESSION_ID=$(curl -s -i -X POST http://localhost:3000/mcp/agent \
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -106,7 +99,6 @@ tags:
   fingerprint: 6771c0b154221007
   lang: sh
   lines: fabb3891 4877c191 67c5a3ac 4347ff3f f852aefa 80e461be
-  preview: curl -s -X POST http://localhost:3000/mcp/agent \
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -116,7 +108,6 @@ tags:
   fingerprint: 607044ba76285479
   lang: sh
   lines: 607044ba
-  preview: rm upstream-client-secret.txt
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -126,7 +117,6 @@ tags:
   fingerprint: cc308ce3f2451d79
   lang: sh
   lines: 49d727d1 08167823 d2735be6 ebdfbb59 9b2c3af7 8d80fca4
-  preview: ADMIN_TOKEN=$(curl -fsS -X POST http://localhost:8080/realms/master/protocol/ope
   form:
     attr: paths="mcp-elicitation-brokered-agent"
     only: true
@@ -137,7 +127,6 @@ hidden:
     fingerprint: 972baa580ddf0a61
     lang: sh
     lines: 62892a1d 3db7a8c9
-    preview: cd "$HOME/agentgateway-brokered-elicitation"
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
        # ============================================================================
@@ -164,7 +153,6 @@ hidden:
     fingerprint: f93d0f96fc8d42e3
     lang: yaml
     lines: a7f80a73 7b1fc5bd e68ca7ba cab2be2b 234dc542 6f403570 b6e7e95c 33d39895 ebeee92c 883e1a24 b1a50bad 8281707a 501fffc8 837dd2e9
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
        # Hidden equivalent of the hand edit in Step 3: the same route and resource.
@@ -226,7 +214,6 @@ hidden:
     fingerprint: 4e835ac68958197c
     lang: sh
     lines: be262e4c 4877c191 67c5a3ac 4347ff3f af835a62
-    preview: curl -s -i -X POST http://localhost:3000/mcp/agent \
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
        # The proxy reloads on its own schedule: retry until the new route answers 400.
@@ -261,7 +248,6 @@ hidden:
     fingerprint: 6771c0b154221007
     lang: sh
     lines: fabb3891 4877c191 67c5a3ac 4347ff3f f852aefa 80e461be
-    preview: curl -s -X POST http://localhost:3000/mcp/agent \
   content: |2-
        {{< doc-test paths="mcp-elicitation-brokered-agent" >}}
        [ -n "${MCP_SESSION_ID}" ] || { echo "FAIL: empty MCP_SESSION_ID after authorization" >&2; exit 1; }

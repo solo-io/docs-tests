@@ -1,5 +1,6 @@
 format: 1
 source: content/en/agentgateway/kubernetes/latest/documentation/security/extauth/oauth/access-token.md
+previews: false
 blocks:
 - aa1f141eaa6c0fa9 yaml
 - 9e0355280b8f6519 sh
@@ -20,7 +21,6 @@ tags:
   fingerprint: aa1f141eaa6c0fa9
   lang: yaml
   lines: 16c71da1 98875768 efd325e8 8c8c4228 81c3599f 8af957d1 36184fa5 d5ec3fae afba47a2 971c8e86 9b9d0530 8b782833 ad87b24c ef60f61f abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="oauth-access-token"
     only: true
@@ -30,7 +30,6 @@ tags:
   fingerprint: 9e0355280b8f6519
   lang: sh
   lines: 9e035528
-  preview: kubectl get authconfig oauth-jwt-validation -n {{< reuse "agw-docs/snippets/name
   form:
     attr: paths="oauth-access-token"
     only: true
@@ -40,7 +39,6 @@ tags:
   fingerprint: f57034773dfed63c
   lang: yaml
   lines: abbd1bdc fbc30693 7f57603a 8c8c4228 81c3599f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 2c3ea4d6 75674f79 81c3599f 8af957d1 70c97555 aaecb171 8af957d1 fe80e1dd abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="oauth-access-token"
     only: true
@@ -50,7 +48,6 @@ tags:
   fingerprint: 4b1ab5000b178727
   lang: sh
   lines: adc85b7a a90f7a89 4b3b16d3 021fb596 23c01049 29fe507d e52a1813 021fb596 09d1b3dd 4bbbd315 d10b36aa cfae0d42 fc075a9d
-  preview: curl -v "${INGRESS_GW_ADDRESS}:80/openai" -H content-type:application/json -d '{
   form:
     attr: paths="oauth-access-token"
     only: true
@@ -60,7 +57,6 @@ tags:
   fingerprint: 645e129217fb9985
   lang: sh
   lines: bd37e137 9348e6ef 15ae54eb bd09ef43 4536b685 64825780 0096af31 54d1cb67
-  preview: export USER1_TOKEN=$(curl -Ssm 10 --fail-with-body \
   form:
     attr: paths="oauth-access-token"
     only: true
@@ -70,7 +66,6 @@ tags:
   fingerprint: 2f766d5c2d095136
   lang: sh
   lines: 2f766d5c
-  preview: echo $USER1_TOKEN
   form:
     attr: paths="oauth-access-token"
     only: true
@@ -80,7 +75,6 @@ tags:
   fingerprint: 890891b20f4d3b5c
   lang: sh
   lines: 5668ce2d 015b0dc5
-  preview: kubectl delete authconfig oauth-jwt-validation -n {{< reuse "agw-docs/snippets/n
   form:
     attr: paths="oauth-access-token"
     only: true
@@ -91,7 +85,6 @@ hidden:
     fingerprint: 9e0355280b8f6519
     lang: sh
     lines: 9e035528
-    preview: kubectl get authconfig oauth-jwt-validation -n {{< reuse "agw-docs/snippets/name
   content: |2-
        {{< doc-test paths="oauth-access-token" >}}
        # ============================================================================
@@ -116,7 +109,6 @@ hidden:
     fingerprint: f57034773dfed63c
     lang: yaml
     lines: abbd1bdc fbc30693 7f57603a 8c8c4228 81c3599f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 2c3ea4d6 75674f79 81c3599f 8af957d1 70c97555 aaecb171 8af957d1 fe80e1dd abc56510
-    preview: kubectl apply -f - <<EOF
   content: |2-
        {{< doc-test paths="oauth-access-token" >}}
        YAMLTest -f - <<'EOF'
@@ -141,7 +133,6 @@ hidden:
     fingerprint: 075d442613b76162
     lang: ''
     lines: ab5df625 5c0c3827 f4d99b6a d986f32c 95ba2772 dabd3aff bed133f0 b2e50529 ab5df625
-    preview: '...'
   content: |2-
        {{< doc-test paths="oauth-access-token" >}}
        YAMLTest -f - <<'EOF'
@@ -165,7 +156,6 @@ hidden:
     fingerprint: 2f766d5c2d095136
     lang: sh
     lines: 2f766d5c
-    preview: echo $USER1_TOKEN
   content: |2-
        {{< doc-test paths="oauth-access-token" >}}
        echo "$USER1_TOKEN" | grep -Eq '^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$' \
@@ -176,7 +166,6 @@ hidden:
     fingerprint: 4476789f3b046fc3
     lang: ''
     lines: ab5df625 6364ab47 ab5df625
-    preview: '...'
   content: |2-
        {{< doc-test paths="oauth-access-token" >}}
        # The LoadBalancer tab's command above is split across lines in the wrong

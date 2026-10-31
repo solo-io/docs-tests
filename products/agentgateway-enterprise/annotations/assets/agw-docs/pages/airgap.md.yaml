@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/airgap.md
+previews: false
 blocks:
 - 74d9e1ebc7016d86 sh
 - a6d06a74156b786a sh
@@ -31,7 +32,7 @@ blocks:
 - a8c68715cb3b642c sh
 - c0d6a61ef9e3eccd sh
 - bc2a93ce39e459df sh
-- 7bec3b93c91d31ce sh
+- b1d48fc1d51d6572 sh
 - 4956806f279b5ea3 yaml
 - e2a8e9039ba3db2f yaml
 - 3a286baa41ef5295 yaml
@@ -44,7 +45,6 @@ tags:
   fingerprint: 74d9e1ebc7016d86
   lang: sh
   lines: b3bead00 d11e6989 9ac2dfad d39745f4 e9332104 78c366f3 1aca3585 5aabf630
-  preview: '# Control plane'
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -54,7 +54,6 @@ tags:
   fingerprint: a6d06a74156b786a
   lang: sh
   lines: b3bead00 b38fc9fe 9ac2dfad 007d79ea b5cbc6fd d5ecdbc8 2714bed9 532c3dfe
-  preview: '# Control plane'
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -64,7 +63,6 @@ tags:
   fingerprint: 373d5f1377f6d0f1
   lang: sh
   lines: b3bead00 df101494 9ac2dfad 2cacc947 6ff4f29c 1a23a046 58a3e4e0 ef617aa5
-  preview: '# Control plane'
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -74,7 +72,6 @@ tags:
   fingerprint: 694179eff3dbf733
   lang: sh
   lines: 694179ef
-  preview: curl -LO https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< r
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -84,7 +81,6 @@ tags:
   fingerprint: 8c7c32a34652999c
   lang: sh
   lines: b3bead00 73468017 1c595073 bf0c1b60 9ac2dfad 3bfa1229 914a0b73 6b049323 a673fac3 670e941c 8bdd13f2 261bc773 0f567554 22408e2f e89b64da 9e90e3d4 c7907f2d 6c019e9e 6f7458ce 9168a5b8
-  preview: '# Control plane'
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -94,7 +90,6 @@ tags:
   fingerprint: 40f7eed9c57099b2
   lang: sh
   lines: 40f7eed9
-  preview: kubectl create namespace {{< reuse "agw-docs/snippets/namespace.md" >}}
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -104,7 +99,6 @@ tags:
   fingerprint: f323e40fa4bcce93
   lang: yaml
   lines: 41b4f836 c51be8dc c14c1813 c01255f9 6962ade9 55532f0a a396599a 2d0a637c e409bdd9 abc56510
-  preview: mkdir -p enterprise-agentgateway
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -114,7 +108,6 @@ tags:
   fingerprint: 38a67bbfeb831731
   lang: sh
   lines: 38a67bbf
-  preview: kubectl apply -f standard-install.yaml
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -124,7 +117,6 @@ tags:
   fingerprint: f6c04958c90df851
   lang: yaml
   lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 8af957d1 36184fa5 2f2479a1 c10d7538 fe67aa7e da480536 9278ed91 5f37c61e c3201545 e83d405d abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -134,7 +126,6 @@ tags:
   fingerprint: c06e2311b977eb15
   lang: sh
   lines: 7cf5780a 3ba992c3
-  preview: 'helm pull oci://{{< reuse "agw-docs/snippets/helm-path.md" >}}/charts/{{< reuse '
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -144,7 +135,6 @@ tags:
   fingerprint: 3f1659db934c4508
   lang: sh
   lines: e68579db 47f92532
-  preview: helm push {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}}-v$AGENTGATEWAY_
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -154,7 +144,6 @@ tags:
   fingerprint: 4b084da9b87abcc2
   lang: sh
   lines: 24d0bc4d 7a0b9974 3ba69cac 09c016e8 7a0b9974 fde80217 878ad6e0 37d65509
-  preview: 'helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} oci:'
   form:
     attr: paths="enterprise-airgap"
     only: true
@@ -164,14 +153,13 @@ tags:
   fingerprint: 06fb55dde8478d60
   lang: sh
   lines: cca5dc08 20aca5b0 7e00906f
-  preview: kubectl get deploy,statefulset -n {{< reuse "agw-docs/snippets/namespace.md" >}}
   form:
     attr: paths="enterprise-airgap"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: 'Step 1: Pull images on a connected device'
+    section: h:9aefb9597abe13b5
     line: cc32ad7f204825ce
     occurrence: 0
     words: b8d31e85 4d040d3f 12a7bd86 263a4dbe 68ff63fb b9776d7d 80ea8bc4 21b2eed1 10c22bcf d9c0d341 eb4e3800 21a355f1 5e82ea9e 7b12be43
@@ -215,7 +203,6 @@ hidden:
     fingerprint: 206112879b9ad86d
     lang: sh
     lines: c13d7aa3 431ef27c
-    preview: export PRIVATE_REGISTRY=<registry.example.com>
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-airgap" >}}
@@ -236,7 +223,6 @@ hidden:
     fingerprint: fcfae6d24b77192b
     lang: sh
     lines: 656f64a9 e87b6717 1231af6f c234339c 2708ed4f 3ba69cac
-    preview: kubectl create secret docker-registry private-registry-credentials \
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-airgap" >}}
@@ -252,7 +238,6 @@ hidden:
     fingerprint: 4b084da9b87abcc2
     lang: sh
     lines: 24d0bc4d 7a0b9974 3ba69cac 09c016e8 7a0b9974 fde80217 878ad6e0 37d65509
-    preview: 'helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} oci:'
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-airgap" >}}
@@ -265,7 +250,6 @@ hidden:
     fingerprint: 06fb55dde8478d60
     lang: sh
     lines: cca5dc08 20aca5b0 7e00906f
-    preview: kubectl get deploy,statefulset -n {{< reuse "agw-docs/snippets/namespace.md" >}}
   blank_before: []
   content: |-
     {{< doc-test paths="enterprise-airgap" >}}

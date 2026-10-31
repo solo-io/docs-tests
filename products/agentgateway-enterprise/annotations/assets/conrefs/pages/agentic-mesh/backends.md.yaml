@@ -1,5 +1,6 @@
 format: 1
 source: assets/conrefs/pages/agentic-mesh/backends.md
+previews: false
 blocks:
 - 32bf31282726b79d sh
 - 5e5bb81d9abc5918 sh
@@ -19,7 +20,6 @@ tags:
   fingerprint: cfe2cba5db117ae9
   lang: yaml
   lines: abbd1bdc 263e4531 f84e6062 8c8c4228 6666820d 18d7aff9 36184fa5 ad3afdb1 93a4b62b da4aa5f1 6d88d930 c8f3f59a 146e11c6 9ebc4789 4df4f75f abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
     only: true
@@ -29,7 +29,6 @@ tags:
   fingerprint: 29f8f566d76aa86d
   lang: yaml
   lines: abbd1bdc e6494e6f 32b92192 8c8c4228 f9307450 18d7aff9 fa1e8330 087eb29a 36184fa5 bfce7f60 9e3ad6df b6e959f2 0ff65a1a d6f6a58a 9278ed91 069de162 c2e7a109 f775c99b dffb4316 abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
     only: true
@@ -39,7 +38,6 @@ tags:
   fingerprint: b677dfa4a48f32ea
   lang: yaml
   lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 8b141b76 18d7aff9 36184fa5 d3d416e7 182050a3 32b92192 f9307450 3de9d845 b733d726 aeca2b3d bf068a96 461e88b9 94ae491e cd410e85 22aec9ce f84e6062 abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
     only: true
@@ -49,7 +47,6 @@ tags:
   fingerprint: dc724bd32dfe36f8
   lang: yaml
   lines: abbd1bdc 00c69c65 5cad5c90 8c8c4228 2e77f681 18d7aff9 36184fa5 588a5d84 519265a4 ca6fb638 f9307450 e4f6a86d d48a6346 d25a61e1 1188488c 0a06a173 a0beb94b abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
     only: true
@@ -59,7 +56,6 @@ tags:
   fingerprint: 05343ad53db2fb55
   lang: sh
   lines: 05343ad5
-  preview: 'kubectl run curl-unauth -n ${NAMESPACE} --image=curlimages/curl --restart=Never '
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
     only: true
@@ -69,7 +65,6 @@ tags:
   fingerprint: abb20ff4a3ab66a3
   lang: sh
   lines: 346a8b56 041d8c89 ab5cb401
-  preview: kubectl run curl-auth -n ${NAMESPACE} --image=curlimages/curl \
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
     only: true
@@ -79,7 +74,6 @@ tags:
   fingerprint: 00295d6f5ca868c6
   lang: sh
   lines: 3900686d 9aa03128 fc68f389 cc34797f
-  preview: kubectl exec -n ${NAMESPACE} curl-unauth -- \
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
     only: true
@@ -89,7 +83,6 @@ tags:
   fingerprint: 942e98432a9c3f05
   lang: sh
   lines: ccd604cb 9aa03128 fc68f389 cc34797f
-  preview: kubectl exec -n ${NAMESPACE} curl-auth -- \
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
     only: true
@@ -99,7 +92,6 @@ tags:
   fingerprint: 990a2f0f3cdf2a52
   lang: sh
   lines: b576eb2e 2b37ba1b 8c21323d 4c8643cb b738c648 88def8fa
-  preview: kubectl delete pod curl-unauth curl-auth -n ${NAMESPACE}
   form:
     attr: paths="integrations-agentic-mesh-waypoint-backends"
     only: true
@@ -110,7 +102,6 @@ hidden:
     fingerprint: 32bf31282726b79d
     lang: sh
     lines: 32bf3128
-    preview: export NAMESPACE=<ns>
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-backends" >}}
@@ -122,7 +113,6 @@ hidden:
     fingerprint: 5e5bb81d9abc5918
     lang: sh
     lines: f3e37996 01e62778
-    preview: kubectl create secret generic openai-secret -n ${NAMESPACE} \
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-backends" >}}
@@ -136,7 +126,6 @@ hidden:
     fingerprint: 016b0d3f5a53715b
     lang: sh
     lines: 016b0d3f
-    preview: export AGENT_SERVICE_ACCOUNT=<your_agent_sa>
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-backends" >}}
@@ -149,14 +138,13 @@ hidden:
     fingerprint: abb20ff4a3ab66a3
     lang: sh
     lines: 346a8b56 041d8c89 ab5cb401
-    preview: kubectl run curl-auth -n ${NAMESPACE} --image=curlimages/curl \
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-backends" >}}
        kubectl -n ${NAMESPACE} wait pod/curl-unauth pod/curl-auth --for=condition=Ready --timeout=180s
        {{< /doc-test >}}
 - after:
-    section: Apply authorization policies alongside backends
+    section: h:4d49202d1c25e37f
     line: 260149c59064c90b
     occurrence: 0
     words: ef2d127d a12dd3a7 8e7fc023 b9776d7d bbb75229 15d9aff9 b9776d7d 823412d1 a7e2d26e 86474ae6 ca978112 31e06f7d 21606b58 1f58b914 75857a45 b9776d7d e9d83f01 425c89ed b9776d7d bbb75229 153b2a38 ca978112 d26eae87 6db7d803 b9776d7d 1f58b914 b080c643 b9776d7d 487b9104 5c4c1964
@@ -165,7 +153,6 @@ hidden:
       fingerprint: abb20ff4a3ab66a3
       lang: sh
       lines: 346a8b56 041d8c89 ab5cb401
-      preview: kubectl run curl-auth -n ${NAMESPACE} --image=curlimages/curl \
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-backends" >}}
@@ -179,7 +166,7 @@ hidden:
        [ "$code" = "403" ] || { echo "expected 403 from the waypoint for curl-unauth, got ${code}"; exit 1; }
        {{< /doc-test >}}
 - after:
-    section: Apply authorization policies alongside backends
+    section: h:4d49202d1c25e37f
     line: cdc38943510e5c74
     occurrence: 0
     words: e7f6c011 3f267c2a 8e7fc023 b9776d7d 04dd9c7e 425c89ed 9f584196 ed4561f6 b9776d7d 14c2529e b9776d7d 08659077 539822cd bec16879 1f58b914 f4bf9f7f ca978112 31e06f7d 21606b58 a1d98908 27ce1d1b ca978112 72231043 1f58b914 0695b563 ca978112 31e06f7d 21606b58 230d8358 0695b563 ca978112 ec654fac 14c2529e 2c70e12b b9776d7d 1f58b914 153b2a38 27badc98
@@ -188,7 +175,6 @@ hidden:
       fingerprint: 00295d6f5ca868c6
       lang: sh
       lines: 3900686d 9aa03128 fc68f389 cc34797f
-      preview: kubectl exec -n ${NAMESPACE} curl-unauth -- \
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-backends" >}}

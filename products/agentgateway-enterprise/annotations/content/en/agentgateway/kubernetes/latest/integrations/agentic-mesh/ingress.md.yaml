@@ -1,5 +1,6 @@
 format: 1
 source: content/en/agentgateway/kubernetes/latest/integrations/agentic-mesh/ingress.md
+previews: false
 blocks:
 - acf87bc841d852fa sh
 - 8d47f23e4ac8d132 sh
@@ -14,7 +15,6 @@ tags:
   fingerprint: acf87bc841d852fa
   lang: sh
   lines: eed9279f 56636913 f82702aa 09709669 cd85f142
-  preview: helm get values enterprise-agentgateway -n agentgateway-system -o yaml > values.
   form:
     attr: paths="integrations-agentic-mesh-ingress"
     only: true
@@ -24,7 +24,6 @@ tags:
   fingerprint: 8d47f23e4ac8d132
   lang: sh
   lines: bad086bc 13bfeb78
-  preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
   form:
     attr: paths="integrations-agentic-mesh-ingress"
     only: true
@@ -34,7 +33,6 @@ tags:
   fingerprint: 1334baf3b4ec3970
   lang: yaml
   lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 af4ee5f4 8d7577a7 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 2836fc17 94ae491e 80e9487c bca8e5f7 abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-ingress"
     only: true
@@ -44,7 +42,6 @@ tags:
   fingerprint: 074e2652d402c8ca
   lang: sh
   lines: 074e2652
-  preview: 'curl -H "Host: www.example.com" http://${INGRESS_GW_ADDRESS}:8080/get'
   form:
     attr: paths="integrations-agentic-mesh-ingress"
     only: true
@@ -54,7 +51,6 @@ tags:
   fingerprint: 1807a744591ce523
   lang: sh
   lines: 1807a744
-  preview: istioctl ztunnel-config connections --workload-namespace httpbin
   form:
     attr: paths="integrations-agentic-mesh-ingress"
     only: true
@@ -64,7 +60,6 @@ tags:
   fingerprint: 0f795331b0c14df0
   lang: sh
   lines: cb36d864 11d484a1
-  preview: kubectl delete httproute httpbin -n httpbin
   form:
     attr: paths="integrations-agentic-mesh-ingress"
     only: true
@@ -75,7 +70,6 @@ hidden:
     fingerprint: acf87bc841d852fa
     lang: sh
     lines: eed9279f 56636913 f82702aa 09709669 cd85f142
-    preview: helm get values enterprise-agentgateway -n agentgateway-system -o yaml > values.
   blank_before: []
   content: |2-
       {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
@@ -88,14 +82,13 @@ hidden:
     fingerprint: 8d47f23e4ac8d132
     lang: sh
     lines: bad086bc 13bfeb78
-    preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/he
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-ingress" >}}
        kubectl -n httpbin rollout status deploy/httpbin --timeout=180s
        {{< /doc-test >}}
 - after:
-    section: Route traffic with HTTPRoute
+    section: h:65ca720726baa329
     line: f9b2c9cabb0179f2
     occurrence: 0
     words: 4e074085 27ce1d1b ca978112 1f58b914 663ea1bf b9776d7d 487a0a9a 4ea5ee68 663ea1bf a12dd3a7 8e7fc023 075f4ab8 b080c643 b9776d7d a172cedc
@@ -104,7 +97,6 @@ hidden:
       fingerprint: 1334baf3b4ec3970
       lang: yaml
       lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 af4ee5f4 8d7577a7 301e1bfa 8f304d1d 3de9d845 b733d726 aeca2b3d bf068a96 2836fc17 94ae491e 80e9487c bca8e5f7 abc56510
-      preview: kubectl apply -f - <<EOF
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-ingress" >}}

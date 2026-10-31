@@ -1,15 +1,16 @@
 format: 1
 source: assets/agw-docs/pages/global-rate-limit.md
+previews: false
 blocks:
 - 991d632b6d8b2fb9 yaml
 - 75b37bbe874d26a7 yaml
 - 0b26879c76445ea2 sh
-- 34631d9c1a02f4f5 sh
+- 4f046dac514c5fe8 sh
 - cd0dfef548da6d39 sh
 - 1ccc3354a57bb9b2
 - f5f1b728ce750271 yaml
 - 97da73ec0f2f8dca yaml
-- 995307c7dd9ca123 sh
+- 6a0b9b9851ab8e20 sh
 - 7f924fdaa91c421f sh
 - a61237b3ca707dd9
 - 94fd48bb7e641eea yaml
@@ -21,7 +22,6 @@ tags:
   fingerprint: 991d632b6d8b2fb9
   lang: yaml
   lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 2a9ae068 0bebd850 36184fa5 aeeb33bd b7b5f484 d1d87427 a50da420 fe0213c0 6a642fca a19560f5 e50b9463 99005bf9 6e631e62 19006c37 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="global-rate-limit-enterprise"
     only: true
@@ -31,7 +31,6 @@ tags:
   fingerprint: 75b37bbe874d26a7
   lang: yaml
   lines: 16c71da1 88b9492f c548623c 8c8c4228 2a9ae068 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 065d53f7 c14c1813 2ed67d95 959a9fcb abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="global-rate-limit-enterprise"
     only: true
@@ -41,7 +40,6 @@ tags:
   fingerprint: 0b26879c76445ea2
   lang: sh
   lines: 0b26879c
-  preview: 'kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} ip-rate-limit -n '
   form:
     attr: paths="global-rate-limit-enterprise"
     only: true
@@ -51,7 +49,6 @@ tags:
   fingerprint: f5f1b728ce750271
   lang: yaml
   lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 93c87b1b 0bebd850 36184fa5 aeeb33bd b7b5f484 eef55bb8 a50da420 ca372f46 6a642fca a19560f5 e50b9463 99005bf9 a68324b2 25a46942 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="global-rate-limit-enterprise"
     only: true
@@ -61,7 +58,6 @@ tags:
   fingerprint: 97da73ec0f2f8dca
   lang: yaml
   lines: 16c71da1 88b9492f c548623c 8c8c4228 93c87b1b 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 597ae42e abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="global-rate-limit-enterprise"
     only: true
@@ -71,7 +67,6 @@ tags:
   fingerprint: 94fd48bb7e641eea
   lang: yaml
   lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 e26d8d3a 0bebd850 36184fa5 aeeb33bd b7b5f484 eef55bb8 a50da420 ca372f46 6a642fca a19560f5 e50b9463 99005bf9 a68324b2 25a46942 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="global-rate-limit-enterprise"
     only: true
@@ -81,7 +76,6 @@ tags:
   fingerprint: c2000aa37d574476
   lang: yaml
   lines: 16c71da1 88b9492f c548623c 8c8c4228 e9c383a9 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d a50da420 f971795d bafdf12e 9482fbfc cb3f91d5 88b9492f c548623c 8c8c4228 1a71044f 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 12a458d8 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="global-rate-limit-enterprise"
     only: true
@@ -91,7 +85,6 @@ tags:
   fingerprint: ca32cb37a33f927c
   lang: sh
   lines: 06575f84 dc7418a7 4c584f47 0a10bab7 7efd914d a0866e61 c486f184
-  preview: kubectl delete RateLimitConfig ip-rate-limit -n {{< reuse "kgw-docs/snippets/nam
   form:
     attr: paths="global-rate-limit-enterprise"
     only: true
@@ -102,7 +95,6 @@ hidden:
     fingerprint: 75b37bbe874d26a7
     lang: yaml
     lines: 16c71da1 88b9492f c548623c 8c8c4228 2a9ae068 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 e4f6a86d 065d53f7 c14c1813 2ed67d95 959a9fcb abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="global-rate-limit-enterprise" >}}
        # ============================================================================
@@ -172,7 +164,6 @@ hidden:
     fingerprint: 1ccc3354a57bb9b2
     lang: ''
     lines: 1ef92b8a 70b65d9e ab5df625 950ea6a2 bff140b7 8a7b694f ab5df625 b5c48621
-    preview: 'Request 1: HTTP 200'
   content: |2-
        {{< doc-test paths="global-rate-limit-enterprise" >}}
        wait_enforced
@@ -183,7 +174,6 @@ hidden:
     fingerprint: 97da73ec0f2f8dca
     lang: yaml
     lines: 16c71da1 88b9492f c548623c 8c8c4228 93c87b1b 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 597ae42e abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="global-rate-limit-enterprise" >}}
        YAMLTest -f - <<'EOF'
@@ -208,7 +198,6 @@ hidden:
     fingerprint: a61237b3ca707dd9
     lang: ''
     lines: b77b3a6f 24e84fb2 0c1a5f6d 3ca1ea63 8cdb8317
-    preview: < HTTP/1.1 429 Too Many Requests
   content: |2-
        {{< doc-test paths="global-rate-limit-enterprise" >}}
        wait_enforced -H "x-user-id: alice"
@@ -219,7 +208,6 @@ hidden:
     fingerprint: c2000aa37d574476
     lang: yaml
     lines: 16c71da1 88b9492f c548623c 8c8c4228 e9c383a9 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d a50da420 f971795d bafdf12e 9482fbfc cb3f91d5 88b9492f c548623c 8c8c4228 1a71044f 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 12a458d8 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="global-rate-limit-enterprise" >}}
        YAMLTest -f - <<'EOF'

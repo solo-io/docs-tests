@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/mcp/openapi.md
+previews: false
 blocks:
 - 4de7787db2ddd28d yaml
 - 56b4b251dc78a818 sh
@@ -14,14 +15,13 @@ blocks:
 - 911b17ca4604be60 sh
 - 8be8e933d48a38d2
 - 7080e554015b43ce yaml
-- 40e61fabdf945363 sh
+- 007da98fa82e3a4e sh
 tags:
 - paths: mcp-openapi
   block: 0
   fingerprint: 4de7787db2ddd28d
   lang: yaml
   lines: 16c71da1 58584366 ab78925c 8c8c4228 1c1f9d26 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac 4436eb4b a58565b2 8c8c4228 fa1e8330 4436eb4b 36184fa5 04968f51 67f91a16 af63f06b 0ff65a1a a46d7c6d cb3f91d5 f1540154 0d6480f0 8c8c4228 1c1f9d26 0ccc8edc 36184fa5 8432e015 4436eb4b 0ff65a1a 4fc11012 b1d5c800 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-openapi"
     only: true
@@ -31,7 +31,6 @@ tags:
   fingerprint: 56b4b251dc78a818
   lang: sh
   lines: 56b4b251
-  preview: kubectl wait --for=condition=available deployment/petstore --timeout=60s
   form:
     attr: paths="mcp-openapi"
     only: true
@@ -41,7 +40,6 @@ tags:
   fingerprint: 6a2183ad53bef98c
   lang: yaml
   lines: 16c71da1 f1540154 033792b5 8c8c4228 39de6d79 0ccc8edc ff72caa3 dff31ef9 021fb596 79d24f77 41ef8b23 d195eb02 a5d89d88 e52a1813 93d33a28 021fb596 59d3e6e2 d10b36aa 39d4b54e 4563730f 79086267 18ed7122 21581a1a 2d0f6766 83a17fcb 021fb596 7d386fd3 370f5b17 270f2991 3c3cac27 4a2ff782 d10b36aa 39d4b54e 7309fc27 c500d1b7 424588ed d10b36aa d10b36aa e52a1813 070bf82f 71179199 a96cad30 9f34e69d 800cdd10 b7fd2393 e393fe3c 028b56a6 578b7fdc 75d5a96b e6f6d2cc e325d405 f1c12e8f e52a1813 84ff17ab d10b36aa d10b36aa d10b36aa e52a1813 7309fc27 c500d1b7 428053fc d10b36aa d10b36aa d10b36aa e52a1813 3b7de782 18ed7122 b1a8c8f7 308eb7cc 83a17fcb 021fb596 58ef9793 c9c31288 800cdd10 4a2ff782 d10b36aa 39d4b54e 7309fc27 c500d1b7 d2859c08 d10b36aa d10b36aa e52a1813 843fff4b 676d8934 bf252fc5 83a17fcb 021fb596 58ef9793 c9c31288 800cdd10 4a2ff782 d10b36aa 39d4b54e 7309fc27 e3a93020 6b98131f d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-openapi"
     only: true
@@ -51,7 +49,6 @@ tags:
   fingerprint: 1c42c0c0b443deab
   lang: yaml
   lines: 16c71da1 00c69c65 450c56e0 8c8c4228 8a05d704 0ccc8edc 36184fa5 425ef23b 3035507a 67f91a16 2efcbf93 5d0f39f7 c095a45d 36c52be2 10b9a3aa e29cb53c 39de6d79 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-openapi"
     only: true
@@ -61,7 +58,6 @@ tags:
   fingerprint: 495b348ff18ddd42
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1bac93d3 0ccc8edc 36184fa5 d3d416e7 2d157081 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e 32ee2c65 b8ac8874 450c56e0 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-openapi"
     only: true
@@ -71,7 +67,6 @@ tags:
   fingerprint: 6b951406d5d83916
   lang: sh
   lines: 6b951406
-  preview: kubectl get httproute openapi-mcp -o jsonpath='{.status.parents[0].conditions[?(
   form:
     attr: paths="mcp-openapi"
     only: true
@@ -82,7 +77,6 @@ hidden:
     fingerprint: 495b348ff18ddd42
     lang: yaml
     lines: 16c71da1 8c67597e 56bf9360 8c8c4228 1bac93d3 0ccc8edc 36184fa5 d3d416e7 2d157081 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 7981fdab 94ae491e 32ee2c65 b8ac8874 450c56e0 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="mcp-openapi" >}}
        # The route's parentRefs namespace comes from a kgw-docs snippet that resolves
@@ -97,7 +91,6 @@ hidden:
     fingerprint: 6b951406d5d83916
     lang: sh
     lines: 6b951406
-    preview: kubectl get httproute openapi-mcp -o jsonpath='{.status.parents[0].conditions[?(
   content: |2-
        {{< doc-test paths="mcp-openapi" >}}
        YAMLTest -f - <<'EOF'
@@ -136,7 +129,6 @@ hidden:
     fingerprint: 911b17ca4604be60
     lang: sh
     lines: e514ce72 67c5a3ac 4347ff3f 8950b9e5 3f897f1f
-    preview: curl -s "http://localhost:8080/mcp" \
   content: |2-
        {{< doc-test paths="mcp-openapi" >}}
        # The visible steps use a port-forward and a <session-id> placeholder, so run the

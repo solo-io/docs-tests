@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/mcp-rate-limit.md
+previews: false
 blocks:
 - 4f94bbc7ad74f113 yaml
 - 0360ec4c49c7f844 sh
@@ -21,7 +22,6 @@ tags:
   fingerprint: 4f94bbc7ad74f113
   lang: yaml
   lines: 16c71da1 88b9492f c548623c 8c8c4228 d4cf8077 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d a50da420 f971795d e58a0870 9482fbfc db022252 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-rate-limit-enterprise"
     only: true
@@ -31,7 +31,6 @@ tags:
   fingerprint: 0360ec4c49c7f844
   lang: sh
   lines: 0360ec4c
-  preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-rate-limit -n
   form:
     attr: paths="mcp-rate-limit-enterprise"
     only: true
@@ -41,7 +40,6 @@ tags:
   fingerprint: 7916b76ca46d9ce1
   lang: yaml
   lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 3ee5fe1e 0bebd850 36184fa5 aeeb33bd a169cfbe b7b5f484 d0c1eaa8 7db841bc b7b5f484 03d30b36 66e392bc a50da420 c7bd68b9 6a642fca 03d30b36 f31a7efb a50da420 c7bd68b9 6a642fca 03d30b36 a50da420 fe0213c0 6a642fca a19560f5 e50b9463 99005bf9 0ab04e07 be14a85f 99005bf9 de5b1158 ae20956b abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-rate-limit-enterprise"
     only: true
@@ -51,7 +49,6 @@ tags:
   fingerprint: 9f2c4f6665e747b6
   lang: yaml
   lines: 16c71da1 88b9492f c548623c 8c8c4228 3ee5fe1e 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 d2ace77c e4f6a86d 065d53f7 c14c1813 2ed67d95 c4fcc5d8 0bebd850 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-rate-limit-enterprise"
     only: true
@@ -61,7 +58,6 @@ tags:
   fingerprint: f7ef726e941cb21f
   lang: sh
   lines: f7ef726e
-  preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-tool-rate-lim
   form:
     attr: paths="mcp-rate-limit-enterprise"
     only: true
@@ -71,7 +67,6 @@ tags:
   fingerprint: 0df7b47523f15591
   lang: sh
   lines: 7ce0b024 e2b55b81 9c093642
-  preview: kubectl delete RateLimitConfig mcp-tool-rate-limit -n {{< reuse "kgw-docs/snippe
   form:
     attr: paths="mcp-rate-limit-enterprise"
     only: true
@@ -82,7 +77,6 @@ hidden:
     fingerprint: 0360ec4c49c7f844
     lang: sh
     lines: 0360ec4c
-    preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-rate-limit -n
   content: |2-
        {{< doc-test paths="mcp-rate-limit-enterprise" >}}
        # ============================================================================
@@ -136,7 +130,6 @@ hidden:
     fingerprint: d4b42d21f9eaa1ab
     lang: ''
     lines: 021fb596 a63a199c d10b36aa ab5df625 021fb596 491dfbfb 4a787328 d10b36aa ab5df625 8cda5848 4da671a3 ab5df625
-    preview: '{'
   content: |2-
        {{< doc-test paths="mcp-rate-limit-enterprise" >}}
        for i in $(seq 1 30); do
@@ -159,7 +152,6 @@ hidden:
     fingerprint: f7ef726e941cb21f
     lang: sh
     lines: f7ef726e
-    preview: kubectl get {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} mcp-tool-rate-lim
   content: |2-
        {{< doc-test paths="mcp-rate-limit-enterprise" >}}
        YAMLTest -f - <<'EOF'
@@ -184,7 +176,6 @@ hidden:
     fingerprint: 07aa94ccbcc7ee05
     lang: ''
     lines: c65b0101 021fb596 6a96e041 d10b36aa 021fb596 6a96e041 d10b36aa 021fb596 6a96e041 d10b36aa 021fb596 0d4cab13 4a787328 d10b36aa 021fb596 0d4cab13 4a787328 d10b36aa 947c5c95 021fb596 a63a199c d10b36aa 021fb596 a63a199c d10b36aa 021fb596 a63a199c d10b36aa 021fb596 a63a199c d10b36aa 021fb596 a63a199c d10b36aa
-    preview: '# trigger-long-running-operation calls (3/min limit)'
   content: |2-
        {{< doc-test paths="mcp-rate-limit-enterprise" >}}
        # Open one session; initialize is not counted by the per-tool limit.

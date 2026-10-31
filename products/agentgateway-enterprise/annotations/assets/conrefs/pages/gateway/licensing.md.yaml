@@ -1,5 +1,6 @@
 format: 1
 source: assets/conrefs/pages/gateway/licensing.md
+previews: false
 blocks:
 - e7ec31289e349cd3 sh
 - d6b60841a75f90f9 sh
@@ -21,7 +22,6 @@ tags:
   fingerprint: e7ec31289e349cd3
   lang: sh
   lines: 8a3b9e28 1bd2e2c1 7fe1d0d2 f3b85382
-  preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
   form:
     attr: paths="enterprise-licensing"
     only: true
@@ -31,7 +31,6 @@ tags:
   fingerprint: 94947d75279727a9
   lang: yaml
   lines: 4f9a49d2 f1540154 a67acb0a 1426decf 8c8c4228 91e75609 0bebd850 2f7c298d ce1a9758 abc56510
-  preview: cat << EOF | kubectl apply -f -
   form:
     attr: paths="enterprise-licensing"
     only: true
@@ -41,7 +40,6 @@ tags:
   fingerprint: 274079499b6408e7
   lang: sh
   lines: 87fb9ffa bb33f2e0 d2f34d1e bc73c86d
-  preview: kubectl create secret generic --save-config \
   form:
     attr: paths="enterprise-licensing"
     only: true
@@ -51,7 +49,6 @@ tags:
   fingerprint: f108eba057e499c0
   lang: bash
   lines: f108eba0
-  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout restart deploy
   form:
     attr: paths="enterprise-licensing"
     only: true
@@ -61,14 +58,13 @@ tags:
   fingerprint: 12f398d993156eaf
   lang: sh
   lines: 12f398d9
-  preview: kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "
   form:
     attr: paths="enterprise-licensing"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: Provide key directly
+    section: h:f78521207c8015ec
     line: ba1ea144d5c55a86
     occurrence: 0
     words: 7508386a 82a3537f 9b97ac5e cc1d3b02
@@ -100,7 +96,6 @@ hidden:
     fingerprint: e7ec31289e349cd3
     lang: sh
     lines: 8a3b9e28 1bd2e2c1 7fe1d0d2 f3b85382
-    preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
   blank_before: []
   content: |-
     {{< doc-test paths="enterprise-licensing" >}}
@@ -116,7 +111,6 @@ hidden:
     fingerprint: 888be0a422cf3291
     lang: yaml
     lines: 46ab7fcc 49c99de3 241af637
-    preview: 'licensing:'
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-licensing" >}}
@@ -139,7 +133,6 @@ hidden:
     fingerprint: fe3eda094a7ecca3
     lang: sh
     lines: a23bf984 1bd2e2c1 0c975bff
-    preview: kubectl get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license   \
   blank_before: []
   content: |-
     {{< doc-test paths="enterprise-licensing" >}}
@@ -165,7 +158,6 @@ hidden:
     fingerprint: 4460a322d3025cee
     lang: bash
     lines: 4460a322
-    preview: export LICENSE_KEY=<new-key-string>
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-licensing" >}}
@@ -177,7 +169,6 @@ hidden:
     fingerprint: f108eba057e499c0
     lang: bash
     lines: f108eba0
-    preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout restart deploy
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-licensing" >}}
@@ -189,7 +180,6 @@ hidden:
     fingerprint: 12f398d993156eaf
     lang: sh
     lines: 12f398d9
-    preview: kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-licensing" >}}

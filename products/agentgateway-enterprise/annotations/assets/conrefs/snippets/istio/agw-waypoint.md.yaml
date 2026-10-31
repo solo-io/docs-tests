@@ -1,5 +1,6 @@
 format: 1
 source: assets/conrefs/snippets/istio/agw-waypoint.md
+previews: false
 blocks:
 - 32bf31282726b79d sh
 - dad3ac076ef4f447 yaml
@@ -22,7 +23,6 @@ tags:
   fingerprint: dad3ac076ef4f447
   lang: yaml
   lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 8c300a0b 18d7aff9 fa1e8330 f1651cd1 36184fa5 a86d8611 c10d7538 326e54f2 572d5678 6d9c1787 abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup"
     only: true
@@ -32,7 +32,6 @@ tags:
   fingerprint: 11cb7e985a2cda3c
   lang: sh
   lines: 6965bfad 8e9e2829
-  preview: kubectl get pods -n ${NAMESPACE} -l gateway.networking.k8s.io/gateway-name=agent
   form:
     attr: paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup"
     only: true
@@ -42,7 +41,6 @@ tags:
   fingerprint: 14fd7cea859fc2f1
   lang: sh
   lines: 9fe5ae2d ebeaeaee 69486046
-  preview: kubectl label namespace ${NAMESPACE} \
   form:
     attr: paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup"
     only: true
@@ -52,7 +50,6 @@ tags:
   fingerprint: ebd00df345271b15
   lang: sh
   lines: ebd00df3
-  preview: istioctl ztunnel-config connections --workload-namespace ${NAMESPACE}
   form:
     attr: paths="integrations-agentic-mesh-waypoint-install"
     only: true
@@ -63,7 +60,6 @@ hidden:
     fingerprint: 32bf31282726b79d
     lang: sh
     lines: 32bf3128
-    preview: export NAMESPACE=<ns>
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup" >}}
@@ -74,7 +70,7 @@ hidden:
        kubectl label namespace ${NAMESPACE} istio.io/dataplane-mode=ambient --overwrite
        {{< /doc-test >}}
 - after:
-    section: Single cluster
+    section: h:5731bae6a9fbb8ac
     line: b06367c8d4bf6395
     occurrence: 0
     words: 4e074085 a12dd3a7 8e7fc023 b9776d7d 56e57ada bbb75229 425c89ed fa51fd49 c071cf5f 6201111b b9776d7d 4ea5ee68 fa51fd49 2de632d1
@@ -83,7 +79,6 @@ hidden:
       fingerprint: dad3ac076ef4f447
       lang: yaml
       lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 8c300a0b 18d7aff9 fa1e8330 f1651cd1 36184fa5 a86d8611 c10d7538 326e54f2 572d5678 6d9c1787 abc56510
-      preview: kubectl apply -f - <<EOF
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-install,integrations-agentic-mesh-waypoint-setup" >}}
@@ -97,7 +92,6 @@ hidden:
     fingerprint: 11cb7e985a2cda3c
     lang: sh
     lines: 6965bfad 8e9e2829
-    preview: kubectl get pods -n ${NAMESPACE} -l gateway.networking.k8s.io/gateway-name=agent
   blank_before: []
   content: |2-
        {{< doc-test paths="integrations-agentic-mesh-waypoint-install" >}}
@@ -113,7 +107,6 @@ hidden:
     fingerprint: 14fd7cea859fc2f1
     lang: sh
     lines: 9fe5ae2d ebeaeaee 69486046
-    preview: kubectl label namespace ${NAMESPACE} \
   blank_before: []
   content: |2-
          {{< doc-test paths="integrations-agentic-mesh-waypoint-install" >}}
