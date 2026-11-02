@@ -388,6 +388,25 @@ metadata:
         code, tests = self.run_check(str(self.new), f"--kubeconform={KUBECONFORM}", "--kubernetes-version=1.36.0")
         self.assertIn("Service at /spec/ports/0/port", tests[key]["error"])
 
+    def test_kind_without_api_version_is_not_kubernetes(self):
+        """An agentgateway config resource for `agctl standalone apply`."""
+        key = self.write("main", page("""```yaml {paths="policy"}
+apiVersion: v1
+kind: Service
+metadata:
+  name: s
+spec:
+  ports:
+  - port: 8080
+---
+kind: llm.model
+value:
+  name: example-model
+```"""))
+        code, tests = self.run_check(str(self.new), f"--kubeconform={KUBECONFORM}", "--kubernetes-version=1.36.0")
+        self.assertEqual(code, 0, tests)
+        self.assertEqual(tests[key]["status"], "passed", tests[key])
+
     def test_without_kubeconform_core_kinds_are_unchecked(self):
         key = self.service(8080)
         code, tests = self.run_check(str(self.new))

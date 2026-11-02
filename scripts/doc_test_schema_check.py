@@ -399,6 +399,13 @@ def check_step(repo_root: Path, file: str, path: str, schemas: Schemas, docs_tes
                 continue
             if not isinstance(doc, dict) or "kind" not in doc:
                 continue
+            # Every Kubernetes object has an apiVersion. A `kind:` document
+            # without one is something else, such as an agentgateway config
+            # resource (`kind: llm.model`, `value: ...`) for `agctl standalone
+            # apply`, so kubeconform must not see it.
+            if "apiVersion" not in doc:
+                res.unchecked_kinds.add(str(doc["kind"]))
+                continue
             group = str(doc.get("apiVersion", "")).rpartition("/")[0]
             if (group, doc["kind"]) in schemas.crds:
                 res.checked += 1
@@ -496,9 +503,12 @@ def check_scenario(
                      doc_file.relative_to(repo_root).as_posix(), unparsed)
     if checked == 0:
         found = f" (found only {', '.join(sorted(unchecked_kinds))}, which have no schema here)" if unchecked_kinds else ""
+        # A manifest that does not parse is the usual cause when a page shows
+        # one, for example a mis-indented line.
+        broken = f"; {unparsed} YAML document(s) in it did not parse" if unparsed else ""
         errors.append(
             f"{doc_file.relative_to(repo_root).as_posix()}: found no recognizable custom "
-            f"resource manifest or config file to validate anywhere in this scenario's source chain{found}"
+            f"resource manifest or config file to validate anywhere in this scenario's source chain{found}{broken}"
         )
     return errors, checked
 

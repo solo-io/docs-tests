@@ -1,0 +1,7 @@
+# Doc test type check findings that predate the check (doc_test_type_check.py).
+# A run fails only on an error not listed here. Regenerate with --write-baseline.
+# Each is a skip: page whose new schema test would fail, so it stays skipped:
+# argocd.md shows only Argo CD Applications, which have no schema here, so a
+# schema test has nothing to check. products/agentgateway/type-check-baseline.yaml
+# lists the open source page it rebases for the same reason.
+- products/agentgateway-enterprise/kubernetes/tests.yaml skip-checkable skip documentation/install/argocd.md
