@@ -159,10 +159,8 @@ skip:
 - page: setup/customize/_index.md
 - page: setup/customize/envoy/_index.md
 - page: setup/listeners/_index.md
-- page: setup/listeners/overview.md
 - page: traffic-management/_index.md
 - page: traffic-management/destination-types/_index.md
-- page: traffic-management/destination-types/backends/_index.md
 - page: traffic-management/destination-types/backends/dfp.md
 - page: traffic-management/destination-types/backends/lambda/_index.md
 - page: traffic-management/destination-types/kube-services/_index.md
@@ -176,9 +174,6 @@ skip:
 - page: traffic-management/route-delegation/inheritance/_index.md
 - page: traffic-management/session-affinity/_index.md
 - page: traffic-management/transformations/_index.md
-# A reference page. Its only resource is a TrafficPolicy with every field
-# left empty to show the structure, which no schema check can pass.
-- page: traffic-management/transformations/templating-language.md
 scenarios:
   access-logging:
     # stdout fileSink with the page's jsonFormat: a request with a unique user
@@ -466,6 +461,10 @@ scenarios:
     type: schema
     source: kgw-docs/pages/about/backendconfigpolicy.md
     path: backendconfigpolicy
+  backends-schema:
+    type: schema
+    page: traffic-management/destination-types/backends/_index.md
+    path: all
   buffering-filter-stage:
     # Needs kgateway 2.4.5 or later (buffer.filterStage).
     type: functional
@@ -1647,6 +1646,10 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/resiliency/outlier-detection.md
     path: outlier-detection
+  overview-schema:
+    type: schema
+    page: setup/listeners/overview.md
+    path: all
   per-try-timeout-gateway-listener:
     type: functional
     needs:
@@ -2033,6 +2036,10 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/strip-trailing-host-dot.md
     path: strip-trailing-host-dot
+  templating-language-schema:
+    type: schema
+    page: traffic-management/transformations/templating-language.md
+    path: all
   timeout-idle-stream:
     type:
     - schema

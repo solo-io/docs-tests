@@ -74,7 +74,6 @@ skip:
 - page: documentation/about/architecture/network.md
 - page: documentation/about/architecture/rate-limiting.md
 - page: documentation/about/architecture/token-exchange.md
-- page: documentation/about/architecture/ui-observability.md
 - page: documentation/about/architecture/waf.md
 - page: documentation/about/overview.md
 - page: documentation/about/policies/_index.md
@@ -84,7 +83,6 @@ skip:
 - page: documentation/agent/_index.md
 - page: documentation/agent/about.md
 - page: documentation/install/_index.md
-- page: documentation/install/advanced.md
 - page: documentation/install/argocd.md
 - page: documentation/install/tls.md
 - page: documentation/install/ui/_index.md
@@ -120,11 +118,6 @@ skip:
 - page: documentation/observability/traces/_index.md
 - page: documentation/observability/traces/attribute-reference.md
 - page: documentation/observability/traces/configs/_index.md
-- page: documentation/observability/traces/configs/datadog.md
-- page: documentation/observability/traces/configs/grafana-cloud.md
-- page: documentation/observability/traces/configs/honeycomb.md
-- page: documentation/observability/traces/configs/jaeger.md
-- page: documentation/observability/traces/configs/otel.md
 - page: documentation/observability/ui.md
 - page: documentation/operations/_index.md
 - page: documentation/operations/agctl.md
@@ -137,7 +130,6 @@ skip:
 - page: documentation/resiliency/retry/about.md
 - page: documentation/resiliency/timeouts/_index.md
 - page: documentation/resiliency/timeouts/about.md
-- page: documentation/resiliency/timeouts/per-try-timeout.md
 - page: documentation/security/_index.md
 - page: documentation/security/backend-authn/providers/_index.md
 - page: documentation/security/backend-authn/token-exchange/_index.md
@@ -164,9 +156,7 @@ skip:
 - page: documentation/support/about.md
 - page: documentation/support/support-ticket.md
 - page: documentation/traffic-management/_index.md
-- page: documentation/traffic-management/buffer.md
 - page: documentation/traffic-management/header-control/_index.md
-- page: documentation/traffic-management/load-balancing.md
 - page: documentation/traffic-management/match/_index.md
 - page: documentation/traffic-management/redirect/_index.md
 - page: documentation/traffic-management/rewrite/_index.md
@@ -186,7 +176,6 @@ skip:
 - page: integrations/llm/clients/devin.md
 - page: integrations/llm/clients/microsoft-intune.md
 - page: integrations/llm/observability/_index.md
-- page: integrations/llm/observability/azure-monitor.md
 - page: integrations/llm/providers/_index.md
 - page: integrations/llm/providers/copilot.md
 - page: integrations/llm/routing/_index.md
@@ -275,6 +264,10 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/header-control/response-header.md
     path: add-response-header
+  advanced-schema:
+    type: schema
+    page: documentation/install/advanced.md
+    path: all
   agent-agentcore-schema:
     type: schema
     page: documentation/agent/agentcore.md
@@ -346,6 +339,10 @@ scenarios:
     type: schema
     page: integrations/llm/observability/axiom.md
     path: axiom
+  azure-monitor-schema:
+    type: schema
+    page: integrations/llm/observability/azure-monitor.md
+    path: all
   backend-authn-config-schema:
     type: schema
     page: documentation/security/backend-authn/_index.md
@@ -407,6 +404,10 @@ scenarios:
     - gateway
     page: documentation/llm/cost-controls/budget-limits.md
     path: budget-limits-enterprise
+  buffer-schema:
+    type: schema
+    page: documentation/traffic-management/buffer.md
+    path: all
   buffering:
     type:
     - schema
@@ -500,9 +501,7 @@ scenarios:
     page: documentation/llm/content-routing.md
     path: content-routing
   control-plane-metrics:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     page: documentation/observability/metrics/control-plane.md
@@ -532,9 +531,7 @@ scenarios:
     page: documentation/llm/cost-controls/attribution.md
     path: cost-attribution
   cost-tracking:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - gateway
@@ -619,6 +616,10 @@ scenarios:
     needs: []
     page: documentation/setup/customize/configs.md
     path: customize-configs
+  datadog-schema:
+    type: schema
+    page: documentation/observability/traces/configs/datadog.md
+    path: all
   dataplane-metrics-schema:
     type: schema
     page: documentation/observability/metrics/dataplane.md
@@ -982,6 +983,10 @@ scenarios:
       path: openai-setup
     page: documentation/security/rate-limit-global.md
     path: global-rate-limit-enterprise
+  grafana-cloud-schema:
+    type: schema
+    page: documentation/observability/traces/configs/grafana-cloud.md
+    path: all
   grpc:
     needs:
     - install-standard
@@ -1098,6 +1103,10 @@ scenarios:
     needs:
     - install-experimental
     page: documentation/install/helm.md
+  honeycomb-schema:
+    type: schema
+    page: documentation/observability/traces/configs/honeycomb.md
+    path: all
   host-match:
     needs:
     - install-standard
@@ -1274,6 +1283,10 @@ scenarios:
     type: schema
     page: integrations/agentic-mesh/waypoint/policies.md
     path: integrations-agentic-mesh-waypoint-policies
+  jaeger-schema:
+    type: schema
+    page: documentation/observability/traces/configs/jaeger.md
+    path: all
   jwt-claims:
     type:
     - schema
@@ -1382,9 +1395,7 @@ scenarios:
     page: integrations/llm/clients/continue.md
     path: llm-client-continue
   llm-client-curl:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - gateway
@@ -1412,9 +1423,7 @@ scenarios:
     page: integrations/llm/clients/github-copilot.md
     path: llm-client-github-copilot
   llm-client-openai-sdk:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - gateway
@@ -1424,9 +1433,7 @@ scenarios:
     page: integrations/llm/clients/openai-sdk.md
     path: llm-client-openai-sdk
   llm-client-opencode:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - gateway
@@ -1448,9 +1455,7 @@ scenarios:
     page: documentation/llm/transformations.md
     path: llm-final-transformations
   llm-functions:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - gateway
@@ -1555,6 +1560,10 @@ scenarios:
     - gateway
     page: documentation/llm/load-balancing.md
     path: load-balancing
+  load-balancing-schema:
+    type: schema
+    page: documentation/traffic-management/load-balancing.md
+    path: all
   local-rate-limit:
     type:
     - schema
@@ -1593,9 +1602,7 @@ scenarios:
     page: documentation/mcp/auth/setup.md
     path: mcp-auth-setup
   mcp-clients-k8s:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - gateway
@@ -1781,9 +1788,7 @@ scenarios:
     page: documentation/llm/inference/multiple-inference-pools.md
     path: multiple-inference-pools
   nacks:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - gateway
@@ -1875,6 +1880,10 @@ scenarios:
     - install-standard
     page: integrations/agent-runtimes/openshell.md
     path: openshell
+  otel-schema:
+    type: schema
+    page: documentation/observability/traces/configs/otel.md
+    path: all
   path-match-exact:
     needs:
     - install-standard
@@ -1966,6 +1975,10 @@ scenarios:
     - httpbin
     page: documentation/resiliency/retry/per-try-timeout.md
     path: per-try-timeout-in-httproute
+  per-try-timeout-schema:
+    type: schema
+    page: documentation/resiliency/timeouts/per-try-timeout.md
+    path: all
   providers-anthropic-schema:
     type: schema
     page: integrations/llm/providers/anthropic.md
@@ -2273,9 +2286,7 @@ scenarios:
     page: documentation/setup/customize/extensions/_index.md
     path: shared-extensions-deployer
   streaming-openai:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     - gateway
@@ -2440,10 +2451,12 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/inheritance/trafficpolicies.md
     path: trafficpolicies
+  ui-observability-schema:
+    type: schema
+    page: documentation/about/architecture/ui-observability.md
+    path: all
   uninstall:
-    type:
-    - schema
-    - functional
+    type: functional
     needs:
     - install-standard
     page: documentation/operations/uninstall.md

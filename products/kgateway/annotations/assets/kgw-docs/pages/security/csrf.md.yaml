@@ -165,33 +165,11 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 9
-    fingerprint: 4ada8d3d84afc8e5
-    lang: sh
-    lines: 4ada8d3d
-    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} csrf -n httpbi
-  content: |-
-    {{< doc-test paths="csrf" >}}
-    YAMLTest -f - <<'EOF'
-    - name: csrf - after cleanup, a POST without an origin is no longer rejected
-      retries: 60
-      http:
-        url: "http://${INGRESS_GW_ADDRESS}:8080"
-        path: /post
-        method: POST
-        headers:
-          host: "www.example.com:8080"
-      source:
-        type: local
-      expect:
-        statusCode: 200
-    EOF
-    {{< /doc-test >}}
-- after:
-    fingerprint: 3f6810b1588e4c6c
+    block: 8
+    fingerprint: 98a780706f791f4e
     lang: console
-    lines: 76741cb6 6fcd35db 39b522ee ab5df625
-    preview: 'http.{{< version include-if="2.0.x,2.1.x,2.2.x,2.3.x,2.4.x" >}}http{{< /version '
+    lines: 5120dd24 8c37096f cfb329e8 ab5df625
+    preview: http.{{< version include-if="2.1.x,2.2.x,2.3.x,2.4.x" >}}http{{< /version >}}{{<
   content: |-
     {{< doc-test paths="csrf" >}}
     # Test-only: read the counters from the admin port inside the proxy pod instead
@@ -218,4 +196,26 @@ hidden:
     echo "csrf stats:"
     echo "$csrf_lines"
     {{< /doc-test >}}
-  status: needs-update
+- after:
+    block: 9
+    fingerprint: 4ada8d3d84afc8e5
+    lang: sh
+    lines: 4ada8d3d
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} csrf -n httpbi
+  content: |-
+    {{< doc-test paths="csrf" >}}
+    YAMLTest -f - <<'EOF'
+    - name: csrf - after cleanup, a POST without an origin is no longer rejected
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /post
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

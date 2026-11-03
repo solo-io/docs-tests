@@ -53,7 +53,6 @@ skip:
 - page: documentation/observability/traces/configs/_index.md
 - page: documentation/operations/_index.md
 - page: documentation/operations/agctl.md
-- page: documentation/operations/config-resources.md
 - page: documentation/operations/inspect-config.md
 - page: documentation/operations/upgrade.md
 - page: documentation/about/_index.md
@@ -71,8 +70,6 @@ skip:
 - page: integrations/llm/clients/_index.md
 - page: integrations/llm/clients/microsoft-intune.md
 - page: integrations/llm/guardrails/_index.md
-- page: integrations/llm/observability/arize.md
-- page: integrations/llm/observability/axiom.md
 - page: integrations/llm/routing/_index.md
 - page: integrations/mcp/_index.md
 - page: integrations/mcp/clients/_index.md
@@ -83,7 +80,6 @@ skip:
 - page: documentation/setup/_index.md
 - page: documentation/setup/install/_index.md
 - page: documentation/setup/install/kubernetes.md
-- page: documentation/setup/storage.md
 - page: documentation/setup/ui/_index.md
 - page: documentation/configuration/_index.md
 - page: _index.md
@@ -117,9 +113,17 @@ scenarios:
     - functional
     page: documentation/llm/api-types/decisions.md
     path: api-types-decisions-run
+  arize-schema:
+    type: schema
+    page: integrations/llm/observability/arize.md
+    path: all
   attachment-schema:
     type: schema
     page: documentation/configuration/policies/attachment.md
+    path: all
+  axiom-schema:
+    type: schema
+    page: integrations/llm/observability/axiom.md
     path: all
   azure-content-safety:
     type:
@@ -212,6 +216,10 @@ scenarios:
     - functional
     page: documentation/configuration/overview.md
     path: config-overview
+  config-resources-schema:
+    type: schema
+    page: documentation/operations/config-resources.md
+    path: all
   copilot-validate:
     type:
     - schema
@@ -587,6 +595,10 @@ scenarios:
     - functional
     page: documentation/configuration/static-configuration.md
     path: static-config
+  storage-schema:
+    type: schema
+    page: documentation/setup/storage.md
+    path: all
   tailscale:
     type:
     - schema
