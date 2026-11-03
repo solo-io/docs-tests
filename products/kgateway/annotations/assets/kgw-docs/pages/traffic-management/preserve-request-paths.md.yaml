@@ -48,15 +48,15 @@ tags:
     only: true
     lead: ' '
 - paths: preserve-request-paths
-  fingerprint: d89d6d3ca34eb15d
+  block: 14
+  fingerprint: 664093908d1f83b5
   lang: sh
-  lines: 42cb96a5 af4b2418
+  lines: 42cb96a5 0d155535
   preview: kubectl delete listenerpolicy preserve-path-handling -n {{< reuse "kgw-docs/snip
   form:
     attr: paths="preserve-request-paths"
     only: true
     lead: ' '
-  status: needs-update
 hidden:
 - after:
     section: Disable path normalization and slash merging

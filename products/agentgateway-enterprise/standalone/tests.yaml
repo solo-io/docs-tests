@@ -36,13 +36,7 @@ skip:
 - page: documentation/agent/_index.md
 - page: documentation/agent/about.md
 - page: documentation/configuration/_index.md
-- page: documentation/configuration/import.md
 - page: documentation/configuration/policies/_index.md
-- page: documentation/configuration/policies/attachment.md
-- page: documentation/configuration/policies/conditional-policies.md
-- page: documentation/configuration/resiliency/_index.md
-- page: documentation/configuration/security/_index.md
-- page: documentation/configuration/security/backend-authn/_index.md
 - page: documentation/configuration/security/backend-authn/providers/_index.md
 - page: documentation/configuration/security/backend-authn/token-exchange/_index.md
 - page: documentation/configuration/security/backend-authn/token-exchange/idps/_index.md
@@ -50,22 +44,10 @@ skip:
 - page: documentation/configuration/security/backend-authn/token-exchange/sts/about.md
 - page: documentation/configuration/security/backend-authn/token-exchange/sts/elicitation.md
 - page: documentation/configuration/security/ui-access-control/_index.md
-- page: documentation/configuration/traffic-management/_index.md
 - page: documentation/llm/_index.md
-- page: documentation/llm/about.md
 - page: documentation/llm/api-types/_index.md
-- page: documentation/llm/api-types/completions.md
-- page: documentation/llm/api-types/embeddings.md
-- page: documentation/llm/api-types/messages.md
-- page: documentation/llm/api-types/models.md
-- page: documentation/llm/api-types/passthrough.md
-- page: documentation/llm/api-types/rerank.md
-- page: documentation/llm/api-types/responses.md
-- page: documentation/llm/api-types/token-count.md
 - page: documentation/llm/cost-controls/_index.md
 - page: documentation/llm/cost-controls/budget-limits/_index.md
-- page: documentation/llm/cost-controls/budget-limits/rate-limit.md
-- page: documentation/llm/inference/_index.md
 - page: documentation/llm/playground.md
 - page: documentation/llm/prompt-guards/_index.md
 - page: documentation/llm/providers.md
@@ -84,33 +66,21 @@ skip:
 - page: documentation/mcp/spec-compatibility.md
 - page: documentation/observability/_index.md
 - page: documentation/observability/access-logs/_index.md
-- page: documentation/observability/access-logs/database.md
-- page: documentation/observability/access-logs/view.md
 - page: documentation/observability/metrics/_index.md
-- page: documentation/observability/metrics/overview.md
 - page: documentation/observability/metrics/reference.md
 - page: documentation/observability/traces/_index.md
 - page: documentation/observability/traces/attribute-reference.md
 - page: documentation/observability/traces/configs/_index.md
-- page: documentation/observability/traces/configs/grafana-cloud.md
-- page: documentation/observability/traces/configs/honeycomb.md
-- page: documentation/observability/traces/setup.md
 - page: documentation/operations/_index.md
 - page: documentation/operations/agctl.md
-- page: documentation/operations/config-resources.md
 - page: documentation/operations/inspect-config.md
 - page: documentation/operations/upgrade.md
 - page: documentation/quickstart/_index.md
 - page: documentation/setup/_index.md
 - page: documentation/setup/install/_index.md
-- page: documentation/setup/install/helm.md
 - page: documentation/setup/install/kubernetes.md
-- page: documentation/setup/storage.md
 - page: documentation/setup/ui/_index.md
 - page: documentation/setup/ui/access-control.md
-- page: documentation/setup/ui/expose-ui.md
-- page: documentation/setup/ui/secure-ui.md
-- page: documentation/setup/update.md
 - page: integrations/_index.md
 - page: integrations/auth/_index.md
 - page: integrations/cloud-providers/_index.md
@@ -118,11 +88,6 @@ skip:
 - page: integrations/llm/clients/_index.md
 - page: integrations/llm/clients/microsoft-intune.md
 - page: integrations/llm/guardrails/_index.md
-- page: integrations/llm/guardrails/deepkeep.md
-- page: integrations/llm/observability/_index.md
-- page: integrations/llm/observability/azure-monitor.md
-- page: integrations/llm/observability/datadog.md
-- page: integrations/llm/providers/_index.md
 - page: integrations/llm/routing/_index.md
 - page: integrations/llm/routing/vllm-semantic-router.md
 - page: integrations/mcp/_index.md
@@ -170,6 +135,10 @@ scenarios:
   a2a:
     page: documentation/agent/a2a.md
     path: a2a
+  about-schema:
+    type: schema
+    page: documentation/llm/about.md
+    path: all
   admin-address:
     type:
     - schema
@@ -206,6 +175,10 @@ scenarios:
     - functional
     page: documentation/llm/cost-controls/budget-limits/per-key.md
     path: apikey-budgets
+  attachment-schema:
+    type: schema
+    page: documentation/configuration/policies/attachment.md
+    path: all
   attribute-budgets:
     type: &id001
     - schema
@@ -258,6 +231,10 @@ scenarios:
     - functional
     page: documentation/llm/prompt-guards/azure-content-safety.md
     path: azure-content-safety
+  azure-monitor-schema:
+    type: schema
+    page: integrations/llm/observability/azure-monitor.md
+    path: all
   backend-authn-aws:
     path: backend-authn-aws
     page: documentation/configuration/security/backend-authn/providers/aws.md
@@ -285,6 +262,10 @@ scenarios:
     - functional
     path: backend-authn-key
     page: documentation/configuration/security/backend-authn/key.md
+  backend-authn-schema:
+    type: schema
+    page: documentation/configuration/security/backend-authn/_index.md
+    path: all
   backend-authn-te-google:
     type:
     - schema
@@ -384,10 +365,18 @@ scenarios:
     - functional
     page: integrations/llm/providers/cohere.md
     path: cohere
+  completions-schema:
+    type: schema
+    page: documentation/llm/api-types/completions.md
+    path: all
   composable:
     type: *id001
     page: documentation/mcp/composable.md
     path: composable
+  conditional-policies-schema:
+    type: schema
+    page: documentation/configuration/policies/conditional-policies.md
+    path: all
   conditional-reversible:
     type: *id001
     page: documentation/llm/prompt-guards/conditional-reversible.md
@@ -398,6 +387,10 @@ scenarios:
     - functional
     page: documentation/configuration/overview.md
     path: config-overview
+  config-resources-schema:
+    type: schema
+    page: documentation/operations/config-resources.md
+    path: all
   configuration/gateways:
     type:
     - schema
@@ -441,12 +434,24 @@ scenarios:
     - functional
     path: custom-cel-functions
     page: reference/cel/custom-functions.md
+  database-schema:
+    type: schema
+    page: documentation/observability/access-logs/database.md
+    path: all
+  datadog-schema:
+    type: schema
+    page: integrations/llm/observability/datadog.md
+    path: all
   deepinfra:
     type:
     - schema
     - functional
     page: integrations/llm/providers/deepinfra.md
     path: deepinfra
+  deepkeep-schema:
+    type: schema
+    page: integrations/llm/guardrails/deepkeep.md
+    path: all
   deepseek:
     type:
     - schema
@@ -483,12 +488,20 @@ scenarios:
     - functional
     page: documentation/configuration/egress-proxy.md
     path: egress-proxy
+  embeddings-schema:
+    type: schema
+    page: documentation/llm/api-types/embeddings.md
+    path: all
   entra-mcp-authn:
     type:
     - schema
     - functional
     page: integrations/auth/entra.md
     path: entra-mcp-authn
+  expose-ui-schema:
+    type: schema
+    page: documentation/setup/ui/expose-ui.md
+    path: all
   external-authz:
     type:
     - schema
@@ -550,6 +563,10 @@ scenarios:
   grafana:
     page: documentation/observability/metrics/grafana.md
     path: grafana
+  grafana-cloud-schema:
+    type: schema
+    page: documentation/observability/traces/configs/grafana-cloud.md
+    path: all
   groq:
     type:
     - schema
@@ -568,6 +585,14 @@ scenarios:
     - functional
     page: documentation/llm/prompt-guards/overview.md
     path: guardrails-overview
+  helm-schema:
+    type: schema
+    page: documentation/setup/install/helm.md
+    path: all
+  honeycomb-schema:
+    type: schema
+    page: documentation/observability/traces/configs/honeycomb.md
+    path: all
   http-authz:
     type:
     - schema
@@ -580,6 +605,14 @@ scenarios:
     - functional
     page: integrations/llm/providers/huggingface.md
     path: huggingface
+  import-schema:
+    type: schema
+    page: documentation/configuration/import.md
+    path: all
+  inference-schema:
+    type: schema
+    page: documentation/llm/inference/_index.md
+    path: all
   jaeger-standalone:
     type:
     - schema
@@ -841,6 +874,10 @@ scenarios:
     - functional
     page: integrations/mcp/servers/virtual.md
     path: mcp-virtual
+  messages-schema:
+    type: schema
+    page: documentation/llm/api-types/messages.md
+    path: all
   meta-validate:
     type:
     - schema
@@ -859,6 +896,10 @@ scenarios:
     - functional
     page: integrations/llm/providers/mistral.md
     path: mistral
+  models-schema:
+    type: schema
+    page: documentation/llm/api-types/models.md
+    path: all
   multi-layer-guardrails:
     type:
     - schema
@@ -889,6 +930,10 @@ scenarios:
     - functional
     page: integrations/auth/oauth2-proxy.md
     path: oauth2-proxy
+  observability-schema:
+    type: schema
+    page: integrations/llm/observability/_index.md
+    path: all
   oidc-browser:
     type:
     - schema
@@ -943,6 +988,14 @@ scenarios:
     - functional
     page: documentation/observability/access-logs/export.md
     path: otlp-log-export
+  overview-schema:
+    type: schema
+    page: documentation/observability/metrics/overview.md
+    path: all
+  passthrough-schema:
+    type: schema
+    page: documentation/llm/api-types/passthrough.md
+    path: all
   perplexity:
     type:
     - schema
@@ -964,10 +1017,18 @@ scenarios:
     - functional
     page: documentation/llm/prompt-guards/moderation.md
     path: prompt-guards-moderation-inline
+  providers-schema:
+    type: schema
+    page: integrations/llm/providers/_index.md
+    path: all
   purview-dlp-schema:
     type: schema
     page: documentation/llm/prompt-guards/purview-dlp.md
     path: purview-dlp
+  rate-limit-schema:
+    type: schema
+    page: documentation/llm/cost-controls/budget-limits/rate-limit.md
+    path: all
   rate-limits:
     type:
     - schema
@@ -992,6 +1053,18 @@ scenarios:
     - functional
     page: documentation/llm/prompt-guards/regex.md
     path: regex
+  rerank-schema:
+    type: schema
+    page: documentation/llm/api-types/rerank.md
+    path: all
+  resiliency-schema:
+    type: schema
+    page: documentation/configuration/resiliency/_index.md
+    path: all
+  responses-schema:
+    type: schema
+    page: documentation/llm/api-types/responses.md
+    path: all
   retries:
     type:
     - schema
@@ -1019,6 +1092,18 @@ scenarios:
   schema-validation:
     page: reference/configuration/validation.md
     path: schema-validation
+  secure-ui-schema:
+    type: schema
+    page: documentation/setup/ui/secure-ui.md
+    path: all
+  security-schema:
+    type: schema
+    page: documentation/configuration/security/_index.md
+    path: all
+  setup-schema:
+    type: schema
+    page: documentation/observability/traces/setup.md
+    path: all
   standalone-database:
     type:
     - schema
@@ -1031,6 +1116,10 @@ scenarios:
     - functional
     page: documentation/configuration/static-configuration.md
     path: static-config
+  storage-schema:
+    type: schema
+    page: documentation/setup/storage.md
+    path: all
   sts-delegation:
     type:
     - schema
@@ -1076,6 +1165,10 @@ scenarios:
     - functional
     page: integrations/llm/providers/togetherai.md
     path: togetherai
+  token-count-schema:
+    type: schema
+    page: documentation/llm/api-types/token-count.md
+    path: all
   tool-mode:
     type: *id001
     page: documentation/mcp/tool-mode.md
@@ -1086,6 +1179,10 @@ scenarios:
     - functional
     page: documentation/operations/trace-requests.md
     path: trace-validate
+  traffic-management-schema:
+    type: schema
+    page: documentation/configuration/traffic-management/_index.md
+    path: all
   transformations:
     type:
     - schema
@@ -1123,12 +1220,20 @@ scenarios:
     type: functional
     page: documentation/setup/ui/mcp-catalog.md
     path: ui-mcp-catalog
+  update-schema:
+    type: schema
+    page: documentation/setup/update.md
+    path: all
   vertex:
     type:
     - schema
     - functional
     page: integrations/llm/providers/vertex.md
     path: vertex
+  view-schema:
+    type: schema
+    page: documentation/observability/access-logs/view.md
+    path: all
   virtual-keys:
     type:
     - schema

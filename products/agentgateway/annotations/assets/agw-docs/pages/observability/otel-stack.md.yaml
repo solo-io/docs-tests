@@ -209,6 +209,17 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
+    block: 13
+    fingerprint: ab8037b3c28cd9fd
+    lang: console
+    lines: 30790290 0384cad3 a70ecf90 1b6d8b4c 6250920f
+    preview: NAME                                                        READY   STATUS    RE
+  content: |-
+    {{< doc-test paths="otel-stack" >}}
+    # The current agentgateway chart renders fields that need Prometheus Operator CRDs v0.88.0 or later.
+    kubectl apply --server-side --force-conflicts -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.94.2/stripped-down-crds.yaml
+    {{< /doc-test >}}
+- after:
     section: 'Step 4: Enable metrics scraping'
     line: b1937a741638ab78
     occurrence: 0
