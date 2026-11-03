@@ -15,7 +15,7 @@ blocks:
 - 325db331ca256a85 sh
 - 448f78290f74067c sh
 - 4d6379761cb08494 console
-- d89d6d3ca34eb15d sh
+- 664093908d1f83b5 sh
 tags:
 - paths: preserve-request-paths
   block: 0
@@ -48,7 +48,6 @@ tags:
     only: true
     lead: ' '
 - paths: preserve-request-paths
-  block: 14
   fingerprint: d89d6d3ca34eb15d
   lang: sh
   lines: 42cb96a5 af4b2418
@@ -57,6 +56,7 @@ tags:
     attr: paths="preserve-request-paths"
     only: true
     lead: ' '
+  status: needs-update
 hidden:
 - after:
     section: Disable path normalization and slash merging
