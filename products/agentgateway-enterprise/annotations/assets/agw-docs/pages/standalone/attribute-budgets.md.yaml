@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/standalone/attribute-budgets.md
+previews: false
 blocks:
 - 9ad6e47e82157724 yaml
 - 288c4af02a951261 sh
@@ -7,13 +8,14 @@ blocks:
 - b2d189535ca1c739 sh
 - 5f9b7223a8932f7f yaml
 - 07506ca86d039dcf sh
+- 64d3ed24bab268f1 yaml
+- 07506ca86d039dcf sh
 tags:
 - paths: attribute-budgets
   block: 0
   fingerprint: 9ad6e47e82157724
   lang: yaml
   lines: 2a7b4933 a7f80a73 2180b199 19bcae4b be9145ed 3af99526 e01ccf75 51d42664 6472803d 009395dd 6d88d930 4208ae28 bf75dafc 42464cd7 1e9034cc 9f3bc06f dc36242a 1891bc00 215d8789 1fe164f7 3f1bb532 5aea7895 abc56510
-  preview: cat <<'EOF' > config.yaml
   form:
     attr: paths="attribute-budgets"
     only: true
@@ -23,7 +25,6 @@ tags:
   fingerprint: 288c4af02a951261
   lang: sh
   lines: 288c4af0
-  preview: agentgateway --validate-only -f config.yaml
   form:
     attr: paths="attribute-budgets"
     only: true
@@ -33,7 +34,6 @@ tags:
   fingerprint: b2d189535ca1c739
   lang: sh
   lines: 1f8361ca fc68f389 0e152d5a
-  preview: curl -s localhost:4000/v1/chat/completions \
   form:
     attr: paths="attribute-budgets"
     only: true
@@ -67,7 +67,6 @@ hidden:
     fingerprint: f6931a7b2e59dbc5
     lang: sh
     lines: f6931a7b
-    preview: agentgateway -f config.yaml
   content: |-
     {{< doc-test paths="attribute-budgets" >}}
     {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
@@ -82,7 +81,6 @@ hidden:
     fingerprint: b2d189535ca1c739
     lang: sh
     lines: 1f8361ca fc68f389 0e152d5a
-    preview: curl -s localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="attribute-budgets" >}}
     code=$(curl -s -o /dev/null -w '%{http_code}' localhost:4000/v1/chat/completions \

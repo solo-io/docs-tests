@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/cost-dashboard.md
+previews: false
 blocks:
 - ecca3dd0d92c51fb sh
 - 130fb412ca979578 sh
@@ -16,7 +17,6 @@ tags:
   fingerprint: f0bd5857e19c0061
   lang: sh
   lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 0ceeffe6
-  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   form:
     attr: paths="enterprise-cost-dashboard"
     only: true
@@ -27,7 +27,6 @@ hidden:
     fingerprint: f0bd5857e19c0061
     lang: sh
     lines: 2d065637 3a26b6d2 736e1ed1 f7ad5ab4 0ceeffe6
-    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   content: |2-
        {{< doc-test paths="enterprise-cost-dashboard" >}}
        # ============================================================================
