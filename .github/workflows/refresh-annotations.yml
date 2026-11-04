@@ -12,6 +12,12 @@ name: Refresh test annotations
 # and refuses to write if any would disappear. Every close match is listed in
 # the commit message, and git history allows a one-step revert.
 #
+# It also adds a schema test for each new page that has none and shows a
+# Kubernetes object or a standalone config file (scripts/scaffold_schema_tests.py).
+# Those go out as a pull request, not to main: a new test that fails on its
+# first run usually means the page shows placeholder YAML, and a person decides
+# whether the page needs a fix or a `skip:` entry.
+#
 # Runs at 05:00 UTC, before the website's doc tests at 06:00.
 on:
   schedule:
@@ -24,6 +30,7 @@ concurrency:
 
 permissions:
   contents: write
+  pull-requests: write
 
 env:
   # The daily post goes where the doc test results go, in the same layout; a
@@ -43,6 +50,8 @@ jobs:
         include:
           - product: agentgateway
             repository: agentgateway/website
+            # Lets the scaffold step recognize a whole standalone config file.
+            config_schema: https://raw.githubusercontent.com/agentgateway/agentgateway/main/schema/config.json
           - product: kgateway
             repository: kgateway-dev/kgateway.dev
     env:
@@ -66,7 +75,8 @@ jobs:
           python-version: '3.x'
 
       - name: Install Python dependencies
-        run: pip install pyyaml
+        # jsonschema: the scaffold step loads the standalone config schema.
+        run: pip install pyyaml jsonschema
 
       - name: Refresh annotations
         run: |
@@ -100,6 +110,61 @@ jobs:
           # own product directory, so a rebase cannot conflict.
           git pull -q --rebase origin main
           git push origin HEAD:main
+
+      # Runs after the refresh commit, so the pull request starts from today's
+      # main. The branch is rebuilt from scratch each day: it holds every page
+      # that still has no test, so an open pull request stays current, and one
+      # that was merged leaves nothing to add.
+      - name: Scaffold schema tests for new pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CONFIG_SCHEMA_URL: ${{ matrix.config_schema }}
+          PRODUCT: ${{ matrix.product }}
+          BRANCH: scaffold-schema-tests/${{ matrix.product }}
+        run: |
+          set -euo pipefail
+          ARGS=(--repo consumer --product "$PRODUCT" --report out/scaffold-report.json)
+          if [ -n "$CONFIG_SCHEMA_URL" ]; then
+            curl -fsSL --retry 5 --retry-all-errors -o "$RUNNER_TEMP/config.json" "$CONFIG_SCHEMA_URL"
+            ARGS+=(--config-schema "$RUNNER_TEMP/config.json")
+          fi
+          python3 scripts/scaffold_schema_tests.py "${ARGS[@]}" | tee out/scaffold.log
+          if [ -z "$(git status --porcelain -- "products/$PRODUCT")" ]; then
+            echo "No new pages to add schema tests for."
+            exit 0
+          fi
+          {
+            echo "## New schema tests"
+            echo
+            echo '```'
+            cat out/scaffold.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -q -C "$BRANCH"
+          git add -A -- "products/$PRODUCT"
+          git commit -q -F - <<EOF
+          Add schema tests for new $PRODUCT pages
+
+          $(cat out/scaffold.log)
+          EOF
+          git push -q -f origin "$BRANCH"
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --head "$BRANCH" --base main --title "Add schema tests for new $PRODUCT pages" --body-file - <<EOF
+          These pages have no doc test yet. Each shows a Kubernetes object or a standalone
+          config file, so each gets a \`schema\` scenario with \`path: all\`, which needs no
+          markup on the page. This pull request is rebuilt every day from main.
+
+          Before you merge, check the site's next schema run, or run the schema check locally.
+          A scenario that fails usually means placeholder YAML on the page: fix the page, or
+          move it under \`skip:\` in the manifest.
+
+          \`\`\`
+          $(cat out/scaffold.log)
+          \`\`\`
+          EOF
+          fi
 
       - name: Upload report
         if: always()

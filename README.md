@@ -628,6 +628,8 @@ The `version` context (used to resolve `{{< version include-if="..." >}}` blocks
 
 ## Checklist for adding a test to a new page
 
+A **schema** test needs no checklist. `scripts/scaffold_schema_tests.py` adds one, a single manifest entry with `path: all`, for every page that has no test and shows a Kubernetes object or a standalone config file. The daily refresh runs it for the open source sites and opens a pull request with the new entries. To run it yourself, pass `--repo <content repo> --product <product>`, and `--dry-run` to only list the pages. The checklist below is for a **functional** test.
+
 All markup goes in this repo. Never add `paths=`, `{{< doc-test >}}`, or front matter `test:` to a page in the content repo.
 
 1. **Trace prerequisites** — follow "Before you begin" links back to `helm.md`.
