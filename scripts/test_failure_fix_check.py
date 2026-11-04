@@ -220,6 +220,62 @@ class GateTests(unittest.TestCase):
         errors, _, _ = self.run_check([self.row(files=[f"consumer/{ASSET_REL}"])])
         self.assertEqual(errors, [])
 
+    # rule 7: candidates
+
+    def candidate(self):
+        c = {"suite": "agentgateway-enterprise", "key": f"{HUB_PAGE}::routing-schema::functional", "page": HUB_PAGE,
+             "upstream_page": UP_REL, "test": "routing-schema", "type": "functional",
+             "candidate": {"manifest": "products/agentgateway/kubernetes/tests.yaml", "scenario": "routing-schema",
+                           "scaffolded": "2026-11-04"}}
+        self.failures = [c]
+        return c
+
+    def test_a_candidate_can_only_be_drafted_or_declined(self):
+        c = self.candidate()
+        errors, _, _ = self.run_check([self.row(key=c["key"], kind="test", fix=False)])
+        self.assertTrue(any("drafted or declined" in e for e in errors), errors)
+
+    def test_a_failure_cannot_be_declined(self):
+        errors, _, _ = self.run_check([self.row(kind="declined", fix=False)])
+        self.assertTrue(any("for new pages only" in e for e in errors), errors)
+
+    def test_a_declined_candidate_changes_nothing_and_is_not_rerun(self):
+        c = self.candidate()
+        errors, rerun, _ = self.run_check([self.row(key=c["key"], kind="declined", fix=False,
+                                                    public_reason="Needs an AWS account.")])
+        self.assertEqual(errors, [])
+        self.assertEqual(rerun, [])
+
+    def test_a_draft_must_check_something(self):
+        c = self.candidate()
+        errors, _, _ = self.run_check([self.row(key=c["key"], kind="drafted", scenario={"needs": ["gateway"]})])
+        self.assertTrue(any("checks nothing" in e for e in errors), errors)
+
+    def test_a_draft_with_an_assert_passes_and_is_rerun(self):
+        c = self.candidate()
+        errors, rerun, _ = self.run_check([self.row(key=c["key"], kind="drafted",
+                                                    scenario={"assert": ["kubectl get svc httpbin"]})])
+        self.assertEqual(errors, [])
+        self.assertEqual([r["key"] for r in rerun], [c["key"]])
+
+    def test_a_draft_with_a_doc_test_check_in_its_annotation_passes(self):
+        c = self.candidate()
+        ann = f"docs-tests/products/agentgateway/annotations/{ASSET_REL}.yaml"
+        self.write(ann, "format: 1\nhidden:\n- content: |\n    {{< doc-test paths=\"x\" >}}\n    curl -f localhost\n")
+        errors, _, exempt = self.run_check([self.row(key=c["key"], kind="drafted", scenario={"path": "x"}, files=[ann])])
+        self.assertEqual(errors, [])
+        self.assertIn(ASSET_REL, exempt)
+
+    def test_only_the_scripts_manifest_edits_are_allowed(self):
+        c = self.candidate()
+        self.write("docs-tests/products/agentgateway/kubernetes/tests.yaml", "tests: {changed: 1}\n")
+        rows = [self.row(key=c["key"], kind="declined", fix=False, public_reason="Needs an AWS account.")]
+        errors, _, _ = self.run_check(rows)
+        self.assertTrue(any("tests.yaml" in e for e in errors), errors)
+        errors, _, _ = C.check(self.ws, self.repos, self.failures, {"failures": rows}, [],
+                               {"products/agentgateway/kubernetes/tests.yaml"})
+        self.assertEqual(errors, [])
+
     def test_an_ordinary_fix_line_is_not_refused(self):
         self.write(f"consumer/{ASSET_REL}", ASSET + 'curl -s "http://${INGRESS_GW_ADDRESS}/headers" -H "host: www.example.com"\n'
                    "kubectl get secret openai-secret -n agentgateway-system\n")

@@ -10,11 +10,14 @@ so the whole test is one manifest entry:
       type: schema
       page: <version-relative page>      # or source: <assets file>
       path: all
+      scaffolded: <date>                 # marks a new page for the functional-test drafter
 
 That makes it the one kind of test that can be written without a person:
 there is nothing to decide about prerequisites, waits, or assertions. A
 functional test still needs one, so a page scaffolded here still counts
-toward the functional-test backlog in the coverage report.
+toward the functional-test backlog in the coverage report. The `scaffolded:`
+date is how list_functional_candidates.py tells a new page from one someone
+already decided about; nothing else reads it.
 
 A page is scaffolded when, in a tested version root (latest, main):
   - no manifest scenario or `skip:` entry covers it, and its front matter has
@@ -43,6 +46,7 @@ import argparse
 import json
 import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -208,9 +212,9 @@ def scaffold_manifest(repo: Path, manifest: Path, covered: set, reverse_index: D
     return list(added.values()), skipped
 
 
-def entry_yaml(e: dict) -> str:
+def entry_yaml(e: dict, date: str) -> str:
     ref = f"    source: {e['source']}" if "source" in e else f"    page: {e['page_key']}"
-    return f"  {e['name']}:\n    type: schema\n{ref}\n    path: all\n"
+    return f"  {e['name']}:\n    type: schema\n{ref}\n    path: all\n    scaffolded: \"{date}\"\n"
 
 
 def main(argv=None) -> int:
@@ -227,6 +231,8 @@ def main(argv=None) -> int:
     ap.add_argument("--limit", type=int, default=0, help="add at most this many scenarios (0: no limit)")
     ap.add_argument("--report", help="write the added and skipped pages here as JSON")
     ap.add_argument("--dry-run", action="store_true", help="report only; leave the manifests unchanged")
+    ap.add_argument("--date", default=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    help="the `scaffolded:` date to write (default: today, UTC)")
     ap.add_argument("--docs-tests-root", help="docs-tests checkout whose manifests to read and change "
                                               "(default: the one this script is in)")
     args = ap.parse_args(argv)
@@ -266,7 +272,7 @@ def main(argv=None) -> int:
         report["skipped"].extend(skipped)
         if added and not args.dry_run:
             text = manifest.read_text(encoding="utf-8")
-            manifest.write_text(insert_scenarios(text, [(e["name"], entry_yaml(e)) for e in added]), encoding="utf-8")
+            manifest.write_text(insert_scenarios(text, [(e["name"], entry_yaml(e, args.date)) for e in added]), encoding="utf-8")
         for e in added:
             print(f"{'would add' if args.dry_run else 'added'} {e['name']} ({e['objects']} object(s)): {e['page']}")
 

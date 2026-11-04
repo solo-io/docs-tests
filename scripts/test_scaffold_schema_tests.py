@@ -79,7 +79,7 @@ class ScaffoldTest(unittest.TestCase):
 
     def run_scaffold(self, *extra) -> dict:
         report = pathlib.Path(self.tmp.name) / "report.json"
-        args = ["--repo", str(self.repo), "--product", "demo", "--docs-tests-root", str(self.dt),
+        args = ["--repo", str(self.repo), "--product", "demo", "--docs-tests-root", str(self.dt), "--date", "2026-11-04",
                 "--report", str(report), *extra]
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(S.main(args), 0)
@@ -99,7 +99,7 @@ class ScaffoldTest(unittest.TestCase):
         self.assertEqual([s["page"] for s in report["skipped"]], [f"{root}/concept.md"])
         data = yaml.safe_load(m.read_text())
         self.assertEqual(data["scenarios"]["new-feature-schema"],
-                         {"type": "schema", "page": "new-feature.md", "path": "all"})
+                         {"type": "schema", "page": "new-feature.md", "path": "all", "scaffolded": "2026-11-04"})
         text = m.read_text()
         self.assertTrue(text.startswith("# A comment that must survive."))
         # alphabetical: after `covered`, before `zebra`
@@ -129,7 +129,8 @@ class ScaffoldTest(unittest.TestCase):
                        page("New", '{{< reuse "pages/new-feature.md" >}}\n'))
         self.run_scaffold()
         entry = yaml.safe_load(m.read_text())["scenarios"]["new-feature-schema"]
-        self.assertEqual(entry, {"type": "schema", "source": "pages/new-feature.md", "path": "all"})
+        self.assertEqual(entry, {"type": "schema", "source": "pages/new-feature.md", "path": "all",
+                                 "scaffolded": "2026-11-04"})
 
     def test_standalone_config_needs_the_config_schema(self):
         self.manifest("standalone")

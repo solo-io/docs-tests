@@ -892,7 +892,11 @@ a cluster. It fails when any of the following is true:
 - An `environment`, `product`, or `unknown` row changes a file.
 - A file changed that no row lists, or that is outside the paths a fix may change:
   `content/docs/` and `assets/` upstream, `assets/<product>-docs/` in a consumer, and
-  annotation files here. `tests.yaml` is not among them.
+  annotation files here. `tests.yaml` is not among them; only
+  `candidate_manifest.py` changes it, for a new page's row (see
+  [Drafting a functional test for a new page](#drafting-a-functional-test-for-a-new-page)).
+- A new page's row is not `drafted` or `declined`, a failure's row is, or a
+  drafted test has no `assert:` and no `{{< doc-test >}}` check.
 - An annotation changed for a failure belongs to a page that the failure's scenario
   does not run.
 - A content page gains test markup.
@@ -927,6 +931,75 @@ once more, for that failure only:
 
 The second attempt is re-run the same way, and a fix that still fails is not
 published.
+
+### Drafting a functional test for a new page
+
+A new page gets a `schema` test from `scripts/scaffold_schema_tests.py`, marked with a
+`scaffolded:` date. When the page also has steps to run, the daily fixer job drafts a
+functional test for it. A person can follow the same steps.
+
+1. **List the work.** `scripts/list_functional_candidates.py` lists the scaffolded
+   pages that have commands to run and no decision yet: no `functional:` reason and no
+   functional test. Each row has the shape of a failure (`key`, `page`, `test`,
+   `upstream_page` for a rebase shell), plus `candidate`: the manifest and scenario.
+   The fixer adds the rows to its failure list, so every rule of
+   [Fixing a failing doc test](#fixing-a-failing-doc-test) applies to them too.
+
+2. **Decide whether the page can run on a kind cluster.** Decline it when it needs any
+   of these:
+   - a cloud account (AWS, GCP, Azure) or a cloud service;
+   - real credentials: an LLM provider key, an identity provider account, a personal
+     access token;
+   - a system the prerequisites cannot set up, such as a SaaS backend;
+   - a particular operating system, a desktop app, or a browser;
+   - steps that only show part of a configuration, with nothing to run end to end.
+
+   Also decline it when you cannot tell what would prove the feature works. A guess
+   is worse than no test.
+
+3. **Draft the test.** Work like
+   [Checklist for adding a test to a new page](#checklist-for-adding-a-test-to-a-new-page):
+   - Take the prerequisites from the manifest's `prerequisites:`, by name, in the
+     order the page's "Before you begin" lists them. Never invent one: a step the
+     prerequisites do not cover goes in `before:`, as a `page:` or `source:` with a
+     `path:`.
+   - Tag the page's blocks for the scenario in its annotation file, with `annotate`
+     and `save`, under a new paths value named after the page. Leave out blocks with
+     placeholders the reader replaces, such as `<your-host>`.
+   - Add a wait after each step that creates something a later step needs
+     (see [Waiting for resources with YAMLTest](#waiting-for-resources-with-yamltest)).
+     A metric or log that appears only after an interval needs a wait or a retry.
+   - **Assert the feature, not the page's example output.** An example output may
+     have been written by hand. Check what the feature does: a status code, a header,
+     a metric value, a condition. A test with no check is refused.
+
+4. **Record it** in the summary's `failures` list, one row per candidate. Never
+   change `tests.yaml` yourself: `scripts/candidate_manifest.py` writes the row into
+   the manifest after the guard checks your work.
+
+   ```json
+   {"key": "<key from the list>", "kind": "drafted", "fix": true,
+    "reason": "what the test runs and checks",
+    "public_reason": "the same, in words fit for a public repo",
+    "files": ["<annotation files you changed>"],
+    "scenario": {"needs": ["gateway", "httpbin"], "path": "<paths value>",
+                 "before": [{"page": "...", "path": "..."}],
+                 "assert": ["<one-line command that fails if the feature does not work>"]}}
+   ```
+
+   ```json
+   {"key": "<key from the list>", "kind": "declined", "fix": false,
+    "reason": "why", "public_reason": "why, in words fit for a public repo"}
+   ```
+
+   A drafted test is re-run on a cluster like a fix, gets a second attempt the same
+   way, and is left out if it still fails. A declined page keeps its `schema` test
+   and gets `functional: "<public_reason>"` in the manifest, so it is not a candidate
+   again. To queue it again, delete that line.
+
+`functional: "<reason>"` is also how a person records why any page stays schema
+only. A schema-only page without it, and without a `scaffolded:` date, is never
+listed: it may be schema only by a decision nobody wrote down.
 
 ---
 

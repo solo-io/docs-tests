@@ -34,6 +34,14 @@ stops, and nothing is re-run or published, if any rule fails.
    outside contributors can edit. So an added line may not name a secret-shaped
    variable, call `gh`, dump the environment, or name an http(s) host that the
    repo does not already name somewhere.
+7. A candidate (a row of list_functional_candidates.py, with `candidate`) is
+   a new page that could get a functional test. Its row is `drafted` (a fix:
+   re-run like one, and it must check something, with an `assert:` in its
+   `scenario` or a `{{< doc-test >}}` check in an annotation file it lists) or
+   `declined` (no files). The agent never edits tests.yaml: candidate_manifest.py
+   writes both into the manifest, and --manifest-edits names the manifests it
+   changed, the only tests.yaml changes allowed. A candidate is never given
+   another kind, and a failure never one of these two.
 
 --repos is a JSON list, one entry per checkout:
 
@@ -69,8 +77,10 @@ from typing import Dict, List, Set
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from reuse_consumers import inclusion_targets  # noqa: E402
 
-KINDS = {"content", "test", "environment", "product", "unknown"}
-FIXABLE = {"content", "test"}
+CANDIDATE_KINDS = {"drafted", "declined"}
+KINDS = {"content", "test", "environment", "product", "unknown"} | CANDIDATE_KINDS
+FIXABLE = {"content", "test", "drafted"}
+DOC_TEST_CHECK = re.compile(r"\{\{[<%]\s*doc-test\b")
 
 # Words that name the private side in text bound for a public repo. Broad on
 # purpose: a false hit costs a re-run, a missed one publishes internal detail.
@@ -189,7 +199,7 @@ def closure(pages: Set[str], roots: List[pathlib.Path]) -> Set[str]:
 
 
 def check(workspace: pathlib.Path, repos: List[dict], failures: List[dict], summary: dict,
-          pending: List[dict]) -> tuple[List[str], List[dict], List[str]]:
+          pending: List[dict], manifest_edits: Set[str] = frozenset()) -> tuple[List[str], List[dict], List[str]]:
     errors: List[str] = []
     rows = summary.get("failures") or []
     by_key: Dict[str, dict] = {}
@@ -212,7 +222,21 @@ def check(workspace: pathlib.Path, repos: List[dict], failures: List[dict], summ
             errors.append(f"{f['key']}: needs a reason")
         if r.get("fix") and r.get("kind") not in FIXABLE:
             errors.append(f"{f['key']}: a {r.get('kind')} failure is reported, not fixed")
-        if r.get("fix") and not r.get("files"):
+        if bool(f.get("candidate")) != (r.get("kind") in CANDIDATE_KINDS):
+            errors.append(f"{f['key']}: " + (f"a new page's row is drafted or declined, not {r.get('kind')!r}"
+                                            if f.get("candidate") else f"{r.get('kind')!r} is for new pages only"))
+        if r.get("kind") == "drafted":
+            if not r.get("fix"):
+                errors.append(f"{f['key']}: a drafted test is a fix; set fix: true")
+            if not isinstance(r.get("scenario"), dict):
+                errors.append(f"{f['key']}: a drafted test needs its `scenario`")
+            elif not (r["scenario"].get("assert") or any(
+                    DOC_TEST_CHECK.search(l) for p in r.get("files") or []
+                    for l in added_lines(repo_of(repos, p), workspace,
+                                         p[len(repo_of(repos, p)["path"].rstrip("/")) + 1:]
+                                         if repo_of(repos, p)["path"] not in (".", "") else p))):
+                errors.append(f"{f['key']}: a drafted test checks nothing; add an assert or a doc-test check")
+        elif r.get("fix") and not r.get("files"):
             errors.append(f"{f['key']}: marked fixed but lists no files")
         if not r.get("fix") and r.get("files"):
             errors.append(f"{f['key']}: lists files but is not marked fixed")
@@ -235,6 +259,8 @@ def check(workspace: pathlib.Path, repos: List[dict], failures: List[dict], summ
     for repo in repos:
         for rel in changed(repo, workspace):
             path = ws(repo, rel)
+            if repo.get("annotations") and rel in manifest_edits:
+                continue   # candidate_manifest.py's edit, from the agent's rows
             if not rel.startswith(tuple(repo["allowed"])):
                 errors.append(f"{path}: outside the paths a fix may change in {repo['name']}")
                 continue
@@ -286,15 +312,18 @@ def main(argv=None) -> int:
     ap.add_argument("--pending", help="`annotations.py pending --json` output, for the other fixer's files")
     ap.add_argument("--rerun-out", help="write the failures to re-run here, as JSON")
     ap.add_argument("--exempt-out", help="write the annotation pages edited for a failure here, one per line")
+    ap.add_argument("--manifest-edits", help="candidate_manifest.py --edits-out: the tests.yaml files it changed")
     args = ap.parse_args(argv)
 
     workspace = pathlib.Path(args.workspace)
     repos = json.loads(pathlib.Path(args.repos).read_text(encoding="utf-8"))
     failures = json.loads(pathlib.Path(args.failures).read_text(encoding="utf-8"))
     pending = json.loads(pathlib.Path(args.pending).read_text(encoding="utf-8")) if args.pending else []
+    manifest_edits = set(json.loads(pathlib.Path(args.manifest_edits).read_text(encoding="utf-8"))) \
+        if args.manifest_edits else set()
     try:
         summary = json.loads(pathlib.Path(args.summary).read_text(encoding="utf-8"))
-        errors, rerun, exempt = check(workspace, repos, failures, summary, pending)
+        errors, rerun, exempt = check(workspace, repos, failures, summary, pending, manifest_edits)
     except (OSError, ValueError, subprocess.CalledProcessError) as e:
         errors, rerun, exempt = [f"summary: {e}"], [], []
     for e in errors:
