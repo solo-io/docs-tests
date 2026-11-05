@@ -10,8 +10,8 @@ itself, at the release the page documents:
 - every key its templates read (`.Values.a.b`, `index .Values "a" "b"`), which
   covers options that `values.yaml` only shows commented out;
 - a map whose default is empty, a list, a scalar, or that a template hands on
-  whole (`toYaml .Values.x`, `range .Values.x`, `with .Values.x` + `toYaml .`)
-  is open: its contents are not checked, because they are Kubernetes fields or
+  whole (`toYaml .Values.x`, `range .Values.x`, `with .Values.x` + `toYaml .`,
+  `omit .Values.x "k" | toJson`) is open: its contents are not checked, because they are Kubernetes fields or
   free-form labels, not chart options.
 
 What the generated schema can't know goes in an overlay file in docs-tests
@@ -24,6 +24,8 @@ that no template reads still passes; this can't tell.
 import json
 import re
 import shlex
+import tarfile
+import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
@@ -39,8 +41,12 @@ OPEN: Dict[str, Any] = {}
 _VALUES_REF = r"\$?\.Values((?:\.[A-Za-z0-9_]+)+)"
 VALUES_REF_RE = re.compile(_VALUES_REF)
 INDEX_REF_RE = re.compile(r"index\s+\$?\.Values((?:\s+\"[^\"]+\")+)")
-# A value handed on whole, so its contents are Kubernetes fields, not chart options.
-PASSED_ON_RE = re.compile(r"(?:toYaml|toJson|tpl|range\s+(?:\$\w+\s*,\s*)?(?:\$\w+\s*:=\s*)?)\s*\(?\s*" + _VALUES_REF)
+# A value handed on whole, so its contents are Kubernetes fields or a
+# component's own config, not chart options. `omit`/`pick`/`merge` take a map
+# apart or together on its way to toJson, such as enterprise agentgateway's
+# `omit .Values.tokenExchange "configSecret" | toJson`.
+PASSED_ON_RE = re.compile(r"(?:toYaml|toJson|tpl|omit|pick|merge|mergeOverwrite|deepCopy"
+                          r"|range\s+(?:\$\w+\s*,\s*)?(?:\$\w+\s*:=\s*)?)\s*\(?\s*" + _VALUES_REF)
 PIPED_ON_RE = re.compile(_VALUES_REF + r"\s*\|\s*(?:toYaml|toJson)")
 WITH_RE = re.compile(r"with\s+\(?\s*" + _VALUES_REF)
 WITH_BODY_LINES = 4
@@ -105,6 +111,48 @@ def _is_closed_key(schema: Dict[str, Any], path: List[str]) -> bool:
     return "properties" in node
 
 
+def _merge(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
+    """Every key either schema has. Open only if both are."""
+    if "properties" not in a:
+        return b
+    if "properties" not in b:
+        return a
+    props = dict(a["properties"])
+    for k, v in b["properties"].items():
+        props[k] = _merge(props[k], v) if k in props else v
+    return {"properties": props}
+
+
+def _subchart_dir(chart_dir: Path, name: str) -> Optional[Path]:
+    """A dependency vendored under charts/, as a directory or a packaged .tgz."""
+    charts = chart_dir / "charts"
+    if (charts / name / "Chart.yaml").exists():
+        return charts / name
+    for tgz in sorted(charts.glob(f"{name}-*.tgz")):
+        out = Path(tempfile.mkdtemp(prefix="helm-subchart-"))
+        with tarfile.open(tgz) as tar:
+            tar.extractall(out, filter="data")
+        if (out / name / "Chart.yaml").exists():
+            return out / name
+    return None
+
+
+def _schema_with_subcharts(chart_dir: Path, meta: Dict[str, Any], schema: Dict[str, Any]) -> Dict[str, Any]:
+    """A dependency's values go under its alias (or name). A subchart that isn't
+    vendored, as in a chart directory from source, can't be checked: its key is open.
+    `global` and `tags` are Helm's own and shared with every subchart."""
+    props = schema["properties"]
+    for dep in meta.get("dependencies") or []:
+        key = str(dep.get("alias") or dep.get("name"))
+        sub_dir = _subchart_dir(chart_dir, str(dep.get("name")))
+        sub = load_chart(sub_dir).schema if sub_dir else OPEN
+        props[key] = _merge(props.get(key, {"properties": {}}), sub) if sub_dir else OPEN
+    if meta.get("dependencies"):
+        props["global"] = OPEN
+        props["tags"] = OPEN
+    return schema
+
+
 def load_chart(chart_dir: Path, overlay: Optional[Dict[str, Any]] = None) -> HelmChart:
     """The chart's name (Chart.yaml) and a schema of its values."""
     if yaml is None:
@@ -115,6 +163,8 @@ def load_chart(chart_dir: Path, overlay: Optional[Dict[str, Any]] = None) -> Hel
     defaults = yaml.safe_load(values_file.read_text(encoding="utf-8")) if values_file.exists() else None
     # The top level is always closed: a chart with no values takes none.
     schema: Dict[str, Any] = {"properties": dict(_schema_for(defaults).get("properties", {}))}
+    # A subchart can read `.Values.global`, so every chart takes it.
+    schema["properties"].setdefault("global", OPEN)
     passed_on: List[List[str]] = []
     for tpl in sorted((chart_dir / "templates").rglob("*")) if (chart_dir / "templates").is_dir() else []:
         if not tpl.is_file():
@@ -125,6 +175,7 @@ def load_chart(chart_dir: Path, overlay: Optional[Dict[str, Any]] = None) -> Hel
         passed_on.extend(whole)
     for path in passed_on:
         _add_path(schema, path, open_leaf=True)
+    _schema_with_subcharts(chart_dir, meta, schema)
 
     stale: List[str] = []
     for dotted in ((overlay or {}).get(name) or {}).get("open") or []:

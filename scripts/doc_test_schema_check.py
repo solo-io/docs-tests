@@ -15,11 +15,11 @@ What gets checked, and against what:
   OpenAPI schema, through kubeconform, when --kubeconform is given.
 - Standalone config files (`binds:`, `routes:`, `llm:`, ...) on standalone
   pages: agentgateway's `schema/config.json`, when --config-schema is given.
-
 - Helm values set on a product chart (`--set`, `-f values.yaml`), when
   --helm-chart is given: against a schema built from that chart's values.yaml
-  and templates (see doc_test_helm_values.py). For now these are warnings: they
-  never fail a scenario and don't count toward a pass.
+  and templates (see doc_test_helm_values.py). A value the chart doesn't have
+  fails the scenario. Helm values don't count toward a pass, though: the
+  Verified badge promises only resources and config files.
 
 Blocks that don't parse as YAML are skipped, not flagged. They don't count
 toward a pass, though: a scenario in which nothing was validated fails, rather
@@ -341,7 +341,6 @@ class StepResult:
     unparsed: int = 0
     read: Set[Path] = field(default_factory=set)
     helm_checked: int = 0
-    helm_warnings: List[str] = field(default_factory=list)
 
 
 # Set in main(), before the pool forks, from --upstream-root and
@@ -437,7 +436,7 @@ def check_step(repo_root: Path, file: str, path: str, schemas: Schemas, docs_tes
     if schemas.helm:
         page_rel = source_file.relative_to(repo_root).as_posix()
         res.helm_checked, findings = check_helm_blocks(blocks, schemas.helm, lambda b: f"{page_rel}:{b.start_line}")
-        res.helm_warnings = [f"{f.loc}: {f.message}" for f in findings]
+        res.errors.extend(f"{f.loc}: {f.message}" for f in findings)
     return res
 
 
@@ -476,11 +475,10 @@ def check_scenario(
     version: str = "main",
     kubeconform: Optional[Kubeconform] = None,
     cache: Optional[Dict[Any, Any]] = None,
-) -> Tuple[List[str], int, List[str]]:
+) -> Tuple[List[str], int]:
     """Run the 'schema' check across every source step of one test scenario.
 
-    Returns the errors, the number of manifests and config files validated, and
-    the Helm values warnings (which never fail the scenario).
+    Returns the errors and the number of manifests and config files validated.
     `version` is the link version ("latest", "main") the extractor resolves
     version-gated content against. `read`, if given, collects every file the
     scenario's steps read, so the caller can tell whether markup that did not
@@ -498,7 +496,6 @@ def check_scenario(
     checked = 0
     unchecked_kinds: Set[str] = set()
     unparsed = 0
-    helm_warnings: List[str] = []
     for unit in _units(repo_root, doc_file, sources, version):
         if unit not in cache:
             cache[unit] = _run_unit(unit, repo_root, schemas, docs_tests_root, kubeconform)
@@ -513,7 +510,6 @@ def check_scenario(
         checked += result.checked
         unchecked_kinds |= result.unchecked_kinds
         unparsed += result.unparsed
-        helm_warnings.extend(w for w in result.helm_warnings if w not in helm_warnings)
 
     if unparsed:
         logger.debug("%s: %d YAML document(s) did not parse and were not checked",
@@ -527,7 +523,7 @@ def check_scenario(
             f"{doc_file.relative_to(repo_root).as_posix()}: found no recognizable custom "
             f"resource manifest or config file to validate anywhere in this scenario's source chain{found}{broken}"
         )
-    return errors, checked, helm_warnings
+    return errors, checked
 
 
 def load_schemas(crd_paths: Dict[Optional[str], List[Path]],
@@ -591,16 +587,10 @@ def run_units(units: List[Any], jobs: int) -> Dict[Any, Any]:
 
 
 def log_helm_summary(cache: Dict[Any, Any]) -> None:
-    """Each Helm values warning once, however many scenarios share its step
-    (most come from install pages that every scenario starts with)."""
-    steps = [r for u, r in cache.items() if u[0] == "step"]
-    if not any(r.helm_checked or r.helm_warnings for r in steps):
-        return
-    checked = sum(r.helm_checked for r in steps)
-    warnings = sorted({w for r in steps for w in r.helm_warnings})
-    logger.info("Helm values: %d set(s) of values checked against their chart; %d warning(s)", checked, len(warnings))
-    for w in warnings:
-        logger.warning("Helm values: %s", w)
+    """How many sets of Helm values the run checked, across distinct steps."""
+    checked = sum(r.helm_checked for u, r in cache.items() if u[0] == "step")
+    if checked:
+        logger.info("Helm values: %d set(s) of values checked against their chart", checked)
 
 
 def main() -> int:
@@ -636,8 +626,8 @@ def main() -> int:
         default=[],
         metavar="[VERSION=]DIR",
         help="Chart directory (with Chart.yaml) whose values pages set, such as agentgateway/agentgateway's "
-        "controller/install/helm/agentgateway. Repeatable, same VERSION= form as --crd-dir. Values a page "
-        "sets that the chart does not have are reported as warnings; they don't fail the scenario.",
+        "controller/install/helm/agentgateway. Repeatable, same VERSION= form as --crd-dir. A value a page "
+        "sets that the chart does not have fails the scenario.",
     )
     parser.add_argument(
         "--helm-overlay",
@@ -800,10 +790,9 @@ def main() -> int:
         if schemas is None:
             errors = [f"{doc_rel}: no CRD schemas for version '{version}'; pass --crd-dir {version}=PATH"]
             checked = 0
-            helm_warnings: List[str] = []
         else:
-            errors, checked, helm_warnings = check_scenario(repo_root, tc.document, tc.sources, schemas,
-                                                            docs_tests_root, read, version, kubeconform, cache)
+            errors, checked = check_scenario(repo_root, tc.document, tc.sources, schemas, docs_tests_root,
+                                             read, version, kubeconform, cache)
         missing = unattached_for(tc, read, unattached)
         if missing:
             skipped[key] = {"markup": [
@@ -821,10 +810,6 @@ def main() -> int:
         else:
             logger.info("PASSED: %s (%s, %d resource(s) checked)", key, version, checked)
             test_results[key] = {"status": "passed", "checks": [], "type": "schema"}
-        for w in helm_warnings:
-            logger.debug("Helm values: %s: %s", key, w)
-        if helm_warnings:
-            test_results[key]["helm_warnings"] = helm_warnings
 
     log_helm_summary(cache)
 
