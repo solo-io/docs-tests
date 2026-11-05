@@ -16,10 +16,15 @@ What gets checked, and against what:
 - Standalone config files (`binds:`, `routes:`, `llm:`, ...) on standalone
   pages: agentgateway's `schema/config.json`, when --config-schema is given.
 
+- Helm values set on a product chart (`--set`, `-f values.yaml`), when
+  --helm-chart is given: against a schema built from that chart's values.yaml
+  and templates (see doc_test_helm_values.py). For now these are warnings: they
+  never fail a scenario and don't count toward a pass.
+
 Blocks that don't parse as YAML are skipped, not flagged. They don't count
 toward a pass, though: a scenario in which nothing was validated fails, rather
-than passing with nothing checked. Helm values and CRD CEL rules
-(`x-kubernetes-validations`) are not checked; see solo-io/docs-tests#19.
+than passing with nothing checked. CRD CEL rules (`x-kubernetes-validations`)
+are not checked; see solo-io/docs-tests#19.
 
 Each version tree should be checked against the release it documents, not the
 default branch. Pass `--crd-dir latest=DIR --crd-dir main=DIR` (and the same for
@@ -50,6 +55,7 @@ except ModuleNotFoundError:
     jsonschema = None
 
 from doc_test_extract import Extractor, resolve_docs_tests_root
+from doc_test_helm_values import HelmChart, check_blocks as check_helm_blocks, load_chart, load_overlay
 from doc_test_run import (
     DEFAULT_OPTIONS,
     _mode_segment,
@@ -82,6 +88,7 @@ class Schemas:
     """Everything one version tree is validated against."""
     crds: CrdValidators = field(default_factory=dict)
     config: Optional[Any] = None   # validator for the standalone config file
+    helm: Dict[str, HelmChart] = field(default_factory=dict)   # chart name -> values schema
 
 
 def extract_yaml_documents(block_content: str) -> List[str]:
@@ -333,6 +340,8 @@ class StepResult:
     unchecked_kinds: Set[str] = field(default_factory=set)
     unparsed: int = 0
     read: Set[Path] = field(default_factory=set)
+    helm_checked: int = 0
+    helm_warnings: List[str] = field(default_factory=list)
 
 
 # Set in main(), before the pool forks, from --upstream-root and
@@ -424,6 +433,11 @@ def check_step(repo_root: Path, file: str, path: str, schemas: Schemas, docs_tes
         res.checked += 1
         if err:
             res.errors.append(f"{loc}: {err}")
+
+    if schemas.helm:
+        page_rel = source_file.relative_to(repo_root).as_posix()
+        res.helm_checked, findings = check_helm_blocks(blocks, schemas.helm, lambda b: f"{page_rel}:{b.start_line}")
+        res.helm_warnings = [f"{f.loc}: {f.message}" for f in findings]
     return res
 
 
@@ -462,10 +476,11 @@ def check_scenario(
     version: str = "main",
     kubeconform: Optional[Kubeconform] = None,
     cache: Optional[Dict[Any, Any]] = None,
-) -> Tuple[List[str], int]:
+) -> Tuple[List[str], int, List[str]]:
     """Run the 'schema' check across every source step of one test scenario.
 
-    Returns the errors and the number of manifests and config files validated.
+    Returns the errors, the number of manifests and config files validated, and
+    the Helm values warnings (which never fail the scenario).
     `version` is the link version ("latest", "main") the extractor resolves
     version-gated content against. `read`, if given, collects every file the
     scenario's steps read, so the caller can tell whether markup that did not
@@ -483,6 +498,7 @@ def check_scenario(
     checked = 0
     unchecked_kinds: Set[str] = set()
     unparsed = 0
+    helm_warnings: List[str] = []
     for unit in _units(repo_root, doc_file, sources, version):
         if unit not in cache:
             cache[unit] = _run_unit(unit, repo_root, schemas, docs_tests_root, kubeconform)
@@ -497,6 +513,7 @@ def check_scenario(
         checked += result.checked
         unchecked_kinds |= result.unchecked_kinds
         unparsed += result.unparsed
+        helm_warnings.extend(w for w in result.helm_warnings if w not in helm_warnings)
 
     if unparsed:
         logger.debug("%s: %d YAML document(s) did not parse and were not checked",
@@ -510,14 +527,17 @@ def check_scenario(
             f"{doc_file.relative_to(repo_root).as_posix()}: found no recognizable custom "
             f"resource manifest or config file to validate anywhere in this scenario's source chain{found}{broken}"
         )
-    return errors, checked
+    return errors, checked, helm_warnings
 
 
 def load_schemas(crd_paths: Dict[Optional[str], List[Path]],
-                 config_paths: Dict[Optional[str], List[Path]]) -> Dict[Optional[str], Schemas]:
+                 config_paths: Dict[Optional[str], List[Path]],
+                 helm_paths: Optional[Dict[Optional[str], List[Path]]] = None,
+                 helm_overlay: Optional[Dict[str, Any]] = None) -> Dict[Optional[str], Schemas]:
     """One Schemas per version key. Bare paths apply to every version; a
-    VERSION= path wins over a bare one for the same kind."""
-    for paths in list(crd_paths.values()) + list(config_paths.values()):
+    VERSION= path wins over a bare one for the same kind (or chart)."""
+    helm_paths = helm_paths or {}
+    for paths in list(crd_paths.values()) + list(config_paths.values()) + list(helm_paths.values()):
         for p in paths:
             if not p.exists():
                 raise ValueError(f"{p} does not exist")
@@ -530,15 +550,21 @@ def load_schemas(crd_paths: Dict[Optional[str], List[Path]],
         base.crds.update(load_crd_schemas(p))
     if None in config_paths:
         base.config = load_config_schema(config_paths[None][0])
+    for p in helm_paths.get(None, []):
+        chart = load_chart(p, helm_overlay)
+        base.helm[chart.name] = chart
     by_version: Dict[Optional[str], Schemas] = {}
     if None in crd_paths or None in config_paths:
         by_version[None] = base
-    for version in {v for v in list(crd_paths) + list(config_paths) if v is not None}:
-        s = Schemas(crds=dict(base.crds), config=base.config)
+    for version in {v for v in list(crd_paths) + list(config_paths) + list(helm_paths) if v is not None}:
+        s = Schemas(crds=dict(base.crds), config=base.config, helm=dict(base.helm))
         for p in crd_paths.get(version, []):
             s.crds.update(load_crd_schemas(p))
         if version in config_paths:
             s.config = load_config_schema(config_paths[version][0])
+        for p in helm_paths.get(version, []):
+            chart = load_chart(p, helm_overlay)
+            s.helm[chart.name] = chart
         by_version[version] = s
     return by_version
 
@@ -562,6 +588,19 @@ def run_units(units: List[Any], jobs: int) -> Dict[Any, Any]:
     # fork: workers start with the loaded schemas, and need no __main__ guard.
     with multiprocessing.get_context("fork").Pool(jobs) as pool:
         return dict(pool.imap_unordered(_pool_unit, units, chunksize=1))
+
+
+def log_helm_summary(cache: Dict[Any, Any]) -> None:
+    """Each Helm values warning once, however many scenarios share its step
+    (most come from install pages that every scenario starts with)."""
+    steps = [r for u, r in cache.items() if u[0] == "step"]
+    if not any(r.helm_checked or r.helm_warnings for r in steps):
+        return
+    checked = sum(r.helm_checked for r in steps)
+    warnings = sorted({w for r in steps for w in r.helm_warnings})
+    logger.info("Helm values: %d set(s) of values checked against their chart; %d warning(s)", checked, len(warnings))
+    for w in warnings:
+        logger.warning("Helm values: %s", w)
 
 
 def main() -> int:
@@ -590,6 +629,22 @@ def main() -> int:
         metavar="[VERSION=]FILE",
         help="JSON schema for the standalone config file (agentgateway/agentgateway's "
         "schema/config.json), checked on standalone pages only. Same VERSION= form as --crd-dir.",
+    )
+    parser.add_argument(
+        "--helm-chart",
+        action="append",
+        default=[],
+        metavar="[VERSION=]DIR",
+        help="Chart directory (with Chart.yaml) whose values pages set, such as agentgateway/agentgateway's "
+        "controller/install/helm/agentgateway. Repeatable, same VERSION= form as --crd-dir. Values a page "
+        "sets that the chart does not have are reported as warnings; they don't fail the scenario.",
+    )
+    parser.add_argument(
+        "--helm-overlay",
+        default=None,
+        metavar="FILE",
+        help="YAML of chart name -> {open: [dotted.path, ...]}: values whose contents are not checked, "
+        "beyond what the chart itself shows (e.g. products/agentgateway/helm-values.yaml in docs-tests).",
     )
     parser.add_argument(
         "--kubeconform",
@@ -680,14 +735,21 @@ def main() -> int:
             return 1
         _UPSTREAM["root"] = Path(args.upstream_root).resolve()
     try:
-        schemas_by_version = load_schemas(parse_versioned(args.crd_dir), parse_versioned(args.config_schema))
+        overlay = load_overlay(Path(args.helm_overlay)) if args.helm_overlay else None
+        schemas_by_version = load_schemas(parse_versioned(args.crd_dir), parse_versioned(args.config_schema),
+                                          parse_versioned(args.helm_chart), overlay)
     except ValueError as exc:
         logger.error("%s", exc)
         return 1
     for version, s in sorted(schemas_by_version.items(), key=lambda kv: kv[0] or ""):
-        logger.info("Schemas for %s: %d CRD kind(s) (%s); standalone config schema: %s",
+        logger.info("Schemas for %s: %d CRD kind(s) (%s); standalone config schema: %s; Helm charts: %s",
                     version or "every version", len(s.crds), ", ".join(sorted(k for _, k in s.crds)),
-                    "yes" if s.config is not None else "no")
+                    "yes" if s.config is not None else "no", ", ".join(sorted(s.helm)) or "none")
+        for chart in s.helm.values():
+            for path in chart.stale_overlay:
+                # An entry for a value the chart no longer has, or already doesn't check.
+                logger.warning("--helm-overlay: %s has no checked value '%s' (%s); remove the entry",
+                               chart.name, path, version or "every version")
     kubeconform = Kubeconform(args.kubeconform, args.kubernetes_version) if args.kubeconform else None
 
     test_cases, _, _, _ = build_test_cases(
@@ -738,9 +800,10 @@ def main() -> int:
         if schemas is None:
             errors = [f"{doc_rel}: no CRD schemas for version '{version}'; pass --crd-dir {version}=PATH"]
             checked = 0
+            helm_warnings: List[str] = []
         else:
-            errors, checked = check_scenario(repo_root, tc.document, tc.sources, schemas, docs_tests_root,
-                                             read, version, kubeconform, cache)
+            errors, checked, helm_warnings = check_scenario(repo_root, tc.document, tc.sources, schemas,
+                                                            docs_tests_root, read, version, kubeconform, cache)
         missing = unattached_for(tc, read, unattached)
         if missing:
             skipped[key] = {"markup": [
@@ -758,6 +821,12 @@ def main() -> int:
         else:
             logger.info("PASSED: %s (%s, %d resource(s) checked)", key, version, checked)
             test_results[key] = {"status": "passed", "checks": [], "type": "schema"}
+        for w in helm_warnings:
+            logger.debug("Helm values: %s: %s", key, w)
+        if helm_warnings:
+            test_results[key]["helm_warnings"] = helm_warnings
+
+    log_helm_summary(cache)
 
     write_job_summary(skipped)
     if args.report_file:

@@ -7,9 +7,9 @@ blocks:
 - b8e6cb750369a5c3 sh
 - 6c50f43a6f42c191 yaml
 - bfa5795dac738138 yaml
-- 0cb8123ebc5e6901 sh
-- b41221bb568c5b0a sh
-- 6364ab47a888e2d8 text
+- 2476c2ff8f56e735 sh
+- aa2758b552164624 sh
+- f288f4688c000368 text
 - 0fe7492dd40b4966 sh
 tags:
 - paths: two-backends
@@ -110,15 +110,15 @@ hidden:
     {{< /doc-test >}}
 - after:
     section: Verify the configuration
-    line: 546718fed01d1a74
+    line: 938a30108cf51f78
     occurrence: 0
-    words: 935f6831 b9776d7d 78236fd5 fa51fd49 0c7fcf41 88d4230f bb0347a4 f86b1f62 aa9e9b5c ca978112 27badc98 2689367b a9f4b3d2
+    words: 4e074085 a12dd3a7 8e7fc023 b9776d7d a9f4b3d2 c093955c b9776d7d abbea20e e0ee8bb5 b9776d7d 4ea5ee68 e3e4aec3 b9776d7d a0561fd6 3c469e9d a718e3e9 b9776d7d 78236fd5 8e7fc023 2ad8a704 0c7fcf41 9c6725dc b9776d7d 68214f50 10e08a41 935f6831 b9776d7d 4ea5ee68 9a43b6da e7d3799e b9776d7d 78236fd5 b9776d7d 1f58b914 f3959239 b9776d7d 42882135 c1481e2e 6201111b 961eb436 254bb97b 7187f067 b9776d7d abbea20e e0ee8bb5
     block_before:
       block: 8
-      fingerprint: 6364ab47a888e2d8
+      fingerprint: f288f4688c000368
       lang: text
-      lines: 6364ab47
-      preview: < HTTP/1.1 200 OK
+      lines: bd9ba729 fc2e0196
+      preview: < HTTP/2 302
   content: |-
     {{< doc-test paths="two-backends" >}}
     # With jwt.accessToken set, the gateway validates the access token from the
@@ -156,19 +156,19 @@ hidden:
     {{< /doc-test >}}
 - after:
     section: Verify the configuration
-    line: 546718fed01d1a74
+    line: 938a30108cf51f78
     occurrence: 0
-    words: 935f6831 b9776d7d 78236fd5 fa51fd49 0c7fcf41 88d4230f bb0347a4 f86b1f62 aa9e9b5c ca978112 27badc98 2689367b a9f4b3d2
+    words: 4e074085 a12dd3a7 8e7fc023 b9776d7d a9f4b3d2 c093955c b9776d7d abbea20e e0ee8bb5 b9776d7d 4ea5ee68 e3e4aec3 b9776d7d a0561fd6 3c469e9d a718e3e9 b9776d7d 78236fd5 8e7fc023 2ad8a704 0c7fcf41 9c6725dc b9776d7d 68214f50 10e08a41 935f6831 b9776d7d 4ea5ee68 9a43b6da e7d3799e b9776d7d 78236fd5 b9776d7d 1f58b914 f3959239 b9776d7d 42882135 c1481e2e 6201111b 961eb436 254bb97b 7187f067 b9776d7d abbea20e e0ee8bb5
     block_before:
       block: 8
-      fingerprint: 6364ab47a888e2d8
+      fingerprint: f288f4688c000368
       lang: text
-      lines: 6364ab47
-      preview: < HTTP/1.1 200 OK
+      lines: bd9ba729 fc2e0196
+      preview: < HTTP/2 302
   content: |-
     {{< doc-test paths="two-backends" >}}
-    # The page's own check: a request over HTTP with a Bearer token gets 200.
-    # TOKEN is not set anywhere on the page, so fetch one from Keycloak.
+    # The note in Verify: a request with only a Bearer header has no session
+    # cookie, so the OAuth2 policy redirects it to the login page.
     TOKEN=$(curl -sk --max-time 10 --connect-to "keycloak.example.com:443:${KEYCLOAK_ADDRESS}:443" \
       -d "client_id=kgateway-client" -d "client_secret=kgateway-client-secret" \
       -d "username=testuser" -d "password=password" -d "grant_type=password" \
@@ -177,20 +177,11 @@ hidden:
       echo "FAIL: Keycloak returned no access token for testuser"
       exit 1
     fi
-    export TOKEN
-    YAMLTest -f - <<'EOF'
-    - name: two-backends - a request with a Bearer token gets 200, as the Verify section says
-      retries: 10
-      http:
-        url: "http://${INGRESS_GW_ADDRESS}:8080"
-        path: /headers
-        method: GET
-        headers:
-          host: "www.example.com:8080"
-          Authorization: "Bearer ${TOKEN}"
-      source:
-        type: local
-      expect:
-        statusCode: 200
-    EOF
+    code=$(curl -sk --max-time 10 --connect-to "www.example.com:443:${INGRESS_GW_ADDRESS}:8443" \
+      -H "Authorization: Bearer ${TOKEN}" -o /dev/null -w '%{http_code}' "https://www.example.com/headers" || true)
+    if [ "$code" != "302" ]; then
+      echo "FAIL: a request with only a Bearer header returned ${code}, want 302 to the login page"
+      exit 1
+    fi
+    echo "a request with only a Bearer header is redirected to the login page"
     {{< /doc-test >}}

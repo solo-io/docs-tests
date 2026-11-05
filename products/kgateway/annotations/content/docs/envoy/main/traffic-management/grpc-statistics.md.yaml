@@ -9,6 +9,7 @@ blocks:
 - 1278e0c2da30c211 sh
 - 71e7bbf3b187dd3f console
 - 867df5c449d48c29 yaml
+- e092b7a58eaa7775 sh
 - bd1bada9858cf19a sh
 - 4f0c8b682c28cdeb sh
 - 5bc7a9d551e7389d json
@@ -48,7 +49,17 @@ tags:
     only: true
     lead: ' '
 - paths: grpc-statistics
-  block: 11
+  block: 8
+  fingerprint: e092b7a58eaa7775
+  lang: sh
+  lines: d3bbdc22 7f293015
+  preview: kubectl rollout restart deployment/grpc -n {{< reuse "kgw-docs/snippets/namespac
+  form:
+    attr: paths="grpc-statistics"
+    only: true
+    lead: ' '
+- paths: grpc-statistics
+  block: 12
   fingerprint: 49af9d3d2b15b287
   lang: sh
   lines: 446898e7 ad5ba554 446898e7 76c5faef
@@ -195,9 +206,20 @@ hidden:
     # so its ancestors are already Accepted. Wait for the proxy to drop
     # stats_for_all_methods and pick up the allow list instead.
     gs_check_filter "grpc-statistics allow list" 'not cfg.get("stats_for_all_methods") and not cfg.get("enable_upstream_stats") and any(s.get("name") == "yages.Echo" and s.get("method_names") == ["Ping"] for s in cfg.get("individual_method_stats_allowlist", {}).get("services", []))'
-    # Record the counters that exist before the next calls. Envoy keeps the stats
-    # from the all-methods section, so the allow list shows up as Ping still
-    # counting by name while ServerReflectionInfo stops counting by name.
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: e092b7a58eaa7775
+    lang: sh
+    lines: d3bbdc22 7f293015
+    preview: kubectl rollout restart deployment/grpc -n {{< reuse "kgw-docs/snippets/namespac
+  content: |-
+    {{< doc-test paths="grpc-statistics" >}}
+    # Record the counters that exist before the next calls. The page restarts the
+    # proxy in the step above, so the stats start from nothing: the per-method
+    # stats that the all-methods section created would otherwise hide the allow
+    # list's new counts under the same names.
+    gs_check_filter "grpc-statistics allow list after restart" 'not cfg.get("stats_for_all_methods") and not cfg.get("enable_upstream_stats") and any(s.get("name") == "yages.Echo" and s.get("method_names") == ["Ping"] for s in cfg.get("individual_method_stats_allowlist", {}).get("services", []))'
     gs_ping_before=$(gs_stat 'grpc\.yages\.Echo\.Ping\.total')
     gs_refl_before=$(gs_stat 'grpc\.grpc\.reflection\.v1alpha\.ServerReflection\.ServerReflectionInfo\.total')
     gs_agg_before=$(gs_stat 'grpc\.total')
@@ -209,7 +231,7 @@ hidden:
     occurrence: 0
     words: c818c516 7b2de53b 12886f9d 28391d3b 1f58b914 7175517a a9f4b3d2 f5cccfb7 7afbb334
     block_before:
-      block: 13
+      block: 14
       fingerprint: 1b32ac5428881f14
       lang: console
       lines: 034cb716 ff5dd136 443e3f19 0b1580a4 d0ef6196 38a0da2b df22f60c 4da2b53f 89cc9aad 23c63dfa

@@ -1,0 +1,396 @@
+#!/usr/bin/env python3
+"""Helm values for the 'schema' doc test: check that the values a page sets on
+a product chart are values the chart has (solo-io/docs-tests#19).
+
+The product charts ship no values.schema.json, so Helm installs a misspelled or
+removed value without complaint. This builds a schema per chart from the chart
+itself, at the release the page documents:
+
+- every key in the chart's default `values.yaml`;
+- every key its templates read (`.Values.a.b`, `index .Values "a" "b"`), which
+  covers options that `values.yaml` only shows commented out;
+- a map whose default is empty, a list, a scalar, or that a template hands on
+  whole (`toYaml .Values.x`, `range .Values.x`, `with .Values.x` + `toYaml .`)
+  is open: its contents are not checked, because they are Kubernetes fields or
+  free-form labels, not chart options.
+
+What the generated schema can't know goes in an overlay file in docs-tests
+(`products/<product>/helm-values.yaml`): more paths to open, per chart.
+
+Only keys are checked, not value types. A key that is in `values.yaml` but
+that no template reads still passes; this can't tell.
+"""
+
+import json
+import re
+import shlex
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Optional, Tuple
+
+try:
+    import yaml  # type: ignore[import-not-found]
+except ModuleNotFoundError:
+    yaml = None
+
+# Open: contents not checked. Otherwise {"properties": {key: node}}, closed.
+OPEN: Dict[str, Any] = {}
+
+_VALUES_REF = r"\$?\.Values((?:\.[A-Za-z0-9_]+)+)"
+VALUES_REF_RE = re.compile(_VALUES_REF)
+INDEX_REF_RE = re.compile(r"index\s+\$?\.Values((?:\s+\"[^\"]+\")+)")
+# A value handed on whole, so its contents are Kubernetes fields, not chart options.
+PASSED_ON_RE = re.compile(r"(?:toYaml|toJson|tpl|range\s+(?:\$\w+\s*,\s*)?(?:\$\w+\s*:=\s*)?)\s*\(?\s*" + _VALUES_REF)
+PIPED_ON_RE = re.compile(_VALUES_REF + r"\s*\|\s*(?:toYaml|toJson)")
+WITH_RE = re.compile(r"with\s+\(?\s*" + _VALUES_REF)
+WITH_BODY_LINES = 4
+
+
+@dataclass
+class HelmChart:
+    name: str
+    schema: Dict[str, Any]
+    source: str                           # for messages: the chart dir
+    stale_overlay: List[str] = field(default_factory=list)
+
+
+def _schema_for(default: Any) -> Dict[str, Any]:
+    if isinstance(default, dict) and default:
+        return {"properties": {str(k): _schema_for(v) for k, v in default.items()}}
+    return OPEN
+
+
+def _template_refs(text: str) -> Tuple[List[List[str]], List[List[str]]]:
+    """(paths read, paths handed on whole) from one template file."""
+    read: List[List[str]] = []
+    passed_on: List[List[str]] = []
+    for m in VALUES_REF_RE.finditer(text):
+        read.append(m.group(1).lstrip(".").split("."))
+    for m in INDEX_REF_RE.finditer(text):
+        read.append(re.findall(r"\"([^\"]+)\"", m.group(1)))
+    for rx in (PASSED_ON_RE, PIPED_ON_RE):
+        for m in rx.finditer(text):
+            passed_on.append(m.group(1).lstrip(".").split("."))
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        for m in WITH_RE.finditer(line):
+            body = "\n".join(lines[i:i + WITH_BODY_LINES + 1])
+            if re.search(r"(?:toYaml|toJson|tpl)\s+\.\s", body + " "):
+                passed_on.append(m.group(1).lstrip(".").split("."))
+    return read, passed_on
+
+
+def _add_path(schema: Dict[str, Any], path: List[str], open_leaf: bool) -> None:
+    node = schema
+    for i, part in enumerate(path):
+        props = node.get("properties")
+        if props is None:
+            return          # already open from here down
+        if part not in props:
+            props[part] = OPEN
+        if i == len(path) - 1 and open_leaf:
+            props[part] = OPEN
+        node = props[part]
+
+
+def _is_closed_key(schema: Dict[str, Any], path: List[str]) -> bool:
+    """Whether `path` is a key the schema has and still checks the contents of,
+    so opening it in the overlay changes something."""
+    node = schema
+    for part in path:
+        props = node.get("properties")
+        if props is None or part not in props:
+            return False
+        node = props[part]
+    return "properties" in node
+
+
+def load_chart(chart_dir: Path, overlay: Optional[Dict[str, Any]] = None) -> HelmChart:
+    """The chart's name (Chart.yaml) and a schema of its values."""
+    if yaml is None:
+        raise RuntimeError("PyYAML is required. Install it with: pip install pyyaml")
+    meta = yaml.safe_load((chart_dir / "Chart.yaml").read_text(encoding="utf-8")) or {}
+    name = str(meta.get("name") or chart_dir.name)
+    values_file = chart_dir / "values.yaml"
+    defaults = yaml.safe_load(values_file.read_text(encoding="utf-8")) if values_file.exists() else None
+    # The top level is always closed: a chart with no values takes none.
+    schema: Dict[str, Any] = {"properties": dict(_schema_for(defaults).get("properties", {}))}
+    passed_on: List[List[str]] = []
+    for tpl in sorted((chart_dir / "templates").rglob("*")) if (chart_dir / "templates").is_dir() else []:
+        if not tpl.is_file():
+            continue
+        read, whole = _template_refs(tpl.read_text(encoding="utf-8", errors="replace"))
+        for path in read:
+            _add_path(schema, path, open_leaf=False)
+        passed_on.extend(whole)
+    for path in passed_on:
+        _add_path(schema, path, open_leaf=True)
+
+    stale: List[str] = []
+    for dotted in ((overlay or {}).get(name) or {}).get("open") or []:
+        path = split_key(str(dotted))
+        if not _is_closed_key(schema, path):
+            stale.append(str(dotted))
+        _add_path(schema, path, open_leaf=True)
+    return HelmChart(name=name, schema=schema, source=chart_dir.as_posix(), stale_overlay=stale)
+
+
+def load_overlay(path: Path) -> Dict[str, Any]:
+    if yaml is None:
+        raise RuntimeError("PyYAML is required. Install it with: pip install pyyaml")
+    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+
+
+def split_key(key: str) -> List[str]:
+    """`a.b\\.c[0].d` -> ["a", "b.c", "d"]: Helm's --set path, list indexes dropped
+    (a list is open, so nothing below one is checked)."""
+    parts: List[str] = []
+    cur = ""
+    i = 0
+    while i < len(key):
+        ch = key[i]
+        if ch == "\\" and i + 1 < len(key):
+            cur += key[i + 1]
+            i += 2
+            continue
+        if ch == ".":
+            parts.append(cur)
+            cur = ""
+        elif ch == "[":
+            parts.append(cur)
+            cur = ""
+            i = key.find("]", i)
+            if i < 0:
+                break
+            parts.append("[]")
+            if i + 1 < len(key) and key[i + 1] == ".":
+                i += 1
+        else:
+            cur += ch
+        i += 1
+    if cur:
+        parts.append(cur)
+    out: List[str] = []
+    for p in parts:
+        if p == "[]":
+            break           # into a list: open
+        if p:
+            out.append(p)
+    return out
+
+
+def unknown_keys(schema: Dict[str, Any], values: Any, prefix: Tuple[str, ...] = ()) -> List[str]:
+    """Dotted paths in `values` that the schema has no key for."""
+    props = schema.get("properties")
+    if props is None or not isinstance(values, dict):
+        return []
+    found: List[str] = []
+    for k, v in values.items():
+        path = prefix + (str(k),)
+        if str(k) not in props:
+            found.append(".".join(path))
+        else:
+            found.extend(unknown_keys(props[str(k)], v, path))
+    return found
+
+
+def _nest(path: List[str], value: Any) -> Dict[str, Any]:
+    out: Any = value
+    for part in reversed(path):
+        out = {part: out}
+    return out
+
+
+# --- Reading Helm commands from a page -------------------------------------
+
+HELM_SUBCOMMANDS = {"install", "upgrade", "template"}
+SET_FLAGS = {"--set", "--set-string", "--set-json", "--set-file", "--set-literal"}
+VALUES_FLAGS = {"-f", "--values"}
+# Flags that take a value, so the word after them is not the chart.
+VALUE_FLAGS = SET_FLAGS | VALUES_FLAGS | {
+    "-n", "--namespace", "--version", "--repo", "--timeout", "--kube-context", "--kubeconfig",
+    "-o", "--output", "--output-dir", "--post-renderer", "--post-renderer-args", "--description",
+    "--name-template", "--username", "--password", "--ca-file", "--cert-file", "--key-file",
+    "--history-max", "-a", "--api-versions", "--kube-version", "-l", "--labels", "--keyring",
+    "--registry-config", "--repository-config", "--repository-cache", "--max-history",
+    "--kube-apiserver", "--kube-as-user", "--kube-as-group", "--kube-token", "-s", "--show-only",
+    "--release-name", "--wait-for",
+}
+HEREDOC_START_RE = re.compile(r"<<-?\s*['\"]?(\w+)['\"]?")
+WRITE_RE = re.compile(r"^\s*(?:cat\b[^\n]*?>>?\s*|tee\s+(?:-a\s+)?)([^\s<>|;&]+)")
+
+
+@dataclass
+class HelmCommand:
+    chart_ref: str
+    line: int                               # offset in the block, for ordering
+    sets: List[Tuple[str, str]] = field(default_factory=list)   # (flag, "key=value")
+    value_files: List[str] = field(default_factory=list)
+    stdin_values: Optional[str] = None
+    third_party_repo: bool = False
+
+
+def _heredocs(text: str) -> List[Tuple[int, int, str, str]]:
+    """(start offset, end offset, opening line, body) of each heredoc."""
+    out = []
+    for m in HEREDOC_START_RE.finditer(text):
+        tag = m.group(1)
+        line_end = text.find("\n", m.end())
+        if line_end < 0:
+            continue
+        end = re.compile(r"^\s*" + re.escape(tag) + r"\s*$", re.MULTILINE).search(text, line_end + 1)
+        if not end:
+            continue
+        line_start = text.rfind("\n", 0, m.start()) + 1
+        out.append((line_start, end.end(), text[line_start:line_end], text[line_end + 1:end.start()]))
+    return out
+
+
+def _split_sets(value: str) -> List[str]:
+    """`a=1,b={x,y}` -> ["a=1", "b={x,y}"]: Helm's comma list, braces kept whole."""
+    parts, cur, depth = [], "", 0
+    for ch in value:
+        if ch in "{[":
+            depth += 1
+        elif ch in "}]":
+            depth -= 1
+        if ch == "," and depth == 0:
+            parts.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    parts.append(cur)
+    return [p for p in parts if p.strip()]
+
+
+def parse_block(text: str) -> Tuple[List[HelmCommand], List[Tuple[int, str, str]]]:
+    """The Helm install/upgrade/template commands in one shell block, and the
+    files it writes with a heredoc: (offset, file name, YAML)."""
+    docs = _heredocs(text)
+    writes: List[Tuple[int, str, str]] = []
+    commands: List[HelmCommand] = []
+    # Blank out heredoc bodies so their lines are not read as commands.
+    masked = list(text)
+    for start, end, opening, body in docs:
+        w = WRITE_RE.search(opening)
+        if w and "helm" not in opening:
+            writes.append((start, w.group(1).strip("'\""), body))
+        body_start = start + len(opening) + 1
+        for i in range(body_start, end):
+            if masked[i] != "\n":
+                masked[i] = " "
+    flat = "".join(masked).replace("\\\n", "  ")
+    for m in re.finditer(r"(?:^|[;&|(]\s*|\s)helm\s+(install|upgrade|template)\b([^\n;|&]*)", flat, re.MULTILINE):
+        args = m.group(2)
+        try:
+            words = shlex.split(args, comments=False, posix=True)
+        except ValueError:
+            words = args.split()
+        cmd = HelmCommand(chart_ref="", line=m.start())
+        positionals: List[str] = []
+        i = 0
+        while i < len(words):
+            w = words[i]
+            flag, eq, inline = w.partition("=") if w.startswith("--") else (w, "", "")
+            if flag in VALUE_FLAGS:
+                if eq:
+                    val = inline
+                else:
+                    i += 1
+                    val = words[i] if i < len(words) else ""
+                if flag in SET_FLAGS:
+                    cmd.sets.extend((flag, s) for s in _split_sets(val))
+                elif flag in VALUES_FLAGS:
+                    if val == "-":
+                        # The command's own heredoc: the first one that ends after it starts.
+                        heredoc = next((d for d in docs if d[1] > m.start()), None)
+                        cmd.stdin_values = heredoc[3] if heredoc else None
+                    else:
+                        cmd.value_files.append(val)
+                elif flag == "--repo":
+                    cmd.third_party_repo = True
+            elif w.startswith("<<") or w.startswith(">") or w in {"<", "EOF"}:
+                break
+            elif not w.startswith("-"):
+                positionals.append(w)
+            i += 1
+        if positionals:
+            cmd.chart_ref = positionals[-1]
+            commands.append(cmd)
+    return commands, writes
+
+
+def chart_name(ref: str) -> str:
+    """`oci://cr.agentgateway.dev/charts/agentgateway` -> `agentgateway`."""
+    return ref.rstrip("/").rsplit("/", 1)[-1].split(":", 1)[0]
+
+
+@dataclass
+class HelmFinding:
+    loc: str
+    message: str
+
+
+def check_blocks(blocks: Iterable[Any], charts: Dict[str, HelmChart], loc_for) -> Tuple[int, List[HelmFinding]]:
+    """Check the Helm values that `blocks` (one page's, in any order) set on a
+    known chart. Returns (values checked, findings).
+
+    A values file a command reads with `-f NAME` is matched to the heredocs on
+    the same page that write NAME before that command and after the previous
+    command that read NAME (both tabs of a "with X / without X" choice count).
+    A file written on another page is not checked.
+    """
+    if yaml is None:
+        raise RuntimeError("PyYAML is required. Install it with: pip install pyyaml")
+    events: List[Tuple[Tuple[str, int, int], Any, Any]] = []   # ((file, line, offset), kind, payload)
+    for b in blocks:
+        cmds, writes = parse_block(b.content)
+        base = (b.file_path.as_posix(), b.start_line)
+        for off, name, body in writes:
+            events.append(((base[0], base[1], off), "write", (name, body, b)))
+        for c in cmds:
+            events.append(((base[0], base[1], c.line), "cmd", (c, b)))
+    events.sort(key=lambda e: e[0])
+
+    checked = 0
+    findings: List[HelmFinding] = []
+    pending: Dict[Tuple[str, str], List[Tuple[str, Any]]] = {}    # (file, name) -> writes
+    for (file, _, _), kind, payload in events:
+        if kind == "write":
+            name, body, b = payload
+            pending.setdefault((file, name), []).append((body, b))
+            continue
+        cmd, b = payload
+        chart = None if cmd.third_party_repo else charts.get(chart_name(cmd.chart_ref))
+        sources: List[Tuple[Any, str, Any]] = []        # (values, what, block)
+        for flag, item in cmd.sets:
+            key, eq, raw = item.partition("=")
+            if not eq:
+                continue
+            value: Any = raw
+            if flag == "--set-json":
+                try:
+                    value = json.loads(raw)
+                except json.JSONDecodeError:
+                    value = raw
+            sources.append((_nest(split_key(key.strip()), value), f"{flag} {key.strip()}", b))
+        if cmd.stdin_values is not None:
+            sources.append((cmd.stdin_values, "values from stdin", b))
+        for name in cmd.value_files:
+            for body, wb in pending.pop((file, name), []):
+                sources.append((body, f"values file {name}", wb))
+        if chart is None:
+            continue
+        for values, what, src_block in sources:
+            if isinstance(values, str):
+                try:
+                    values = yaml.safe_load(values)
+                except yaml.YAMLError:
+                    continue
+            if not isinstance(values, dict):
+                continue
+            checked += 1
+            for key in unknown_keys(chart.schema, values):
+                findings.append(HelmFinding(loc_for(src_block),
+                                            f"chart {chart.name} has no value '{key}' ({what})"))
+    return checked, findings
