@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/observability/enterprise-traces-setup.md
+previews: false
 blocks:
 - 4bd0f90482dc65b5 yaml
 - 21ff649189a82fb2 sh
@@ -16,7 +17,6 @@ tags:
   fingerprint: 4bd0f90482dc65b5
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-traces-setup"
     only: true
@@ -26,7 +26,6 @@ tags:
   fingerprint: 406c77b85324adf9
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee be7234f8 57d78469 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-traces-setup"
     only: true
@@ -36,7 +35,6 @@ tags:
   fingerprint: 053b090691ecf392
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 b2a76230 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-traces-setup"
     only: true
@@ -46,7 +44,6 @@ tags:
   fingerprint: 48b4be80f2213782
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 cab2be2b 21be7e8f c5a9bbf9 c9a521fd a273b231 73c054bf 274fdf3f 8abece4f a68324b2 8e8f9cf8 d80f53a1 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-traces-setup"
     only: true
@@ -56,7 +53,6 @@ tags:
   fingerprint: db137bc929b464d9
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 73c054bf 0a282488 ed32980f f8e71c10 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-traces-setup"
     only: true
@@ -66,7 +62,6 @@ tags:
   fingerprint: fd4deab47750b4d4
   lang: sh
   lines: fd4deab4
-  preview: 'kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} tracing -n {{< reuse '
   form:
     attr: paths="enterprise-traces-setup"
     only: true
@@ -77,7 +72,6 @@ hidden:
     fingerprint: 4bd0f90482dc65b5
     lang: yaml
     lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="enterprise-traces-setup" >}}
     # ============================================================================
@@ -135,7 +129,6 @@ hidden:
     fingerprint: 406c77b85324adf9
     lang: yaml
     lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee be7234f8 57d78469 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="enterprise-traces-setup" >}}
     # Policy check 5
@@ -163,7 +156,6 @@ hidden:
     fingerprint: 053b090691ecf392
     lang: yaml
     lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 b2a76230 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="enterprise-traces-setup" >}}
     # Policy check 6
@@ -191,7 +183,6 @@ hidden:
     fingerprint: 48b4be80f2213782
     lang: yaml
     lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 cab2be2b 21be7e8f c5a9bbf9 c9a521fd a273b231 73c054bf 274fdf3f 8abece4f a68324b2 8e8f9cf8 d80f53a1 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="enterprise-traces-setup" >}}
     # Policy check 7
@@ -221,7 +212,6 @@ hidden:
     fingerprint: db137bc929b464d9
     lang: yaml
     lines: 16c71da1 fbc30693 7f57603a 8c8c4228 eb97063c 8af957d1 36184fa5 588a5d84 7115e129 89b06424 350955ef 30901338 390f7e12 70c97555 f9cdd0ae 8af957d1 0d6480f0 5a41b93f e9ef40ee 3e371bf8 73c054bf 0a282488 ed32980f f8e71c10 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="enterprise-traces-setup" >}}
     # Policy check 8
