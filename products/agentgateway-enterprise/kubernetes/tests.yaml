@@ -86,10 +86,13 @@ skip:
 - page: documentation/install/argocd.md
 - page: documentation/install/tls.md
 - page: documentation/install/ui/_index.md
+- page: documentation/install/ui/access-control/_index.md
 - page: documentation/install/ui/explore.md
 - page: documentation/llm/_index.md
 - page: documentation/llm/api-types/_index.md
+- page: documentation/llm/batch/_index.md
 - page: documentation/llm/cost-controls/_index.md
+- page: documentation/llm/cost-controls/budget-limits/troubleshoot.md
 - page: documentation/llm/guardrails/_index.md
 - page: documentation/llm/guardrails/webhook/_index.md
 - page: documentation/llm/guardrails/webhook/openapi-spec.md
@@ -230,6 +233,11 @@ scenarios:
     - install-standard
     page: documentation/agent/a2a.md
     path: a2a
+  about-schema:
+    type: schema
+    page: documentation/install/ui/access-control/about.md
+    path: all
+    scaffolded: "2026-11-05"
   access-logs:
     type:
     - schema
@@ -317,6 +325,11 @@ scenarios:
     - gateway
     page: integrations/ci-cd/argo.md
     path: argo-rollouts
+  arize-schema:
+    type: schema
+    page: integrations/llm/observability/arize.md
+    path: all
+    scaffolded: "2026-11-05"
   authorization:
     type:
     - schema
@@ -400,6 +413,21 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/basic.md
     path: basic
+  batch-about-schema:
+    type: schema
+    page: documentation/llm/batch/about.md
+    path: all
+    scaffolded: "2026-11-05"
+  bedrock-schema:
+    type: schema
+    page: documentation/llm/batch/bedrock.md
+    path: all
+    scaffolded: "2026-11-05"
+  braintrust-schema:
+    type: schema
+    page: integrations/llm/observability/braintrust.md
+    path: all
+    scaffolded: "2026-11-05"
   budget-limits-enterprise:
     type:
     - schema
@@ -409,6 +437,16 @@ scenarios:
     - gateway
     page: documentation/llm/cost-controls/budget-limits.md
     path: budget-limits-enterprise
+  budget-limits-schema:
+    type: schema
+    page: documentation/llm/cost-controls/budget-limits/_index.md
+    path: all
+    scaffolded: "2026-11-05"
+  budget-limits-setup-schema:
+    type: schema
+    page: documentation/llm/cost-controls/budget-limits/setup.md
+    path: all
+    scaffolded: "2026-11-05"
   buffer-schema:
     type: schema
     page: documentation/traffic-management/buffer.md
@@ -621,6 +659,11 @@ scenarios:
     needs: []
     page: documentation/setup/customize/configs.md
     path: customize-configs
+  customize-schema:
+    type: schema
+    page: documentation/llm/cost-controls/budget-limits/customize.md
+    path: all
+    scaffolded: "2026-11-05"
   datadog-schema:
     type: schema
     page: documentation/observability/traces/configs/datadog.md
@@ -1808,6 +1851,11 @@ scenarios:
       path: route-delegation-prereq
     page: documentation/traffic-management/route-delegation/inheritance/native-policies.md
     path: native-policies
+  notifications-schema:
+    type: schema
+    page: documentation/llm/cost-controls/budget-limits/notifications.md
+    path: all
+    scaffolded: "2026-11-05"
   oauth-access-token:
     type:
     - schema
@@ -1854,6 +1902,11 @@ scenarios:
     - install-standard
     page: documentation/security/extauth/oauth/keycloak.md
     path: oauth-keycloak
+  observability-datadog-schema:
+    type: schema
+    page: integrations/llm/observability/datadog.md
+    path: all
+    scaffolded: "2026-11-05"
   ollama-provider-setup:
     type:
     - schema
@@ -1863,6 +1916,11 @@ scenarios:
     - gateway
     page: integrations/llm/providers/ollama.md
     path: ollama-provider-setup
+  openai-anthropic-schema:
+    type: schema
+    page: documentation/llm/batch/openai-anthropic.md
+    path: all
+    scaffolded: "2026-11-05"
   openai-compatible-validate:
     type:
     - schema
@@ -2264,6 +2322,11 @@ scenarios:
     - gateway
     page: documentation/mcp/static-mcp.md
     path: setup-mcp-server
+  setup-schema:
+    type: schema
+    page: documentation/install/ui/access-control/setup.md
+    path: all
+    scaffolded: "2026-11-05"
   shared-connection-settings:
     type:
     - schema

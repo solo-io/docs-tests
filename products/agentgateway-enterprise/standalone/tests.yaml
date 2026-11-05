@@ -46,6 +46,7 @@ skip:
 - page: documentation/configuration/security/ui-access-control/_index.md
 - page: documentation/llm/_index.md
 - page: documentation/llm/api-types/_index.md
+- page: documentation/llm/batch/_index.md
 - page: documentation/llm/cost-controls/_index.md
 - page: documentation/llm/cost-controls/budget-limits/_index.md
 - page: documentation/llm/playground.md
@@ -180,6 +181,11 @@ scenarios:
     - functional
     page: documentation/llm/cost-controls/budget-limits/per-key.md
     path: apikey-budgets
+  arize-schema:
+    type: schema
+    page: integrations/llm/observability/arize.md
+    path: all
+    scaffolded: "2026-11-05"
   attachment-schema:
     type: schema
     page: documentation/configuration/policies/attachment.md
@@ -218,6 +224,11 @@ scenarios:
     type: schema
     page: documentation/configuration/security/backend-authn/providers/aws-assume-role-chain.md
     path: aws-assume-role-chain
+  axiom-schema:
+    type: schema
+    page: integrations/llm/observability/axiom.md
+    path: all
+    scaffolded: "2026-11-05"
   azure:
     type:
     - schema
@@ -301,6 +312,11 @@ scenarios:
     - functional
     page: documentation/configuration/security/basic-authn.md
     path: basic-authn
+  batch-about-schema:
+    type: schema
+    page: documentation/llm/batch/about.md
+    path: all
+    scaffolded: "2026-11-05"
   bedrock:
     type:
     - schema
@@ -313,12 +329,22 @@ scenarios:
     - functional
     page: documentation/llm/prompt-guards/bedrock-guardrails.md
     path: bedrock-guardrails
+  bedrock-schema:
+    type: schema
+    page: documentation/llm/batch/bedrock.md
+    path: all
+    scaffolded: "2026-11-05"
   binary-install:
     type:
     - schema
     - functional
     path: binary-install
     page: documentation/setup/install/binary.md
+  braintrust-schema:
+    type: schema
+    page: integrations/llm/observability/braintrust.md
+    path: all
+    scaffolded: "2026-11-05"
   buffer:
     type:
     - schema
@@ -969,6 +995,11 @@ scenarios:
     - functional
     page: integrations/llm/providers/openai.md
     path: openai
+  openai-anthropic-schema:
+    type: schema
+    page: documentation/llm/batch/openai-anthropic.md
+    path: all
+    scaffolded: "2026-11-05"
   openai-compatible-validate:
     type:
     - schema
