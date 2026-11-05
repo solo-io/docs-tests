@@ -123,8 +123,11 @@ hidden:
       # statussync collection holds a reports.RouteReport whose Parents map is keyed
       # by the ParentRefKey struct, which has no MarshalText method, so encoding/json
       # cannot write the snapshot. Accept only that exact error, so that the check
-      # still fails on any other problem. Remove this branch when the product is fixed.
-      if grep -q 'object member name must be a string' krt.json && grep -q '/Report/Route/Parents' krt.json; then
+      # still fails on any other problem. The report shows up under more than one
+      # collection path, such as .../Report/Route/Parents and
+      # .../Status/Contributions/1/Route/Parents, so match the shared ending.
+      # Remove this branch when the product is fixed.
+      if grep -q 'object member name must be a string' krt.json && grep -q '/Route/Parents"' krt.json; then
         echo "KNOWN PRODUCT BUG: /snapshots/krt cannot marshal the HTTPRoute status report (map keyed by ParentRefKey):"
         head -c 500 krt.json; echo
       else
