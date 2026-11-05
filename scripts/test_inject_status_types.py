@@ -38,6 +38,13 @@ class Types(unittest.TestCase):
         self.assertEqual(fm["test_status"], "passed")
         self.assertEqual(fm["test_types"], ["schema", "functional"])
 
+    def test_extra_types_count_as_kinds(self):
+        fm = _run({
+            f"{DOC}::a::functional": {"status": "passed", "type": "functional"},
+            f"{DOC}::a::schema": {"status": "passed", "type": "schema", "extra_types": ["helm"]},
+        })
+        self.assertEqual(fm["test_types"], ["schema", "helm", "functional"])
+
     def test_missing_type_counts_as_functional(self):
         fm = _run({f"{DOC}::a": {"status": "passed"}})
         self.assertEqual(fm["test_types"], ["functional"])

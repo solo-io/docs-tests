@@ -475,10 +475,13 @@ def check_scenario(
     version: str = "main",
     kubeconform: Optional[Kubeconform] = None,
     cache: Optional[Dict[Any, Any]] = None,
-) -> Tuple[List[str], int]:
+) -> Tuple[List[str], int, int]:
     """Run the 'schema' check across every source step of one test scenario.
 
-    Returns the errors and the number of manifests and config files validated.
+    Returns the errors, the number of manifests and config files validated, and
+    the number of sets of Helm values checked on the scenario's own page. Helm
+    values on prerequisite pages are checked but not counted: the Verified
+    badge's "Helm values" row speaks for the page it is on.
     `version` is the link version ("latest", "main") the extractor resolves
     version-gated content against. `read`, if given, collects every file the
     scenario's steps read, so the caller can tell whether markup that did not
@@ -494,6 +497,7 @@ def check_scenario(
     cache = {} if cache is None else cache
     errors: List[str] = []
     checked = 0
+    helm_on_page = 0
     unchecked_kinds: Set[str] = set()
     unparsed = 0
     for unit in _units(repo_root, doc_file, sources, version):
@@ -508,6 +512,8 @@ def check_scenario(
             read |= result.read
         errors.extend(result.errors)
         checked += result.checked
+        if unit[5]:   # page_wide: this step is the scenario's own page
+            helm_on_page += result.helm_checked
         unchecked_kinds |= result.unchecked_kinds
         unparsed += result.unparsed
 
@@ -523,7 +529,7 @@ def check_scenario(
             f"{doc_file.relative_to(repo_root).as_posix()}: found no recognizable custom "
             f"resource manifest or config file to validate anywhere in this scenario's source chain{found}{broken}"
         )
-    return errors, checked
+    return errors, checked, helm_on_page
 
 
 def load_schemas(crd_paths: Dict[Optional[str], List[Path]],
@@ -789,9 +795,9 @@ def main() -> int:
         schemas = schemas_by_version.get(version, schemas_by_version.get(None))
         if schemas is None:
             errors = [f"{doc_rel}: no CRD schemas for version '{version}'; pass --crd-dir {version}=PATH"]
-            checked = 0
+            checked = helm_on_page = 0
         else:
-            errors, checked = check_scenario(repo_root, tc.document, tc.sources, schemas, docs_tests_root,
+            errors, checked, helm_on_page = check_scenario(repo_root, tc.document, tc.sources, schemas, docs_tests_root,
                                              read, version, kubeconform, cache)
         missing = unattached_for(tc, read, unattached)
         if missing:
@@ -810,6 +816,11 @@ def main() -> int:
         else:
             logger.info("PASSED: %s (%s, %d resource(s) checked)", key, version, checked)
             test_results[key] = {"status": "passed", "checks": [], "type": "schema"}
+            # The Helm values check runs inside this one, so it has no result
+            # of its own. doc_test_inject_status.py adds extra_types to the
+            # page's test_types for the badge.
+            if helm_on_page:
+                test_results[key]["extra_types"] = ["helm"]
 
     log_helm_summary(cache)
 

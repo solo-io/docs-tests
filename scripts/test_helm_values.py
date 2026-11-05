@@ -202,6 +202,29 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(tests[key]["status"], "failed")
         self.assertIn("chart demo has no value 'controller.logLvl'", tests[key]["error"])
 
+    def test_passing_page_with_helm_values_reports_helm(self):
+        import test_schema_check as t
+        base = t.Base()
+        base.setUp()
+        chart_dir = pathlib.Path(tempfile.mkdtemp())
+        chart(chart_dir)
+        key = base.write("main", t.page(t.policy_block("timeout: 10s") + "\n\n```sh\nhelm install agw oci://r/demo "
+                                        "--set controller.logLevel=debug\n```"))
+        code, tests = base.run_check(str(base.new), f"--helm-chart=main={chart_dir / 'demo'}")
+        self.assertEqual(code, 0, tests)
+        self.assertEqual(tests[key]["extra_types"], ["helm"])
+
+    def test_passing_page_without_helm_values_reports_no_helm(self):
+        import test_schema_check as t
+        base = t.Base()
+        base.setUp()
+        chart_dir = pathlib.Path(tempfile.mkdtemp())
+        chart(chart_dir)
+        key = base.write("main", t.page(t.policy_block("timeout: 10s")))
+        code, tests = base.run_check(str(base.new), f"--helm-chart=main={chart_dir / 'demo'}")
+        self.assertEqual(code, 0, tests)
+        self.assertNotIn("extra_types", tests[key])
+
     def test_helm_values_alone_do_not_pass(self):
         import test_schema_check as t
         base = t.Base()

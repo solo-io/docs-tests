@@ -5,9 +5,11 @@ Inject test status metadata into markdown front matter based on test-results.yam
 This script reads the test results file and updates the front matter of each
 tested document with a `test_status` field indicating whether all tests passed.
 A page that passed also gets `test_types`, the kinds of test that ran on it
-(schema, functional), which the Verified badge's tooltip
+(schema, helm, functional), which the Verified badge's tooltip
 lists. The kinds come from the results, never from tests.yaml: a scenario that
 declares `[schema, functional]` but ran only `functional` claims only that.
+`helm` is never a scenario type. The schema check adds it to a passed result's
+`extra_types` when it checked Helm values on the page itself.
 
 Usage:
     python3 scripts/inject_test_status.py [--results-file PATH] [--only PATH ...] [--dry-run]
@@ -69,7 +71,7 @@ def compute_document_status(doc_path: str, tests: Dict, skipped: Optional[Dict] 
 # Badge order for the known kinds, cheapest check first. An unknown kind sorts
 # after these, alphabetically; the badge partial skips any kind it has no
 # wording for, so a new kind never shows its raw name to readers.
-TYPE_ORDER = ["schema", "functional"]
+TYPE_ORDER = ["schema", "helm", "functional"]
 
 
 def compute_document_types(doc_path: str, tests: Dict) -> List[str]:
@@ -78,13 +80,15 @@ def compute_document_types(doc_path: str, tests: Dict) -> List[str]:
 
     A result with no `type` is "functional", the runner's default for a
     scenario that declares none (results written before the field existed).
+    A result's `extra_types` are checks that ran inside it, such as the Helm
+    values check inside the schema check, and count as kinds of their own.
     """
     prefix = f"{doc_path}::"
-    kinds = {
-        (v or {}).get("type") or "functional"
-        for k, v in tests.items()
-        if k.startswith(prefix)
-    }
+    kinds = set()
+    for k, v in tests.items():
+        if k.startswith(prefix):
+            kinds.add((v or {}).get("type") or "functional")
+            kinds.update((v or {}).get("extra_types") or [])
     known = [t for t in TYPE_ORDER if t in kinds]
     return known + sorted(kinds - set(TYPE_ORDER))
 
