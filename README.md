@@ -324,8 +324,18 @@ Add `schema` this way only when the scenario shows something the checker has a s
 for: a custom resource whose CRD it was given (agentgateway's own kinds, and Gateway API
 kinds), a core Kubernetes kind (when `kubeconform` is available), or, on a standalone page,
 a whole config file. A scenario in which nothing was validated fails rather than passing
-vacuously, so `schema` stays opt-in per scenario, not automatic. Helm values and CRD CEL
-rules are not checked; see [#19](https://github.com/solo-io/docs-tests/issues/19).
+vacuously, so `schema` stays opt-in per scenario, not automatic. CRD CEL rules are not
+checked; see [#19](https://github.com/solo-io/docs-tests/issues/19).
+
+Helm values are checked when the run passes `--helm-chart` for each product chart at each
+version. The product charts ship no `values.schema.json`, so the
+checker builds one from the chart's `values.yaml` plus every key its templates read, and
+leaves free-form values (empty maps, lists, anything a template passes on with `toYaml`)
+unchecked. It reports a `--set` key or a key in a `-f` values file (written on the same
+page) that the chart doesn't have, and the scenario fails. Helm values don't count toward a
+pass on their own, because the Verified badge doesn't mention them. If a valid key is
+flagged, open its parent value in `products/<product>/helm-values.yaml` (passed with
+`--helm-overlay`).
 
 ### Running a scenario on macOS or Windows
 

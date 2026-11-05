@@ -1,0 +1,19 @@
+# Helm values the `schema` check should not look inside, per chart, beyond what
+# doc_test_helm_values.py works out from the chart itself. It already treats as
+# open: maps whose default is empty, lists, scalars, and anything a template
+# hands on whole (`toYaml .Values.x`, `range .Values.x`, `with .Values.x` +
+# `toYaml .`, `omit .Values.x "k" | toJson`), and a vendored subchart's values
+# under its alias.
+#
+# Add a dotted path here when a page fails for a valid key under a value the
+# check doesn't know is free-form, for example a map the chart passes to Kubernetes
+# in a way the template scan misses. The check warns about an entry that names
+# a value the chart no longer has, or that is already open, so remove it then.
+#
+# Passed to doc_test_schema_check.py with --helm-overlay.
+
+enterprise-agentgateway:
+  open: []
+
+enterprise-agentgateway-standalone:
+  open: []
