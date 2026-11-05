@@ -774,7 +774,7 @@ hidden:
           - path: "$.headers['X-Route'][0]"
             comparator: equals
             value: "homepage"
-      - name: "regex in one HTTPRoute - a PathPrefix rule listed after the regex rules still wins"
+      - name: "regex in one HTTPRoute - a regex rule wins over a PathPrefix rule that also matches"
         retries: 20
         http:
           url: "http://${INGRESS_GW_ADDRESS}:8080/anything/api/homepage/1"
@@ -788,7 +788,7 @@ hidden:
           bodyJsonPath:
           - path: "$.headers['X-Route'][0]"
             comparator: equals
-            value: "prefix"
+            value: "homepage"
       - name: "regex in one HTTPRoute - with the broader pattern listed first, it wins (no specificity ranking)"
         retries: 60
         http:

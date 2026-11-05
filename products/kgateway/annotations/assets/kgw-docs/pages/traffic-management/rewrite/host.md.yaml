@@ -117,24 +117,21 @@ hidden:
         polling:
           timeoutSeconds: 300
           intervalSeconds: 5
-    - name: rewrite-host-external - the request reaches httpbin.org with the rewritten host and path
-      retries: 60
-      http:
-        url: "http://${INGRESS_GW_ADDRESS}:8080"
-        path: /headers
-        method: GET
-        headers:
-          host: "external-rewrite.example:8080"
-      source:
-        type: local
-      expect:
-        statusCode: 200
-        bodyJsonPath:
-        - path: "$.headers.Host[0]"
-          comparator: equals
-          value: "httpbin.org"
-        - path: "$.url"
-          comparator: matches
-          value: "/headers$"
     EOF
+    # httpbin.org serves two response formats: classic httpbin ("Host": "httpbin.org",
+    # no "url" field on /headers) and go-httpbin ("Host": ["httpbin.org"]). Read the
+    # Host header in either format. A JSON body with a "headers" object also shows
+    # that the request reached the /headers path.
+    host=""
+    for i in $(seq 1 60); do
+      host=$(curl -s --max-time 15 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: external-rewrite.example:8080" \
+        | jq -r '.headers.Host | if type == "array" then .[0] else . end' 2>/dev/null || true)
+      [ "$host" = "httpbin.org" ] && break
+      echo "rewrite-host-external: attempt $i got Host '${host}', want httpbin.org, retrying"; sleep 2
+    done
+    if [ "$host" != "httpbin.org" ]; then
+      echo "FAIL: rewrite-host-external - the request did not reach httpbin.org/headers with the Host header httpbin.org"
+      exit 1
+    fi
+    echo "rewrite-host-external - the request reaches httpbin.org/headers with the rewritten Host header"
     {{< /doc-test >}}

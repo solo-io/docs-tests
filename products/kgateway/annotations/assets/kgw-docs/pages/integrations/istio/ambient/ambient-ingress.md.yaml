@@ -129,6 +129,10 @@ hidden:
           # connection to httpbin pooled, so `connection: close` from the client
           # does not end it. If no entry shows up after a few rounds, restart the
           # gateway once so the pooled connection closes.
+          # Right after the namespaces join the mesh, ztunnel can still log a few
+          # connections from the transition, with no SPIFFE IDs and straight to
+          # port 8080 (or a refused connection). Wait for an HBONE connection,
+          # which is the steady state that the page's example output shows.
           line=""
           restarted=""
           for i in $(seq 1 30); do
@@ -136,7 +140,8 @@ hidden:
               curl -sSI -m 10 "http://$INGRESS_GW_ADDRESS:8080/headers" -H "host: www.example.com:8080" -H "connection: close" > /dev/null || true
             done
             logs=$(kubectl -n istio-system logs -l app=ztunnel --since=5m --tail=-1 2>/dev/null || true)
-            line=$(grep 'dst.namespace="httpbin"' <<<"$logs" | grep 'src.namespace="{{< reuse "kgw-docs/snippets/namespace.md" >}}"' | tail -n1 || true)
+            any=$(grep 'dst.namespace="httpbin"' <<<"$logs" | grep 'src.namespace="{{< reuse "kgw-docs/snippets/namespace.md" >}}"' || true)
+            line=$(grep 'dst.hbone_addr=' <<<"$any" | tail -n1 || true)
             [ -n "$line" ] && break
             if [ "$i" -ge 5 ] && [ -z "$restarted" ]; then
               kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout restart deployment/http
@@ -145,7 +150,11 @@ hidden:
             fi
             sleep 4
           done
-          [ -n "$line" ] || { echo "no ztunnel log line for {{< reuse "kgw-docs/snippets/namespace.md" >}} -> httpbin"; exit 1; }
+          if [ -z "$line" ]; then
+            echo "FAIL: no ztunnel log line for an HBONE connection {{< reuse "kgw-docs/snippets/namespace.md" >}} -> httpbin. Lines for this pair:"
+            tail -n5 <<<"$any"
+            exit 1
+          fi
           echo "$line"
           # Claims: both workloads have a SPIFFE ID, and the hop goes over HBONE (15008).
           for want in 'src.identity="spiffe://cluster.local/ns/{{< reuse "kgw-docs/snippets/namespace.md" >}}/' \

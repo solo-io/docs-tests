@@ -68,12 +68,17 @@ hidden:
   content: |-
     {{< doc-test paths="envoy-image" >}}
     # Test-only: the test cannot compile the Rust module and push to a registry,
-    # so it stands in for steps 1 and 2. It gives the stock envoy-wrapper image
-    # that the installed kgateway already runs (the image of the httpbin sample's
-    # http proxy) the name the page pushes,
-    # registry.example.com/myorg/envoy-wrapper:v2.3.0-custom, in the kind node's
-    # image store. The default pullPolicy is IfNotPresent, so the proxy pod starts
+    # so it stands in for steps 1 and 2. It builds a thin image on top of the stock
+    # envoy-wrapper image that the installed kgateway already runs (the image of
+    # the httpbin sample's http proxy), names it as the page does,
+    # registry.example.com/myorg/envoy-wrapper:v2.3.0-custom, and loads it into the
+    # kind node. The default pullPolicy is IfNotPresent, so the proxy pod starts
     # from that local copy and never contacts registry.example.com.
+    # A plain `ctr images tag` of the stock image is not enough: the kubelet already
+    # has a pull record for that image ID under the cr.kgateway.dev name, so on
+    # Kubernetes versions that verify pulled-image credentials it tries to pull the
+    # new name again. The LABEL gives the image a new ID with no pull record, which
+    # the kubelet treats as a preloaded image.
     ei_src=$(kubectl get deployment http -n kgateway-system -o jsonpath='{.spec.template.spec.containers[?(@.name=="kgateway-proxy")].image}')
     ei_dst=registry.example.com/myorg/envoy-wrapper:v2.3.0-custom
     case "$ei_src" in
@@ -81,9 +86,12 @@ hidden:
       *) echo "FAIL: the http proxy runs '${ei_src}', not an envoy-wrapper image"; exit 1 ;;
     esac
     ei_node=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
-    echo "tagging ${ei_src} as ${ei_dst} on kind node ${ei_node}"
-    docker exec "$ei_node" crictl inspecti "$ei_src" >/dev/null 2>&1 || docker exec "$ei_node" crictl pull "$ei_src"
-    docker exec "$ei_node" ctr -n k8s.io images tag --force "$ei_src" "$ei_dst"
+    echo "building ${ei_dst} on top of ${ei_src} and loading it into kind node ${ei_node}"
+    printf 'FROM %s\nLABEL dev.kgateway.doc-test="envoy-image"\n' "$ei_src" | docker build -t "$ei_dst" -
+    if ! kind load docker-image "$ei_dst" --name "${ei_node%-control-plane}"; then
+      echo "kind load failed, importing the image with ctr instead"
+      docker save "$ei_dst" | docker exec -i "$ei_node" ctr -n k8s.io images import --all-platforms -
+    fi
     ei_seen=0
     for attempt in $(seq 1 15); do
       if docker exec "$ei_node" crictl inspecti "$ei_dst" >/dev/null 2>&1; then ei_seen=1; break; fi

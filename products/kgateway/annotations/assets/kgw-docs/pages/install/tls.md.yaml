@@ -303,10 +303,26 @@ hidden:
     {{< doc-test paths="install-tls" >}}
     # The page checks the server through port-forwards. The test checks it from
     # pods in the cluster instead.
+    # Test-only: `kubectl run --rm -i` often drops the output of a pod that exits
+    # quickly, which made the probes below read empty output. Run each probe pod
+    # to completion and read its output with `kubectl logs` instead.
+    run_probe() {
+      local name="$1"; shift
+      kubectl delete pod "$name" -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found --wait=true >/dev/null 2>&1
+      kubectl run "$name" --restart=Never -n {{< reuse "kgw-docs/snippets/namespace.md" >}} "$@" >/dev/null || return 1
+      local phase=""
+      for _ in $(seq 1 60); do
+        phase=$(kubectl get pod "$name" -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.status.phase}' 2>/dev/null)
+        case "$phase" in Succeeded|Failed) break ;; esac
+        sleep 2
+      done
+      kubectl logs "$name" -n {{< reuse "kgw-docs/snippets/namespace.md" >}} 2>&1 || true
+      kubectl delete pod "$name" -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --ignore-not-found --wait=false >/dev/null 2>&1
+    }
     # 1. Port 9977 serves TLS with a certificate that chains to the kgateway-xds-ca CA.
     rm -f xds-served.crt
     for i in $(seq 1 30); do
-      kubectl run xds-tls-probe --rm -i --restart=Never -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --image=alpine/openssl:3.3.2 --command -- \
+      run_probe xds-tls-probe --image=alpine/openssl:3.3.2 --command -- \
         sh -c 'openssl s_client -connect {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc:9977 -servername {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc </dev/null 2>/dev/null' \
         > xds-s-client.txt 2>/dev/null || true
       openssl x509 -in xds-s-client.txt -out xds-served.crt 2>/dev/null && break
@@ -317,7 +333,7 @@ hidden:
     openssl verify -CAfile xds-ca.crt xds-served.crt || { echo "FAIL: the certificate on port 9977 does not chain to the kgateway-xds-ca CA"; exit 1; }
     # 2. A plaintext gRPC request fails before it reaches authentication, because the
     #    server now requires TLS. Without TLS, the same request returns "authentication failed".
-    plain=$(kubectl run xds-plaintext-probe --rm -i --restart=Never -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --image=fullstorydev/grpcurl:v1.9.1 -- \
+    plain=$(run_probe xds-plaintext-probe --image=fullstorydev/grpcurl:v1.9.1 -- \
       -plaintext -max-time 10 {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc:9977 list 2>&1 || true)
     echo "$plain"
     if grep -q "authentication failed" <<<"$plain" || ! grep -qi "fail" <<<"$plain"; then
@@ -326,7 +342,7 @@ hidden:
     fi
     # 3. Over TLS, the same request reaches the server and fails authentication,
     #    because it carries no service account token.
-    tlsout=$(kubectl run xds-tls-grpc-probe --rm -i --restart=Never -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --image=fullstorydev/grpcurl:v1.9.1 -- \
+    tlsout=$(run_probe xds-tls-grpc-probe --image=fullstorydev/grpcurl:v1.9.1 -- \
       -insecure -max-time 10 {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc:9977 list 2>&1 || true)
     echo "$tlsout"
     grep -q "authentication failed" <<<"$tlsout" || { echo "FAIL: a gRPC request over TLS to port 9977 did not return 'authentication failed'"; exit 1; }
@@ -340,7 +356,7 @@ hidden:
     [ "$code" = "200" ] || { echo "FAIL: the http proxy did not serve httpbin after it reconnected to the TLS-enabled control plane"; exit 1; }
     # 5. The control plane metrics have the xds_auth counters, with at least one success.
     for i in $(seq 1 30); do
-      metrics=$(kubectl run xds-metrics-probe --rm -i --restart=Never -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --image=curlimages/curl:8.10.1 -- \
+      metrics=$(run_probe xds-metrics-probe --image=curlimages/curl:8.10.1 -- \
         -s --max-time 10 http://{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.{{< reuse "kgw-docs/snippets/namespace.md" >}}.svc:9092/metrics 2>/dev/null || true)
       success=$(awk '$1=="kgateway_xds_auth_rq_success_total"{print int($2)}' <<<"$metrics")
       [ "${success:-0}" -ge 1 ] && break

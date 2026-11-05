@@ -1,7 +1,7 @@
 format: 1
 source: assets/kgw-docs/pages/observability/otel-stack.md
 blocks:
-- e7f609f347e3691e yaml
+- 7f55578ac8c1e8cc yaml
 - 790bd0e204e48860 yaml
 - 00269cf968c4536e sh
 - 9260b2c958883e79 console
@@ -16,9 +16,9 @@ blocks:
 tags:
 - paths: otel-stack
   block: 0
-  fingerprint: e7f609f347e3691e
+  fingerprint: 7f55578ac8c1e8cc
   lang: yaml
-  lines: de13793e 17a7076e b2daaaf1 97c47a9a 2a24ff0e 0b570272 a641f532 456469bd b823b136 c794c548 d5ec3fae 07ea4397 5528c115 259774ff 86c75b8d 0d7a40bb 47fd10c1 8cb1880e 36cbe0dc 093785e8 a7a2adcd e115206d 97bcd5e0 a1c5573d ff7360cf d620c590 e4bc2178 5aff61a9 e4bc2178 20fe4dbd 28f801e6 e4bc2178 188e27df 3ecb9f77 3c053919 e4bc2178 50c39ac0 e4bc2178 8957fd96 e4bc2178 4fafa0d3 3897150c c483b266 e5f9d686 bb85cefe 0eb31522 cc9dba6f 0eb31522 2ecc5143 0eb31522 8224dae4 0eb31522 15968281 0eb31522 e79f6c4d 0eb31522 7a2ad882 0eb31522 d62a555d 0eb31522 43b772b1 0eb31522 7f3b0621 0eb31522 8b7bb22b 0eb31522 8ce0fb11 0eb31522 abc56510
+  lines: de13793e 17a7076e b2daaaf1 97c47a9a 2a24ff0e 0b570272 a641f532 456469bd b823b136 c794c548 d5ec3fae 07ea4397 5528c115 18e9058d 86c75b8d 0d7a40bb 47fd10c1 8cb1880e b2c7d028 6566d421 36cbe0dc 093785e8 a7a2adcd e115206d 97bcd5e0 a1c5573d e4bc2178 d620c590 e4bc2178 5aff61a9 e4bc2178 20fe4dbd 28f801e6 e4bc2178 188e27df 3ecb9f77 3c053919 e4bc2178 50c39ac0 e4bc2178 8957fd96 e4bc2178 4fafa0d3 3897150c c483b266 e5f9d686 bb85cefe 0eb31522 cc9dba6f 0eb31522 2ecc5143 0eb31522 8224dae4 0eb31522 15968281 0eb31522 e79f6c4d 0eb31522 7a2ad882 0eb31522 d62a555d 0eb31522 43b772b1 0eb31522 7f3b0621 0eb31522 8b7bb22b 0eb31522 8ce0fb11 0eb31522 abc56510
   preview: helm upgrade --install loki loki \
   form:
     attr: paths="otel-stack"
@@ -113,10 +113,10 @@ hidden:
     preview: helm upgrade --install tempo tempo \
   content: |-
     {{< doc-test paths="otel-stack" >}}
-    # Loki (single binary), its MinIO object store, and Tempo come up. The Loki
-    # chunks and results caches request several GiB of memory and can stay
-    # Pending on a small runner. Loki serves without them, so the test reports
-    # them but does not require them.
+    # Loki (single binary, filesystem storage) and Tempo come up. The page used
+    # to deploy MinIO for Loki, whose quay.io/minio images are no longer
+    # pullable; the loop below still waits for MinIO if a page version deploys it.
+    # Any pods that stay Pending are reported but not required.
     kubectl -n telemetry rollout status statefulset/loki --timeout=600s
     for r in $(kubectl -n telemetry get statefulset,deployment -o name | grep minio || true); do
       kubectl -n telemetry rollout status "$r" --timeout=600s

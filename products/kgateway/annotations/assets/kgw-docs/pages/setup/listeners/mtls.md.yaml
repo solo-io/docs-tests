@@ -375,13 +375,16 @@ hidden:
       fi
     done
     # Without a client certificate the TLS handshake fails: curl gets no HTTP
-    # status and exits with an SSL connect error (35) or a receive error (56).
+    # status and exits with an SSL connect error (35), or with a send (55) or
+    # receive (56) error. With TLS 1.3 the server sends its alert after the
+    # handshake. curl reports the alert as exit 55 or 56, depending on the
+    # curl version and on timing (CI curl with OpenSSL 3.5 reports 55).
     for port in 8443 8444; do
       rc=0
       code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
         --resolve "example.com:${port}:${INGRESS_GW_ADDRESS}" "https://example.com:${port}/get") || rc=$?
-      if [ "$code" != "000" ] || { [ "$rc" != "35" ] && [ "$rc" != "56" ]; }; then
-        echo "FAIL: port $port without a client certificate returned '$code' (curl exit $rc), want a failed TLS handshake (curl exit 35 or 56)"
+      if [ "$code" != "000" ] || { [ "$rc" != "35" ] && [ "$rc" != "55" ] && [ "$rc" != "56" ]; }; then
+        echo "FAIL: port $port without a client certificate returned '$code' (curl exit $rc), want a failed TLS handshake (curl exit 35, 55, or 56)"
         exit 1
       fi
     done
@@ -430,8 +433,8 @@ hidden:
     rc=0
     code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
       --resolve "example.com:8443:${INGRESS_GW_ADDRESS}" https://example.com:8443/get) || rc=$?
-    if [ "$code" != "000" ] || { [ "$rc" != "35" ] && [ "$rc" != "56" ]; }; then
-      echo "FAIL: AllowValidOnly on port 8443 returned '$code' (curl exit $rc) without a client certificate, want a failed TLS handshake (curl exit 35 or 56)"
+    if [ "$code" != "000" ] || { [ "$rc" != "35" ] && [ "$rc" != "55" ] && [ "$rc" != "56" ]; }; then
+      echo "FAIL: AllowValidOnly on port 8443 returned '$code' (curl exit $rc) without a client certificate, want a failed TLS handshake (curl exit 35, 55, or 56)"
       exit 1
     fi
     {{< /doc-test >}}
@@ -608,13 +611,13 @@ hidden:
   content: |-
     {{< doc-test paths="mtls,mtls-per-listener" >}}
     # Tenant B's listener does not trust tenant A's CA: the TLS handshake fails
-    # (curl exit 35 or 56) and no HTTP status comes back.
+    # (curl exit 35, 55, or 56) and no HTTP status comes back.
     rc=0
     code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
       --cert tenant-a-client-cert.pem --key tenant-a-client-key.pem \
       --resolve "tenant-b.example.com:8443:${INGRESS_GW_ADDRESS}" https://tenant-b.example.com:8443/get) || rc=$?
-    if [ "$code" != "000" ] || { [ "$rc" != "35" ] && [ "$rc" != "56" ]; }; then
-      echo "FAIL: the tenant B listener returned '$code' (curl exit $rc) for the tenant A certificate, want a failed TLS handshake (curl exit 35 or 56)"
+    if [ "$code" != "000" ] || { [ "$rc" != "35" ] && [ "$rc" != "55" ] && [ "$rc" != "56" ]; }; then
+      echo "FAIL: the tenant B listener returned '$code' (curl exit $rc) for the tenant A certificate, want a failed TLS handshake (curl exit 35, 55, or 56)"
       exit 1
     fi
     {{< /doc-test >}}
@@ -712,18 +715,18 @@ hidden:
   content: |-
     {{< doc-test paths="mtls" >}}
     # The client certificate has no mtls.com SAN, so the TLS handshake fails
-    # (curl exit 35 or 56). Retry until the new configuration is in place.
+    # (curl exit 35, 55, or 56). Retry until the new configuration is in place.
     rc=0; code=""; ok=""
     for i in $(seq 1 60); do
       rc=0
       code=$(curl -sS -o /dev/null --max-time 10 -w '%{http_code}' --cacert ca-cert.pem \
         --cert client-cert.pem --key client-key.pem \
         --resolve "example.com:8443:${INGRESS_GW_ADDRESS}" https://example.com:8443/get) || rc=$?
-      if [ "$code" = "000" ] && { [ "$rc" = "35" ] || [ "$rc" = "56" ]; }; then ok=1; break; fi
+      if [ "$code" = "000" ] && { [ "$rc" = "35" ] || [ "$rc" = "55" ] || [ "$rc" = "56" ]; }; then ok=1; break; fi
       echo "request with a certificate that lacks the mtls.com SAN returned '$code' (curl exit $rc), want a failed TLS handshake, retrying ($i/60)"; sleep 5
     done
     if [ -z "$ok" ]; then
-      echo "FAIL: the request with a certificate that lacks the mtls.com SAN returned '$code' (curl exit $rc), want a failed TLS handshake (curl exit 35 or 56)"
+      echo "FAIL: the request with a certificate that lacks the mtls.com SAN returned '$code' (curl exit $rc), want a failed TLS handshake (curl exit 35, 55, or 56)"
       exit 1
     fi
     {{< /doc-test >}}

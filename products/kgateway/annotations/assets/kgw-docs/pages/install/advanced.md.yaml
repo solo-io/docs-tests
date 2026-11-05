@@ -982,6 +982,13 @@ hidden:
     preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
   content: |-
     {{< doc-test paths="advanced" >}}
+    # The page's helm upgrade step above is byte-identical to the earlier xDS scoping
+    # upgrade step, so the extractor drops it as a duplicate. Run the same upgrade here
+    # so that the STRICT values.yaml is applied.
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      -f values.yaml
     kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
     {{< /doc-test >}}
 - after:

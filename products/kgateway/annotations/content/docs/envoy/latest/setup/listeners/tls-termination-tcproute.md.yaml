@@ -196,14 +196,17 @@ hidden:
   content: |2-
           {{< doc-test paths="tls-termination-tcproute-listenerset" >}}
           YAMLTest -f - <<'EOF'
-          - name: wait for the my-tls-terminate-tcp-listenerset ListenerSet to be accepted
+          # Test-only: a TLS listener without routes is not programmed, so kgateway
+          # reports the ListenerSet as Accepted=False (ListenersNotValid) until the
+          # route exists. Check the listener here, and the ListenerSet after the route.
+          - name: wait for the tls-listener-set listener on the my-tls-terminate-tcp-listenerset ListenerSet to be accepted
             wait:
               target:
                 kind: ListenerSet
                 metadata:
                   namespace: kgateway-system
                   name: my-tls-terminate-tcp-listenerset
-              jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+              jsonPath: "$.status.listeners[?(@.name=='tls-listener-set')].conditions[?(@.type=='Accepted')].status"
               jsonPathExpectation:
                 comparator: equals
                 value: "True"
@@ -383,6 +386,20 @@ hidden:
   content: |-
     {{< doc-test paths="tls-termination-tcproute-listenerset" >}}
     YAMLTest -f - <<'EOF'
+    - name: wait for the my-tls-terminate-tcp-listenerset ListenerSet to be accepted
+      wait:
+        target:
+          kind: ListenerSet
+          metadata:
+            namespace: kgateway-system
+            name: my-tls-terminate-tcp-listenerset
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
     - name: wait for the my-tls-terminate-tcp-listenerset ListenerSet to be programmed
       wait:
         target:

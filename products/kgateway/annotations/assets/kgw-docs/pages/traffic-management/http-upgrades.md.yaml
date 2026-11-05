@@ -384,15 +384,17 @@ hidden:
     {{< doc-test paths="http-upgrades" >}}
     # Without terminate, the gateway proxy forwards the CONNECT request to httpbin,
     # which answers 404, so curl reports the CONNECT tunnel failed. Wait for the
-    # terminated tunnel (200) to go away first.
+    # terminated tunnel (200) to go away first. The curl exit code for a failed
+    # tunnel depends on the curl version: older curl exits 56 (CURLE_RECV_ERROR),
+    # curl 8.18 exits 7 (CURLE_COULDNT_CONNECT). Both mean the tunnel failed.
     connect=""; rc=0
     for i in $(seq 1 30); do
       connect=$(curl -s -o /dev/null --max-time 10 -p -x "http://${INGRESS_GW_ADDRESS}:8080" -w '%{http_connect}' http://connect.example:8000/headers) && rc=0 || rc=$?
       [ "$connect" = "404" ] && break
       echo "CONNECT without terminate: CONNECT returned '$connect' (curl exit $rc), want 404, retrying ($i/30)"; sleep 2
     done
-    if [ "$connect" != "404" ] || [ "$rc" != "56" ]; then
-      echo "FAIL: CONNECT without terminate: CONNECT returned '$connect' (curl exit $rc), want 404 and curl exit 56"
+    if [ "$connect" != "404" ] || { [ "$rc" != "56" ] && [ "$rc" != "7" ]; }; then
+      echo "FAIL: CONNECT without terminate: CONNECT returned '$connect' (curl exit $rc), want 404 and curl exit 56 or 7"
       exit 1
     fi
     echo "CONNECT without terminate: tunnel failed with 404 as expected"

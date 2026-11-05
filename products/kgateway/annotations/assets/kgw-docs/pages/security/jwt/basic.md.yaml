@@ -28,7 +28,7 @@ blocks:
 - 4b11de35a014145f yaml
 - 0cb8123ebc5e6901 sh
 - b41221bb568c5b0a sh
-- 34190537ff35e37d
+- 82068cb1d1a05ea8
 - 2d8b5d79942f1624 yaml
 - 39762db175af793e sh
 - ff6a73405115fe9c sh
@@ -454,15 +454,16 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 27
-    fingerprint: 34190537ff35e37d
+    fingerprint: 82068cb1d1a05ea8
     lang: ''
-    lines: 983e7192 325493bd
-    preview: < HTTP/1.1 401 Unauthorized
+    lines: f4d99b6a 325493bd
+    preview: < HTTP/1.1 403 Forbidden
   content: |-
     {{< doc-test paths="simple-basic" >}}
     # Test-only: the sample token has no aud claim, so the my-api audience rejects it.
+    # Envoy's jwt_authn filter answers an audience mismatch with 403, not 401.
     YAMLTest -f - <<'EOF'
-    - name: simple-basic audiences - the sample JWT without an aud claim is denied with 401
+    - name: simple-basic audiences - the sample JWT without an aud claim is denied with 403
       retries: 60
       http:
         url: "http://${INGRESS_GW_ADDRESS}:8080"
@@ -474,7 +475,9 @@ hidden:
       source:
         type: local
       expect:
-        statusCode: 401
+        statusCode: 403
+        bodyRegex:
+        - 'Audiences in Jwt are not allowed'
     EOF
     {{< /doc-test >}}
 - after:

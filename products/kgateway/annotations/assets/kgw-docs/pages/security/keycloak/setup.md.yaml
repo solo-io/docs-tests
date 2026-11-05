@@ -274,8 +274,11 @@ hidden:
       echo "FAIL: token iss is '${iss}', want https://keycloak.example.com/realms/myrealm"
       exit 1
     fi
-    if ! jq -e 'index("kgateway-client") != null and index("account") != null' <<<"$aud" >/dev/null; then
-      echo "FAIL: token aud is ${aud}, want it to include kgateway-client and account"
+    # The page says that the ConfigMap test user has no realm roles, so its
+    # tokens carry only kgateway-client (no `account` audience). Users made in
+    # the admin console get the default roles and also carry `account`.
+    if [ "$aud" != '["kgateway-client"]' ]; then
+      echo "FAIL: token aud is ${aud}, want exactly [\"kgateway-client\"] for the ConfigMap test user"
       exit 1
     fi
     echo "token iss=${iss} aud=${aud}"

@@ -249,9 +249,9 @@ hidden:
     {{< /doc-test >}}
 - after:
     section: Brotli and Zstd compression codecs
-    line: 74d151eef54b3663
+    line: 63e0ec199ea0319c
     occurrence: 0
-    words: b9776d7d 8d0288f4 50d858e0 582d95ad ad55a1e0 f4bf9f7f b9776d7d 35af1308 a40d3dbc 0695b563 c8d77bf4 f4bf9f7f ca978112 5c7ee207
+    words: b9776d7d 8d0288f4 50d858e0 92ab364e ad55a1e0 c8d77bf4 6201111b 242daddb ca978112 948fe603 8e7fc023 c626da0c 379fadc6 885036a0 c8d77bf4 d3fb7168 ca978112 4df3db0a a9f4b3d2 ca978112 948fe603 8e7fc023 c626da0c 379fadc6 c8d77bf4 885036a0 d3fb7168 ca978112 3229f1ba a9f4b3d2
     block_before:
       block: 13
       fingerprint: 0bf4751e698bd25f
@@ -275,7 +275,10 @@ hidden:
     comp_expect "compression - libraries, Accept-Encoding br gets Brotli" br br
     comp_expect "compression - libraries, Accept-Encoding zstd gets Zstd" zstd zstd
     comp_expect "compression - libraries, Accept-Encoding gzip still gets gzip" gzip gzip
-    comp_expect "compression - libraries, equal preference picks the first configured codec (Brotli)" "gzip, zstd, br" br
+    # On equal q-values, Envoy uses the codec that the client lists first. The
+    # order of the libraries list does not matter (no choose_first is set).
+    comp_expect "compression - libraries, equal preference picks the codec the client lists first (gzip)" "gzip, zstd, br" gzip
+    comp_expect "compression - libraries, equal preference picks the codec the client lists first (Brotli)" "br, gzip" br
     comp_expect "compression - libraries, no Accept-Encoding still gets no compression" "" none
     {{< /doc-test >}}
 - after:

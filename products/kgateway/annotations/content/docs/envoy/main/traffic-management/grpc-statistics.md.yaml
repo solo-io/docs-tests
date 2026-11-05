@@ -194,7 +194,7 @@ hidden:
     # The allow list policy replaces the statsForAllMethods policy of the same name,
     # so its ancestors are already Accepted. Wait for the proxy to drop
     # stats_for_all_methods and pick up the allow list instead.
-    gs_check_filter "grpc-statistics allow list" 'not cfg.get("stats_for_all_methods") and not cfg.get("enable_upstream_stats") and any(s.get("service_name") == "yages.Echo" and s.get("method_names") == ["Ping"] for s in cfg.get("individual_method_stats_allowlist", {}).get("services", []))'
+    gs_check_filter "grpc-statistics allow list" 'not cfg.get("stats_for_all_methods") and not cfg.get("enable_upstream_stats") and any(s.get("name") == "yages.Echo" and s.get("method_names") == ["Ping"] for s in cfg.get("individual_method_stats_allowlist", {}).get("services", []))'
     # Record the counters that exist before the next calls. Envoy keeps the stats
     # from the all-methods section, so the allow list shows up as Ping still
     # counting by name while ServerReflectionInfo stops counting by name.

@@ -165,31 +165,34 @@ hidden:
   content: |2-
           {{< doc-test paths="listeners-tcp-listenerset" >}}
           YAMLTest -f - <<'EOF'
-          - name: listeners-tcp-listenerset - wait for the my-tcp-listenerset ListenerSet to be accepted
+          # Test-only: a TCP listener without routes is not programmed, so kgateway
+          # reports the ListenerSet as Accepted=False (ListenersNotValid) until the
+          # TCPRoute exists. Check the listener here, and the ListenerSet after the route.
+          - name: listeners-tcp-listenerset - wait for the tcp-listener-set listener to be accepted
             wait:
               target:
                 kind: ListenerSet
                 metadata:
                   namespace: kgateway-system
                   name: my-tcp-listenerset
-              jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+              jsonPath: "$.status.listeners[?(@.name=='tcp-listener-set')].conditions[?(@.type=='Accepted')].status"
               jsonPathExpectation:
                 comparator: equals
                 value: "True"
               polling:
                 timeoutSeconds: 300
                 intervalSeconds: 5
-          - name: listeners-tcp-listenerset - wait for the tcp-listener-set listener to be programmed
+          - name: listeners-tcp-listenerset - the tcp-listener-set listener does not conflict with other listeners
             wait:
               target:
                 kind: ListenerSet
                 metadata:
                   namespace: kgateway-system
                   name: my-tcp-listenerset
-              jsonPath: "$.status.listeners[?(@.name=='tcp-listener-set')].conditions[?(@.type=='Programmed')].status"
+              jsonPath: "$.status.listeners[?(@.name=='tcp-listener-set')].conditions[?(@.type=='Conflicted')].status"
               jsonPathExpectation:
                 comparator: equals
-                value: "True"
+                value: "False"
               polling:
                 timeoutSeconds: 300
                 intervalSeconds: 5
@@ -310,6 +313,34 @@ hidden:
            jsonPathExpectation:
              comparator: equals
              value: 1
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp-listenerset - the tcp-listener-set listener is programmed
+         wait:
+           target:
+             kind: ListenerSet
+             metadata:
+               namespace: kgateway-system
+               name: my-tcp-listenerset
+           jsonPath: "$.status.listeners[?(@.name=='tcp-listener-set')].conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: listeners-tcp-listenerset - the my-tcp-listenerset ListenerSet is accepted
+         wait:
+           target:
+             kind: ListenerSet
+             metadata:
+               namespace: kgateway-system
+               name: my-tcp-listenerset
+           jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
            polling:
              timeoutSeconds: 300
              intervalSeconds: 5

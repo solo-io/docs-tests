@@ -10,6 +10,7 @@ blocks:
 - f135059ceb374d76 console
 - 93e2872baf6ea91d sh
 - 05b7f06ab82e070b sh
+- c631c55fa4bf3b83 console
 - e486a84a06bc6ead console
 - bc26218b4e67991a sh
 - 25d86d1c753cafda sh
@@ -235,16 +236,18 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 9
-    fingerprint: e486a84a06bc6ead
+    fingerprint: c631c55fa4bf3b83
     lang: console
-    lines: 92413e97 9bb623b1 3201f37c 15357256 92413e97 a152bc23 5a8507b6 3e670794 befea1e7 18e0a468 3201f37c 15357256 cd8a298e 5f7c6523
+    lines: 92413e97 a152bc23 bbe83b1b 5a8507b6 92aab6c2 9b674d98 5f7c6523 15357256
     preview: HTTP/1.1 200 OK
   content: |-
     {{< doc-test paths="cors,cors-trafficpolicy" >}}
-    # The gateway does not answer a preflight from an origin that is not allowed, so
-    # the request reaches httpbin, which adds its own generic CORS headers. None of
-    # the policy's values (max age 86400, methods GET, POST, OPTIONS, the expose
-    # headers) are in the response.
+    # Since kgateway 2.3, the CORS policy sets Envoy's forward_not_matching_preflights
+    # to false, so Envoy answers a preflight from an origin that is not allowed
+    # itself: HTTP 200, no access-control-allow-origin, and no upstream call. Envoy
+    # still adds the policy's other preflight values (methods, max age). This
+    # checks the page's claims: 200, no allow-origin, answered by the gateway (no
+    # x-envoy-upstream-service-time), and the policy's methods and max age present.
     cors_bad=""
     for i in $(seq 1 30); do
       cors_resp=$(curl -s -o /dev/null -D - --max-time 5 -X OPTIONS "http://${INGRESS_GW_ADDRESS}:8080/get" -H "host: cors.example:8080" \
@@ -253,18 +256,18 @@ hidden:
         -H "Access-Control-Request-Headers: Origin" 2>/dev/null | tr -d '\r' | tr 'A-Z' 'a-z') || true
       cors_code=$(awk 'NR==1{print $2}' <<<"$cors_resp")
       cors_bad=""
-      if [ "$cors_code" != 200 ]; then cors_bad="status is '${cors_code}', expected 200"; fi
-      if grep -qx 'access-control-max-age: 86400' <<<"$cors_resp"; then cors_bad="${cors_bad} max-age is the policy's 86400;"; fi
-      if grep -qx 'access-control-allow-methods: get, post, options' <<<"$cors_resp"; then cors_bad="${cors_bad} allow-methods are the policy's;"; fi
-      if grep -q '^access-control-expose-headers:.*x-\(httproute\|trafficpolicy\)-header' <<<"$cors_resp"; then cors_bad="${cors_bad} expose-headers are the policy's;"; fi
-      if grep -qx 'access-control-allow-origin: https://example.com' <<<"$cors_resp"; then cors_bad="${cors_bad} allow-origin is the allowed origin;"; fi
+      if [ "$cors_code" != 200 ]; then cors_bad="status is '${cors_code}', expected 200;"; fi
+      if grep -q '^access-control-allow-origin:' <<<"$cors_resp"; then cors_bad="${cors_bad} the response has an access-control-allow-origin header;"; fi
+      if grep -q '^x-envoy-upstream-service-time:' <<<"$cors_resp"; then cors_bad="${cors_bad} the preflight reached the upstream app instead of being answered by the gateway;"; fi
+      if ! grep -qx 'access-control-max-age: 86400' <<<"$cors_resp"; then cors_bad="${cors_bad} max-age is not the policy's 86400;"; fi
+      if ! grep -qx 'access-control-allow-methods: get, post, options' <<<"$cors_resp"; then cors_bad="${cors_bad} allow-methods are not the policy's;"; fi
       if [ -z "$cors_bad" ]; then break; fi
       sleep 2
     done
     if [ -n "$cors_bad" ]; then
-      echo "cors: a preflight from https://notallowed.com got the policy's CORS headers or failed: ${cors_bad}"
+      echo "cors: a preflight from https://notallowed.com does not match the page:${cors_bad}"
       echo "$cors_resp"
       exit 1
     fi
-    echo "cors: a preflight from https://notallowed.com gets HTTP 200 without the policy's CORS headers"
+    echo "cors: a preflight from https://notallowed.com gets HTTP 200 from the gateway without access-control-allow-origin"
     {{< /doc-test >}}

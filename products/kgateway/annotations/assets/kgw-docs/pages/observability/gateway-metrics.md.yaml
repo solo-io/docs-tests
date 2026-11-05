@@ -5,7 +5,7 @@ blocks:
 - 30990f64f37fa317 console
 - 40954736e86bd3ad
 - e80806d3fcf0dc47 yaml
-- 9d37e8a2fbaebfdf yaml
+- 82dfc15ac78fd185 yaml
 - 3d5e27b9ad918364 sh
 - 3e0757754434a886 yaml
 - 3d5e27b9ad918364 sh
@@ -25,9 +25,9 @@ tags:
     lead: ' '
 - paths: gateway-metrics-inclusion
   block: 4
-  fingerprint: 9d37e8a2fbaebfdf
+  fingerprint: 82dfc15ac78fd185
   lang: yaml
-  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 204b92b4 0bebd850 36184fa5 9cc14d83 8afebc2f ff7360cf 67d8be8f 4a4de463 3c0c254e d2397975 7e3641d5 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 204b92b4 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 204b92b4 0bebd850 36184fa5 9cc14d83 8afebc2f ff7360cf 67d8be8f 4a4de463 3c0c254e d2397975 d62039f1 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 204b92b4 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
   preview: kubectl apply -f- <<EOF
   form:
     attr: paths="gateway-metrics-inclusion"
@@ -131,11 +131,11 @@ hidden:
     grep -q '^http\.http_8080\.downstream_rq_total:' <<<"$admin" || { echo "the admin stats have no http.http_8080.downstream_rq_total"; exit 1; }
     {{< /doc-test >}}
 - after:
-    block: 4
-    fingerprint: 9d37e8a2fbaebfdf
-    lang: yaml
-    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 204b92b4 0bebd850 36184fa5 9cc14d83 8afebc2f ff7360cf 67d8be8f 4a4de463 3c0c254e d2397975 7e3641d5 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 204b92b4 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
-    preview: kubectl apply -f- <<EOF
+    block: 5
+    fingerprint: 3d5e27b9ad918364
+    lang: sh
+    lines: 4038a6e1 dde2d046
+    preview: kubectl rollout restart deployment/http -n {{< reuse "kgw-docs/snippets/namespac
   content: |-
     {{< doc-test paths="gateway-metrics-inclusion" >}}
     # The deployer writes the inclusion list into the proxy bootstrap ConfigMap.
@@ -156,14 +156,14 @@ hidden:
       echo "attempt $i: the proxy still reports server.* stats that the inclusion list leaves out"
       sleep 4
     done
-    [ -n "$ok" ] || { echo "The running proxy still emits stats outside the inclusion list. The matcher is in the bootstrap ConfigMap, but Envoy reads its bootstrap only at startup, so the page may need a step that restarts the proxy, such as kubectl rollout restart deployment/http."; exit 1; }
+    [ -n "$ok" ] || { echo "FAIL: after the restart step, the proxy still emits stats outside the inclusion list, although the matcher is in the bootstrap ConfigMap."; exit 1; }
     {{< /doc-test >}}
 - after:
-    block: 6
-    fingerprint: 3e0757754434a886
-    lang: yaml
-    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 204b92b4 0bebd850 36184fa5 9cc14d83 8afebc2f ff7360cf 67d8be8f 3bc64b6e edac8b98 431c2a5f 79c1f492 cb3f91d5 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 204b92b4 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
-    preview: kubectl apply -f- <<EOF
+    block: 7
+    fingerprint: 3d5e27b9ad918364
+    lang: sh
+    lines: 4038a6e1 dde2d046
+    preview: kubectl rollout restart deployment/http -n {{< reuse "kgw-docs/snippets/namespac
   content: |-
     {{< doc-test paths="gateway-metrics-exclusion" >}}
     # The deployer writes the exclusion list into the proxy bootstrap ConfigMap.
@@ -182,7 +182,7 @@ hidden:
       echo "attempt $i: the proxy still reports the excluded server.* stats"
       sleep 4
     done
-    [ -n "$ok" ] || { echo "The running proxy still emits the excluded server.* stats. The matcher is in the bootstrap ConfigMap, but Envoy reads its bootstrap only at startup, so the page may need a step that restarts the proxy, such as kubectl rollout restart deployment/http."; exit 1; }
+    [ -n "$ok" ] || { echo "FAIL: after the restart step, the proxy still emits the excluded server.* stats, although the matcher is in the bootstrap ConfigMap."; exit 1; }
     {{< /doc-test >}}
 - after:
     block: 9

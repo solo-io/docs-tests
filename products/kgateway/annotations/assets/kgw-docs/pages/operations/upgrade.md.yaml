@@ -126,7 +126,10 @@ hidden:
     # Test-only: the upgrade starts from the previous minor release, so this
     # scenario has no install prerequisite. Install the standard channel of the
     # Gateway API version that the previous minor release supports.
-    kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< version include-if="2.5.x" >}}1.6.1{{< /version >}}{{< version include-if="2.4.x" >}}1.5.1{{< /version >}}/standard-install.yaml
+    # Add a mapping here for each new minor version, or the URL has an empty version.
+    OLD_GWAPI_VERSION="{{< version include-if="2.6.x" >}}1.7.0{{< /version >}}{{< version include-if="2.5.x" >}}1.6.1{{< /version >}}{{< version include-if="2.4.x" >}}1.5.1{{< /version >}}"
+    if [ -z "$OLD_GWAPI_VERSION" ]; then echo "FAIL: no previous Gateway API version is mapped for this docs version"; exit 1; fi
+    kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v${OLD_GWAPI_VERSION}/standard-install.yaml
     {{< /doc-test >}}
 - after:
     start: true
@@ -136,7 +139,10 @@ hidden:
     # scenario has no install prerequisite. Install the experimental channel of the
     # Gateway API version that the previous minor release supports, server-side as
     # the quick start does.
-    kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< version include-if="2.5.x" >}}1.6.1{{< /version >}}{{< version include-if="2.4.x" >}}1.5.1{{< /version >}}/experimental-install.yaml
+    # Add a mapping here for each new minor version, or the URL has an empty version.
+    OLD_GWAPI_VERSION="{{< version include-if="2.6.x" >}}1.7.0{{< /version >}}{{< version include-if="2.5.x" >}}1.6.1{{< /version >}}{{< version include-if="2.4.x" >}}1.5.1{{< /version >}}"
+    if [ -z "$OLD_GWAPI_VERSION" ]; then echo "FAIL: no previous Gateway API version is mapped for this docs version"; exit 1; fi
+    kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v${OLD_GWAPI_VERSION}/experimental-install.yaml
     {{< /doc-test >}}
 - after:
     start: true

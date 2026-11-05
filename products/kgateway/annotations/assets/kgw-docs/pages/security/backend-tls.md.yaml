@@ -24,9 +24,9 @@ blocks:
 - 1ef761a2a734c06b yaml
 - 0dce855f5a8ec6db sh
 - 3db1d7c859b80f15 yaml
-- 1a32c97b5375a00f sh
+- 9c23454467a07b8a sh
 - 3db1d7c859b80f15 yaml
-- 6f540a20d7496025 sh
+- f4b8e49681e7f8bf sh
 - 4d14c958ef78b46c sh
 - 4e289a3674608cff sh
 - 5f99b46b6d0a4072 sh
@@ -163,10 +163,10 @@ tags:
     lead: ' '
 - paths: backend-tls-bcp
   block: 23
-  fingerprint: 1a32c97b5375a00f
+  fingerprint: 9c23454467a07b8a
   lang: sh
-  lines: 1a32c97b
-  preview: kubectl -n kgateway-base delete backendconfigpolicy,secret,httproute -A -l app=n
+  lines: 9c234544
+  preview: kubectl -n kgateway-base delete backendconfigpolicy,secret,httproute -l app=ngin
   form:
     attr: paths="backend-tls-bcp"
     only: true
@@ -183,10 +183,10 @@ tags:
     lead: ' '
 - paths: backend-tls
   block: 25
-  fingerprint: 6f540a20d7496025
+  fingerprint: f4b8e49681e7f8bf
   lang: sh
-  lines: cbd51285 0596605a
-  preview: kubectl -n kgateway-base delete backendtlspolicy,configmap,httproute -A -l app=n
+  lines: e0e392da 0596605a
+  preview: kubectl -n kgateway-base delete backendtlspolicy,configmap,httproute -l app=ngin
   form:
     attr: paths="backend-tls"
     only: true

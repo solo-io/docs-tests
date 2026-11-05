@@ -359,9 +359,13 @@ hidden:
           timeoutSeconds: 300
           intervalSeconds: 5
     EOF
-    # Test-only: the demo ConfigMap is immutable and has no nested descriptors, so
-    # replace it with the nested descriptors that this tab shows, in the
-    # api-gateway domain, and restart the rate limit service to load them.
+    # Test-only: the demo ConfigMap has no nested descriptors, so give the rate
+    # limit service the nested descriptors that this tab shows, in the
+    # api-gateway domain. The demo ConfigMap is immutable, and the kubelet keeps
+    # serving the cached old data of an immutable ConfigMap that is deleted and
+    # recreated under the same name while a pod still mounts it (a rollout
+    # restart starts the new pod before the old one stops). So create a
+    # ConfigMap with a new name and point the deployment's config volume at it.
     cfg=$(mktemp)
     cat > "$cfg" <<'EOF'
     domain: api-gateway
@@ -375,10 +379,22 @@ hidden:
               unit: minute
               requests_per_unit: 2
     EOF
-    kubectl delete configmap ratelimit-config -n kgateway-test-extensions
-    kubectl create configmap ratelimit-config -n kgateway-test-extensions --from-file=config.yaml="$cfg"
-    kubectl rollout restart deployment/ratelimit -n kgateway-test-extensions
+    kubectl create configmap ratelimit-config-nested -n kgateway-test-extensions --from-file=config.yaml="$cfg"
+    kubectl patch deployment ratelimit -n kgateway-test-extensions \
+      -p '{"spec":{"template":{"spec":{"volumes":[{"name":"config-volume","configMap":{"name":"ratelimit-config-nested"}}]}}}}'
     kubectl rollout status deployment/ratelimit -n kgateway-test-extensions --timeout=180s
+    # Confirm that the running rate limit service loaded the nested descriptor.
+    rl_nested=""
+    for i in $(seq 1 30); do
+      rl_logs=$(kubectl logs -n kgateway-test-extensions deployment/ratelimit 2>/dev/null || true)
+      if grep -qF 'api-gateway.path_/path1.X-User-ID_user1' <<<"$rl_logs"; then rl_nested=1; break; fi
+      sleep 2
+    done
+    if [ -z "$rl_nested" ]; then
+      echo "global-nested: the rate limit service did not load the nested path_/path1.X-User-ID_user1 descriptor"
+      kubectl logs -n kgateway-test-extensions deployment/ratelimit 2>/dev/null | grep 'loading descriptor' || true
+      exit 1
+    fi
     c=""
     for i in $(seq 1 90); do
       c=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/path1" -H "host: www.example.com:8080" -H "X-User-ID: user1" || true)

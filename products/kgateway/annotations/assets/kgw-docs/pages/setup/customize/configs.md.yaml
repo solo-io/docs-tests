@@ -631,7 +631,8 @@ hidden:
     kubectl rollout status deployment/custom -n kgateway-system --timeout=300s
     cfg_file=""
     for attempt in $(seq 1 30); do
-      cfg_file=$(kubectl exec -n kgateway-system deploy/custom -c kgateway-proxy -- cat /etc/custom-config/greeting 2>/dev/null || true)
+      # The envoy-wrapper image has no cat; read the file with the shell builtin.
+      cfg_file=$(kubectl exec -n kgateway-system deploy/custom -c kgateway-proxy -- sh -c 'IFS= read -r l < /etc/custom-config/greeting || [ -n "$l" ]; echo "$l"' 2>/dev/null || true)
       [ "$cfg_file" = "hello-from-configmap" ] && break
       sleep 2
     done
@@ -665,7 +666,10 @@ hidden:
     # Test-only: the page applies each overlay to an existing GatewayParameters
     # and points to the Change proxy settings page for the Gateway that uses it.
     # Create that Gateway, custom, plus an HTTPRoute to httpbin so that each
-    # overlay can be checked with traffic.
+    # overlay can be checked with traffic. The listener uses port 8080, the port
+    # that the hostNetwork example adds as a container port. A listener port
+    # below 1024 makes kgateway add the net.ipv4.ip_unprivileged_port_start
+    # sysctl, which Kubernetes rejects together with hostNetwork.
     kubectl apply -f- <<EOF
     apiVersion: gateway.networking.k8s.io/v1
     kind: Gateway
@@ -681,7 +685,7 @@ hidden:
           kind: GatewayParameters
       listeners:
       - protocol: HTTP
-        port: 80
+        port: 8080
         name: http
         allowedRoutes:
           namespaces:
@@ -752,7 +756,7 @@ hidden:
     - name: configs-overlays init container - httpbin answers through the custom Gateway
       retries: 30
       http:
-        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        url: "http://${CUSTOM_GW_ADDRESS}:8080"
         path: /headers
         method: GET
         headers:
@@ -799,7 +803,7 @@ hidden:
     - name: configs-overlays sidecar container - httpbin answers through the custom Gateway
       retries: 30
       http:
-        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        url: "http://${CUSTOM_GW_ADDRESS}:8080"
         path: /headers
         method: GET
         headers:
@@ -843,7 +847,7 @@ hidden:
     - name: configs-overlays hostNetwork - httpbin answers through the custom Gateway
       retries: 30
       http:
-        url: "http://${CUSTOM_GW_ADDRESS}:80"
+        url: "http://${CUSTOM_GW_ADDRESS}:8080"
         path: /headers
         method: GET
         headers:

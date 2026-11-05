@@ -317,7 +317,7 @@ hidden:
         type: local
       expect:
         statusCode: 401
-    - name: jwt-claim-extraction - a JWT for another audience is denied with 401
+    - name: jwt-claim-extraction - a JWT for another audience is denied with 403
       retries: 60
       http:
         url: "http://${INGRESS_GW_ADDRESS}:8080"
@@ -329,7 +329,9 @@ hidden:
       source:
         type: local
       expect:
-        statusCode: 401
+        statusCode: 403
+        bodyRegex:
+        - 'Audiences in Jwt are not allowed'
     EOF
     {{< /doc-test >}}
 - after:
