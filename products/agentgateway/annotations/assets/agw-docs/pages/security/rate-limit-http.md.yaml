@@ -68,24 +68,23 @@ hidden:
     preview: sleep 1 && curl -o /dev/null -w "%{http_code}\n" \
   content: |2-
        {{< doc-test paths="local-rate-limit" >}}
-       # Test rate limiting by sending requests in rapid succession
-       for i in $(seq 1 6); do
-         curl -s -o /dev/null http://${INGRESS_GW_ADDRESS}:80/anything -H "host: www.example.com" &
+       # The bucket holds 6 tokens and refills 3 per second, so a separate
+       # check after the burst finds a refilled token and gets 200. Send the
+       # burst and look for the 429 in the same loop instead.
+       for attempt in 1 2 3; do
+         CODES=$(for i in $(seq 1 12); do
+           curl -s -o /dev/null -w "%{http_code}\n" \
+             http://${INGRESS_GW_ADDRESS}:80/anything -H "host: www.example.com"
+         done)
+         if grep -q '^429$' <<<"$CODES"; then
+           echo "✓ Rate limit returned 429 after the burst"
+           break
+         fi
+         if [ "$attempt" = 3 ]; then
+           echo "FAIL: 12 rapid requests never returned 429"
+           echo "$CODES"
+           exit 1
+         fi
+         sleep 3
        done
-       wait
-
-       # Now verify the rate limit is active
-       YAMLTest -f - <<'EOF'
-       - name: Verify rate limit kicks in after burst
-         http:
-           url: "http://${INGRESS_GW_ADDRESS}:80/anything"
-           method: GET
-           headers:
-             host: www.example.com
-         source:
-           type: local
-         expect:
-           statusCode: 429
-         retries: 3
-       EOF
        {{< /doc-test >}}

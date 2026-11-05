@@ -2,6 +2,7 @@
 """Tests for scaffold_schema_tests.py: which pages get a schema test, how the
 entry is keyed and named, and where it lands in the manifest."""
 import contextlib
+import importlib.util
 import io
 import json
 import pathlib
@@ -132,6 +133,9 @@ class ScaffoldTest(unittest.TestCase):
         self.assertEqual(entry, {"type": "schema", "source": "pages/new-feature.md", "path": "all",
                                  "scaffolded": "2026-11-04"})
 
+    # Consumer repos run this suite in jobs that install only PyYAML; loading
+    # the config schema needs jsonschema. docs-tests' own CI installs it.
+    @unittest.skipUnless(importlib.util.find_spec("jsonschema"), "jsonschema is not installed")
     def test_standalone_config_needs_the_config_schema(self):
         self.manifest("standalone")
         self.write("content/docs/standalone/latest/config-guide.md", page("Config", CONFIG))
