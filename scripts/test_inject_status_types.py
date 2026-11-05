@@ -38,12 +38,20 @@ class Types(unittest.TestCase):
         self.assertEqual(fm["test_status"], "passed")
         self.assertEqual(fm["test_types"], ["schema", "functional"])
 
-    def test_extra_types_count_as_kinds(self):
+    def test_schema_parts_replace_schema(self):
         fm = _run({
             f"{DOC}::a::functional": {"status": "passed", "type": "functional"},
-            f"{DOC}::a::schema": {"status": "passed", "type": "schema", "extra_types": ["helm"]},
+            f"{DOC}::a::schema": {"status": "passed", "type": "schema", "extra_types": ["helm", "kubernetes"]},
         })
-        self.assertEqual(fm["test_types"], ["schema", "helm", "functional"])
+        self.assertEqual(fm["test_types"], ["kubernetes", "helm", "functional"])
+
+    def test_config_page_never_says_kubernetes(self):
+        fm = _run({f"{DOC}::a": {"status": "passed", "type": "schema", "extra_types": ["config"]}})
+        self.assertEqual(fm["test_types"], ["config"])
+
+    def test_schema_without_parts_stays_generic(self):
+        fm = _run({f"{DOC}::a": {"status": "passed", "type": "schema", "extra_types": ["helm"]}})
+        self.assertEqual(fm["test_types"], ["schema", "helm"])
 
     def test_missing_type_counts_as_functional(self):
         fm = _run({f"{DOC}::a": {"status": "passed"}})

@@ -332,6 +332,11 @@ SCHEMA_OPTIONS = {**DEFAULT_OPTIONS, "follow_internal_links": False}
 LANGS = ("yaml", "yml", "sh", "bash", "shell")
 
 
+# What a passed scenario reports in `extra_types`, in badge order: the kinds of
+# thing this check validated on the scenario's own page.
+PAGE_KINDS = ("kubernetes", "config", "helm")
+
+
 @dataclass
 class StepResult:
     """One source step, checked once however many scenarios share it."""
@@ -341,6 +346,7 @@ class StepResult:
     unparsed: int = 0
     read: Set[Path] = field(default_factory=set)
     helm_checked: int = 0
+    config_checked: int = 0   # of `checked`, the standalone config files; the rest are manifests
 
 
 # Set in main(), before the pool forks, from --upstream-root and
@@ -401,6 +407,7 @@ def check_step(repo_root: Path, file: str, path: str, schemas: Schemas, docs_tes
             # a Kubernetes page can share a top-level key such as `config`.
             if mode == "standalone" and schemas.config is not None and is_config_file(doc, schemas.config, doc_text):
                 res.checked += 1
+                res.config_checked += 1
                 err = _first_error(schemas.config, doc)
                 if err:
                     res.errors.append(f"{loc}: config file {err}")
@@ -475,13 +482,13 @@ def check_scenario(
     version: str = "main",
     kubeconform: Optional[Kubeconform] = None,
     cache: Optional[Dict[Any, Any]] = None,
-) -> Tuple[List[str], int, int]:
+) -> Tuple[List[str], int, List[str]]:
     """Run the 'schema' check across every source step of one test scenario.
 
     Returns the errors, the number of manifests and config files validated, and
-    the number of sets of Helm values checked on the scenario's own page. Helm
-    values on prerequisite pages are checked but not counted: the Verified
-    badge's "Helm values" row speaks for the page it is on.
+    the kinds of thing checked on the scenario's own page, in PAGE_KINDS order.
+    Prerequisite pages are checked but add no kinds: each row of the Verified
+    badge speaks for the page it is on.
     `version` is the link version ("latest", "main") the extractor resolves
     version-gated content against. `read`, if given, collects every file the
     scenario's steps read, so the caller can tell whether markup that did not
@@ -497,7 +504,7 @@ def check_scenario(
     cache = {} if cache is None else cache
     errors: List[str] = []
     checked = 0
-    helm_on_page = 0
+    on_page = dict.fromkeys(PAGE_KINDS, 0)
     unchecked_kinds: Set[str] = set()
     unparsed = 0
     for unit in _units(repo_root, doc_file, sources, version):
@@ -513,7 +520,9 @@ def check_scenario(
         errors.extend(result.errors)
         checked += result.checked
         if unit[5]:   # page_wide: this step is the scenario's own page
-            helm_on_page += result.helm_checked
+            on_page["kubernetes"] += result.checked - result.config_checked
+            on_page["config"] += result.config_checked
+            on_page["helm"] += result.helm_checked
         unchecked_kinds |= result.unchecked_kinds
         unparsed += result.unparsed
 
@@ -529,7 +538,7 @@ def check_scenario(
             f"{doc_file.relative_to(repo_root).as_posix()}: found no recognizable custom "
             f"resource manifest or config file to validate anywhere in this scenario's source chain{found}{broken}"
         )
-    return errors, checked, helm_on_page
+    return errors, checked, [k for k, n in on_page.items() if n]
 
 
 def load_schemas(crd_paths: Dict[Optional[str], List[Path]],
@@ -795,9 +804,9 @@ def main() -> int:
         schemas = schemas_by_version.get(version, schemas_by_version.get(None))
         if schemas is None:
             errors = [f"{doc_rel}: no CRD schemas for version '{version}'; pass --crd-dir {version}=PATH"]
-            checked = helm_on_page = 0
+            checked, page_kinds = 0, []
         else:
-            errors, checked, helm_on_page = check_scenario(repo_root, tc.document, tc.sources, schemas, docs_tests_root,
+            errors, checked, page_kinds = check_scenario(repo_root, tc.document, tc.sources, schemas, docs_tests_root,
                                              read, version, kubeconform, cache)
         missing = unattached_for(tc, read, unattached)
         if missing:
@@ -816,11 +825,11 @@ def main() -> int:
         else:
             logger.info("PASSED: %s (%s, %d resource(s) checked)", key, version, checked)
             test_results[key] = {"status": "passed", "checks": [], "type": "schema"}
-            # The Helm values check runs inside this one, so it has no result
-            # of its own. doc_test_inject_status.py adds extra_types to the
-            # page's test_types for the badge.
-            if helm_on_page:
-                test_results[key]["extra_types"] = ["helm"]
+            # What this check found on the page: Kubernetes manifests, config
+            # files, Helm values. doc_test_inject_status.py lists them in the
+            # page's test_types, so the badge names each one, not "schema".
+            if page_kinds:
+                test_results[key]["extra_types"] = page_kinds
 
     log_helm_summary(cache)
 

@@ -212,7 +212,7 @@ class EndToEndTests(unittest.TestCase):
                                         "--set controller.logLevel=debug\n```"))
         code, tests = base.run_check(str(base.new), f"--helm-chart=main={chart_dir / 'demo'}")
         self.assertEqual(code, 0, tests)
-        self.assertEqual(tests[key]["extra_types"], ["helm"])
+        self.assertEqual(tests[key]["extra_types"], ["kubernetes", "helm"])
 
     def test_passing_page_without_helm_values_reports_no_helm(self):
         import test_schema_check as t
@@ -223,7 +223,7 @@ class EndToEndTests(unittest.TestCase):
         key = base.write("main", t.page(t.policy_block("timeout: 10s")))
         code, tests = base.run_check(str(base.new), f"--helm-chart=main={chart_dir / 'demo'}")
         self.assertEqual(code, 0, tests)
-        self.assertNotIn("extra_types", tests[key])
+        self.assertEqual(tests[key]["extra_types"], ["kubernetes"])
 
     def test_helm_values_alone_do_not_pass(self):
         import test_schema_check as t

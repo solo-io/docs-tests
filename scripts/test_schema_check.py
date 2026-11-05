@@ -310,6 +310,8 @@ class MoreKindsTests(Base):
     def test_standalone_config_file_is_checked(self):
         code, result = self.run_config("main", config_page("binds:\n- port: 3000"), f"--config-schema={self.config}")
         self.assertEqual(result["status"], "passed", result)
+        # The badge names config files here, never Kubernetes resources.
+        self.assertEqual(result["extra_types"], ["config"])
         code, result = self.run_config("main", config_page("binds:\n- prot: 3000"), f"--config-schema={self.config}")
         self.assertIn("config file at binds/0", result["error"])
 
