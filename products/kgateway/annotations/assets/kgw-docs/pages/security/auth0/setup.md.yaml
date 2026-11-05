@@ -374,13 +374,19 @@ hidden:
     command kubectl create configmap coredns -n kube-system --from-file=Corefile="$IDP_DIR/Corefile" --dry-run=client -o yaml | command kubectl apply -f -
     command kubectl rollout restart deployment coredns -n kube-system
     command kubectl rollout status deployment coredns -n kube-system --timeout=180s
+    # One long-lived pod, and `kubectl exec` for each try: `kubectl run --rm -i`
+    # often loses the output of a pod that exits as fast as curl does, so a
+    # working rewrite could still read as a failure.
+    command kubectl run idp-dns-check -n idp-standin --restart=Never --image=curlimages/curl:8.10.1 --command -- sleep 3600
+    command kubectl wait pod/idp-dns-check -n idp-standin --for=condition=Ready --timeout=120s
     ok=false
     for i in $(seq 1 30); do
-      out=$(command kubectl run "idp-dns-check-$i" --rm -i --restart=Never -n idp-standin --image=curlimages/curl:8.10.1 -- \
-        curl -sk -o /dev/null -w '%{http_code}' "https://${IDP_HOST}/healthz" 2>/dev/null || true)
+      out=$(command kubectl exec -n idp-standin idp-dns-check -- \
+        curl -sk --max-time 5 -o /dev/null -w '%{http_code}' "https://${IDP_HOST}/healthz" 2>/dev/null || true)
       if grep -q 200 <<<"$out"; then ok=true; break; fi
       echo "${IDP_HOST} does not resolve to the stand-in in the cluster yet ($i/30)"; sleep 5
     done
+    command kubectl delete pod idp-dns-check -n idp-standin --wait=false >/dev/null 2>&1 || true
     [ "$ok" = true ] || { echo "the CoreDNS rewrite for ${IDP_HOST} does not work"; exit 1; }
 
     # Trust: the proxy's system CA file gets the test CA.
