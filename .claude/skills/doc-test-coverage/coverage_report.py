@@ -57,7 +57,7 @@ def use_docs_tests(path: Path) -> None:
 # The doc-test workflow in each product's content repo, where it isn't the
 # default. The repo itself comes from the checkout's `origin` remote.
 DEFAULT_WORKFLOW = "doc-tests.yaml"
-WORKFLOWS = {"agentgateway-enterprise": "agentgateway-doc-tests.yml"}
+WORKFLOWS = {"agentgateway-enterprise": "doc-tests-agentgateway.yml"}
 
 TESTED_TYPES = ("both", "func", "schema")
 SOURCE_RE = re.compile(r"^\s*(?:-\s*)?source:", re.MULTILINE)
