@@ -219,6 +219,14 @@ hidden:
     # proxy in the step above, so the stats start from nothing: the per-method
     # stats that the all-methods section created would otherwise hide the allow
     # list's new counts under the same names.
+    # `rollout status` returns while the old proxy pod is still terminating, and
+    # the Service can still send a call to it. Wait until only one proxy pod is
+    # left so that every call below lands on the pod whose stats are read.
+    for i in $(seq 1 60); do
+      [ "$(kubectl get po -n kgateway-system -l gateway.networking.k8s.io/gateway-name=grpc --no-headers 2>/dev/null | wc -l)" -eq 1 ] && break
+      sleep 2
+    done
+    sleep 5
     gs_check_filter "grpc-statistics allow list after restart" 'not cfg.get("stats_for_all_methods") and not cfg.get("enable_upstream_stats") and any(s.get("name") == "yages.Echo" and s.get("method_names") == ["Ping"] for s in cfg.get("individual_method_stats_allowlist", {}).get("services", []))'
     gs_ping_before=$(gs_stat 'grpc\.yages\.Echo\.Ping\.total')
     gs_refl_before=$(gs_stat 'grpc\.grpc\.reflection\.v1alpha\.ServerReflection\.ServerReflectionInfo\.total')
