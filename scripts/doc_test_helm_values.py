@@ -14,11 +14,18 @@ itself, at the release the page documents:
   `omit .Values.x "k" | toJson`) is open: its contents are not checked, because they are Kubernetes fields or
   free-form labels, not chart options.
 
-What the generated schema can't know goes in an overlay file in docs-tests
-(`products/<product>/helm-values.yaml`): more paths to open, per chart.
+A value also has to be the type of its default: a boolean, an integer, a
+number, a string, a list, or a map. A default of `null` or `""` says nothing
+about the type, so that value takes anything. `--set` values are typed the way
+Helm types them (`true` is a boolean, `3` an integer, anything else a string),
+and a shell variable or a `<placeholder>` is not checked.
 
-Only keys are checked, not value types. A key that is in `values.yaml` but
-that no template reads still passes; this can't tell.
+What the generated schema can't know goes in an overlay file in docs-tests
+(`products/<product>/helm-values.yaml`): more paths to open, per chart. An open
+path takes any keys and any type.
+
+A key that is in `values.yaml` but that no template reads still passes; this
+can't tell.
 """
 
 import json
@@ -35,8 +42,11 @@ try:
 except ModuleNotFoundError:
     yaml = None
 
-# Open: contents not checked. Otherwise {"properties": {key: node}}, closed.
+# Open: contents not checked. Otherwise {"properties": {key: node}}, closed,
+# and either form can carry a "type" (TYPE_NAMES) the value must have.
 OPEN: Dict[str, Any] = {}
+TYPE_NAMES = {"boolean": "a boolean", "integer": "an integer", "number": "a number",
+              "string": "a string", "array": "a list", "object": "a map"}
 
 _VALUES_REF = r"\$?\.Values((?:\.[A-Za-z0-9_]+)+)"
 VALUES_REF_RE = re.compile(_VALUES_REF)
@@ -60,10 +70,28 @@ class HelmChart:
     stale_overlay: List[str] = field(default_factory=list)
 
 
+def _type_of(default: Any) -> Optional[str]:
+    """The type a default says its value has, or None if it says nothing."""
+    if isinstance(default, bool):
+        return "boolean"
+    if isinstance(default, int):
+        return "integer"
+    if isinstance(default, float):
+        return "number"
+    if isinstance(default, str):
+        return "string" if default else None
+    if isinstance(default, list):
+        return "array"
+    if isinstance(default, dict):
+        return "object"
+    return None
+
+
 def _schema_for(default: Any) -> Dict[str, Any]:
+    t = _type_of(default)
     if isinstance(default, dict) and default:
-        return {"properties": {str(k): _schema_for(v) for k, v in default.items()}}
-    return OPEN
+        return {"type": t, "properties": {str(k): _schema_for(v) for k, v in default.items()}}
+    return {"type": t} if t else OPEN
 
 
 def _template_refs(text: str) -> Tuple[List[List[str]], List[List[str]]]:
@@ -86,7 +114,10 @@ def _template_refs(text: str) -> Tuple[List[List[str]], List[List[str]]]:
     return read, passed_on
 
 
-def _add_path(schema: Dict[str, Any], path: List[str], open_leaf: bool) -> None:
+def _add_path(schema: Dict[str, Any], path: List[str], open_leaf: bool, keep_type: bool = True) -> None:
+    """Add `path` as a key. With `open_leaf`, its contents are not checked; a
+    template that hands a value on whole still needs it to be the type of its
+    default, so the type stays unless `keep_type` is False."""
     node = schema
     for i, part in enumerate(path):
         props = node.get("properties")
@@ -95,20 +126,21 @@ def _add_path(schema: Dict[str, Any], path: List[str], open_leaf: bool) -> None:
         if part not in props:
             props[part] = OPEN
         if i == len(path) - 1 and open_leaf:
-            props[part] = OPEN
+            t = props[part].get("type") if keep_type else None
+            props[part] = {"type": t} if t else OPEN
         node = props[part]
 
 
 def _is_closed_key(schema: Dict[str, Any], path: List[str]) -> bool:
-    """Whether `path` is a key the schema has and still checks the contents of,
-    so opening it in the overlay changes something."""
+    """Whether `path` is a key the schema has and still checks the keys or type
+    of, so opening it in the overlay changes something."""
     node = schema
     for part in path:
         props = node.get("properties")
         if props is None or part not in props:
             return False
         node = props[part]
-    return "properties" in node
+    return "properties" in node or "type" in node
 
 
 def _merge(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
@@ -120,7 +152,8 @@ def _merge(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
     props = dict(a["properties"])
     for k, v in b["properties"].items():
         props[k] = _merge(props[k], v) if k in props else v
-    return {"properties": props}
+    t = a.get("type") or b.get("type")
+    return {"type": t, "properties": props} if t else {"properties": props}
 
 
 def _subchart_dir(chart_dir: Path, name: str) -> Optional[Path]:
@@ -182,7 +215,7 @@ def load_chart(chart_dir: Path, overlay: Optional[Dict[str, Any]] = None) -> Hel
         path = split_key(str(dotted))
         if not _is_closed_key(schema, path):
             stale.append(str(dotted))
-        _add_path(schema, path, open_leaf=True)
+        _add_path(schema, path, open_leaf=True, keep_type=False)
     return HelmChart(name=name, schema=schema, source=chart_dir.as_posix(), stale_overlay=stale)
 
 
@@ -243,6 +276,94 @@ def unknown_keys(schema: Dict[str, Any], values: Any, prefix: Tuple[str, ...] = 
         else:
             found.extend(unknown_keys(props[str(k)], v, path))
     return found
+
+
+# A value whose type can't be known from the page: a list item set by index
+# (`a[0]=x`), a shell variable, or a placeholder.
+ANY = object()
+UNCHECKED_RE = re.compile(r"\$|<[^<>\s][^<>]*>|\{\{")
+
+
+def _matches(t: str, value: Any) -> bool:
+    if value is None:
+        return True         # null unsets the value
+    if t == "boolean":
+        return isinstance(value, bool)
+    if t == "integer":
+        return isinstance(value, int) and not isinstance(value, bool)
+    if t == "number":
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+    if t == "string":
+        return isinstance(value, str)
+    if t == "array":
+        return isinstance(value, list)
+    if t == "object":
+        return isinstance(value, dict)
+    return True
+
+
+def wrong_types(schema: Dict[str, Any], values: Any, prefix: Tuple[str, ...] = ()) -> List[Tuple[str, str, Any]]:
+    """(dotted path, expected type, value) for each value in `values` that is
+    not the type the schema says. Nothing below a wrong value is checked."""
+    if values is ANY or isinstance(values, str) and UNCHECKED_RE.search(values):
+        return []
+    t = schema.get("type")
+    if t and not _matches(t, values):
+        return [(".".join(prefix), t, values)]
+    props = schema.get("properties")
+    if props is None or not isinstance(values, dict):
+        return []
+    found: List[Tuple[str, str, Any]] = []
+    for k, v in values.items():
+        if str(k) in props:
+            found.extend(wrong_types(props[str(k)], v, prefix + (str(k),)))
+    return found
+
+
+def _describe(value: Any) -> str:
+    kind = ("a boolean" if isinstance(value, bool) else "an integer" if isinstance(value, int)
+            else "a number" if isinstance(value, float) else "a string" if isinstance(value, str)
+            else "a list" if isinstance(value, list) else "a map" if isinstance(value, dict) else "a value")
+    if isinstance(value, (dict, list)):
+        return kind
+    shown = json.dumps(value)
+    return f"{kind}, {shown if len(shown) <= 40 else shown[:37] + '...'}"
+
+
+def _typed_set(raw: str) -> Any:
+    """A `--set` value the way Helm's strvals parser types it: `true`/`false` a
+    boolean, `null` nothing, a whole number without a leading zero an integer,
+    `{a,b}` a list, and anything else a string (so `0.5` is a string)."""
+    if raw.startswith("{") and raw.endswith("}"):
+        return [_typed_set(p) for p in _split_sets(raw[1:-1])]
+    low = raw.lower()
+    if low in ("true", "false"):
+        return low == "true"
+    if low == "null":
+        return None
+    if raw == "0":
+        return 0
+    if raw and raw[0] != "0" and re.fullmatch(r"[+-]?\d+", raw):
+        return int(raw)
+    return raw
+
+
+def set_value(flag: str, key: str, raw: str) -> Any:
+    """The value a `--set`-style flag gives `key`, typed as Helm types it."""
+    if UNCHECKED_RE.search(raw):
+        value: Any = ANY
+    elif flag == "--set-json":
+        try:
+            value = json.loads(raw)
+        except json.JSONDecodeError:
+            value = ANY
+    elif flag == "--set":
+        value = _typed_set(raw)
+    else:
+        value = raw         # --set-string, --set-literal, --set-file: always a string
+    if "[" in key:
+        value = [ANY]       # split_key stops at the list
+    return value
 
 
 def _nest(path: List[str], value: Any) -> Dict[str, Any]:
@@ -418,12 +539,7 @@ def check_blocks(blocks: Iterable[Any], charts: Dict[str, HelmChart], loc_for) -
             key, eq, raw = item.partition("=")
             if not eq:
                 continue
-            value: Any = raw
-            if flag == "--set-json":
-                try:
-                    value = json.loads(raw)
-                except json.JSONDecodeError:
-                    value = raw
+            value = set_value(flag, key.strip(), raw)
             sources.append((_nest(split_key(key.strip()), value), f"{flag} {key.strip()}", b))
         if cmd.stdin_values is not None:
             sources.append((cmd.stdin_values, "values from stdin", b))
@@ -444,4 +560,8 @@ def check_blocks(blocks: Iterable[Any], charts: Dict[str, HelmChart], loc_for) -
             for key in unknown_keys(chart.schema, values):
                 findings.append(HelmFinding(loc_for(src_block),
                                             f"chart {chart.name} has no value '{key}' ({what})"))
+            for key, t, value in wrong_types(chart.schema, values):
+                findings.append(HelmFinding(loc_for(src_block),
+                                            f"chart {chart.name} value '{key}' must be {TYPE_NAMES[t]}, "
+                                            f"not {_describe(value)} ({what})"))
     return checked, findings

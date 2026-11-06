@@ -163,12 +163,26 @@ hidden:
        # flag that step 5 uses. The published ghcr.io/kgateway-dev/extproc-server:0.0.1
        # image predates that flag, and no 0.0.2 tag is published.
        # KIND=kind uses the kind binary on the runner instead of `go tool kind`.
+       # The clone and the image build download from GitHub and proxy.golang.org,
+       # which sometimes drop a connection mid-download. Retry each up to 3 times;
+       # docker's layer cache keeps the finished layers between attempts.
+       kgw_retry() {
+         for attempt in 1 2 3; do
+           "$@" && return 0
+           [ "$attempt" -lt 3 ] && echo "Attempt ${attempt} failed: $*. Retrying in $((attempt * 15))s." && sleep $((attempt * 15))
+         done
+         return 1
+       }
+       kgw_clone() {
+         rm -rf "${kgw_src}"
+         git clone --quiet --depth 1 --branch v2.4.7 https://github.com/kgateway-dev/kgateway.git "${kgw_src}"
+       }
        kgw_src=$(mktemp -d)
-       git clone --quiet --depth 1 --branch v2.4.7 https://github.com/kgateway-dev/kgateway.git "${kgw_src}"
+       kgw_retry kgw_clone
        kind_cluster=$(kubectl config current-context)
        kind_cluster=${kind_cluster#kind-}
        echo "Loading the ExtProc server image into kind cluster ${kind_cluster}"
-       make -C "${kgw_src}" extproc-server-docker EXTPROC_SERVER_VERSION=0.0.2
+       kgw_retry make -C "${kgw_src}" extproc-server-docker EXTPROC_SERVER_VERSION=0.0.2
        make -C "${kgw_src}" cluster-load-extproc-server CLUSTER_NAME="${kind_cluster}" EXTPROC_SERVER_VERSION=0.0.2 KIND=kind
        rm -rf "${kgw_src}"
        {{< /doc-test >}}

@@ -14,7 +14,9 @@ from types import SimpleNamespace
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
-from doc_test_helm_values import check_blocks, load_chart, parse_block, split_key, unknown_keys  # noqa: E402
+from doc_test_helm_values import (  # noqa: E402
+    ANY, check_blocks, load_chart, parse_block, set_value, split_key, unknown_keys, wrong_types,
+)
 
 VALUES = """\
 resources:
@@ -121,10 +123,82 @@ class SchemaTests(unittest.TestCase):
         self.assertEqual(unknown_keys(c.schema, {"ui": {"service": {"typo": 1}}}), ["ui.service.typo"])
 
     def test_overlay_opens_a_value_and_flags_stale_entries(self):
-        c = chart(self.tmp, "overlaid", overlay={"overlaid": {"open": ["controller.image", "gone.key", "labels"]}})
+        c = chart(self.tmp, "overlaid", overlay={"overlaid": {"open": [
+            "controller.image", "gone.key", "controller.image.pullPolicy", "controller.logLevel"]}})
         self.assertEqual(unknown_keys(c.schema, {"controller": {"image": {"anything": 1}}}), [])
-        # gone.key isn't in the chart; labels is already open.
-        self.assertEqual(c.stale_overlay, ["gone.key", "labels"])
+        # gone.key isn't in the chart; pullPolicy ("" by default) is already open.
+        self.assertEqual(c.stale_overlay, ["gone.key", "controller.image.pullPolicy"])
+        # Opening a typed value lets it take any type.
+        self.assertEqual(wrong_types(c.schema, {"controller": {"logLevel": 3}}), [])
+
+
+class TypeTests(unittest.TestCase):
+    """A value must be the type of its default (solo-io/docs-tests#19)."""
+
+    VALUES = """\
+replicas: 1
+ratio: 0.5
+enabled: false
+logLevel: info
+tag: ""
+nothing: null
+args: []
+labels: {}
+resources:
+  requests:
+    cpu: 100m
+controller:
+  image:
+    pullPolicy: IfNotPresent
+"""
+    TEMPLATES = "spec:\n  resources: {{ toYaml .Values.resources | nindent 4 }}\n"
+
+    def setUp(self):
+        self.chart = chart(tempfile.mkdtemp(), "typed", values=self.VALUES, templates=self.TEMPLATES)
+
+    def wrong(self, values):
+        return [(k, t) for k, t, _ in wrong_types(self.chart.schema, values)]
+
+    def test_values_of_the_default_type_pass(self):
+        self.assertEqual(self.wrong({
+            "replicas": 3, "ratio": 2, "enabled": True, "logLevel": "debug", "args": ["-v"],
+            "labels": {"a": "b"}, "resources": {"limits": {"memory": "1Gi"}},
+            "controller": {"image": {"pullPolicy": "Always"}},
+        }), [])
+
+    def test_values_of_another_type_fail(self):
+        self.assertEqual(self.wrong({
+            "replicas": "three", "ratio": True, "enabled": "yes", "logLevel": 3, "args": "-v",
+            "labels": ["a"], "controller": {"image": "repo/img:1"},
+        }), [("replicas", "integer"), ("ratio", "number"), ("enabled", "boolean"), ("logLevel", "string"),
+             ("args", "array"), ("labels", "object"), ("controller.image", "object")])
+
+    def test_empty_and_null_defaults_take_anything(self):
+        self.assertEqual(self.wrong({"tag": 1.2, "nothing": {"a": 1}}), [])
+
+    def test_null_unsets_any_value(self):
+        self.assertEqual(self.wrong({"replicas": None, "controller": None}), [])
+
+    def test_value_handed_on_whole_keeps_its_type(self):
+        # toYaml'd, so its keys are open, but it is still a map.
+        self.assertEqual(self.wrong({"resources": "big"}), [("resources", "object")])
+
+    def test_shell_variables_and_placeholders_are_not_checked(self):
+        self.assertEqual(self.wrong({"replicas": "$REPLICAS", "enabled": "<true-or-false>",
+                                     "ratio": "{{ .ratio }}"}), [])
+
+    def test_set_values_are_typed_like_helm(self):
+        self.assertEqual(set_value("--set", "a", "true"), True)
+        self.assertEqual(set_value("--set", "a", "3"), 3)
+        self.assertEqual(set_value("--set", "a", "0"), 0)
+        self.assertEqual(set_value("--set", "a", "007"), "007")
+        self.assertEqual(set_value("--set", "a", "0.5"), "0.5")
+        self.assertEqual(set_value("--set", "a", "null"), None)
+        self.assertEqual(set_value("--set", "a", "{x,2}"), ["x", 2])
+        self.assertEqual(set_value("--set-string", "a", "true"), "true")
+        self.assertEqual(set_value("--set-json", "a", '{"b":1}'), {"b": 1})
+        self.assertIs(set_value("--set", "a", "$N"), ANY)
+        self.assertEqual(set_value("--set", "a[0]", "x"), [ANY])
 
 
 class ParseTests(unittest.TestCase):
@@ -164,6 +238,13 @@ class CheckBlocksTests(unittest.TestCase):
                                  self.charts)
         self.assertEqual(checked, 1)
         self.assertEqual(msgs, ["chart demo has no value 'controller.logLvl' (--set controller.logLvl)"])
+
+    def test_set_value_of_the_wrong_type(self):
+        # logLevel defaults to a string; Helm reads --set ...=3 as an integer.
+        checked, msgs = findings([block("helm upgrade -i agw oci://r/demo --set controller.logLevel=3 "
+                                        "--set-string controller.logLevel=3\n")], self.charts)
+        self.assertEqual(msgs, ["chart demo value 'controller.logLevel' must be a string, not an integer, 3 "
+                                "(--set controller.logLevel)"])
 
     def test_other_charts_are_skipped(self):
         checked, msgs = findings([
