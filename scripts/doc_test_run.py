@@ -13,7 +13,7 @@ import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 try:
     import yaml  # type: ignore[import-not-found]
@@ -925,6 +925,51 @@ def create_cluster_with_retries(cluster_name: str, repo_root: Path) -> Tuple[int
     return create_code, create_output
 
 
+# Number of times to run a test whose failure was a crash inside a tool, not a
+# failing step. Helm 4's `--wait` can panic with "send on closed channel" in its
+# kstatus watcher, a race in Helm itself (agentgateway/website run 42271149023:
+# `helm upgrade -i agentgateway ... --wait` from quickstart/install.md died while
+# the same step passed in every other test). The crash can leave the release in
+# `pending-install`, so retrying only the helm command would hit "another
+# operation is in progress". The whole test reruns instead, on a new cluster.
+TOOL_CRASH_ATTEMPTS = 2
+
+# Substrings that mark a failure as a tool crash. Matching is case-sensitive and
+# deliberately narrow: a bare "panic:" would also catch a crashing agentgateway
+# pod whose logs a test prints, and that is a real failure.
+_TOOL_CRASH_MARKERS = (
+    "panic: send on closed channel",
+)
+
+
+def _is_tool_crash(result: Dict[str, Any]) -> bool:
+    if result.get("status") == "passed":
+        return False
+    error = result.get("error") or ""
+    return any(marker in error for marker in _TOOL_CRASH_MARKERS)
+
+
+def run_with_tool_crash_retry(run_once: Callable[[], Dict[str, Any]], key: str) -> Dict[str, Any]:
+    """Run a test, and run it again if it failed on a known tool crash.
+
+    `run_once` must start from a clean slate each call; run_test_case creates and
+    deletes its own cluster, so it does. A result that needed a retry carries
+    `retried: <count>` so a crash that keeps recurring still shows in the report.
+    """
+    result: Dict[str, Any] = {}
+    for attempt in range(1, TOOL_CRASH_ATTEMPTS + 1):
+        result = run_once()
+        if attempt == TOOL_CRASH_ATTEMPTS or not _is_tool_crash(result):
+            break
+        logger.warning(
+            "Tool crash in %s (attempt %d/%d); rerunning the test",
+            key, attempt, TOOL_CRASH_ATTEMPTS,
+        )
+    if attempt > 1:
+        result["retried"] = attempt - 1
+    return result
+
+
 PORT_FORWARD_RE = re.compile(r"\bkubectl\s+port-forward\b")
 
 
@@ -1566,7 +1611,14 @@ def main() -> int:
     for test_case in test_cases:
         doc_rel = test_case.document.relative_to(repo_root).as_posix()
         key = f"{doc_rel}::{test_case.name}"
-        result = run_test_case(repo_root, test_case, args.cluster_prefix, context_base_dir=context_base_dir, pause=args.pause, keep_cluster=args.keep_cluster)
+        def run_once(test_case: TestCase = test_case) -> Dict:
+            return run_test_case(repo_root, test_case, args.cluster_prefix, context_base_dir=context_base_dir, pause=args.pause, keep_cluster=args.keep_cluster)
+        if args.keep_cluster or args.pause:
+            # Both leave the failed attempt's cluster up for a person or a later
+            # step to look at, so a rerun would collide with it.
+            result = run_once()
+        else:
+            result = run_with_tool_crash_retry(run_once, key)
         result["type"] = test_case.type
         status_icon = "PASSED" if result.get("status") == "passed" else "FAILED"
         logger.info("%s: %s (%s)", status_icon, key, test_case.type)
