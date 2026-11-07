@@ -7,12 +7,12 @@ blocks:
 - 825305219c4ad551 yaml
 - b8944ce705060f2f sh
 - bd264d5a16c32315 sh
-- f81b566b20f4d008 console
+- c15d3e9936f216b5 console
 - 6ca12798acaef6b9 sh
 - ce0bb5109fef71ba yaml
 - b8944ce705060f2f sh
 - bd264d5a16c32315 sh
-- f81b566b20f4d008 console
+- c15d3e9936f216b5 console
 - c079278758454413 sh
 - b8944ce705060f2f sh
 - bd264d5a16c32315 sh
@@ -154,35 +154,6 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 6
-    fingerprint: f81b566b20f4d008
-    lang: console
-    lines: 5b07bb0e 8eafa6ea
-    preview: '* Request completely sent off'
-  content: |-
-    {{< doc-test paths="http-upgrades" >}}
-    # ListenerPolicy enable-upgrades: the gateway proxy must forward the upgrade instead of rejecting it.
-    # httpbin does not speak WebSocket, so the page expects curl to time out
-    # (exit 28, no status code); any non-403 response also means it was forwarded.
-    code=""; rc=0; ok=""
-    for i in $(seq 1 30); do
-      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
-        -H "Host: www.example.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
-        -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
-        "http://${INGRESS_GW_ADDRESS}:8080/get") && rc=0 || rc=$?
-      if [ "$rc" = "28" ] && [ "$code" = "000" ]; then ok=1; break; fi
-      if [ "$rc" = "0" ] && [ "$code" != "403" ] && [ "$code" != "000" ]; then
-        echo "NOTE: ListenerPolicy enable-upgrades: got HTTP $code instead of the timeout the page shows"; ok=1; break
-      fi
-      echo "ListenerPolicy enable-upgrades: upgrade request returned '$code' (curl exit $rc), retrying ($i/30)"; sleep 2
-    done
-    if [ -z "$ok" ]; then
-      echo "FAIL: ListenerPolicy enable-upgrades: upgrade request still rejected or failed: '$code' (curl exit $rc)"
-      exit 1
-    fi
-    echo "ListenerPolicy enable-upgrades: upgrade request forwarded (status '$code', curl exit $rc)"
-    {{< /doc-test >}}
-- after:
     block: 7
     fingerprint: 6ca12798acaef6b9
     lang: sh
@@ -235,35 +206,6 @@ hidden:
           timeoutSeconds: 300
           intervalSeconds: 5
     EOF
-    {{< /doc-test >}}
-- after:
-    block: 11
-    fingerprint: f81b566b20f4d008
-    lang: console
-    lines: 5b07bb0e 8eafa6ea
-    preview: '* Request completely sent off'
-  content: |-
-    {{< doc-test paths="http-upgrades" >}}
-    # TrafficPolicy websocket-upgrade: the gateway proxy must forward the upgrade instead of rejecting it.
-    # httpbin does not speak WebSocket, so the page expects curl to time out
-    # (exit 28, no status code); any non-403 response also means it was forwarded.
-    code=""; rc=0; ok=""
-    for i in $(seq 1 30); do
-      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
-        -H "Host: www.example.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
-        -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
-        "http://${INGRESS_GW_ADDRESS}:8080/get") && rc=0 || rc=$?
-      if [ "$rc" = "28" ] && [ "$code" = "000" ]; then ok=1; break; fi
-      if [ "$rc" = "0" ] && [ "$code" != "403" ] && [ "$code" != "000" ]; then
-        echo "NOTE: TrafficPolicy websocket-upgrade: got HTTP $code instead of the timeout the page shows"; ok=1; break
-      fi
-      echo "TrafficPolicy websocket-upgrade: upgrade request returned '$code' (curl exit $rc), retrying ($i/30)"; sleep 2
-    done
-    if [ -z "$ok" ]; then
-      echo "FAIL: TrafficPolicy websocket-upgrade: upgrade request still rejected or failed: '$code' (curl exit $rc)"
-      exit 1
-    fi
-    echo "TrafficPolicy websocket-upgrade: upgrade request forwarded (status '$code', curl exit $rc)"
     {{< /doc-test >}}
 - after:
     block: 15
@@ -399,3 +341,61 @@ hidden:
     fi
     echo "CONNECT without terminate: tunnel failed with 404 as expected"
     {{< /doc-test >}}
+- after:
+    fingerprint: f81b566b20f4d008
+    lang: console
+    lines: 5b07bb0e 8eafa6ea
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    # ListenerPolicy enable-upgrades: the gateway proxy must forward the upgrade instead of rejecting it.
+    # httpbin does not speak WebSocket, so the page expects curl to time out
+    # (exit 28, no status code); any non-403 response also means it was forwarded.
+    code=""; rc=0; ok=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
+        -H "Host: www.example.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
+        -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+        "http://${INGRESS_GW_ADDRESS}:8080/get") && rc=0 || rc=$?
+      if [ "$rc" = "28" ] && [ "$code" = "000" ]; then ok=1; break; fi
+      if [ "$rc" = "0" ] && [ "$code" != "403" ] && [ "$code" != "000" ]; then
+        echo "NOTE: ListenerPolicy enable-upgrades: got HTTP $code instead of the timeout the page shows"; ok=1; break
+      fi
+      echo "ListenerPolicy enable-upgrades: upgrade request returned '$code' (curl exit $rc), retrying ($i/30)"; sleep 2
+    done
+    if [ -z "$ok" ]; then
+      echo "FAIL: ListenerPolicy enable-upgrades: upgrade request still rejected or failed: '$code' (curl exit $rc)"
+      exit 1
+    fi
+    echo "ListenerPolicy enable-upgrades: upgrade request forwarded (status '$code', curl exit $rc)"
+    {{< /doc-test >}}
+  status: needs-update
+- after:
+    fingerprint: f81b566b20f4d008
+    lang: console
+    lines: 5b07bb0e 8eafa6ea
+    preview: '* Request completely sent off'
+  content: |-
+    {{< doc-test paths="http-upgrades" >}}
+    # TrafficPolicy websocket-upgrade: the gateway proxy must forward the upgrade instead of rejecting it.
+    # httpbin does not speak WebSocket, so the page expects curl to time out
+    # (exit 28, no status code); any non-403 response also means it was forwarded.
+    code=""; rc=0; ok=""
+    for i in $(seq 1 30); do
+      code=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' \
+        -H "Host: www.example.com" -H "Connection: Upgrade" -H "Upgrade: websocket" \
+        -H "Sec-WebSocket-Version: 13" -H "Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==" \
+        "http://${INGRESS_GW_ADDRESS}:8080/get") && rc=0 || rc=$?
+      if [ "$rc" = "28" ] && [ "$code" = "000" ]; then ok=1; break; fi
+      if [ "$rc" = "0" ] && [ "$code" != "403" ] && [ "$code" != "000" ]; then
+        echo "NOTE: TrafficPolicy websocket-upgrade: got HTTP $code instead of the timeout the page shows"; ok=1; break
+      fi
+      echo "TrafficPolicy websocket-upgrade: upgrade request returned '$code' (curl exit $rc), retrying ($i/30)"; sleep 2
+    done
+    if [ -z "$ok" ]; then
+      echo "FAIL: TrafficPolicy websocket-upgrade: upgrade request still rejected or failed: '$code' (curl exit $rc)"
+      exit 1
+    fi
+    echo "TrafficPolicy websocket-upgrade: upgrade request forwarded (status '$code', curl exit $rc)"
+    {{< /doc-test >}}
+  status: needs-update

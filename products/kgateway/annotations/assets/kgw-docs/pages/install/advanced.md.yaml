@@ -13,6 +13,11 @@ blocks:
 - 21e2e4400b01708a sh
 - 78b3cdfd5b572fb9 sh
 - 835ddfaed1c71aeb console
+- 8dd52dbe6e45c870 yaml
+- c403656e64db2b65 sh
+- 682bd5ca54b024eb sh
+- b15c85a90aa86930 sh
+- fb30b8d69c095ee1 console
 - 674d11f5bf55ea75 yaml
 - 0c4d76c57607f30a sh
 - 5cfb737529f1cb56 yaml
@@ -71,7 +76,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 13
+  block: 18
   fingerprint: 0c4d76c57607f30a
   lang: sh
   lines: b4095574 8f16bc27
@@ -81,7 +86,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 15
+  block: 20
   fingerprint: 9b7754df70ac386d
   lang: yaml
   lines: 16c71da1 979905a0 e47a48f5 8c8c4228 d0db9645 617053e6 c137289d 36184fa5 0e20b496 47f31603 55024e6a 82f215b9 0f10c5bc 55708cb7 e6365cc1 a67acb0a abc56510
@@ -91,7 +96,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 16
+  block: 21
   fingerprint: 676c185b6579b961
   lang: sh
   lines: 968e6966 459cb237
@@ -101,7 +106,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 19
+  block: 24
   fingerprint: 21e2e4400b01708a
   lang: sh
   lines: fae8c8b8 8e85cac6 39fd077a 0e1a9b32
@@ -111,7 +116,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 20
+  block: 25
   fingerprint: 5fba5f3bf561451f
   lang: sh
   lines: 5fba5f3b
@@ -121,7 +126,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 21
+  block: 26
   fingerprint: 676c185b6579b961
   lang: sh
   lines: 968e6966 459cb237
@@ -531,7 +536,7 @@ hidden:
     fi
     {{< /doc-test >}}
 - after:
-    block: 12
+    block: 17
     fingerprint: 674d11f5bf55ea75
     lang: yaml
     lines: d2ba729d 5fb3655e
@@ -554,7 +559,7 @@ hidden:
     kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
     {{< /doc-test >}}
 - after:
-    block: 13
+    block: 18
     fingerprint: 0c4d76c57607f30a
     lang: sh
     lines: b4095574 8f16bc27
@@ -677,7 +682,7 @@ hidden:
     kubectl delete httproute strict-check -n httpbin
     {{< /doc-test >}}
 - after:
-    block: 14
+    block: 19
     fingerprint: 5cfb737529f1cb56
     lang: yaml
     lines: adc43cf7 a1f4619b
@@ -738,7 +743,7 @@ hidden:
     occurrence: 0
     words: b9776d7d 8d0288f4 50d858e0 77f6a166 ca978112 823412d1 58296753 b9776d7d abbea20e 9359f3bb 663ea1bf 3316348d 20e8cdb5 58296753 b9776d7d bcb3caf1 9359f3bb
     block_before:
-      block: 14
+      block: 19
       fingerprint: 5cfb737529f1cb56
       lang: yaml
       lines: adc43cf7 a1f4619b
@@ -801,7 +806,7 @@ hidden:
     fi
     {{< /doc-test >}}
 - after:
-    block: 15
+    block: 20
     fingerprint: 9b7754df70ac386d
     lang: yaml
     lines: 16c71da1 979905a0 e47a48f5 8c8c4228 d0db9645 617053e6 c137289d 36184fa5 0e20b496 47f31603 55024e6a 82f215b9 0f10c5bc 55708cb7 e6365cc1 a67acb0a abc56510
@@ -851,7 +856,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 16
+    block: 21
     fingerprint: 676c185b6579b961
     lang: sh
     lines: 968e6966 459cb237
@@ -944,7 +949,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 17
+    block: 22
     fingerprint: 9a5df46d7afe8526
     lang: sh
     lines: 1a5d2257 db51caed
@@ -956,7 +961,7 @@ hidden:
     cat values.yaml
     {{< /doc-test >}}
 - after:
-    block: 18
+    block: 23
     fingerprint: f02fbeec6958bfa3
     lang: yaml
     lines: adc43cf7 6c077fe9 0ef0dcb8
@@ -975,7 +980,7 @@ hidden:
     cat values.yaml
     {{< /doc-test >}}
 - after:
-    block: 19
+    block: 24
     fingerprint: 21e2e4400b01708a
     lang: sh
     lines: fae8c8b8 8e85cac6 39fd077a 0e1a9b32
@@ -992,7 +997,7 @@ hidden:
     kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
     {{< /doc-test >}}
 - after:
-    block: 21
+    block: 26
     fingerprint: 676c185b6579b961
     lang: sh
     lines: 968e6966 459cb237
@@ -1045,7 +1050,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 24
+    block: 29
     fingerprint: 6400e2ef481e8d6e
     lang: yaml
     lines: 84c31baf 524a8194

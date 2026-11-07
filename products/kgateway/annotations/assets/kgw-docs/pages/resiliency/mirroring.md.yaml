@@ -13,7 +13,7 @@ blocks:
 - 2619c526b6d2e29a
 - 3ed4774e8365d0f8 yaml
 - a9c5bfdff5db5680 yaml
-- 8984fca17ad69a2d sh
+- 9be11e6156e12dac sh
 tags:
 - paths: mirroring
   block: 0
@@ -67,10 +67,10 @@ tags:
     lead: ' '
 - paths: mirroring
   block: 12
-  fingerprint: 8984fca17ad69a2d
+  fingerprint: 9be11e6156e12dac
   lang: sh
-  lines: 3c6b4ca5 86d88893 da5c6096 835a8eef
-  preview: kubectl delete trafficpolicy httpbin-mirror -n httpbin --ignore-not-found
+  lines: f09442ec 86d88893 da5c6096 835a8eef
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} httpbin-mirror
   form:
     attr: paths="mirroring"
     only: true
