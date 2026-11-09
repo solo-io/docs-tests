@@ -223,7 +223,7 @@ hidden:
     - name: wait for the websocket-upgrade TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: websocket-upgrade
@@ -334,7 +334,7 @@ hidden:
     - name: wait for the connect-termination TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: connect-termination

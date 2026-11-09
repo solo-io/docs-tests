@@ -142,7 +142,7 @@ hidden:
        - name: wait for the transformation TrafficPolicy in the httpbin namespace (same namespace as the HTTPRoute) to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: httpbin
                name: transformation

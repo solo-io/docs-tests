@@ -118,7 +118,7 @@ hidden:
     - name: wait for the retry TrafficPolicy with perTryTimeout on the timeout rule to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: retry
@@ -157,7 +157,7 @@ hidden:
     - name: wait for the retry TrafficPolicy with perTryTimeout on the http listener to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: retry

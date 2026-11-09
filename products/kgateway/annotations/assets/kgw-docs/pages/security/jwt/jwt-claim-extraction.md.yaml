@@ -218,7 +218,7 @@ hidden:
     - name: wait for the jwt-auth-policy TrafficPolicy to be accepted (jwtAuth with the jwt-provider GatewayExtension)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: jwt-auth-policy

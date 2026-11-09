@@ -176,7 +176,7 @@ hidden:
     - name: wait for the httpbin-mirror TrafficPolicy with disableShadowHostSuffixAppend to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: httpbin-mirror

@@ -117,7 +117,7 @@ hidden:
     - name: "buffering - per gateway - wait for the transformation-buffer-body TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: transformation-buffer-body
@@ -223,7 +223,7 @@ hidden:
     - name: "buffering - per route - wait for the transformation-buffer-limit TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: transformation-buffer-limit

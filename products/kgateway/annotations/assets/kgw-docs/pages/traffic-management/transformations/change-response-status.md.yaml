@@ -57,7 +57,7 @@ hidden:
     - name: "transform-change-response-status - wait for the transformation TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: transformation

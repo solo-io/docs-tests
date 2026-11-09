@@ -431,7 +431,7 @@ hidden:
     - name: wait for the httpbin-rewrite-regex TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: httpbin-rewrite-regex
@@ -522,7 +522,7 @@ hidden:
     - name: wait for the httpbin-rewrite-regex policy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: httpbin-rewrite-regex

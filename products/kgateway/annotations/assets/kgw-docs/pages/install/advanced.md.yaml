@@ -817,7 +817,7 @@ hidden:
     - name: advanced - with the ReferenceGrant, the policy that reads the team-secrets Secret is accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: refgrant-apikey
@@ -935,7 +935,7 @@ hidden:
     - name: advanced - PERMISSIVE accepts a cross-namespace GatewayExtension reference without a ReferenceGrant
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: refgrant-extauth
@@ -1036,7 +1036,7 @@ hidden:
        - name: advanced - STRICT keeps the policy whose Secret reference has a ReferenceGrant accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: httpbin
                name: refgrant-apikey
