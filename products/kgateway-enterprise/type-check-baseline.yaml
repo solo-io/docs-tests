@@ -1,0 +1,7 @@
+# Doc test type check findings that predate the check (doc_test_type_check.py).
+# A run fails only on an error not listed here. Regenerate with --write-baseline.
+# Each is a skip: page whose new schema test would fail, so it stays skipped:
+# staged/overview.md shows the structure of a staged transformation, with type
+# names (`bool`) and empty keys in place of values, so it is not valid YAML for
+# the CRD. It is an outline, not an example to apply.
+- products/kgateway-enterprise/envoy/tests.yaml skip-checkable skip traffic-management/transformations/staged/overview.md

@@ -42,7 +42,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import doc_test_schema_check  # noqa: E402
 import doc_test_type_check as TC  # noqa: E402
-from doc_test_run import TESTED_VERSIONS, _resolve_manifest_ref, load_test_manifests  # noqa: E402
+from doc_test_run import _resolve_manifest_ref, load_test_manifests, tested_versions  # noqa: E402
 from doc_test_extract import resolve_docs_tests_root  # noqa: E402
 from reuse_consumers import build_reverse_index  # noqa: E402
 from collect_failures import upstream_of  # noqa: E402
@@ -66,7 +66,7 @@ def candidates(repo_root: Path, docs_tests_root: Path, product: str, reverse_ind
             if f.kind != "could-be-functional" or f.scenario not in queued:
                 continue
             page = None
-            for version in TESTED_VERSIONS:
+            for version in tested_versions(data, repo_root):
                 if version not in f.versions:
                     continue
                 page = _resolve_manifest_ref(f.ref, mode, version, reverse_index, mpath, f.scenario, content_root)

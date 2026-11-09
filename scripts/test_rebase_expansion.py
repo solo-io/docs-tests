@@ -91,6 +91,52 @@ class RebaseExpansionTests(unittest.TestCase):
             e.process_file(cp)
 
 
+class VersionInPathShellTests(unittest.TestCase):
+    """Shells that write the upstream version directory into file=.
+
+    The kgateway hub mounts upstream content/docs at assets/conrefs/kgateway, so
+    its shells read conrefs/kgateway/envoy/latest/<path>. Read as the agw form,
+    that became content/docs/kgateway/<dir>/envoy/latest/<path>, which does not
+    exist.
+    """
+
+    REL = "content/en/kgateway/2.4.x/traffic-management/buffering.md"
+    VMAP = {"2.4.x": "latest"}
+
+    def build(self, shell_dir: str):
+        consumer = pathlib.Path(tempfile.mkdtemp())
+        upstream = pathlib.Path(tempfile.mkdtemp())
+        cp = consumer / self.REL
+        cp.parent.mkdir(parents=True, exist_ok=True)
+        cp.write_text(SHELL.replace("agw-docs/kubernetes/documentation/buffering.md",
+                                    f"conrefs/kgateway/envoy/{shell_dir}/traffic-management/buffering.md"))
+        for d in ("latest", "2.2.x"):
+            up = upstream / f"content/docs/envoy/{d}/traffic-management/buffering.md"
+            up.parent.mkdir(parents=True, exist_ok=True)
+            up.write_text(UPSTREAM.replace("curl localhost", f"curl {d}"))
+        return consumer, upstream, cp
+
+    def blocks(self, shell_dir: str):
+        consumer, upstream, cp = self.build(shell_dir)
+        e = Extractor(
+            repo_root=consumer,
+            definition={"main_file": self.REL,
+                        "sources": [{"file": self.REL, "path": "buffering"}],
+                        "context": {"product": "envoy", "version": "2.4.x"}},
+            upstream_root=upstream, upstream_version_for=self.VMAP,
+        )
+        return e.process_file(cp).code_blocks
+
+    def test_the_upstream_blocks_appear(self):
+        blocks = self.blocks("latest")
+        self.assertEqual(len(blocks), 2)
+        self.assertIn("curl latest", [b.content.strip() for b in blocks])
+
+    def test_the_directory_in_the_shell_wins_over_the_version_map(self):
+        """Hugo renders the directory the shell names, so the test must too."""
+        self.assertIn("curl 2.2.x", [b.content.strip() for b in self.blocks("2.2.x")])
+
+
 class ShadowedSnippetTests(unittest.TestCase):
     """The consuming site's own assets must win over the upstream copies.
 

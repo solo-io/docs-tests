@@ -1,0 +1,903 @@
+# Doc-test scenario definitions for the enterprise kgateway docs (Solo
+# Enterprise for kgateway), envoy mode.
+#
+# Same shape as ../../agentgateway-enterprise/kubernetes/tests.yaml. A rebase
+# shell copies its upstream twin's scenarios from ../../kgateway/envoy/tests.yaml
+# (same name and path). An enterprise-only page gets its own scenarios; a
+# schema-only one is named `<page>-schema`.
+#
+# Most pages on the consuming site are rebase shells, stubs whose whole body is
+# one {{< rebase file="conrefs/kgateway/envoy/<dir>/..." >}} line that the site
+# expands from the open source kgateway-dev/kgateway.dev repo at build time.
+# Unlike the agentgateway shells, these name the upstream version directory
+# themselves; the runner uses it as written.
+#
+# How that differs from ../../kgateway/envoy/tests.yaml:
+#
+#   page:, never source: for a shell. A shell reuses nothing from its own
+#            assets/, so there is no snippet to key on. The shell paths mirror
+#            the upstream page paths, so `page:` here is the same string as the
+#            upstream scenario's page.
+#   content_root: the consuming site lays content out as
+#            content/en/kgateway/<version>/, with no mode folder, so the
+#            version goes into content_root as {version}.
+#   versions: the trees are named by release, not latest/main. `latest` is
+#            resolved to the site's current release, the defaultVersion in
+#            version_config (2.4.x as of 2026-11), so it moves on by itself
+#            when a release ships. The site's doc-test workflow reads the same
+#            field, and the release's upstream directory from its ossDir.
+#
+# The consuming site's own assets/ SHADOW the upstream copies. The install
+# snippet is the one that matters: assets/kgw-docs/snippets/envoy/get-started.md
+# adds the license key and installs the enterprise charts. Its markup lives in
+# ../annotations/assets/kgw-docs/snippets/envoy/get-started.md.yaml: the
+# runnable blocks are tagged `standard`, the license-key placeholder is left
+# untagged so it never overwrites the LICENSE_KEY that CI sets, and a hidden
+# step adds the experimental Gateway API CRDs for `experimental` (the site's
+# snippet documents only the standard channel). The upstream pages it rebases
+# get their markup from products/kgateway/annotations.
+version: 1
+mode: envoy
+content_root: content/en/kgateway/{version}
+versions:
+- latest
+version_config: hugo-kgateway.toml
+prerequisites:
+  install-standard:
+    page: quickstart.md
+    path: standard
+  install-experimental:
+    page: quickstart.md
+    path: experimental
+  # httpbin, the `http` Gateway, the httpbin HTTPRoute, and INGRESS_GW_ADDRESS.
+  httpbin:
+    page: install/sample-app.md
+    path: install-httpbin
+  # Test-only stand-in for httpbin.org; see ../../kgateway/envoy/tests.yaml.
+  httpbin-org-standin:
+    page: install/sample-app.md
+    path: httpbin-org-standin
+# Pages with deliberately no test: section indexes, concept, reference,
+# release-note, and support pages. A rebase shell is skipped when its
+# upstream twin is skipped in ../../kgateway/envoy/tests.yaml.
+skip:
+- page: _index.md
+- page: about/_index.md
+- page: about/architecture.md
+- page: about/custom-resources.md
+- page: about/deployment-patterns.md
+- page: about/overview.md
+- page: about/policies/_index.md
+- page: about/policies/merging.md
+- page: about/proxies.md
+- page: install/_index.md
+- page: integrations/_index.md
+- page: integrations/aws-elb/_index.md
+- page: integrations/aws-elb/about.md
+- page: integrations/istio/_index.md
+- page: integrations/istio/ambient/_index.md
+- page: integrations/istio/sidecar/_index.md
+- page: not-in-version.md
+- page: observability/_index.md
+- page: operations/_index.md
+- page: portal/_index.md
+- page: portal/apis/_index.md
+- page: portal/frontend-setup/_index.md
+- page: portal/frontend-setup/credential-management/_index.md
+- page: portal/frontend-usage/_index.md
+- page: portal/frontend-usage/credentials/_index.md
+- page: portal/frontend-usage/teams-apps.md
+- page: portal/openapi.md
+- page: portal/operations/_index.md
+- page: portal/operations/advanced/_index.md
+- page: reference/_index.md
+- page: reference/api/_index.md
+- page: reference/api/kgateway.md
+- page: reference/api/kubernetes-gateway-api.md
+- page: reference/api/portal.md
+- page: reference/api/solo.md
+- page: reference/api/waf.md
+- page: reference/changelog/_index.md
+- page: reference/changelog/changelog.md
+- page: reference/changelog/release-notes.md
+- page: reference/glossary.md
+- page: reference/helm/_index.md
+- page: reference/helm/kgateway-crds.md
+- page: reference/helm/kgateway.md
+- page: reference/helm/portal.md
+- page: reference/ports.md
+- page: reference/sbom.md
+- page: resiliency/_index.md
+- page: resiliency/keepalive/_index.md
+- page: resiliency/retry/_index.md
+- page: resiliency/retry/about.md
+- page: resiliency/timeouts/_index.md
+- page: resiliency/timeouts/about.md
+- page: resiliency/timeouts/per-try-timeout.md
+- page: security/_index.md
+- page: security/extauth/_index.md
+- page: security/extauth/basic/_index.md
+- page: security/extauth/byo-ext-auth-service/_index.md
+- page: security/extauth/oauth/_index.md
+- page: security/extauth/oauth/about.md
+- page: security/extauth/opa/_index.md
+- page: security/extauth/opa/about.md
+- page: security/extauth/passthrough/_index.md
+- page: security/jwt/_index.md
+- page: security/jwt/overview.md
+- page: security/jwt/simple/_index.md
+- page: security/jwt/staged/_index.md
+- page: security/ratelimit/_index.md
+- page: security/ratelimit/global/_index.md
+- page: security/waf/_index.md
+- page: security/waf/operations/_index.md
+- page: setup/_index.md
+- page: setup/customize/_index.md
+- page: setup/customize/envoy/_index.md
+- page: setup/listeners/_index.md
+- page: support/_index.md
+- page: support/about.md
+- page: support/support-ticket.md
+- page: traffic-management/_index.md
+- page: traffic-management/destination-types/_index.md
+- page: traffic-management/destination-types/backends/_index.md
+- page: traffic-management/destination-types/backends/dfp.md
+- page: traffic-management/destination-types/backends/lambda/_index.md
+- page: traffic-management/destination-types/backends/lambda/about.md
+- page: traffic-management/destination-types/kube-services/_index.md
+- page: traffic-management/extproc/_index.md
+- page: traffic-management/header-control/_index.md
+- page: traffic-management/header-control/overview.md
+- page: traffic-management/health-checks/_index.md
+- page: traffic-management/match/_index.md
+- page: traffic-management/redirect/_index.md
+- page: traffic-management/rewrite/_index.md
+- page: traffic-management/route-delegation/_index.md
+- page: traffic-management/route-delegation/inheritance/_index.md
+- page: traffic-management/route-delegation/overview.md
+- page: traffic-management/session-affinity/_index.md
+- page: traffic-management/transformations/_index.md
+- page: traffic-management/transformations/engines.md
+- page: traffic-management/transformations/simple/_index.md
+- page: traffic-management/transformations/simple/overview.md
+- page: traffic-management/transformations/staged/_index.md
+- page: traffic-management/transformations/staged/overview.md
+scenarios:
+  about-schema:
+    type: schema
+    page: security/extauth/about.md
+    path: all
+  access-logging:
+    type: schema
+    page: security/access-logging.md
+    path: access-logging
+  access-token-schema:
+    type: schema
+    page: security/extauth/oauth/access-token.md
+    path: all
+  acl:
+    type: schema
+    page: security/acl.md
+    path: acl
+  add-request-header:
+    type: schema
+    page: traffic-management/header-control/request-header.md
+    path: add-request-header
+  add-response-header:
+    type: schema
+    page: traffic-management/header-control/response-header.md
+    path: add-response-header
+  additional-settings-schema:
+    type: schema
+    page: integrations/istio/ambient/additional-settings.md
+    path: all
+  advanced:
+    type: schema
+    page: install/advanced.md
+    path: advanced
+  affinity-consistent-hashing-ringhash:
+    type: schema
+    page: traffic-management/session-affinity/consistent-hashing.md
+    path: affinity-consistent-hashing-ringhash
+  affinity-loadbalancing:
+    type: schema
+    page: traffic-management/session-affinity/loadbalancing.md
+    path: affinity-loadbalancing
+  affinity-session-persistence:
+    type: schema
+    page: traffic-management/session-affinity/session-persistence.md
+    path: affinity-session-persistence
+  airgap-schema:
+    type: schema
+    page: install/airgap.md
+    path: all
+  alb-schema:
+    type: schema
+    page: integrations/aws-elb/alb.md
+    path: alb
+  apidocs-schema:
+    type: schema
+    page: portal/apis/apidocs.md
+    path: all
+  apikey-client-id-schema:
+    type: schema
+    page: portal/frontend-setup/credential-management/apikey-client-id.md
+    path: all
+  apikey-schema:
+    type: schema
+    page: portal/frontend-setup/credential-management/apikey.md
+    path: all
+  apiproducts-schema:
+    type: schema
+    page: portal/apis/apiproducts.md
+    path: all
+  app-metadata-schema:
+    type: schema
+    page: portal/frontend-setup/app-metadata.md
+    path: all
+  append-headers-schema:
+    type: schema
+    page: traffic-management/transformations/staged/append-headers.md
+    path: all
+  authconfig-schema:
+    type: schema
+    page: security/extauth/basic/authconfig.md
+    path: all
+  authorization-code-schema:
+    type: schema
+    page: security/extauth/oauth/authorization-code.md
+    path: all
+  backend-tls:
+    type: schema
+    page: security/backend-tls.md
+    path: backend-tls
+  backendconfigpolicy-schema:
+    type: schema
+    page: about/policies/backendconfigpolicy.md
+    path: backendconfigpolicy
+  buffering:
+    type: schema
+    page: traffic-management/buffering.md
+    path: buffering
+  byo-ext-auth-service-grpc:
+    type: schema
+    page: security/extauth/byo-ext-auth-service/grpc.md
+    path: byo-ext-auth-service-grpc
+  byo-ext-auth-service-http:
+    type: schema
+    page: security/extauth/byo-ext-auth-service/http.md
+    path: byo-ext-auth-service-http
+  byo-redis-schema:
+    type: schema
+    page: setup/customize/byo-redis.md
+    path: all
+  byo-schema:
+    type: schema
+    page: security/extauth/opa/byo.md
+    path: all
+  chaining-schema:
+    type: schema
+    page: security/extauth/chaining.md
+    path: all
+  circuit-breakers:
+    type: schema
+    page: resiliency/circuit-breakers.md
+    path: circuit-breakers
+  claim-based-access-schema:
+    type: schema
+    page: security/jwt/staged/claim-based-access.md
+    path: all
+  claim-based-rbac-schema:
+    type: schema
+    page: security/jwt/simple/claim-based-rbac.md
+    path: claim-based-rbac
+  compression:
+    type: schema
+    page: traffic-management/compression.md
+    path: compression
+  configs:
+    type: schema
+    page: setup/customize/configs.md
+    path: configs
+  connection:
+    type: schema
+    page: resiliency/connection.md
+    path: connection
+  cors:
+    type: schema
+    page: security/cors.md
+    path: cors
+  creds-secret-schema:
+    type: schema
+    page: traffic-management/destination-types/backends/lambda/creds-secret.md
+    path: creds-secret
+  cross-account-schema:
+    type: schema
+    page: traffic-management/destination-types/backends/lambda/cross-account.md
+    path: all
+  csrf:
+    type: schema
+    page: security/csrf.md
+    path: csrf
+  custom-bootstrap:
+    type: schema
+    page: setup/customize/envoy/custom-bootstrap.md
+    path: custom-bootstrap
+  custom-rules-schema:
+    type: schema
+    page: security/waf/custom-rules.md
+    path: all
+  customize-gateway:
+    type: schema
+    page: setup/customize/gateway.md
+    path: customize-gateway
+  database-schema:
+    type: schema
+    page: portal/operations/database.md
+    path: all
+  debug:
+    type: schema
+    page: operations/debug.md
+    path: debug
+  debug-schema:
+    type: schema
+    page: security/waf/operations/debug.md
+    path: all
+  default:
+    type: schema
+    page: setup/default.md
+    path: default
+  delegation-basic:
+    type: schema
+    page: traffic-management/route-delegation/basic.md
+    path: delegation-basic
+  delegation-header-query:
+    type: schema
+    page: traffic-management/route-delegation/header-query.md
+    path: delegation-header-query
+  delegation-inheritance-kgateway:
+    type: schema
+    page: traffic-management/route-delegation/inheritance/kgateway-policies.md
+    path: delegation-inheritance-kgateway
+  delegation-inheritance-native:
+    type: schema
+    page: traffic-management/route-delegation/inheritance/native-policies.md
+    path: delegation-inheritance-native
+  delegation-label:
+    type: schema
+    page: traffic-management/route-delegation/label.md
+    path: delegation-label
+  delegation-multi-level:
+    type: schema
+    page: traffic-management/route-delegation/multi-level-delegation.md
+    path: delegation-multi-level
+  delegation-multi-parent:
+    type: schema
+    page: traffic-management/route-delegation/multi-parent.md
+    path: delegation-multi-parent
+  destination-selector-schema:
+    type: schema
+    page: traffic-management/destination-types/destination-selector.md
+    path: all
+  dfp:
+    type: schema
+    page: traffic-management/dfp.md
+    path: dfp
+  direct-response-schema:
+    type: schema
+    page: traffic-management/direct-response.md
+    path: all
+  dlp-schema:
+    type: schema
+    page: security/dlp.md
+    path: all
+  early-request-header-modifier:
+    type: schema
+    page: traffic-management/header-control/early-request-header-modifier.md
+    path: early-request-header-modifier
+  ec2-schema:
+    type: schema
+    page: traffic-management/destination-types/backends/ec2.md
+    path: ec2
+  enable-schema:
+    type: schema
+    page: security/waf/enable.md
+    path: all
+  enrich-access-logs-schema:
+    type: schema
+    page: traffic-management/transformations/staged/enrich-access-logs.md
+    path: all
+  envoy-schema:
+    type: schema
+    page: security/ratelimit/global/envoy.md
+    path: all
+  extauth-apikey-schema:
+    type: schema
+    page: security/extauth/apikey.md
+    path: all
+  extensions-schema:
+    type: schema
+    page: setup/customize/extensions.md
+    path: all
+  external-dns-cert-manager-schema:
+    type: schema
+    page: integrations/external-dns-cert-manager.md
+    path: external-dns-cert-manager
+  extract-header-schema:
+    type: schema
+    page: traffic-management/transformations/staged/extract-header.md
+    path: all
+  extract-query-params-schema:
+    type: schema
+    page: traffic-management/transformations/staged/extract-query-params.md
+    path: all
+  fault-injection:
+    type: schema
+    page: resiliency/fault-injection.md
+    path: fault-injection
+  filter-stages:
+    type: schema
+    page: traffic-management/extproc/filter-stages.md
+    path: filter-stages
+  forward-xfcc:
+    type: schema
+    page: traffic-management/header-control/forward-xfcc.md
+    path: forward-xfcc
+  gateway-metrics:
+    type: schema
+    page: observability/gateway-metrics.md
+    path: gateway-metrics
+  gcp-schema:
+    type: schema
+    page: traffic-management/destination-types/backends/gcp.md
+    path: all
+  global:
+    type: schema
+    page: security/ratelimit/byo.md
+    path: global
+  global-attachment:
+    type: schema
+    page: about/policies/global-attachment.md
+    path: global-attachment
+  grpc:
+    type: schema
+    page: traffic-management/grpc.md
+    path: grpc
+  grpc-schema:
+    type: schema
+    page: security/extauth/passthrough/grpc.md
+    path: all
+  grpc-services:
+    type: schema
+    page: traffic-management/destination-types/kube-services/grpc-services.md
+    path: grpc-services
+  grpc-statistics:
+    type: schema
+    page: traffic-management/grpc-statistics.md
+    path: grpc-statistics
+  grpc-transcoding-schema:
+    type: schema
+    page: traffic-management/grpc-transcoding.md
+    path: all
+  header-manipulation:
+    type: schema
+    page: traffic-management/extproc/header-manipulation.md
+    path: header-manipulation
+  headers-to-body-schema:
+    type: schema
+    page: traffic-management/transformations/staged/headers-to-body.md
+    path: all
+  health-checks-backend:
+    type: schema
+    page: traffic-management/health-checks/backend.md
+    path: health-checks-backend
+  health-checks-gateway:
+    type: schema
+    page: traffic-management/health-checks/gateway.md
+    path: health-checks-gateway
+  http-connect-tunnels:
+    type: schema
+    page: traffic-management/http-connect-tunnels.md
+    path: http-connect-tunnels
+  http-schema:
+    type: schema
+    page: security/extauth/passthrough/http.md
+    path: all
+  http-services-schema:
+    type: schema
+    page: traffic-management/destination-types/kube-services/http-services.md
+    path: http-services
+  http-upgrades:
+    type: schema
+    page: traffic-management/http-upgrades.md
+    path: http-upgrades
+  http10:
+    type: schema
+    page: setup/http10.md
+    path: http10
+  http2:
+    type: schema
+    page: traffic-management/http2.md
+    path: http2
+  http2-downstream:
+    type: schema
+    page: traffic-management/http2-downstream.md
+    path: http2-downstream
+  ingress-multi-schema:
+    type: schema
+    page: integrations/istio/ambient/ingress-multi.md
+    path: all
+  ingress-schema:
+    type: schema
+    page: integrations/istio/sidecar/ingress.md
+    path: ingress
+  ip-filtering-schema:
+    type: schema
+    page: security/waf/ip-filtering.md
+    path: all
+  keepalive-http2:
+    type: schema
+    page: resiliency/keepalive/http2.md
+    path: keepalive-http2
+  keepalive-tcp:
+    type: schema
+    page: resiliency/keepalive/tcp.md
+    path: keepalive-tcp
+  licensing-schema:
+    type: schema
+    page: install/licensing.md
+    path: all
+  listenerpolicy:
+    type: schema
+    page: about/policies/listenerpolicy.md
+    path: listenerpolicy
+  listeners-http:
+    type: schema
+    page: setup/listeners/http.md
+    path: listeners-http
+  listeners-https:
+    type: schema
+    page: setup/listeners/https.md
+    path: listeners-https
+  listeners-overview-schema:
+    type: schema
+    page: setup/listeners/overview.md
+    path: all
+  listeners-tcp:
+    type: schema
+    page: setup/listeners/tcp.md
+    path: listeners-tcp
+  local:
+    type: schema
+    page: security/ratelimit/local.md
+    path: local
+  local-replies:
+    type: schema
+    page: traffic-management/local-replies.md
+    path: local-replies
+  login-schema:
+    type: schema
+    page: portal/frontend-setup/login.md
+    path: all
+  match-header-exact:
+    type: schema
+    page: traffic-management/match/header.md
+    path: match-header-exact
+  match-host:
+    type: schema
+    page: traffic-management/match/host.md
+    path: match-host
+  match-method:
+    type: schema
+    page: traffic-management/match/method.md
+    path: match-method
+  match-path:
+    type: schema
+    page: traffic-management/match/path.md
+    path: match-path
+  match-query:
+    type: schema
+    page: traffic-management/match/query.md
+    path: match-query
+  max-headers-count:
+    type: schema
+    page: traffic-management/header-control/max-headers-count.md
+    path: max-headers-count
+  migrate-schema:
+    type: schema
+    page: install/migrate.md
+    path: all
+  mirroring:
+    type: schema
+    page: resiliency/mirroring.md
+    path: mirroring
+  mtls:
+    type: schema
+    page: setup/listeners/mtls.md
+    path: mtls
+  nlb-schema:
+    type: schema
+    page: integrations/aws-elb/nlb.md
+    path: nlb
+  oauth-schema:
+    type: schema
+    page: portal/frontend-setup/credential-management/oauth.md
+    path: all
+  observability-schema:
+    type: schema
+    page: security/waf/operations/observability.md
+    path: all
+  otel-stack:
+    type: schema
+    page: observability/otel-stack.md
+    path: otel-stack
+  outlier-detection:
+    type: schema
+    page: resiliency/outlier-detection.md
+    path: outlier-detection
+  overview-schema:
+    type: schema
+    page: portal/overview.md
+    path: all
+  owasp-crs-schema:
+    type: schema
+    page: security/waf/owasp-crs.md
+    path: all
+  per-try-timeout:
+    type: schema
+    page: resiliency/retry/per-try-timeout.md
+    path: per-try-timeout
+  portal-auth-server-schema:
+    type: schema
+    page: portal/operations/portal-auth-server.md
+    path: all
+  preserve-request-paths:
+    type: schema
+    page: traffic-management/preserve-request-paths.md
+    path: preserve-request-paths
+  priority-groups:
+    type: schema
+    page: traffic-management/destination-types/backends/priority-groups.md
+    path: priority-groups
+  proxy-100-continue:
+    type: schema
+    page: traffic-management/proxy-100-continue.md
+    path: proxy-100-continue
+  proxy-protocol:
+    type: schema
+    page: traffic-management/proxy-protocol.md
+    path: proxy-protocol
+  quickstart:
+    type: functional
+    needs:
+    - install-standard
+    page: quickstart.md
+    path: quickstart
+  ratelimit-about-schema:
+    type: schema
+    page: security/ratelimit/about.md
+    path: all
+  ratelimit-schema:
+    type: schema
+    page: portal/frontend-setup/ratelimit.md
+    path: all
+  rbac-schema:
+    type: schema
+    page: portal/operations/advanced/rbac.md
+    path: all
+  redirect-host:
+    type: schema
+    page: traffic-management/redirect/host.md
+    path: redirect-host
+  redirect-https:
+    type: schema
+    page: traffic-management/redirect/https.md
+    path: redirect-https
+  redirect-internal:
+    type: schema
+    page: traffic-management/redirect/internal.md
+    path: redirect-internal
+  redirect-path:
+    type: schema
+    page: traffic-management/redirect/path.md
+    path: redirect-path
+  rego-cm-schema:
+    type: schema
+    page: security/extauth/opa/rego-cm.md
+    path: all
+  require-auth-schema:
+    type: schema
+    page: security/extauth/require-auth.md
+    path: all
+  response-header-sanitization-schema:
+    type: schema
+    page: security/response-header-sanitization.md
+    path: all
+  retry:
+    type: schema
+    page: resiliency/retry/retry.md
+    path: retry
+  rewrite-host:
+    type: schema
+    page: traffic-management/rewrite/host.md
+    path: rewrite-host
+  rewrite-path-full:
+    type: schema
+    page: traffic-management/rewrite/path.md
+    path: rewrite-path-full
+  route-ordering:
+    type: schema
+    page: traffic-management/match/route-ordering.md
+    path: route-ordering
+  sample-app:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    page: install/sample-app.md
+    path: sample-app
+  selfmanaged:
+    type: schema
+    page: setup/customize/envoy/selfmanaged.md
+    path: selfmanaged
+  service-accounts-schema:
+    type: schema
+    page: traffic-management/destination-types/backends/lambda/service-accounts.md
+    path: service-accounts
+  set-style-schema:
+    type: schema
+    page: security/ratelimit/global/set-style.md
+    path: all
+  setup-gateway:
+    type: schema
+    page: setup/gateway.md
+    path: setup-gateway
+  setup-schema:
+    type: schema
+    page: portal/setup.md
+    path: all
+  sidecar-schema:
+    type: schema
+    page: security/extauth/opa/sidecar.md
+    path: all
+  simple-basic:
+    type: schema
+    page: security/jwt/simple/basic.md
+    path: simple-basic
+  sni:
+    type: schema
+    page: setup/listeners/sni.md
+    path: sni
+  staged-auth-schema:
+    type: schema
+    page: security/jwt/staged/staged-auth.md
+    path: all
+  startup-settings-schema:
+    type: schema
+    page: setup/customize/envoy/startup-settings.md
+    path: all
+  static:
+    type: schema
+    page: traffic-management/destination-types/backends/static.md
+    path: static
+  strip-port-host:
+    type: schema
+    page: traffic-management/header-control/strip-port-host.md
+    path: strip-port-host
+  strip-trailing-host-dot:
+    type: schema
+    page: traffic-management/header-control/strip-trailing-host-dot.md
+    path: strip-trailing-host-dot
+  templating-language-schema:
+    type: schema
+    page: traffic-management/transformations/simple/templating-language.md
+    path: all
+  timeout-idle:
+    type: schema
+    page: resiliency/timeouts/idle.md
+    path: timeout-idle
+  timeout-idle-stream:
+    type: schema
+    page: resiliency/timeouts/idle-stream.md
+    path: timeout-idle-stream
+  timeout-max-connection-duration:
+    type: schema
+    page: resiliency/timeouts/max-connection-duration.md
+    path: timeout-max-connection-duration
+  timeout-request:
+    type: schema
+    page: resiliency/timeouts/request.md
+    path: timeout-request
+  timeout-tls-handshake:
+    type: schema
+    page: resiliency/timeouts/tls-handshake.md
+    path: timeout-tls-handshake
+  tls-passthrough:
+    type: schema
+    page: setup/listeners/tls-passthrough.md
+    path: tls-passthrough
+  tls-settings-schema:
+    type: schema
+    page: setup/listeners/tls-settings.md
+    path: tls-settings
+  tls-termination:
+    type: schema
+    page: setup/listeners/tls-termination.md
+    path: tls-termination
+  tls-termination-tcproute:
+    type: schema
+    page: setup/listeners/tls-termination-tcproute.md
+    path: tls-termination-tcproute
+  tracing:
+    type: schema
+    page: observability/tracing.md
+    path: tracing
+  traffic-split:
+    type: schema
+    page: traffic-management/traffic-split.md
+    path: traffic-split
+  trafficpolicy:
+    type: schema
+    page: about/policies/trafficpolicy.md
+    path: trafficpolicy
+  trafficpolicy-schema:
+    type: schema
+    page: security/extauth/basic/trafficpolicy.md
+    path: all
+  transform-change-response-status:
+    type: schema
+    page: traffic-management/transformations/simple/change-response-status.md
+    path: transform-change-response-status
+  transform-decode-base64-headers:
+    type: schema
+    page: traffic-management/transformations/simple/decode-base64-headers.md
+    path: transform-decode-base64-headers
+  transform-inject-response-headers:
+    type: schema
+    page: traffic-management/transformations/simple/inject-response-headers.md
+    path: transform-inject-response-headers
+  transform-redirect-url:
+    type: schema
+    page: traffic-management/transformations/simple/redirect-url.md
+    path: transform-redirect-url
+  transform-update-request-path:
+    type: schema
+    page: traffic-management/transformations/simple/update-request-path.md
+    path: transform-update-request-path
+  transform-update-response-body:
+    type: schema
+    page: traffic-management/transformations/simple/update-response-body.md
+    path: transform-update-response-body
+  transformations-schema:
+    type: schema
+    page: traffic-management/destination-types/backends/lambda/transformations.md
+    path: all
+  update-body-schema:
+    type: schema
+    page: traffic-management/transformations/staged/update-body.md
+    path: all
+  versions-schema:
+    type: schema
+    page: reference/versions.md
+    path: all
+  virtual-destinations-schema:
+    type: schema
+    page: integrations/istio/sidecar/virtual-destinations.md
+    path: all
+  visibility-schema:
+    type: schema
+    page: portal/frontend-setup/visibility.md
+    path: all
+  waf-overview-schema:
+    type: schema
+    page: security/waf/overview.md
+    path: all
+  weighted-routes:
+    type: schema
+    page: traffic-management/weighted-routes.md
+    path: weighted-routes
+  zone-routing:
+    type: schema
+    page: traffic-management/zone-routing.md
+    path: zone-routing

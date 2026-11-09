@@ -56,7 +56,7 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from doc_test_extract import resolve_docs_tests_root  # noqa: E402
-from doc_test_run import TESTED_VERSIONS, _resolve_manifest_ref, load_test_manifests  # noqa: E402
+from doc_test_run import _resolve_manifest_ref, load_test_manifests, tested_versions, version_root  # noqa: E402
 import doc_test_schema_check  # noqa: E402
 from doc_test_schema_check import (  # noqa: E402
     HEREDOC_RE, LANGS, _extractor, extract_yaml_documents, is_config_file, load_config_schema,
@@ -166,15 +166,15 @@ def _own_ref(entry: Dict[str, Any]) -> Optional[Dict[str, str]]:
 
 def _facts_by_version(repo_root: Path, mpath: Path, mode: str, content_root: str, ref: Dict[str, str],
                       path: Optional[str], reverse_index, docs_tests_root: Path, config_validator,
-                      cache: Dict[Any, Facts]) -> Dict[str, Facts]:
+                      cache: Dict[Any, Facts], versions=None) -> Dict[str, Facts]:
     out: Dict[str, Facts] = {}
     # A site that rebases another (the enterprise hub) can only resolve the
     # versions its upstream map names, as in the schema check.
     upstream = doc_test_schema_check._UPSTREAM.get("versions")
-    for version in TESTED_VERSIONS:
+    for version in versions or tested_versions({}):
         if upstream is not None and version not in upstream:
             continue
-        if not (repo_root / content_root / mode / version).is_dir():
+        if not (repo_root / version_root(content_root, mode, version)).is_dir():
             continue
         try:
             resolved = _resolve_manifest_ref(ref, mode, version, reverse_index, mpath, "type-check", content_root)
@@ -203,7 +203,8 @@ def check_manifest(repo_root: Path, mpath: Path, mode: str, data: Dict[str, Any]
             continue   # only prerequisite steps: no page of its own to judge
         types = _types(entry)
         by_version = _facts_by_version(repo_root, mpath, mode, content_root, ref, entry.get("path"),
-                                       reverse_index, docs_tests_root, config_validator, cache)
+                                       reverse_index, docs_tests_root, config_validator, cache,
+                                       tested_versions(data, repo_root))
         if not by_version:
             continue
         versions = sorted(by_version)
@@ -245,7 +246,8 @@ def check_manifest(repo_root: Path, mpath: Path, mode: str, data: Dict[str, Any]
         if ref is None:
             continue   # `dir:` covers generated pages, which nobody types by hand
         by_version = _facts_by_version(repo_root, mpath, mode, content_root, ref, None,
-                                       reverse_index, docs_tests_root, config_validator, cache)
+                                       reverse_index, docs_tests_root, config_validator, cache,
+                                       tested_versions(data, repo_root))
         if by_version and all(f.resources > 0 for f in by_version.values()):
             findings.append(Finding(manifest=rel, kind="skip-checkable", severity="error", ref=ref,
                                     versions=sorted(by_version), message=(

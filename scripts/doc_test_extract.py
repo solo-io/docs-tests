@@ -22,6 +22,30 @@ SHELL_LANGS = {"", "sh", "bash", "shell", "zsh", "yaml", "yml"}
 PWSH_LANGS = {"powershell", "pwsh", "ps1", "ps"}
 
 
+# An upstream version directory under content/docs/<mode>/: latest, main, or a
+# release line such as 2.4.x.
+UPSTREAM_VERSION_DIR_RE = re.compile(r"^(latest|main|\d+\.\d+\.x)$")
+
+
+def split_rebase_file(file_value: str) -> Tuple[str, Optional[str], str]:
+    """A rebase shell's `file=` -> (mode, version directory or None, rest).
+
+    Two forms, depending on where the site mounts upstream content/docs:
+
+      agw-docs/<mode>/<rest>                 no version; it comes from the page's path
+      conrefs/kgateway/<mode>/<dir>/<rest>   version directory written in file=
+
+    The second form names the directory Hugo renders, so callers use it as
+    written, even when it differs from their version map (a shell may pin an
+    older tree on purpose, or by mistake; either way that is what publishes).
+    """
+    parts = file_value.strip("/").split("/")
+    for i in range(1, len(parts) - 2):
+        if UPSTREAM_VERSION_DIR_RE.match(parts[i + 1]):
+            return parts[i], parts[i + 1], "/".join(parts[i + 2:])
+    return parts[1], None, "/".join(parts[2:])
+
+
 # The step a failed script was on, for telling a page step that broke apart
 # from a check that docs-tests added. Each step writes its origin to
 # $DOC_TEST_STEP_FILE before it runs, so the last line there is the step that
@@ -465,10 +489,8 @@ class Extractor:
         """
         if self.upstream_root is None or not self.upstream_version_for:
             return ""
-        parts = file_value.strip("/").split("/")
-        if len(parts) < 3:
+        if len(file_value.strip("/").split("/")) < 3:
             return ""
-        mode, rest = parts[1], "/".join(parts[2:])
 
         rel = source_file.resolve().relative_to(self.repo_root.resolve()).as_posix()
         version = next((seg for seg in rel.split("/") if seg in self.upstream_version_for), None)
@@ -479,7 +501,9 @@ class Extractor:
             # version's content.
             return ""
 
-        upstream_rel = f"content/docs/{mode}/{self.upstream_version_for[version]}/{rest}"
+        mode, written_dir, rest = split_rebase_file(file_value)
+        upstream_dir = written_dir or self.upstream_version_for[version]
+        upstream_rel = f"content/docs/{mode}/{upstream_dir}/{rest}"
         upstream_file = self.upstream_root / upstream_rel
         if not upstream_file.is_file():
             raise FileNotFoundError(
@@ -494,7 +518,7 @@ class Extractor:
         body = text.split("---", 2)[2] if text.startswith("---") and text.count("---") >= 2 else text
 
         # Per consumer version too: it resolves the consumer's own snippets.
-        key = f"{mode}/{self.upstream_version_for[version]}/{version}"
+        key = f"{mode}/{upstream_dir}/{version}"
         extractor = self._upstream_extractors.get(key)
         if extractor is None:
             extractor = Extractor(
@@ -503,7 +527,7 @@ class Extractor:
                     "main_file": upstream_rel,
                     "sources": [],
                     "options": self.definition.get("options", {}),
-                    "context": {"product": mode, "version": self.upstream_version_for[version],
+                    "context": {"product": mode, "version": upstream_dir,
                                 "conditions": sorted(self.conditions)},
                 },
                 docs_tests_root=self.docs_tests_root,
