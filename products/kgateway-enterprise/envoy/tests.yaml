@@ -180,11 +180,21 @@ scenarios:
     page: security/acl.md
     path: acl
   add-request-header:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/header-control/request-header.md
     path: add-request-header
   add-response-header:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/header-control/response-header.md
     path: add-response-header
   additional-settings-schema:
@@ -391,8 +401,31 @@ scenarios:
     type: schema
     page: security/dlp.md
     path: all
+  dynamic-request-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/header-control/request-header.md
+    path: dynamic-request-header
+  dynamic-response-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/header-control/response-header.md
+    path: dynamic-response-header
   early-request-header-modifier:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/header-control/early-request-header-modifier.md
     path: early-request-header-modifier
   ec2-schema:
@@ -440,7 +473,12 @@ scenarios:
     page: traffic-management/extproc/filter-stages.md
     path: filter-stages
   forward-xfcc:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/header-control/forward-xfcc.md
     path: forward-xfcc
   gateway-metrics:
@@ -479,6 +517,15 @@ scenarios:
     type: schema
     page: traffic-management/grpc-transcoding.md
     path: all
+  header-from-secret:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/header-control/request-header.md
+    path: header-from-secret
   header-manipulation:
     type: schema
     page: traffic-management/extproc/header-manipulation.md
@@ -580,27 +627,66 @@ scenarios:
     page: portal/frontend-setup/login.md
     path: all
   match-header-exact:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/match/header.md
     path: match-header-exact
+  match-header-regex:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/match/header.md
+    path: match-header-regex
   match-host:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/match/host.md
     path: match-host
   match-method:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/match/method.md
     path: match-method
   match-path:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/match/path.md
     path: match-path
   match-query:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/match/query.md
     path: match-query
   max-headers-count:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/header-control/max-headers-count.md
     path: max-headers-count
   migrate-schema:
@@ -705,10 +791,37 @@ scenarios:
     type: schema
     page: security/extauth/opa/rego-cm.md
     path: all
+  remove-request-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/header-control/request-header.md
+    path: remove-request-header
+  remove-response-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/header-control/response-header.md
+    path: remove-response-header
   require-auth-schema:
     type: schema
     page: security/extauth/require-auth.md
     path: all
+  response-header-from-secret:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/header-control/response-header.md
+    path: response-header-from-secret
   response-header-sanitization-schema:
     type: schema
     page: security/response-header-sanitization.md
@@ -726,7 +839,12 @@ scenarios:
     page: traffic-management/rewrite/path.md
     path: rewrite-path-full
   route-ordering:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/match/route-ordering.md
     path: route-ordering
   sample-app:
@@ -745,6 +863,24 @@ scenarios:
     type: schema
     page: traffic-management/destination-types/backends/lambda/service-accounts.md
     path: service-accounts
+  set-request-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/header-control/request-header.md
+    path: set-request-header
+  set-response-header:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/header-control/response-header.md
+    path: set-response-header
   set-style-schema:
     type: schema
     page: security/ratelimit/global/set-style.md
@@ -782,11 +918,21 @@ scenarios:
     page: traffic-management/destination-types/backends/static.md
     path: static
   strip-port-host:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/header-control/strip-port-host.md
     path: strip-port-host
   strip-trailing-host-dot:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/header-control/strip-trailing-host-dot.md
     path: strip-trailing-host-dot
   templating-language-schema:
