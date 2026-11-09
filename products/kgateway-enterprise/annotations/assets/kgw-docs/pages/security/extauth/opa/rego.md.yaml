@@ -1,0 +1,372 @@
+format: 1
+source: assets/kgw-docs/pages/security/extauth/opa/rego.md
+blocks:
+- 02bd6f6a78f0ee14 sh
+- da699b87c2130fcb sh
+- 7bd833af50d45c03 yaml
+- 3b19abd72c79b6b2 yaml
+- 887db6f6da9dcd86 sh
+- 3ea105525316b62c sh
+- 9ac4cc8d83b6d904 sh
+- b1507579a0174257
+- 381d5452ac358685 sh
+- 8d755e2e6e5a07ea sh
+- 000d07cfe05247e6
+- 1e528f6248459301 shell
+- 5e0dee9e1c7a24c8 shell
+- 2a60dfefc221005b yaml
+- 0ad4913bc07b073b yaml
+- 04352f9f1ca3f54b yaml
+- 8534286bc1f41c76 sh
+- 1b90a4502563e699 sh
+- 0a0c4c6404a883f5 sh
+- f1f61a5ff12b7d97
+- 722d2372e63f0f3a sh
+- 4e5229c05414ddfa sh
+- f3966eb326dbc8d0
+- 0e4627c3f4b06485 shell
+tags:
+- paths: extauth-opa-rego
+  block: 0
+  fingerprint: 02bd6f6a78f0ee14
+  lang: sh
+  lines: 68ddfab2 c4ec0d8f 839339c1 fae2cc27 6d1a5a1a 13b69e17 d10b36aa fae2cc27 cfb1de82 55007629 19b72084 2c58b0f2 d10b36aa abc56510
+  preview: cat <<EOF > policy.rego
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 1
+  fingerprint: da699b87c2130fcb
+  lang: sh
+  lines: da699b87
+  preview: kubectl -n httpbin create configmap allow-get-users --from-file=policy.rego
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 2
+  fingerprint: 7bd833af50d45c03
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 80e6a893 0f10c5bc 36184fa5 d5ec3fae c19c90c1 b79ab3f2 3e8bc744 0f10c5bc 95a386bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 3
+  fingerprint: 3b19abd72c79b6b2
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 80e6a893 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 80e6a893 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 4
+  fingerprint: 887db6f6da9dcd86
+  lang: sh
+  lines: 887db6f6
+  preview: kubectl get authconfig opa-auth -n httpbin -o yaml
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 5
+  fingerprint: 3ea105525316b62c
+  lang: sh
+  lines: 3ea10552
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080"'
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 8
+  fingerprint: 381d5452ac358685
+  lang: sh
+  lines: 381d5452
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 11
+  fingerprint: 1e528f6248459301
+  lang: shell
+  lines: 4908ff74 9947f34d f9bb17a5 7a556e16
+  preview: kubectl delete authconfig opa-auth -n httpbin
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 12
+  fingerprint: 5e0dee9e1c7a24c8
+  lang: shell
+  lines: 9eeabc2c 2fb5febe 54f82511 36755a95
+  preview: kubectl delete authconfig opa-auth -n httpbin --ignore-not-found
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 13
+  fingerprint: 2a60dfefc221005b
+  lang: yaml
+  lines: abbd1bdc f1540154 033792b5 8c8c4228 04498e8c 0f10c5bc ff72caa3 558c3aa0 8b7c531f 68c14ff3 29d1e7bc 40aa9995 2b7d91ed 9e3fb78d 8d49c138 d32971cf a7cb81f3 d10b36aa 0bfa672c dded5eb9 8f80bf1d 7d99e5d3 8b02e069 32542b95 de956db6 141cc0c5 36dd32b1 a737f2f0 5c03f1cd d10b36aa d10b36aa abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 14
+  fingerprint: 0ad4913bc07b073b
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 38cca6da 0f10c5bc 36184fa5 d5ec3fae c19c90c1 b79ab3f2 430c055c 0f10c5bc 1d7090da abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 15
+  fingerprint: 04352f9f1ca3f54b
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 38cca6da 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 38cca6da 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 16
+  fingerprint: 8534286bc1f41c76
+  lang: sh
+  lines: 8534286b
+  preview: kubectl get authconfig opa-advanced -n httpbin -o yaml
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 17
+  fingerprint: 1b90a4502563e699
+  lang: sh
+  lines: 1b90a450
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080"'
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 20
+  fingerprint: 722d2372e63f0f3a
+  lang: sh
+  lines: 722d2372
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080" -H "'
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+- paths: extauth-opa-rego
+  block: 23
+  fingerprint: 0e4627c3f4b06485
+  lang: shell
+  lines: 2fa9e513 fb1c9689 89d92728
+  preview: kubectl delete authconfig opa-advanced -n httpbin
+  form:
+    attr: paths="extauth-opa-rego"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 4
+    fingerprint: 887db6f6da9dcd86
+    lang: sh
+    lines: 887db6f6
+    preview: kubectl get authconfig opa-auth -n httpbin -o yaml
+  content: |-
+    {{< doc-test paths="extauth-opa-rego" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-rego - wait for the opa-auth policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: opa-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-opa-rego - wait for the opa-auth AuthConfig to be accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: opa-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 3ea105525316b62c
+    lang: sh
+    lines: 3ea10552
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080"'
+  content: |-
+    {{< doc-test paths="extauth-opa-rego" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-rego - the /headers path is not allowed by the policy and returns 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 381d5452ac358685
+    lang: sh
+    lines: 381d5452
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="extauth-opa-rego" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-rego - the /status/200 path is allowed by the policy and returns 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 8534286bc1f41c76
+    lang: sh
+    lines: 8534286b
+    preview: kubectl get authconfig opa-advanced -n httpbin -o yaml
+  content: |-
+    {{< doc-test paths="extauth-opa-rego" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-rego - wait for the opa-advanced policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: opa-advanced
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-opa-rego - wait for the opa-advanced AuthConfig to be accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: opa-advanced
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 1b90a4502563e699
+    lang: sh
+    lines: 1b90a450
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080"'
+  content: |-
+    {{< doc-test paths="extauth-opa-rego" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-rego - a request without an api-key is denied with 403, a custom body, and x-opa-deny-reason"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        headers:
+          - name: x-opa-deny-reason
+            comparator: equals
+            value: "missing-or-invalid-api-key"
+        bodyContains: "Request denied by OPA policy"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: 722d2372e63f0f3a
+    lang: sh
+    lines: 722d2372
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080" -H "'
+  content: |-
+    {{< doc-test paths="extauth-opa-rego" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-rego - a request with a valid api-key is allowed, x-opa-status is added, and api-key is stripped from the upstream request"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          api-key: "my-secret-key"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-opa-status
+            comparator: equals
+            value: "approved"
+        bodyJsonPath:
+          - path: "$.headers.X-Validated-By[0]"
+            comparator: equals
+            value: "opa-policy"
+          - path: "$.headers.Api-Key"
+            comparator: exists
+            negate: true
+    EOF
+    {{< /doc-test >}}

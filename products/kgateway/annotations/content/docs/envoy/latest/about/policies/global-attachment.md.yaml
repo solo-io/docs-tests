@@ -203,9 +203,9 @@ hidden:
        # Steps 1 and 2 by script: the page's step 1 also runs `open`, which has no
        # meaning on a CI runner, and step 2 is a manual edit. Helm prints JSON, which is
        # valid YAML, so jq adds the setting without duplicating the `controller` key.
-       helm get values kgateway -n kgateway-system -o json \
-         | jq '.controller.extraEnv.KGW_GLOBAL_POLICY_NAMESPACE = "kgateway-system"' > kgateway.yaml
-       cat kgateway.yaml
+       helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system -o json \
+         | jq '.controller.extraEnv.KGW_GLOBAL_POLICY_NAMESPACE = "kgateway-system"' > {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml
+       cat {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml
        {{< /doc-test >}}
 - after:
     block: 16
@@ -215,8 +215,8 @@ hidden:
     preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
   content: |2-
        {{< doc-test paths="global-attachment" >}}
-       kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
-       global_ns=$(kubectl get deployment kgateway -n kgateway-system \
+       kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
+       global_ns=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system \
          -o jsonpath='{.spec.template.spec.containers[*].env[?(@.name=="KGW_GLOBAL_POLICY_NAMESPACE")].value}')
        echo "KGW_GLOBAL_POLICY_NAMESPACE=${global_ns}"
        if [ "$global_ns" != "kgateway-system" ]; then

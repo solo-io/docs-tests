@@ -1,0 +1,516 @@
+format: 1
+source: assets/kgw-docs/pages/security/extauth/passthrough-auth.md
+blocks:
+- ae662f549cbac634 mermaid
+- d5dbbdefd61bb918 yaml
+- 813b124a05ce3650 yaml
+- 5a3d24de43b37282 sh
+- 970777410bcb334e yaml
+- e893350752d8911f yaml
+- 203d0729f7bae309 sh
+- 1a1d7641506a4ebb sh
+- b2ecf584c3563f58 txt
+- 57ebb43da3c3cc4d sh
+- f966b3985f033583 sh
+- 4259049d37c460ce txt
+- d04fe83306f195a8 sh
+- 598e1c758a7caa11 yaml
+- 9958a2d03718f6dd yaml
+- 04399b9f70dd53a6 yaml
+- 1cb57b4c71e41240 yaml
+- 7d685fa9420ced39 yaml
+- 9edf3b862b56a445 yaml
+tags:
+- paths: extauth-passthrough-grpc,extauth-passthrough-grpc-options
+  block: 1
+  fingerprint: d5dbbdefd61bb918
+  lang: yaml
+  lines: abbd1bdc 58584366 ab78925c 8c8c4228 852ae295 0bebd850 fa1e8330 23cc601c 36184fa5 97bcd5e0 8432e015 839a5cac 23cc601c a58565b2 8c8c4228 fa1e8330 23cc601c 73ca09d5 36184fa5 04968f51 3dc38930 1e18a9cf 0ff65a1a 088263b2 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc,extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc,extauth-passthrough-grpc-options
+  block: 2
+  fingerprint: 813b124a05ce3650
+  lang: yaml
+  lines: abbd1bdc f1540154 0d6480f0 8c8c4228 852ae295 0bebd850 fa1e8330 23cc601c 36184fa5 0ff65a1a d8212fc2 7811827d 9693ecf1 7d42f305 8432e015 23cc601c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc,extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc,extauth-passthrough-grpc-options
+  block: 3
+  fingerprint: 5a3d24de43b37282
+  lang: sh
+  lines: 5a3d24de
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=ext-au
+  form:
+    attr: paths="extauth-passthrough-grpc,extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc,extauth-passthrough-grpc-options
+  block: 4
+  fingerprint: 970777410bcb334e
+  lang: yaml
+  lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 8b265679 0bebd850 fa1e8330 23cc601c 36184fa5 9e973d21 e833744f 6d0a9a1d 70c97555 852ae295 b8eebd11 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc,extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc,extauth-passthrough-grpc-options
+  block: 5
+  fingerprint: e893350752d8911f
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 8b265679 0bebd850 fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e833744f 248578da 8b265679 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc,extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc
+  block: 6
+  fingerprint: 203d0729f7bae309
+  lang: sh
+  lines: 203d0729
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080"'
+  form:
+    attr: paths="extauth-passthrough-grpc"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc
+  block: 9
+  fingerprint: 57ebb43da3c3cc4d
+  lang: sh
+  lines: 57ebb43d
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080" '
+  form:
+    attr: paths="extauth-passthrough-grpc"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc
+  block: 12
+  fingerprint: d04fe83306f195a8
+  lang: sh
+  lines: 4174ba7e b3e4972a
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} -A -l app=ext-
+  form:
+    attr: paths="extauth-passthrough-grpc"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc-options
+  block: 13
+  fingerprint: 598e1c758a7caa11
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 49c051fb 0f10c5bc fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e833744f cfd701cc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc-options
+  block: 14
+  fingerprint: 9958a2d03718f6dd
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 8b265679 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e833744f 248578da 8b265679 40a067ee e6d1ada3 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc-options
+  block: 15
+  fingerprint: 04399b9f70dd53a6
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 8b265679 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e833744f 248578da 8b265679 ab53f7fc 44360e20 d8c06bd1 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc-options
+  block: 16
+  fingerprint: 1cb57b4c71e41240
+  lang: yaml
+  lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 8b265679 0bebd850 36184fa5 9e973d21 e833744f 5a91a165 6d0a9a1d 70c97555 852ae295 b8eebd11 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc-options
+  block: 17
+  fingerprint: 7d685fa9420ced39
+  lang: yaml
+  lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 8b265679 0bebd850 36184fa5 9e973d21 e833744f 462f79ed 6d0a9a1d 70c97555 852ae295 b8eebd11 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-grpc-options
+  block: 18
+  fingerprint: 9edf3b862b56a445
+  lang: yaml
+  lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 8b265679 0bebd850 36184fa5 9e973d21 e833744f 6d0a9a1d 70c97555 852ae295 b8eebd11 15d56a6c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-grpc-options"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 5a3d24de43b37282
+    lang: sh
+    lines: 5a3d24de
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=ext-au
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc,extauth-passthrough-grpc-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc - wait for the ext-authz deployment to be available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: ext-authz
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: e893350752d8911f
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 8b265679 0bebd850 fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e833744f 248578da 8b265679 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc,extauth-passthrough-grpc-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc - wait for the passthrough-auth policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: passthrough-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 203d0729f7bae309
+    lang: sh
+    lines: 203d0729
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080"'
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc - a request without the x-ext-authz header is denied with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        headers:
+          - name: x-ext-authz-check-result
+            comparator: equals
+            value: "denied"
+        bodyContains: "denied by ext_authz for not found header"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 57ebb43da3c3cc4d
+    lang: sh
+    lines: 57ebb43d
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080" '
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc - a request with x-ext-authz: allow is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-ext-authz: "allow"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 598e1c758a7caa11
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 49c051fb 0f10c5bc fa1e8330 23cc601c 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e833744f cfd701cc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc-options - wait for the passthrough-auth-disable policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: passthrough-auth-disable
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-grpc-options - ext auth is disabled on the httpbin route, so a request without the header succeeds"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    # Remove the route-level opt-out so that the next examples are enforced again.
+    kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} passthrough-auth-disable -n httpbin
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc-options - with the opt-out removed, a request without the header is denied again"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 9958a2d03718f6dd
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 8b265679 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e833744f 248578da 8b265679 40a067ee e6d1ada3 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc-options - wait for the passthrough-auth policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: passthrough-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-grpc-options - a POST with a body and x-ext-authz: allow is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/post"
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          x-ext-authz: "allow"
+          content-type: "application/json"
+        body: |
+          {"hello": "world"}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "extauth-passthrough-grpc-options - a POST with a body but no x-ext-authz header is denied"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/post"
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          content-type: "application/json"
+        body: |
+          {"hello": "world"}
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 04399b9f70dd53a6
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 8b265679 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 e833744f 248578da 8b265679 ab53f7fc 44360e20 d8c06bd1 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc-options - wait for the passthrough-auth policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: passthrough-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-grpc-options - with context extensions, a request with x-ext-authz: allow is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-ext-authz: "allow"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "extauth-passthrough-grpc-options - with context extensions, a request without the header is denied"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 1cb57b4c71e41240
+    lang: yaml
+    lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 8b265679 0bebd850 36184fa5 9e973d21 e833744f 5a91a165 6d0a9a1d 70c97555 852ae295 b8eebd11 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc-options" >}}
+    # Take the auth server down to exercise failOpen.
+    kubectl scale deployment ext-authz -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --replicas=0
+    kubectl wait --for=delete pod -l app=ext-authz -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=180s
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc-options - with failOpen and the auth server unreachable, a request without the header is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 7d685fa9420ced39
+    lang: yaml
+    lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 8b265679 0bebd850 36184fa5 9e973d21 e833744f 462f79ed 6d0a9a1d 70c97555 852ae295 b8eebd11 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc-options" >}}
+    # The auth server is still scaled to 0, so every auth check errors.
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc-options - with statusOnError 401 and the auth server unreachable, requests get 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-ext-authz: "allow"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 9edf3b862b56a445
+    lang: yaml
+    lines: abbd1bdc d664f32c 5ee5f7dc 8c8c4228 8b265679 0bebd850 36184fa5 9e973d21 e833744f 6d0a9a1d 70c97555 852ae295 b8eebd11 15d56a6c abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-grpc-options" >}}
+    # Bring the auth server back.
+    kubectl scale deployment ext-authz -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --replicas=1
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-grpc-options - wait for the ext-authz deployment to be available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: ext-authz
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-grpc-options - with a request timeout, a request with x-ext-authz: allow is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          x-ext-authz: "allow"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "extauth-passthrough-grpc-options - with a request timeout, a request without the header is denied with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}

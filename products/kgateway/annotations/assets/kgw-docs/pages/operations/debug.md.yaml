@@ -96,7 +96,7 @@ hidden:
     # Test-only: the CI runner cannot forward ports, and the admin server listens
     # on localhost:9095 inside the control plane pod. Add a debug container with
     # curl to the pod (it shares the pod's network) and read the endpoints from it.
-    cp_pod=$(kubectl get pod -n kgateway-system -l app.kubernetes.io/name=kgateway -o jsonpath='{.items[0].metadata.name}')
+    cp_pod=$(kubectl get pod -n kgateway-system -l app.kubernetes.io/name={{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -o jsonpath='{.items[0].metadata.name}')
     kubectl debug -n kgateway-system "$cp_pod" --image=curlimages/curl:8.10.1 --container=doctest-admin -- sleep 3600
     for i in $(seq 1 60); do
       [ -n "$(kubectl get pod -n kgateway-system "$cp_pod" -o jsonpath='{.status.ephemeralContainerStatuses[?(@.name=="doctest-admin")].state.running}')" ] && break

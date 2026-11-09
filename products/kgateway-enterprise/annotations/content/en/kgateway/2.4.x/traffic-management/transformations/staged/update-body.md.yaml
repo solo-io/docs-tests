@@ -1,0 +1,276 @@
+format: 1
+source: content/en/kgateway/2.4.x/traffic-management/transformations/staged/update-body.md
+blocks:
+- 4d5d9c21ccbd8bf2 sh
+- af318e4ad9cec5ed sh
+- 651c13fb28d623c1
+- c1e407749a284368 yaml
+- 4d5d9c21ccbd8bf2 sh
+- af318e4ad9cec5ed sh
+- 3d3f44d57d75ee07 console
+- cbe7302eaf493e79 yaml
+- 4d5d9c21ccbd8bf2 sh
+- af318e4ad9cec5ed sh
+- a457b7345d9604a0 console
+- b10cc8a4a8b066b6 yaml
+- 4d5d9c21ccbd8bf2 sh
+- af318e4ad9cec5ed sh
+- d2319f68a3e7e498 yaml
+- ed5e148ec7409060 sh
+tags:
+- paths: staged-update-body
+  block: 0
+  fingerprint: 4d5d9c21ccbd8bf2
+  lang: sh
+  lines: 9f1a6153 93236379
+  preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/json \
+  form:
+    attr: paths="staged-update-body"
+    only: true
+    lead: ' '
+- paths: staged-update-body
+  block: 3
+  fingerprint: c1e407749a284368
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 488c7a25 baf1ffd3 a58565b2 c98cc0c6 8d0f9c38 a0670d1a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="staged-update-body"
+    only: true
+    lead: ' '
+- paths: staged-update-body
+  block: 4
+  fingerprint: 4d5d9c21ccbd8bf2
+  lang: sh
+  lines: 9f1a6153 93236379
+  preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/json \
+  form:
+    attr: paths="staged-update-body"
+    only: true
+    lead: ' '
+- paths: staged-update-body
+  block: 7
+  fingerprint: cbe7302eaf493e79
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 488c7a25 baf1ffd3 a58565b2 babc1bf7 3a331596 22449075 a7d7aa25 5ab0d66c bd35300b 0b77f188 c98cc0c6 8d0f9c38 01e31e97 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="staged-update-body"
+    only: true
+    lead: ' '
+- paths: staged-update-body
+  block: 8
+  fingerprint: 4d5d9c21ccbd8bf2
+  lang: sh
+  lines: 9f1a6153 93236379
+  preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/json \
+  form:
+    attr: paths="staged-update-body"
+    only: true
+    lead: ' '
+- paths: staged-update-body
+  block: 11
+  fingerprint: b10cc8a4a8b066b6
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 488c7a25 baf1ffd3 a58565b2 c98cc0c6 8d0f9c38 d181bcdc abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="staged-update-body"
+    only: true
+    lead: ' '
+- paths: staged-update-body
+  block: 12
+  fingerprint: 4d5d9c21ccbd8bf2
+  lang: sh
+  lines: 9f1a6153 93236379
+  preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/json \
+  form:
+    attr: paths="staged-update-body"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 4d5d9c21ccbd8bf2
+    lang: sh
+    lines: 9f1a6153 93236379
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/json \
+  content: |-
+    {{< doc-test paths="staged-update-body" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-update-body - the json endpoint returns the original slideshow body"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/json"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.slideshow.author"
+            comparator: equals
+            value: 'Yours Truly'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: c1e407749a284368
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 488c7a25 baf1ffd3 a58565b2 c98cc0c6 8d0f9c38 a0670d1a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="staged-update-body" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-update-body - wait for the transformation policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: transformation
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 4d5d9c21ccbd8bf2
+    lang: sh
+    lines: 9f1a6153 93236379
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/json \
+  content: |-
+    {{< doc-test paths="staged-update-body" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-update-body - the response body is rebuilt from the author, title, and slides values"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/json"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: '"author": "Yours Truly", "title": "Sample Slide Show", "slides"'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: cbe7302eaf493e79
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 488c7a25 baf1ffd3 a58565b2 babc1bf7 3a331596 22449075 a7d7aa25 5ab0d66c bd35300b 0b77f188 c98cc0c6 8d0f9c38 01e31e97 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="staged-update-body" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-update-body - wait for the transformation policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: transformation
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 4d5d9c21ccbd8bf2
+    lang: sh
+    lines: 9f1a6153 93236379
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/json \
+  content: |-
+    {{< doc-test paths="staged-update-body" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-update-body - the author key is replaced with editor and the rest of the body is unchanged"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/json"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.slideshow.editor"
+            comparator: equals
+            value: 'Yours Truly'
+          - path: "$.slideshow.title"
+            comparator: equals
+            value: 'Sample Slide Show'
+          - path: "$.slideshow.slides[1].title"
+            comparator: equals
+            value: 'Overview'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: b10cc8a4a8b066b6
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 488c7a25 baf1ffd3 a58565b2 c98cc0c6 8d0f9c38 d181bcdc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="staged-update-body" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-update-body - wait for the transformation policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: transformation
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 4d5d9c21ccbd8bf2
+    lang: sh
+    lines: 9f1a6153 93236379
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/json \
+  content: |-
+    {{< doc-test paths="staged-update-body" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-update-body - every all value is replaced with a random string"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/json"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.slideshow.slides[0].type"
+            comparator: matches
+            value: '^[A-Za-z0-9+/]{22}$'
+          - path: "$.slideshow.slides[1].type"
+            comparator: matches
+            value: '^[A-Za-z0-9+/]{22}$'
+    EOF
+    {{< /doc-test >}}

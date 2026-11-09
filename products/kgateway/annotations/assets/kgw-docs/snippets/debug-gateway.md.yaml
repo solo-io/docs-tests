@@ -47,7 +47,7 @@ hidden:
   content: |-
     {{< doc-test paths="debug" >}}
     # The control plane pod and the http gateway proxy pod are Running and Ready.
-    kubectl wait pod -n kgateway-system -l app.kubernetes.io/name=kgateway --for=condition=Ready --timeout=300s
+    kubectl wait pod -n kgateway-system -l app.kubernetes.io/name={{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --for=condition=Ready --timeout=300s
     kubectl wait pod -n kgateway-system -l gateway.networking.k8s.io/gateway-name=http --for=condition=Ready --timeout=300s
     {{< /doc-test >}}
 - after:

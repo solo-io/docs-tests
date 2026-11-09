@@ -157,16 +157,16 @@ hidden:
     # reader to add the controller.extraEnv value by hand. Write the same file
     # here: the current release values plus KGW_WEIGHTED_ROUTE_PRECEDENCE: true,
     # so the page's own helm upgrade command below runs unchanged.
-    helm get values kgateway -n kgateway-system -o yaml > kgateway.yaml
+    helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system -o yaml > {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml
     python3 - <<'PY'
     import yaml
-    with open("kgateway.yaml") as f:
+    with open("{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml") as f:
         values = yaml.safe_load(f) or {}
     values.setdefault("controller", {}).setdefault("extraEnv", {})["KGW_WEIGHTED_ROUTE_PRECEDENCE"] = True
-    with open("kgateway.yaml", "w") as f:
+    with open("{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml", "w") as f:
         yaml.safe_dump(values, f, default_flow_style=False)
     PY
-    cat kgateway.yaml
+    cat {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml
     {{< /doc-test >}}
 - after:
     block: 11
@@ -176,8 +176,8 @@ hidden:
     preview: helm upgrade -i --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} --ver
   content: |-
     {{< doc-test paths="weighted-routes" >}}
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
-    wr_env=$(kubectl get deployment kgateway -n kgateway-system -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_WEIGHTED_ROUTE_PRECEDENCE")].value}')
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
+    wr_env=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_WEIGHTED_ROUTE_PRECEDENCE")].value}')
     if [ "$wr_env" != "true" ]; then
       echo "weighted-routes: expected KGW_WEIGHTED_ROUTE_PRECEDENCE=true on the kgateway controller, got '${wr_env}'"
       exit 1
@@ -189,7 +189,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.status.availableReplicas"
         jsonPathExpectation:
           comparator: greaterThan

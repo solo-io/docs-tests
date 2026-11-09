@@ -394,8 +394,8 @@ hidden:
     { cat /etc/ssl/certs/ca-certificates.crt 2>/dev/null || true; cat "$IDP_DIR/ca.crt"; } > "$IDP_DIR/ca-certificates.crt"
     command kubectl create configmap idp-standin-ca-bundle -n kgateway-system --from-file=ca-certificates.crt="$IDP_DIR/ca-certificates.crt"
     kubectl apply -f- <<'EOF'
-    apiVersion: gateway.kgateway.dev/v1alpha1
-    kind: GatewayParameters
+    apiVersion: {{< reuse "kgw-docs/snippets/gatewayparam-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
     metadata:
       name: idp-standin-ca
       namespace: kgateway-system

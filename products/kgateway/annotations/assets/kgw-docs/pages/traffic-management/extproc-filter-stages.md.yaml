@@ -129,7 +129,7 @@ hidden:
        {{< doc-test paths="filter-stages" >}}
        # The page's step 1 also runs `open values.yaml`, which has no meaning on a
        # CI runner, so save the current Helm values the same way without opening them.
-       helm get values kgateway -n kgateway-system -o yaml > values.yaml
+       helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system -o yaml > values.yaml
        cat values.yaml
        {{< /doc-test >}}
 - after:
@@ -140,8 +140,8 @@ hidden:
     preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
   content: |2-
        {{< doc-test paths="filter-stages" >}}
-       kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
-       policy_merge=$(kubectl get deployment kgateway -n kgateway-system \
+       kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
+       policy_merge=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system \
          -o jsonpath='{.spec.template.spec.containers[*].env[?(@.name=="KGW_POLICY_MERGE")].value}')
        echo "KGW_POLICY_MERGE=${policy_merge}"
        if ! jq -e '.trafficPolicy.extProc == "DeepMerge"' <<<"${policy_merge}" >/dev/null; then

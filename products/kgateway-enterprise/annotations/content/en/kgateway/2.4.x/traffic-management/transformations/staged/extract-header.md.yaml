@@ -1,0 +1,82 @@
+format: 1
+source: content/en/kgateway/2.4.x/traffic-management/transformations/staged/extract-header.md
+blocks:
+- ad79ec5706f4a556 yaml
+- 07e6c7524f56e350 sh
+- adcde90456dc95c0 sh
+- 29b7c6e83f8fedce console
+- ed5e148ec7409060 sh
+tags:
+- paths: staged-extract-header
+  block: 0
+  fingerprint: ad79ec5706f4a556
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 77f1ea54 baf1ffd3 a58565b2 babc1bf7 fd099c37 b5e048ab bc0ceeee 0b77f188 38dc0152 12b619c2 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="staged-extract-header"
+    only: true
+    lead: ' '
+- paths: staged-extract-header
+  block: 1
+  fingerprint: 07e6c7524f56e350
+  lang: sh
+  lines: 64779093 67c5a3ac c88c0a48 12be254e
+  preview: 'curl -vik -H "host: www.example.com:8080" \'
+  form:
+    attr: paths="staged-extract-header"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: ad79ec5706f4a556
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 77f1ea54 baf1ffd3 a58565b2 babc1bf7 fd099c37 b5e048ab bc0ceeee 0b77f188 38dc0152 12b619c2 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="staged-extract-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-extract-header - wait for the transformation policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: transformation
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 07e6c7524f56e350
+    lang: sh
+    lines: 64779093 67c5a3ac c88c0a48 12be254e
+    preview: 'curl -vik -H "host: www.example.com:8080" \'
+  content: |-
+    {{< doc-test paths="staged-extract-header" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-extract-header - the x-account-solo request header holds the extracted account value"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          account: "abc123"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.headers['X-Account-Solo'][0]"
+            comparator: equals
+            value: 'account: abc123-solo'
+    EOF
+    {{< /doc-test >}}

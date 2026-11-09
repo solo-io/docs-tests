@@ -1,0 +1,823 @@
+format: 1
+source: assets/kgw-docs/pages/security/extauth/ext-auth-rate-limit-deployer.md
+blocks:
+- 7656eb0a04764d4e sh
+- c3f577e1083f2781
+- 2ce66d0cf9f33626 yaml
+- cf440d4f13f7d829 sh
+- 86b4bb971f6344a3
+- bcf62eb802dd9da0 bash
+- b0efdd82980695f5 sh
+- 55b79fd92219f5cc yaml
+- f3de5deb0664c32c yaml
+- 994b1e1768335838 yaml
+- cf440d4f13f7d829 sh
+- 839bafd122e7f86d
+- 68599ee2654c5bfd bash
+- 0a47dd793c335a6e yaml
+- e2b3996150674e54 yaml
+- 873728f3c3064b4d yaml
+- 04473f4f38134b47 yaml
+- 6cfc71ed9ff987ee sh
+- 92663c6f7c222712 yaml
+- 2e073c89ef564406 yaml
+- d2489beaf273ef09 sh
+- efb136c09c93368f console
+tags:
+- paths: extauth-deployer
+  block: 0
+  fingerprint: 7656eb0a04764d4e
+  lang: sh
+  lines: 7656eb0a
+  preview: kubectl get gatewayclasses
+  form:
+    attr: paths="extauth-deployer"
+    only: true
+    lead: ' '
+- paths: extauth-deployer
+  block: 2
+  fingerprint: 2ce66d0cf9f33626
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 9278ed91 0bebd850 fa1e8330 36af8845 36184fa5 c281d1bb c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-deployer"
+    only: true
+    lead: ' '
+- paths: extauth-deployer
+  block: 3
+  fingerprint: cf440d4f13f7d829
+  lang: sh
+  lines: ce13b50a 410dae98
+  preview: kubectl get deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  form:
+    attr: paths="extauth-deployer"
+    only: true
+    lead: ' '
+- paths: extauth-deployer
+  block: 5
+  fingerprint: bcf62eb802dd9da0
+  lang: bash
+  lines: bcf62eb8
+  preview: kubectl delete Gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="extauth-deployer"
+    only: true
+    lead: ' '
+- paths: extauth-deployer
+  block: 6
+  fingerprint: b0efdd82980695f5
+  lang: sh
+  lines: b0efdd82
+  preview: kubectl get gatewayclass {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} -o ya
+  form:
+    attr: paths="extauth-deployer"
+    only: true
+    lead: ' '
+- paths: extauth-deployer
+  block: 8
+  fingerprint: f3de5deb0664c32c
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 0277df17 36184fa5 ba8e78cf 106f5da3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-deployer"
+    only: true
+    lead: ' '
+- paths: extauth-deployer
+  block: 9
+  fingerprint: 994b1e1768335838
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 1caae7e2 0ccc8edc 36184fa5 f0d741b9 c10d7538 82601aaa da480536 069de162 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-deployer"
+    only: true
+    lead: ' '
+- paths: extauth-deployer
+  block: 10
+  fingerprint: cf440d4f13f7d829
+  lang: sh
+  lines: ce13b50a 410dae98
+  preview: kubectl get deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  form:
+    attr: paths="extauth-deployer"
+    only: true
+    lead: ' '
+- paths: extauth-deployer
+  block: 12
+  fingerprint: 68599ee2654c5bfd
+  lang: bash
+  lines: 9450b7c0 99233dcc
+  preview: kubectl delete Gateway my-team-gateway -n default
+  form:
+    attr: paths="extauth-deployer"
+    only: true
+    lead: ' '
+- paths: extauth-deployer-manage
+  block: 13
+  fingerprint: 0a47dd793c335a6e
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 ab3ccc48 0bebd850 36184fa5 9cc14d83 356067ee 3e196ba7 ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ba62cf2b ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ab89fa94 ff7360cf cab2be2b 77f1ea54 cde43a03 14551a55 2629ac0e 983d6140 0217db29 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-deployer-manage"
+    only: true
+    lead: ' '
+- paths: extauth-deployer-manage
+  block: 14
+  fingerprint: e2b3996150674e54
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf b02ea8cb 3f04fdd7 4a23a5a4 2ee1c717 ab3ccc48 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-deployer-manage"
+    only: true
+    lead: ' '
+- paths: extauth-deployer-manage
+  block: 15
+  fingerprint: 873728f3c3064b4d
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 74dd1168 0bebd850 36184fa5 9cc14d83 356067ee 3e196ba7 e4bc2178 ba62cf2b e4bc2178 ab89fa94 e4bc2178 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-deployer-manage"
+    only: true
+    lead: ' '
+- paths: extauth-deployer-manage
+  block: 16
+  fingerprint: 04473f4f38134b47
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf b02ea8cb 3f04fdd7 4a23a5a4 2ee1c717 74dd1168 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-deployer-manage"
+    only: true
+    lead: ' '
+- paths: extauth-deployer-manage
+  block: 17
+  fingerprint: 6cfc71ed9ff987ee
+  lang: sh
+  lines: fafc61d6 410dae98
+  preview: kubectl delete deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  form:
+    attr: paths="extauth-deployer-manage"
+    only: true
+    lead: ' '
+- paths: extauth-deployer-timeout
+  block: 18
+  fingerprint: 92663c6f7c222712
+  lang: yaml
+  lines: 16c71da1 d664f32c 5ee5f7dc 8c8c4228 8ec2fd40 0bebd850 36184fa5 9e973d21 e833744f 6d0a9a1d 635e5c1d 70c97555 b38b822f 65e6df25 0bebd850 fe80e1dd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-deployer-timeout"
+    only: true
+    lead: ' '
+- paths: extauth-deployer-timeout
+  block: 19
+  fingerprint: 2e073c89ef564406
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 de54fd07 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 248578da 8ec2fd40 0bebd850 75674f79 529ff855 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-deployer-timeout"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: c3f577e1083f2781
+    lang: ''
+    lines: 0735699a 5b3aec9f 841c3572
+    preview: NAME                       CONTROLLER                ACCEPTED   AGE
+  content: |-
+    {{< doc-test paths="extauth-deployer" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-deployer - the default GatewayClass is accepted"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 86b4bb971f6344a3
+    lang: ''
+    lines: dc2a85f0 604b636a 2689070c f7627c28
+    preview: NAME                                        READY   UP-TO-DATE   AVAILABLE   AGE
+  content: |-
+    {{< doc-test paths="extauth-deployer" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-deployer - the ext-auth-service deployment for the default GatewayClass is ready"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.readyReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer - the rate-limiter deployment for the default GatewayClass is ready"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.readyReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer - the ext-cache deployment for the default GatewayClass is ready"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.readyReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: bcf62eb802dd9da0
+    lang: bash
+    lines: bcf62eb8
+    preview: kubectl delete Gateway http -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="extauth-deployer" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-deployer - the ext-auth-service deployment for the default GatewayClass is deleted after the Gateway is deleted"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer - the rate-limiter deployment for the default GatewayClass is deleted after the Gateway is deleted"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer - the ext-cache deployment for the default GatewayClass is deleted after the Gateway is deleted"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: f3de5deb0664c32c
+    lang: yaml
+    lines: 16c71da1 8c67597e 9730d414 8c8c4228 0277df17 36184fa5 ba8e78cf 106f5da3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-deployer" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-deployer - the my-team-gatewayclass GatewayClass is accepted"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: my-team-gatewayclass
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 839bafd122e7f86d
+    lang: ''
+    lines: dc2a85f0 2203d5be 906bdf37 1da1ba9d
+    preview: NAME                                        READY   UP-TO-DATE   AVAILABLE   AGE
+  content: |-
+    {{< doc-test paths="extauth-deployer" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-deployer - the ext-auth-service deployment for the my-team-gatewayclass GatewayClass is ready"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: my-team-gatewayclass
+        jsonPath: "$.items[0].status.readyReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer - the rate-limiter deployment for the my-team-gatewayclass GatewayClass is ready"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: my-team-gatewayclass
+        jsonPath: "$.items[0].status.readyReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer - the ext-cache deployment for the my-team-gatewayclass GatewayClass is ready"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: my-team-gatewayclass
+        jsonPath: "$.items[0].status.readyReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 68599ee2654c5bfd
+    lang: bash
+    lines: 9450b7c0 99233dcc
+    preview: kubectl delete Gateway my-team-gateway -n default
+  content: |-
+    {{< doc-test paths="extauth-deployer" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-deployer - the ext-auth-service deployment for the my-team-gatewayclass GatewayClass is deleted after the Gateway is deleted"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: my-team-gatewayclass
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer - the rate-limiter deployment for the my-team-gatewayclass GatewayClass is deleted after the Gateway is deleted"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: my-team-gatewayclass
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer - the ext-cache deployment for the my-team-gatewayclass GatewayClass is deleted after the Gateway is deleted"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: my-team-gatewayclass
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: e2b3996150674e54
+    lang: yaml
+    lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf b02ea8cb 3f04fdd7 4a23a5a4 2ee1c717 ab3ccc48 0bebd850 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-deployer-manage" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-deployer-manage - the ext-auth-service deployment uses the requests.cpu 200m from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.requests.cpu"
+        jsonPathExpectation:
+          comparator: equals
+          value: "200m"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the ext-auth-service deployment uses the requests.memory 256Mi from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.requests.memory"
+        jsonPathExpectation:
+          comparator: equals
+          value: "256Mi"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the ext-auth-service deployment uses the limits.cpu 750m from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.limits.cpu"
+        jsonPathExpectation:
+          comparator: equals
+          value: "750m"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the ext-auth-service deployment uses the limits.memory 512Mi from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.limits.memory"
+        jsonPathExpectation:
+          comparator: equals
+          value: "512Mi"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the rate-limiter deployment uses the requests.cpu 200m from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.requests.cpu"
+        jsonPathExpectation:
+          comparator: equals
+          value: "200m"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the rate-limiter deployment uses the requests.memory 256Mi from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.requests.memory"
+        jsonPathExpectation:
+          comparator: equals
+          value: "256Mi"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the rate-limiter deployment uses the limits.cpu 750m from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.limits.cpu"
+        jsonPathExpectation:
+          comparator: equals
+          value: "750m"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the rate-limiter deployment uses the limits.memory 512Mi from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.limits.memory"
+        jsonPathExpectation:
+          comparator: equals
+          value: "512Mi"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the ext-cache deployment uses the requests.cpu 256m from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.requests.cpu"
+        jsonPathExpectation:
+          comparator: equals
+          value: "256m"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the ext-cache deployment uses the requests.memory 512Mi from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.requests.memory"
+        jsonPathExpectation:
+          comparator: equals
+          value: "512Mi"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the ext-cache deployment uses the limits.cpu 1000m from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.limits.cpu"
+        jsonPathExpectation:
+          comparator: equals
+          value: "1000m"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the ext-cache deployment uses the limits.memory 2048Mi from my-gw-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources.limits.memory"
+        jsonPathExpectation:
+          comparator: equals
+          value: "2048Mi"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 6cfc71ed9ff987ee
+    lang: sh
+    lines: fafc61d6 410dae98
+    preview: kubectl delete deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  content: |-
+    {{< doc-test paths="extauth-deployer-manage" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-deployer-manage - the ext-auth-service deployment for the default GatewayClass is deleted and not re-created after the deployer is disabled"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the rate-limiter deployment for the default GatewayClass is deleted and not re-created after the deployer is disabled"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-manage - the ext-cache deployment for the default GatewayClass is deleted and not re-created after the deployer is disabled"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 6cfc71ed9ff987ee
+    lang: sh
+    lines: fafc61d6 410dae98
+    preview: kubectl delete deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+  content: |-
+    {{< doc-test paths="extauth-deployer-timeout" >}}
+    # Test-only: Step 1 points to an external auth guide, and Step 3 refers to an AuthConfig named
+    # basic-auth in the {{< reuse "kgw-docs/snippets/namespace.md" >}} namespace, which no guide creates. Create it with the user and
+    # APR1 hash from the basic auth AuthConfig guide (user:password).
+    kubectl apply -f- <<EOF
+    apiVersion: extauth.solo.io/v1
+    kind: AuthConfig
+    metadata:
+      name: basic-auth
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      configs:
+        - basicAuth:
+            apr:
+              users:
+                user:
+                  hashedPassword: 8BvzLUO9IfGPGGsPnAgSu1
+                  salt: TYiryv0/
+            realm: kgateway
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 2e073c89ef564406
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 de54fd07 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 248578da 8ec2fd40 0bebd850 75674f79 529ff855 0bebd850 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-deployer-timeout" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-deployer-timeout - the AuthConfig reaches the Accepted state"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: basic-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-timeout - the test-extauth-policy policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: test-extauth-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-deployer-timeout - through the extauth-extension, a request without credentials is denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: "extauth-deployer-timeout - through the extauth-extension, a request with the user credentials succeeds with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic dXNlcjpwYXNzd29yZA=="
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

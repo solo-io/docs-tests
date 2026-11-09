@@ -127,7 +127,7 @@ hidden:
         target:
           kind: GatewayClass
           metadata:
-            name: kgateway
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
         jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
         jsonPathExpectation:
           comparator: equals

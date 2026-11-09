@@ -162,7 +162,7 @@ hidden:
   content: |-
     {{< doc-test paths="advanced" >}}
     # Default: the chart does not set the variable to false, so the controller default (true) applies.
-    current=$(kubectl get deployment kgateway -n kgateway-system \
+    current=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system \
       -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_ENABLE_EXPERIMENTAL_GATEWAY_API_FEATURES")].value}')
     if [ -n "$current" ] && [ "$current" != "true" ]; then
       echo "FAIL: before any change, KGW_ENABLE_EXPERIMENTAL_GATEWAY_API_FEATURES is '$current', want unset or true"
@@ -176,7 +176,7 @@ hidden:
     helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
       --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
       --reuse-values -f advanced-experimental.yaml
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     YAMLTest -f - <<'EOF'
     - name: advanced - the experimental Gateway API features gate is set to false on the controller
       wait:
@@ -184,7 +184,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_ENABLE_EXPERIMENTAL_GATEWAY_API_FEATURES')].value"
         jsonPathExpectation:
           comparator: equals
@@ -231,7 +231,7 @@ hidden:
     helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
       --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
       --reuse-values -f advanced-leader-election.yaml
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     YAMLTest -f - <<'EOF'
     - name: advanced - leader election is disabled on the controller
       wait:
@@ -239,7 +239,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_DISABLE_LEADER_ELECTION')].value"
         jsonPathExpectation:
           comparator: equals
@@ -263,7 +263,7 @@ hidden:
       --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
       --reuse-values \
       --set-string controller.extraEnv.KGW_DISABLE_LEADER_ELECTION=false
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     {{< /doc-test >}}
 - after:
     block: 6
@@ -283,7 +283,7 @@ hidden:
     helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
       --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
       --reuse-values -f advanced-leader-timings.yaml
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     YAMLTest -f - <<'EOF'
     - name: advanced - leaseDuration sets KGW_LEADER_ELECTION_LEASE_DURATION
       wait:
@@ -291,7 +291,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_LEADER_ELECTION_LEASE_DURATION')].value"
         jsonPathExpectation:
           comparator: equals
@@ -305,7 +305,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_LEADER_ELECTION_RENEW_DEADLINE')].value"
         jsonPathExpectation:
           comparator: equals
@@ -319,7 +319,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_LEADER_ELECTION_RETRY_PERIOD')].value"
         jsonPathExpectation:
           comparator: equals
@@ -369,8 +369,8 @@ hidden:
     helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
       --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
       --reuse-values -f advanced-discovery.yaml
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
-    selectors=$(kubectl get deployment kgateway -n kgateway-system \
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
+    selectors=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system \
       -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_DISCOVERY_NAMESPACE_SELECTORS")].value}')
     echo "KGW_DISCOVERY_NAMESPACE_SELECTORS=$selectors"
     if ! grep -q '"v3"' <<<"$selectors" || ! grep -q '"prod"' <<<"$selectors"; then
@@ -438,7 +438,7 @@ hidden:
       --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
       --reuse-values \
       --set-json 'discoveryNamespaceSelectors=[]'
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     code=""
     for i in $(seq 1 60); do
       code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://${INGRESS_GW_ADDRESS}:8080/headers" -H "host: www.example.com") || true
@@ -473,7 +473,7 @@ hidden:
     preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
   content: |-
     {{< doc-test paths="advanced" >}}
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     YAMLTest -f - <<'EOF'
     - name: advanced - the scoping mode Helm value sets KGW_XDS_SCOPING_MODE
       wait:
@@ -481,7 +481,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_XDS_SCOPING_MODE')].value"
         jsonPathExpectation:
           comparator: equals
@@ -556,7 +556,7 @@ hidden:
     helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
       --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
       --reuse-values -f advanced-validation.yaml
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     {{< /doc-test >}}
 - after:
     block: 18
@@ -573,7 +573,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_VALIDATION_MODE')].value"
         jsonPathExpectation:
           comparator: equals
@@ -702,7 +702,7 @@ hidden:
     helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
       --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
       --reuse-values -f advanced-gomemlimit.yaml
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     YAMLTest -f - <<'EOF'
     - name: advanced - goMemLimitPercent 90 sets the live memory limit ratio to 0.90
       wait:
@@ -710,7 +710,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='AUTOMEMLIMIT')].value"
         jsonPathExpectation:
           comparator: equals
@@ -719,7 +719,7 @@ hidden:
           timeoutSeconds: 120
           intervalSeconds: 5
     EOF
-    gml=$(kubectl get deployment kgateway -n kgateway-system \
+    gml=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system \
       -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="GOMEMLIMIT")].name}')
     if [ -n "$gml" ]; then
       echo "FAIL: with goMemLimitPercent set, the chart still sets the fixed GOMEMLIMIT variable"
@@ -728,7 +728,7 @@ hidden:
     # The test cluster sets no memory limit on the controller, so the controller logs a warning.
     found=""
     for i in $(seq 1 30); do
-      logs=$(kubectl logs deployment/kgateway -n kgateway-system 2>/dev/null) || true
+      logs=$(kubectl logs deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system 2>/dev/null) || true
       if grep -q 'no finite memory limit' <<<"$logs"; then found=1; break; fi
       echo "no 'no finite memory limit' warning in the controller logs yet ($i/30)"; sleep 5
     done
@@ -863,7 +863,7 @@ hidden:
     preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment {{< reu
   content: |-
     {{< doc-test paths="advanced" >}}
-    mode=$(kubectl get deployment kgateway -n kgateway-system \
+    mode=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system \
       -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="KGW_REFERENCE_GRANT_MODE")].value}')
     if [ -n "$mode" ]; then
       echo "FAIL: KGW_REFERENCE_GRANT_MODE is '$mode' before the change, want unset (PERMISSIVE)"
@@ -994,7 +994,7 @@ hidden:
       oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
       --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
       -f values.yaml
-    kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     {{< /doc-test >}}
 - after:
     block: 26
@@ -1011,7 +1011,7 @@ hidden:
              kind: Deployment
              metadata:
                namespace: kgateway-system
-               name: kgateway
+               name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
            jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_REFERENCE_GRANT_MODE')].value"
            jsonPathExpectation:
              comparator: equals

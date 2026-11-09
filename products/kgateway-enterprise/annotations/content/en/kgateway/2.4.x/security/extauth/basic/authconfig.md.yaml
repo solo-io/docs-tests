@@ -1,0 +1,293 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/extauth/basic/authconfig.md
+blocks:
+- 2f143757ad5ef9e9 sh
+- 5a1584769c3f8df6 console
+- a87c7875a84a3f40 yaml
+- 49191f087a99a9bf yaml
+- 0fddaf2f7251acd9 sh
+- a00fb0c50741f81b console
+- 579b19038cf955c8 sh
+- 241dd920965f4bc6 sh
+- febd02aba6eb14f9 console
+- 691ee609dbcfc053 sh
+- bdfeaef44475711c console
+- f2d89ea7fb2f9d34 sh
+- 3822c396e198dd63 sh
+- b8a58ae44d111ff8 console
+- 06340d1886fbf716 sh
+tags:
+- paths: extauth-basic-authconfig
+  block: 0
+  fingerprint: 2f143757ad5ef9e9
+  lang: sh
+  lines: 2f143757
+  preview: htpasswd -nbm user password
+  form:
+    attr: paths="extauth-basic-authconfig"
+    only: true
+    lead: ' '
+- paths: extauth-basic-authconfig
+  block: 2
+  fingerprint: a87c7875a84a3f40
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 529ff855 0f10c5bc 36184fa5 d5ec3fae 6c360c9f e11ff142 c9888a7d 0a478cd0 93454560 aa2f82ea 098e6eb9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-basic-authconfig"
+    only: true
+    lead: ' '
+- paths: extauth-basic-authconfig
+  block: 3
+  fingerprint: 49191f087a99a9bf
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 529ff855 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-basic-authconfig"
+    only: true
+    lead: ' '
+- paths: extauth-basic-authconfig
+  block: 4
+  fingerprint: 0fddaf2f7251acd9
+  lang: sh
+  lines: 0fddaf2f
+  preview: kubectl get authconfig basic-auth -n httpbin -o jsonpath='{.status.state}{"\n"}'
+  form:
+    attr: paths="extauth-basic-authconfig"
+    only: true
+    lead: ' '
+- paths: extauth-basic-authconfig
+  block: 6
+  fingerprint: 579b19038cf955c8
+  lang: sh
+  lines: 579b1903
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com"'
+  form:
+    attr: paths="extauth-basic-authconfig"
+    only: true
+    lead: ' '
+- paths: extauth-basic-authconfig
+  block: 9
+  fingerprint: 691ee609dbcfc053
+  lang: sh
+  lines: 691ee609
+  preview: echo -n "user:password" | base64
+  form:
+    attr: paths="extauth-basic-authconfig"
+    only: true
+    lead: ' '
+- paths: extauth-basic-authconfig
+  block: 11
+  fingerprint: f2d89ea7fb2f9d34
+  lang: sh
+  lines: 800245fb eb3aa0d2
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  form:
+    attr: paths="extauth-basic-authconfig"
+    only: true
+    lead: ' '
+- paths: extauth-basic-authconfig
+  block: 14
+  fingerprint: 06340d1886fbf716
+  lang: sh
+  lines: 17709695 e2bc1015
+  preview: kubectl delete authconfig basic-auth -n httpbin
+  form:
+    attr: paths="extauth-basic-authconfig"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: 'Step 1: Generate your user credentials'
+    line: a502b3e829503cbd
+    occurrence: 0
+    words: 6b86b273 24cacf50 ca978112 63479ad6 6201111b 1a06df82 5e884898 10c22bcf ca978112 04f8996d b9776d7d 8d0288f4 50d858e0 f480ffb2 b9776d7d feb2ebf8 7c9bbe5e 663ea1bf fa8847b0 631aada4 10c22bcf ca978112 04f8996d 0695b563 b9776d7d 16f78a7d 04f8996d 6201111b b9776d7d 5e884898 5e884898 b9776d7d 5d347fd9 9150c74c b9776d7d e904c9cc feb2ebf8 65da367f 16f78a7d 5e884898 b9776d7d 62c66a7a 807d0fbc 3a4278f8 b9776d7d 5e884898 0695b563 b9776d7d d7e04cba b4ac05dd dcd74c94 3ebff31b b1eb2ec8 77bc06c5 fa51fd49 2be23c58 b9776d7d e0ee8bb5 89ae673c 0695b563 b4ac05dd b9776d7d b6a68e56 58296753 b9776d7d c6c1c9a9 3e64cc41 f480ffb2 b9776d7d e0705e68 02b3dce9 ec72b956 58296753 4d040d3f 5b397565 8fb6d5f3 7ab37787 b808e156 89445ea0 0695b563 b9776d7d 16f78a7d 6201111b 5e884898 8e7fc023 bb0347a4 8656aa55 8f4d9088 663ea1bf a3b142af
+    block_before: null
+  content: |-
+    {{< doc-test paths="extauth-basic-authconfig" >}}
+    # Test-only: the next step runs htpasswd. macOS ships it; on Linux it comes with apache2-utils.
+    command -v htpasswd >/dev/null 2>&1 || { sudo apt-get update -qq && sudo apt-get install -y -qq apache2-utils; }
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 5a1584769c3f8df6
+    lang: console
+    lines: 5a158476
+    preview: user:$apr1$TYiryv0/$8BvzLUO9IfGPGGsPnAgSu1
+  content: |-
+    {{< doc-test paths="extauth-basic-authconfig" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-basic-authconfig - htpasswd -nbm prints a salted APR1 entry for the user"
+      command:
+        command: "htpasswd -nbm user password"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: '^user:\$apr1\$[^$]+\$[^$]+'
+    - name: "extauth-basic-authconfig - the salt and hash on the page are the APR1 hash of the password"
+      command:
+        command: "openssl passwd -apr1 -salt 'TYiryv0/' password"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: '$apr1$TYiryv0/$8BvzLUO9IfGPGGsPnAgSu1'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: a87c7875a84a3f40
+    lang: yaml
+    lines: 16c71da1 98875768 efd325e8 8c8c4228 529ff855 0f10c5bc 36184fa5 d5ec3fae 6c360c9f e11ff142 c9888a7d 0a478cd0 93454560 aa2f82ea 098e6eb9 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="extauth-basic-authconfig" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-basic-authconfig - the basic-auth AuthConfig reaches the Accepted state"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: basic-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 49191f087a99a9bf
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 529ff855 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 529ff855 0f10c5bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-basic-authconfig" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-basic-authconfig - the basic-auth policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: basic-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: febd02aba6eb14f9
+    lang: console
+    lines: 63282280 47429b32 a679bcf1 5f7c6523 15357256
+    preview: HTTP/1.1 401 Unauthorized
+  content: |-
+    {{< doc-test paths="extauth-basic-authconfig" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-basic-authconfig - a request without credentials is denied with 401 and the kgateway realm"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+        headers:
+          - name: www-authenticate
+            comparator: equals
+            value: 'Basic realm="kgateway"'
+    - name: "extauth-basic-authconfig - a request with a wrong password is denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic dXNlcjp3cm9uZy1wYXNzd29yZA=="
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: bdfeaef44475711c
+    lang: console
+    lines: bdfeaef4
+    preview: dXNlcjpwYXNzd29yZA==
+  content: |-
+    {{< doc-test paths="extauth-basic-authconfig" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-basic-authconfig - the base64 credentials match the page's example output"
+      command:
+        command: "printf '%s' 'user:password' | base64"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: 'dXNlcjpwYXNzd29yZA=='
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: b8a58ae44d111ff8
+    lang: console
+    lines: 92413e97 a152bc23 c441a9d6 2cb853b3 15357256 71b9dd8a 5f7c6523
+    preview: HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="extauth-basic-authconfig" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-basic-authconfig - a request with the user credentials succeeds with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+          Authorization: "Basic dXNlcjpwYXNzd29yZA=="
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 06340d1886fbf716
+    lang: sh
+    lines: 17709695 e2bc1015
+    preview: kubectl delete authconfig basic-auth -n httpbin
+  content: |-
+    {{< doc-test paths="extauth-basic-authconfig" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-basic-authconfig - after cleanup, a request without credentials succeeds again"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

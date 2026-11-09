@@ -57,6 +57,9 @@ prerequisites:
   httpbin-org-standin:
     page: install/sample-app.md
     path: httpbin-org-standin
+  grpc-routing:
+    page: traffic-management/grpc.md
+    path: grpc
 # Pages with deliberately no test: section indexes, concept, reference,
 # release-note, and support pages. A rebase shell is skipped when its
 # upstream twin is skipped in ../../kgateway/envoy/tests.yaml.
@@ -162,21 +165,60 @@ skip:
 - page: traffic-management/transformations/simple/overview.md
 - page: traffic-management/transformations/staged/_index.md
 - page: traffic-management/transformations/staged/overview.md
+# Reference: template fragments only, no runnable steps.
+- page: traffic-management/transformations/staged/templating-language.md
 scenarios:
   about-schema:
     type: schema
     page: security/extauth/about.md
     path: all
   access-logging:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/access-logging.md
     path: access-logging
+  access-logging-extauth-latency:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/access-logging.md
+    path: access-logging-extauth-latency
+  access-logging-route-source:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/access-logging.md
+    path: access-logging-route-source
+  access-logging-string-format:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/access-logging.md
+    path: access-logging-string-format
+  access-logging-tcp:
+    type: functional
+    needs:
+    - install-standard
+    page: security/access-logging.md
+    path: access-logging-tcp
   access-token-schema:
     type: schema
     page: security/extauth/oauth/access-token.md
     path: all
   acl:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/acl.md
     path: acl
   add-request-header:
@@ -202,21 +244,55 @@ scenarios:
     page: integrations/istio/ambient/additional-settings.md
     path: all
   advanced:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: install/advanced.md
     path: advanced
+  affinity-consistent-hashing-maglev:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/session-affinity/consistent-hashing.md
+    path: affinity-consistent-hashing-maglev
   affinity-consistent-hashing-ringhash:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/session-affinity/consistent-hashing.md
     path: affinity-consistent-hashing-ringhash
   affinity-loadbalancing:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/session-affinity/loadbalancing.md
     path: affinity-loadbalancing
   affinity-session-persistence:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - httpbin
     page: traffic-management/session-affinity/session-persistence.md
     path: affinity-session-persistence
+  affinity-session-persistence-policy:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/session-affinity/session-persistence.md
+    path: affinity-session-persistence-policy
   airgap-schema:
     type: schema
     page: install/airgap.md
@@ -249,6 +325,10 @@ scenarios:
     type: schema
     page: traffic-management/transformations/staged/append-headers.md
     path: all
+  argocd:
+    type: functional
+    page: install/argocd.md
+    path: argocd
   authconfig-schema:
     type: schema
     page: security/extauth/basic/authconfig.md
@@ -258,23 +338,50 @@ scenarios:
     page: security/extauth/oauth/authorization-code.md
     path: all
   backend-tls:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/backend-tls.md
     path: backend-tls
+  backend-tls-bcp:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/backend-tls.md
+    path: backend-tls-bcp
   backendconfigpolicy-schema:
     type: schema
     page: about/policies/backendconfigpolicy.md
     path: backendconfigpolicy
   buffering:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/buffering.md
     path: buffering
   byo-ext-auth-service-grpc:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/extauth/byo-ext-auth-service/grpc.md
     path: byo-ext-auth-service-grpc
   byo-ext-auth-service-http:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/extauth/byo-ext-auth-service/http.md
     path: byo-ext-auth-service-http
   byo-redis-schema:
@@ -290,7 +397,12 @@ scenarios:
     page: security/extauth/chaining.md
     path: all
   circuit-breakers:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/circuit-breakers.md
     path: circuit-breakers
   claim-based-access-schema:
@@ -302,21 +414,67 @@ scenarios:
     page: security/jwt/simple/claim-based-rbac.md
     path: claim-based-rbac
   compression:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/compression.md
     path: compression
   configs:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: setup/customize/configs.md
     path: configs
+  configs-deployment:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/customize/configs.md
+    path: configs-deployment
+  configs-overlays:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/customize/configs.md
+    path: configs-overlays
+  configs-service:
+    type: functional
+    needs:
+    - install-standard
+    page: setup/customize/configs.md
+    path: configs-service
   connection:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/connection.md
     path: connection
   cors:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/cors.md
     path: cors
+  cors-trafficpolicy:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/cors.md
+    path: cors-trafficpolicy
   creds-secret-schema:
     type: schema
     page: traffic-management/destination-types/backends/lambda/creds-secret.md
@@ -326,11 +484,21 @@ scenarios:
     page: traffic-management/destination-types/backends/lambda/cross-account.md
     path: all
   csrf:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/csrf.md
     path: csrf
   custom-bootstrap:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/customize/envoy/custom-bootstrap.md
     path: custom-bootstrap
   custom-rules-schema:
@@ -338,7 +506,11 @@ scenarios:
     page: security/waf/custom-rules.md
     path: all
   customize-gateway:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: setup/customize/gateway.md
     path: customize-gateway
   database-schema:
@@ -346,7 +518,12 @@ scenarios:
     page: portal/operations/database.md
     path: all
   debug:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: operations/debug.md
     path: debug
   debug-schema:
@@ -354,35 +531,98 @@ scenarios:
     page: security/waf/operations/debug.md
     path: all
   default:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/default.md
     path: default
   delegation-basic:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: traffic-management/route-delegation/basic.md
+      path: route-delegation-prereq
     page: traffic-management/route-delegation/basic.md
     path: delegation-basic
   delegation-header-query:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: traffic-management/route-delegation/header-query.md
+      path: route-delegation-prereq
     page: traffic-management/route-delegation/header-query.md
     path: delegation-header-query
   delegation-inheritance-kgateway:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: traffic-management/route-delegation/inheritance/kgateway-policies.md
+      path: route-delegation-prereq
     page: traffic-management/route-delegation/inheritance/kgateway-policies.md
     path: delegation-inheritance-kgateway
   delegation-inheritance-native:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: traffic-management/route-delegation/inheritance/native-policies.md
+      path: route-delegation-prereq
     page: traffic-management/route-delegation/inheritance/native-policies.md
     path: delegation-inheritance-native
   delegation-label:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: traffic-management/route-delegation/label.md
+      path: route-delegation-prereq
     page: traffic-management/route-delegation/label.md
     path: delegation-label
+  delegation-label-wildcard:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: traffic-management/route-delegation/label.md
+      path: route-delegation-prereq
+    page: traffic-management/route-delegation/label.md
+    path: delegation-label-wildcard
   delegation-multi-level:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: traffic-management/route-delegation/multi-level-delegation.md
+      path: route-delegation-prereq
     page: traffic-management/route-delegation/multi-level-delegation.md
     path: delegation-multi-level
   delegation-multi-parent:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    before:
+    - page: traffic-management/route-delegation/multi-parent.md
+      path: route-delegation-prereq
     page: traffic-management/route-delegation/multi-parent.md
     path: delegation-multi-parent
   destination-selector-schema:
@@ -390,9 +630,22 @@ scenarios:
     page: traffic-management/destination-types/destination-selector.md
     path: all
   dfp:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
     page: traffic-management/dfp.md
     path: dfp
+  direct-response:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/direct-response.md
+    path: direct-response
   direct-response-schema:
     type: schema
     page: traffic-management/direct-response.md
@@ -444,10 +697,150 @@ scenarios:
     type: schema
     page: security/ratelimit/global/envoy.md
     path: all
+  extauth-apikey-hmac:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/apikey.md
+    path: extauth-apikey-hmac
+  extauth-apikey-raw:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/apikey.md
+    path: extauth-apikey-raw
   extauth-apikey-schema:
     type: schema
     page: security/extauth/apikey.md
     path: all
+  extauth-apikey-sha256:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/apikey.md
+    path: extauth-apikey-sha256
+  extauth-basic:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/basic/trafficpolicy.md
+    path: extauth-basic
+  extauth-basic-authconfig:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/basic/authconfig.md
+    path: extauth-basic-authconfig
+  extauth-basic-disable:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/basic/trafficpolicy.md
+    path: extauth-basic-disable
+  extauth-basic-multiple-users:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/basic/trafficpolicy.md
+    path: extauth-basic-multiple-users
+  extauth-basic-secret:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/basic/trafficpolicy.md
+    path: extauth-basic-secret
+  extauth-basic-secret-key:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/basic/trafficpolicy.md
+    path: extauth-basic-secret-key
+  extauth-chaining:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/chaining.md
+    path: extauth-chaining
+  extauth-chaining-fallback:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/chaining.md
+    path: extauth-chaining-fallback
+  extauth-deployer:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/about.md
+    path: extauth-deployer
+  extauth-deployer-manage:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/about.md
+    path: extauth-deployer-manage
+  extauth-deployer-timeout:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/about.md
+    path: extauth-deployer-timeout
+  extauth-opa-byo:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/opa/byo.md
+    path: extauth-opa-byo
+  extauth-opa-rego:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/opa/rego-cm.md
+    path: extauth-opa-rego
+  extauth-passthrough-grpc:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/passthrough/grpc.md
+    path: extauth-passthrough-grpc
+  extauth-passthrough-grpc-options:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/passthrough/grpc.md
+    path: extauth-passthrough-grpc-options
+  extauth-passthrough-http:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/passthrough/http.md
+    path: extauth-passthrough-http
+  extauth-passthrough-http-options:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/passthrough/http.md
+    path: extauth-passthrough-http-options
   extensions-schema:
     type: schema
     page: setup/customize/extensions.md
@@ -465,11 +858,28 @@ scenarios:
     page: traffic-management/transformations/staged/extract-query-params.md
     path: all
   fault-injection:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/fault-injection.md
     path: fault-injection
+  fault-injection-gateway:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: resiliency/fault-injection.md
+    path: fault-injection-gateway
   filter-stages:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/extproc/filter-stages.md
     path: filter-stages
   forward-xfcc:
@@ -482,23 +892,91 @@ scenarios:
     page: traffic-management/header-control/forward-xfcc.md
     path: forward-xfcc
   gateway-metrics:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: observability/gateway-metrics.md
     path: gateway-metrics
+  gateway-metrics-exclusion:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: observability/gateway-metrics.md
+    path: gateway-metrics-exclusion
+  gateway-metrics-inclusion:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: observability/gateway-metrics.md
+    path: gateway-metrics-inclusion
   gcp-schema:
     type: schema
     page: traffic-management/destination-types/backends/gcp.md
     path: all
   global:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/ratelimit/byo.md
     path: global
   global-attachment:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: about/policies/global-attachment.md
     path: global-attachment
+  global-local-global:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/byo.md
+    path: global-local-global
+  global-nested:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/byo.md
+    path: global-nested
+  global-path:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/byo.md
+    path: global-path
+  global-shadow:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/byo.md
+    path: global-shadow
+  global-user:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/byo.md
+    path: global-user
   grpc:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: traffic-management/grpc.md
     path: grpc
   grpc-schema:
@@ -506,11 +984,20 @@ scenarios:
     page: security/extauth/passthrough/grpc.md
     path: all
   grpc-services:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: traffic-management/destination-types/kube-services/grpc-services.md
     path: grpc-services
   grpc-statistics:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - grpc-routing
     page: traffic-management/grpc-statistics.md
     path: grpc-statistics
   grpc-transcoding-schema:
@@ -527,7 +1014,12 @@ scenarios:
     page: traffic-management/header-control/request-header.md
     path: header-from-secret
   header-manipulation:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/extproc/header-manipulation.md
     path: header-manipulation
   headers-to-body-schema:
@@ -535,15 +1027,53 @@ scenarios:
     page: traffic-management/transformations/staged/headers-to-body.md
     path: all
   health-checks-backend:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/health-checks/backend.md
     path: health-checks-backend
+  health-checks-backend-panic-default:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/health-checks/backend.md
+    path: health-checks-backend-panic-default
   health-checks-gateway:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/health-checks/gateway.md
     path: health-checks-gateway
+  helm:
+    type: functional
+    page: install/helm.md
+    path: helm
+  helm-custom-values:
+    type: functional
+    page: install/helm.md
+    path: helm-custom-values
+  helm-development:
+    type: functional
+    page: install/helm.md
+    path: helm-development
+  helm-experimental:
+    type: functional
+    page: install/helm.md
+    path: helm-experimental
   http-connect-tunnels:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/http-connect-tunnels.md
     path: http-connect-tunnels
   http-schema:
@@ -555,19 +1085,39 @@ scenarios:
     page: traffic-management/destination-types/kube-services/http-services.md
     path: http-services
   http-upgrades:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/http-upgrades.md
     path: http-upgrades
   http10:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/http10.md
     path: http10
   http2:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/http2.md
     path: http2
   http2-downstream:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/http2-downstream.md
     path: http2-downstream
   ingress-multi-schema:
@@ -578,16 +1128,40 @@ scenarios:
     type: schema
     page: integrations/istio/sidecar/ingress.md
     path: ingress
+  install-tls:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: install/tls.md
+    path: install-tls
   ip-filtering-schema:
     type: schema
     page: security/waf/ip-filtering.md
     path: all
+  istio-ambient-ingress:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: integrations/istio/ambient/ambient-ingress.md
+    path: istio-ambient-ingress
   keepalive-http2:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/keepalive/http2.md
     path: keepalive-http2
   keepalive-tcp:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/keepalive/tcp.md
     path: keepalive-tcp
   licensing-schema:
@@ -595,31 +1169,94 @@ scenarios:
     page: install/licensing.md
     path: all
   listenerpolicy:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: about/policies/listenerpolicy.md
     path: listenerpolicy
   listeners-http:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/http.md
     path: listeners-http
+  listeners-http-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/http.md
+    path: listeners-http-listenerset
   listeners-https:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/https.md
     path: listeners-https
+  listeners-https-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/https.md
+    path: listeners-https-listenerset
   listeners-overview-schema:
     type: schema
     page: setup/listeners/overview.md
     path: all
   listeners-tcp:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: setup/listeners/tcp.md
     path: listeners-tcp
+  listeners-tcp-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    page: setup/listeners/tcp.md
+    path: listeners-tcp-listenerset
   local:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/ratelimit/local.md
     path: local
+  local-disable:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/local.md
+    path: local-disable
+  local-gateway:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/local.md
+    path: local-gateway
   local-replies:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/local-replies.md
     path: local-replies
   login-schema:
@@ -694,13 +1331,30 @@ scenarios:
     page: install/migrate.md
     path: all
   mirroring:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/mirroring.md
     path: mirroring
   mtls:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/mtls.md
     path: mtls
+  mtls-per-listener:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/mtls.md
+    path: mtls-per-listener
   nlb-schema:
     type: schema
     page: integrations/aws-elb/nlb.md
@@ -714,11 +1368,21 @@ scenarios:
     page: security/waf/operations/observability.md
     path: all
   otel-stack:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: observability/otel-stack.md
     path: otel-stack
   outlier-detection:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/outlier-detection.md
     path: outlier-detection
   overview-schema:
@@ -730,29 +1394,82 @@ scenarios:
     page: security/waf/owasp-crs.md
     path: all
   per-try-timeout:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - httpbin
     page: resiliency/retry/per-try-timeout.md
     path: per-try-timeout
+  per-try-timeout-gateway-listener:
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    page: resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-gateway-listener
+  per-try-timeout-trafficpolicy:
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    page: resiliency/retry/per-try-timeout.md
+    path: per-try-timeout-trafficpolicy
   portal-auth-server-schema:
     type: schema
     page: portal/operations/portal-auth-server.md
     path: all
   preserve-request-paths:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/preserve-request-paths.md
     path: preserve-request-paths
   priority-groups:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/destination-types/backends/priority-groups.md
     path: priority-groups
   proxy-100-continue:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/proxy-100-continue.md
     path: proxy-100-continue
   proxy-protocol:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/proxy-protocol.md
     path: proxy-protocol
+  proxy-protocol-readiness:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/proxy-protocol.md
+    path: proxy-protocol-readiness
+  proxy-protocol-upstream:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/proxy-protocol.md
+    path: proxy-protocol-upstream
   quickstart:
     type: functional
     needs:
@@ -772,19 +1489,39 @@ scenarios:
     page: portal/operations/advanced/rbac.md
     path: all
   redirect-host:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/redirect/host.md
     path: redirect-host
   redirect-https:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/redirect/https.md
     path: redirect-https
   redirect-internal:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/redirect/internal.md
     path: redirect-internal
   redirect-path:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/redirect/path.md
     path: redirect-path
   rego-cm-schema:
@@ -809,6 +1546,13 @@ scenarios:
     - httpbin
     page: traffic-management/header-control/response-header.md
     path: remove-response-header
+  require-auth:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/require-auth.md
+    path: require-auth
   require-auth-schema:
     type: schema
     page: security/extauth/require-auth.md
@@ -827,17 +1571,96 @@ scenarios:
     page: security/response-header-sanitization.md
     path: all
   retry:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - httpbin
     page: resiliency/retry/retry.md
     path: retry
+  retry-gateway-listener:
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    page: resiliency/retry/retry.md
+    path: retry-gateway-listener
+  retry-trafficpolicy:
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    page: resiliency/retry/retry.md
+    path: retry-trafficpolicy
   rewrite-host:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/rewrite/host.md
     path: rewrite-host
+  rewrite-host-external:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
+    page: traffic-management/rewrite/host.md
+    path: rewrite-host-external
   rewrite-path-full:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/rewrite/path.md
     path: rewrite-path-full
+  rewrite-path-full-external:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
+    page: traffic-management/rewrite/path.md
+    path: rewrite-path-full-external
+  rewrite-path-prefix:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/rewrite/path.md
+    path: rewrite-path-prefix
+  rewrite-path-prefix-external:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
+    page: traffic-management/rewrite/path.md
+    path: rewrite-path-prefix-external
+  rewrite-path-regex:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/rewrite/path.md
+    path: rewrite-path-regex
+  rewrite-path-regex-external:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - httpbin-org-standin
+    page: traffic-management/rewrite/path.md
+    path: rewrite-path-regex-external
   route-ordering:
     type:
     - schema
@@ -856,7 +1679,11 @@ scenarios:
     page: install/sample-app.md
     path: sample-app
   selfmanaged:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: setup/customize/envoy/selfmanaged.md
     path: selfmanaged
   service-accounts-schema:
@@ -886,9 +1713,19 @@ scenarios:
     page: security/ratelimit/global/set-style.md
     path: all
   setup-gateway:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
     page: setup/gateway.md
     path: setup-gateway
+  setup-gateway-static-ip:
+    type: functional
+    needs:
+    - install-standard
+    page: setup/gateway.md
+    path: setup-gateway-static-ip
   setup-schema:
     type: schema
     page: portal/setup.md
@@ -898,25 +1735,103 @@ scenarios:
     page: security/extauth/opa/sidecar.md
     path: all
   simple-basic:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: security/jwt/simple/basic.md
     path: simple-basic
+  simple-basic-disable:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/jwt/simple/basic.md
+    path: simple-basic-disable
   sni:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/sni.md
     path: sni
+  sni-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/sni.md
+    path: sni-listenerset
+  staged-append-headers:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/transformations/staged/append-headers.md
+    path: staged-append-headers
   staged-auth-schema:
     type: schema
     page: security/jwt/staged/staged-auth.md
     path: all
+  staged-enrich-access-logs:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/transformations/staged/enrich-access-logs.md
+    path: staged-enrich-access-logs
+  staged-extract-header:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/transformations/staged/extract-header.md
+    path: staged-extract-header
+  staged-extract-query-params:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/transformations/staged/extract-query-params.md
+    path: staged-extract-query-params
+  staged-headers-to-body:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/transformations/staged/headers-to-body.md
+    path: staged-headers-to-body
+  staged-update-body:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/transformations/staged/update-body.md
+    path: staged-update-body
   startup-settings-schema:
     type: schema
     page: setup/customize/envoy/startup-settings.md
     path: all
   static:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/destination-types/backends/static.md
     path: static
+  static-backendtlspolicy:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/destination-types/backends/static.md
+    path: static-backendtlspolicy
   strip-port-host:
     type:
     - schema
@@ -940,51 +1855,141 @@ scenarios:
     page: traffic-management/transformations/simple/templating-language.md
     path: all
   timeout-idle:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/timeouts/idle.md
     path: timeout-idle
   timeout-idle-stream:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/timeouts/idle-stream.md
     path: timeout-idle-stream
   timeout-max-connection-duration:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/timeouts/max-connection-duration.md
     path: timeout-max-connection-duration
   timeout-request:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/timeouts/request.md
     path: timeout-request
+  timeout-request-trafficpolicy:
+    type: functional
+    needs:
+    - install-experimental
+    - httpbin
+    page: resiliency/timeouts/request.md
+    path: timeout-request-trafficpolicy
   timeout-tls-handshake:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: resiliency/timeouts/tls-handshake.md
     path: timeout-tls-handshake
   tls-passthrough:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/tls-passthrough.md
     path: tls-passthrough
+  tls-passthrough-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/tls-passthrough.md
+    path: tls-passthrough-listenerset
   tls-settings-schema:
     type: schema
     page: setup/listeners/tls-settings.md
     path: tls-settings
   tls-termination:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/tls-termination.md
     path: tls-termination
+  tls-termination-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/tls-termination.md
+    path: tls-termination-listenerset
   tls-termination-tcproute:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: setup/listeners/tls-termination-tcproute.md
     path: tls-termination-tcproute
+  tls-termination-tcproute-listenerset:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/listeners/tls-termination-tcproute.md
+    path: tls-termination-tcproute-listenerset
   tracing:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: observability/tracing.md
     path: tracing
+  tracing-disable:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: observability/tracing.md
+    path: tracing-disable
   traffic-split:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/traffic-split.md
     path: traffic-split
   trafficpolicy:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: about/policies/trafficpolicy.md
     path: trafficpolicy
   trafficpolicy-schema:
@@ -992,37 +1997,82 @@ scenarios:
     page: security/extauth/basic/trafficpolicy.md
     path: all
   transform-change-response-status:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/transformations/simple/change-response-status.md
     path: transform-change-response-status
   transform-decode-base64-headers:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/transformations/simple/decode-base64-headers.md
     path: transform-decode-base64-headers
   transform-inject-response-headers:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/transformations/simple/inject-response-headers.md
     path: transform-inject-response-headers
   transform-redirect-url:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/transformations/simple/redirect-url.md
     path: transform-redirect-url
   transform-update-request-path:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/transformations/simple/update-request-path.md
     path: transform-update-request-path
   transform-update-response-body:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/transformations/simple/update-response-body.md
     path: transform-update-response-body
   transformations-schema:
     type: schema
     page: traffic-management/destination-types/backends/lambda/transformations.md
     path: all
+  uninstall:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: operations/uninstall.md
+    path: uninstall
   update-body-schema:
     type: schema
     page: traffic-management/transformations/staged/update-body.md
     path: all
+  upgrade:
+    type: functional
+    page: operations/upgrade.md
+    path: upgrade
+  upgrade-experimental:
+    type: functional
+    page: operations/upgrade.md
+    path: upgrade-experimental
   versions-schema:
     type: schema
     page: reference/versions.md
@@ -1040,10 +2090,27 @@ scenarios:
     page: security/waf/overview.md
     path: all
   weighted-routes:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/weighted-routes.md
     path: weighted-routes
   zone-routing:
-    type: schema
+    type:
+    - schema
+    - functional
+    needs:
+    - install-standard
+    - httpbin
     page: traffic-management/zone-routing.md
     path: zone-routing
+  zone-routing-force:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/zone-routing.md
+    path: zone-routing-force

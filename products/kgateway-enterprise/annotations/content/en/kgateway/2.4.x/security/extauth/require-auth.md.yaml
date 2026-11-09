@@ -1,0 +1,250 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/extauth/require-auth.md
+blocks:
+- 9a5df46d7afe8526 sh
+- cff7597840a76c29 yaml
+- 8a257649326cf3eb sh
+- 5fba5f3bf561451f sh
+- fb06eabfb4adcd68 yaml
+- 1b90a4502563e699 sh
+- 0a0c4c6404a883f5 sh
+- b67a5d424a588203
+- d8d9b81cb8aeb51b yaml
+- c4cba2438e06d9cb yaml
+- 2b5fe5c9983bb7db yaml
+- 2fa34b5c7f208920 sh
+- e54a98ea89dab585 sh
+- 6364ab47a888e2d8
+- e3ab59f03285777d sh
+tags:
+- paths: require-auth
+  block: 2
+  fingerprint: 8a257649326cf3eb
+  lang: sh
+  lines: 87ff5769 39fd077a 0e1a9b32
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="require-auth"
+    only: true
+    lead: ' '
+- paths: require-auth
+  block: 3
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="require-auth"
+    only: true
+    lead: ' '
+- paths: require-auth
+  block: 4
+  fingerprint: fb06eabfb4adcd68
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 72ab0e66 e640c79c 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa bf0611ca 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="require-auth"
+    only: true
+    lead: ' '
+- paths: require-auth
+  block: 5
+  fingerprint: 1b90a4502563e699
+  lang: sh
+  lines: 1b90a450
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080"'
+  form:
+    attr: paths="require-auth"
+    only: true
+    lead: ' '
+- paths: require-auth
+  block: 8
+  fingerprint: d8d9b81cb8aeb51b
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 26995afc 0f10c5bc fa1e8330 f7bbc71c be2a10d0 2f7c298d e478f625 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="require-auth"
+    only: true
+    lead: ' '
+- paths: require-auth
+  block: 9
+  fingerprint: c4cba2438e06d9cb
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 97862ff9 0f10c5bc 36184fa5 d5ec3fae 5598fa1d 27466baf 8647a760 f7bbc71c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="require-auth"
+    only: true
+    lead: ' '
+- paths: require-auth
+  block: 10
+  fingerprint: 2b5fe5c9983bb7db
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 6609695e 0f10c5bc 36184fa5 588a5d84 80e9487c 350955ef 56bf9360 2c3ea4d6 75674f79 97862ff9 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="require-auth"
+    only: true
+    lead: ' '
+- paths: require-auth
+  block: 11
+  fingerprint: 2fa34b5c7f208920
+  lang: sh
+  lines: 1cf2c117 f9b0fd29
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080" \'
+  form:
+    attr: paths="require-auth"
+    only: true
+    lead: ' '
+- paths: require-auth
+  block: 14
+  fingerprint: e3ab59f03285777d
+  lang: sh
+  lines: 9d18d9b1 f78174e3 7fb99b9a abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa bf0611ca 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} require-auth-p
+  form:
+    attr: paths="require-auth"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 9a5df46d7afe8526
+    lang: sh
+    lines: 1a5d2257 db51caed
+    preview: helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse
+  content: |-
+    {{< doc-test paths="require-auth" >}}
+    # Replaces the step that saves the Helm values and opens them in an editor (step 1),
+    # and adds the step 2 snippet to the saved values file without an editor.
+    helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yaml > values.yaml
+    python3 - <<'PY'
+    import yaml
+    with open('values.yaml') as f:
+        values = yaml.safe_load(f) or {}
+    values.setdefault('controller', {}).setdefault('extraEnv', {})['KGW_ENABLE_AUTH_METADATA'] = 'true'
+    with open('values.yaml', 'w') as f:
+        yaml.safe_dump(values, f, default_flow_style=False)
+    PY
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 8a257649326cf3eb
+    lang: sh
+    lines: 87ff5769 39fd077a 0e1a9b32
+    preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  content: |-
+    {{< doc-test paths="require-auth" >}}
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=400s
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 5fba5f3bf561451f
+    lang: sh
+    lines: 5fba5f3b
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  content: |-
+    {{< doc-test paths="require-auth" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the controller deployment sets KGW_ENABLE_AUTH_METADATA to true"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_ENABLE_AUTH_METADATA')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "true"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the controller deployment is available after the upgrade"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 1b90a4502563e699
+    lang: sh
+    lines: 1b90a450
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080"'
+  content: |-
+    {{< doc-test paths="require-auth" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request to the require-auth route without an auth policy is denied with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains: "RBAC: access denied"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 2b5fe5c9983bb7db
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 6609695e 0f10c5bc 36184fa5 588a5d84 80e9487c 350955ef 56bf9360 2c3ea4d6 75674f79 97862ff9 0f10c5bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="require-auth" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "wait for the require-auth-policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: require-auth-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 2fa34b5c7f208920
+    lang: sh
+    lines: 1cf2c117 f9b0fd29
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080" \'
+  content: |-
+    {{< doc-test paths="require-auth" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request with the API key succeeds with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          api-key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

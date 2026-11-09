@@ -1,0 +1,481 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/extauth/apikey.md
+blocks:
+- d8d9b81cb8aeb51b yaml
+- 390b2043d16dcc7a sh
+- 99be6cfa643ab355 yaml
+- 4c2527feb335d2fc sh
+- 7a06c5f5fa592c3e yaml
+- fb17b499b0de4297 yaml
+- cd64000b6097e19f sh
+- 898d51c4ec5e9e35 sh
+- 35283094dae38cfd yaml
+- 959b4ae5eca900ca sh
+- 98330d4a78bd6b18 yaml
+- d516d4edd8d8feec yaml
+- f208b6fc5634d435 yaml
+- 2a1b58815cb0c815 yaml
+- 579b19038cf955c8 sh
+- 241dd920965f4bc6 sh
+- bf4e28a190982916
+- 8e2e3893d8b09391 sh
+- a1e9dc3cf65bd853 sh
+- 8e2e3893d8b09391 sh
+- a1e9dc3cf65bd853 sh
+- 88bfbe0f2cbad343 sh
+- 465b6a7bb8a579d2 sh
+- 9fea0da55d141c9b
+- cf30d75aa5b3825d sh
+- 65cf25f95620fe3c sh
+- bf4e28a190982916
+- 6dca127edcb710b4 sh
+tags:
+- paths: extauth-apikey-raw
+  block: 0
+  fingerprint: d8d9b81cb8aeb51b
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 26995afc 0f10c5bc fa1e8330 f7bbc71c be2a10d0 2f7c298d e478f625 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-apikey-raw"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-raw
+  block: 1
+  fingerprint: 390b2043d16dcc7a
+  lang: sh
+  lines: 390b2043
+  preview: kubectl get secret infra-apikey -n httpbin -oyaml
+  form:
+    attr: paths="extauth-apikey-raw"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-hmac
+  block: 3
+  fingerprint: 4c2527feb335d2fc
+  lang: sh
+  lines: 38df6891 df544ed1 8f480c6c
+  preview: export RAW_API_KEY='N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy'
+  form:
+    attr: paths="extauth-apikey-hmac"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-hmac
+  block: 4
+  fingerprint: 7a06c5f5fa592c3e
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 8d4105f4 0f10c5bc 77ed10b0 2f7c298d 619ae2ea abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-apikey-hmac"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-hmac
+  block: 5
+  fingerprint: fb17b499b0de4297
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 26995afc 0f10c5bc fa1e8330 f7bbc71c be2a10d0 2f7c298d 5792530f abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-apikey-hmac"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-hmac
+  block: 6
+  fingerprint: cd64000b6097e19f
+  lang: sh
+  lines: cd64000b
+  preview: kubectl get secret infra-apikey apikey-hmac-secret -n httpbin
+  form:
+    attr: paths="extauth-apikey-hmac"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-sha256
+  block: 7
+  fingerprint: 898d51c4ec5e9e35
+  lang: sh
+  lines: d5e7b64b 8b0f61a1 7b28c626 1836ebc2 f13fcd6e 5f47d6e4
+  preview: export CLIENT_ID_A='client-a'
+  form:
+    attr: paths="extauth-apikey-sha256"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-sha256
+  block: 8
+  fingerprint: 35283094dae38cfd
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 e52bb9ef 0f10c5bc fa1e8330 f7bbc71c be2a10d0 2f7c298d 26270a58 7ad6fe05 cb3f91d5 f1540154 a67acb0a 8c8c4228 4f85c4f4 0f10c5bc fa1e8330 f7bbc71c be2a10d0 2f7c298d c923426c 460093fa abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-apikey-sha256"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-sha256
+  block: 9
+  fingerprint: 959b4ae5eca900ca
+  lang: sh
+  lines: 959b4ae5
+  preview: kubectl get secret apikey-digest-client-a apikey-digest-client-b -n httpbin
+  form:
+    attr: paths="extauth-apikey-sha256"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-raw
+  block: 10
+  fingerprint: 98330d4a78bd6b18
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 97862ff9 0f10c5bc 36184fa5 d5ec3fae 5598fa1d 6e2781a3 f848bce3 27466baf 8647a760 f7bbc71c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-apikey-raw"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-hmac
+  block: 11
+  fingerprint: d516d4edd8d8feec
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 97862ff9 0f10c5bc 36184fa5 d5ec3fae 5598fa1d 6e2781a3 f848bce3 27466baf d74fa882 380a5d44 c5e0fdd7 746282d9 8d4105f4 0f10c5bc 8647a760 f7bbc71c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-apikey-hmac"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-sha256
+  block: 12
+  fingerprint: f208b6fc5634d435
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 97862ff9 0f10c5bc 36184fa5 d5ec3fae 5598fa1d abd7fe72 b9c53071 32821ce7 fa716aff 83ca2a10 f0ce727c 38dc0152 35973522 8647a760 f7bbc71c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="extauth-apikey-sha256"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-raw,extauth-apikey-hmac,extauth-apikey-sha256
+  block: 13
+  fingerprint: 2a1b58815cb0c815
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 de54fd07 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 97862ff9 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-apikey-raw,extauth-apikey-hmac,extauth-apikey-sha256"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-raw,extauth-apikey-hmac,extauth-apikey-sha256
+  block: 14
+  fingerprint: 579b19038cf955c8
+  lang: sh
+  lines: 579b1903
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com"'
+  form:
+    attr: paths="extauth-apikey-raw,extauth-apikey-hmac,extauth-apikey-sha256"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-raw
+  block: 17
+  fingerprint: 8e2e3893d8b09391
+  lang: sh
+  lines: 800245fb f9b0fd29
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  form:
+    attr: paths="extauth-apikey-raw"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-hmac
+  block: 19
+  fingerprint: 8e2e3893d8b09391
+  lang: sh
+  lines: 800245fb f9b0fd29
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  form:
+    attr: paths="extauth-apikey-hmac"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-sha256
+  block: 21
+  fingerprint: 88bfbe0f2cbad343
+  lang: sh
+  lines: 800245fb b676945b 1259d0bb
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  form:
+    attr: paths="extauth-apikey-sha256"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-sha256
+  block: 24
+  fingerprint: cf30d75aa5b3825d
+  lang: sh
+  lines: 800245fb d70534cc 1259d0bb
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  form:
+    attr: paths="extauth-apikey-sha256"
+    only: true
+    lead: ' '
+- paths: extauth-apikey-raw,extauth-apikey-hmac
+  block: 27
+  fingerprint: 6dca127edcb710b4
+  lang: sh
+  lines: f78174e3 cb92a914 7fb99b9a a52f586f 167efabb
+  preview: kubectl delete authconfig apikey-auth -n httpbin
+  form:
+    attr: paths="extauth-apikey-raw,extauth-apikey-hmac"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 390b2043d16dcc7a
+    lang: sh
+    lines: 390b2043
+    preview: kubectl get secret infra-apikey -n httpbin -oyaml
+  content: |-
+    {{< doc-test paths="extauth-apikey-raw" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "secret infra-apikey has $.type equals extauth.solo.io/apikey"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: httpbin
+            name: infra-apikey
+        jsonPath: "$.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "extauth.solo.io/apikey"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: "secret infra-apikey has $.data.api-key equals TjJZd01ESXhaVEV0TkdVek5TMWpOemd6TFRSa1lqQXRZakUyWXpSa1pHVm1OamN5"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: httpbin
+            name: infra-apikey
+        jsonPath: "$.data.api-key"
+        jsonPathExpectation:
+          comparator: equals
+          value: "TjJZd01ESXhaVEV0TkdVek5TMWpOemd6TFRSa1lqQXRZakUyWXpSa1pHVm1OamN5"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: cd64000b6097e19f
+    lang: sh
+    lines: cd64000b
+    preview: kubectl get secret infra-apikey apikey-hmac-secret -n httpbin
+  content: |-
+    {{< doc-test paths="extauth-apikey-hmac" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "secret infra-apikey has $.type equals extauth.solo.io/apikey"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: httpbin
+            name: infra-apikey
+        jsonPath: "$.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "extauth.solo.io/apikey"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: "secret apikey-hmac-secret has $.type equals extauth.solo.io/accountcredentials"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: httpbin
+            name: apikey-hmac-secret
+        jsonPath: "$.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "extauth.solo.io/accountcredentials"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 959b4ae5eca900ca
+    lang: sh
+    lines: 959b4ae5
+    preview: kubectl get secret apikey-digest-client-a apikey-digest-client-b -n httpbin
+  content: |-
+    {{< doc-test paths="extauth-apikey-sha256" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "secret apikey-digest-client-a has $.type equals extauth.solo.io/apikey"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: httpbin
+            name: apikey-digest-client-a
+        jsonPath: "$.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "extauth.solo.io/apikey"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    - name: "secret apikey-digest-client-b has $.type equals extauth.solo.io/apikey"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: httpbin
+            name: apikey-digest-client-b
+        jsonPath: "$.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "extauth.solo.io/apikey"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 2a1b58815cb0c815
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 de54fd07 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 97862ff9 0f10c5bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-apikey-raw,extauth-apikey-hmac,extauth-apikey-sha256" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "wait for the test-extauth-policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: test-extauth-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 579b19038cf955c8
+    lang: sh
+    lines: 579b1903
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com"'
+  content: |-
+    {{< doc-test paths="extauth-apikey-raw,extauth-apikey-hmac,extauth-apikey-sha256" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request without credentials is denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 8e2e3893d8b09391
+    lang: sh
+    lines: 800245fb f9b0fd29
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  content: |-
+    {{< doc-test paths="extauth-apikey-raw" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request with the raw API key succeeds with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+          api-key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 8e2e3893d8b09391
+    lang: sh
+    lines: 800245fb f9b0fd29
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  content: |-
+    {{< doc-test paths="extauth-apikey-hmac" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request with the raw API key is accepted against the stored HMAC digest with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+          api-key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 88bfbe0f2cbad343
+    lang: sh
+    lines: 800245fb b676945b 1259d0bb
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  content: |-
+    {{< doc-test paths="extauth-apikey-sha256" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request with a matching client_id and client_secret succeeds with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+          client_id: "client-a"
+          client_secret: "digest-client-secret-a"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: cf30d75aa5b3825d
+    lang: sh
+    lines: 800245fb d70534cc 1259d0bb
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  content: |-
+    {{< doc-test paths="extauth-apikey-sha256" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request with a mismatched client_id and client_secret is denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com"
+          client_id: "client-b"
+          client_secret: "digest-client-secret-a"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
