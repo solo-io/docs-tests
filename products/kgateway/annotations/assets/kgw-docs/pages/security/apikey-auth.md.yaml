@@ -133,7 +133,7 @@ hidden:
     - name: wait for the apikey-auth TrafficPolicy to be accepted (secretRef, default api-key header)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: apikey-auth
@@ -265,7 +265,7 @@ hidden:
     - name: wait for the apikey-auth TrafficPolicy to be accepted (secretSelector app=httpbin)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: apikey-auth
@@ -315,7 +315,7 @@ hidden:
     - name: wait for the apikey-auth TrafficPolicy to be accepted (keySources X-API-KEY header)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: apikey-auth
@@ -378,7 +378,7 @@ hidden:
     - name: wait for the apikey-auth TrafficPolicy to be accepted (header, query, and cookie key sources)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: apikey-auth
@@ -471,7 +471,7 @@ hidden:
     - name: wait for the apikey-auth TrafficPolicy to be accepted (clientIdHeader x-client-id)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: apikey-auth
@@ -525,7 +525,7 @@ hidden:
     - name: wait for the apikey-auth TrafficPolicy to be accepted (forwardCredential true)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: apikey-auth
@@ -581,7 +581,7 @@ hidden:
     - name: wait for the apikey-auth TrafficPolicy to be accepted (gateway-level policy that the route overrides)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: apikey-auth
@@ -595,7 +595,7 @@ hidden:
     - name: wait for the apikey-auth-disable TrafficPolicy to be accepted (route-level disable)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: apikey-auth-disable

@@ -163,7 +163,7 @@ hidden:
     - name: wait for the tracing-route TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: tracing-route
@@ -210,7 +210,7 @@ hidden:
     - name: wait for the tracing-disable TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: tracing-disable

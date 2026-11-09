@@ -45,7 +45,7 @@ hidden:
     - name: wait for the csrf TrafficPolicy to be accepted on the httpbin HTTPRoute
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: csrf

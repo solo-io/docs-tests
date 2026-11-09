@@ -80,7 +80,7 @@ hidden:
     - name: wait for the okta-jwt-policy TrafficPolicy to be accepted (jwtAuth with the okta-jwt GatewayExtension)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: okta-jwt-policy
@@ -94,7 +94,7 @@ hidden:
     - name: wait for the okta-jwt-policy TrafficPolicy to be attached (jwtAuth with the okta-jwt GatewayExtension)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: okta-jwt-policy

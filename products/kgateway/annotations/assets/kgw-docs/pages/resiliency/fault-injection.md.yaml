@@ -103,7 +103,7 @@ hidden:
     - name: wait for the httpbin-fault TrafficPolicy with the delay to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: httpbin-fault
@@ -214,7 +214,7 @@ hidden:
     - name: wait for the httpbin-fault TrafficPolicy with the response rate limit to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: httpbin-fault
@@ -283,7 +283,7 @@ hidden:
     - name: wait for the fault-gateway TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: fault-gateway
@@ -371,7 +371,7 @@ hidden:
     - name: wait for the fault-disable TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: fault-disable

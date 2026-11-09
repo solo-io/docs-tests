@@ -152,7 +152,7 @@ hidden:
     - name: wait for the basic-auth TrafficPolicy to be accepted (inline users list)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: basic-auth
@@ -282,7 +282,7 @@ hidden:
     - name: wait for the basic-auth TrafficPolicy to be accepted (admin and developer users)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: basic-auth
@@ -358,7 +358,7 @@ hidden:
     - name: wait for the basic-auth TrafficPolicy to be accepted (secretRef basic-auth-users, default .htpasswd key)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: basic-auth
@@ -440,7 +440,7 @@ hidden:
     - name: wait for the basic-auth TrafficPolicy to be accepted (secretRef key passwords.htpasswd)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: basic-auth
@@ -492,7 +492,7 @@ hidden:
     - name: wait for the basic-auth TrafficPolicy to be accepted (gateway-level policy that the route overrides)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: basic-auth
@@ -506,7 +506,7 @@ hidden:
     - name: wait for the basic-auth-disable TrafficPolicy to be accepted (route-level disable)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: basic-auth-disable

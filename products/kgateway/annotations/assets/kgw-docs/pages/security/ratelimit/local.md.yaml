@@ -207,7 +207,7 @@ hidden:
        - name: wait for the Gateway-level local-ratelimit TrafficPolicy to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: kgateway-system
                name: local-ratelimit
@@ -278,7 +278,7 @@ hidden:
        - name: wait for the local-ratelimit TrafficPolicy on the http Gateway to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: kgateway-system
                name: local-ratelimit
@@ -344,7 +344,7 @@ hidden:
        - name: wait for the disable-ratelimit TrafficPolicy on httpbin-anything to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: httpbin
                name: disable-ratelimit

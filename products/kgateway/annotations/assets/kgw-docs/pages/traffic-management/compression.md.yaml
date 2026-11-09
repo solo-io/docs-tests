@@ -126,7 +126,7 @@ hidden:
     - name: "compression - wait for the response-compression TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: response-compression
@@ -206,7 +206,7 @@ hidden:
     - name: "compression - wait for the request-decompression TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: request-decompression

@@ -380,7 +380,7 @@ hidden:
           - name: wait for the httpbin-headers TrafficPolicy to be accepted
             wait:
               target:
-                kind: TrafficPolicy
+                kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
                 metadata:
                   namespace: kgateway-system
                   name: httpbin-headers
@@ -559,7 +559,7 @@ hidden:
           - name: wait for the httpbin-headers TrafficPolicy to be accepted
             wait:
               target:
-                kind: TrafficPolicy
+                kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
                 metadata:
                   namespace: kgateway-system
                   name: httpbin-headers
@@ -748,7 +748,7 @@ hidden:
           - name: wait for the httpbin-headers TrafficPolicy to be accepted
             wait:
               target:
-                kind: TrafficPolicy
+                kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
                 metadata:
                   namespace: kgateway-system
                   name: httpbin-headers
@@ -810,7 +810,7 @@ hidden:
        - name: wait for the httpbin-secret-headers TrafficPolicy to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: kgateway-system
                name: httpbin-secret-headers
@@ -954,7 +954,7 @@ hidden:
           - name: wait for the httpbin-headers TrafficPolicy to be accepted
             wait:
               target:
-                kind: TrafficPolicy
+                kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
                 metadata:
                   namespace: kgateway-system
                   name: httpbin-headers

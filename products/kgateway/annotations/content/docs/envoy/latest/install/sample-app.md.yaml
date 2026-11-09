@@ -395,8 +395,9 @@ hidden:
             name: httpbin
         jsonPath: "$.status.parents[0].controllerName"
         jsonPathExpectation:
-          comparator: equals
-          value: "kgateway.dev/kgateway"
+          # Open source kgateway, or the enterprise build.
+          comparator: matches
+          value: '^(kgateway\.dev/kgateway|solo\.io/enterprise-kgateway)$'
         polling:
           timeoutSeconds: 120
           intervalSeconds: 5

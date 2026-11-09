@@ -41,7 +41,7 @@ hidden:
     - name: wait for the timeout TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: timeout

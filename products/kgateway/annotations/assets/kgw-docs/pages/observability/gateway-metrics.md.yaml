@@ -196,7 +196,7 @@ hidden:
     - name: wait for the httpbin-stat-prefix TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: httpbin-stat-prefix

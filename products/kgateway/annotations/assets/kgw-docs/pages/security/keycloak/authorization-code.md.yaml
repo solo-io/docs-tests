@@ -154,7 +154,7 @@ hidden:
        - name: wait for the keycloak-oauth2 TrafficPolicy to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: httpbin
                name: keycloak-oauth2
@@ -168,7 +168,7 @@ hidden:
        - name: the keycloak-oauth2 TrafficPolicy is attached to its target
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: httpbin
                name: keycloak-oauth2

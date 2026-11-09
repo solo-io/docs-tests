@@ -359,7 +359,7 @@ hidden:
     - name: "add-response-header - wait for the httpbin-headers TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: httpbin-headers
@@ -512,7 +512,7 @@ hidden:
     - name: "set-response-header - wait for the httpbin-headers TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: httpbin-headers
@@ -671,7 +671,7 @@ hidden:
     - name: "remove-response-header - wait for the httpbin-headers TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: httpbin-headers
@@ -725,7 +725,7 @@ hidden:
     - name: "response-header-from-secret - wait for the httpbin-secret-response-headers TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: httpbin-secret-response-headers
@@ -845,7 +845,7 @@ hidden:
     - name: "dynamic-response-header - wait for the httpbin-headers TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: httpbin-headers

@@ -230,7 +230,7 @@ hidden:
     - name: wait for the ip-rate-limit TrafficPolicy to be accepted (RemoteAddress descriptor)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: ip-rate-limit
@@ -255,7 +255,7 @@ hidden:
     - name: wait for the request-path TrafficPolicy to be accepted (Path descriptor)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: request-path
@@ -295,7 +295,7 @@ hidden:
     - name: wait for the user-rate-limit TrafficPolicy to be accepted (Header X-User-ID descriptor)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: user-rate-limit
@@ -347,7 +347,7 @@ hidden:
     - name: wait for the combined-rate-limit TrafficPolicy to be accepted (nested Path and Header descriptors)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: combined-rate-limit
@@ -441,7 +441,7 @@ hidden:
     - name: wait for the local-global-rate-limit TrafficPolicy to be accepted (local token bucket and Generic service=premium-api descriptor)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: local-global-rate-limit

@@ -107,7 +107,7 @@ hidden:
     - name: "buffering-filter-stage - wait for the bufferedroute-policy TrafficPolicy to be accepted"
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: bufferedroute-policy

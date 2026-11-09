@@ -180,7 +180,7 @@ hidden:
        - name: wait for the gateway-ext-auth-policy TrafficPolicy to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: kgateway-system
                name: gateway-ext-auth-policy
@@ -258,7 +258,7 @@ hidden:
        - name: wait for the route-ext-auth-policy TrafficPolicy to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: httpbin
                name: route-ext-auth-policy

@@ -114,7 +114,7 @@ hidden:
        - name: transform-update-response-body - author and title body - wait for the transformation TrafficPolicy to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: httpbin
                name: transformation
@@ -174,7 +174,7 @@ hidden:
        - name: transform-update-response-body - replace_with_random body - wait for the transformation TrafficPolicy to be accepted
          wait:
            target:
-             kind: TrafficPolicy
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
              metadata:
                namespace: httpbin
                name: transformation

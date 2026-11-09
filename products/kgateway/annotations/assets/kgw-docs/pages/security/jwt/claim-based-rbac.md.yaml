@@ -93,7 +93,7 @@ hidden:
     - name: wait for the jwt-policy TrafficPolicy to be accepted (jwtAuth and rbac team == dev)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: kgateway-system
             name: jwt-policy

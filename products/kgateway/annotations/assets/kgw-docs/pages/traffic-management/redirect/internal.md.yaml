@@ -87,7 +87,7 @@ hidden:
     - name: wait for the internal-redirect TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: internal-redirect
@@ -161,7 +161,7 @@ hidden:
     - name: wait for the updated internal-redirect TrafficPolicy to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: internal-redirect

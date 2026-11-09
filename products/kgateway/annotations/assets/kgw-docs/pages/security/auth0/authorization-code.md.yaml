@@ -122,7 +122,7 @@ hidden:
     - name: wait for the auth0-oauth2-policy TrafficPolicy to be accepted (oauth2 with the auth0-oauth2 GatewayExtension)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: auth0-oauth2-policy
@@ -136,7 +136,7 @@ hidden:
     - name: wait for the auth0-oauth2-policy TrafficPolicy to be attached (oauth2 with the auth0-oauth2 GatewayExtension)
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: auth0-oauth2-policy

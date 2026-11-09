@@ -81,7 +81,7 @@ hidden:
     - name: wait for the local-ratelimit TrafficPolicy (targetRefs.sectionName rule1) to be accepted
       wait:
         target:
-          kind: TrafficPolicy
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
           metadata:
             namespace: httpbin
             name: local-ratelimit
