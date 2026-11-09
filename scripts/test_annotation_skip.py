@@ -207,7 +207,7 @@ class SchemaSkipTests(unittest.TestCase):
         import doc_test_schema_check
         report = self.repo / "attach.json"
         quiet(A.main, ["attach", "--repo", str(self.repo), "--annotations", str(self.adir), "--report", str(report)])
-        argv = ["doc_test_schema_check.py", "--repo-root", str(self.repo), "--crd-dir", str(self.crds),
+        argv = ["doc_test_schema_check.py", "--no-apiserver", "--repo-root", str(self.repo), "--crd-dir", str(self.crds),
                 "--report-file", str(self.repo / "out/schema.yaml")]
         if with_report:
             argv += ["--annotation-report", str(report)]

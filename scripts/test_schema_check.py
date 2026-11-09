@@ -120,7 +120,8 @@ class Base(unittest.TestCase):
     def run_check(self, *crd_dirs):
         """Each argument is a --crd-dir value, or a whole --flag=value."""
         import doc_test_schema_check
-        argv = ["doc_test_schema_check.py", "--repo-root", str(self.repo),
+        # --no-apiserver first, so a test that passes --apiserver still turns it on.
+        argv = ["doc_test_schema_check.py", "--no-apiserver", "--repo-root", str(self.repo),
                 "--docs-tests-root", str(self.repo), "--report-file", str(self.repo / "out/schema.yaml")]
         for d in crd_dirs:
             argv += [d] if d.startswith("--") else ["--crd-dir", d]

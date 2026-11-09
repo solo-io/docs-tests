@@ -628,11 +628,11 @@ def log_helm_summary(cache: Dict[Any, Any]) -> None:
 
 
 def start_apiservers(versions: Set[Optional[str]], crd_paths: Dict[Optional[str], List[Path]],
-                     schemas_by_version: Dict[Optional[str], Schemas], kubernetes_version: Optional[str],
+                     schemas_by_version: Dict[Optional[str], Schemas], apiserver_version: Optional[str],
                      envtest_dir: Optional[str]) -> List[ApiServer]:
     """One API server per version tree in `versions`, with that tree's CRDs
     (the bare --crd-dir paths, then its own, as load_schemas merges them)."""
-    binaries = ensure_binaries(kubernetes_version, envtest_dir)
+    binaries = ensure_binaries(apiserver_version, envtest_dir)
     servers: List[ApiServer] = []
     try:
         for version in sorted(versions, key=lambda v: v or ""):
@@ -700,15 +700,26 @@ def main() -> int:
     parser.add_argument(
         "--kubernetes-version",
         default=None,
-        help="Kubernetes version for kubeconform's schemas, e.g. 1.36.0 (default: kubeconform's). "
-        "With --apiserver, also the API server's version (its newest patch).",
+        help="Kubernetes version for kubeconform's schemas, e.g. 1.36.0 (default: kubeconform's).",
     )
     parser.add_argument(
         "--apiserver",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=True,
         help="Also create each custom resource that passes its CRD schema as a dry run on a bare "
         "Kubernetes API server (envtest's etcd and kube-apiserver, no nodes) with the same CRDs, so "
-        "CRD CEL rules are checked. Needs openssl. The binaries are downloaded once and cached.",
+        "CRD CEL rules are checked. On by default, because the static check ignores CEL rules and "
+        "every consumer should get them without opting in. Needs openssl and curl. The binaries are "
+        "downloaded once and cached. --no-apiserver skips it, for a quick local check.",
+    )
+    parser.add_argument(
+        "--apiserver-version",
+        default=None,
+        metavar="VERSION",
+        help="Kubernetes version of the --apiserver server, e.g. 1.36 (its newest patch). Default: the "
+        "newest envtest release. It is not --kubernetes-version on purpose: CRDs can use CEL functions "
+        "that only newer API servers compile, such as Gateway API v1.7's format library, which an "
+        "older server refuses to install.",
     )
     parser.add_argument(
         "--envtest-dir",
@@ -843,7 +854,7 @@ def main() -> int:
     servers: List[ApiServer] = []
     if args.apiserver:
         try:
-            servers = start_apiservers(used, crd_paths, schemas_by_version, args.kubernetes_version,
+            servers = start_apiservers(used, crd_paths, schemas_by_version, args.apiserver_version,
                                        args.envtest_dir)
         except (RuntimeError, OSError, subprocess.CalledProcessError) as exc:
             logger.error("--apiserver: %s", exc)

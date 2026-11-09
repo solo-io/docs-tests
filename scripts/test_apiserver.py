@@ -2,7 +2,7 @@
 """The schema check's API server pass: CRD CEL rules (solo-io/docs-tests#19).
 
 `jsonschema` ignores `x-kubernetes-validations`, so a manifest that breaks a
-CEL rule passed the schema check. With --apiserver, each custom resource that
+CEL rule passed the schema check. With --apiserver (the default), each custom resource that
 passes its schema is also created as a dry run on a bare API server.
 
 The end-to-end tests need envtest's binaries: set KUBEBUILDER_ASSETS, or run
@@ -98,6 +98,16 @@ class RejectionTests(unittest.TestCase):
     def test_a_rule_on_an_object_holding_a_shell_variable_is_dropped(self):
         # spec's own rule might compare spec.host, which the shell fills in.
         self.assertIsNone(rejection(self.MANIFEST, self.status("spec")))
+
+    def test_angle_bracket_placeholders_are_dropped(self):
+        manifest = {"metadata": {"name": "<policy_name>", "namespace": "<namespace>"}, "spec": {}}
+        self.assertIsNone(rejection(manifest, self.status("metadata.name", "metadata.namespace")))
+
+    def test_follow_on_cause_alone_is_dropped(self):
+        status = self.status("spec.host")
+        status["details"]["causes"].append({"reason": "FieldValueInvalid", "field": "<nil>", "message":
+                                            "Invalid value: null: " + api.FOLLOW_ON + "; correct the existing errors"})
+        self.assertIsNone(rejection(self.MANIFEST, status))
 
     def test_status_without_causes_is_its_message(self):
         self.assertEqual(rejection(self.MANIFEST, {"message": "strict decoding error"}), "strict decoding error")

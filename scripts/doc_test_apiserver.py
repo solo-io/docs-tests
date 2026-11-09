@@ -20,10 +20,11 @@ same ones `setup-envtest` downloads), checked against the release index's
 sha512, and are cached under ~/.cache/docs-tests/envtest. Pass --envtest-dir,
 or set KUBEBUILDER_ASSETS, to use binaries already on disk.
 
-A failure on a value that is a shell variable (`${HOST}`) is not reported,
-the same as in the static check: the shell fills it in before the resource
-reaches the API server. A rule on an object that holds a shell variable
-anywhere below it is not reported either, since it may compare that value.
+A failure on a value the reader fills in is not reported: a shell variable
+(`${HOST}`), which the shell replaces before the resource reaches the API
+server, the same as in the static check, or a `<placeholder>`. A rule on an
+object that holds one anywhere below it is not reported either, since it may
+compare that value.
 """
 
 import hashlib
@@ -55,8 +56,11 @@ logger = logging.getLogger(__name__)
 ENVTEST_INDEX = "https://raw.githubusercontent.com/kubernetes-sigs/controller-tools/HEAD/envtest-releases.yaml"
 CACHE_DIR = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "docs-tests" / "envtest"
 BINARIES = ("etcd", "kube-apiserver")
-SHELL_VAR_RE = re.compile(r"\$\{?[A-Za-z_][A-Za-z0-9_]*")
+# A value the reader fills in: a shell variable (`${HOST}`), which the shell
+# replaces, or a `<placeholder>`.
+PLACEHOLDER_RE = re.compile(r"\$\{?[A-Za-z_][A-Za-z0-9_]*|<[A-Za-z_][^<>]*>")
 TOKEN = "docs-tests"
+FOLLOW_ON = "some validation rules were not checked because the object was invalid"
 
 
 # --- Binaries ---------------------------------------------------------------
@@ -199,13 +203,13 @@ def _at(doc: Any, path: List[Any]) -> Any:
     return doc
 
 
-def _has_shell_var(node: Any) -> bool:
+def _has_placeholder(node: Any) -> bool:
     if isinstance(node, str):
-        return bool(SHELL_VAR_RE.search(node))
+        return bool(PLACEHOLDER_RE.search(node))
     if isinstance(node, dict):
-        return any(_has_shell_var(k) or _has_shell_var(v) for k, v in node.items())
+        return any(_has_placeholder(k) or _has_placeholder(v) for k, v in node.items())
     if isinstance(node, list):
-        return any(_has_shell_var(v) for v in node)
+        return any(_has_placeholder(v) for v in node)
     return False
 
 
@@ -218,9 +222,15 @@ def rejection(manifest: dict, status: dict) -> Optional[str]:
         return status.get("message") or json.dumps(status)
     kept = []
     for c in causes:
+        # Says only that another cause stopped the rest of the rules; that
+        # cause is reported, or was about a shell variable.
+        if FOLLOW_ON in (c.get("message") or ""):
+            continue
         f = c.get("field") or ""
+        if f == "<nil>":
+            f = ""
         node = _at(manifest, field_path(f)) if f else manifest
-        if _has_shell_var(node):
+        if _has_placeholder(node):
             continue
         kept.append(f"at {f or '(root)'}: {c.get('message') or c.get('reason')}")
     return "; ".join(kept) or None
@@ -285,7 +295,7 @@ class ApiServerClient:
             meta["generateName"] = "docs-tests-"
         if res.namespaced:
             ns = meta.get("namespace") or "default"
-            if _has_shell_var(ns):
+            if _has_placeholder(ns):
                 ns = meta["namespace"] = "default"
             base += f"/namespaces/{ns}"
         url = f"{base}/{res.plural}?dryRun=All&fieldValidation=Strict"
