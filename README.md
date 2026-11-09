@@ -275,7 +275,7 @@ asserts on a real response, which is what `functional` means.
 
 | Type | What it checks | Needs | Blocks the PR? |
 |---|---|---|---|
-| `schema` | The doc's own examples validate against the real schema for the version the page documents: custom resources and Gateway API kinds against their CRDs, core Kubernetes kinds through `kubeconform`, and standalone config files against agentgateway's `schema/config.json` (renamed/removed/mistyped fields, wrong types) | Nothing — no cluster, no execution (`doc_test_schema_check.py`) | Yes, in its own job |
+| `schema` | The doc's own examples validate against the real schema for the version the page documents: custom resources and Gateway API kinds against their CRDs, core Kubernetes kinds through `kubeconform`, and standalone config files against agentgateway's `schema/config.json` (renamed/removed/mistyped fields, wrong types). Also CRD CEL rules, through a dry run on a bare API server (skip with `--no-apiserver`) | Nothing — no cluster, no execution (`doc_test_schema_check.py`). `--apiserver` runs a local `etcd` and `kube-apiserver`, but no nodes | Yes, in its own job |
 | `functional` | Real behavior in a real cluster (apply config, assert on a real response) | A `kind` cluster, no vendor credentials | Yes |
 
 `schema` needs no prerequisite chain — since nothing executes, only the step that shows
@@ -324,8 +324,21 @@ Add `schema` this way only when the scenario shows something the checker has a s
 for: a custom resource whose CRD it was given (agentgateway's own kinds, and Gateway API
 kinds), a core Kubernetes kind (when `kubeconform` is available), or, on a standalone page,
 a whole config file. A scenario in which nothing was validated fails rather than passing
-vacuously, so `schema` stays opt-in per scenario, not automatic. CRD CEL rules are not
-checked; see [#19](https://github.com/solo-io/docs-tests/issues/19).
+vacuously, so `schema` stays opt-in per scenario, not automatic.
+
+CRD CEL rules (`x-kubernetes-validations`) are checked by default, through `--apiserver`, because
+`jsonschema` ignores them. Pass `--no-apiserver` to skip them, for example for a quick local check.
+Each custom resource that passes its CRD
+schema is then also created as a dry run on a bare Kubernetes API server (envtest's `etcd`
+and `kube-apiserver`, no nodes or controllers) that has the same CRDs installed, one server
+per version tree. The binaries are downloaded once and cached under `~/.cache/docs-tests/envtest`, or taken
+from `--envtest-dir` or `$KUBEBUILDER_ASSETS`. The server is the newest envtest release unless
+`--apiserver-version` says otherwise. It does not follow `--kubernetes-version`, because a CRD
+can use CEL functions that only a newer API server compiles: an API server for Kubernetes 1.31
+refuses to install the Gateway API v1.7.0 CRDs.
+The run also needs `openssl` and `curl`. A rejection on a value the reader fills in, a shell
+variable (`${HOST}`) or a `<placeholder>`, isn't reported. Neither is a rule on an object that
+holds one, since the rule may compare that value. See [#19](https://github.com/solo-io/docs-tests/issues/19).
 
 Helm values are checked when the run passes `--helm-chart` for each product chart at each
 version. The product charts ship no `values.schema.json`, so the

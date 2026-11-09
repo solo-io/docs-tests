@@ -3,7 +3,8 @@
 a reader against the real schema it has to satisfy.
 
 Unlike the 'functional' type, this never stands up a cluster
-or executes anything. It catches renamed/removed/mistyped fields for near-zero
+or executes anything (with --apiserver it runs a local API server, but no
+nodes, and nothing a page shows is stored). It catches renamed/removed/mistyped fields for near-zero
 cost, and runs on every PR regardless of vendor credentials or live infrastructure.
 
 What gets checked, and against what:
@@ -21,10 +22,14 @@ What gets checked, and against what:
   or one of another type than its default, fails the scenario. Helm values don't count toward a pass, though: the
   Verified badge promises only resources and config files.
 
+- CRD CEL rules (`x-kubernetes-validations`), which `jsonschema` ignores, when
+  --apiserver is given: each custom resource that passes its CRD schema is
+  also created as a dry run on a bare Kubernetes API server with the same
+  CRDs installed, one server per version tree (see doc_test_apiserver.py).
+
 Blocks that don't parse as YAML are skipped, not flagged. They don't count
 toward a pass, though: a scenario in which nothing was validated fails, rather
-than passing with nothing checked. CRD CEL rules (`x-kubernetes-validations`)
-are not checked; see solo-io/docs-tests#19.
+than passing with nothing checked.
 
 Each version tree should be checked against the release it documents, not the
 default branch. Pass `--crd-dir latest=DIR --crd-dir main=DIR` (and the same for
@@ -54,6 +59,7 @@ try:
 except ModuleNotFoundError:
     jsonschema = None
 
+from doc_test_apiserver import ApiServer, ApiServerClient, ensure_binaries, load_crds
 from doc_test_extract import Extractor, resolve_docs_tests_root
 from doc_test_helm_values import HelmChart, check_blocks as check_helm_blocks, load_chart, load_overlay
 from doc_test_run import (
@@ -89,6 +95,7 @@ class Schemas:
     crds: CrdValidators = field(default_factory=dict)
     config: Optional[Any] = None   # validator for the standalone config file
     helm: Dict[str, HelmChart] = field(default_factory=dict)   # chart name -> values schema
+    apiserver: Optional[ApiServerClient] = None   # for CEL rules, with --apiserver
 
 
 def extract_yaml_documents(block_content: str) -> List[str]:
@@ -347,6 +354,7 @@ class StepResult:
     read: Set[Path] = field(default_factory=set)
     helm_checked: int = 0
     config_checked: int = 0   # of `checked`, the standalone config files; the rest are manifests
+    dry_runs: int = 0         # of `checked`, the custom resources the API server also accepted or rejected
 
 
 # Set in main(), before the pool forks, from --upstream-root and
@@ -425,6 +433,14 @@ def check_step(repo_root: Path, file: str, path: str, schemas: Schemas, docs_tes
             if (group, doc["kind"]) in schemas.crds:
                 res.checked += 1
                 err = check_manifest(doc, schemas.crds)
+                # Only a manifest that passed its schema goes to the API
+                # server, so one mistake is reported once.
+                if not err and schemas.apiserver is not None:
+                    res.dry_runs += 1
+                    rejected = schemas.apiserver.dry_run(doc)
+                    if rejected:
+                        name = (doc.get("metadata") or {}).get("name")
+                        err = f"{doc['kind']}{f' {name}' if name else ''} {rejected}"
                 if err:
                     res.errors.append(f"{loc}: {err}")
             elif kubeconform is not None:
@@ -606,6 +622,29 @@ def log_helm_summary(cache: Dict[Any, Any]) -> None:
     checked = sum(r.helm_checked for u, r in cache.items() if u[0] == "step")
     if checked:
         logger.info("Helm values: %d set(s) of values checked against their chart", checked)
+    dry_runs = sum(r.dry_runs for u, r in cache.items() if u[0] == "step")
+    if dry_runs:
+        logger.info("API server: %d custom resource(s) created as a dry run", dry_runs)
+
+
+def start_apiservers(versions: Set[Optional[str]], crd_paths: Dict[Optional[str], List[Path]],
+                     schemas_by_version: Dict[Optional[str], Schemas], apiserver_version: Optional[str],
+                     envtest_dir: Optional[str]) -> List[ApiServer]:
+    """One API server per version tree in `versions`, with that tree's CRDs
+    (the bare --crd-dir paths, then its own, as load_schemas merges them)."""
+    binaries = ensure_binaries(apiserver_version, envtest_dir)
+    servers: List[ApiServer] = []
+    try:
+        for version in sorted(versions, key=lambda v: v or ""):
+            crds = load_crds(crd_paths.get(None, []) + (crd_paths.get(version, []) if version else []))
+            server = ApiServer(binaries, crds, version or "every version")
+            servers.append(server)
+            schemas_by_version[version].apiserver = server.start()
+    except Exception:
+        for s in servers:
+            s.stop()
+        raise
+    return servers
 
 
 def main() -> int:
@@ -662,6 +701,32 @@ def main() -> int:
         "--kubernetes-version",
         default=None,
         help="Kubernetes version for kubeconform's schemas, e.g. 1.36.0 (default: kubeconform's).",
+    )
+    parser.add_argument(
+        "--apiserver",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Also create each custom resource that passes its CRD schema as a dry run on a bare "
+        "Kubernetes API server (envtest's etcd and kube-apiserver, no nodes) with the same CRDs, so "
+        "CRD CEL rules are checked. On by default, because the static check ignores CEL rules and "
+        "every consumer should get them without opting in. Needs openssl and curl. The binaries are "
+        "downloaded once and cached. --no-apiserver skips it, for a quick local check.",
+    )
+    parser.add_argument(
+        "--apiserver-version",
+        default=None,
+        metavar="VERSION",
+        help="Kubernetes version of the --apiserver server, e.g. 1.36 (its newest patch). Default: the "
+        "newest envtest release. It is not --kubernetes-version on purpose: CRDs can use CEL functions "
+        "that only newer API servers compile, such as Gateway API v1.7's format library, which an "
+        "older server refuses to install.",
+    )
+    parser.add_argument(
+        "--envtest-dir",
+        default=None,
+        metavar="DIR",
+        help="Directory with envtest's etcd and kube-apiserver, for --apiserver, instead of "
+        "downloading them (default: $KUBEBUILDER_ASSETS if set).",
     )
     parser.add_argument(
         "--docs-tests-root",
@@ -741,7 +806,8 @@ def main() -> int:
         _UPSTREAM["root"] = Path(args.upstream_root).resolve()
     try:
         overlay = load_overlay(Path(args.helm_overlay)) if args.helm_overlay else None
-        schemas_by_version = load_schemas(parse_versioned(args.crd_dir), parse_versioned(args.config_schema),
+        crd_paths = parse_versioned(args.crd_dir)
+        schemas_by_version = load_schemas(crd_paths, parse_versioned(args.config_schema),
                                           parse_versioned(args.helm_chart), overlay)
     except ValueError as exc:
         logger.error("%s", exc)
@@ -779,15 +845,29 @@ def main() -> int:
     # from the results. Scenarios share most of their steps (install, gateway
     # setup), so this is far less work than checking scenario by scenario.
     units: Dict[Any, None] = {}
+    used: Set[Optional[str]] = set()
     for tc in schema_cases:
         version = infer_version_from_sources(tc.sources, "main")
         if schemas_by_version.get(version, schemas_by_version.get(None)) is not None:
             units.update(dict.fromkeys(_units(repo_root, tc.document, tc.sources, version)))
+            used.add(version if version in schemas_by_version else None)
+    servers: List[ApiServer] = []
+    if args.apiserver:
+        try:
+            servers = start_apiservers(used, crd_paths, schemas_by_version, args.apiserver_version,
+                                       args.envtest_dir)
+        except (RuntimeError, OSError, subprocess.CalledProcessError) as exc:
+            logger.error("--apiserver: %s", exc)
+            return 1
     _POOL.update(repo_root=repo_root, schemas=schemas_by_version, docs_tests_root=docs_tests_root,
                  kubeconform=kubeconform)
     logger.info("Checking %d distinct step(s) for %d scenario(s), %d at a time",
                 len(units), len(schema_cases), max(1, args.jobs))
-    cache = run_units(list(units), args.jobs)
+    try:
+        cache = run_units(list(units), args.jobs)
+    finally:
+        for s in servers:
+            s.stop()
 
     unattached = load_annotation_reports(args.annotation_report)
     exit_code = 0
