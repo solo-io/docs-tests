@@ -401,6 +401,20 @@ class RebaseResolutionTests(unittest.TestCase):
                     rc.resolve_rebase_target(bad, "content/en/p/kubernetes/latest/x.md", self.VMAP)
                 )
 
+    def test_a_version_directory_in_the_file_value_is_used_as_written(self):
+        """The kgateway hub mounts content/docs at conrefs/kgateway and names the tree."""
+        vmap = {"2.4.x": "latest"}
+        page = "content/en/kgateway/2.4.x/traffic-management/buffering.md"
+        self.assertEqual(
+            rc.resolve_rebase_target(
+                "conrefs/kgateway/envoy/latest/traffic-management/buffering.md", page, vmap),
+            "content/docs/envoy/latest/traffic-management/buffering.md",
+        )
+        self.assertEqual(
+            rc.resolve_rebase_target("conrefs/kgateway/envoy/2.2.x/x.md", page, vmap),
+            "content/docs/envoy/2.2.x/x.md",
+        )
+
     def test_different_modes_resolve_to_different_upstream_trees(self):
         k = rc.resolve_rebase_target(
             "agw-docs/kubernetes/documentation/x.md", "content/en/p/kubernetes/latest/x.md", self.VMAP)

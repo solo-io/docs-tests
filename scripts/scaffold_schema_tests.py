@@ -58,7 +58,7 @@ except ModuleNotFoundError:
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import doc_test_schema_check as SC  # noqa: E402
-from doc_test_run import TESTED_VERSIONS, build_test_cases_from_manifests  # noqa: E402
+from doc_test_run import build_test_cases_from_manifests, tested_versions, version_root  # noqa: E402
 from reuse_consumers import build_reverse_index  # noqa: E402
 
 DOCS_TESTS_ROOT = Path(__file__).resolve().parent.parent
@@ -173,7 +173,8 @@ def scaffold_manifest(repo: Path, manifest: Path, covered: set, reverse_index: D
     content_root = str(data.get("content_root") or "content/docs").strip("/")
     scenarios = data.get("scenarios") or {}
     by_source = any(isinstance(s, dict) and "source" in s for s in scenarios.values())
-    roots = [(v, f"{content_root}/{mode}/{v}/") for v in TESTED_VERSIONS if (repo / content_root / mode / v).is_dir()]
+    roots = [(v, version_root(content_root, mode, v) + "/") for v in tested_versions(data)
+             if (repo / version_root(content_root, mode, v)).is_dir()]
     taken = set(scenarios)
     added: Dict[Tuple[str, str], dict] = {}
     skipped: List[dict] = []

@@ -116,6 +116,13 @@ def infer_version_from_sources(sources: List[Dict[str, Any]], fallback: str) -> 
         segment = _version_segment(src.get("file", ""))
         if segment:
             return segment
+    # A site that names its trees by release and has no mode folder
+    # (content/en/kgateway/2.4.x/): the first segment that is a version.
+    release = re.compile(r"^(latest|main|\d+\.\d+\.x)$")
+    for src in sources:
+        segment = next((p for p in src.get("file", "").split("/") if release.match(p)), "")
+        if segment:
+            return segment
     return fallback
 
 
@@ -297,6 +304,32 @@ def _version_key(doc_path: str) -> str:
 TESTED_VERSIONS = ("latest", "main")
 
 
+def tested_versions(manifest: Dict[str, Any]) -> Tuple[str, ...]:
+    """The version trees one manifest's scenarios run in.
+
+    TESTED_VERSIONS unless the manifest names its own with `versions:`. A site
+    whose trees are named by release (the enterprise kgateway hub: 2.4.x, 2.5.x)
+    has no `latest` or `main` directory, so it must list them.
+    """
+    versions = manifest.get("versions")
+    if not versions:
+        return TESTED_VERSIONS
+    return tuple(str(v) for v in versions)
+
+
+def version_root(content_root: str, mode: str, version: str) -> str:
+    """The repo-relative folder of one version tree, without a trailing slash.
+
+    <content_root>/<mode>/<version> by default. A site with no mode folder
+    writes where the version goes in content_root itself, as in
+    `content_root: content/en/kgateway/{version}`.
+    """
+    content_root = content_root.strip("/")
+    if "{version}" in content_root:
+        return content_root.replace("{mode}", mode).replace("{version}", version)
+    return f"{content_root}/{mode}/{version}"
+
+
 def _mode_segment(doc_path: str) -> str:
     """Extract the deployment mode ('kubernetes', 'standalone') from a doc path.
 
@@ -381,7 +414,7 @@ def _resolve_manifest_ref(
     which is normal: a guide added after a release is absent from the older
     tree, and that scenario simply does not apply there.
     """
-    root_prefix = f"{content_root}/{mode}/{version}/"
+    root_prefix = version_root(content_root, mode, version) + "/"
     if "page" in ref:
         return root_prefix + str(ref["page"]).lstrip("/")
     source = ref.get("source")
@@ -494,8 +527,8 @@ def build_test_cases_from_manifests(
                     f"{mpath}: scenario '{name}' has `type: {', '.join(unknown)}`; use {' or '.join(TEST_TYPES)}."
                 )
 
-            for version in TESTED_VERSIONS:
-                if not (repo_root / content_root / mode / version).is_dir():
+            for version in tested_versions(data):
+                if not (repo_root / version_root(content_root, mode, version)).is_dir():
                     continue
                 sources: List[Dict[str, Any]] = []
                 incomplete = False
@@ -546,11 +579,11 @@ def build_test_cases_from_manifests(
         for ref in data.get("skip") or []:
             if not isinstance(ref, dict):
                 raise RuntimeError(f"{mpath}: each `skip:` entry needs `page:`, `source:` or `dir:`.")
-            for version in TESTED_VERSIONS:
-                if not (repo_root / content_root / mode / version).is_dir():
+            for version in tested_versions(data):
+                if not (repo_root / version_root(content_root, mode, version)).is_dir():
                     continue
                 if "dir" in ref:
-                    folder = repo_root / content_root / mode / version / str(ref["dir"]).strip("/")
+                    folder = repo_root / version_root(content_root, mode, version) / str(ref["dir"]).strip("/")
                     tested_documents.extend(
                         p.relative_to(repo_root).as_posix() for p in folder.rglob("*.md")
                     )
@@ -576,8 +609,14 @@ def build_test_cases(
     manifest_cases, claimed, manifest_docs = build_test_cases_from_manifests(
         repo_root, docs_tests_root, generated_dir
     )
-    test_cases.extend(manifest_cases)
-    tested_documents.extend(manifest_docs)
+    # Every manifest whose tree exists in this repo resolves, and one repo can
+    # host several products (the docs hub has enterprise agentgateway AND
+    # enterprise kgateway). The glob is what names this run's product, so keep
+    # only the scenarios and pages under it. Otherwise the agentgateway run
+    # would also run the kgateway scenarios, with the wrong license.
+    in_glob = {p.relative_to(repo_root).as_posix() for p in repo_root.glob(docs_glob)}
+    test_cases.extend(c for c in manifest_cases if c.document.relative_to(repo_root).as_posix() in in_glob)
+    tested_documents.extend(d for d in manifest_docs if d in in_glob)
 
     for md_file in sorted(repo_root.glob(docs_glob)):
         rel = md_file.relative_to(repo_root).as_posix()

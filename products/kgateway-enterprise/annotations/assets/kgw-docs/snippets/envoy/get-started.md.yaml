@@ -1,0 +1,75 @@
+format: 1
+source: assets/kgw-docs/snippets/envoy/get-started.md
+blocks:
+- c1e1531a1c9b7609 sh
+- 189bf76bb4d0140a sh
+- 114a7d53b3a86a10 sh
+- 6e2f4659aa232bc5 sh
+- 5fba5f3bf561451f sh
+- d0b0bc9da4b13dd2 console
+tags:
+- paths: standard
+  block: 1
+  fingerprint: 189bf76bb4d0140a
+  lang: sh
+  lines: 189bf76b
+  preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  form:
+    attr: paths="standard"
+    only: true
+    lead: ' '
+- paths: standard,experimental
+  block: 2
+  fingerprint: 114a7d53b3a86a10
+  lang: sh
+  lines: 5799835c 2a24ff0e 9d671c51 0713159a
+  preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway-crds.md" >}} oci://{
+  form:
+    attr: paths="standard,experimental"
+    only: true
+    lead: ' '
+- paths: standard,experimental
+  block: 3
+  fingerprint: 6e2f4659aa232bc5
+  lang: sh
+  lines: 8a3b9e28 1bd2e2c1 39fd077a 1dfe0cc2
+  preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
+  form:
+    attr: paths="standard,experimental"
+    only: true
+    lead: ' '
+- paths: quickstart
+  block: 4
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="quickstart"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 189bf76bb4d0140a
+    lang: sh
+    lines: 189bf76b
+    preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="experimental" >}}
+       kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< reuse "kgw-docs/versions/k8s-gw-version.md" >}}/experimental-install.yaml
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 6e2f4659aa232bc5
+    lang: sh
+    lines: 8a3b9e28 1bd2e2c1 39fd077a 1dfe0cc2
+    preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="standard,experimental" >}}
+       # The enterprise install succeeds only with a real license key, which CI
+       # supplies as LICENSE_KEY. Wait for every control plane Deployment.
+       kubectl wait deployment --all -n kgateway-system --for=condition=Available --timeout=400s
+       {{< /doc-test >}}

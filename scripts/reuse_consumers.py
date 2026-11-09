@@ -84,6 +84,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 # `test:` block actually points at, and a second copy of that logic here would
 # drift from the runner's copy silently -- which is the failure this whole
 # script exists to stop. Neither module does anything at import time.
+from doc_test_extract import split_rebase_file  # noqa: E402
 from doc_test_run import parse_front_matter, version_path_tokens  # noqa: E402
 
 # This script now lives in docs-tests, beside the runner it imports, rather than
@@ -297,6 +298,10 @@ def build_test_dependency_index(root: pathlib.Path,
 #     <assetDir>/<mode>/<rest>  on a consumer page at version V
 #       -> content/docs/<mode>/<upstream_version_for[V]>/<rest>  upstream
 #
+# A site that mounts upstream content/docs deeper writes the version directory
+# into file= itself (conrefs/kgateway/envoy/latest/<rest>); that directory is
+# used as written. See doc_test_extract.split_rebase_file.
+#
 # Verified against a real pair of repos: all 43 rebase shells in one subject
 # area resolved, none unresolved.
 REBASE_RE = re.compile(r"""\{\{[<%]\s*rebase\s+file="([^"]+)"[^}]*[>%]\}\}""")
@@ -325,16 +330,15 @@ def resolve_rebase_target(
     root is a frozen release tree is deliberately absent from the map, because
     nothing tests those trees.
     """
-    parts = file_value.strip("/").split("/")
-    if len(parts) < 3:
+    if len(file_value.strip("/").split("/")) < 3:
         return None
-    _asset_dir, mode, rest = parts[0], parts[1], "/".join(parts[2:])
+    mode, written_dir, rest = split_rebase_file(file_value)
 
     segments = consumer_page_rel.replace("\\", "/").split("/")
     version = next((seg for seg in segments if seg in upstream_version_for), None)
     if version is None:
         return None
-    return f"{UPSTREAM_CONTENT_DIR}/{mode}/{upstream_version_for[version]}/{rest}"
+    return f"{UPSTREAM_CONTENT_DIR}/{mode}/{written_dir or upstream_version_for[version]}/{rest}"
 
 
 def build_rebase_index(
