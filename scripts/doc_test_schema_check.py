@@ -17,8 +17,8 @@ What gets checked, and against what:
   pages: agentgateway's `schema/config.json`, when --config-schema is given.
 - Helm values set on a product chart (`--set`, `-f values.yaml`), when
   --helm-chart is given: against a schema built from that chart's values.yaml
-  and templates (see doc_test_helm_values.py). A value the chart doesn't have
-  fails the scenario. Helm values don't count toward a pass, though: the
+  and templates (see doc_test_helm_values.py). A value the chart doesn't have,
+  or one of another type than its default, fails the scenario. Helm values don't count toward a pass, though: the
   Verified badge promises only resources and config files.
 
 Blocks that don't parse as YAML are skipped, not flagged. They don't count
@@ -642,7 +642,7 @@ def main() -> int:
         metavar="[VERSION=]DIR",
         help="Chart directory (with Chart.yaml) whose values pages set, such as agentgateway/agentgateway's "
         "controller/install/helm/agentgateway. Repeatable, same VERSION= form as --crd-dir. A value a page "
-        "sets that the chart does not have fails the scenario.",
+        "sets that the chart does not have, or of another type than its default, fails the scenario.",
     )
     parser.add_argument(
         "--helm-overlay",

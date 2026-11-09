@@ -332,10 +332,14 @@ version. The product charts ship no `values.schema.json`, so the
 checker builds one from the chart's `values.yaml` plus every key its templates read, and
 leaves free-form values (empty maps, lists, anything a template passes on with `toYaml`)
 unchecked. It reports a `--set` key or a key in a `-f` values file (written on the same
-page) that the chart doesn't have, and the scenario fails. Helm values don't count toward a
-pass on their own, because the Verified badge doesn't mention them. If a valid key is
-flagged, open its parent value in `products/<product>/helm-values.yaml` (passed with
-`--helm-overlay`).
+page) that the chart doesn't have, and the scenario fails. A value must also be the type of
+its default: a boolean, integer, number, string, list, or map. A default of `null` or `""`
+takes any type. `--set` values are typed the way Helm types them, so `--set a=3` is an
+integer and `--set-string a=3` a string, and a shell variable or `<placeholder>` is not
+checked. Helm values don't count toward a pass on their own, because the Verified badge
+doesn't mention them. If a valid key is flagged, open its parent value in
+`products/<product>/helm-values.yaml` (passed with `--helm-overlay`). If a valid value of
+another type is flagged, open the value itself.
 
 ### Running a scenario on macOS or Windows
 

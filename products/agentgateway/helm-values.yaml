@@ -5,9 +5,14 @@
 # `toYaml .`, `omit .Values.x "k" | toJson`), and a vendored subchart's values
 # under its alias.
 #
+# A value must also be the type of its default (a boolean, integer, number,
+# string, list, or map); a default of null or "" takes any type.
+#
 # Add a dotted path here when a page fails for a valid key under a value the
 # check doesn't know is free-form, for example a map the chart passes to Kubernetes
-# in a way the template scan misses. The check warns about an entry that names
+# in a way the template scan misses, or for a valid value of another type than
+# its default, such as a port the chart takes as a string or a number. An open
+# path takes any keys and any type. The check warns about an entry that names
 # a value the chart no longer has, or that is already open, so remove it then.
 #
 # Passed to doc_test_schema_check.py with --helm-overlay.

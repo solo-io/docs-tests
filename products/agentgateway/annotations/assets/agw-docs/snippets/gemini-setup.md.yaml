@@ -180,6 +180,23 @@ hidden:
            polling:
              timeoutSeconds: 60
              intervalSeconds: 2
+       # The httpbun mock has no readiness probe, so `rollout status` can return before it
+       # listens on 3090 and the page's one-shot curl gets a 503 (connection refused).
+       # Wait for the route to answer before the visible curl runs.
+       - name: the httpbun mock answers through the /gemini route
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:80"
+           path: "/gemini"
+           method: POST
+           headers:
+             content-type: application/json
+           body: |
+             {"model": "", "messages": [{"role": "user", "content": "ping"}]}
+         source:
+           type: local
+         retries: 15
+         expect:
+           statusCode: 200
        EOF
        {{< /doc-test >}}
 - after:
