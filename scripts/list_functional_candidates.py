@@ -66,7 +66,7 @@ def candidates(repo_root: Path, docs_tests_root: Path, product: str, reverse_ind
             if f.kind != "could-be-functional" or f.scenario not in queued:
                 continue
             page = None
-            for version in tested_versions(data):
+            for version in tested_versions(data, repo_root):
                 if version not in f.versions:
                     continue
                 page = _resolve_manifest_ref(f.ref, mode, version, reverse_index, mpath, f.scenario, content_root)

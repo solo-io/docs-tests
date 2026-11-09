@@ -204,7 +204,7 @@ def check_manifest(repo_root: Path, mpath: Path, mode: str, data: Dict[str, Any]
         types = _types(entry)
         by_version = _facts_by_version(repo_root, mpath, mode, content_root, ref, entry.get("path"),
                                        reverse_index, docs_tests_root, config_validator, cache,
-                                       tested_versions(data))
+                                       tested_versions(data, repo_root))
         if not by_version:
             continue
         versions = sorted(by_version)
@@ -247,7 +247,7 @@ def check_manifest(repo_root: Path, mpath: Path, mode: str, data: Dict[str, Any]
             continue   # `dir:` covers generated pages, which nobody types by hand
         by_version = _facts_by_version(repo_root, mpath, mode, content_root, ref, None,
                                        reverse_index, docs_tests_root, config_validator, cache,
-                                       tested_versions(data))
+                                       tested_versions(data, repo_root))
         if by_version and all(f.resources > 0 for f in by_version.values()):
             findings.append(Finding(manifest=rel, kind="skip-checkable", severity="error", ref=ref,
                                     versions=sorted(by_version), message=(

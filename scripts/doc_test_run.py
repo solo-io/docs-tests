@@ -304,17 +304,40 @@ def _version_key(doc_path: str) -> str:
 TESTED_VERSIONS = ("latest", "main")
 
 
-def tested_versions(manifest: Dict[str, Any]) -> Tuple[str, ...]:
+def tested_versions(manifest: Dict[str, Any], repo_root: Optional[Path] = None) -> Tuple[str, ...]:
     """The version trees one manifest's scenarios run in.
 
     TESTED_VERSIONS unless the manifest names its own with `versions:`. A site
     whose trees are named by release (the enterprise kgateway hub: 2.4.x, 2.5.x)
-    has no `latest` or `main` directory, so it must list them.
+    has no `latest` or `main` directory, so it lists them.
+
+    `latest` in that list is resolved through the site's Hugo config, named by
+    `version_config:` (a TOML file in the content repo): its `defaultVersion`,
+    the tree the site's root URL redirects to. That way the manifest does not
+    go stale when the site's current release moves on. The site's doc-test
+    workflow picks the version under test from the same field.
     """
     versions = manifest.get("versions")
     if not versions:
         return TESTED_VERSIONS
-    return tuple(str(v) for v in versions)
+    out = []
+    for v in (str(v) for v in versions):
+        if v == "latest" and manifest.get("version_config") and repo_root is not None:
+            v = _default_version(repo_root / str(manifest["version_config"])) or v
+        out.append(v)
+    return tuple(out)
+
+
+def _default_version(config: Path) -> Optional[str]:
+    """`params.defaultVersion` from a site's Hugo TOML config, or None."""
+    import tomllib
+
+    try:
+        with config.open("rb") as f:
+            value = (tomllib.load(f).get("params") or {}).get("defaultVersion")
+    except (OSError, tomllib.TOMLDecodeError):
+        return None
+    return str(value).strip() if value else None
 
 
 def version_root(content_root: str, mode: str, version: str) -> str:
@@ -527,7 +550,7 @@ def build_test_cases_from_manifests(
                     f"{mpath}: scenario '{name}' has `type: {', '.join(unknown)}`; use {' or '.join(TEST_TYPES)}."
                 )
 
-            for version in tested_versions(data):
+            for version in tested_versions(data, repo_root):
                 if not (repo_root / version_root(content_root, mode, version)).is_dir():
                     continue
                 sources: List[Dict[str, Any]] = []
@@ -579,7 +602,7 @@ def build_test_cases_from_manifests(
         for ref in data.get("skip") or []:
             if not isinstance(ref, dict):
                 raise RuntimeError(f"{mpath}: each `skip:` entry needs `page:`, `source:` or `dir:`.")
-            for version in tested_versions(data):
+            for version in tested_versions(data, repo_root):
                 if not (repo_root / version_root(content_root, mode, version)).is_dir():
                     continue
                 if "dir" in ref:

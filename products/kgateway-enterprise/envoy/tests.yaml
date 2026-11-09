@@ -21,9 +21,11 @@
 #   content_root: the consuming site lays content out as
 #            content/en/kgateway/<version>/, with no mode folder, so the
 #            version goes into content_root as {version}.
-#   versions: the trees are named by release, not latest/main. Only the
-#            current release is tested; its upstream directory comes from the
-#            site's params.versions ossDir.
+#   versions: the trees are named by release, not latest/main. `latest` is
+#            resolved to the site's current release, the defaultVersion in
+#            version_config (2.4.x as of 2026-11), so it moves on by itself
+#            when a release ships. The site's doc-test workflow reads the same
+#            field, and the release's upstream directory from its ossDir.
 #
 # The consuming site's own assets/ SHADOW the upstream copies. The install
 # snippet is the one that matters: assets/kgw-docs/snippets/envoy/get-started.md
@@ -38,7 +40,8 @@ version: 1
 mode: envoy
 content_root: content/en/kgateway/{version}
 versions:
-- 2.4.x
+- latest
+version_config: hugo-kgateway.toml
 prerequisites:
   install-standard:
     page: quickstart.md

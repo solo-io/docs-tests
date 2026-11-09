@@ -57,7 +57,8 @@ def use_docs_tests(path: Path) -> None:
 # The doc-test workflow in each product's content repo, where it isn't the
 # default. The repo itself comes from the checkout's `origin` remote.
 DEFAULT_WORKFLOW = "doc-tests.yaml"
-WORKFLOWS = {"agentgateway-enterprise": "doc-tests-agentgateway.yml"}
+WORKFLOWS = {"agentgateway-enterprise": "doc-tests-agentgateway.yml",
+             "kgateway-enterprise": "doc-tests-kgateway.yml"}
 
 TESTED_TYPES = ("both", "func", "schema")
 SOURCE_RE = re.compile(r"^\s*(?:-\s*)?source:", re.MULTILINE)
@@ -90,7 +91,12 @@ def snapshot(checkout: Path, manifests: list[tuple[Path, str, dict]], dest: Path
     never read."""
     run(["git", "-C", str(checkout), "fetch", "-q", "origin"])
     head = run(["git", "-C", str(checkout), "symbolic-ref", "--short", "refs/remotes/origin/HEAD"])
-    paths = sorted({str(data.get("content_root") or "content/docs").strip("/") for _, _, data in manifests})
+    # A content_root with a {version} placeholder is archived from the folder
+    # above it; a manifest's version_config (the site's Hugo config, which
+    # resolves `latest`) comes along.
+    paths = sorted({str(data.get("content_root") or "content/docs").strip("/").split("/{", 1)[0]
+                    for _, _, data in manifests}
+                   | {str(data["version_config"]) for _, _, data in manifests if data.get("version_config")})
     if any(SOURCE_RE.search(m.read_text(encoding="utf-8")) for m, _, _ in manifests):
         paths.append("assets")
     archive = subprocess.run(
@@ -193,8 +199,8 @@ def coverage(product: str, root: Path, manifests: list[tuple[Path, str, dict]], 
     rows = []
     for _mpath, mode, data in manifests:
         content_root = str(data.get("content_root") or "content/docs").strip("/")
-        for version in runner.TESTED_VERSIONS:
-            base = root / content_root / mode / version
+        for version in runner.tested_versions(data, root):
+            base = root / runner.version_root(content_root, mode, version)
             if not base.is_dir():
                 continue
             for path in sorted(base.rglob("*.md")):

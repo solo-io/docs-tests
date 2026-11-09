@@ -173,7 +173,7 @@ def scaffold_manifest(repo: Path, manifest: Path, covered: set, reverse_index: D
     content_root = str(data.get("content_root") or "content/docs").strip("/")
     scenarios = data.get("scenarios") or {}
     by_source = any(isinstance(s, dict) and "source" in s for s in scenarios.values())
-    roots = [(v, version_root(content_root, mode, v) + "/") for v in tested_versions(data)
+    roots = [(v, version_root(content_root, mode, v) + "/") for v in tested_versions(data, repo)
              if (repo / version_root(content_root, mode, v)).is_dir()]
     taken = set(scenarios)
     added: Dict[Tuple[str, str], dict] = {}

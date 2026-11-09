@@ -30,6 +30,14 @@ class VersionRootTests(unittest.TestCase):
     def test_manifest_versions(self):
         self.assertEqual(R.tested_versions({"versions": ["2.4.x"]}), ("2.4.x",))
 
+    def test_latest_resolves_through_the_site_config(self):
+        repo = pathlib.Path(tempfile.mkdtemp())
+        (repo / "hugo-x.toml").write_text('[params]\ndefaultVersion = "2.4.x"\n')
+        manifest = {"versions": ["latest"], "version_config": "hugo-x.toml"}
+        self.assertEqual(R.tested_versions(manifest, repo), ("2.4.x",))
+        # Without the repo (or the config), `latest` stays as written.
+        self.assertEqual(R.tested_versions(manifest), ("latest",))
+
     def test_version_comes_from_a_release_named_tree(self):
         self.assertEqual(
             R.infer_version_from_sources([{"file": "content/en/kgateway/2.4.x/quickstart.md"}], "main"),
@@ -40,6 +48,7 @@ class DiscoveryTests(unittest.TestCase):
     def test_scenarios_and_skips_resolve_in_a_release_named_tree(self):
         repo = pathlib.Path(tempfile.mkdtemp())
         dt = pathlib.Path(tempfile.mkdtemp())
+        (repo / "hugo-kgateway.toml").write_text('[params]\ndefaultVersion = "2.4.x"\n')
         for rel in ("content/en/kgateway/2.4.x/quickstart.md",
                     "content/en/kgateway/2.4.x/_index.md",
                     "content/en/kgateway/2.3.x/quickstart.md"):
@@ -49,7 +58,7 @@ class DiscoveryTests(unittest.TestCase):
         m.parent.mkdir(parents=True)
         m.write_text(
             "version: 1\nmode: envoy\ncontent_root: content/en/kgateway/{version}\n"
-            "versions: [2.4.x]\nprerequisites: {}\nskip:\n- page: _index.md\n"
+            "versions: [latest]\nversion_config: hugo-kgateway.toml\nprerequisites: {}\nskip:\n- page: _index.md\n"
             "scenarios:\n  quickstart:\n    page: quickstart.md\n    path: quickstart\n")
         cases, _claimed, docs = R.build_test_cases_from_manifests(repo, dt, pathlib.Path(tempfile.mkdtemp()))
         self.assertEqual([c.document.relative_to(repo).as_posix() for c in cases],
