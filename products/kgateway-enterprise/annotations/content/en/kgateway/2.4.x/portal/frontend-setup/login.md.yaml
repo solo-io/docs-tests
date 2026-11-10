@@ -1,0 +1,904 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/frontend-setup/login.md
+blocks:
+- 727dcb87aa30a423 sh
+- cabd98b628658dfa sh
+- e237f40562d1305a sh
+- a85f8c0a99e42d0c sh
+- 0d0cbc0fb5db3fbd sh
+- 8e16bae0de137d69 sh
+- 5fb04cea21ff8485 shell
+- 57768851b72bc2c5 shell
+- 5125c6bb11278508 shell
+- 6b5731bbfb604894
+- d1e5f3cacc935cbf yaml
+- 6c466e3d0d3f2059 shell
+- 6922cdd4784890e3 shell
+- 4b2a63c0a63bf627 shell
+- f6a0fa82b7ba257b json
+- 026ef1a84b3e041c shell
+- 68a72289f1c62d80 shell
+- 25b6270a77ab9803 json
+- 43095825a9695ef3 shell
+- 92464f318df486e9 shell
+- a6a4629b5f87110b
+- 8f935c19397fc689 yaml
+- 0d793c9581d3b266 yaml
+- 5d03368fbb112650 yaml
+- d1704c3a9ebdd89a yaml
+- 3c0ba0e39c2deb24 sh
+- b6397ed0fad5002e sh
+- 025f795f362c8a10 sh
+- 9005239507b0160d yaml
+- bbe93269a324116a sh
+- 17a460dab9f0a9de yaml
+- eb4375f9a207d7b8 sh
+- e37dbe6f997eb764 console
+- 47a9d5638396fdd5 shell
+- b7f11762aacd337d sh
+- 6192022b6b95ec71 console
+- 3682b3dae935d11e yaml
+- bf8055f9b408c07a yaml
+tags:
+- paths: portal-login,portal-login-pkce
+  block: 0
+  fingerprint: 727dcb87aa30a423
+  lang: sh
+  lines: 727dcb87
+  preview: kubectl create namespace keycloak
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 1
+  fingerprint: cabd98b628658dfa
+  lang: sh
+  lines: cabd98b6
+  preview: kubectl -n keycloak apply -f https://raw.githubusercontent.com/solo-io/gloo-mesh
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 2
+  fingerprint: e237f40562d1305a
+  lang: sh
+  lines: e172b8ae ba98c032 3d3426ec 4596039d
+  preview: kubectl -n keycloak set env deploy/keycloak \
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 3
+  fingerprint: a85f8c0a99e42d0c
+  lang: sh
+  lines: a85f8c0a
+  preview: kubectl -n keycloak rollout status deploy/keycloak
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 4
+  fingerprint: 0d0cbc0fb5db3fbd
+  lang: sh
+  lines: a2888476 d595778e 8ebb163c 09c09818 41752bd2
+  preview: export ENDPOINT_KEYCLOAK=$(kubectl -n keycloak get service keycloak -o jsonpath=
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 6
+  fingerprint: 5fb04cea21ff8485
+  lang: shell
+  lines: 271f5793 08b14d18 8a6cc1de ec710f62 64825780 7ec3569a 11638fb5 3bee196e
+  preview: export KEYCLOAK_TOKEN=$(curl -s \
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 7
+  fingerprint: 57768851b72bc2c5
+  lang: shell
+  lines: 072274c2 4485b325 007181c8 67c5a3ac 562c26e9 f992fedf 6d8ce517 007181c8 67c5a3ac b0cead6d e36403e4 afa07114 be2f7f0f 59693229 be1075b9 7d2c93a2 bbb0c9e3 0a43be95 c4595beb 40b28360 5b3284c4 d10b36aa fc075a9d 98469cf2 872c2d78 007181c8 4f091c18 be1d46bd 554cb45f d0fa4dd2 007181c8 db0445bf 017e7eb9 e8d0092a 5078dd7d 007181c8 67c5a3ac 9a3de423 5078dd7d 007181c8 67c5a3ac bbd322d5 225900c5 271f5793 87f44bf8 64825780 7ec3569a 11638fb5 e57966df a57e6384 007181c8 4f091c18 2006f79b c46a5faa 9c991671 461b2b18 db20c854 007181c8 6472d5ba 46b52bac dd2eae60 007181c8 67c5a3ac c28dd232
+  preview: '# Create the portal realm'
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 8
+  fingerprint: 5125c6bb11278508
+  lang: shell
+  lines: e7af7727 007181c8 d0378e1f
+  preview: curl -s "${KEYCLOAK_URL}/admin/realms/portal/users/${SA_USER_ID}/role-mappings/c
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 11
+  fingerprint: 6c466e3d0d3f2059
+  lang: shell
+  lines: 271f5793 87f44bf8 64825780 7ec3569a 11638fb5 30c597ee 698bf91b 007181c8 67c5a3ac b0cead6d bcffc029 d15de3c7 7ba48c1e 6685a21a 65ffdce6 9cf11664 7d170475 8712479b 3e25b96f d10b36aa fc075a9d
+  preview: export KEYCLOAK_TOKEN=$(curl -s \
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 12
+  fingerprint: 6922cdd4784890e3
+  lang: shell
+  lines: 0d578c0f 007181c8 67c5a3ac 467e1b7f 841cc043 009428c1 daf1bdd0 c5e3c483 e0100537 007181c8 67c5a3ac 05e4b50d 9489fa55 007181c8 a85e4d4d 45c8051c 868bf1fa
+  preview: curl -s -X POST "${KEYCLOAK_URL}/admin/realms/portal/users" \
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 13
+  fingerprint: 4b2a63c0a63bf627
+  lang: shell
+  lines: d1ebafcd 9348e6ef 15ae54eb 64825780 bd09ef43 4536b685 a4a08542 6aa5f13d 23396309 b012595c 81188166 6c96ba56 4cf92c48 b29ed696 c6c27d6d e94b6638 8a331fdd
+  preview: curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 15
+  fingerprint: 026ef1a84b3e041c
+  lang: shell
+  lines: 271f5793 87f44bf8 64825780 7ec3569a 11638fb5 0d578c0f 007181c8 67c5a3ac 87bcf0ee c7876f1e 009428c1 77ec132d 403138d7 cfb5e5b0 007181c8 67c5a3ac 05e4b50d f9aa1843 007181c8 10899545 08bfde92 868bf1fa
+  preview: export KEYCLOAK_TOKEN=$(curl -s \
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 16
+  fingerprint: 68a72289f1c62d80
+  lang: shell
+  lines: d1ebafcd 9348e6ef 15ae54eb 64825780 f25a6378 4536b685 a4a08542 6aa5f13d 23396309 b012595c 81188166 6c96ba56 4cf92c48 b29ed696 c6c27d6d e94b6638 8a331fdd
+  preview: curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 18
+  fingerprint: 43095825a9695ef3
+  lang: shell
+  lines: 271f5793 87f44bf8 64825780 7ec3569a 11638fb5 510b9097 872c2d78 007181c8 4f091c18 f6fd9386 007181c8 4f091c18 98d56505 007181c8 4f091c18 bbc36d6c 8c9d7bb9 ac52d946 dd728e29 e9c0e72c 9c991671 271f5793 87f44bf8 64825780 7ec3569a 11638fb5 a7dba260 7524608c 4da23bb8 007181c8 67c5a3ac de6276a1 37cd562a 271f5793 87f44bf8 64825780 7ec3569a 11638fb5 698bf91b 007181c8 67c5a3ac b0cead6d 1ef4e435 d15de3c7 0eb43e37 6685a21a 986bee3b c761e95f 7d170475 8712479b 3e25b96f d10b36aa fc075a9d 6d1bad83 04971648 007181c8 67c5a3ac b0cead6d cf696df2 663fda8c 9b679841 751aa098 afa07114 07f50448 63f27a79 fc075a9d addf8226 460c6794 007181c8 67c5a3ac b0cead6d 1602beac e50d678d 533350a1 df54b1ae afa07114 07f50448 8653a240 fc075a9d
+  preview: export KEYCLOAK_TOKEN=$(curl -s \
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login,portal-login-pkce
+  block: 19
+  fingerprint: 92464f318df486e9
+  lang: shell
+  lines: d1ebafcd 9348e6ef 15ae54eb 64825780 bd09ef43 4536b685 a4a08542 6aa5f13d 23396309 b012595c 81188166 6c96ba56 4cf92c48 b29ed696 c6c27d6d e94b6638 528de7a4
+  preview: curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+  form:
+    attr: paths="portal-login,portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login
+  block: 21
+  fingerprint: 8f935c19397fc689
+  lang: yaml
+  lines: 16c71da1 f1540154 2ed8aa83 8c8c4228 cec17b8d 0ccc8edc cb3f91d5 58584366 ab78925c 8c8c4228 cec17b8d 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac f184a6c7 a58565b2 8c8c4228 fa1e8330 f184a6c7 36184fa5 88f2876e 1dbe8698 11e8fef1 dfb67d7f 04968f51 82ac8adf a6775a77 ff42c2c6 0ff65a1a 82601aaa 7305a68b 9693ecf1 8db70061 b09519d4 81a8c996 ebc90541 162b7570 e26ac34e e43d2642 51689d66 f37eb95c 0466b46b 69d7f213 7c781356 f3e81d6c f98c047b dd425e10 82f2bc7e 69d7f213 7c781356 f3e81d6c 27791fcd 79bb435b cab2be2b 77f1ea54 f5a0555c 88dd7363 2629ac0e f614fa9d 14551a55 1dbe8698 de4520a8 9cedb412 cfb30922 cf5449a2 f0222554 cb3f91d5 f1540154 0d6480f0 8c8c4228 cec17b8d 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 5c2eb985 0cf44c45 9693ecf1 9278ed91 8432e015 f184a6c7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-login"
+    only: true
+    lead: ' '
+- paths: portal-login
+  block: 22
+  fingerprint: 0d793c9581d3b266
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 b2f9f161 0ccc8edc 170ac459 2f7c298d c78e3b12 227b8ed8 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="portal-login"
+    only: true
+    lead: ' '
+- paths: portal-login
+  block: 23
+  fingerprint: 5d03368fbb112650
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 b2f9f161 0ccc8edc 36184fa5 d5ec3fae afba47a2 f1c7325d 291dfcbb cd2edd69 6c4264f8 54cde512 e73ad6de b2f9f161 0ccc8edc b3fa6e8d 0bc8506e ad916773 b31eb75b 59a39a74 56beb715 61d9749c 9519f874 d8541eca 38dc0152 331bb1b3 8715bd8e abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="portal-login"
+    only: true
+    lead: ' '
+- paths: portal-login
+  block: 24
+  fingerprint: d1704c3a9ebdd89a
+  lang: yaml
+  lines: abbd1bdc c28cc8a6 8c67597e 56bf9360 8c8c4228 32925040 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 b733d726 aeca2b3d bf068a96 b6bb8ea1 38dc0152 0be206f8 ff36735c 3cd97e4d ae6b70e3 a602752c 19c2fa74 97ae8597 3b8c1410 cf9b6dda 94ae491e 8900eecd 0ccc8edc c095a45d cb3f91d5 f902f973 8c67597e 56bf9360 8c8c4228 e14be511 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 b733d726 aeca2b3d bf068a96 b6bb8ea1 38dc0152 aac49b5d ff36735c d96163dd ae6b70e3 a602752c 19c2fa74 97ae8597 3b8c1410 cf9b6dda 94ae491e 8900eecd 0ccc8edc c095a45d cb3f91d5 381c9ee3 8c67597e 56bf9360 8c8c4228 c845df2f 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 b733d726 aeca2b3d 6d88f925 98d806e0 aeca2b3d 6d88f925 cc9c1c09 94ae491e 8900eecd 0ccc8edc c095a45d cb3f91d5 27acb345 de5dc664 bd0fb8f4 fefd2fc8 8c8c4228 11e8661f 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 e14be511 b5a028c9 56bf9360 c845df2f 2c3ea4d6 75674f79 b2f9f161 0ccc8edc cb3f91d5 9f7aad27 6bbf8e2a bd0fb8f4 fefd2fc8 8c8c4228 e024befb 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 32925040 3fd65bfa 7ca504ef 6aeb185f a1343bf6 5805bce3 9bd9d662 fcc2215a 045e942a 38dc0152 f9084713 702e22fb 44ec9b74 b93c9907 2b7bc43a 70c97555 28101486 5e1d80db ad65deb7 69f54740 cb3f91d5 39b5f4b7 d664f32c ad65deb7 8c8c4228 28101486 5e1d80db 36184fa5 c582fe46 2efcbf93 bfce7f60 ea54bab8 86ff3252 cb3f91d5 6f090389 979905a0 e47a48f5 8c8c4228 12681759 5e1d80db 36184fa5 0e20b496 7ae7d755 fefd2fc8 0ccc8edc 55708cb7 71ab14c2 ad65deb7 28101486 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="portal-login"
+    only: true
+    lead: ' '
+- paths: portal-login-pkce
+  block: 25
+  fingerprint: 3c0ba0e39c2deb24
+  lang: sh
+  lines: a35efed8 3acb9fb0
+  preview: export GATEWAY_ADDRESS=$(kubectl get service portal-gateway -n default -o jsonpa
+  form:
+    attr: paths="portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login-pkce
+  block: 26
+  fingerprint: b6397ed0fad5002e
+  lang: sh
+  lines: 0ac19ed0 d4512e0b 85a41cde cfac72a0
+  preview: export PORTAL_HOST=portal.example.com
+  form:
+    attr: paths="portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login-pkce
+  block: 28
+  fingerprint: 9005239507b0160d
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 e3cde7c0 0ccc8edc 36184fa5 b206896b c10d7538 82601aaa c095a45d 069de162 5f37c61e c3201545 e83d405d 52b5b541 c6ba4159 53aa10f9 3195c5f5 f7446fcf bc611839 944c8de2 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login-pkce
+  block: 29
+  fingerprint: bbe93269a324116a
+  lang: sh
+  lines: bbe93269
+  preview: kubectl rollout status deploy/portal-gateway -n default
+  form:
+    attr: paths="portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login-pkce
+  block: 30
+  fingerprint: 17a460dab9f0a9de
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 28101486 5e1d80db 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa 62d70051 3de9d845 a3b86ab6 a5b107cc c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login-pkce
+  block: 33
+  fingerprint: 47a9d5638396fdd5
+  lang: shell
+  lines: c0f49e21 271f5793 87f44bf8 64825780 7ec3569a 11638fb5 5783dbe2 6d8ce517 007181c8 67c5a3ac b0cead6d ec36778b afa07114 8c92794d 59693229 3213e977 7a9da5ed 40b28360 f72352be b6768570 d10b36aa fc075a9d 34df3848 91be62ca 007181c8 4f091c18 ec723e30 19788c4d 007181c8 67c5a3ac b0cead6d bcffc029 d15de3c7 7ba48c1e 6685a21a 65ffdce6 9cf11664 7d170475 8712479b 3e25b96f d10b36aa fc075a9d bffa28d8 19788c4d 007181c8 67c5a3ac b0cead6d 1ef4e435 d15de3c7 0eb43e37 6685a21a 986bee3b c761e95f 7d170475 8712479b 3e25b96f d10b36aa fc075a9d
+  preview: '# Refresh the admin token'
+  form:
+    attr: paths="portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login-pkce
+  block: 36
+  fingerprint: 3682b3dae935d11e
+  lang: yaml
+  lines: 16c71da1 f1540154 2ed8aa83 8c8c4228 cec17b8d 0ccc8edc cb3f91d5 58584366 ab78925c 8c8c4228 cec17b8d 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac f184a6c7 a58565b2 8c8c4228 fa1e8330 f184a6c7 36184fa5 88f2876e 1dbe8698 11e8fef1 dfb67d7f 04968f51 82ac8adf a6775a77 ff42c2c6 0ff65a1a 82601aaa 7305a68b 9693ecf1 8db70061 b09519d4 418f06a9 ebc90541 8affd970 806c57ad 77436eea 73bbd682 d6613065 8135652e d4a36a3a e2d56be7 239ec354 0466b46b 69d7f213 7c781356 f3e81d6c f98c047b dd425e10 82f2bc7e 69d7f213 7c781356 f3e81d6c 27791fcd 79bb435b cab2be2b 77f1ea54 f5a0555c 88dd7363 2629ac0e f614fa9d 14551a55 1dbe8698 de4520a8 9cedb412 cfb30922 cf5449a2 f0222554 cb3f91d5 f1540154 0d6480f0 8c8c4228 cec17b8d 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 5c2eb985 0cf44c45 9693ecf1 9278ed91 8432e015 f184a6c7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-login-pkce"
+    only: true
+    lead: ' '
+- paths: portal-login-pkce
+  block: 37
+  fingerprint: bf8055f9b408c07a
+  lang: yaml
+  lines: 16c71da1 c28cc8a6 8c67597e 56bf9360 8c8c4228 32925040 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa 70af8e1d 3de9d845 b733d726 aeca2b3d bf068a96 b6bb8ea1 38dc0152 0be206f8 ff36735c 3cd97e4d ae6b70e3 a602752c 19c2fa74 97ae8597 3b8c1410 cf9b6dda 94ae491e 8900eecd 0ccc8edc c095a45d cb3f91d5 9f7aad27 6bbf8e2a bd0fb8f4 fefd2fc8 8c8c4228 e024befb 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 32925040 3fd65bfa 7ca504ef 6aeb185f a1343bf6 5805bce3 363360d3 fcc2215a 045e942a 38dc0152 f9084713 702e22fb 44ec9b74 b93c9907 4bc56092 70c97555 28101486 5e1d80db ad65deb7 69f54740 cb3f91d5 39b5f4b7 d664f32c ad65deb7 8c8c4228 28101486 5e1d80db 36184fa5 c582fe46 2efcbf93 bfce7f60 ea54bab8 86ff3252 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-login-pkce"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: a85f8c0a99e42d0c
+    lang: sh
+    lines: a85f8c0a
+    preview: kubectl -n keycloak rollout status deploy/keycloak
+  content: |-
+    {{< doc-test paths="portal-login,portal-login-pkce" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the keycloak Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: keycloak
+            name: keycloak
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 600
+          intervalSeconds: 5
+    - name: "the keycloak LoadBalancer service has an external address"
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: keycloak
+            name: keycloak
+        jsonPath: "$.status.loadBalancer.ingress[0]"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 0d0cbc0fb5db3fbd
+    lang: sh
+    lines: a2888476 d595778e 8ebb163c 09c09818 41752bd2
+    preview: export ENDPOINT_KEYCLOAK=$(kubectl -n keycloak get service keycloak -o jsonpath=
+  content: |-
+    {{< doc-test paths="portal-login,portal-login-pkce" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "Keycloak serves the master realm on KEYCLOAK_URL"
+      retries: 60
+      http:
+        url: "${KEYCLOAK_URL}/realms/master"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 57768851b72bc2c5
+    lang: shell
+    lines: 072274c2 4485b325 007181c8 67c5a3ac 562c26e9 f992fedf 6d8ce517 007181c8 67c5a3ac b0cead6d e36403e4 afa07114 be2f7f0f 59693229 be1075b9 7d2c93a2 bbb0c9e3 0a43be95 c4595beb 40b28360 5b3284c4 d10b36aa fc075a9d 98469cf2 872c2d78 007181c8 4f091c18 be1d46bd 554cb45f d0fa4dd2 007181c8 db0445bf 017e7eb9 e8d0092a 5078dd7d 007181c8 67c5a3ac 9a3de423 5078dd7d 007181c8 67c5a3ac bbd322d5 225900c5 271f5793 87f44bf8 64825780 7ec3569a 11638fb5 e57966df a57e6384 007181c8 4f091c18 2006f79b c46a5faa 9c991671 461b2b18 db20c854 007181c8 6472d5ba 46b52bac dd2eae60 007181c8 67c5a3ac c28dd232
+    preview: '# Create the portal realm'
+  content: |-
+    {{< doc-test paths="portal-login,portal-login-pkce" >}}
+    # The Admin REST API calls above print nothing on success; check what they created.
+    case "$KEYCLOAK_SECRET" in ""|null) echo "FAIL: no client secret for the portal-frontend client (realm or client not created)"; exit 1 ;; esac
+    for g in admin users; do
+      curl -s "${KEYCLOAK_URL}/admin/realms/portal/groups" -H "Authorization: Bearer ${KEYCLOAK_TOKEN}" \
+        | jq -e --arg g "$g" 'any(.[]; .name == $g)' >/dev/null || { echo "FAIL: the $g group does not exist in the portal realm"; exit 1; }
+    done
+    echo "portal realm, portal-frontend client, and admin/users groups exist"
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 5125c6bb11278508
+    lang: shell
+    lines: e7af7727 007181c8 d0378e1f
+    preview: curl -s "${KEYCLOAK_URL}/admin/realms/portal/users/${SA_USER_ID}/role-mappings/c
+  content: |-
+    {{< doc-test paths="portal-login,portal-login-pkce" >}}
+    curl -s "${KEYCLOAK_URL}/admin/realms/portal/users/${SA_USER_ID}/role-mappings/clients/${REALM_MGMT_ID}" \
+      -H "Authorization: Bearer ${KEYCLOAK_TOKEN}" \
+      | jq -e 'any(.[]; .name == "manage-clients")' >/dev/null \
+      || { echo "FAIL: the portal-frontend service account does not have the manage-clients role"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 4b2a63c0a63bf627
+    lang: shell
+    lines: d1ebafcd 9348e6ef 15ae54eb 64825780 bd09ef43 4536b685 a4a08542 6aa5f13d 23396309 b012595c 81188166 6c96ba56 4cf92c48 b29ed696 c6c27d6d e94b6638 8a331fdd
+    preview: curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+  content: |-
+    {{< doc-test paths="portal-login,portal-login-pkce" >}}
+    claims() {
+      curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+        -d "client_id=${KEYCLOAK_CLIENT}" -d "client_secret=${KEYCLOAK_SECRET}" \
+        -d "grant_type=password" -d "username=$1" -d "password=password" \
+        -d "scope=openid email profile" \
+        | jq -r '.access_token' | cut -d. -f2 | tr '_-' '/+' \
+        | awk '{ l = length($0) % 4; if (l == 2) $0 = $0 "=="; else if (l == 3) $0 = $0 "="; print }' \
+        | base64 -d 2>/dev/null
+    }
+
+    c=$(claims user1)
+    echo "$c" | jq -e '(.groups | index("users")) != null and .email == "user1@example.com" and .preferred_username == "user1" and .name == "Alice Doe" and (.sub | length) > 0' >/dev/null \
+      || { echo "FAIL: the user1 token is missing a required claim or the users group"; echo "$c"; exit 1; }
+    echo "user1 token has email, name, preferred_username, sub, and groups [users]"
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 68a72289f1c62d80
+    lang: shell
+    lines: d1ebafcd 9348e6ef 15ae54eb 64825780 f25a6378 4536b685 a4a08542 6aa5f13d 23396309 b012595c 81188166 6c96ba56 4cf92c48 b29ed696 c6c27d6d e94b6638 8a331fdd
+    preview: curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+  content: |-
+    {{< doc-test paths="portal-login,portal-login-pkce" >}}
+    claims() {
+      curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+        -d "client_id=${KEYCLOAK_CLIENT}" -d "client_secret=${KEYCLOAK_SECRET}" \
+        -d "grant_type=password" -d "username=$1" -d "password=password" \
+        -d "scope=openid email profile" \
+        | jq -r '.access_token' | cut -d. -f2 | tr '_-' '/+' \
+        | awk '{ l = length($0) % 4; if (l == 2) $0 = $0 "=="; else if (l == 3) $0 = $0 "="; print }' \
+        | base64 -d 2>/dev/null
+    }
+
+    c=$(claims admin1)
+    echo "$c" | jq -e '(.groups | index("admin")) != null and .email == "admin1@solo.io" and .preferred_username == "admin1"' >/dev/null \
+      || { echo "FAIL: the admin1 token is missing a required claim or the admin group"; echo "$c"; exit 1; }
+    echo "admin1 token has groups [admin]"
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 92464f318df486e9
+    lang: shell
+    lines: d1ebafcd 9348e6ef 15ae54eb 64825780 bd09ef43 4536b685 a4a08542 6aa5f13d 23396309 b012595c 81188166 6c96ba56 4cf92c48 b29ed696 c6c27d6d e94b6638 528de7a4
+    preview: curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+  content: |-
+    {{< doc-test paths="portal-login,portal-login-pkce" >}}
+    claims() {
+      curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+        -d "client_id=${KEYCLOAK_CLIENT}" -d "client_secret=${KEYCLOAK_SECRET}" \
+        -d "grant_type=password" -d "username=$1" -d "password=password" \
+        -d "scope=openid email profile" \
+        | jq -r '.access_token' | cut -d. -f2 | tr '_-' '/+' \
+        | awk '{ l = length($0) % 4; if (l == 2) $0 = $0 "=="; else if (l == 3) $0 = $0 "="; print }' \
+        | base64 -d 2>/dev/null
+    }
+
+    claims user1 | jq -e '.tier == "basic"' >/dev/null || { echo "FAIL: the user1 token has no tier=basic claim"; exit 1; }
+    claims admin1 | jq -e '.tier == "premium"' >/dev/null || { echo "FAIL: the admin1 token has no tier=premium claim"; exit 1; }
+    echo "tier claims: user1=basic, admin1=premium"
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: 8f935c19397fc689
+    lang: yaml
+    lines: 16c71da1 f1540154 2ed8aa83 8c8c4228 cec17b8d 0ccc8edc cb3f91d5 58584366 ab78925c 8c8c4228 cec17b8d 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac f184a6c7 a58565b2 8c8c4228 fa1e8330 f184a6c7 36184fa5 88f2876e 1dbe8698 11e8fef1 dfb67d7f 04968f51 82ac8adf a6775a77 ff42c2c6 0ff65a1a 82601aaa 7305a68b 9693ecf1 8db70061 b09519d4 81a8c996 ebc90541 162b7570 e26ac34e e43d2642 51689d66 f37eb95c 0466b46b 69d7f213 7c781356 f3e81d6c f98c047b dd425e10 82f2bc7e 69d7f213 7c781356 f3e81d6c 27791fcd 79bb435b cab2be2b 77f1ea54 f5a0555c 88dd7363 2629ac0e f614fa9d 14551a55 1dbe8698 de4520a8 9cedb412 cfb30922 cf5449a2 f0222554 cb3f91d5 f1540154 0d6480f0 8c8c4228 cec17b8d 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 5c2eb985 0cf44c45 9693ecf1 9278ed91 8432e015 f184a6c7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-login" >}}
+    kubectl rollout status deploy/portal-ui -n default --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-ui Deployment with the gateway-hosted flow settings is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-ui
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: 5d03368fbb112650
+    lang: yaml
+    lines: abbd1bdc 98875768 efd325e8 8c8c4228 b2f9f161 0ccc8edc 36184fa5 d5ec3fae afba47a2 f1c7325d 291dfcbb cd2edd69 6c4264f8 54cde512 e73ad6de b2f9f161 0ccc8edc b3fa6e8d 0bc8506e ad916773 b31eb75b 59a39a74 56beb715 61d9749c 9519f874 d8541eca 38dc0152 331bb1b3 8715bd8e abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="portal-login" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-oidc AuthConfig is accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: default
+            name: portal-oidc
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: d1704c3a9ebdd89a
+    lang: yaml
+    lines: abbd1bdc c28cc8a6 8c67597e 56bf9360 8c8c4228 32925040 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 b733d726 aeca2b3d bf068a96 b6bb8ea1 38dc0152 0be206f8 ff36735c 3cd97e4d ae6b70e3 a602752c 19c2fa74 97ae8597 3b8c1410 cf9b6dda 94ae491e 8900eecd 0ccc8edc c095a45d cb3f91d5 f902f973 8c67597e 56bf9360 8c8c4228 e14be511 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 b733d726 aeca2b3d bf068a96 b6bb8ea1 38dc0152 aac49b5d ff36735c d96163dd ae6b70e3 a602752c 19c2fa74 97ae8597 3b8c1410 cf9b6dda 94ae491e 8900eecd 0ccc8edc c095a45d cb3f91d5 381c9ee3 8c67597e 56bf9360 8c8c4228 c845df2f 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 b733d726 aeca2b3d 6d88f925 98d806e0 aeca2b3d 6d88f925 cc9c1c09 94ae491e 8900eecd 0ccc8edc c095a45d cb3f91d5 27acb345 de5dc664 bd0fb8f4 fefd2fc8 8c8c4228 11e8661f 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 e14be511 b5a028c9 56bf9360 c845df2f 2c3ea4d6 75674f79 b2f9f161 0ccc8edc cb3f91d5 9f7aad27 6bbf8e2a bd0fb8f4 fefd2fc8 8c8c4228 e024befb 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 32925040 3fd65bfa 7ca504ef 6aeb185f a1343bf6 5805bce3 9bd9d662 fcc2215a 045e942a 38dc0152 f9084713 702e22fb 44ec9b74 b93c9907 2b7bc43a 70c97555 28101486 5e1d80db ad65deb7 69f54740 cb3f91d5 39b5f4b7 d664f32c ad65deb7 8c8c4228 28101486 5e1d80db 36184fa5 c582fe46 2efcbf93 bfce7f60 ea54bab8 86ff3252 cb3f91d5 6f090389 979905a0 e47a48f5 8c8c4228 12681759 5e1d80db 36184fa5 0e20b496 7ae7d755 fefd2fc8 0ccc8edc 55708cb7 71ab14c2 ad65deb7 28101486 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="portal-login" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-backend-bearer HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: portal-backend-bearer
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-backend-session HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: portal-backend-session
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-login HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: portal-login
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-session policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: default
+            name: portal-session
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-bearer policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: default
+            name: portal-bearer
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "an anonymous request to /v1/me falls through to my-portal-backend and gets a 401"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/me"
+        method: GET
+        headers:
+          host: "portal.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: "a request to /v1/login without a session is redirected to the Keycloak portal realm"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/login"
+        method: GET
+        headers:
+          host: "portal.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 302
+        headers:
+          - name: location
+            comparator: contains
+            value: "/realms/portal/protocol/openid-connect/auth?client_id=portal-frontend"
+    EOF
+
+    # Steps 5 and 6 (open the portal, click Login, sign in as user1 and admin1) done
+    # with curl. portal.example.com:8080 resolves to the portal gateway; Keycloak is
+    # reached at the KEYCLOAK_URL that the AuthConfig's issuerUrl uses.
+    gw=(--resolve "portal.example.com:8080:${PORTAL_GW_ADDRESS}")
+    portal=http://portal.example.com:8080
+    portal_login() {  # $1 user, $2 cookie jar
+      local user=$1 jar=$2 login action callback code me
+      : > "$jar"
+      # Login: /v1/login hits the portal-login route; without a session ExtAuth redirects to Keycloak.
+      login=$(curl -sS -o /dev/null -w '%{redirect_url}' -c "$jar" -b "$jar" "${gw[@]}" "$portal/v1/login")
+      case "$login" in "$KEYCLOAK_URL"/realms/portal/protocol/openid-connect/auth\?*) ;; *) echo "FAIL: /v1/login did not redirect to the portal realm login, got '$login'"; return 1 ;; esac
+      case "$login" in *"redirect_uri=http%3A%2F%2Fportal.example.com%3A8080%2Fv1%2Flogin"*) ;; *) echo "FAIL: the login redirect does not use the /v1/login callback: '$login'"; return 1 ;; esac
+      action=$(curl -sS -c "$jar" -b "$jar" "$login" | grep -o 'action="[^"]*"' | head -1 | sed -e 's/^action="//' -e 's/"$//' -e 's/&amp;/\&/g')
+      test -n "$action" || { echo "FAIL: the Keycloak login page has no form"; return 1; }
+      callback=$(curl -sS -o /dev/null -w '%{redirect_url}' -c "$jar" -b "$jar" -d "username=$user" -d password=password "$action")
+      case "$callback" in "$portal/v1/login?"*code=*) ;; *) echo "FAIL: Keycloak did not redirect $user to the /v1/login callback, got '$callback'"; return 1 ;; esac
+      # Callback: ExtAuth exchanges the code, stores the session, and sets the id_token cookie.
+      code=$(curl -sS -o /dev/null -w '%{http_code}' -c "$jar" -b "$jar" "${gw[@]}" "$callback")
+      case "$code" in 30?) ;; *) echo "FAIL: the /v1/login callback returned $code instead of a redirect"; return 1 ;; esac
+      grep -q 'id_token' "$jar" || { echo "FAIL: no id_token session cookie after the callback for $user"; return 1; }
+      # Back on /v1/login with the session: the request reaches the portal, which redirects to the app root.
+      code=$(curl -sS -o /dev/null -w '%{http_code}' -c "$jar" -b "$jar" "${gw[@]}" "$portal/v1/login")
+      case "$code" in 30?) ;; *) echo "FAIL: /v1/login with a session returned $code instead of the redirect to /"; return 1 ;; esac
+    }
+    me_check() {  # $1 label, $2 jq filter, then curl args
+      local label=$1 filter=$2 body; shift 2
+      for i in $(seq 1 30); do
+        body=$(curl -sS "${gw[@]}" "$@" "$portal/v1/me")
+        echo "$body" | jq -e "$filter" >/dev/null 2>&1 && { echo "$label: $body"; return 0; }
+        sleep 2
+      done
+      echo "FAIL: $label: /v1/me returned: $body"; return 1
+    }
+    curl -sS -o /dev/null -w '%{http_code}' "${gw[@]}" "$portal/" | grep -q '^200$' || { echo "FAIL: the portal frontend is not reachable on $portal/"; exit 1; }
+    user_jar=$(mktemp); admin_jar=$(mktemp)
+    portal_login user1 "$user_jar" || exit 1
+    portal_login admin1 "$admin_jar" || exit 1
+    # Session route: the gateway exchanges the session cookie for the access token in an
+    # Authorization: Bearer header, so the portal identifies the user from the cookie alone.
+    me_check "user1 through the session route" '.email == "user1@example.com" and .isAdmin == false' -b "$user_jar" || exit 1
+    me_check "admin1 through the session route" '.email == "admin1@solo.io" and .isAdmin == true' -b "$admin_jar" || exit 1
+    # Bearer route: a valid Keycloak token is accepted and forwarded; a forged token gets a 401.
+    tok=$(curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+      -d "client_id=${KEYCLOAK_CLIENT}" -d "client_secret=${KEYCLOAK_SECRET}" \
+      -d grant_type=password -d username=admin1 -d password=password -d "scope=openid email profile" | jq -r .access_token)
+    me_check "admin1 through the bearer route" '.email == "admin1@solo.io" and .isAdmin == true' -H "Authorization: Bearer $tok" || exit 1
+    forged="$(echo "$tok" | cut -d. -f1-2).AAAA"
+    code=$(curl -sS -o /dev/null -w '%{http_code}' "${gw[@]}" -H "Authorization: Bearer $forged" "$portal/v1/me")
+    test "$code" = 401 || { echo "FAIL: a forged bearer token got $code instead of 401"; exit 1; }
+    echo "user1 and admin1 logged in through the gateway-hosted flow; the session and bearer routes give the portal the user identity"
+    {{< /doc-test >}}
+- after:
+    block: 27
+    fingerprint: 025f795f362c8a10
+    lang: sh
+    lines: d0eae5f6 03b9e4a4 9cd8dfa1
+    preview: kubectl create secret tls portal-tls -n default \
+  content: |-
+    {{< doc-test paths="portal-login-pkce" >}}
+    # A self-signed certificate for both hostnames replaces <your-key-file> and <your-cert-file>.
+    tlsdir=$(mktemp -d)
+    openssl req -x509 -newkey rsa:2048 -nodes -days 2 \
+      -keyout "$tlsdir/tls.key" -out "$tlsdir/tls.crt" \
+      -subj "/CN=${PORTAL_HOST}" \
+      -addext "subjectAltName=DNS:${PORTAL_HOST},DNS:${KEYCLOAK_HOST}"
+    kubectl create secret tls portal-tls -n default \
+      --key "$tlsdir/tls.key" \
+      --cert "$tlsdir/tls.crt"
+    {{< /doc-test >}}
+- after:
+    block: 28
+    fingerprint: 9005239507b0160d
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 e3cde7c0 0ccc8edc 36184fa5 b206896b c10d7538 82601aaa c095a45d 069de162 5f37c61e c3201545 e83d405d 52b5b541 c6ba4159 53aa10f9 3195c5f5 f7446fcf bc611839 944c8de2 a67acb0a 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-login-pkce" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-gateway Gateway with the HTTPS listener is programmed"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: default
+            name: portal-gateway
+        jsonPath: "$.status.listeners[?(@.name=='https')].conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 30
+    fingerprint: 17a460dab9f0a9de
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 28101486 5e1d80db 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa 62d70051 3de9d845 a3b86ab6 a5b107cc c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-login-pkce" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the keycloak HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: keycloak
+            name: keycloak
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 31
+    fingerprint: eb4375f9a207d7b8
+    lang: sh
+    lines: 82ffa625 66fca620
+    preview: curl -skI $PORTAL_URL | head -1
+  content: |-
+    {{< doc-test paths="portal-login-pkce" >}}
+    kc=(--resolve "${KEYCLOAK_HOST}:443:${GATEWAY_ADDRESS}")
+    pt=(--resolve "${PORTAL_HOST}:443:${GATEWAY_ADDRESS}")
+    # Step 8 with curl --resolve, because portal.example.com and keycloak.example.com have no DNS records.
+    ok=
+    for i in $(seq 1 60); do
+      status=$(curl -skI "${pt[@]}" "$PORTAL_URL" | head -1 | tr -d '\r')
+      issuer=$(curl -sk "${kc[@]}" "$KEYCLOAK_BROWSER_URL/realms/portal/.well-known/openid-configuration" | jq -r .issuer 2>/dev/null)
+      case "$status" in HTTP/*" 200"*) [ "$issuer" = "${KEYCLOAK_BROWSER_URL}/realms/portal" ] && { ok=1; break; } ;; esac
+      sleep 5
+    done
+    [ -n "$ok" ] || { echo "FAIL: HTTPS check: portal status '$status', Keycloak issuer '$issuer' (expected ${KEYCLOAK_BROWSER_URL}/realms/portal)"; exit 1; }
+    echo "$status"; echo "$issuer"
+    {{< /doc-test >}}
+- after:
+    block: 33
+    fingerprint: 47a9d5638396fdd5
+    lang: shell
+    lines: c0f49e21 271f5793 87f44bf8 64825780 7ec3569a 11638fb5 5783dbe2 6d8ce517 007181c8 67c5a3ac b0cead6d ec36778b afa07114 8c92794d 59693229 3213e977 7a9da5ed 40b28360 f72352be b6768570 d10b36aa fc075a9d 34df3848 91be62ca 007181c8 4f091c18 ec723e30 19788c4d 007181c8 67c5a3ac b0cead6d bcffc029 d15de3c7 7ba48c1e 6685a21a 65ffdce6 9cf11664 7d170475 8712479b 3e25b96f d10b36aa fc075a9d bffa28d8 19788c4d 007181c8 67c5a3ac b0cead6d 1ef4e435 d15de3c7 0eb43e37 6685a21a 986bee3b c761e95f 7d170475 8712479b 3e25b96f d10b36aa fc075a9d
+    preview: '# Refresh the admin token'
+  content: |-
+    {{< doc-test paths="portal-login-pkce" >}}
+    case "$SPA_CLIENT_ID" in ""|null) echo "FAIL: the portal-frontend-spa client was not created"; exit 1 ;; esac
+    curl -s "${KEYCLOAK_URL}/admin/realms/portal/clients/${SPA_CLIENT_ID}" -H "Authorization: Bearer ${KEYCLOAK_TOKEN}" \
+      | jq -e '.publicClient == true and .attributes["pkce.code.challenge.method"] == "S256"' >/dev/null \
+      || { echo "FAIL: portal-frontend-spa is not a public client that enforces S256 PKCE"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 34
+    fingerprint: b7f11762aacd337d
+    lang: sh
+    lines: b7f11762
+    preview: 'curl -sk $KEYCLOAK_BROWSER_URL/realms/portal/.well-known/openid-configuration | '
+  content: |-
+    {{< doc-test paths="portal-login-pkce" >}}
+    kc=(--resolve "${KEYCLOAK_HOST}:443:${GATEWAY_ADDRESS}")
+    pt=(--resolve "${PORTAL_HOST}:443:${GATEWAY_ADDRESS}")
+    # Step 10 with curl --resolve, because keycloak.example.com has no DNS record.
+    curl -sk "${kc[@]}" $KEYCLOAK_BROWSER_URL/realms/portal/.well-known/openid-configuration \
+      | jq -e --arg b "$KEYCLOAK_BROWSER_URL/realms/portal/protocol/openid-connect" \
+          '.authorization_endpoint == ($b + "/auth") and .token_endpoint == ($b + "/token") and .end_session_endpoint == ($b + "/logout")' \
+      || { echo "FAIL: the discovery document does not list the HTTPS Keycloak endpoints"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 36
+    fingerprint: 3682b3dae935d11e
+    lang: yaml
+    lines: 16c71da1 f1540154 2ed8aa83 8c8c4228 cec17b8d 0ccc8edc cb3f91d5 58584366 ab78925c 8c8c4228 cec17b8d 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac f184a6c7 a58565b2 8c8c4228 fa1e8330 f184a6c7 36184fa5 88f2876e 1dbe8698 11e8fef1 dfb67d7f 04968f51 82ac8adf a6775a77 ff42c2c6 0ff65a1a 82601aaa 7305a68b 9693ecf1 8db70061 b09519d4 418f06a9 ebc90541 8affd970 806c57ad 77436eea 73bbd682 d6613065 8135652e d4a36a3a e2d56be7 239ec354 0466b46b 69d7f213 7c781356 f3e81d6c f98c047b dd425e10 82f2bc7e 69d7f213 7c781356 f3e81d6c 27791fcd 79bb435b cab2be2b 77f1ea54 f5a0555c 88dd7363 2629ac0e f614fa9d 14551a55 1dbe8698 de4520a8 9cedb412 cfb30922 cf5449a2 f0222554 cb3f91d5 f1540154 0d6480f0 8c8c4228 cec17b8d 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 5c2eb985 0cf44c45 9693ecf1 9278ed91 8432e015 f184a6c7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-login-pkce" >}}
+    kubectl rollout status deploy/portal-ui -n default --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-ui Deployment with the PKCE settings is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-ui
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 37
+    fingerprint: bf8055f9b408c07a
+    lang: yaml
+    lines: 16c71da1 c28cc8a6 8c67597e 56bf9360 8c8c4228 32925040 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa 70af8e1d 3de9d845 b733d726 aeca2b3d bf068a96 b6bb8ea1 38dc0152 0be206f8 ff36735c 3cd97e4d ae6b70e3 a602752c 19c2fa74 97ae8597 3b8c1410 cf9b6dda 94ae491e 8900eecd 0ccc8edc c095a45d cb3f91d5 9f7aad27 6bbf8e2a bd0fb8f4 fefd2fc8 8c8c4228 e024befb 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 32925040 3fd65bfa 7ca504ef 6aeb185f a1343bf6 5805bce3 363360d3 fcc2215a 045e942a 38dc0152 f9084713 702e22fb 44ec9b74 b93c9907 4bc56092 70c97555 28101486 5e1d80db ad65deb7 69f54740 cb3f91d5 39b5f4b7 d664f32c ad65deb7 8c8c4228 28101486 5e1d80db 36184fa5 c582fe46 2efcbf93 bfce7f60 ea54bab8 86ff3252 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-login-pkce" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-backend-bearer HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: portal-backend-bearer
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-bearer policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: default
+            name: portal-bearer
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kc=(--resolve "${KEYCLOAK_HOST}:443:${GATEWAY_ADDRESS}")
+    pt=(--resolve "${PORTAL_HOST}:443:${GATEWAY_ADDRESS}")
+    # Steps 13 and 14 (open the portal, click Login, sign in) done with curl: the PKCE
+    # authorization code flow that the frontend runs in the browser, against Keycloak
+    # at keycloak.example.com through the gateway's HTTPS listener.
+    curl -skI "${pt[@]}" "$PORTAL_URL/" | head -1 | grep -q ' 200' || { echo "FAIL: the portal frontend is not served on $PORTAL_URL"; exit 1; }
+    pkce_login() {  # $1 user; prints the access token
+      local user=$1 jar verifier challenge redir auth action loc code tok
+      jar=$(mktemp)
+      verifier=$(openssl rand -hex 48)
+      challenge=$(printf '%s' "$verifier" | openssl dgst -sha256 -binary | openssl base64 -A | tr '+/' '-_' | tr -d '=')
+      redir=$(jq -rn --arg u "$PORTAL_URL/callback" '$u|@uri')
+      auth="$KEYCLOAK_BROWSER_URL/realms/portal/protocol/openid-connect/auth?client_id=portal-frontend-spa&response_type=code&scope=openid%20email%20profile&redirect_uri=${redir}&state=doctest&code_challenge=${challenge}&code_challenge_method=S256"
+      action=$(curl -sSk -c "$jar" -b "$jar" "${kc[@]}" "$auth" | grep -o 'action="[^"]*"' | head -1 | sed -e 's/^action="//' -e 's/"$//' -e 's/&amp;/\&/g')
+      case "$action" in "$KEYCLOAK_BROWSER_URL"/*) ;; *) echo "FAIL: the Keycloak login form for $user is not on $KEYCLOAK_BROWSER_URL: '$action'" >&2; return 1 ;; esac
+      loc=$(curl -sSk -o /dev/null -w '%{redirect_url}' -c "$jar" -b "$jar" "${kc[@]}" -d "username=$user" -d password=password "$action")
+      case "$loc" in "$PORTAL_URL/callback?"*code=*) ;; *) echo "FAIL: Keycloak did not return $user to $PORTAL_URL/callback, got '$loc'" >&2; return 1 ;; esac
+      code=$(printf '%s' "$loc" | sed -e 's/.*[?&]code=//' -e 's/&.*//')
+      tok=$(curl -sSk "${kc[@]}" -X POST "$KEYCLOAK_BROWSER_URL/realms/portal/protocol/openid-connect/token" \
+        -d grant_type=authorization_code -d client_id=portal-frontend-spa \
+        --data-urlencode "code=$code" --data-urlencode "redirect_uri=$PORTAL_URL/callback" -d "code_verifier=$verifier" \
+        | jq -r .access_token)
+      case "$tok" in ey*) ;; *) echo "FAIL: the token request with the PKCE code verifier failed for $user" >&2; return 1 ;; esac
+      printf '%s' "$tok"
+    }
+    me_https() {  # $1 label, $2 token, $3 jq filter
+      local body
+      for i in $(seq 1 30); do
+        body=$(curl -sSk "${pt[@]}" -H "Authorization: Bearer $2" "$PORTAL_URL/v1/me")
+        echo "$body" | jq -e "$3" >/dev/null 2>&1 && { echo "$1: $body"; return 0; }
+        sleep 2
+      done
+      echo "FAIL: $1: /v1/me returned: $body"; return 1
+    }
+    user_tok=$(pkce_login user1) || exit 1
+    admin_tok=$(pkce_login admin1) || exit 1
+    echo "$admin_tok" | cut -d. -f2 | tr '_-' '/+' | awk '{ l = length($0) % 4; if (l == 2) $0 = $0 "=="; else if (l == 3) $0 = $0 "="; print }' | base64 -d 2>/dev/null \
+      | jq -e --arg iss "$KEYCLOAK_BROWSER_URL/realms/portal" '.iss == $iss and (.groups | index("admin")) != null' >/dev/null \
+      || { echo "FAIL: the PKCE token does not have the browser-facing issuer and the groups claim"; exit 1; }
+    me_https "user1 through the bearer route" "$user_tok" '.email == "user1@example.com" and .isAdmin == false' || exit 1
+    me_https "admin1 through the bearer route" "$admin_tok" '.email == "admin1@solo.io" and .isAdmin == true' || exit 1
+    code=$(curl -sSk -o /dev/null -w '%{http_code}' "${pt[@]}" -H "Authorization: Bearer $(echo "$admin_tok" | cut -d. -f1-2).AAAA" "$PORTAL_URL/v1/me")
+    test "$code" = 401 || { echo "FAIL: a forged bearer token got $code instead of 401"; exit 1; }
+    echo "user1 and admin1 logged in with the PKCE flow; the bearer route accepts their tokens and rejects a forged one"
+    {{< /doc-test >}}

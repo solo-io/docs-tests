@@ -1,0 +1,270 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/frontend-setup/app-metadata.md
+blocks:
+- 7f529d28222c6d58 sh
+- a5234fcaf03fb28e sh
+- 0208ab0483ccd5f7 sh
+- 685dbd9d07116b67 sh
+- dae4f060281b21a7 sh
+- 1b0a6efd40add629 sh
+- 566b263795a6bd4a sh
+- ceb703c34aa97ef4 sh
+- b5501ac791376499 sh
+- d25845317d23ccea sh
+- 1601f02b24f5d32e yaml
+- 768b34a769f80813 sh
+- 3ffcb1aa8051ded5 sh
+- 57065239ca025e59 sh
+- dab29e37b3c9ed9b sh
+- ab49128634bacb72 sh
+- dd64ef0efdf64f19 console
+tags:
+- paths: portal-app-metadata
+  block: 0
+  fingerprint: 7f529d28222c6d58
+  lang: sh
+  lines: b7dc0e7f 6300cde6
+  preview: export PORTAL_URL=http://$(kubectl get httproute my-portal-backend -n default -o
+  form:
+    attr: paths="portal-app-metadata"
+    only: true
+    lead: ' '
+- paths: portal-app-metadata
+  block: 1
+  fingerprint: a5234fcaf03fb28e
+  lang: sh
+  lines: ccf9ec3d 9348e6ef 15ae54eb 64825780 f25a6378 4536b685 a75a9eeb
+  preview: export ADMIN_TOKEN=$(curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/ope
+  form:
+    attr: paths="portal-app-metadata"
+    only: true
+    lead: ' '
+- paths: portal-app-metadata
+  block: 10
+  fingerprint: 1601f02b24f5d32e
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 4e7657ee 0ccc8edc 36184fa5 588a5d84 b5a028c9 cd44d8cd e3cde7c0 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 54ccadac 92046d69 a99fad3a 2b2fa404 f2252f88 79d3bb7a 090a797e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-app-metadata"
+    only: true
+    lead: ' '
+- paths: portal-app-metadata
+  block: 11
+  fingerprint: 768b34a769f80813
+  lang: sh
+  lines: 468d57ff 27a278ad 663f7696 498a2f70
+  preview: export PORTAL_GW_ADDRESS=$(kubectl get svc -n default portal-gateway -o jsonpath
+  form:
+    attr: paths="portal-app-metadata"
+    only: true
+    lead: ' '
+- paths: portal-app-metadata
+  block: 15
+  fingerprint: ab49128634bacb72
+  lang: sh
+  lines: ab491286
+  preview: kubectl logs -n default deployment/portal-gateway | grep '"path":"/httpbin/heade
+  form:
+    attr: paths="portal-app-metadata"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: a5234fcaf03fb28e
+    lang: sh
+    lines: ccf9ec3d 9348e6ef 15ae54eb 64825780 f25a6378 4536b685 a75a9eeb
+    preview: export ADMIN_TOKEN=$(curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/ope
+  content: |-
+    {{< doc-test paths="portal-app-metadata" >}}
+    echo "PORTAL_URL=$PORTAL_URL"
+    [ "$PORTAL_URL" = "http://portal.example.com:8080" ] || { echo "FAIL: unexpected PORTAL_URL $PORTAL_URL"; exit 1; }
+    [ -n "$ADMIN_TOKEN" ] && [ "$ADMIN_TOKEN" != "null" ] || { echo "FAIL: no Keycloak token for admin1"; exit 1; }
+    # The httpbin-route HTTPRoute is attached to the portal-gateway Gateway from
+    # the portal setup guide, so send the page's API requests to that gateway.
+    export INGRESS_GW_ADDRESS="${PORTAL_GW_ADDRESS}"
+    # API_KEY comes from the Create API keys guide. If it is not set, create a key
+    # for user1's app through the portal API, as that guide does in the frontend.
+    if [ -z "${API_KEY:-}" ]; then
+      kc_token() {
+        curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+          -d "client_id=${KEYCLOAK_CLIENT}" \
+          -d "client_secret=${KEYCLOAK_SECRET}" \
+          -d "grant_type=password" \
+          -d "username=$1" \
+          -d "password=password" \
+          -d "scope=openid email profile" | jq -r '.access_token'
+      }
+      USER1_TOKEN=$(kc_token user1)
+      pc() { curl -s -H "Host: portal.example.com" -H "Authorization: Bearer ${USER1_TOKEN}" -H "Content-Type: application/json" "$@"; }
+      T=$(pc "http://${PORTAL_GW_ADDRESS}:8080/v1/teams" | jq -r '.[0].id')
+      A=$(pc "http://${PORTAL_GW_ADDRESS}:8080/v1/teams/${T}/apps" | jq -r '.[0].id')
+      export API_KEY=$(pc -X POST "http://${PORTAL_GW_ADDRESS}:8080/v1/apps/${A}/api-keys" -d '{"apiKeyName":"app-metadata-test"}' | jq -r '.apiKey')
+    fi
+    [ -n "${API_KEY:-}" ] && [ "${API_KEY}" != "null" ] || { echo "FAIL: no API key for the httpbin API product"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: ceb703c34aa97ef4
+    lang: sh
+    lines: ceb703c3
+    preview: export SUBSCRIPTION_ID=<subscription-id>
+  content: |-
+    {{< doc-test paths="portal-app-metadata" >}}
+    # Stands in for the three list calls and the placeholder exports above: find
+    # the app that owns API_KEY, then its team and its approved subscription to the
+    # httpbin API product, with the same admin endpoints the page uses.
+    # portal.example.com resolves to the portal-gateway address only through the
+    # Host header, so the portal API calls go to PORTAL_GW_ADDRESS with that header.
+    pa() { curl -s -H "Host: portal.example.com" -H "Authorization: Bearer ${ADMIN_TOKEN}" -H "Content-Type: application/json" "$@"; }
+    export APP_ID=$(curl -s -G -H "Host: portal.example.com" "http://${PORTAL_GW_ADDRESS}:8080/v1/metadata" \
+      --data-urlencode "apiKey=${API_KEY}" --data-urlencode "apiProductId=httpbin" | jq -r '.applicationId')
+    [ -n "$APP_ID" ] && [ "$APP_ID" != "null" ] || { echo "FAIL: the API key is not valid for the httpbin API product"; exit 1; }
+    export TEAM_ID=$(pa "http://${PORTAL_GW_ADDRESS}:8080/v1/apps/${APP_ID}" | jq -r '.teamId')
+    pa "http://${PORTAL_GW_ADDRESS}:8080/v1/teams" | jq -e --arg t "$TEAM_ID" 'map(.id) | index($t) != null' >/dev/null \
+      || { echo "FAIL: GET /v1/teams does not list team $TEAM_ID"; exit 1; }
+    export APP_NAME=$(pa "http://${PORTAL_GW_ADDRESS}:8080/v1/teams/${TEAM_ID}/apps" | jq -r --arg a "$APP_ID" '.[] | select(.id == $a) | .name')
+    [ -n "$APP_NAME" ] || { echo "FAIL: GET /v1/teams/$TEAM_ID/apps does not list app $APP_ID"; exit 1; }
+    export SUBSCRIPTION_ID=$(pa "http://${PORTAL_GW_ADDRESS}:8080/v1/apps/${APP_ID}/subscriptions" \
+      | jq -r '[.[] | select(.apiProductId == "httpbin" and .approved)][0].id')
+    [ -n "$SUBSCRIPTION_ID" ] && [ "$SUBSCRIPTION_ID" != "null" ] || { echo "FAIL: no approved subscription to httpbin for app $APP_ID"; exit 1; }
+    echo "TEAM_ID=$TEAM_ID APP_ID=$APP_ID APP_NAME=$APP_NAME SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: b5501ac791376499
+    lang: sh
+    lines: a27a839c f43e9869 67c5a3ac ce37f1bf
+    preview: curl -s -X POST "$PORTAL_URL/v1/apps/$APP_ID/metadata" \
+  content: |-
+    {{< doc-test paths="portal-app-metadata" >}}
+    # Runs the call above against the portal-gateway address and checks that the
+    # app reports the custom metadata.
+    # portal.example.com resolves to the portal-gateway address only through the
+    # Host header, so the portal API calls go to PORTAL_GW_ADDRESS with that header.
+    pa() { curl -s -H "Host: portal.example.com" -H "Authorization: Bearer ${ADMIN_TOKEN}" -H "Content-Type: application/json" "$@"; }
+    resp=$(pa -w '\n%{http_code}' -X POST "http://${PORTAL_GW_ADDRESS}:8080/v1/apps/$APP_ID/metadata" \
+      -d '{"customMetadata": {"tier": "free", "region": "eu"}}')
+    echo "$resp"
+    [ "$(echo "$resp" | tail -1)" = "200" ] || { echo "FAIL: setting the app metadata did not return 200"; exit 1; }
+    echo "$resp" | sed '$d' | jq -e '.metadata.customMetadata == {"tier": "free", "region": "eu"}' >/dev/null \
+      || { echo "FAIL: the app does not report customMetadata tier=free, region=eu"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: d25845317d23ccea
+    lang: sh
+    lines: 0bf031c9 f43e9869 67c5a3ac fff4e913
+    preview: curl -s -X POST "$PORTAL_URL/v1/subscriptions/$SUBSCRIPTION_ID/metadata" \
+  content: |-
+    {{< doc-test paths="portal-app-metadata" >}}
+    # Runs the call above against the portal-gateway address, checks that the
+    # subscription reports the custom metadata, and reads back the merged metadata
+    # that ExtAuth gets for the API key: the subscription's tier wins.
+    # portal.example.com resolves to the portal-gateway address only through the
+    # Host header, so the portal API calls go to PORTAL_GW_ADDRESS with that header.
+    pa() { curl -s -H "Host: portal.example.com" -H "Authorization: Bearer ${ADMIN_TOKEN}" -H "Content-Type: application/json" "$@"; }
+    resp=$(pa -w '\n%{http_code}' -X POST "http://${PORTAL_GW_ADDRESS}:8080/v1/subscriptions/$SUBSCRIPTION_ID/metadata" \
+      -d '{"customMetadata": {"tier": "premium"}}')
+    echo "$resp"
+    [ "$(echo "$resp" | tail -1)" = "200" ] || { echo "FAIL: setting the subscription metadata did not return 200"; exit 1; }
+    echo "$resp" | sed '$d' | jq -e '.metadata.customMetadata == {"tier": "premium"}' >/dev/null \
+      || { echo "FAIL: the subscription does not report customMetadata tier=premium"; exit 1; }
+    pa "http://${PORTAL_GW_ADDRESS}:8080/v1/apps/$APP_ID/subscriptions" \
+      | jq -e --arg s "$SUBSCRIPTION_ID" '.[] | select(.id == $s) | .metadata.customMetadata.tier == "premium"' >/dev/null \
+      || { echo "FAIL: GET /v1/apps/$APP_ID/subscriptions does not return the subscription metadata"; exit 1; }
+    meta=$(curl -s -G -H "Host: portal.example.com" "http://${PORTAL_GW_ADDRESS}:8080/v1/metadata" \
+      --data-urlencode "apiKey=${API_KEY}" --data-urlencode "apiProductId=httpbin")
+    echo "$meta"
+    echo "$meta" | jq -e --arg a "$APP_ID" '.allowed == true and .applicationId == $a and .customMetadata == {"tier": "premium", "region": "eu"}' >/dev/null \
+      || { echo "FAIL: /v1/metadata does not return the merged customMetadata tier=premium, region=eu"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 1601f02b24f5d32e
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 4e7657ee 0ccc8edc 36184fa5 588a5d84 b5a028c9 cd44d8cd e3cde7c0 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 54ccadac 92046d69 a99fad3a 2b2fa404 f2252f88 79d3bb7a 090a797e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-app-metadata" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-application-metadata-access-logs ListenerPolicy is accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: default
+            name: portal-application-metadata-access-logs
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Verify access log output
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 14
+      fingerprint: dab29e37b3c9ed9b
+      lang: sh
+      lines: 424ccc8c 663f7696 52119980
+      preview: curl -vik localhost:8080/httpbin/headers \
+  content: |-
+    {{< doc-test paths="portal-app-metadata" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request with the API key returns 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/httpbin/headers"
+        method: GET
+        headers:
+          host: "api.example.com"
+          api-key: "${API_KEY}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    # The next step greps the proxy log for this path. Wait until the new access
+    # log format reaches the proxy and a line for the request is flushed.
+    for i in $(seq 1 30); do
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/httpbin/headers" -H "host: api.example.com" -H "api-key: ${API_KEY}"
+      sleep 2
+      kubectl logs -n default deployment/portal-gateway --tail=500 | grep '"path":"/httpbin/headers"' >/dev/null && break
+      sleep 3
+    done
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: ab49128634bacb72
+    lang: sh
+    lines: ab491286
+    preview: kubectl logs -n default deployment/portal-gateway | grep '"path":"/httpbin/heade
+  content: |-
+    {{< doc-test paths="portal-app-metadata" >}}
+    # Checks the latest access log line for an authenticated /httpbin/headers
+    # request. ExtAuth caches credential lookups (cacheDuration: 10s) and the
+    # listener change takes a moment to reach the proxy, so send a fresh request
+    # and retry.
+    ok=0
+    for i in $(seq 1 30); do
+      curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/httpbin/headers" -H "host: api.example.com" -H "api-key: ${API_KEY}"
+      sleep 2
+      line=$(kubectl logs -n default deployment/portal-gateway --tail=500 \
+        | grep '^{' | jq -c 'select(.path == "/httpbin/headers" and (.response_code | tostring) == "200")' 2>/dev/null | tail -1 || true)
+      if [ -n "$line" ] && echo "$line" | jq -e --arg a "$APP_ID" --arg n "$APP_NAME" \
+          '.application_id == $a and .application_name == $n and .tier == "premium" and .region == "eu" and .method == "GET"' >/dev/null; then
+        ok=1; break
+      fi
+      sleep 3
+    done
+    echo "last access log line: $line"
+    [ "$ok" = 1 ] || { echo "FAIL: no access log line with application_id=$APP_ID, application_name=$APP_NAME, tier=premium, region=eu"; exit 1; }
+    {{< /doc-test >}}

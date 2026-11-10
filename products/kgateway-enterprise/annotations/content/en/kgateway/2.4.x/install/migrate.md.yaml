@@ -1,0 +1,818 @@
+format: 1
+source: content/en/kgateway/2.4.x/install/migrate.md
+blocks:
+- 7121e43a061d31e9 mermaid
+- e142977316a0dc96 mermaid
+- 6b84e20cbbfdaa4d mermaid
+- 405963804cceaf7d mermaid
+- c1e1531a1c9b7609 sh
+- 356177af76a1136f sh
+- 7a89cbf8b08e4e00 sh
+- 5fba5f3bf561451f sh
+- b155cdb517b91cb8 console
+- e128d7ff246598c4 sh
+- 16c507250dc49a6f console
+- e0065bfea92d337a sh
+- 24fcdc1873676397 sh
+- 20d80a7e59d7e936 sh
+- 21aa38e158bd4796 console
+- ee0ebd5a8e0b91b7 yaml
+- 392a071412681a37 yaml
+- f1cc5f7a712e8156 sh
+- 3da854ebfb6df3fd sh
+- e52d33c301efbaf3 yaml
+- 6d51f39a9f15b2ce sh
+- ff8a91e13e0f1465 sh
+tags:
+- paths: migrate,migrate-canary
+  block: 5
+  fingerprint: 356177af76a1136f
+  lang: sh
+  lines: b2d49b63 2a24ff0e 74cfa645 0713159a
+  preview: 'helm upgrade -i kgateway-crds oci://{{< reuse "/kgw-docs/snippets/helm-path.md" '
+  form:
+    attr: paths="migrate,migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate,migrate-canary
+  block: 6
+  fingerprint: 7a89cbf8b08e4e00
+  lang: sh
+  lines: 8a3b9e28 1bd2e2c1 39fd077a f3b85382
+  preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
+  form:
+    attr: paths="migrate,migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate,migrate-canary
+  block: 7
+  fingerprint: 5fba5f3bf561451f
+  lang: sh
+  lines: 5fba5f3b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="migrate,migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate
+  block: 11
+  fingerprint: e0065bfea92d337a
+  lang: sh
+  lines: e0065bfe
+  preview: kubectl patch gateway http -n kgateway-system --type=merge -p '{"spec":{"gateway
+  form:
+    attr: paths="migrate"
+    only: true
+    lead: ' '
+- paths: migrate
+  block: 12
+  fingerprint: 24fcdc1873676397
+  lang: sh
+  lines: a4b9fbb1 9c36181e e4c83c51 6f86efea a4c3ed04
+  preview: kubectl get gateways --all-namespaces -o json \
+  form:
+    attr: paths="migrate"
+    only: true
+    lead: ' '
+- paths: migrate
+  block: 13
+  fingerprint: 20d80a7e59d7e936
+  lang: sh
+  lines: 20d80a7e
+  preview: kubectl get pods -n kgateway-system
+  form:
+    attr: paths="migrate"
+    only: true
+    lead: ' '
+- paths: migrate-canary
+  block: 15
+  fingerprint: ee0ebd5a8e0b91b7
+  lang: yaml
+  lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 0402695b 0bebd850 36184fa5 c281d1bb c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 a9279f6d abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate-canary
+  block: 16
+  fingerprint: 392a071412681a37
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 e25330ff 1288d06d c4c19ccb 1288d06d 301e1bfa bf0611ca 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate-canary
+  block: 17
+  fingerprint: f1cc5f7a712e8156
+  lang: sh
+  lines: d80c992c 4059cfa2 02fbd77e
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n kgateway-system enterprise-gatewa
+  form:
+    attr: paths="migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate-canary
+  block: 19
+  fingerprint: e52d33c301efbaf3
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 f8869deb 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="migrate-canary"
+    only: true
+    lead: ' '
+- paths: migrate-canary
+  block: 20
+  fingerprint: 6d51f39a9f15b2ce
+  lang: sh
+  lines: 6d51f39a
+  preview: kubectl delete gateway http -n kgateway-system
+  form:
+    attr: paths="migrate-canary"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: 170df6ab8fcca554
+    occurrence: 0
+    words: d4735e3a b7bd55c1 b9776d7d af2bdbe1 abbea20e a172cedc 3e194352 32a914f3 46b42b42 84532b30 5e1e2bca 1e142e62 50848436
+    block_before:
+      block: 3
+      fingerprint: 405963804cceaf7d
+      lang: mermaid
+      lines: 35bb4631 95b4397d 22965568 42d1bb56 b8ce934d 5a27cb24 e879ba36 0104dff1 361e48d0 b9ebcef8 6459061b 9de85497 37bf8d74 68d2c1f1
+      preview: flowchart LR
+  content: |-
+    {{< doc-test paths="migrate,migrate-canary" >}}
+    # Start state for this guide: kgateway open source with the httpbin sample app,
+    # installed the way the kgateway open source quick start and sample app guides do.
+    # The open source version is v2.5.0: Solo Enterprise for kgateway 2.4.x is built on
+    # kgateway 2.5 (the docs map 2.4.x to open source 2.5.x), so v2.5.0 is the open
+    # source release whose CRDs the enterprise CRD chart replaces in step 1.
+    kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< reuse "kgw-docs/versions/k8s-gw-version.md" >}}/standard-install.yaml
+    helm upgrade -i kgateway-crds oci://cr.kgateway.dev/kgateway-dev/charts/kgateway-crds \
+      --create-namespace --namespace kgateway-system \
+      --version v2.5.0
+    helm upgrade -i kgateway oci://cr.kgateway.dev/kgateway-dev/charts/kgateway \
+      --namespace kgateway-system \
+      --version v2.5.0
+    YAMLTest -f - <<'EOF'
+    - name: "migrate - the kgateway open source control plane is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    - name: "migrate - the kgateway GatewayClass is accepted"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: kgateway
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway/refs/heads/{{< reuse "kgw-docs/versions/github-branch.md" >}}/examples/httpbin.yaml
+    kubectl apply -f- <<EOF
+    kind: Gateway
+    apiVersion: gateway.networking.k8s.io/v1
+    metadata:
+      name: http
+      namespace: kgateway-system
+    spec:
+      gatewayClassName: kgateway
+      listeners:
+      - protocol: HTTP
+        port: 8080
+        name: http
+        allowedRoutes:
+          namespaces:
+            from: All
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: httpbin
+      namespace: httpbin
+    spec:
+      parentRefs:
+        - name: http
+          namespace: kgateway-system
+      hostnames:
+        - "www.example.com"
+      rules:
+        - backendRefs:
+            - name: httpbin
+              port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: "migrate - the httpbin sample app is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    - name: "migrate - the open source http Gateway is programmed"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the http gateway service has a load balancer address"
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+          value: true
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the httpbin HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    export INGRESS_GW_ADDRESS=$(kubectl get svc -n kgateway-system http -o jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    export OSS_GW_ADDRESS=$INGRESS_GW_ADDRESS
+    YAMLTest -f - <<'EOF'
+    - name: "migrate - the open source gateway proxy serves httpbin with a 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "www.example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 7a89cbf8b08e4e00
+    lang: sh
+    lines: 8a3b9e28 1bd2e2c1 39fd077a f3b85382
+    preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
+  content: |-
+    {{< doc-test paths="migrate,migrate-canary" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "migrate - the enterprise control plane is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    - name: "migrate - the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} GatewayClass is accepted"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the kgateway open source control plane keeps running next to the enterprise control plane"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the open source gateway proxy still serves httpbin after the enterprise install"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "www.example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 16c507250dc49a6f
+    lang: console
+    lines: f3aa0c41 dd7640ae
+    preview: All commands and output from this session will be recorded in container logs, in
+  content: |-
+    {{< doc-test paths="migrate" >}}
+    # The curl pod on the page is interactive and runs until you stop it. Run the
+    # same loop as a detached pod instead, and read its logs in step 4.
+    kubectl run curl-test --image=curlimages/curl --restart=Never -- \
+      sh -c '
+      while true; do
+        status=$(curl -s -o /dev/null -w "%{http_code}" http://http.kgateway-system.svc.cluster.local:8080/headers -H "host: www.example.com")
+        if [ "$status" != "200" ]; then
+          echo "ALERT: dropped request, got HTTP $status"
+        fi
+        sleep 0.25
+      done
+    '
+    kubectl wait pod curl-test --for=condition=Ready --timeout=180s
+    YAMLTest -f - <<'EOF'
+    - name: "migrate - the curl-test pod reaches httpbin through the open source proxy without dropped requests"
+      retries: 5
+      command:
+        command: "sleep 5; kubectl logs curl-test"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: "ALERT"
+          negate: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 21aa38e158bd4796
+    lang: console
+    lines: c264f97a cdac12e8 861eacc3 6891baed 59ac0442
+    preview: NAME                                  READY   STATUS        RESTARTS   AGE
+  content: |-
+    {{< doc-test paths="migrate" >}}
+    kubectl rollout status deploy/http -n kgateway-system --timeout=300s
+    # Wait until the old proxy pod finishes terminating, so that step 4 covers the
+    # whole handoff.
+    for i in $(seq 1 60); do
+      n=$(kubectl get pods -n kgateway-system -l gateway.networking.k8s.io/gateway-name=http --no-headers 2>/dev/null | wc -l | tr -d ' ')
+      [ "$n" = "1" ] && break
+      sleep 5
+    done
+    YAMLTest -f - <<'EOF'
+    - name: "migrate - the http Gateway uses the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} GatewayClass"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.spec.gatewayClassName"
+        jsonPathExpectation:
+          comparator: equals
+          value: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the http Gateway is programmed by the enterprise control plane"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the http proxy Deployment runs the enterprise proxy image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: contains
+          value: {{< reuse "/kgw-docs/snippets/helm-path.md" >}}
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the http proxy Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: http
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the migrated gateway proxy serves httpbin with a 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "www.example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Migrate proxies'
+    line: 63b9ff4d88018b49
+    occurrence: 0
+    words: 4b227777 a12dd3a7 8e7fc023 9390298f ec72420d 910adfb4 e7cd9c3a 76678e40 b9776d7d a4fa034c 935f6831 ca978112 1f58b914 b63b99f6 e7cd9c3a bb0347a4 aa9e9b5c ea325d76 df905058 e7cd9c3a 1f58b914 0497db51 e0603c49 7182dd43 ab530a13 58296753 b9776d7d 99bb8840 e0ee8bb5 28391d3b b9776d7d 427e4b79 425c89ed 8e7fc023 bb0347a4 c1fa83ed 2a51d354
+    block_before:
+      block: 14
+      fingerprint: 21aa38e158bd4796
+      lang: console
+      lines: c264f97a cdac12e8 861eacc3 6891baed 59ac0442
+      preview: NAME                                  READY   STATUS        RESTARTS   AGE
+  content: |-
+    {{< doc-test paths="migrate" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "migrate - the curl-test pod logged no dropped requests during the rollout"
+      command:
+        command: "kubectl logs curl-test"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: "ALERT"
+          negate: true
+    EOF
+    kubectl delete pod curl-test --wait=false
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: ee0ebd5a8e0b91b7
+    lang: yaml
+    lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 0402695b 0bebd850 36184fa5 c281d1bb c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 a9279f6d abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="migrate-canary" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "migrate-canary - the enterprise-gateway Gateway is programmed"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: enterprise-gateway
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate-canary - the enterprise-gateway proxy Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: enterprise-gateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate-canary - the enterprise-gateway service has a load balancer address"
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: enterprise-gateway
+        jsonPath: "$.status.loadBalancer.ingress[0].ip"
+        jsonPathExpectation:
+          comparator: exists
+          value: true
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 392a071412681a37
+    lang: yaml
+    lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 e25330ff 1288d06d c4c19ccb 1288d06d 301e1bfa bf0611ca 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="migrate-canary" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "migrate-canary - the httpbin HTTPRoute is accepted by the open source Gateway"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[?(@.parentRef.name=='http')].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate-canary - the httpbin HTTPRoute is accepted by the enterprise Gateway"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.status.parents[?(@.parentRef.name=='enterprise-gateway')].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: f1cc5f7a712e8156
+    lang: sh
+    lines: d80c992c 4059cfa2 02fbd77e
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n kgateway-system enterprise-gatewa
+  content: |-
+    {{< doc-test paths="migrate-canary" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "migrate-canary - the enterprise gateway proxy serves httpbin with a 200 on port 80"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "www.example.com"
+    - name: "migrate-canary - the open source gateway proxy still serves httpbin with a 200"
+      retries: 60
+      http:
+        url: "http://${OSS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "www.example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: e52d33c301efbaf3
+    lang: yaml
+    lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 f8869deb 0bebd850 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="migrate-canary" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "migrate-canary - the httpbin HTTPRoute now has only the enterprise Gateway as parent"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin
+        jsonPath: "$.spec.parentRefs.length"
+        jsonPathExpectation:
+          comparator: equals
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate-canary - the enterprise gateway proxy serves httpbin with a 200 after the route update"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "www.example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: 6d51f39a9f15b2ce
+    lang: sh
+    lines: 6d51f39a
+    preview: kubectl delete gateway http -n kgateway-system
+  content: |-
+    {{< doc-test paths="migrate-canary" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "migrate-canary - the open source http proxy Deployment is removed"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            labels:
+              gateway.networking.k8s.io/gateway-name: http
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate-canary - the enterprise gateway proxy serves httpbin with a 200 after the open source Gateway is deleted"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "www.example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: ff8a91e13e0f1465
+    lang: sh
+    lines: ff8a91e1
+    preview: helm uninstall kgateway -n kgateway-system
+  content: |-
+    {{< doc-test paths="migrate,migrate-canary" >}}
+    # The command on the page has no namespace flag, so Helm looks for the release
+    # in the namespace of the current kubeconfig context. The kgateway release is in
+    # kgateway-system.
+    helm uninstall kgateway -n kgateway-system
+    YAMLTest -f - <<'EOF'
+    - name: "migrate - the kgateway open source control plane is removed"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            labels:
+              app.kubernetes.io/instance: kgateway
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the kgateway-crds Helm release keeps the TrafficPolicy CRD"
+      wait:
+        target:
+          kind: CustomResourceDefinition
+          metadata:
+            name: trafficpolicies.gateway.kgateway.dev
+        jsonPath: "$.metadata.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: trafficpolicies.gateway.kgateway.dev
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "migrate - the enterprise control plane is still available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: ff8a91e13e0f1465
+    lang: sh
+    lines: ff8a91e1
+    preview: helm uninstall kgateway -n kgateway-system
+  content: |-
+    {{< doc-test paths="migrate" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "migrate - the migrated gateway proxy serves httpbin with a 200 after kgateway open source is uninstalled"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "www.example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: ff8a91e13e0f1465
+    lang: sh
+    lines: ff8a91e1
+    preview: helm uninstall kgateway -n kgateway-system
+  content: |-
+    {{< doc-test paths="migrate-canary" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "migrate-canary - the enterprise gateway proxy serves httpbin with a 200 after kgateway open source is uninstalled"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:80/headers"
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "www.example.com"
+    EOF
+    {{< /doc-test >}}

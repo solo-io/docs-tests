@@ -20,7 +20,7 @@ blocks:
 - 04473f4f38134b47 yaml
 - 6cfc71ed9ff987ee sh
 - 92663c6f7c222712 yaml
-- 2e073c89ef564406 yaml
+- 634bf3116b92b070 yaml
 - d2489beaf273ef09 sh
 - efb136c09c93368f console
 tags:
@@ -176,9 +176,9 @@ tags:
     lead: ' '
 - paths: extauth-deployer-timeout
   block: 19
-  fingerprint: 2e073c89ef564406
+  fingerprint: 634bf3116b92b070
   lang: yaml
-  lines: 16c71da1 88b9492f c548623c 8c8c4228 de54fd07 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 248578da 8ec2fd40 0bebd850 75674f79 529ff855 0bebd850 abc56510
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 de54fd07 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 248578da 8ec2fd40 0bebd850 75674f79 97862ff9 0f10c5bc abc56510
   preview: kubectl apply -f- <<EOF
   form:
     attr: paths="extauth-deployer-timeout"
@@ -739,31 +739,54 @@ hidden:
     preview: kubectl delete deployments -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
   content: |-
     {{< doc-test paths="extauth-deployer-timeout" >}}
-    # Test-only: Step 1 points to an external auth guide, and Step 3 refers to an AuthConfig named
-    # basic-auth in the {{< reuse "kgw-docs/snippets/namespace.md" >}} namespace, which no guide creates. Create it with the user and
-    # APR1 hash from the basic auth AuthConfig guide (user:password).
+    # Test-only: step 1 follows the API keys guide. Create what its raw API key
+    # option creates: the infra-apikey Secret, the apikey-auth AuthConfig in the
+    # httpbin namespace, and the test-extauth-policy that step 3 updates.
     kubectl apply -f- <<EOF
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: infra-apikey
+      namespace: httpbin
+      labels:
+        team: infrastructure
+    type: extauth.solo.io/apikey
+    stringData:
+      api-key: N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy
+    ---
     apiVersion: extauth.solo.io/v1
     kind: AuthConfig
     metadata:
-      name: basic-auth
-      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+      name: apikey-auth
+      namespace: httpbin
     spec:
       configs:
-        - basicAuth:
-            apr:
-              users:
-                user:
-                  hashedPassword: 8BvzLUO9IfGPGGsPnAgSu1
-                  salt: TYiryv0/
-            realm: kgateway
+        - apiKeyAuth:
+            headerName: api-key
+            labelSelector:
+              team: infrastructure
+    ---
+    apiVersion: {{< reuse "kgw-docs/snippets/trafficpolicy-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+    metadata:
+      name: test-extauth-policy
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      targetRefs:
+        - name: http
+          group: gateway.networking.k8s.io
+          kind: Gateway
+      entExtAuth:
+        authConfigRef:
+          name: apikey-auth
+          namespace: httpbin
     EOF
     {{< /doc-test >}}
 - after:
     block: 19
-    fingerprint: 2e073c89ef564406
+    fingerprint: 634bf3116b92b070
     lang: yaml
-    lines: 16c71da1 88b9492f c548623c 8c8c4228 de54fd07 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 248578da 8ec2fd40 0bebd850 75674f79 529ff855 0bebd850 abc56510
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 de54fd07 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 248578da 8ec2fd40 0bebd850 75674f79 97862ff9 0f10c5bc abc56510
     preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="extauth-deployer-timeout" >}}
@@ -773,8 +796,8 @@ hidden:
         target:
           kind: AuthConfig
           metadata:
-            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
-            name: basic-auth
+            namespace: httpbin
+            name: apikey-auth
         jsonPath: "$.status.state"
         jsonPathExpectation:
           comparator: equals
@@ -807,14 +830,14 @@ hidden:
         type: local
       expect:
         statusCode: 401
-    - name: "extauth-deployer-timeout - through the extauth-extension, a request with the user credentials succeeds with 200"
+    - name: "extauth-deployer-timeout - through the extauth-extension, a request with the API key succeeds with 200"
       retries: 60
       http:
         url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
         method: GET
         headers:
           host: "www.example.com"
-          Authorization: "Basic dXNlcjpwYXNzd29yZA=="
+          api-key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
       source:
         type: local
       expect:

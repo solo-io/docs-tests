@@ -1,0 +1,245 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/grpc-transcoding.md
+blocks:
+- 00c8f85c36b0e780 mermaid
+- 9bf2941ff5cf8afe yaml
+- 657f2d131c40fc00 bash
+- 43beae236bc656d9 console
+- 5458e4de54c0fc73 yaml
+- 95f925c76190c4b2 bash
+- 0e39d197357f0f80 bash
+- 7404174d7a9514cb yaml
+- 1e11c1e7e1504ef6 bash
+- 348df8819606bdf6 bash
+- 2b24d2a7c4f3ce5f console
+- e805b1be0d626831 bash
+- b4e4e28e5af8d600 bash
+- 2b24d2a7c4f3ce5f console
+- 09a82c2a9499dfac bash
+- 7ef77e6be3683329 yaml
+- c4f046a0ce1a44b7 yaml
+- ddd8d0ac51c6b7e3 yaml
+- 8015665a531e743b bash
+tags:
+- paths: grpc-transcoding
+  block: 1
+  fingerprint: 9bf2941ff5cf8afe
+  lang: yaml
+  lines: abbd1bdc 58584366 ab78925c 8c8c4228 167a6906 0bebd850 fa1e8330 b98dc78e 36184fa5 8432e015 839a5cac b98dc78e 97bcd5e0 a58565b2 8c8c4228 fa1e8330 b98dc78e 36184fa5 04968f51 5ed9d638 97f2e789 0ff65a1a 088263b2 9693ecf1 8db70061 63862108 516ef5ea f7d23240 c5d509f1 b1f3f283 516ef5ea f7d23240 ede66692 8e799ec0 162b7570 25e2e45f 61eae934 cb3f91d5 f1540154 0d6480f0 8c8c4228 a4394357 0bebd850 fa1e8330 b98dc78e 36184fa5 08a3b86e 0ff65a1a 796eea4c 9693ecf1 7811827d 51ef3959 8432e015 b98dc78e abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc-transcoding"
+    only: true
+    lead: ' '
+- paths: grpc-transcoding
+  block: 2
+  fingerprint: 657f2d131c40fc00
+  lang: bash
+  lines: 657f2d13
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=grpc-e
+  form:
+    attr: paths="grpc-transcoding"
+    only: true
+    lead: ' '
+- paths: grpc-transcoding
+  block: 4
+  fingerprint: 5458e4de54c0fc73
+  lang: yaml
+  lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 336b6c4d 0bebd850 fa1e8330 b98dc78e 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa fdefee39 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 2b5155a3 2b6bc07a abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc-transcoding"
+    only: true
+    lead: ' '
+- paths: grpc-transcoding
+  block: 5
+  fingerprint: 95f925c76190c4b2
+  lang: bash
+  lines: 95f925c7
+  preview: PROTO_DESCRIPTOR="CqEBCgt5YWdlcy5wcm90bxIFeWFnZXMiBwoFRW1wdHkiHQoHQ29udGVudBISCg
+  form:
+    attr: paths="grpc-transcoding"
+    only: true
+    lead: ' '
+- paths: grpc-transcoding
+  block: 7
+  fingerprint: 7404174d7a9514cb
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 492a1d0e 0bebd850 fa1e8330 b98dc78e 36184fa5 588a5d84 b5a028c9 56bf9360 336b6c4d 8a0a6e6c 21de4acc 449ac08a d067654e 3e618f87 c22f375c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc-transcoding"
+    only: true
+    lead: ' '
+- paths: grpc-transcoding
+  block: 8
+  fingerprint: 1e11c1e7e1504ef6
+  lang: bash
+  lines: 5d2e2390 0ff41a95 67c5a3ac 97dc2ea5 04c14825
+  preview: curl -X POST \
+  form:
+    attr: paths="grpc-transcoding"
+    only: true
+    lead: ' '
+- paths: grpc-transcoding
+  block: 15
+  fingerprint: 7ef77e6be3683329
+  lang: yaml
+  lines: abbd1bdc f1540154 033792b5 8c8c4228 140aacf6 0bebd850 fa1e8330 b98dc78e ff72caa3 34aad1a2 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc-transcoding"
+    only: true
+    lead: ' '
+- paths: grpc-transcoding
+  block: 16
+  fingerprint: c4f046a0ce1a44b7
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 492a1d0e 0bebd850 fa1e8330 b98dc78e 36184fa5 588a5d84 b5a028c9 56bf9360 336b6c4d 8a0a6e6c 53425f89 140aacf6 ec4ef4bb 449ac08a d067654e 3e618f87 c22f375c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="grpc-transcoding"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 9bf2941ff5cf8afe
+    lang: yaml
+    lines: abbd1bdc 58584366 ab78925c 8c8c4228 167a6906 0bebd850 fa1e8330 b98dc78e 36184fa5 8432e015 839a5cac b98dc78e 97bcd5e0 a58565b2 8c8c4228 fa1e8330 b98dc78e 36184fa5 04968f51 5ed9d638 97f2e789 0ff65a1a 088263b2 9693ecf1 8db70061 63862108 516ef5ea f7d23240 c5d509f1 b1f3f283 516ef5ea f7d23240 ede66692 8e799ec0 162b7570 25e2e45f 61eae934 cb3f91d5 f1540154 0d6480f0 8c8c4228 a4394357 0bebd850 fa1e8330 b98dc78e 36184fa5 08a3b86e 0ff65a1a 796eea4c 9693ecf1 7811827d 51ef3959 8432e015 b98dc78e abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="grpc-transcoding" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the grpc-echo Deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: grpc-echo
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 7404174d7a9514cb
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 492a1d0e 0bebd850 fa1e8330 b98dc78e 36184fa5 588a5d84 b5a028c9 56bf9360 336b6c4d 8a0a6e6c 21de4acc 449ac08a d067654e 3e618f87 c22f375c abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="grpc-transcoding" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the grpc-transcoding-policy is Accepted
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: grpc-transcoding-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 1e11c1e7e1504ef6
+    lang: bash
+    lines: 5d2e2390 0ff41a95 67c5a3ac 97dc2ea5 04c14825
+    preview: curl -X POST \
+  content: |-
+    {{< doc-test paths="grpc-transcoding" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "grpc-transcoding - POST /yages.Echo/Ping is transcoded to gRPC and returns pong"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/yages.Echo/Ping"
+        method: POST
+        headers:
+          host: "grpc.example.com"
+          content-type: "application/json"
+        body: |
+          {}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.text"
+            comparator: equals
+            value: "pong"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: e805b1be0d626831
+    lang: bash
+    lines: 765ed6ef 3c31fa4e 6801a0cc 5d8837a5
+    preview: grpcurl -plaintext \
+  content: |-
+    {{< doc-test paths="grpc-transcoding" >}}
+    kubectl run grpcurl-transcoding -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --image=docker.io/fullstorydev/grpcurl:v1.8.7-alpine --restart=Never --command -- sleep 3600
+    kubectl wait -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --for=condition=Ready pod/grpcurl-transcoding --timeout=300s
+    ok=0
+    for i in $(seq 1 30); do
+      out=$(kubectl exec -n {{< reuse "kgw-docs/snippets/namespace.md" >}} grpcurl-transcoding -- grpcurl -plaintext -authority grpc.example.com http:8080 yages.Echo/Ping 2>&1 || true)
+      echo "$out"
+      case "$out" in *'"text": "pong"'*) ok=1; break;; esac
+      sleep 2
+    done
+    [ "$ok" = 1 ]
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: c4f046a0ce1a44b7
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 492a1d0e 0bebd850 fa1e8330 b98dc78e 36184fa5 588a5d84 b5a028c9 56bf9360 336b6c4d 8a0a6e6c 53425f89 140aacf6 ec4ef4bb 449ac08a d067654e 3e618f87 c22f375c abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="grpc-transcoding" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the grpc-transcoding-policy is Accepted
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: grpc-transcoding-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    - name: "grpc-transcoding - POST /yages.Echo/Ping still returns pong with the descriptor from the ConfigMap"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/yages.Echo/Ping"
+        method: POST
+        headers:
+          host: "grpc.example.com"
+          content-type: "application/json"
+        body: |
+          {}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.text"
+            comparator: equals
+            value: "pong"
+    EOF
+    {{< /doc-test >}}

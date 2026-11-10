@@ -1,0 +1,83 @@
+format: 1
+source: content/en/kgateway/2.4.x/observability/control-plane-metrics.md
+blocks:
+- 31702fa5f32b8068 sh
+- f8c06fe5aa449e9f console
+hidden:
+- after:
+    block: 1
+    fingerprint: f8c06fe5aa449e9f
+    lang: console
+    lines: e0d385be 779a592b 10fc46cc 93ea91da 9cb1b83f 3628eb03 4e9d5564 0b38de92
+    preview: '# HELP enterprise_kgateway_controller_reconciliations_total Total number of cont'
+  content: |-
+    {{< doc-test paths="control-plane-metrics" >}}
+    # Instead of a port-forward and a browser, read the same metrics endpoint
+    # (port 9092 on the control plane) through the Kubernetes API server proxy.
+    YAMLTest -f - <<'EOF'
+    - name: "control-plane-metrics - the control plane Service exposes the metrics port 9092"
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.spec.ports[?(@.name=='metrics')].port"
+        jsonPathExpectation:
+          comparator: equals
+          value: 9092
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: "control-plane-metrics - the metrics endpoint serves Prometheus text format"
+      retries: 60
+      command:
+        command: "kubectl get --raw /api/v1/namespaces/{{< reuse "kgw-docs/snippets/namespace.md" >}}/services/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}:metrics/proxy/metrics"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: '# TYPE '
+    - name: "control-plane-metrics - the enterprise reconciliation counter is exposed"
+      retries: 60
+      command:
+        command: "kubectl get --raw /api/v1/namespaces/{{< reuse "kgw-docs/snippets/namespace.md" >}}/services/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}:metrics/proxy/metrics"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: '# TYPE enterprise_kgateway_controller_reconciliations_total counter'
+    - name: "control-plane-metrics - the enterprise reconciliation counter counts successful reconciliations of a shared extension controller"
+      retries: 60
+      command:
+        command: "kubectl get --raw /api/v1/namespaces/{{< reuse "kgw-docs/snippets/namespace.md" >}}/services/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}:metrics/proxy/metrics"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: 'enterprise_kgateway_controller_reconciliations_total\{controller="solo-(ext-auth|rate-limiter|ext-cache)",[^}]*result="success"[^}]*\} [1-9]'
+    - name: "control-plane-metrics - the gateway controller reconciliation counter is exposed"
+      retries: 60
+      command:
+        command: "kubectl get --raw /api/v1/namespaces/{{< reuse "kgw-docs/snippets/namespace.md" >}}/services/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}:metrics/proxy/metrics"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: '(^|\n)kgateway_controller_reconciliations_total\{controller="gateway",[^}]*result="success"[^}]*\} [1-9]'
+    - name: "control-plane-metrics - the gatewayclass controller reconciliation counter is exposed"
+      retries: 60
+      command:
+        command: "kubectl get --raw /api/v1/namespaces/{{< reuse "kgw-docs/snippets/namespace.md" >}}/services/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}:metrics/proxy/metrics"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: '(^|\n)kgateway_controller_reconciliations_total\{controller="gatewayclass",[^}]*result="success"[^}]*\} [1-9]'
+    EOF
+    {{< /doc-test >}}

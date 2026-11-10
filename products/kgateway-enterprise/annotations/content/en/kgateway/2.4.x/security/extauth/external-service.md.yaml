@@ -1,0 +1,235 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/extauth/external-service.md
+blocks:
+- 43d18e7edbaeb90d sh
+- 4585eabef58d5839 sh
+- 63282280f2ffab49
+- 691ee609dbcfc053
+- bdfeaef44475711c
+- 82a75f6576eeb68b sh
+- 2812fb2efbcd4852 sh
+- 92413e9787e7d079
+- 18209595aca938ef sh
+- fc778a06a5d1c812 sh
+tags:
+- paths: extauth-external-service
+  block: 0
+  fingerprint: 43d18e7edbaeb90d
+  lang: sh
+  lines: 43d18e7e
+  preview: 'curl -vi http://$INGRESS_GW_ADDRESS:8080/posts -H "host: static.example:8080"'
+  form:
+    attr: paths="extauth-external-service"
+    only: true
+    lead: ' '
+- paths: extauth-external-service
+  block: 5
+  fingerprint: 82a75f6576eeb68b
+  lang: sh
+  lines: 82a75f65
+  preview: 'curl -vi http://$INGRESS_GW_ADDRESS:8080/posts -H "host: static.example:8080" -H'
+  form:
+    attr: paths="extauth-external-service"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: 'Step 1: Create an external service'
+    line: 0c6269d41bd7cecf
+    occurrence: 0
+    words: a3ce0b61 b9776d7d 2053dbbf 10e08a41 b1b1bdb4 a0af9f86 1458db56 539fcc7e d8f9b68a 2053dbbf 83ca68be 663ea1bf fa8847b0 ea325d76 3c462384 9df6b026 8e7fc023 1f64fff0 31207a20 4d040d3f 164cf1ca
+    block_before: null
+  content: |-
+    {{< doc-test paths="extauth-external-service" >}}
+    # Step 1 points to the Static backend guide. These are that guide's Backend
+    # and HTTPRoute for the static.example host.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.kgateway.dev/v1alpha1
+    kind: Backend
+    metadata:
+      name: json-backend
+    spec:
+      type: Static
+      static:
+        hosts:
+          - host: jsonplaceholder.typicode.com
+            port: 80
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: static-backend
+      namespace: default
+    spec:
+      parentRefs:
+      - name: http
+        namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+      hostnames:
+        - static.example
+      rules:
+        - backendRefs:
+          - name: json-backend
+            kind: Backend
+            group: gateway.kgateway.dev
+          filters:
+          - type: URLRewrite
+            urlRewrite:
+              hostname: jsonplaceholder.typicode.com
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-external-service - the static backend serves /posts before auth is applied"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/posts"
+        method: GET
+        headers:
+          host: "static.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Apply the auth rules'
+    line: 31678b0d4823484c
+    occurrence: 0
+    words: a3ce0b61 b9776d7d fbb7b5bf bdf49c3c b1b1bdb4 a0af9f86 5d2d3ceb be1dcf5c fbb7b5bf 83ca68be 663ea1bf 97a5e41b b9776d7d bdf49c3c 6c621d1a 663ea1bf 4d040d3f e22bc966
+    block_before: null
+  content: |-
+    {{< doc-test paths="extauth-external-service" >}}
+    # Step 2 points to the Basic auth guide. These are the AuthConfig and policy
+    # from its AuthConfig option, which apply to every route on the http Gateway.
+    kubectl apply -f- <<EOF
+    apiVersion: extauth.solo.io/v1
+    kind: AuthConfig
+    metadata:
+      name: basic-auth
+      namespace: httpbin
+    spec:
+      configs:
+        - basicAuth:
+            apr:
+              users:
+                user:
+                  hashedPassword: 8BvzLUO9IfGPGGsPnAgSu1
+                  salt: TYiryv0/
+            realm: kgateway
+    EOF
+    kubectl apply -f - <<EOF
+    apiVersion: {{< reuse "kgw-docs/snippets/trafficpolicy-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+    metadata:
+      name: basic-auth
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      targetRefs:
+        - name: http
+          group: gateway.networking.k8s.io
+          kind: Gateway
+      entExtAuth:
+        authConfigRef:
+          name: basic-auth
+          namespace: httpbin
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Apply the auth rules'
+    line: 31678b0d4823484c
+    occurrence: 0
+    words: a3ce0b61 b9776d7d fbb7b5bf bdf49c3c b1b1bdb4 a0af9f86 5d2d3ceb be1dcf5c fbb7b5bf 83ca68be 663ea1bf 97a5e41b b9776d7d bdf49c3c 6c621d1a 663ea1bf 4d040d3f e22bc966
+    block_before: null
+  content: |-
+    {{< doc-test paths="extauth-external-service" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-external-service - the basic-auth AuthConfig is accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: basic-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Apply the auth rules'
+    line: 31678b0d4823484c
+    occurrence: 0
+    words: a3ce0b61 b9776d7d fbb7b5bf bdf49c3c b1b1bdb4 a0af9f86 5d2d3ceb be1dcf5c fbb7b5bf 83ca68be 663ea1bf 97a5e41b b9776d7d bdf49c3c 6c621d1a 663ea1bf 4d040d3f e22bc966
+    block_before: null
+  content: |-
+    {{< doc-test paths="extauth-external-service" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-external-service - the basic-auth policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: basic-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 43d18e7edbaeb90d
+    lang: sh
+    lines: 43d18e7e
+    preview: 'curl -vi http://$INGRESS_GW_ADDRESS:8080/posts -H "host: static.example:8080"'
+  content: |2-
+       {{< doc-test paths="extauth-external-service" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "extauth-external-service - a request to the external service without credentials is denied with 401"
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/posts"
+           method: GET
+           headers:
+             host: "static.example:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 401
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 82a75f6576eeb68b
+    lang: sh
+    lines: 82a75f65
+    preview: 'curl -vi http://$INGRESS_GW_ADDRESS:8080/posts -H "host: static.example:8080" -H'
+  content: |2-
+       {{< doc-test paths="extauth-external-service" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "extauth-external-service - a request to the external service with the user:password credentials succeeds"
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/posts"
+           method: GET
+           headers:
+             host: "static.example:8080"
+             Authorization: "basic dXNlcjpwYXNzd29yZA=="
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$[0].userId"
+               comparator: equals
+               value: 1
+       EOF
+       {{< /doc-test >}}

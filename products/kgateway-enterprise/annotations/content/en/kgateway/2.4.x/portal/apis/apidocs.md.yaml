@@ -1,0 +1,302 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/apis/apidocs.md
+blocks:
+- 90348e2f1f80599f sh
+- a58aa4eff87c1ced sh
+- 519affead29f518e
+- ef85d63e62142482 yaml
+- 07856ea187d60efd yaml
+- 565f4a11effd6c4f yaml
+- 2bd22b1d20000c34 yaml
+- bdff36830363dee3 sh
+- ecc931ce3a425165 sh
+- 9b1b1fb0e89d7d4c sh
+- 35efc6ded4e13f29 console
+- 344744eca5a5f4d8 sh
+- 0342ce6be25fa324 console
+- 231c4909e91a1165 sh
+- dc6ee8fd0c0f3a63 console
+- 5fc5635a1ac64c57 sh
+tags:
+- paths: portal-apidocs,portal-apidocs-kube
+  block: 0
+  fingerprint: 90348e2f1f80599f
+  lang: sh
+  lines: 90348e2f
+  preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway.dev/31d
+  form:
+    attr: paths="portal-apidocs,portal-apidocs-kube"
+    only: true
+    lead: ' '
+- paths: portal-apidocs,portal-apidocs-kube
+  block: 1
+  fingerprint: a58aa4eff87c1ced
+  lang: sh
+  lines: a58aa4ef
+  preview: kubectl get pods -n default -l app=petstore
+  form:
+    attr: paths="portal-apidocs,portal-apidocs-kube"
+    only: true
+    lead: ' '
+- paths: portal-apidocs,portal-apidocs-kube
+  block: 3
+  fingerprint: ef85d63e62142482
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 c7d41ffc 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa a3d4a9b9 3de9d845 b733d726 aeca2b3d bf068a96 c84e15fd ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 67f91a16 c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-apidocs,portal-apidocs-kube"
+    only: true
+    lead: ' '
+- paths: portal-apidocs
+  block: 4
+  fingerprint: 07856ea187d60efd
+  lang: yaml
+  lines: 16c71da1 4f6d8314 5af18c1e 8c8c4228 1a7b72d3 0ccc8edc 36184fa5 26ffdce3 547191a2 1e720e76 021fb596 79d24f77 41ef8b23 7f759ab8 a5d89d88 e52a1813 4563730f d1d0f811 18ed7122 a1bc2550 7309fc27 c500d1b7 424588ed d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa c466349b 1c1f9d26 0ccc8edc c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-apidocs"
+    only: true
+    lead: ' '
+- paths: portal-apidocs
+  block: 5
+  fingerprint: 565f4a11effd6c4f
+  lang: yaml
+  lines: 16c71da1 4f6d8314 5af18c1e 8c8c4228 eed9de9d 0ccc8edc 36184fa5 26ffdce3 9a3f0a7b 09d1b06a c466349b 1c1f9d26 0ccc8edc c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-apidocs"
+    only: true
+    lead: ' '
+- paths: portal-apidocs-kube
+  block: 6
+  fingerprint: 2bd22b1d20000c34
+  lang: yaml
+  lines: 16c71da1 4f6d8314 5af18c1e 8c8c4228 8fe0b453 0ccc8edc 36184fa5 26ffdce3 9cc14d83 acfd35ac 1c1f9d26 c095a45d d62fb362 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-apidocs-kube"
+    only: true
+    lead: ' '
+- paths: portal-apidocs
+  block: 8
+  fingerprint: ecc931ce3a425165
+  lang: sh
+  lines: 5965c2dc d3c0046a d167ef22 7ed222a2 612ae560 b14950aa
+  preview: helm upgrade -i portal \
+  form:
+    attr: paths="portal-apidocs"
+    only: true
+    lead: ' '
+- paths: portal-apidocs
+  block: 9
+  fingerprint: 9b1b1fb0e89d7d4c
+  lang: sh
+  lines: 60e6d8cb d5092ca9 96e132af
+  preview: kubectl get deployment portal-controller \
+  form:
+    attr: paths="portal-apidocs"
+    only: true
+    lead: ' '
+- paths: portal-apidocs
+  block: 11
+  fingerprint: 344744eca5a5f4d8
+  lang: sh
+  lines: 344744ec
+  preview: kubectl get apidoc -n default
+  form:
+    attr: paths="portal-apidocs"
+    only: true
+    lead: ' '
+- paths: portal-apidocs
+  block: 13
+  fingerprint: 231c4909e91a1165
+  lang: sh
+  lines: 485bff17 9f728d9f
+  preview: kubectl get apidocs -n default \
+  form:
+    attr: paths="portal-apidocs"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 90348e2f1f80599f
+    lang: sh
+    lines: 90348e2f
+    preview: kubectl apply -f https://raw.githubusercontent.com/kgateway-dev/kgateway.dev/31d
+  content: |-
+    {{< doc-test paths="portal-apidocs,portal-apidocs-kube" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the petstore Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: petstore
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: ef85d63e62142482
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 c7d41ffc 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa a3d4a9b9 3de9d845 b733d726 aeca2b3d bf068a96 c84e15fd ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 67f91a16 c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-apidocs,portal-apidocs-kube" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the petstore-route HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: petstore-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 2bd22b1d20000c34
+    lang: yaml
+    lines: 16c71da1 4f6d8314 5af18c1e 8c8c4228 8fe0b453 0ccc8edc 36184fa5 26ffdce3 9cc14d83 acfd35ac 1c1f9d26 c095a45d d62fb362 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-apidocs-kube" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the petstore-kube-apidoc ApiDoc reports Ready=True"
+      wait:
+        target:
+          kind: ApiDoc
+          metadata:
+            namespace: default
+            name: petstore-kube-apidoc
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: bdff36830363dee3
+    lang: sh
+    lines: bdff3683
+    preview: export PORTAL_LICENSE_KEY=<portal-license-key>
+  content: |-
+    {{< doc-test paths="portal-apidocs" >}}
+    # CI sets only the Solo Enterprise for kgateway license, as LICENSE_KEY. The
+    # portal controller only logs license problems, so reuse that key when no
+    # portal license key is set.
+    export PORTAL_LICENSE_KEY="${PORTAL_LICENSE_KEY:-$LICENSE_KEY}"
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: ecc931ce3a425165
+    lang: sh
+    lines: 5965c2dc d3c0046a d167ef22 7ed222a2 612ae560 b14950aa
+    preview: helm upgrade -i portal \
+  content: |-
+    {{< doc-test paths="portal-apidocs" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal controller Deployment sets APIDOC_MAX_OPENAPI_VERSION to 3.1"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+            name: portal-controller
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='APIDOC_MAX_OPENAPI_VERSION')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "3.1"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deployment/portal-controller -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 344744eca5a5f4d8
+    lang: sh
+    lines: 344744ec
+    preview: kubectl get apidoc -n default
+  content: |-
+    {{< doc-test paths="portal-apidocs" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the petstore-apidoc ApiDoc reports Ready=True"
+      wait:
+        target:
+          kind: ApiDoc
+          metadata:
+            namespace: default
+            name: petstore-apidoc
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the petstore-url-apidoc ApiDoc reports Ready=True"
+      wait:
+        target:
+          kind: ApiDoc
+          metadata:
+            namespace: default
+            name: petstore-url-apidoc
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the manual petstore ApiDoc declares OpenAPI 3.0.0"
+      wait:
+        target:
+          kind: ApiDoc
+          metadata:
+            namespace: default
+            name: petstore-apidoc
+        jsonPath: "$.status.sourceOpenApiVersion"
+        jsonPathExpectation:
+          comparator: equals
+          value: "3.0.0"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the manual petstore ApiDoc is converted to OpenAPI 3.1.0"
+      wait:
+        target:
+          kind: ApiDoc
+          metadata:
+            namespace: default
+            name: petstore-apidoc
+        jsonPath: "$.status.resolvedOpenApiVersion"
+        jsonPathExpectation:
+          comparator: equals
+          value: "3.1.0"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

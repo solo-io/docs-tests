@@ -1,0 +1,397 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/dlp.md
+blocks:
+- d9addb6b4a371a20 json
+- 35a23ef790aca340 json
+- eaf48afac11d4342 yaml
+- eeac13921b381ac5 sh
+- 271e2366e35ffd66 sh
+- 5fe2611b6ba01038 console
+- d135334c16d23b4b yaml
+- eeac13921b381ac5 sh
+- 271e2366e35ffd66 sh
+- e95afe6af5c8f658 console
+- 5b1c7e6cc0ed57a2 sh
+- 2b080d39b3ecb5f3 sh
+- df3adf693cef8754 console
+- d26dbe1900bed95c yaml
+- 5b1c7e6cc0ed57a2 sh
+- 2b080d39b3ecb5f3 sh
+- 805d8f337b363824 json
+- 9fbb81bfd26273fb yaml
+- f922e7f0f5ff0678 yaml
+- 5c8d83fbd2c24bbd sh
+- c06b3b00c0b30cbf sh
+- 0eb99e12f899c345 sh
+- d8a503194719d44a json
+- ac5bd7d6b0f01886 sh
+tags:
+- paths: dlp
+  block: 3
+  fingerprint: eeac13921b381ac5
+  lang: sh
+  lines: e4de2b78 93236379
+  preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/anything?fakevisa=4397945340344828&ss
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 6
+  fingerprint: d135334c16d23b4b
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c67ca101 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 06271d5c 3035507a 260d4f8a 48350fd2 9146a6ab 8b612676 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 7
+  fingerprint: eeac13921b381ac5
+  lang: sh
+  lines: e4de2b78 93236379
+  preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/anything?fakevisa=4397945340344828&ss
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 10
+  fingerprint: 5b1c7e6cc0ed57a2
+  lang: sh
+  lines: 5b1c7e6c
+  preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/json -H "host: www.example.com:8080"'
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 13
+  fingerprint: d26dbe1900bed95c
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c67ca101 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 06271d5c 3035507a 260d4f8a 48350fd2 fb9bc61f 769b21d9 36b90d8e 67c424fd cd83d760 0b77f188 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 14
+  fingerprint: 5b1c7e6cc0ed57a2
+  lang: sh
+  lines: 5b1c7e6c
+  preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/json -H "host: www.example.com:8080"'
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 17
+  fingerprint: 9fbb81bfd26273fb
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 0ab82554 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 54ccadac 92046d69 a99fad3a 496753c7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 18
+  fingerprint: f922e7f0f5ff0678
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c67ca101 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 06271d5c 3035507a e80390bd 48350fd2 b53fc51b d60b41cf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 19
+  fingerprint: 5c8d83fbd2c24bbd
+  lang: sh
+  lines: dda2a30b 34ced9d9 f27a3282
+  preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/status/200 \
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 21
+  fingerprint: 0eb99e12f899c345
+  lang: sh
+  lines: 0eb99e12
+  preview: kubectl logs -n kgateway-system deployment/http | grep authorization | tail -5
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+- paths: dlp
+  block: 23
+  fingerprint: ac5bd7d6b0f01886
+  lang: sh
+  lines: 8efe857a bc24dd1c
+  preview: kubectl delete listenerpolicy -n kgateway-system dlp-access-logs --ignore-not-fo
+  form:
+    attr: paths="dlp"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: eeac13921b381ac5
+    lang: sh
+    lines: e4de2b78 93236379
+    preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/anything?fakevisa=4397945340344828&ss
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dlp - without DLP the card and SSN values are returned unmasked"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything?fakevisa=4397945340344828&ssn=123-45-6789"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.args.fakevisa[0]"
+            comparator: equals
+            value: "4397945340344828"
+          - path: "$.args.ssn[0]"
+            comparator: equals
+            value: "123-45-6789"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: d135334c16d23b4b
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c67ca101 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 06271d5c 3035507a 260d4f8a 48350fd2 9146a6ab 8b612676 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dlp - wait for the dlp preset policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: dlp
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: eeac13921b381ac5
+    lang: sh
+    lines: e4de2b78 93236379
+    preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/anything?fakevisa=4397945340344828&ss
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dlp - the SSN and AllCreditCards presets mask the values"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything?fakevisa=4397945340344828&ssn=123-45-6789"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.args.fakevisa[0]"
+            comparator: equals
+            value: "XXXXXXXXXXXX4828"
+          - path: "$.args.ssn[0]"
+            comparator: equals
+            value: "XXX-XX-X789"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 5b1c7e6cc0ed57a2
+    lang: sh
+    lines: 5b1c7e6c
+    preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/json -H "host: www.example.com:8080"'
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dlp - /json returns the slideshow author"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/json"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.slideshow.author"
+            comparator: equals
+            value: "Yours Truly"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: d26dbe1900bed95c
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c67ca101 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 06271d5c 3035507a 260d4f8a 48350fd2 fb9bc61f 769b21d9 36b90d8e 67c424fd cd83d760 0b77f188 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dlp - wait for the dlp custom policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: dlp
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 5b1c7e6cc0ed57a2
+    lang: sh
+    lines: 5b1c7e6c
+    preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/json -H "host: www.example.com:8080"'
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dlp - the custom action masks the author with underscores"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/json"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.slideshow.author"
+            comparator: equals
+            value: "_____ _____"
+          - path: "$.slideshow.date"
+            comparator: equals
+            value: "date of publication"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: 9fbb81bfd26273fb
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 0ab82554 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 54ccadac 92046d69 a99fad3a 496753c7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dlp - wait for the dlp-access-logs ListenerPolicy to be accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: dlp-access-logs
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: f922e7f0f5ff0678
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c67ca101 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 06271d5c 3035507a e80390bd 48350fd2 b53fc51b d60b41cf abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dlp - wait for the dlp access log policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: dlp
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 5c8d83fbd2c24bbd
+    lang: sh
+    lines: dda2a30b 34ced9d9 f27a3282
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/status/200 \
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "dlp - the request with an authorization header succeeds"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          authorization: "Bearer my-secret-token"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 5c8d83fbd2c24bbd
+    lang: sh
+    lines: dda2a30b 34ced9d9 f27a3282
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/status/200 \
+  content: |-
+    {{< doc-test paths="dlp" >}}
+    for i in $(seq 1 30); do
+      curl -s -o /dev/null "http://$INGRESS_GW_ADDRESS:8080/status/200" -H "host: www.example.com:8080" -H "authorization: Bearer my-secret-token" || true
+      sleep 2
+      line=$(kubectl logs -n {{< reuse "kgw-docs/snippets/namespace.md" >}} deployment/http --tail=1)
+      if [[ "$line" == *'"path":"/status/200"'* && "$line" == *'"authorization":"XXXX'* && "$line" != *'my-secret-token'* ]]; then
+        echo "$line"
+        break
+      fi
+      if [ "$i" -eq 30 ]; then
+        echo "the authorization header is not masked in the access log: $line"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}

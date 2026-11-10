@@ -1,0 +1,555 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/setup.md
+blocks:
+- bdff36830363dee3 sh
+- d38c66b5445a46c0 sh
+- 0485fcdf66f122cc sh
+- ebaa01e48804fb67 sh
+- ef8c913bd3bbfe6f sh
+- ed7ce55018ebd2ab
+- 92c73f941fba5322 yaml
+- 025f485d2738fe54 yaml
+- 0b0a60abda96f0d2 sh
+- 4796e3e34b7f9395
+- ed56c85bc1b7b3ee yaml
+- 628810dea0ab9bec yaml
+- 86b4378518760ca2 yaml
+- 8527be2432c72170 sh
+- 8e79f0b5bca835ee yaml
+- 8bc39af4f3448d56 sh
+- fd70af7b44db134d sh
+- 07a2138bc2113f25 sh
+- 8ac409094ce5cd12 yaml
+- 10ff2c2cf1cc38c7 yaml
+- 78234ab96e0cd7e6 yaml
+- c634516d902265f9 yaml
+- a8b0fb60a9cc7670 yaml
+- 9cce0de5ee07b298 sh
+- 729c6ee54e8196d4
+- fd70af7b44db134d sh
+- 075bc4dd67d65d82 sh
+tags:
+- paths: portal-setup
+  block: 1
+  fingerprint: d38c66b5445a46c0
+  lang: sh
+  lines: 509e3848 16628975 d167ef22 7ed222a2 7718c0b6
+  preview: helm upgrade -i portal-crds \
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 2
+  fingerprint: 0485fcdf66f122cc
+  lang: sh
+  lines: 5965c2dc d3c0046a d167ef22 7ed222a2 9f29d7e5
+  preview: helm upgrade -i portal \
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 4
+  fingerprint: ef8c913bd3bbfe6f
+  lang: sh
+  lines: ef8c913b
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 6
+  fingerprint: 92c73f941fba5322
+  lang: yaml
+  lines: 16c71da1 4f6d8314 dc5b5dd8 8c8c4228 fa4a9675 0ccc8edc 36184fa5 147ec90d 398ce3a8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 7
+  fingerprint: 025f485d2738fe54
+  lang: yaml
+  lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 233590fd 6c730259 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 8
+  fingerprint: 0b0a60abda96f0d2
+  lang: sh
+  lines: 9b9ff05b 0aa14d7e
+  preview: kubectl get deployment portal-my-portal -n default
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 10
+  fingerprint: ed56c85bc1b7b3ee
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 e3cde7c0 0ccc8edc 36184fa5 b206896b c10d7538 82601aaa c095a45d 069de162 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 11
+  fingerprint: 628810dea0ab9bec
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 05526f1a 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 6e95318c a602752c 19c2fa74 fd12af70 9d7e2b17 afd95d43 be536e21 25d8505d a36f3951 e2f5e926 08e0e4bc ead663af 9d7e2b17 eaaad965 aeca2b3d bf068a96 b6bb8ea1 94ae491e 8900eecd 0ccc8edc c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 12
+  fingerprint: 86b4378518760ca2
+  lang: yaml
+  lines: 16c71da1 f1540154 2ed8aa83 8c8c4228 cec17b8d 0ccc8edc cb3f91d5 58584366 ab78925c 8c8c4228 cec17b8d 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac f184a6c7 a58565b2 8c8c4228 fa1e8330 f184a6c7 36184fa5 88f2876e 1dbe8698 11e8fef1 dfb67d7f 04968f51 82ac8adf a6775a77 ff42c2c6 0ff65a1a 82601aaa 7305a68b 9693ecf1 8db70061 b09519d4 81a8c996 0466b46b 69d7f213 7c781356 f3e81d6c f98c047b dd425e10 82f2bc7e 69d7f213 7c781356 f3e81d6c 27791fcd 79bb435b cab2be2b 77f1ea54 f5a0555c 88dd7363 2629ac0e f614fa9d 14551a55 1dbe8698 de4520a8 9cedb412 cfb30922 cf5449a2 f0222554 cb3f91d5 f1540154 0d6480f0 8c8c4228 cec17b8d 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 5c2eb985 0cf44c45 9693ecf1 9278ed91 8432e015 f184a6c7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 13
+  fingerprint: 8527be2432c72170
+  lang: sh
+  lines: 8527be24
+  preview: kubectl rollout status deploy/portal-ui
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 14
+  fingerprint: 8e79f0b5bca835ee
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 0d7c6d9c 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 6e95318c a602752c 19c2fa74 fd12af70 9d7e2b17 afd95d43 be536e21 25d8505d a36f3951 e2f5e926 08e0e4bc ead663af 9d7e2b17 eaaad965 aeca2b3d bf068a96 aecdc9c3 94ae491e 82ac8adf 0ccc8edc 06267a46 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+    tail: ' '
+- paths: portal-setup
+  block: 18
+  fingerprint: 8ac409094ce5cd12
+  lang: yaml
+  lines: 16c71da1 f1540154 2ed8aa83 8c8c4228 d217c891 0ccc8edc cb3f91d5 58584366 ab78925c 8c8c4228 d217c891 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac c2e1f378 a58565b2 8c8c4228 fa1e8330 c2e1f378 36184fa5 52da62ae 04968f51 80e9487c d8d4ee1b 0ff65a1a a46d7c6d 8db70061 cbe0aefe 35ade4b6 cab2be2b 77f1ea54 cffdb702 35f726e3 2629ac0e 0123dda7 88dd7363 cb3f91d5 f1540154 0d6480f0 8c8c4228 d217c891 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 4fc11012 b1d5c800 9278ed91 8432e015 c2e1f378 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 19
+  fingerprint: 10ff2c2cf1cc38c7
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7237d9e7 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa a3d4a9b9 3de9d845 b733d726 aeca2b3d bf068a96 09f41fea ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 80e9487c c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 20
+  fingerprint: 78234ab96e0cd7e6
+  lang: yaml
+  lines: 16c71da1 4f6d8314 5af18c1e 8c8c4228 30ec14d7 0ccc8edc 36184fa5 26ffdce3 547191a2 1e720e76 021fb596 79d24f77 41ef8b23 3c2f4b35 6d50373e 6bbfe011 e52a1813 4563730f 1719a91e 18ed7122 e5e919b6 7309fc27 6fc18352 d10b36aa d10b36aa e52a1813 3138cdcc 18ed7122 5cf853a6 7309fc27 122799b2 d10b36aa d10b36aa e52a1813 6223ad5b 18ed7122 c59db854 83a17fcb 021fb596 1ebc3ff0 c9c31288 800cdd10 4a2ff782 d10b36aa 39d4b54e 7309fc27 0d3299f5 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa c466349b d217c891 0ccc8edc c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 21
+  fingerprint: c634516d902265f9
+  lang: yaml
+  lines: 16c71da1 4f6d8314 29bd527d 8c8c4228 72cf5197 0ccc8edc 36184fa5 d8bb66dd 50cf561e 2ed8b772 97ff9e7d 09628e22 49616b64 588a5d84 b5a028c9 56bf9360 7237d9e7 8aa17117 5055bddb 61970b42 607a9830 eed777fc 3827f529 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 22
+  fingerprint: a8b0fb60a9cc7670
+  lang: yaml
+  lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 233590fd cf3e75ee aa80d960 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+- paths: portal-setup
+  block: 23
+  fingerprint: 9cce0de5ee07b298
+  lang: sh
+  lines: 9cce0de5
+  preview: kubectl get apidoc,apiproduct,portal,portalconfig,portalparameters -n default
+  form:
+    attr: paths="portal-setup"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: bdff36830363dee3
+    lang: sh
+    lines: bdff3683
+    preview: export PORTAL_LICENSE_KEY=<portal-license-key>
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    # CI sets only the Solo Enterprise for kgateway license, as LICENSE_KEY. The
+    # portal controller only logs license problems, so reuse that key when no
+    # portal license key is set.
+    export PORTAL_LICENSE_KEY="${PORTAL_LICENSE_KEY:-$LICENSE_KEY}"
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: ef8c913bd3bbfe6f
+    lang: sh
+    lines: ef8c913b
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-controller Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+            name: portal-controller
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 025f485d2738fe54
+    lang: yaml
+    lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 233590fd 6c730259 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-my-portal Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: ed56c85bc1b7b3ee
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 e3cde7c0 0ccc8edc 36184fa5 b206896b c10d7538 82601aaa c095a45d 069de162 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-gateway Gateway reports Programmed=True"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: default
+            name: portal-gateway
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-gateway Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-gateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    export PORTAL_GW_ADDRESS=$(kubectl get svc -n default portal-gateway -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    echo "PORTAL_GW_ADDRESS=$PORTAL_GW_ADDRESS"
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 628810dea0ab9bec
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 05526f1a 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 6e95318c a602752c 19c2fa74 fd12af70 9d7e2b17 afd95d43 be536e21 25d8505d a36f3951 e2f5e926 08e0e4bc ead663af 9d7e2b17 eaaad965 aeca2b3d bf068a96 b6bb8ea1 94ae491e 8900eecd 0ccc8edc c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the my-portal-backend HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: my-portal-backend
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal backend serves the API catalog on portal.example.com"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products"
+        method: GET
+        headers:
+          host: "portal.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 86b4378518760ca2
+    lang: yaml
+    lines: 16c71da1 f1540154 2ed8aa83 8c8c4228 cec17b8d 0ccc8edc cb3f91d5 58584366 ab78925c 8c8c4228 cec17b8d 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac f184a6c7 a58565b2 8c8c4228 fa1e8330 f184a6c7 36184fa5 88f2876e 1dbe8698 11e8fef1 dfb67d7f 04968f51 82ac8adf a6775a77 ff42c2c6 0ff65a1a 82601aaa 7305a68b 9693ecf1 8db70061 b09519d4 81a8c996 0466b46b 69d7f213 7c781356 f3e81d6c f98c047b dd425e10 82f2bc7e 69d7f213 7c781356 f3e81d6c 27791fcd 79bb435b cab2be2b 77f1ea54 f5a0555c 88dd7363 2629ac0e f614fa9d 14551a55 1dbe8698 de4520a8 9cedb412 cfb30922 cf5449a2 f0222554 cb3f91d5 f1540154 0d6480f0 8c8c4228 cec17b8d 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 5c2eb985 0cf44c45 9693ecf1 9278ed91 8432e015 f184a6c7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-ui Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-ui
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 8e79f0b5bca835ee
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 0d7c6d9c 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa bc1d6fba 3de9d845 6e95318c a602752c 19c2fa74 fd12af70 9d7e2b17 afd95d43 be536e21 25d8505d a36f3951 e2f5e926 08e0e4bc ead663af 9d7e2b17 eaaad965 aeca2b3d bf068a96 aecdc9c3 94ae491e 82ac8adf 0ccc8edc 06267a46 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the my-portal-frontend HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: my-portal-frontend
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal frontend serves the UI on portal.example.com"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "portal.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 8ac409094ce5cd12
+    lang: yaml
+    lines: 16c71da1 f1540154 2ed8aa83 8c8c4228 d217c891 0ccc8edc cb3f91d5 58584366 ab78925c 8c8c4228 d217c891 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac c2e1f378 a58565b2 8c8c4228 fa1e8330 c2e1f378 36184fa5 52da62ae 04968f51 80e9487c d8d4ee1b 0ff65a1a a46d7c6d 8db70061 cbe0aefe 35ade4b6 cab2be2b 77f1ea54 cffdb702 35f726e3 2629ac0e 0123dda7 88dd7363 cb3f91d5 f1540154 0d6480f0 8c8c4228 d217c891 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 4fc11012 b1d5c800 9278ed91 8432e015 c2e1f378 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: httpbin
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 10ff2c2cf1cc38c7
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 7237d9e7 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa a3d4a9b9 3de9d845 b733d726 aeca2b3d bf068a96 09f41fea ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 80e9487c c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-route HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: httpbin-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the httpbin API is reachable on api.example.com/httpbin"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/httpbin/get"
+        method: GET
+        headers:
+          host: "api.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: 78234ab96e0cd7e6
+    lang: yaml
+    lines: 16c71da1 4f6d8314 5af18c1e 8c8c4228 30ec14d7 0ccc8edc 36184fa5 26ffdce3 547191a2 1e720e76 021fb596 79d24f77 41ef8b23 3c2f4b35 6d50373e 6bbfe011 e52a1813 4563730f 1719a91e 18ed7122 e5e919b6 7309fc27 6fc18352 d10b36aa d10b36aa e52a1813 3138cdcc 18ed7122 5cf853a6 7309fc27 122799b2 d10b36aa d10b36aa e52a1813 6223ad5b 18ed7122 c59db854 83a17fcb 021fb596 1ebc3ff0 c9c31288 800cdd10 4a2ff782 d10b36aa 39d4b54e 7309fc27 0d3299f5 d10b36aa d10b36aa d10b36aa d10b36aa d10b36aa c466349b d217c891 0ccc8edc c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-apidoc ApiDoc reports Ready=True"
+      wait:
+        target:
+          kind: ApiDoc
+          metadata:
+            namespace: default
+            name: httpbin-apidoc
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 22
+    fingerprint: a8b0fb60a9cc7670
+    lang: yaml
+    lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 233590fd cf3e75ee aa80d960 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-setup" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-api ApiProduct reports Ready=True"
+      wait:
+        target:
+          kind: ApiProduct
+          metadata:
+            namespace: default
+            name: httpbin-api
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the httpbin-api-v1 ApiDoc reports Ready=True"
+      wait:
+        target:
+          kind: ApiDoc
+          metadata:
+            namespace: default
+            name: httpbin-api-v1
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the my-portal Portal reports Programmed=True"
+      wait:
+        target:
+          kind: Portal
+          metadata:
+            namespace: default
+            name: my-portal
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the API catalog lists the httpbin ApiProduct"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products"
+        method: GET
+        headers:
+          host: "portal.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "httpbin"
+    EOF
+    {{< /doc-test >}}

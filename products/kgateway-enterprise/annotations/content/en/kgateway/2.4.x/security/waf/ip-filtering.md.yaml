@@ -1,0 +1,189 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/waf/ip-filtering.md
+blocks:
+- 429cb099219c3b9f yaml
+- 86b1e0241c6df49a yaml
+- 7ab8420529392be4 yaml
+- 269eee725a1c476f sh
+- 7f477c33bed082fa sh
+- 4259049d37c460ce console
+- 1de514c64fa70b7f sh
+- 02657e3c861c3d9e sh
+- 7a137888e17fb3d5 console
+- 0ff62257ee544f7c sh
+- adbe49c47c131d01 yaml
+- ca85a6f1fcbb3dde yaml
+- 29b861ba1869798d yaml
+- d9327fb98ff9b0c0 yaml
+tags:
+- paths: waf-ip-filtering
+  block: 0
+  fingerprint: 429cb099219c3b9f
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 de680f8b 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 3d9eb060 bc7dae16 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 1
+  fingerprint: 86b1e0241c6df49a
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 142b1d35 385a2eb3 1851f975 139e0649 7c77bc8f 86359fa1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 2
+  fingerprint: 7ab8420529392be4
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 a140c182 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa c9abe331 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 3
+  fingerprint: 269eee725a1c476f
+  lang: sh
+  lines: 4e52e3ff bed00b2c
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 6
+  fingerprint: 1de514c64fa70b7f
+  lang: sh
+  lines: f8c1fa40 e40b67f9
+  preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:8'
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+- paths: waf-ip-filtering
+  block: 9
+  fingerprint: 0ff62257ee544f7c
+  lang: sh
+  lines: 2b808a0e 6bfd3cd4 91376ae9
+  preview: kubectl delete wafpolicy -n httpbin httpbin-waf
+  form:
+    attr: paths="waf-ip-filtering"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 429cb099219c3b9f
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 de680f8b 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 3d9eb060 bc7dae16 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-ip-filtering" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the xff-trust ListenerPolicy is accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: xff-trust
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 7ab8420529392be4
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 a140c182 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa c9abe331 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-ip-filtering" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-waf-ip traffic policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf-ip
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the httpbin-waf WAFPolicy is ready"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 269eee725a1c476f
+    lang: sh
+    lines: 4e52e3ff bed00b2c
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="waf-ip-filtering" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request from an allowed X-Forwarded-For address is allowed with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          X-Forwarded-For: "10.0.0.1"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 1de514c64fa70b7f
+    lang: sh
+    lines: f8c1fa40 e40b67f9
+    preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:8'
+  content: |-
+    {{< doc-test paths="waf-ip-filtering" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request from the blocked 198.51.100.0/24 range is denied with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          X-Forwarded-For: "198.51.100.10"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,273 @@
+format: 1
+source: content/en/kgateway/2.4.x/setup/customize/envoy/startup-settings.md
+blocks:
+- 8dacc6d53f7c940a yaml
+- 205863999ef54eaf yaml
+- 70eb6788c7df0678 sh
+- b239b9d2ba74f141 console
+- 370e4691948f90b1 sh
+- 50e7a1074acbd1ee console
+- 6f7730c7d38c485c sh
+- 352d5c8bc5ae10b5 console
+- 13ea42dff2f7c751 sh
+- 3d29746a09f1fc47 console
+- 1cb4223249ecd7ff sh
+tags:
+- paths: startup-settings
+  block: 0
+  fingerprint: 8dacc6d53f7c940a
+  lang: yaml
+  lines: fa03f663 5a05cd6c 2ee1c717 8c8c4228 fbe52518 0bebd850 36184fa5 9cc14d83 9287e3e4 687277da 2cdcce97 dfc0a973 d208b044 d5ca8303 135e3f32 bc3511de 0677b05d 8a8c6b59 0f06a493 062aee6c a0832f3c 330b1729 5d3e4209 abc56510
+  preview: kubectl apply -f- <<'EOF'
+  form:
+    attr: paths="startup-settings"
+    only: true
+    lead: ' '
+- paths: startup-settings
+  block: 1
+  fingerprint: 205863999ef54eaf
+  lang: yaml
+  lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 9dd2b0cf 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 fbe52518 c10d7538 82601aaa 069de162 c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="startup-settings"
+    only: true
+    lead: ' '
+- paths: startup-settings
+  block: 2
+  fingerprint: 70eb6788c7df0678
+  lang: sh
+  lines: 70eb6788
+  preview: 'kubectl get ekgpar startup-params -n {{< reuse "kgw-docs/snippets/namespace.md" '
+  form:
+    attr: paths="startup-settings"
+    only: true
+    lead: ' '
+- paths: startup-settings
+  block: 4
+  fingerprint: 370e4691948f90b1
+  lang: sh
+  lines: 1fd09da7 79f5f431
+  preview: kubectl get deployment startup-settings -n {{< reuse "kgw-docs/snippets/namespac
+  form:
+    attr: paths="startup-settings"
+    only: true
+    lead: ' '
+- paths: startup-settings
+  block: 6
+  fingerprint: 6f7730c7d38c485c
+  lang: sh
+  lines: 6f7730c7
+  preview: kubectl logs deployment/startup-settings -n {{< reuse "kgw-docs/snippets/namespa
+  form:
+    attr: paths="startup-settings"
+    only: true
+    lead: ' '
+- paths: startup-settings
+  block: 8
+  fingerprint: 13ea42dff2f7c751
+  lang: sh
+  lines: 13ea42df
+  preview: kubectl get configmap startup-settings -n {{< reuse "kgw-docs/snippets/namespace
+  form:
+    attr: paths="startup-settings"
+    only: true
+    lead: ' '
+- paths: startup-settings
+  block: 10
+  fingerprint: 1cb4223249ecd7ff
+  lang: sh
+  lines: e616f4a6 020527b8
+  preview: kubectl delete gateway startup-settings -n {{< reuse "kgw-docs/snippets/namespac
+  form:
+    attr: paths="startup-settings"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 205863999ef54eaf
+    lang: yaml
+    lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 9dd2b0cf 0bebd850 36184fa5 c281d1bb 27a69ac8 3f04fdd7 4a23a5a4 2ee1c717 fbe52518 c10d7538 82601aaa 069de162 c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="startup-settings" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "startup-settings - the startup-settings Gateway is programmed"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: startup-settings
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "startup-settings - the startup-settings proxy Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: startup-settings
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: b239b9d2ba74f141
+    lang: console
+    lines: d4ea7db6 afb753a9
+    preview: NAME             ACCEPTED
+  content: |-
+    {{< doc-test paths="startup-settings" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "startup-settings - the startup-params resource has an Accepted condition of True"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: startup-params
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: "startup-settings - the ACCEPTED column of kubectl get ekgpar shows True"
+      retries: 30
+      command:
+        command: "kubectl get ekgpar startup-params -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --no-headers"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: '^startup-params\s+True'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 50e7a1074acbd1ee
+    lang: console
+    lines: 50e7a107
+    preview: '["--disable-hot-restart","--service-node","$(POD_NAME).$(POD_NAMESPACE)","--log-'
+  content: |-
+    {{< doc-test paths="startup-settings" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "startup-settings - the Envoy container args match the example output, with --concurrency 2 appended last"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: startup-settings
+        jsonPath: "$.spec.template.spec.containers[0].args"
+        jsonPathExpectation:
+          comparator: equals
+          value: ["--disable-hot-restart","--service-node","$(POD_NAME).$(POD_NAMESPACE)","--log-level","info","--drain-time-s","60","--drain-strategy","immediate","--concurrency","2"]
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 352d5c8bc5ae10b5
+    lang: console
+    lines: 352d5c8b
+    preview: '{"message":"all dependencies initialized. starting workers","time":"2026-10-01T1'
+  content: |-
+    {{< doc-test paths="startup-settings" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "startup-settings - the last Envoy application log line is a JSON object with the message, time, logger, and level keys"
+      retries: 30
+      command:
+        command: "kubectl logs deployment/startup-settings -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -c kgateway-proxy --tail=1 | jq -e 'has(\"message\") and has(\"time\") and has(\"logger\") and has(\"level\")'"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: "true"
+    - name: "startup-settings - Envoy logged the starting workers message as JSON"
+      retries: 30
+      command:
+        command: "kubectl logs deployment/startup-settings -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -c kgateway-proxy"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: '"message":"all dependencies initialized. starting workers"'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 3d29746a09f1fc47
+    lang: console
+    lines: 3d29746a
+    preview: 'udp_max_queries: 50'
+  content: |-
+    {{< doc-test paths="startup-settings" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "startup-settings - the bootstrap ConfigMap sets udp_max_queries to 50"
+      retries: 30
+      command:
+        command: "kubectl get configmap startup-settings -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yaml"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: 'udp_max_queries: 50\b'
+    - name: "startup-settings - the bootstrap ConfigMap caps active downstream connections at 10000"
+      retries: 30
+      command:
+        command: "kubectl get configmap startup-settings -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yaml"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: 'max_active_downstream_connections: 10000\b'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 1cb4223249ecd7ff
+    lang: sh
+    lines: e616f4a6 020527b8
+    preview: kubectl delete gateway startup-settings -n {{< reuse "kgw-docs/snippets/namespac
+  content: |-
+    {{< doc-test paths="startup-settings" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "startup-settings - the startup-settings proxy Deployment is removed after cleanup"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              gateway.networking.k8s.io/gateway-name: startup-settings
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

@@ -60,6 +60,14 @@ prerequisites:
   grpc-routing:
     page: traffic-management/grpc.md
     path: grpc
+  # Keycloak in the keycloak namespace from the Keycloak guide: the published
+  # manifest behind a LoadBalancer Service, the master realm's admin-registered
+  # client (KEYCLOAK_CLIENT, KEYCLOAK_SECRET), users user1 and user2 with the
+  # password `password`, and KEYCLOAK_URL, TOKEN_ENDPOINT, KEYCLOAK_JWKS_URI,
+  # and KEYCLOAK_CERT_KEYS exported. Needs `install-standard` first.
+  keycloak:
+    page: security/extauth/oauth/keycloak.md
+    path: keycloak
 # Pages with deliberately no test: section indexes, concept, reference,
 # release-note, and support pages. A rebase shell is skipped when its
 # upstream twin is skipped in ../../kgateway/envoy/tests.yaml.
@@ -89,7 +97,6 @@ skip:
 - page: portal/frontend-setup/credential-management/_index.md
 - page: portal/frontend-usage/_index.md
 - page: portal/frontend-usage/credentials/_index.md
-- page: portal/frontend-usage/teams-apps.md
 - page: portal/openapi.md
 - page: portal/operations/_index.md
 - page: portal/operations/advanced/_index.md
@@ -167,6 +174,9 @@ skip:
 - page: traffic-management/transformations/staged/overview.md
 # Reference: template fragments only, no runnable steps.
 - page: traffic-management/transformations/staged/templating-language.md
+# Reference: partial AuthConfig snippets with placeholders for options of the
+# authorization code flow that oauth-authorization-code tests end to end.
+- page: security/extauth/oauth/examples.md
 scenarios:
   about-schema:
     type: schema
@@ -384,6 +394,13 @@ scenarios:
     - httpbin
     page: security/extauth/byo-ext-auth-service/http.md
     path: byo-ext-auth-service-http
+  byo-redis:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/customize/byo-redis.md
+    path: byo-redis
   byo-redis-schema:
     type: schema
     page: setup/customize/byo-redis.md
@@ -459,6 +476,13 @@ scenarios:
     - httpbin
     page: resiliency/connection.md
     path: connection
+  control-plane-metrics:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: observability/control-plane-metrics.md
+    path: control-plane-metrics
   cors:
     type:
     - schema
@@ -505,6 +529,34 @@ scenarios:
     type: schema
     page: security/waf/custom-rules.md
     path: all
+  customize-extensions:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/customize/extensions.md
+    path: customize-extensions
+  customize-extensions-env:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/customize/extensions.md
+    path: customize-extensions-env
+  customize-extensions-gomemlimit:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/customize/extensions.md
+    path: customize-extensions-gomemlimit
+  customize-extensions-overlays:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: setup/customize/extensions.md
+    path: customize-extensions-overlays
   customize-gateway:
     type:
     - schema
@@ -513,6 +565,12 @@ scenarios:
     - install-standard
     page: setup/customize/gateway.md
     path: customize-gateway
+  customize-options:
+    type: functional
+    needs:
+    - install-standard
+    page: setup/customize/options.md
+    path: customize-options
   database-schema:
     type: schema
     page: portal/operations/database.md
@@ -625,6 +683,13 @@ scenarios:
       path: route-delegation-prereq
     page: traffic-management/route-delegation/multi-parent.md
     path: delegation-multi-parent
+  destination-selector:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/destination-types/destination-selector.md
+    path: destination-selector
   destination-selector-schema:
     type: schema
     page: traffic-management/destination-types/destination-selector.md
@@ -650,6 +715,13 @@ scenarios:
     type: schema
     page: traffic-management/direct-response.md
     path: all
+  dlp:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/dlp.md
+    path: dlp
   dlp-schema:
     type: schema
     page: security/dlp.md
@@ -799,6 +871,13 @@ scenarios:
     - httpbin
     page: security/extauth/about.md
     path: extauth-deployer-timeout
+  extauth-external-service:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/external-service.md
+    path: extauth-external-service
   extauth-opa-byo:
     type: functional
     needs:
@@ -813,6 +892,13 @@ scenarios:
     - httpbin
     page: security/extauth/opa/rego-cm.md
     path: extauth-opa-rego
+  extauth-opa-sidecar:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/extauth/opa/sidecar.md
+    path: extauth-opa-sidecar
   extauth-passthrough-grpc:
     type: functional
     needs:
@@ -1000,6 +1086,13 @@ scenarios:
     - grpc-routing
     page: traffic-management/grpc-statistics.md
     path: grpc-statistics
+  grpc-transcoding:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/grpc-transcoding.md
+    path: grpc-transcoding
   grpc-transcoding-schema:
     type: schema
     page: traffic-management/grpc-transcoding.md
@@ -1080,6 +1173,13 @@ scenarios:
     type: schema
     page: security/extauth/passthrough/http.md
     path: all
+  http-services:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: traffic-management/destination-types/kube-services/http-services.md
+    path: http-services
   http-services-schema:
     type: schema
     page: traffic-management/destination-types/kube-services/http-services.md
@@ -1128,6 +1228,17 @@ scenarios:
     type: schema
     page: integrations/istio/sidecar/ingress.md
     path: ingress
+  install-airgap:
+    type: functional
+    needs: []
+    page: install/airgap.md
+    path: install-airgap
+  install-fips:
+    type: functional
+    needs:
+    - install-standard
+    page: install/fips.md
+    path: install-fips
   install-tls:
     type: functional
     needs:
@@ -1146,6 +1257,21 @@ scenarios:
     - httpbin
     page: integrations/istio/ambient/ambient-ingress.md
     path: istio-ambient-ingress
+  jwt-staged-auth:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - keycloak
+    page: security/jwt/staged/staged-auth.md
+    path: jwt-staged-auth
+  jwt-staged-claims:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/jwt/staged/claim-based-access.md
+    path: jwt-staged-claims
   keepalive-http2:
     type:
     - schema
@@ -1164,10 +1290,26 @@ scenarios:
     - httpbin
     page: resiliency/keepalive/tcp.md
     path: keepalive-tcp
+  keycloak-setup:
+    type: functional
+    needs:
+    - install-standard
+    page: security/extauth/oauth/keycloak.md
+    path: keycloak-setup
+  licensing:
+    type: functional
+    needs:
+    - install-standard
+    page: install/licensing.md
+    path: licensing
   licensing-schema:
     type: schema
     page: install/licensing.md
     path: all
+  licensing-secret:
+    type: functional
+    page: install/licensing.md
+    path: licensing-secret
   listenerpolicy:
     type:
     - schema
@@ -1326,6 +1468,14 @@ scenarios:
     - httpbin
     page: traffic-management/header-control/max-headers-count.md
     path: max-headers-count
+  migrate:
+    type: functional
+    page: install/migrate.md
+    path: migrate
+  migrate-canary:
+    type: functional
+    page: install/migrate.md
+    path: migrate-canary
   migrate-schema:
     type: schema
     page: install/migrate.md
@@ -1359,6 +1509,22 @@ scenarios:
     type: schema
     page: integrations/aws-elb/nlb.md
     path: nlb
+  oauth-access-token:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - keycloak
+    page: security/extauth/oauth/access-token.md
+    path: oauth-access-token
+  oauth-authorization-code:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    - keycloak
+    page: security/extauth/oauth/authorization-code.md
+    path: oauth-authorization-code
   oauth-schema:
     type: schema
     page: portal/frontend-setup/credential-management/oauth.md
@@ -1367,6 +1533,13 @@ scenarios:
     type: schema
     page: security/waf/operations/observability.md
     path: all
+  operations-go-client:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: operations/go-client.md
+    path: operations-go-client
   otel-stack:
     type:
     - schema
@@ -1416,10 +1589,290 @@ scenarios:
     - httpbin
     page: resiliency/retry/per-try-timeout.md
     path: per-try-timeout-trafficpolicy
+  portal-apidocs:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    page: portal/apis/apidocs.md
+    path: portal-apidocs
+  portal-apidocs-kube:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    page: portal/apis/apidocs.md
+    path: portal-apidocs-kube
+  portal-apiproducts:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/apis/apidocs.md
+      path: portal-apidocs
+    page: portal/apis/apiproducts.md
+    path: portal-apiproducts
+  portal-app-metadata:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    - page: portal/frontend-setup/credential-management/apikey.md
+      path: portal-cm-apikey
+    - page: portal/frontend-usage/teams-apps.md
+      path: portal-teams-apps
+    - page: portal/frontend-setup/subscriptions.md
+      path: portal-subscriptions
+    - page: portal/frontend-usage/credentials/apikeys.md
+      path: portal-creds-apikeys
+    page: portal/frontend-setup/app-metadata.md
+    path: portal-app-metadata
+  portal-auth-server:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/operations/database.md
+      path: portal-database
+    page: portal/operations/portal-auth-server.md
+    path: portal-auth-server
   portal-auth-server-schema:
     type: schema
     page: portal/operations/portal-auth-server.md
     path: all
+  portal-build-app:
+    type: functional
+    needs:
+    - install-standard
+    page: portal/frontend-setup/build-app.md
+    path: portal-build-app
+  portal-cm-apikey:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    page: portal/frontend-setup/credential-management/apikey.md
+    path: portal-cm-apikey
+  portal-cm-apikey-client-id:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    page: portal/frontend-setup/credential-management/apikey-client-id.md
+    path: portal-cm-apikey-client-id
+  portal-cm-oauth:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    page: portal/frontend-setup/credential-management/oauth.md
+    path: portal-cm-oauth
+  portal-creds-apikeys:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    - page: portal/frontend-setup/credential-management/apikey.md
+      path: portal-cm-apikey
+    - page: portal/frontend-setup/subscriptions.md
+      path: portal-subscriptions
+    page: portal/frontend-usage/credentials/apikeys.md
+    path: portal-creds-apikeys
+  portal-creds-apikeys-client-id:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    - page: portal/frontend-setup/credential-management/apikey-client-id.md
+      path: portal-cm-apikey-client-id
+    - page: portal/frontend-setup/subscriptions.md
+      path: portal-subscriptions
+    page: portal/frontend-usage/credentials/apikeys-client-id.md
+    path: portal-creds-apikeys-client-id
+  portal-creds-oauth:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    - page: portal/frontend-setup/credential-management/oauth.md
+      path: portal-cm-oauth
+    - page: portal/frontend-setup/subscriptions.md
+      path: portal-subscriptions
+    page: portal/frontend-usage/credentials/oauth.md
+    path: portal-creds-oauth
+  portal-database:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    page: portal/operations/database.md
+    path: portal-database
+  portal-login:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    page: portal/frontend-setup/login.md
+    path: portal-login
+  portal-login-pkce:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    page: portal/frontend-setup/login.md
+    path: portal-login-pkce
+  portal-memory-limit:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/operations/database.md
+      path: portal-database
+    - page: portal/operations/portal-auth-server.md
+      path: portal-auth-server
+    page: portal/operations/advanced/memory-limit.md
+    path: portal-memory-limit
+  portal-ratelimit:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    - page: portal/frontend-setup/credential-management/apikey.md
+      path: portal-cm-apikey
+    - page: portal/frontend-usage/teams-apps.md
+      path: portal-teams-apps
+    - page: portal/frontend-setup/subscriptions.md
+      path: portal-subscriptions
+    - page: portal/frontend-usage/credentials/apikeys.md
+      path: portal-creds-apikeys
+    page: portal/frontend-setup/ratelimit.md
+    path: portal-ratelimit
+  portal-rbac:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    page: portal/operations/advanced/rbac.md
+    path: portal-rbac
+  portal-security-context:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/operations/database.md
+      path: portal-database
+    - page: portal/operations/portal-auth-server.md
+      path: portal-auth-server
+    page: portal/operations/advanced/security-context.md
+    path: portal-security-context
+  portal-setup:
+    type: functional
+    needs:
+    - install-standard
+    page: portal/setup.md
+    path: portal-setup
+  portal-subscriptions:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    page: portal/frontend-setup/subscriptions.md
+    path: portal-subscriptions
+  portal-teams-apps:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    page: portal/frontend-usage/teams-apps.md
+    path: portal-teams-apps
+  portal-view-apis:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    - page: portal/frontend-setup/credential-management/apikey.md
+      path: portal-cm-apikey
+    - page: portal/frontend-setup/subscriptions.md
+      path: portal-subscriptions
+    - page: portal/frontend-usage/credentials/apikeys.md
+      path: portal-creds-apikeys
+    page: portal/frontend-usage/view-apis.md
+    path: portal-view-apis
+  portal-visibility:
+    type: functional
+    needs:
+    - install-standard
+    before:
+    - page: portal/setup.md
+      path: portal-setup
+    - page: portal/frontend-setup/login.md
+      path: portal-login
+    page: portal/frontend-setup/visibility.md
+    path: portal-visibility
   preserve-request-paths:
     type:
     - schema
@@ -1480,10 +1933,80 @@ scenarios:
     type: schema
     page: security/ratelimit/about.md
     path: all
+  ratelimit-envoy-generic:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/envoy.md
+    path: ratelimit-envoy-generic
+  ratelimit-envoy-headers:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/envoy.md
+    path: ratelimit-envoy-headers
+  ratelimit-envoy-method:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/envoy.md
+    path: ratelimit-envoy-method
+  ratelimit-envoy-nested:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/envoy.md
+    path: ratelimit-envoy-nested
+  ratelimit-envoy-remote:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/envoy.md
+    path: ratelimit-envoy-remote
   ratelimit-schema:
     type: schema
     page: portal/frontend-setup/ratelimit.md
     path: all
+  ratelimit-set-generic:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/set-style.md
+    path: ratelimit-set-generic
+  ratelimit-set-headers:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/set-style.md
+    path: ratelimit-set-headers
+  ratelimit-set-method:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/set-style.md
+    path: ratelimit-set-method
+  ratelimit-set-nested:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/set-style.md
+    path: ratelimit-set-nested
+  ratelimit-set-remote:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/ratelimit/global/set-style.md
+    path: ratelimit-set-remote
   rbac-schema:
     type: schema
     page: portal/operations/advanced/rbac.md
@@ -1566,6 +2089,13 @@ scenarios:
     - httpbin
     page: traffic-management/header-control/response-header.md
     path: response-header-from-secret
+  response-header-sanitization:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/response-header-sanitization.md
+    path: response-header-sanitization
   response-header-sanitization-schema:
     type: schema
     page: security/response-header-sanitization.md
@@ -1812,6 +2342,12 @@ scenarios:
     - httpbin
     page: traffic-management/transformations/staged/update-body.md
     path: staged-update-body
+  startup-settings:
+    type: functional
+    needs:
+    - install-standard
+    page: setup/customize/envoy/startup-settings.md
+    path: startup-settings
   startup-settings-schema:
     type: schema
     page: setup/customize/envoy/startup-settings.md
@@ -2073,6 +2609,12 @@ scenarios:
     type: functional
     page: operations/upgrade.md
     path: upgrade-experimental
+  versions-fips:
+    type: functional
+    needs:
+    - install-standard
+    page: reference/versions.md
+    path: versions-fips
   versions-schema:
     type: schema
     page: reference/versions.md
@@ -2085,10 +2627,94 @@ scenarios:
     type: schema
     page: portal/frontend-setup/visibility.md
     path: all
+  waf-custom-rules:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    before:
+    - page: security/waf/enable.md
+      path: waf-enable
+    page: security/waf/custom-rules.md
+    path: waf-custom-rules
+  waf-custom-rules-configmap:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    before:
+    - page: security/waf/enable.md
+      path: waf-enable
+    page: security/waf/custom-rules.md
+    path: waf-custom-rules-configmap
+  waf-debug:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/waf/operations/debug.md
+    path: waf-debug
+  waf-debug-pprof:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/waf/operations/debug.md
+    path: waf-debug-pprof
+  waf-enable:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/waf/enable.md
+    path: waf-enable
+  waf-ip-filtering:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    before:
+    - page: security/waf/enable.md
+      path: waf-enable
+    page: security/waf/ip-filtering.md
+    path: waf-ip-filtering
+  waf-message-timeout:
+    type: functional
+    needs:
+    - install-standard
+    page: security/waf/operations/message-timeout.md
+    path: waf-message-timeout
+  waf-observability:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    page: security/waf/operations/observability.md
+    path: waf-observability
+  waf-overview:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    before:
+    - page: security/waf/enable.md
+      path: waf-enable
+    page: security/waf/overview.md
+    path: waf-overview
   waf-overview-schema:
     type: schema
     page: security/waf/overview.md
     path: all
+  waf-owasp-crs:
+    type: functional
+    needs:
+    - install-standard
+    - httpbin
+    before:
+    - page: security/waf/enable.md
+      path: waf-enable
+    page: security/waf/owasp-crs.md
+    path: waf-owasp-crs
   weighted-routes:
     type:
     - schema

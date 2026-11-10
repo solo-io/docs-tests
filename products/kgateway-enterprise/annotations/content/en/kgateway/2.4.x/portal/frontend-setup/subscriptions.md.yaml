@@ -1,0 +1,351 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/frontend-setup/subscriptions.md
+blocks:
+- b8ae0d23fe56f18d json
+- a227403fbe9b0881 sh
+- 10c020dfe6b71911 sh
+- a53fcfc9ce2b6257 console
+- e962b50e189b9d4a sh
+- 5a73040066931e4b sh
+- bb441fc372af1032 sh
+- a88704910642ae0f sh
+- e962b50e189b9d4a sh
+- bb441fc372af1032 sh
+- 9235eefad036475a sh
+tags:
+- paths: portal-subscriptions
+  block: 1
+  fingerprint: a227403fbe9b0881
+  lang: sh
+  lines: 68a5ac68 36184fa5 74fee3dd f775c99b 6cd37ed6 840f48f9 e4192c73 1b70ca57 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-subscriptions"
+    only: true
+    lead: ' '
+- paths: portal-subscriptions
+  block: 2
+  fingerprint: 10c020dfe6b71911
+  lang: sh
+  lines: 10c020df
+  preview: kubectl rollout status deployment/portal-my-portal -n default
+  form:
+    attr: paths="portal-subscriptions"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: 9848a2fbb7242aa7
+    occurrence: 0
+    words: fa8847b0 ca978112 ca8b22d0 ea325d76 a172cedc 6201111b ca978112 a8fa7fd6 663ea1bf 4d040d3f a172cedc b1b1bdb4 a0af9f86 d0960501 d300349d 9b4fecab
+    block_before: null
+  content: |-
+    {{< doc-test paths="portal-subscriptions" >}}
+    # portal/setup.md exports the address of the portal gateway, which serves
+    # api.example.com and portal.example.com. Look it up again if it is not set.
+    export PORTAL_GW_ADDRESS="${PORTAL_GW_ADDRESS:-$(kubectl get svc -n default portal-gateway -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")}"
+    echo "PORTAL_GW_ADDRESS=$PORTAL_GW_ADDRESS"
+    # frontend-setup/login.md exports the Keycloak address and the portal-frontend
+    # client credentials. Look them up again if they are not set.
+    if [ -z "${KEYCLOAK_URL:-}" ]; then
+      export KEYCLOAK_URL="http://$(kubectl -n keycloak get service keycloak -o jsonpath='{.status.loadBalancer.ingress[0].ip}{.status.loadBalancer.ingress[0].hostname}'):8080"
+    fi
+    export KEYCLOAK_CLIENT="${KEYCLOAK_CLIENT:-portal-frontend}"
+    if [ -z "${KEYCLOAK_SECRET:-}" ]; then
+      KC_ADMIN_TOKEN=$(curl -s -d "client_id=admin-cli" -d "username=admin" -d "password=admin" -d "grant_type=password" \
+        "${KEYCLOAK_URL}/realms/master/protocol/openid-connect/token" | jq -r '.access_token')
+      KC_CLIENT_UUID=$(curl -s -H "Authorization: Bearer ${KC_ADMIN_TOKEN}" \
+        "${KEYCLOAK_URL}/admin/realms/portal/clients?clientId=${KEYCLOAK_CLIENT}" | jq -r '.[0].id')
+      export KEYCLOAK_SECRET=$(curl -s -H "Authorization: Bearer ${KC_ADMIN_TOKEN}" \
+        "${KEYCLOAK_URL}/admin/realms/portal/clients/${KC_CLIENT_UUID}/client-secret" | jq -r '.value')
+    fi
+    if [ -z "$KEYCLOAK_SECRET" ] || [ "$KEYCLOAK_SECRET" = "null" ]; then
+      echo "FAIL: could not get the client secret of the ${KEYCLOAK_CLIENT} Keycloak client"; exit 1
+    fi
+    echo "KEYCLOAK_URL=$KEYCLOAK_URL KEYCLOAK_CLIENT=$KEYCLOAK_CLIENT"
+    # Helpers that call the portal API on portal.example.com as a Keycloak user of
+    # the portal realm. They stand in for the browser login and the frontend app.
+    # portal_token USER: prints an access token (direct access grant; every test
+    # user from login.md has the password "password").
+    portal_token() {
+      curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+        -d "client_id=${KEYCLOAK_CLIENT}" -d "client_secret=${KEYCLOAK_SECRET}" \
+        -d "grant_type=password" -d "username=$1" -d "password=password" \
+        -d "scope=openid email profile" | jq -r '.access_token'
+    }
+    # portal_api METHOD PATH TOKEN [JSON]: sets PORTAL_STATUS and writes the
+    # response body to $PORTAL_BODY.
+    PORTAL_BODY=$(mktemp)
+    portal_api() {
+      local args=(-s -o "$PORTAL_BODY" -w '%{http_code}' -X "$1" -H "host: portal.example.com" -H "Authorization: Bearer $3")
+      if [ $# -ge 4 ]; then args+=(-H "Content-Type: application/json" -d "$4"); fi
+      PORTAL_STATUS=$(curl "${args[@]}" "http://${PORTAL_GW_ADDRESS}:8080$2")
+    }
+    # portal_expect STATUS MESSAGE: fails the test unless the last call returned STATUS.
+    portal_expect() {
+      if [ "$PORTAL_STATUS" != "$1" ]; then
+        echo "FAIL: $2: expected HTTP $1, got $PORTAL_STATUS: $(cat "$PORTAL_BODY")"; exit 1
+      fi
+    }
+    # portal_request_subscription: as user1, create the my-team team and the my-app
+    # app if they do not exist, and request a subscription to the httpbin
+    # ApiProduct (spec.id httpbin). Exports PORTAL_TEAM_ID, PORTAL_APP_ID, and
+    # PORTAL_SUBSCRIPTION_ID.
+    portal_request_subscription() {
+      USER1_TOKEN=$(portal_token user1)
+      # The first authenticated call creates the user record. Retry until the
+      # bearer route and its JWT policy from login.md accept the token.
+      for i in $(seq 1 60); do
+        portal_api GET /v1/me "$USER1_TOKEN"
+        [ "$PORTAL_STATUS" = "200" ] && break
+        sleep 5
+      done
+      portal_expect 200 "GET /v1/me as user1"
+      portal_api GET /v1/teams "$USER1_TOKEN"
+      portal_expect 200 "list teams as user1"
+      PORTAL_TEAM_ID=$(jq -r '[.[] | select(.name=="my-team")][0].id // empty' "$PORTAL_BODY")
+      if [ -z "$PORTAL_TEAM_ID" ]; then
+        portal_api POST /v1/teams "$USER1_TOKEN" '{"name":"my-team","description":"Team for the httpbin API"}'
+        portal_expect 201 "create the my-team team as user1"
+        PORTAL_TEAM_ID=$(jq -r '.id' "$PORTAL_BODY")
+      fi
+      portal_api GET "/v1/teams/${PORTAL_TEAM_ID}/apps" "$USER1_TOKEN"
+      portal_expect 200 "list the apps of my-team as user1"
+      PORTAL_APP_ID=$(jq -r '[.[] | select(.name=="my-app")][0].id // empty' "$PORTAL_BODY")
+      if [ -z "$PORTAL_APP_ID" ]; then
+        portal_api POST "/v1/teams/${PORTAL_TEAM_ID}/apps" "$USER1_TOKEN" '{"name":"my-app","description":"App for the httpbin API"}'
+        portal_expect 201 "create the my-app app as user1"
+        PORTAL_APP_ID=$(jq -r '.id' "$PORTAL_BODY")
+      fi
+      portal_api POST "/v1/apps/${PORTAL_APP_ID}/subscriptions" "$USER1_TOKEN" '{"apiProductId":"httpbin"}'
+      portal_expect 201 "request a subscription to the httpbin ApiProduct as user1"
+      PORTAL_SUBSCRIPTION_ID=$(jq -r '.id' "$PORTAL_BODY")
+      export PORTAL_TEAM_ID PORTAL_APP_ID PORTAL_SUBSCRIPTION_ID
+      echo "team=$PORTAL_TEAM_ID app=$PORTAL_APP_ID subscription=$PORTAL_SUBSCRIPTION_ID"
+    }
+
+    # Stands in for frontend-usage/teams-apps.md: user1 creates a team and an app
+    # and requests a subscription to the httpbin API product.
+    portal_request_subscription
+    {{< /doc-test >}}
+- after:
+    section: Work with subscriptions
+    line: 6badbc2cb63f1cc8
+    occurrence: 0
+    words: 6b86b273 58296753 4d040d3f d4c3e8a1 2348f998 b9776d7d d0960501 1cf387c0 a172cedc a5c935d1 f4bf9f7f e0603c49 e89bbdba 6c237681 6201111b 836ff184 58296753 f4bf9f7f ca978112 d0960501 8c6976e5
+    block_before: null
+  content: |-
+    {{< doc-test paths="portal-subscriptions" >}}
+    # Stands in for the browser login as a Portal admin: admin1 is in the admin
+    # group, so the portal grants admin access.
+    export ADMIN_TOKEN=$(portal_token admin1)
+    for i in $(seq 1 60); do
+      portal_api GET /v1/me "$ADMIN_TOKEN"
+      [ "$PORTAL_STATUS" = "200" ] && break
+      sleep 5
+    done
+    YAMLTest -f - <<EOF
+    - name: "admin1 is a Portal admin"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/me"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${ADMIN_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.isAdmin"
+          comparator: equals
+          value: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Work with subscriptions
+    line: 516b89b0ae53418f
+    occurrence: 0
+    words: b5e85581 25a66342 b29814cf d0960501 069daef2 a9c0ad21 b29814cf d0960501 069daef2
+    block_before: null
+  content: |-
+    {{< doc-test paths="portal-subscriptions" >}}
+    # Stands in for the Subscriptions page: the admin sees the pending request.
+    YAMLTest -f - <<EOF
+    - name: "the subscription request is pending"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/subscriptions?status=pending"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${ADMIN_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "${PORTAL_SUBSCRIPTION_ID}"
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Work with subscriptions
+    line: 884e80b789af13e4
+    occurrence: 0
+    words: 4e074085 e5c7ffac 74e21680 663ea1bf 74e21680 ca978112 a8fa7fd6 084e990a 663ea1bf 084e990a ca978112 a8fa7fd6 1f58b914 6201111b 61975955 663ea1bf 61975955 b9776d7d a8fa7fd6 edb46562 8e7fc023 bb0347a4 9f584196 94e8566d 084e990a 7175517a 61975955 ca978112 a8fa7fd6 f3959239 bb0347a4 2687f86e 2ad8a704
+    block_before: null
+  content: |-
+    {{< doc-test paths="portal-subscriptions" >}}
+    # Stands in for the Approve, Reject, and Delete buttons.
+    # Only an admin can approve or reject a subscription.
+    portal_api POST "/v1/subscriptions/${PORTAL_SUBSCRIPTION_ID}/approve" "$(portal_token user1)"
+    portal_expect 403 "approve a subscription as the non-admin user1"
+
+    # Approve.
+    ADMIN_TOKEN=$(portal_token admin1)
+    portal_api POST "/v1/subscriptions/${PORTAL_SUBSCRIPTION_ID}/approve" "$ADMIN_TOKEN"
+    portal_expect 200 "approve the subscription as admin1"
+    [ "$(jq -r '.approved' "$PORTAL_BODY")" = "true" ] || { echo "FAIL: approved is not true: $(cat "$PORTAL_BODY")"; exit 1; }
+    YAMLTest -f - <<EOF
+    - name: "the subscription is approved"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/subscriptions?status=approved"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${ADMIN_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "${PORTAL_SUBSCRIPTION_ID}"
+    EOF
+
+    # You can still reject a subscription after you approved it.
+    portal_api POST "/v1/subscriptions/${PORTAL_SUBSCRIPTION_ID}/reject" "$ADMIN_TOKEN"
+    portal_expect 200 "reject the approved subscription as admin1"
+    [ "$(jq -r '.rejected' "$PORTAL_BODY")" = "true" ] || { echo "FAIL: rejected is not true: $(cat "$PORTAL_BODY")"; exit 1; }
+    YAMLTest -f - <<EOF
+    - name: "the subscription is rejected"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/subscriptions?status=rejected"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${ADMIN_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "${PORTAL_SUBSCRIPTION_ID}"
+    EOF
+
+    # Delete.
+    portal_api DELETE "/v1/subscriptions/${PORTAL_SUBSCRIPTION_ID}" "$ADMIN_TOKEN"
+    portal_expect 204 "delete the subscription as admin1"
+    portal_api GET /v1/subscriptions "$ADMIN_TOKEN"
+    portal_expect 200 "list subscriptions as admin1"
+    if jq -e --arg id "$PORTAL_SUBSCRIPTION_ID" 'any(.[]; .id == $id)' "$PORTAL_BODY" >/dev/null; then
+      echo "FAIL: deleted subscription $PORTAL_SUBSCRIPTION_ID is still listed"; exit 1
+    fi
+
+    # Leave an approved subscription in place for the credential guides:
+    # user1 requests the subscription again and admin1 approves it.
+    portal_request_subscription
+    portal_api POST "/v1/subscriptions/${PORTAL_SUBSCRIPTION_ID}/approve" "$ADMIN_TOKEN"
+    portal_expect 200 "approve the new subscription as admin1"
+    YAMLTest -f - <<EOF
+    - name: "the new subscription is approved"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/subscriptions?status=approved"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${ADMIN_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "${PORTAL_SUBSCRIPTION_ID}"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: a227403fbe9b0881
+    lang: sh
+    lines: 68a5ac68 36184fa5 74fee3dd f775c99b 6cd37ed6 840f48f9 e4192c73 1b70ca57 265fda17
+    preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  content: |-
+    {{< doc-test paths="portal-subscriptions" >}}
+    # Wait until the portal controller re-renders the web server with both
+    # webhook endpoints before checking the rollout.
+    for i in $(seq 1 60); do
+      ARGS=$(kubectl get deployment portal-my-portal -n default -o jsonpath='{.spec.template.spec.containers[0].args}')
+      case "$ARGS" in *--webhook-endpoint=ticketing=*--webhook-endpoint=audit=*) break ;; esac
+      sleep 5
+    done
+    case "$ARGS" in
+      *--webhook-endpoint=ticketing=https://receiver.example.com/events*--webhook-endpoint=audit=http://audit.default.svc.cluster.local:8080/portal*) ;;
+      *) echo "FAIL: the portal web server was not re-rendered with both webhook endpoints: $ARGS"; exit 1 ;;
+    esac
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 10c020dfe6b71911
+    lang: sh
+    lines: 10c020df
+    preview: kubectl rollout status deployment/portal-my-portal -n default
+  content: |-
+    {{< doc-test paths="portal-subscriptions" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-my-portal Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # The rollout restarts the portal web server. With the in-memory store from
+    # portal/setup.md, the restart drops teams, apps, and subscriptions. Make sure
+    # that an approved subscription is still in place for the credential guides.
+    ADMIN_TOKEN=$(portal_token admin1)
+    for i in $(seq 1 60); do
+      portal_api GET "/v1/subscriptions?status=approved" "$ADMIN_TOKEN"
+      [ "$PORTAL_STATUS" = "200" ] && break
+      sleep 5
+    done
+    portal_expect 200 "list approved subscriptions as admin1 after the rollout"
+    if ! jq -e --arg id "$PORTAL_SUBSCRIPTION_ID" 'any(.[]; .id == $id)' "$PORTAL_BODY" >/dev/null; then
+      echo "The subscription is gone after the restart (in-memory store); request and approve it again."
+      portal_request_subscription
+      portal_api POST "/v1/subscriptions/${PORTAL_SUBSCRIPTION_ID}/approve" "$ADMIN_TOKEN"
+      portal_expect 200 "approve the subscription again as admin1"
+    fi
+    YAMLTest -f - <<EOF
+    - name: "an approved subscription for my-app is in place"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/subscriptions?status=approved"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${ADMIN_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "${PORTAL_SUBSCRIPTION_ID}"
+    EOF
+    {{< /doc-test >}}

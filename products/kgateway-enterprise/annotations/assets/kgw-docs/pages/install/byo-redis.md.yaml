@@ -1,0 +1,387 @@
+format: 1
+source: assets/kgw-docs/pages/install/byo-redis.md
+blocks:
+- 08644b4be7cb028d sh
+- 879be13d09d92c6f sh
+- 6bdaccf45748f6e2 sh
+- 2b8bda149923fedb sh
+- 6c3f28af11304a74 sh
+- 7058e11246a24bc7 sh
+- 042e26c5eaa24a13 sh
+- 060ac0ec05b44451 yaml
+- 61ceb89ea6e64c6b yaml
+- 9a5aa1bcbfa0defd yaml
+- 1c24fe2edc3badba sh
+- d6b630271c042f55 sh
+- 4e491961f08dc023 sh
+- 4a3ef1cf62e13170 yaml
+- 0e96c90c903d3be9 yaml
+- 53c8ec3851ffb183 yaml
+- 9a1d0f40b3843994 yaml
+- 6aa4cf93ad1a5a56 yaml
+- de2359856af56cdc yaml
+- 4c219300a739c868 yaml
+- 7d2b17590826e85a yaml
+tags:
+- paths: byo-redis
+  block: 9
+  fingerprint: 9a5aa1bcbfa0defd
+  lang: yaml
+  lines: abbd1bdc 8c67597e 9730d414 8c8c4228 7d30b2df 36184fa5 4afb2481 3f04fdd7 125e7322 24bf663e ed6b9b8e 1288d06d abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="byo-redis"
+    only: true
+    lead: ' '
+- paths: byo-redis
+  block: 10
+  fingerprint: 1c24fe2edc3badba
+  lang: sh
+  lines: 3c388e9a e57be636
+  preview: kubectl get pods -n kgateway-system -l app=rate-limiter
+  form:
+    attr: paths="byo-redis"
+    only: true
+    lead: ' '
+- paths: byo-redis
+  block: 15
+  fingerprint: 53c8ec3851ffb183
+  lang: yaml
+  lines: abbd1bdc bd0fb8f4 24bf663e 8c8c4228 ed6b9b8e 1288d06d 36184fa5 9cc14d83 356067ee ab89fa94 e4bc2178 ba62cf2b ff7360cf ba77f9b0 d34dee9c 146e11c6 9ebc4789 4332276e ae18327b c9619189 3e196ba7 ff7360cf fe770a49 d34dee9c 146e11c6 9ebc4789 4332276e ae18327b c9619189 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="byo-redis"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 7
+    fingerprint: 060ac0ec05b44451
+    lang: yaml
+    lines: abbd1bdc f1540154 2ed8aa83 8c8c4228 3f476e35 1288d06d 72ab0e66 8c506074 cb3f91d5 f1540154 2ed8aa83 8c8c4228 ff4c85b9 1288d06d 72ab0e66 8c506074 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="byo-redis" >}}
+    # Stand-in for an external Redis instance: a password-protected Redis in its
+    # own namespace, reached by the same host:port address format as ElastiCache.
+    # The AWS steps on this page need an EKS cluster and ElastiCache; this scenario
+    # instead follows the username/password option in Other configurations.
+    kubectl create namespace redis --dry-run=client -o yaml | kubectl apply -f -
+    kubectl apply -f- <<'EOF'
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: redis
+      namespace: redis
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          app: redis
+      template:
+        metadata:
+          labels:
+            app: redis
+        spec:
+          containers:
+          - name: redis
+            image: docker.io/redis:8.6.7-alpine
+            args: ["--requirepass", "doc-test-redis-pass"]
+            ports:
+            - containerPort: 6379
+    ---
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: redis
+      namespace: redis
+    spec:
+      selector:
+        app: redis
+      ports:
+      - port: 6379
+        targetPort: 6379
+    EOF
+    kubectl rollout status deploy/redis -n redis --timeout=300s
+    export AWS_ELASTICACHE_HOST=redis.redis.svc.cluster.local:6379
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 0e96c90c903d3be9
+    lang: yaml
+    lines: abbd1bdc f1540154 a67acb0a 8c8c4228 4332276e 1288d06d 2f7c298d 35c9e61d 9c6e54bf abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="byo-redis" >}}
+    # The Secret on the page has placeholder credentials; create it with the
+    # credentials of the stand-in Redis instance. Redis 6 and later accept the
+    # default user with the requirepass password.
+    kubectl apply -f- <<'EOF'
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: redis-credentials
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    stringData:
+      redis-username: "default"
+      redis-password: "doc-test-redis-pass"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 53c8ec3851ffb183
+    lang: yaml
+    lines: abbd1bdc bd0fb8f4 24bf663e 8c8c4228 ed6b9b8e 1288d06d 36184fa5 9cc14d83 356067ee ab89fa94 e4bc2178 ba62cf2b ff7360cf ba77f9b0 d34dee9c 146e11c6 9ebc4789 4332276e ae18327b c9619189 3e196ba7 ff7360cf fe770a49 d34dee9c 146e11c6 9ebc4789 4332276e ae18327b c9619189 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="byo-redis" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "byo-redis - the redis resource has an Accepted condition of True"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: redis
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: "byo-redis - with extCache.enabled false, the managed ext-cache Deployment is removed"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items.length"
+        jsonPathExpectation:
+          comparator: lessThan
+          value: 1
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "byo-redis - the rate-limiter connects to the external Redis address"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].env[?(@.name=='REDIS_URL')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: redis.redis.svc.cluster.local:6379
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "byo-redis - the rate-limiter reads the Redis password from the redis-credentials secret"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].env[?(@.name=='REDIS_PASSWORD')].valueFrom.secretKeyRef"
+        jsonPathExpectation:
+          comparator: equals
+          value: {"name": "redis-credentials", "key": "redis-password"}
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "byo-redis - the rate-limiter reads the Redis username from the redis-credentials secret"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].env[?(@.name=='REDIS_USER')].valueFrom.secretKeyRef"
+        jsonPathExpectation:
+          comparator: equals
+          value: {"name": "redis-credentials", "key": "redis-username"}
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "byo-redis - the ext-auth-service connects to the external Redis address for sessions"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].env[?(@.name=='SESSION_REDIS_ADDRESS')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: redis.redis.svc.cluster.local:6379
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "byo-redis - the ext-auth-service reads the Redis password from the redis-credentials secret"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].env[?(@.name=='SESSION_REDIS_PASSWORD')].valueFrom.secretKeyRef.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: redis-credentials
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "byo-redis - the rate-limiter deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "byo-redis - the ext-auth-service deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deployment -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=rate-limiter --timeout=300s
+    kubectl rollout status deployment -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=ext-auth-service --timeout=300s
+    # Verify the connection as Step 3 describes: a global rate limit, whose counters
+    # the rate limiter keeps in the external Redis instance.
+    kubectl apply -f- <<EOF
+    apiVersion: ratelimit.solo.io/v1alpha1
+    kind: RateLimitConfig
+    metadata:
+      name: byo-redis-ratelimit
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      raw:
+        descriptors:
+        - key: generic_key
+          value: byo-redis
+          rateLimit:
+            requestsPerUnit: 1
+            unit: MINUTE
+        rateLimits:
+        - actions:
+          - genericKey:
+              descriptorValue: byo-redis
+    ---
+    apiVersion: {{< reuse "kgw-docs/snippets/trafficpolicy-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+    metadata:
+      name: byo-redis-ratelimit
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      targetRefs:
+      - group: gateway.networking.k8s.io
+        kind: Gateway
+        name: http
+      entRateLimit:
+        global:
+          rateLimitConfigRefs:
+          - name: byo-redis-ratelimit
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: httpbin-ratelimit
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+      hostnames:
+      - ratelimit.example
+      rules:
+      - backendRefs:
+        - name: httpbin
+          port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: "byo-redis - the RateLimitConfig is accepted"
+      wait:
+        target:
+          kind: RateLimitConfig
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: byo-redis-ratelimit
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: Accepted
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "byo-redis - the rate limit policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: byo-redis-ratelimit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "byo-redis - requests beyond 1 per minute are rate limited with 429, so the rate limiter reaches Redis"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    - name: "byo-redis - the rate limit counters are stored in the external Redis instance"
+      retries: 30
+      command:
+        command: "kubectl exec -n redis deploy/redis -- redis-cli -a doc-test-redis-pass --no-auth-warning DBSIZE"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: '^[1-9][0-9]*'
+    EOF
+    {{< /doc-test >}}

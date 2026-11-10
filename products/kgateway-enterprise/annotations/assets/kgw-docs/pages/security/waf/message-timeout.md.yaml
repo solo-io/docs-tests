@@ -1,0 +1,104 @@
+format: 1
+source: assets/kgw-docs/pages/security/waf/message-timeout.md
+blocks:
+- 5f686e2911a047a5 sh
+- b87fe13da71fc19b sh
+- 02b2924f19104b85 sh
+- 44e778cfba0be431 console
+- 8ff785951438f10a sh
+- 7819f63beefe24e8 console
+tags:
+- paths: waf-message-timeout
+  block: 0
+  fingerprint: 5f686e2911a047a5
+  lang: sh
+  lines: 5f686e29
+  preview: export CURRENT_VERSION=$(helm get metadata {{< reuse "/kgw-docs/snippets/helm-kg
+  form:
+    attr: paths="waf-message-timeout"
+    only: true
+    lead: ' '
+- paths: waf-message-timeout
+  block: 1
+  fingerprint: b87fe13da71fc19b
+  lang: sh
+  lines: b9378eaa 1bd2e2c1 7e4496e3 96064311 a23a38c4
+  preview: helm upgrade {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse
+  form:
+    attr: paths="waf-message-timeout"
+    only: true
+    lead: ' '
+- paths: waf-message-timeout
+  block: 2
+  fingerprint: 02b2924f19104b85
+  lang: sh
+  lines: 02b2924f
+  preview: kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md
+  form:
+    attr: paths="waf-message-timeout"
+    only: true
+    lead: ' '
+- paths: waf-message-timeout
+  block: 4
+  fingerprint: 8ff785951438f10a
+  lang: sh
+  lines: c57f0de1 c5328dfc
+  preview: kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{
+  form:
+    attr: paths="waf-message-timeout"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 5f686e2911a047a5
+    lang: sh
+    lines: 5f686e29
+    preview: export CURRENT_VERSION=$(helm get metadata {{< reuse "/kgw-docs/snippets/helm-kg
+  content: |-
+    {{< doc-test paths="waf-message-timeout" >}}
+    if [ -z "${CURRENT_VERSION:-}" ] || [ "$CURRENT_VERSION" = "null" ]; then
+      echo "could not read the chart version of the Helm release"
+      exit 1
+    fi
+    echo "CURRENT_VERSION=$CURRENT_VERSION"
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 8ff785951438f10a
+    lang: sh
+    lines: c57f0de1 c5328dfc
+    preview: kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{
+  content: |-
+    {{< doc-test paths="waf-message-timeout" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-message-timeout - the control plane has KGW_WAF_MESSAGE_TIMEOUT set to 10s"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.spec.template.spec.containers[*].env[?(@.name=='KGW_WAF_MESSAGE_TIMEOUT')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10s
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-message-timeout - the control plane is available after the upgrade"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

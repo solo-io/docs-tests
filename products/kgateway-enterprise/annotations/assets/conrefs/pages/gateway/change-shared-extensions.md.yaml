@@ -1,0 +1,609 @@
+format: 1
+source: assets/conrefs/pages/gateway/change-shared-extensions.md
+blocks:
+- ba82a0a1a81e8150 yaml
+- 4dad403894326fd8 yaml
+- 461228f4bdc69e10 yaml
+- 6a08e821b72f840f sh
+- cd3fca2fc8dea15c console
+- d5d66f835b031562 yaml
+- 3f994b94515b910e yaml
+- 461228f4bdc69e10 yaml
+- 5a9c568f1d5a9ab9 sh
+- 5515893910087523 console
+- a0f56a841265a64d yaml
+- a157a533b6bd5f4a sh
+tags:
+- paths: customize-extensions
+  block: 0
+  fingerprint: ba82a0a1a81e8150
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 070c96c0 0bebd850 36184fa5 9cc14d83 356067ee 3e196ba7 ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ba62cf2b ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ab89fa94 ff7360cf cab2be2b 77f1ea54 cde43a03 14551a55 2629ac0e 983d6140 0217db29 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="customize-extensions"
+    only: true
+    lead: ' '
+- paths: customize-extensions
+  block: 2
+  fingerprint: 461228f4bdc69e10
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="customize-extensions"
+    only: true
+    lead: ' '
+- paths: customize-extensions
+  block: 3
+  fingerprint: 6a08e821b72f840f
+  lang: sh
+  lines: febba5c0 ddecd44e 1bd2e2c1 2fc86175 6ff72288 847e4fda 1bd2e2c1 2fc86175 d511db66 a3762c91 1bd2e2c1 2fc86175
+  preview: echo "ext-auth-service"
+  form:
+    attr: paths="customize-extensions"
+    only: true
+    lead: ' '
+- paths: customize-extensions-overlays
+  block: 5
+  fingerprint: d5d66f835b031562
+  lang: yaml
+  lines: 6b3c98d2 5a05cd6c 2ee1c717 8c8c4228 070c96c0 0bebd850 36184fa5 9cc14d83 356067ee 3e196ba7 ff7360cf be80440e 8c8c4228 fa1e8330 4d9bed77 6871499b 36184fa5 a58565b2 8c8c4228 72ab0e66 78729bf3 d9b4a977 ba62cf2b ff7360cf be80440e 8c8c4228 fa1e8330 6cff7984 abc56510
+  preview: kubectl apply --server-side -f- <<'EOF'
+  form:
+    attr: paths="customize-extensions-overlays"
+    only: true
+    lead: ' '
+- paths: customize-extensions-overlays
+  block: 7
+  fingerprint: 461228f4bdc69e10
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="customize-extensions-overlays"
+    only: true
+    lead: ' '
+- paths: customize-extensions-overlays
+  block: 8
+  fingerprint: 5a9c568f1d5a9ab9
+  lang: sh
+  lines: ddecd44e 1bd2e2c1 dc7de529 ddecd44e 1bd2e2c1 c5f12b8a a3762c91 1bd2e2c1 dc7de529
+  preview: kubectl get deployment -l app=ext-auth-service \
+  form:
+    attr: paths="customize-extensions-overlays"
+    only: true
+    lead: ' '
+- paths: customize-extensions,customize-extensions-overlays
+  block: 10
+  fingerprint: a0f56a841265a64d
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="customize-extensions,customize-extensions-overlays"
+    only: true
+    lead: ' '
+- paths: customize-extensions,customize-extensions-overlays
+  block: 11
+  fingerprint: a157a533b6bd5f4a
+  lang: sh
+  lines: a157a533
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}} ext-params
+  form:
+    attr: paths="customize-extensions,customize-extensions-overlays"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: ba82a0a1a81e8150
+    lang: yaml
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 070c96c0 0bebd850 36184fa5 9cc14d83 356067ee 3e196ba7 ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ba62cf2b ff7360cf cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ab89fa94 ff7360cf cab2be2b 77f1ea54 cde43a03 14551a55 2629ac0e 983d6140 0217db29 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="customize-extensions" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions - the ext-params resource has an Accepted condition of True"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: ext-params
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 461228f4bdc69e10
+    lang: yaml
+    lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="customize-extensions" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions - the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} GatewayClass references the ext-params resource and is accepted"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.spec.parametersRef.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: ext-params
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    - name: "customize-extensions - the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} GatewayClass is accepted"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: cd3fca2fc8dea15c
+    lang: console
+    lines: 9516086a 021fb596 9bda129f 5c48a833 afe833c5 e52a1813 544ca215 c683590c c7c4d565 d10b36aa d10b36aa be15af85 021fb596 9bda129f a63e69a1 b60eac10 e52a1813 544ca215 b0b255a6 afe833c5 d10b36aa d10b36aa 499d42de 021fb596 9bda129f 5c48a833 afe833c5 e52a1813 544ca215 c683590c c7c4d565 d10b36aa d10b36aa
+    preview: ext-auth-service
+  content: |-
+    {{< doc-test paths="customize-extensions" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions - the ext-auth-service container has the requests and limits from ext-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources"
+        jsonPathExpectation:
+          comparator: equals
+          value: {"limits": {"cpu": "750m", "memory": "512Mi"}, "requests": {"cpu": "200m", "memory": "256Mi"}}
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions - the rate-limiter container has the requests and limits from ext-params"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources"
+        jsonPathExpectation:
+          comparator: equals
+          value: {"limits": {"cpu": "750m", "memory": "512Mi"}, "requests": {"cpu": "200m", "memory": "256Mi"}}
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions - the ext-cache container has the requests and limits from ext-params, normalized to 1 CPU and 2Gi"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].resources"
+        jsonPathExpectation:
+          comparator: equals
+          value: {"limits": {"cpu": "1", "memory": "2Gi"}, "requests": {"cpu": "256m", "memory": "512Mi"}}
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions - the ext-auth-service deployment is available after the change"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions - the rate-limiter deployment is available after the change"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions - the ext-cache deployment is available after the change"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-cache
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: d5d66f835b031562
+    lang: yaml
+    lines: 6b3c98d2 5a05cd6c 2ee1c717 8c8c4228 070c96c0 0bebd850 36184fa5 9cc14d83 356067ee 3e196ba7 ff7360cf be80440e 8c8c4228 fa1e8330 4d9bed77 6871499b 36184fa5 a58565b2 8c8c4228 72ab0e66 78729bf3 d9b4a977 ba62cf2b ff7360cf be80440e 8c8c4228 fa1e8330 6cff7984 abc56510
+    preview: kubectl apply --server-side -f- <<'EOF'
+  content: |-
+    {{< doc-test paths="customize-extensions-overlays" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions-overlays - the ext-params resource has an Accepted condition of True"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: ext-params
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 461228f4bdc69e10
+    lang: yaml
+    lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 070c96c0 0bebd850 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="customize-extensions-overlays" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions-overlays - the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} GatewayClass references the ext-params resource and is accepted"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.spec.parametersRef.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: ext-params
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} GatewayClass is accepted"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: '5515893910087523'
+    lang: console
+    lines: 021fb596 20e35569 112ee5f1 088702f2 4d8e28e0 2aeb19a1 d10b36aa 021fb596 18f68160 6008d7ea 9002cdba 00920073 a7c9e143 d10b36aa 021fb596 dc208466 4fc8cc8d 4d8e28e0 893708cd d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="customize-extensions-overlays" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions-overlays - the ext-auth-service deployment has the team: security label"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].metadata.labels.team"
+        jsonPathExpectation:
+          comparator: equals
+          value: security
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the ext-auth-service deployment has the environment: production label"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].metadata.labels.environment"
+        jsonPathExpectation:
+          comparator: equals
+          value: production
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the ext-auth-service deployment keeps the gateway.solo.io/extension label"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].metadata.labels['gateway.solo.io/extension']"
+        jsonPathExpectation:
+          comparator: equals
+          value: solo-ext-auth
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the ext-auth-service pod template has the app.kubernetes.io/part-of annotation"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.metadata.annotations['app.kubernetes.io/part-of']"
+        jsonPathExpectation:
+          comparator: equals
+          value: api-gateway
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the ext-auth-service pod template has the support-channel annotation"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.metadata.annotations['support-channel']"
+        jsonPathExpectation:
+          comparator: equals
+          value: "slack://security-alerts"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the ext-auth-service pod template keeps the prometheus.io/scrape annotation"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.metadata.annotations['prometheus.io/scrape']"
+        jsonPathExpectation:
+          comparator: equals
+          value: "true"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the rate-limiter deployment has the team: platform label"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].metadata.labels.team"
+        jsonPathExpectation:
+          comparator: equals
+          value: platform
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the rate-limiter deployment keeps the gateway.solo.io/extension label"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].metadata.labels['gateway.solo.io/extension']"
+        jsonPathExpectation:
+          comparator: equals
+          value: solo-rate-limiter
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the ext-auth-service deployment is available after the change"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - the rate-limiter deployment is available after the change"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: a0f56a841265a64d
+    lang: yaml
+    lines: 16c71da1 8c67597e 9730d414 8c8c4228 8cb18166 36184fa5 ba8e78cf abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="customize-extensions,customize-extensions-overlays" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions - the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} GatewayClass no longer has a parametersRef"
+      retries: 30
+      command:
+        command: "kubectl get gatewayclass {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} -o jsonpath='{.spec.parametersRef}'"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          equals: ""
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: a157a533b6bd5f4a
+    lang: sh
+    lines: a157a533
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}} ext-params
+  content: |-
+    {{< doc-test paths="customize-extensions" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions - after cleanup, the ext-auth-service container no longer has the 750m CPU limit"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0]"
+        jsonPathExpectation:
+          comparator: contains
+          value: "750m"
+          negate: true
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions - after cleanup, the ext-auth-service deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: a157a533b6bd5f4a
+    lang: sh
+    lines: a157a533
+    preview: kubectl delete {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}} ext-params
+  content: |-
+    {{< doc-test paths="customize-extensions-overlays" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions-overlays - after cleanup, the ext-auth-service deployment no longer has the team label"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].metadata.labels"
+        jsonPathExpectation:
+          comparator: contains
+          value: "team"
+          negate: true
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-overlays - after cleanup, the rate-limiter deployment no longer has the team label"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].metadata.labels"
+        jsonPathExpectation:
+          comparator: contains
+          value: "team"
+          negate: true
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

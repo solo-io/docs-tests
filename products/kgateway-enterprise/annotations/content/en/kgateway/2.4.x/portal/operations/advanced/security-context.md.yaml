@@ -1,0 +1,476 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/operations/advanced/security-context.md
+blocks:
+- 740cd240c72a90af sh
+- ab32f7692d2efd65 sh
+- 99c1e2ef1cd9294a sh
+- a6a3c049fa16f24f console
+- e6e417248d8f53b9 sh
+- a6a3c049fa16f24f console
+- 732ecc894b5c641d sh
+- 99c1e2ef1cd9294a sh
+- 4cfa80823f8fb8bf console
+- 1e74afae5c5bdeee sh
+- 99c1e2ef1cd9294a sh
+- 380e2487f6b7a52c console
+- 1e64d068830b99e5 sh
+- 99c1e2ef1cd9294a sh
+- 97fc3ae572545bc3 console
+tags:
+- paths: portal-security-context
+  block: 0
+  fingerprint: 740cd240c72a90af
+  lang: sh
+  lines: 68a5ac68 36184fa5 d10802a2 1dc43f54 1dbe8698 4c23b3a6 5e99ff99 b6807098 2fbc721b 6f044701 dfa91c8f 1dbe8698 4c23b3a6 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+- paths: portal-security-context
+  block: 1
+  fingerprint: ab32f7692d2efd65
+  lang: sh
+  lines: 68a5ac68 36184fa5 fd5b82ff 1dc43f54 1dbe8698 4c23b3a6 5e99ff99 b6807098 2fbc721b 6f044701 dfa91c8f 1dbe8698 4c23b3a6 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+- paths: portal-security-context
+  block: 2
+  fingerprint: 99c1e2ef1cd9294a
+  lang: sh
+  lines: 11335ab8 846b0f39
+  preview: kubectl get deployment portal-my-portal -n default -o json \
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+- paths: portal-security-context
+  block: 4
+  fingerprint: e6e417248d8f53b9
+  lang: sh
+  lines: f8f7b01c 846b0f39
+  preview: kubectl get deployment portal-auth-my-portal -n default -o json \
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+- paths: portal-security-context
+  block: 6
+  fingerprint: 732ecc894b5c641d
+  lang: sh
+  lines: 68a5ac68 36184fa5 25522579 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+- paths: portal-security-context
+  block: 7
+  fingerprint: 99c1e2ef1cd9294a
+  lang: sh
+  lines: 11335ab8 846b0f39
+  preview: kubectl get deployment portal-my-portal -n default -o json \
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+- paths: portal-security-context
+  block: 9
+  fingerprint: 1e74afae5c5bdeee
+  lang: sh
+  lines: 68a5ac68 36184fa5 25522579 d10802a2 1dc43f54 1dbe8698 2fbc721b 6f044701 dfa91c8f 1dbe8698 de4520a8 9cedb412 cfb30922 cf5449a2 f0222554 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+- paths: portal-security-context
+  block: 10
+  fingerprint: 99c1e2ef1cd9294a
+  lang: sh
+  lines: 11335ab8 846b0f39
+  preview: kubectl get deployment portal-my-portal -n default -o json \
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+- paths: portal-security-context
+  block: 12
+  fingerprint: 1e64d068830b99e5
+  lang: sh
+  lines: 68a5ac68 36184fa5 d10802a2 dfa91c8f 1dbe8698 cfb30922 274fdf3f 05f966f3 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+- paths: portal-security-context
+  block: 13
+  fingerprint: 99c1e2ef1cd9294a
+  lang: sh
+  lines: 11335ab8 846b0f39
+  preview: kubectl get deployment portal-my-portal -n default -o json \
+  form:
+    attr: paths="portal-security-context"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: ab32f7692d2efd65
+    lang: sh
+    lines: 68a5ac68 36184fa5 fd5b82ff 1dc43f54 1dbe8698 4c23b3a6 5e99ff99 b6807098 2fbc721b 6f044701 dfa91c8f 1dbe8698 4c23b3a6 265fda17
+    preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  content: |-
+    {{< doc-test paths="portal-security-context" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-my-portal Deployment sets the RuntimeDefault seccomp profile"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.seccompProfile.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "RuntimeDefault"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment sets the pod runAsGroup"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.runAsGroup"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment sets the supplemental group"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.supplementalGroups[0]"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment keeps the default fsGroup"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.fsGroup"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment sets the container runAsGroup"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].securityContext.runAsGroup"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment keeps the default drop ALL"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].securityContext.capabilities.drop[0]"
+        jsonPathExpectation:
+          comparator: equals
+          value: "ALL"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-auth-my-portal Deployment sets the RuntimeDefault seccomp profile"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-auth-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.seccompProfile.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "RuntimeDefault"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-auth-my-portal Deployment sets the pod runAsGroup"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-auth-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.runAsGroup"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-auth-my-portal Deployment sets the supplemental group"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-auth-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.supplementalGroups[0]"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-auth-my-portal Deployment keeps the default fsGroup"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-auth-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.fsGroup"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-auth-my-portal Deployment sets the container runAsGroup"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-auth-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].securityContext.runAsGroup"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-auth-my-portal Deployment keeps the default drop ALL"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-auth-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].securityContext.capabilities.drop[0]"
+        jsonPathExpectation:
+          comparator: equals
+          value: "ALL"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deployment/portal-my-portal -n default --timeout=300s
+    kubectl rollout status deployment/portal-auth-my-portal -n default --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: a6a3c049fa16f24f
+    lang: console
+    lines: 021fb596 25c3b8ea 9232ad6c ad42a79c e80771c6 f3279f81 96c07144 51b54828 e52a1813 fb2c992c 1ac6d621 cfae0d42 e52a1813 2014b3f1 84bb4d79 085e8253 8eed8000 f7bf0220 cfae0d42 e52a1813 dfb1decb ad42a79c e80771c6 598f18d8 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="portal-security-context" >}}
+    # The sections are alternatives. Remove the fields that the previous section
+    # set, as the page suggests with kubectl edit, before the next one.
+    kubectl patch portalparameters portal-params -n default --type merge -p '{"spec":{"omitDefaultSecurityContext":null,"webServer":{"pod":null,"container":null},"authServer":{"pod":null,"container":null}}}'
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 732ecc894b5c641d
+    lang: sh
+    lines: 68a5ac68 36184fa5 25522579 265fda17
+    preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  content: |-
+    {{< doc-test paths="portal-security-context" >}}
+    for i in $(seq 1 60); do
+      kubectl get deployment portal-my-portal -n default -o json | jq -e '.spec.template.spec.containers[0].securityContext == null and (.spec.template.spec.securityContext // {}) == {}' >/dev/null && break
+      sleep 5
+    done
+    # the web server renders no security context
+    kubectl get deployment portal-my-portal -n default -o json | jq -e '.spec.template.spec.containers[0].securityContext == null and (.spec.template.spec.securityContext // {}) == {}'
+    for i in $(seq 1 60); do
+      kubectl get deployment portal-auth-my-portal -n default -o json | jq -e '.spec.template.spec.containers[0].securityContext == null and (.spec.template.spec.securityContext // {}) == {}' >/dev/null && break
+      sleep 5
+    done
+    # the auth server renders no security context
+    kubectl get deployment portal-auth-my-portal -n default -o json | jq -e '.spec.template.spec.containers[0].securityContext == null and (.spec.template.spec.securityContext // {}) == {}'
+    kubectl rollout status deployment/portal-my-portal -n default --timeout=300s
+    kubectl rollout status deployment/portal-auth-my-portal -n default --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 1e74afae5c5bdeee
+    lang: sh
+    lines: 68a5ac68 36184fa5 25522579 d10802a2 1dc43f54 1dbe8698 2fbc721b 6f044701 dfa91c8f 1dbe8698 de4520a8 9cedb412 cfb30922 cf5449a2 f0222554 265fda17
+    preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  content: |-
+    {{< doc-test paths="portal-security-context" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-my-portal Deployment sets the RuntimeDefault seccomp profile"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.seccompProfile.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "RuntimeDefault"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment keeps a read-only root file system"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].securityContext.readOnlyRootFilesystem"
+        jsonPathExpectation:
+          comparator: equals
+          value: True
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment drops all capabilities"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].securityContext.capabilities.drop[0]"
+        jsonPathExpectation:
+          comparator: equals
+          value: "ALL"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    for i in $(seq 1 60); do
+      kubectl get deployment portal-my-portal -n default -o json | jq -e '.spec.template.spec.securityContext.runAsUser == null and .spec.template.spec.containers[0].securityContext.runAsUser == null' >/dev/null && break
+      sleep 5
+    done
+    # the web server sets no runAsUser
+    kubectl get deployment portal-my-portal -n default -o json | jq -e '.spec.template.spec.securityContext.runAsUser == null and .spec.template.spec.containers[0].securityContext.runAsUser == null'
+    kubectl rollout status deployment/portal-my-portal -n default --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 380e2487f6b7a52c
+    lang: console
+    lines: 021fb596 25c3b8ea 96c07144 51b54828 d10b36aa e52a1813 2014b3f1 84bb4d79 085e8253 8eed8000 f7bf0220 cfae0d42 e52a1813 be61b864 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="portal-security-context" >}}
+    # The sections are alternatives. Remove the fields that the previous section
+    # set, as the page suggests with kubectl edit, before the next one.
+    kubectl patch portalparameters portal-params -n default --type merge -p '{"spec":{"omitDefaultSecurityContext":null,"webServer":{"pod":null,"container":null},"authServer":{"pod":null,"container":null}}}'
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 1e64d068830b99e5
+    lang: sh
+    lines: 68a5ac68 36184fa5 d10802a2 dfa91c8f 1dbe8698 cfb30922 274fdf3f 05f966f3 265fda17
+    preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  content: |-
+    {{< doc-test paths="portal-security-context" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-my-portal Deployment adds NET_BIND_SERVICE"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].securityContext.capabilities.add[0]"
+        jsonPathExpectation:
+          comparator: equals
+          value: "NET_BIND_SERVICE"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment keeps the default drop ALL"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].securityContext.capabilities.drop[0]"
+        jsonPathExpectation:
+          comparator: equals
+          value: "ALL"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment keeps the default pod runAsUser"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.securityContext.runAsUser"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment keeps the default container runAsUser"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].securityContext.runAsUser"
+        jsonPathExpectation:
+          comparator: equals
+          value: 10101
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deployment/portal-my-portal -n default --timeout=300s
+    {{< /doc-test >}}

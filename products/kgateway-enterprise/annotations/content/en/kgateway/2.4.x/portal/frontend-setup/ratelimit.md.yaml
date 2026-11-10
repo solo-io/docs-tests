@@ -1,0 +1,287 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/frontend-setup/ratelimit.md
+blocks:
+- 9d3f1b234615f396 yaml
+- 6e761a9eee374e97 yaml
+- 73f928c0ef4e3407 sh
+- 3b379a65f867d3de sh
+- 73c62e77b2b7d991 sh
+- 1032bf8d57cf2931 sh
+- ff74e00c2a0e8ba2
+- 2125ee76933bb676 yaml
+- 9711015ebd2a7a56 sh
+- 353abf29b8081a75 sh
+- 75e74891ab8ad33a sh
+- 2168adba274db258 sh
+- 27d2ac360e7fafeb
+tags:
+- paths: portal-ratelimit
+  block: 0
+  fingerprint: 9d3f1b234615f396
+  lang: yaml
+  lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 fd940484 0ccc8edc 36184fa5 aeeb33bd f3330fb8 52591bc7 c53abb73 334a1b95 a50da420 62bcae83 6a642fca a19560f5 44fb7b9e 0f7744e8 628e69e1 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-ratelimit"
+    only: true
+    lead: ' '
+- paths: portal-ratelimit
+  block: 1
+  fingerprint: 6e761a9eee374e97
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 02bf0210 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 7237d9e7 065d53f7 c14c1813 2ed67d95 7e9f8f6f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-ratelimit"
+    only: true
+    lead: ' '
+- paths: portal-ratelimit
+  block: 7
+  fingerprint: 2125ee76933bb676
+  lang: yaml
+  lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 fd940484 0ccc8edc 36184fa5 aeeb33bd f3330fb8 52591bc7 c53abb73 334a1b95 a50da420 62bcae83 6a642fca a19560f5 44fb7b9e 0f7744e8 628e69e1 dc36242a 8b67cea3 a09393f2 df63c760 57af3940 cb447b7f 5090ac38 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-ratelimit"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 9d3f1b234615f396
+    lang: yaml
+    lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 fd940484 0ccc8edc 36184fa5 aeeb33bd f3330fb8 52591bc7 c53abb73 334a1b95 a50da420 62bcae83 6a642fca a19560f5 44fb7b9e 0f7744e8 628e69e1 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-ratelimit" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-rl RateLimitConfig is accepted"
+      wait:
+        target:
+          kind: RateLimitConfig
+          metadata:
+            namespace: default
+            name: httpbin-rl
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 6e761a9eee374e97
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 02bf0210 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 7237d9e7 065d53f7 c14c1813 2ed67d95 7e9f8f6f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-ratelimit" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the ratelimit policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: default
+            name: ratelimit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    # The httpbin-route HTTPRoute is attached to the portal-gateway Gateway from
+    # the portal setup guide, so send the page's requests to that gateway's address.
+    export INGRESS_GW_ADDRESS="${PORTAL_GW_ADDRESS}"
+    # API_KEY comes from the Create API keys guide. If it is not set, create a key
+    # for user1's app through the portal API, as that guide does in the frontend.
+    if [ -z "${API_KEY:-}" ]; then
+      kc_token() {
+        curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+          -d "client_id=${KEYCLOAK_CLIENT}" \
+          -d "client_secret=${KEYCLOAK_SECRET}" \
+          -d "grant_type=password" \
+          -d "username=$1" \
+          -d "password=password" \
+          -d "scope=openid email profile" | jq -r '.access_token'
+      }
+      USER1_TOKEN=$(kc_token user1)
+      pc() { curl -s -H "Host: portal.example.com" -H "Authorization: Bearer ${USER1_TOKEN}" -H "Content-Type: application/json" "$@"; }
+      TEAM_ID=$(pc "http://${PORTAL_GW_ADDRESS}:8080/v1/teams" | jq -r '.[0].id')
+      APP_ID=$(pc "http://${PORTAL_GW_ADDRESS}:8080/v1/teams/${TEAM_ID}/apps" | jq -r '.[0].id')
+      export API_KEY=$(pc -X POST "http://${PORTAL_GW_ADDRESS}:8080/v1/apps/${APP_ID}/api-keys" -d '{"apiKeyName":"ratelimit-test"}' | jq -r '.apiKey')
+    fi
+    [ -n "${API_KEY:-}" ] && [ "${API_KEY}" != "null" ] || { echo "FAIL: no API key for the httpbin API product"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    section: 'Step 1: Set up a default rate limit for an API'
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 5
+      fingerprint: 1032bf8d57cf2931
+      lang: sh
+      lines: fc06010d 663f7696 6692427b
+      preview: for i in {1..3}; do curl -vik localhost:8080/httpbin/headers \
+  content: |-
+    {{< doc-test paths="portal-ratelimit" >}}
+    # Stands in for the curl loop above (its line continuations end in a space, so
+    # the -H flags are not passed): requests with the app's API key beyond the
+    # default limit of 2 per minute get a 429.
+    YAMLTest -f - <<'EOF'
+    - name: "a request with the API key succeeds"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/httpbin/headers"
+        method: GET
+        headers:
+          host: "api.example.com"
+          api-key: "${API_KEY}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "requests beyond the default limit are rate limited"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/httpbin/headers"
+        method: GET
+        headers:
+          host: "api.example.com"
+          api-key: "${API_KEY}"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+        headers:
+          - name: x-envoy-ratelimited
+            comparator: equals
+            value: "true"
+    EOF
+    # Sends $1 requests with the API key at the start of a fresh rate limit
+    # window (the rate limiter counts per calendar minute) and prints the codes.
+    rl_window() {
+      local s; s=$(date +%S); sleep $((61 - 10#$s))
+      local codes=""
+      for i in $(seq 1 "$1"); do
+        codes="$codes $(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/httpbin/headers" -H "host: api.example.com" -H "api-key: ${API_KEY}")"
+      done
+      echo "${codes# }"
+    }
+    codes=$(rl_window 3)
+    echo "default limit, 3 requests in one minute: $codes"
+    [ "$codes" = "200 200 429" ] || { echo "FAIL: expected 200 200 429 with the default limit of 2 per minute, got: $codes"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 2125ee76933bb676
+    lang: yaml
+    lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 fd940484 0ccc8edc 36184fa5 aeeb33bd f3330fb8 52591bc7 c53abb73 334a1b95 a50da420 62bcae83 6a642fca a19560f5 44fb7b9e 0f7744e8 628e69e1 dc36242a 8b67cea3 a09393f2 df63c760 57af3940 cb447b7f 5090ac38 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-ratelimit" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-rl RateLimitConfig is accepted"
+      wait:
+        target:
+          kind: RateLimitConfig
+          metadata:
+            namespace: default
+            name: httpbin-rl
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Allow overwriting default rate limits via the frontend app'
+    line: 7c43bc3050c784ef
+    occurrence: 0
+    words: e7f6c011 e5c7ffac 157dca92 663ea1bf 157dca92 4d040d3f cde0fb0d
+    block_before:
+      block: 7
+      fingerprint: 2125ee76933bb676
+      lang: yaml
+      lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 fd940484 0ccc8edc 36184fa5 aeeb33bd f3330fb8 52591bc7 c53abb73 334a1b95 a50da420 62bcae83 6a642fca a19560f5 44fb7b9e 0f7744e8 628e69e1 dc36242a 8b67cea3 a09393f2 df63c760 57af3940 cb447b7f 5090ac38 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-ratelimit" >}}
+    # Stands in for steps 2-6 in the frontend: as admin1, set a rate limit of 5
+    # requests per minute on the app's subscription to the httpbin API product
+    # through the portal API (the call that the Edit Rate Limit dialog makes).
+    kc_token() {
+      curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+        -d "client_id=${KEYCLOAK_CLIENT}" \
+        -d "client_secret=${KEYCLOAK_SECRET}" \
+        -d "grant_type=password" \
+        -d "username=$1" \
+        -d "password=password" \
+        -d "scope=openid email profile" | jq -r '.access_token'
+    }
+    ADMIN_TOKEN=$(kc_token admin1)
+    [ -n "$ADMIN_TOKEN" ] && [ "$ADMIN_TOKEN" != "null" ] || { echo "FAIL: no Keycloak token for admin1"; exit 1; }
+    APP_ID=$(curl -s -G -H "Host: portal.example.com" "http://${PORTAL_GW_ADDRESS}:8080/v1/metadata" \
+      --data-urlencode "apiKey=${API_KEY}" --data-urlencode "apiProductId=httpbin" | jq -r '.applicationId')
+    [ -n "$APP_ID" ] && [ "$APP_ID" != "null" ] || { echo "FAIL: the API key is not valid for the httpbin API product"; exit 1; }
+    SUBSCRIPTION_ID=$(curl -s -H "Host: portal.example.com" -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+      "http://${PORTAL_GW_ADDRESS}:8080/v1/apps/${APP_ID}/subscriptions" \
+      | jq -r '[.[] | select(.apiProductId == "httpbin" and .approved)][0].id')
+    [ -n "$SUBSCRIPTION_ID" ] && [ "$SUBSCRIPTION_ID" != "null" ] || { echo "FAIL: no approved subscription to httpbin for app $APP_ID"; exit 1; }
+    resp=$(curl -s -w '\n%{http_code}' -X POST -H "Host: portal.example.com" -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+      -H "Content-Type: application/json" "http://${PORTAL_GW_ADDRESS}:8080/v1/subscriptions/${SUBSCRIPTION_ID}/metadata" \
+      -d '{"rateLimit": {"requestsPerUnit": "5", "unit": "MINUTE"}}')
+    echo "$resp"
+    [ "$(echo "$resp" | tail -1)" = "200" ] || { echo "FAIL: setting the subscription rate limit did not return 200"; exit 1; }
+    echo "$resp" | sed '$d' | jq -e '.metadata.rateLimit.requestsPerUnit == "5" and .metadata.rateLimit.unit == "MINUTE"' >/dev/null \
+      || { echo "FAIL: the subscription does not report a rate limit of 5 per MINUTE"; exit 1; }
+    # ExtAuth reads the limit from the same endpoint that validates the key.
+    curl -s -G -H "Host: portal.example.com" "http://${PORTAL_GW_ADDRESS}:8080/v1/metadata" \
+      --data-urlencode "apiKey=${API_KEY}" --data-urlencode "apiProductId=httpbin" \
+      | jq -e '.allowed == true and .rateLimit.requestsPerUnit == "5" and .rateLimit.unit == "MINUTE"' >/dev/null \
+      || { echo "FAIL: /v1/metadata does not return the subscription rate limit for the API key"; exit 1; }
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Allow overwriting default rate limits via the frontend app'
+    line: 600fe1bb59e46b50
+    occurrence: 1
+    words: 32d3feda
+    block_before:
+      block: 11
+      fingerprint: 2168adba274db258
+      lang: sh
+      lines: 6c8f80e2 663f7696 6692427b
+      preview: for i in {1..6}; do curl -I localhost:8080/httpbin/headers \
+  content: |-
+    {{< doc-test paths="portal-ratelimit" >}}
+    # Stands in for the curl loop above (same line continuation problem as in
+    # Step 1): with the subscription limit, 5 requests in a minute succeed and the
+    # 6th gets a 429. ExtAuth caches credential lookups (cacheDuration: 10s), so
+    # retry over a few rate limit windows.
+    # Sends $1 requests with the API key at the start of a fresh rate limit
+    # window (the rate limiter counts per calendar minute) and prints the codes.
+    rl_window() {
+      local s; s=$(date +%S); sleep $((61 - 10#$s))
+      local codes=""
+      for i in $(seq 1 "$1"); do
+        codes="$codes $(curl -s -o /dev/null -w '%{http_code}' "http://${INGRESS_GW_ADDRESS}:8080/httpbin/headers" -H "host: api.example.com" -H "api-key: ${API_KEY}")"
+      done
+      echo "${codes# }"
+    }
+    ok=0
+    for attempt in 1 2 3 4; do
+      codes=$(rl_window 6)
+      echo "subscription limit, 6 requests in one minute: $codes"
+      if [ "$codes" = "200 200 200 200 200 429" ]; then ok=1; break; fi
+    done
+    [ "$ok" = 1 ] || { echo "FAIL: expected 5 x 200 then 429 with the subscription limit of 5 per minute, got: $codes"; exit 1; }
+    {{< /doc-test >}}

@@ -1,0 +1,253 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/frontend-usage/teams-apps.md
+blocks: []
+hidden:
+- after:
+    section: Create teams
+    line: 9b1f25db00d5dccc
+    occurrence: 0
+    words: ef2d127d e5c7ffac fa8847b0 ca8b22d0 b9776d7d 04f8996d 6ed03371 75dd3da2 b9776d7d ca8b22d0 fa51fd49 83ccca18 279b8a60 f4bf9f7f ca978112 ca8b22d0 e31ab643
+    block_before: null
+  content: |-
+    {{< doc-test paths="portal-teams-apps" >}}
+    # The fu_* helpers below stand in for the frontend app (fu = frontend user).
+    # The portal frontend app calls the portal REST API (/v1/...) on
+    # portal.example.com with the token of the user who is logged in, through the
+    # portal-backend-bearer route from the secure login guide. The UI steps are
+    # replaced with the same API calls. Tokens for user1 (Portal user) and admin1
+    # (Portal admin) come from Keycloak's password grant on the portal-frontend
+    # client, which has direct access grants enabled.
+    export PORTAL_GW_ADDRESS="${PORTAL_GW_ADDRESS:-$(kubectl get svc -n default portal-gateway -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")}"
+    if [ -z "${KEYCLOAK_URL:-}" ]; then
+      export KEYCLOAK_URL="http://$(kubectl -n keycloak get service keycloak -o jsonpath='{.status.loadBalancer.ingress[0].ip}{.status.loadBalancer.ingress[0].hostname}'):8080"
+    fi
+    export KEYCLOAK_CLIENT="${KEYCLOAK_CLIENT:-portal-frontend}"
+    if [ -z "${KEYCLOAK_SECRET:-}" ]; then
+      KC_ADMIN_TOKEN=$(curl -s -d client_id=admin-cli -d username=admin -d password=admin -d grant_type=password \
+        "${KEYCLOAK_URL}/realms/master/protocol/openid-connect/token" | jq -r .access_token)
+      KC_CLIENT_UUID=$(curl -s -H "Authorization: Bearer ${KC_ADMIN_TOKEN}" \
+        "${KEYCLOAK_URL}/admin/realms/portal/clients?clientId=${KEYCLOAK_CLIENT}" | jq -r '.[0].id')
+      export KEYCLOAK_SECRET=$(curl -s -H "Authorization: Bearer ${KC_ADMIN_TOKEN}" \
+        "${KEYCLOAK_URL}/admin/realms/portal/clients/${KC_CLIENT_UUID}/client-secret" | jq -r .value)
+    fi
+    # fu_token USER: an access token for USER (password "password").
+    fu_token() {
+      curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+        -d "client_id=${KEYCLOAK_CLIENT}" -d "client_secret=${KEYCLOAK_SECRET}" \
+        -d grant_type=password -d "username=$1" -d password=password \
+        -d "scope=openid email profile" | jq -r '.access_token // empty'
+    }
+    # fu_call METHOD PATH TOKEN [JSON]: calls the portal API, sets FU_STATUS and FU_BODY.
+    fu_call() {
+      local args=(-s -w '\n%{http_code}' -X "$1" "http://${PORTAL_GW_ADDRESS}:8080$2"
+        -H "host: portal.example.com" -H "Authorization: Bearer $3")
+      if [ $# -ge 4 ]; then args+=(-H "Content-Type: application/json" -d "$4"); fi
+      local out
+      out=$(curl "${args[@]}" || true)
+      FU_STATUS="${out##*$'\n'}"
+      FU_BODY="${out%$'\n'*}"
+    }
+    # fu_expect CODE WHAT: fails the test unless the last fu_call returned CODE.
+    fu_expect() {
+      if [ "${FU_STATUS}" != "$1" ]; then
+        echo "FAIL: $2: expected HTTP $1, got ${FU_STATUS}: ${FU_BODY}" >&2
+        exit 1
+      fi
+    }
+    # Log in as user1 and admin1. GET /v1/me creates the user record, like the
+    # first login in the frontend app. Retry until the bearer route accepts tokens.
+    for i in $(seq 1 60); do
+      USER1_TOKEN=$(fu_token user1)
+      if [ -n "${USER1_TOKEN}" ]; then
+        fu_call GET /v1/me "${USER1_TOKEN}"
+        if [ "${FU_STATUS}" = 200 ]; then break; fi
+      fi
+      sleep 5
+    done
+    fu_expect 200 "GET /v1/me as user1"
+    ADMIN1_TOKEN=$(fu_token admin1)
+    fu_call GET /v1/me "${ADMIN1_TOKEN}"
+    fu_expect 200 "GET /v1/me as admin1"
+    export USER1_TOKEN ADMIN1_TOKEN
+    fu_call GET /v1/api-products "${USER1_TOKEN}"
+    fu_expect 200 "GET /v1/api-products as user1"
+    export API_PRODUCT_ID=$(echo "${FU_BODY}" | jq -r '[.[] | select(.id == "httpbin" or .name == "HTTPBin API")][0].id // empty')
+    if [ -z "${API_PRODUCT_ID}" ]; then
+      echo "FAIL: the httpbin ApiProduct is not in the API catalog: ${FU_BODY}" >&2
+      exit 1
+    fi
+    # Create teams: user1 creates the team "my-team" (POST /v1/teams), which is
+    # what CREATE NEW TEAM does in the frontend app.
+    fu_call POST /v1/teams "${USER1_TOKEN}" '{"name":"my-team","description":"Team for the httpbin API"}'
+    fu_expect 201 "create the team my-team as user1"
+    export TEAM_ID=$(echo "${FU_BODY}" | jq -r .id)
+    echo "TEAM_ID=${TEAM_ID}"
+    YAMLTest -f - <<'EOF'
+    - name: "my-team lists user1, who created it, as a team member"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/teams/${TEAM_ID}"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${USER1_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.name"
+            comparator: equals
+            value: "my-team"
+        bodyContains: "user1@example.com"
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Add users
+    line: b7583be96e450902
+    occurrence: 0
+    words: e7f6c011 e08d706b b9776d7d 82244417 d80c9bf9 28391d3b b9776d7d 04f8996d 8e7fc023 bb0347a4 8656aa55 663ea1bf 7e9e5ac3 6201111b e5c7ffac 7e9e5ac3 04f8996d edb46562 8e7fc023 b9776d7d 04f8996d 4137b01e 193c45b5 7baa9965 58296753 663ea1bf b9776d7d d0960501 1cf387c0 a172cedc 6db7d803 58296753 3eeb7e96 663ea1bf 1c633350 ca978112 ba4788b2 20f65c28 6201eb4d 58296753 b9776d7d 9599915b 42882135 881d5fb6
+    block_before: null
+  content: |-
+    {{< doc-test paths="portal-teams-apps" >}}
+    # Add users: user1 adds admin1 to the team by email (POST
+    # /v1/teams/{teamID}/members), which is what ADD USER does in the frontend app.
+    # admin1 logged in earlier (GET /v1/me), so the portal knows the user.
+    USER1_TOKEN=$(fu_token user1)
+    export USER1_TOKEN
+    fu_call POST "/v1/teams/${TEAM_ID}/members" "${USER1_TOKEN}" '{"email":"admin1@solo.io"}'
+    fu_expect 201 "add admin1@solo.io to my-team as user1"
+    export ADMIN1_MEMBER_ID=$(echo "${FU_BODY}" | jq -r .id)
+    YAMLTest -f - <<'EOF'
+    - name: "my-team lists admin1 as a team member"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/teams/${TEAM_ID}/members"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${USER1_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "admin1@solo.io"
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Remove teams and users
+    line: f549f7670530f86c
+    occurrence: 0
+    words: ef2d127d e6640de8 b9776d7d 04f8996d 8e7fc023 bb0347a4 8656aa55 663ea1bf 7e5608ab 6201111b e5c7ffac 7e5608ab
+    block_before: null
+  content: |-
+    {{< doc-test paths="portal-teams-apps" >}}
+    # Remove users: user1 removes admin1 from the team (DELETE
+    # /v1/teams/{teamID}/members/{memberID}), which is what REMOVE does in the
+    # frontend app. The team itself is kept, because the pages that build on this
+    # guide use it.
+    USER1_TOKEN=$(fu_token user1)
+    fu_call DELETE "/v1/teams/${TEAM_ID}/members/${ADMIN1_MEMBER_ID}" "${USER1_TOKEN}"
+    fu_expect 204 "remove admin1 from my-team as user1"
+    fu_call GET "/v1/teams/${TEAM_ID}/members" "${USER1_TOKEN}"
+    fu_expect 200 "list the members of my-team as user1"
+    if echo "${FU_BODY}" | jq -e '.[] | select(.email == "admin1@solo.io")' >/dev/null; then
+      echo "FAIL: admin1 is still a member of my-team: ${FU_BODY}" >&2
+      exit 1
+    fi
+    if ! echo "${FU_BODY}" | jq -e '.[] | select(.email == "user1@example.com")' >/dev/null; then
+      echo "FAIL: user1 is no longer a member of my-team: ${FU_BODY}" >&2
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    section: Create apps
+    line: 822450c1c50996a4
+    occurrence: 0
+    words: ef2d127d e5c7ffac fa8847b0 a172cedc
+    block_before: null
+  content: |-
+    {{< doc-test paths="portal-teams-apps" >}}
+    # Create apps: user1 creates the app "my-app" for my-team (POST
+    # /v1/teams/{teamID}/apps), which is what CREATE NEW APP does in the frontend app.
+    USER1_TOKEN=$(fu_token user1)
+    export USER1_TOKEN
+    fu_call POST "/v1/teams/${TEAM_ID}/apps" "${USER1_TOKEN}" '{"name":"my-app","description":"App for the httpbin API"}'
+    fu_expect 201 "create the app my-app for my-team as user1"
+    export APP_ID=$(echo "${FU_BODY}" | jq -r .id)
+    echo "APP_ID=${APP_ID}"
+    YAMLTest -f - <<'EOF'
+    - name: "my-team lists the app my-app"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/teams/${TEAM_ID}/apps"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${USER1_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$[0].name"
+            comparator: equals
+            value: "my-app"
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Add API product subscriptions
+    line: 935bec5f9b731d56
+    occurrence: 0
+    words: b5e85581 25a66342 b29814cf d0960501 2b5dc954 dec0f004 39b1d7f5 a9c0ad21 b29814cf d0960501 2b5dc954
+    block_before: null
+  content: |-
+    {{< doc-test paths="portal-teams-apps" >}}
+    # Add API product subscriptions: user1 subscribes my-app to the httpbin
+    # ApiProduct (POST /v1/apps/{appID}/subscriptions), which is what Create
+    # Subscription does in the frontend app. The subscription stays pending until a
+    # Portal admin approves it.
+    USER1_TOKEN=$(fu_token user1)
+    export USER1_TOKEN
+    fu_call POST "/v1/apps/${APP_ID}/subscriptions" "${USER1_TOKEN}" "{\"apiProductId\":\"${API_PRODUCT_ID}\"}"
+    fu_expect 201 "subscribe my-app to the ${API_PRODUCT_ID} ApiProduct as user1"
+    export SUBSCRIPTION_ID=$(echo "${FU_BODY}" | jq -r .id)
+    echo "SUBSCRIPTION_ID=${SUBSCRIPTION_ID}"
+    YAMLTest -f - <<'EOF'
+    - name: "the my-app subscription to the httpbin ApiProduct is pending"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/apps/${APP_ID}/subscriptions"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${USER1_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$[0].apiProductId"
+            comparator: equals
+            value: "httpbin"
+          - path: "$[0].approved"
+            comparator: equals
+            value: false
+          - path: "$[0].rejected"
+            comparator: equals
+            value: false
+    - name: "the SPEC and DOCS of the httpbin ApiProduct load"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products/${API_PRODUCT_ID}/versions"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          Authorization: "Bearer ${USER1_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "/headers"
+    EOF
+    {{< /doc-test >}}

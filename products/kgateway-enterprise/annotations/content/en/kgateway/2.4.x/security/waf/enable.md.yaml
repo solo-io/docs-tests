@@ -1,0 +1,64 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/waf/enable.md
+blocks:
+- 83a3319e904c55b8 yaml
+- db081ab2936cac95 yaml
+- 415ee97d73943083 bash
+- 2e7831fcb59eff53
+tags:
+- paths: waf-enable
+  block: 0
+  fingerprint: 83a3319e904c55b8
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 1288d06d 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-enable"
+    only: true
+    lead: ' '
+- paths: waf-enable
+  block: 1
+  fingerprint: db081ab2936cac95
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 7d30b2df 36184fa5 4afb2481 3f04fdd7 125e7322 24bf663e 9048f7b8 1288d06d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-enable"
+    only: true
+    lead: ' '
+- paths: waf-enable
+  block: 2
+  fingerprint: 415ee97d73943083
+  lang: bash
+  lines: 415ee97d
+  preview: kubectl get deploy -n kgateway-system -l app.kubernetes.io/name=waf-server
+  form:
+    attr: paths="waf-enable"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: db081ab2936cac95
+    lang: yaml
+    lines: 16c71da1 8c67597e 9730d414 8c8c4228 7d30b2df 36184fa5 4afb2481 3f04fdd7 125e7322 24bf663e 9048f7b8 1288d06d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-enable" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the waf-server Deployment for the enterprise-kgateway GatewayClass is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-enterprise-kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

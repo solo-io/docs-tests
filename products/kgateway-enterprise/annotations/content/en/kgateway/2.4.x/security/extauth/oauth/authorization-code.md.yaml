@@ -1,0 +1,157 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/extauth/oauth/authorization-code.md
+blocks:
+- 7efe6248c20a28f8 yaml
+- 79350ee025950f23 yaml
+- 71e0ced326e07d1c yaml
+- 617c41ac9887e728 yaml
+- 2acf0e5d1c615ae6 sh
+- eb5210f06fd85687 sh
+- b3b64e11916804a0 sh
+- 241dd920965f4bc6 sh
+- e4d026392be4a64c console
+- a3fd572b09c4c45a sh
+tags:
+- paths: oauth-authorization-code
+  block: 1
+  fingerprint: 79350ee025950f23
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 c35a37c3 0bebd850 170ac459 2f7c298d 8ba30b95 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="oauth-authorization-code"
+    only: true
+    lead: ' '
+    tail: ' '
+- paths: oauth-authorization-code
+  block: 2
+  fingerprint: 71e0ced326e07d1c
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 a23af473 0f10c5bc 36184fa5 d5ec3fae afba47a2 f1c7325d 69e15d7b 6ac3a2ec 5caedf2d e73ad6de c35a37c3 0bebd850 61d0946d 61d9749c 9519f874 0bc8506e ad916773 b31eb75b e8a6bb4b ba77f9b0 3a604046 fa579f78 ced79e71 38dc0152 73535c78 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="oauth-authorization-code"
+    only: true
+    lead: ' '
+- paths: oauth-authorization-code
+  block: 3
+  fingerprint: 617c41ac9887e728
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 a23af473 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 a23af473 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="oauth-authorization-code"
+    only: true
+    lead: ' '
+- paths: oauth-authorization-code
+  block: 4
+  fingerprint: 2acf0e5d1c615ae6
+  lang: sh
+  lines: 2acf0e5d
+  preview: kubectl get authconfig oauth-authorization-code -n httpbin -o yaml
+  form:
+    attr: paths="oauth-authorization-code"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: 71e0ced326e07d1c
+    lang: yaml
+    lines: 16c71da1 98875768 efd325e8 8c8c4228 a23af473 0f10c5bc 36184fa5 d5ec3fae afba47a2 f1c7325d 69e15d7b 6ac3a2ec 5caedf2d e73ad6de c35a37c3 0bebd850 61d0946d 61d9749c 9519f874 0bc8506e ad916773 b31eb75b e8a6bb4b ba77f9b0 3a604046 fa579f78 ced79e71 38dc0152 73535c78 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="oauth-authorization-code" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "oauth-authorization-code - the oauth-authorization-code AuthConfig is accepted"
+         wait:
+           target:
+             kind: AuthConfig
+             metadata:
+               namespace: httpbin
+               name: oauth-authorization-code
+           jsonPath: "$.status.state"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 617c41ac9887e728
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 a23af473 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 a23af473 0f10c5bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="oauth-authorization-code" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "oauth-authorization-code - the oauth-authorization-code policy is accepted"
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: oauth-authorization-code
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    section: 'Step 3: Verify the authorization code flow'
+    line: 33294b407f75fd9e
+    occurrence: 0
+    words: bb0347a4 ba78973d 40c04184 6201111b 68752bf6 663ea1bf b9776d7d 2998b323 a0af9f86 28391d3b b9776d7d abbea20e a172cedc b9776d7d a9f4b3d2 c093955c b9776d7d a5614527 3c469e9d 58296753 b9776d7d fc93cb07 1f58b914 1e0584a2
+    block_before:
+      block: 6
+      fingerprint: b3b64e11916804a0
+      lang: sh
+      lines: b3b64e11
+      preview: open "http://www.example.com:8080/get"
+  content: |-
+    {{< doc-test paths="oauth-authorization-code" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "oauth-authorization-code - a request without a session is redirected to the Keycloak login with the www.example.com:8080 callback"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 302
+        headers:
+          - name: location
+            comparator: contains
+            value: "/realms/master/protocol/openid-connect/auth?client_id="
+          - name: location
+            comparator: contains
+            value: "redirect_uri=http%3A%2F%2Fwww.example.com%3A8080%2Fcallback"
+    EOF
+    # The browser steps (log in as user1, return to the app) done with curl: the
+    # gateway at www.example.com:8080 resolves to INGRESS_GW_ADDRESS, and Keycloak
+    # is reached at the KEYCLOAK_URL that the AuthConfig's issuerUrl uses.
+    jar=$(mktemp)
+    gw=(--resolve "www.example.com:8080:${INGRESS_GW_ADDRESS}")
+    login=$(curl -sS -o /dev/null -w '%{redirect_url}' -c "$jar" -b "$jar" "${gw[@]}" http://www.example.com:8080/get)
+    case "$login" in "$KEYCLOAK_URL"/realms/master/*) ;; *) echo "FAIL: expected a redirect to $KEYCLOAK_URL, got '$login'"; exit 1 ;; esac
+    action=$(curl -sS -c "$jar" -b "$jar" "$login" | grep -o 'action="[^"]*"' | head -1 | sed -e 's/^action="//' -e 's/"$//' -e 's/&amp;/\&/g')
+    test -n "$action" || { echo "FAIL: the Keycloak login page has no form"; exit 1; }
+    callback=$(curl -sS -o /dev/null -w '%{redirect_url}' -c "$jar" -b "$jar" -d username=user1 -d password=password "$action")
+    case "$callback" in http://www.example.com:8080/callback\?*) ;; *) echo "FAIL: Keycloak did not redirect to the callback, got '$callback'"; exit 1 ;; esac
+    back=$(curl -sS -o /dev/null -w '%{redirect_url}' -c "$jar" -b "$jar" "${gw[@]}" "$callback")
+    test "$back" = "http://www.example.com:8080/get" || { echo "FAIL: the callback did not return to /get, got '$back'"; exit 1; }
+    body=$(curl -sS -c "$jar" -b "$jar" "${gw[@]}" http://www.example.com:8080/get)
+    echo "$body" | jq -e '.headers.Jwt[0] | startswith("ey")' >/dev/null \
+      || { echo "FAIL: after login, /get does not show the ID token in the jwt header"; echo "$body" | head -20; exit 1; }
+    echo "logged in as user1; httpbin received the ID token in the jwt header"
+    {{< /doc-test >}}

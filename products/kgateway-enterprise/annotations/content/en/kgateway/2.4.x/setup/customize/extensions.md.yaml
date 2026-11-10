@@ -1,0 +1,298 @@
+format: 1
+source: content/en/kgateway/2.4.x/setup/customize/extensions.md
+blocks:
+- c7ef97c21f07d73c yaml
+- b27ccd7c9afd03ad sh
+- a9876437654fa410 console
+- 3b35e602154affb9 yaml
+- 7104d2e160bebd6f sh
+- b5bea41b6c623f7c console
+tags:
+- paths: customize-extensions-gomemlimit
+  block: 0
+  fingerprint: c7ef97c21f07d73c
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 136a101f 0bebd850 36184fa5 9cc14d83 356067ee 3e196ba7 ff7360cf 577d77a8 cab2be2b 2629ac0e 47796adf ba62cf2b ff7360cf 577d77a8 cab2be2b 2629ac0e 47796adf 9eb3a28d ff7360cf 577d77a8 cab2be2b 2629ac0e 47796adf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="customize-extensions-gomemlimit"
+    only: true
+    lead: ' '
+- paths: customize-extensions-gomemlimit
+  block: 1
+  fingerprint: b27ccd7c9afd03ad
+  lang: sh
+  lines: 684ac5d9 adf7b909 61add936 adf7b909 930009d0 adf7b909
+  preview: kubectl get deployment -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=
+  form:
+    attr: paths="customize-extensions-gomemlimit"
+    only: true
+    lead: ' '
+- paths: customize-extensions-env
+  block: 4
+  fingerprint: 7104d2e160bebd6f
+  lang: sh
+  lines: 576bc0cd 684ac5d9 8ee95de2
+  preview: 'kubectl rollout status deployment -n {{< reuse "kgw-docs/snippets/namespace.md" '
+  form:
+    attr: paths="customize-extensions-env"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: c7ef97c21f07d73c
+    lang: yaml
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 136a101f 0bebd850 36184fa5 9cc14d83 356067ee 3e196ba7 ff7360cf 577d77a8 cab2be2b 2629ac0e 47796adf ba62cf2b ff7360cf 577d77a8 cab2be2b 2629ac0e 47796adf 9eb3a28d ff7360cf 577d77a8 cab2be2b 2629ac0e 47796adf abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="customize-extensions-gomemlimit" >}}
+    # The page says to point the GatewayClass at ext-params-gomemlimit the way
+    # step 2 of Built-in customization does, with the name replaced.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: GatewayClass
+    metadata:
+      name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+    spec:
+      controllerName: solo.io/{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+      parametersRef:
+        group: {{< reuse "kgw-docs/snippets/gatewayparam-group.md" >}}
+        kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+        name: ext-params-gomemlimit
+        namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions-gomemlimit - the ext-params-gomemlimit resource has an Accepted condition of True"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: ext-params-gomemlimit
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: a9876437654fa410
+    lang: console
+    lines: a9876437
+    preview: '1717986918'
+  content: |-
+    {{< doc-test paths="customize-extensions-gomemlimit" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions-gomemlimit - the ext-auth-service container sets GOMEMLIMIT to 80% of 2Gi (1717986918 bytes)"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].env[?(@.name=='GOMEMLIMIT')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "1717986918"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-gomemlimit - the rate-limiter container sets GOMEMLIMIT to 80% of 2Gi (1717986918 bytes)"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].env[?(@.name=='GOMEMLIMIT')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "1717986918"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-gomemlimit - the waf-server container sets GOMEMLIMIT to 80% of 2Gi (1717986918 bytes)"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app.kubernetes.io/name: waf-server
+        jsonPath: "$.items[0].spec.template.spec.containers[0].env[?(@.name=='GOMEMLIMIT')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "1717986918"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-gomemlimit - the ext-auth-service deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-gomemlimit - the rate-limiter deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-gomemlimit - the waf-server deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app.kubernetes.io/name: waf-server
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 3b35e602154affb9
+    lang: yaml
+    lines: 36184fa5 9cc14d83 356067ee 3e196ba7 ff7360cf be80440e 36184fa5 a58565b2 36184fa5 04968f51 fef2806a 8db70061 3d49695e 162b7570
+    preview: 'spec:'
+  content: |-
+    {{< doc-test paths="customize-extensions-env" >}}
+    # The overlay on the page is a fragment of a resource; apply it as a full
+    # resource and point the GatewayClass at it.
+    kubectl apply -f- <<EOF
+    apiVersion: {{< reuse "kgw-docs/snippets/gatewayparam-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+    metadata:
+      name: ext-params
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      kube:
+        sharedExtensions:
+          extauth:
+            enabled: true
+            deploymentOverlay:
+              spec:
+                template:
+                  spec:
+                    containers:
+                    - name: ext-auth-service
+                      env:
+                      - name: PRESERVE_UNSET_INJECTED_HEADERS
+                        value: "true"
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: GatewayClass
+    metadata:
+      name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+    spec:
+      controllerName: solo.io/{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+      parametersRef:
+        group: {{< reuse "kgw-docs/snippets/gatewayparam-group.md" >}}
+        kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+        name: ext-params
+        namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions-env - the ext-params resource has an Accepted condition of True"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: ext-params
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: "customize-extensions-env - the ext-auth-service container has PRESERVE_UNSET_INJECTED_HEADERS set to true"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].env[?(@.name=='PRESERVE_UNSET_INJECTED_HEADERS')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "true"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: b5bea41b6c623f7c
+    lang: console
+    lines: b5bea41b
+    preview: 'true'
+  content: |-
+    {{< doc-test paths="customize-extensions-env" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-extensions-env - the ext-auth-service deployment is available with the variable"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-extensions-env - the ext-auth-service deployment rolled out the new pod template"
+      retries: 30
+      command:
+        command: "kubectl rollout status deployment -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=ext-auth-service --timeout=10s"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+    EOF
+    {{< /doc-test >}}

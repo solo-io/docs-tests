@@ -1,0 +1,133 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/waf/overview.md
+blocks:
+- dca080f82c7bc49f mermaid
+- b9b5336929523ae7 yaml
+- e843547cd573181d yaml
+- 8a41cabb7943e647 yaml
+- 44ac26032f2b15e4 sh
+- 11d1be62f3243078 console
+- aabfcc0d9ce90b15 yaml
+- 955a42083d3b9ef7 yaml
+tags:
+- paths: waf-overview
+  block: 3
+  fingerprint: 8a41cabb7943e647
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 0bebd850 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf b1615677 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-overview"
+    only: true
+    lead: ' '
+- paths: waf-overview
+  block: 4
+  fingerprint: 44ac26032f2b15e4
+  lang: sh
+  lines: 4b95120f 1348d0d3
+  preview: kubectl get deployment -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app.
+  form:
+    attr: paths="waf-overview"
+    only: true
+    lead: ' '
+- paths: waf-overview
+  block: 6
+  fingerprint: aabfcc0d9ce90b15
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 cae18b53 0f10c5bc 36184fa5 dc587d2e 14ddcd05 7606ee23 142b1d35 385a2eb3 1851f975 30f84284 b3ed715b 97f3e0e1 cb3f91d5 bd0fb8f4 fefd2fc8 8c8c4228 cae18b53 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa cae18b53 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-overview"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 8a41cabb7943e647
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 0bebd850 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf b1615677 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-overview" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the waf-server Deployment runs with --max-recv-message-bytes 33554432"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-enterprise-kgateway
+        jsonPath: "$.spec.template.spec.containers[?(@.name=='waf-server')].args"
+        jsonPathExpectation:
+          comparator: contains
+          value: "33554432"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deployment/waf-server-enterprise-kgateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: aabfcc0d9ce90b15
+    lang: yaml
+    lines: 16c71da1 2701c996 d1c189e3 8c8c4228 cae18b53 0f10c5bc 36184fa5 dc587d2e 14ddcd05 7606ee23 142b1d35 385a2eb3 1851f975 30f84284 b3ed715b 97f3e0e1 cb3f91d5 bd0fb8f4 fefd2fc8 8c8c4228 cae18b53 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa cae18b53 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-overview" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the waf-body-limits traffic policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: waf-body-limits
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the waf-body-limits WAFPolicy is ready"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: waf-body-limits
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "a request through the waf-body-limits policy is allowed with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "a request with a small body is inspected and allowed with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/post"
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          content-type: "application/json"
+        body: |
+          {"message": "hello"}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,277 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/frontend-setup/visibility.md
+blocks:
+- 8b447b985f04da77 yaml
+- a7b2c7eae5a18b37 yaml
+- df1d482502c6767d yaml
+- 06fe1537595eb1b8 yaml
+- a63691af50d9cdc0 yaml
+tags:
+- paths: portal-visibility
+  block: 0
+  fingerprint: 8b447b985f04da77
+  lang: yaml
+  lines: 16c71da1 4f6d8314 a89a299a 8c8c4228 1c8c072f 0ccc8edc 36184fa5 d853cefc 78c27774 57d43cc5 d83328ef cb3f91d5 4f6d8314 a89a299a 8c8c4228 777e0605 0ccc8edc 36184fa5 d853cefc 78c27774 57d43cc5 d83328ef 78c27774 57d43cc5 41f89d7c abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-visibility"
+    only: true
+    lead: ' '
+- paths: portal-visibility
+  block: 1
+  fingerprint: a7b2c7eae5a18b37
+  lang: yaml
+  lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 4af98d49 dc81b556 cf3e75ee aa80d960 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-visibility"
+    only: true
+    lead: ' '
+- paths: portal-visibility
+  block: 4
+  fingerprint: a63691af50d9cdc0
+  lang: yaml
+  lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 4af98d49 bab736dc cf3e75ee aa80d960 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-visibility"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 8b447b985f04da77
+    lang: yaml
+    lines: 16c71da1 4f6d8314 a89a299a 8c8c4228 1c8c072f 0ccc8edc 36184fa5 d853cefc 78c27774 57d43cc5 d83328ef cb3f91d5 4f6d8314 a89a299a 8c8c4228 777e0605 0ccc8edc 36184fa5 d853cefc 78c27774 57d43cc5 d83328ef 78c27774 57d43cc5 41f89d7c abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-visibility" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the premium-only VisibilityPolicy exists"
+      wait:
+        target:
+          kind: VisibilityPolicy
+          metadata:
+            namespace: default
+            name: premium-only
+        jsonPath: "$.metadata.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: "premium-only"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    - name: "the all-tiers VisibilityPolicy exists"
+      wait:
+        target:
+          kind: VisibilityPolicy
+          metadata:
+            namespace: default
+            name: all-tiers
+        jsonPath: "$.metadata.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: "all-tiers"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Attach the VisibilityPolicy to a Portal'
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 3
+      fingerprint: 06fe1537595eb1b8
+      lang: yaml
+      lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 4af98d49 bab736dc cf3e75ee aa80d960 4af98d49 dc81b556 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-visibility" >}}
+    # Stands in for checking the result of the Portal-wide tab: the Portal resolves
+    # the premium-only policy, the catalog is no longer public (no token: 401), and
+    # admin1 (tier: premium, and an admin) still sees the httpbin API product.
+    YAMLTest -f - <<'EOF'
+    - name: "the my-portal Portal resolves its VisibilityPolicy refs"
+      wait:
+        target:
+          kind: Portal
+          metadata:
+            namespace: default
+            name: my-portal
+        jsonPath: "$.status.conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the my-portal Portal is programmed"
+      wait:
+        target:
+          kind: Portal
+          metadata:
+            namespace: default
+            name: my-portal
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the API catalog requires a login after visibility.public is removed"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products"
+        method: GET
+        headers:
+          host: "portal.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    kc_token() {
+      curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+        -d "client_id=${KEYCLOAK_CLIENT}" \
+        -d "client_secret=${KEYCLOAK_SECRET}" \
+        -d "grant_type=password" \
+        -d "username=$1" \
+        -d "password=password" \
+        -d "scope=openid email profile" | jq -r '.access_token'
+    }
+    jwt_claim() {
+      python3 -c 'import sys,json,base64; p=sys.argv[1].split(".")[1]; p+="="*(-len(p)%4); print(json.loads(base64.urlsafe_b64decode(p)).get(sys.argv[2]))' "$1" "$2"
+    }
+    ADMIN1_TOKEN=$(kc_token admin1)
+    [ -n "$ADMIN1_TOKEN" ] && [ "$ADMIN1_TOKEN" != "null" ] || { echo "FAIL: no Keycloak token for admin1"; exit 1; }
+    jwt_claim "$ADMIN1_TOKEN" tier | grep premium >/dev/null \
+      || { echo "FAIL: the admin1 token has no tier: premium claim (set in the Secure login guide)"; exit 1; }
+    export ADMIN1_TOKEN
+    YAMLTest -f - <<'EOF'
+    - name: "admin1 (tier: premium) sees the httpbin API product"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          authorization: "Bearer ${ADMIN1_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "\"id\":\"httpbin\""
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 3: Verify access'
+    line: a791e0af23140f59
+    occurrence: 0
+    words: 4e074085 a12dd3a7 8e7fc023 bb0347a4 9a43b6da aa9e9b5c b9776d7d abbea20e 14c2529e a8792157
+    block_before:
+      block: 3
+      fingerprint: 06fe1537595eb1b8
+      lang: yaml
+      lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 4af98d49 bab736dc cf3e75ee aa80d960 4af98d49 dc81b556 abc56510
+      preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-visibility" >}}
+    # Stands in for logging in to the portal frontend as user1 (steps 1-3): call
+    # the portal API as user1 through the gateway's bearer route and check that
+    # the catalog does not list the httpbin API product, and that its detail page
+    # returns 404.
+    kc_token() {
+      curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+        -d "client_id=${KEYCLOAK_CLIENT}" \
+        -d "client_secret=${KEYCLOAK_SECRET}" \
+        -d "grant_type=password" \
+        -d "username=$1" \
+        -d "password=password" \
+        -d "scope=openid email profile" | jq -r '.access_token'
+    }
+    jwt_claim() {
+      python3 -c 'import sys,json,base64; p=sys.argv[1].split(".")[1]; p+="="*(-len(p)%4); print(json.loads(base64.urlsafe_b64decode(p)).get(sys.argv[2]))' "$1" "$2"
+    }
+    ok=0
+    for i in $(seq 1 60); do
+      USER1_TOKEN=$(kc_token user1)
+      body=$(curl -s -H "Host: portal.example.com" -H "Authorization: Bearer ${USER1_TOKEN}" "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products" || true)
+      code=$(curl -s -o /dev/null -w '%{http_code}' -H "Host: portal.example.com" -H "Authorization: Bearer ${USER1_TOKEN}" "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products/httpbin" || true)
+      if echo "$body" | jq -e 'type == "array" and ((map(.id) | index("httpbin")) == null)' >/dev/null 2>&1 && [ "$code" = "404" ]; then ok=1; break; fi
+      sleep 5
+    done
+    [ "$ok" = 1 ] || { echo "FAIL: user1 (tier: basic) can still see the httpbin API product: list=$body detail=$code"; exit 1; }
+    jwt_claim "$USER1_TOKEN" tier | grep basic >/dev/null \
+      || { echo "FAIL: the user1 token has no tier: basic claim (set in the Secure login guide)"; exit 1; }
+    echo "user1 does not see the httpbin API product"
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: a63691af50d9cdc0
+    lang: yaml
+    lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 4af98d49 bab736dc cf3e75ee aa80d960 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-visibility" >}}
+    # Stands in for refreshing the portal frontend as user1 (step 5): user1 now
+    # sees the httpbin API product in the catalog and can open it.
+    kc_token() {
+      curl -s -X POST "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/token" \
+        -d "client_id=${KEYCLOAK_CLIENT}" \
+        -d "client_secret=${KEYCLOAK_SECRET}" \
+        -d "grant_type=password" \
+        -d "username=$1" \
+        -d "password=password" \
+        -d "scope=openid email profile" | jq -r '.access_token'
+    }
+    export USER1_TOKEN=$(kc_token user1)
+    YAMLTest -f - <<'EOF'
+    - name: "the my-portal Portal resolves the all-tiers VisibilityPolicy"
+      wait:
+        target:
+          kind: Portal
+          metadata:
+            namespace: default
+            name: my-portal
+        jsonPath: "$.status.conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "user1 (tier: basic) sees the httpbin API product"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          authorization: "Bearer ${USER1_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "\"id\":\"httpbin\""
+    - name: "user1 can open the httpbin API product"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products/httpbin"
+        method: GET
+        headers:
+          host: "portal.example.com"
+          authorization: "Bearer ${USER1_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.id"
+            comparator: equals
+            value: "httpbin"
+    EOF
+    {{< /doc-test >}}
