@@ -2,9 +2,10 @@ format: 1
 source: content/docs/standalone/main/integrations/llm/providers/bedrock.md
 blocks:
 - efa75e1555de6648 yaml
-- ede7fa55b69cab42 yaml
+- 8f701941366724e5 yaml
 - 682f16a9e2dbc603 python
 - 206af87cd38ed81c python
+- aa0b729b870769bd yaml
 - 7d5d58f3b85da731 yaml
 - 77ab8b74c94657bc bash
 - b7a997a3e4a887b0 json
@@ -76,9 +77,9 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: ede7fa55b69cab42
+    fingerprint: 8f701941366724e5
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 81a0c220 2e2b598b 009395dd 9b4ed50d 6150d164
+    lines: a7f80a73 3af99526 e01ccf75 81a0c220 2e2b598b 009395dd 9b4ed50d
     preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
   content: |-
     {{< doc-test paths="bedrock" >}}
@@ -95,7 +96,7 @@ hidden:
     agentgateway -f config-passthrough.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 4
+    block: 5
     fingerprint: 7d5d58f3b85da731
     lang: yaml
     lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd 9b4ed50d 672a2624
@@ -116,7 +117,7 @@ hidden:
     agentgateway -f config-mantle.yaml --validate-only
     {{< /doc-test >}}
 - after:
-    block: 8
+    block: 9
     fingerprint: e2cce7b6cb2a5cd4
     lang: sh
     lines: 6bb9ea5a dd9b24a2 236c401b 6d89063e d5240f8b eafd7fe9 3796b24f 028b56a6 578b7fdc 75d5a96b f04768bf dc3419e7 e52a1813 d257de3e 4fe655e1 d10b36aa d10b36aa e52a1813 4b3b16d3 021fb596 09d1b3dd fa2251f0 d10b36aa cfae0d42 c83aa0a4
