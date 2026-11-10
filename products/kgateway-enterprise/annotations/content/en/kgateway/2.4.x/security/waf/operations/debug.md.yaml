@@ -1,0 +1,436 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/waf/operations/debug.md
+blocks:
+- 9aa2eb1f9f1a59aa bash
+- 349e476b9cfc8479 bash
+- e0150c927169cb1c yaml
+- 0cbe0157f1c50459 bash
+- 54ae29bf0967ed84 yaml
+- a278f55ac47cf93d sh
+- 1f33e0295b824e4e sh
+tags:
+- paths: waf-debug
+  block: 1
+  fingerprint: 349e476b9cfc8479
+  lang: bash
+  lines: 349e476b
+  preview: kubectl logs deploy/waf-server-enterprise-kgateway -n kgateway-system
+  form:
+    attr: paths="waf-debug"
+    only: true
+    lead: ' '
+- paths: waf-debug
+  block: 2
+  fingerprint: e0150c927169cb1c
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 1288d06d 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf 5ceb8ec3 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-debug"
+    only: true
+    lead: ' '
+- paths: waf-debug
+  block: 3
+  fingerprint: 0cbe0157f1c50459
+  lang: bash
+  lines: 0cbe0157
+  preview: kubectl logs deploy/enterprise-kgateway -n kgateway-system
+  form:
+    attr: paths="waf-debug"
+    only: true
+    lead: ' '
+- paths: waf-debug-pprof
+  block: 4
+  fingerprint: 54ae29bf0967ed84
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 1288d06d 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf 5ceb8ec3 24f7c096 ff7360cf abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-debug-pprof"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="waf-debug,waf-debug-pprof" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: enterprisekgateway.solo.io/v1alpha1
+    kind: EnterpriseKgatewayParameters
+    metadata:
+      name: enterprise-kgateway-params
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      kube:
+        sharedExtensions:
+          waf:
+            enabled: true
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: GatewayClass
+    metadata:
+      name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+    spec:
+      controllerName: solo.io/enterprise-kgateway
+      parametersRef:
+        group: enterprisekgateway.solo.io
+        kind: EnterpriseKgatewayParameters
+        name: enterprise-kgateway-params
+        namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    EOF
+    {{< /doc-test >}}
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="waf-debug,waf-debug-pprof" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-debug - wait for the waf-server deployment to be available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-enterprise-kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="waf-debug,waf-debug-pprof" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: waf.solo.io/v1alpha1
+    kind: WAFPolicy
+    metadata:
+      name: httpbin-waf
+      namespace: httpbin
+    spec:
+      coreRuleSet:
+        settings:
+          inline: |
+            SecDefaultAction "phase:1,log,auditlog,deny,status:403"
+            SecDefaultAction "phase:2,log,auditlog,deny,status:403"
+            SecAction "id:900990,phase:1,pass,t:none,nolog,tag:'OWASP_CRS',ver:'OWASP_CRS/4.23.0',setvar:tx.crs_setup_version=4230"
+      ruleEngineSettings:
+        inline: |
+          SecRuleEngine On
+      customDirectives:
+        - inline: |
+            SecRuleRemoveById 913100
+            SecRuleRemoveById 920430
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: enterprisekgateway.solo.io/v1alpha1
+    kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+    metadata:
+      name: httpbin-waf
+      namespace: httpbin
+    spec:
+      targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: httpbin
+      entWAF:
+        wafPolicyRef:
+          name: httpbin-waf
+    EOF
+    {{< /doc-test >}}
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="waf-debug,waf-debug-pprof" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-debug - wait for the httpbin-waf WAFPolicy to be ready"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-debug - wait for the httpbin-waf policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-debug - the WAF blocks a request for .htaccess with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/.htaccess"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    - name: "waf-debug - the WAF allows a regular request"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 9aa2eb1f9f1a59aa
+    lang: bash
+    lines: 9aa2eb1f
+    preview: kubectl describe wafpolicy <name> -n <namespace>
+  content: |-
+    {{< doc-test paths="waf-debug" >}}
+    kubectl describe wafpolicy httpbin-waf -n httpbin
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 9aa2eb1f9f1a59aa
+    lang: bash
+    lines: 9aa2eb1f
+    preview: kubectl describe wafpolicy <name> -n <namespace>
+  content: |-
+    {{< doc-test paths="waf-debug" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-debug - the WAFPolicy Ready condition is True"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-debug - the WAFPolicy Ready reason is Accepted"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].reason"
+        jsonPathExpectation:
+          comparator: equals
+          value: Accepted
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-debug - the WAFPolicy ancestor is the httpbin-waf traffic policy"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.ancestors[0].ancestorRef.kind"
+        jsonPathExpectation:
+          comparator: equals
+          value: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-debug - the WAFPolicy is attached to its ancestor"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Attached')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: e0150c927169cb1c
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 1288d06d 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf 5ceb8ec3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-debug" >}}
+    for i in $(seq 1 60); do
+      args=$(kubectl get deployment waf-server-enterprise-kgateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[0].args}')
+      if [[ "$args" == *'"debug"'* ]]; then
+        break
+      fi
+      if [ "$i" -eq 60 ]; then
+        echo "the waf-server deployment did not get --log-level debug: $args"
+        exit 1
+      fi
+      sleep 5
+    done
+    kubectl rollout status deployment/waf-server-enterprise-kgateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: e0150c927169cb1c
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 1288d06d 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf 5ceb8ec3 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-debug" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-debug - the waf-server deployment is available after the log level change"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-enterprise-kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-debug - the WAF still blocks .htaccess after the waf-server restart"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/.htaccess"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 54ae29bf0967ed84
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 1288d06d 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf 5ceb8ec3 24f7c096 ff7360cf abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-debug-pprof" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-debug-pprof - the waf-server deployment exposes the admin port"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-enterprise-kgateway
+        jsonPath: "$.spec.template.spec.containers[0].ports[?(@.name=='admin')].containerPort"
+        jsonPathExpectation:
+          comparator: equals
+          value: 9095
+        polling:
+          timeoutSeconds: 180
+          intervalSeconds: 5
+    - name: "waf-debug-pprof - the waf-server deployment is available with the admin server"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-enterprise-kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 4: Enable `waf-server` pprof'
+    line: 068de8484b6b4ecf
+    occurrence: 0
+    words: e0603c49 12ca17b4 337e0052 0b8e9e99 137a5d59 eafe895e
+    block_before:
+      block: 5
+      fingerprint: a278f55ac47cf93d
+      lang: sh
+      lines: a278f55a
+      preview: kubectl port-forward -n kgateway-system deploy/waf-server-enterprise-kgateway 90
+  content: |-
+    {{< doc-test paths="waf-debug-pprof" >}}
+    # Wait for the rollout to finish first: until then the port-forward can attach to
+    # the old pod, which has no admin server.
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/waf-server-enterprise-kgateway --timeout=300s
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} port-forward deploy/waf-server-enterprise-kgateway 9095:9095 >/dev/null 2>&1 &
+    WAF_PF_PID=$!
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    section: 'Step 4: Enable `waf-server` pprof'
+    line: 068de8484b6b4ecf
+    occurrence: 0
+    words: e0603c49 12ca17b4 337e0052 0b8e9e99 137a5d59 eafe895e
+    block_before:
+      block: 5
+      fingerprint: a278f55ac47cf93d
+      lang: sh
+      lines: a278f55a
+      preview: kubectl port-forward -n kgateway-system deploy/waf-server-enterprise-kgateway 90
+  content: |-
+    {{< doc-test paths="waf-debug-pprof" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-debug-pprof - the pprof goroutine profile responds"
+      retries: 60
+      http:
+        url: "http://127.0.0.1:9095/debug/pprof/goroutine?debug=1"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "goroutine profile"
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 4: Enable `waf-server` pprof'
+    line: 068de8484b6b4ecf
+    occurrence: 0
+    words: e0603c49 12ca17b4 337e0052 0b8e9e99 137a5d59 eafe895e
+    block_before:
+      block: 5
+      fingerprint: a278f55ac47cf93d
+      lang: sh
+      lines: a278f55a
+      preview: kubectl port-forward -n kgateway-system deploy/waf-server-enterprise-kgateway 90
+  content: |-
+    {{< doc-test paths="waf-debug-pprof" >}}
+    kill $WAF_PF_PID || true
+    {{< /doc-test >}}

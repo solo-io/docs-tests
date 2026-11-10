@@ -1,0 +1,103 @@
+format: 1
+source: content/en/kgateway/2.4.x/traffic-management/transformations/staged/headers-to-body.md
+blocks:
+- a765986c9fe92def yaml
+- d7b6ff105a902c9f yaml
+- f076b7a5e8c99967 sh
+- fbcc2fc270f083ed sh
+- fe36978d13452446 console
+- ed5e148ec7409060 sh
+tags:
+- paths: staged-headers-to-body
+  block: 0
+  fingerprint: a765986c9fe92def
+  lang: yaml
+  lines: bf825983 021fb596 da4f6337 228104e5 d10b36aa d10b36aa abc56510
+  preview: cat << EOF > data.json
+  form:
+    attr: paths="staged-headers-to-body"
+    only: true
+    lead: ' '
+- paths: staged-headers-to-body
+  block: 1
+  fingerprint: d7b6ff105a902c9f
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 77f1ea54 baf1ffd3 a58565b2 babc1bf7 e0b12c6c 974c1a59 24622c8b 77bf50e4 09ed8b8a 3209eef8 e8288bbf e0b12c6c d0a22889 34582a55 9ae9f483 e37ae582 26d837a6 e8288bbf 986b38f0 c98cc0c6 33ece9f6 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="staged-headers-to-body"
+    only: true
+    lead: ' '
+- paths: staged-headers-to-body
+  block: 2
+  fingerprint: f076b7a5e8c99967
+  lang: sh
+  lines: 6dd8fe98 67c5a3ac 596436ba d2e0ad3e
+  preview: 'curl -X POST -H "host: www.example.com:8080" \'
+  form:
+    attr: paths="staged-headers-to-body"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: d7b6ff105a902c9f
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 77f1ea54 baf1ffd3 a58565b2 babc1bf7 e0b12c6c 974c1a59 24622c8b 77bf50e4 09ed8b8a 3209eef8 e8288bbf e0b12c6c d0a22889 34582a55 9ae9f483 e37ae582 26d837a6 e8288bbf 986b38f0 c98cc0c6 33ece9f6 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="staged-headers-to-body" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-headers-to-body - wait for the transformation policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: transformation
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: f076b7a5e8c99967
+    lang: sh
+    lines: 6dd8fe98 67c5a3ac 596436ba d2e0ad3e
+    preview: 'curl -X POST -H "host: www.example.com:8080" \'
+  content: |-
+    {{< doc-test paths="staged-headers-to-body" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-headers-to-body - the root and nested header values are merged into the request body"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/post"
+        method: POST
+        headers:
+          host: "www.example.com:8080"
+          Content-Type: "application/json"
+          root: "root-val"
+          nested: "nested-val"
+        body: |
+          {"payload": {"foo": "bar"}}
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.json.root"
+            comparator: equals
+            value: 'root-val'
+          - path: "$.json.payload.nested"
+            comparator: equals
+            value: 'nested-val'
+          - path: "$.json.payload.foo"
+            comparator: equals
+            value: 'bar'
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,150 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/waf/owasp-crs.md
+blocks:
+- 9c5b2d900804a562 yaml
+- 6ce6292787307d04 yaml
+- 4e84dcdef2af0e1f sh
+- 241dd920965f4bc6 sh
+- 4259049d37c460ce
+- 2fe47803ec09cab6 sh
+- 0a2a4aa2377d69ff sh
+- 7a137888e17fb3d5
+- 99807b63490c7cc2 sh
+- 84150562857e922f yaml
+- 46900abb655863ef yaml
+- 9b53510033fc5311 yaml
+tags:
+- paths: waf-owasp-crs
+  block: 0
+  fingerprint: 9c5b2d900804a562
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 931824dd 4048f30b 385a2eb3 2d2f62ea db554749 c4c2ea69 142b1d35 385a2eb3 1851f975 139e0649 7c77bc8f 5feaf48d eadb1433 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-owasp-crs"
+    only: true
+    lead: ' '
+- paths: waf-owasp-crs
+  block: 1
+  fingerprint: 6ce6292787307d04
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c9abe331 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa c9abe331 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-owasp-crs"
+    only: true
+    lead: ' '
+- paths: waf-owasp-crs
+  block: 2
+  fingerprint: 4e84dcdef2af0e1f
+  lang: sh
+  lines: 4e84dcde
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  form:
+    attr: paths="waf-owasp-crs"
+    only: true
+    lead: ' '
+- paths: waf-owasp-crs
+  block: 5
+  fingerprint: 2fe47803ec09cab6
+  lang: sh
+  lines: eafbe2f3 93236379
+  preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/.htaccess" \
+  form:
+    attr: paths="waf-owasp-crs"
+    only: true
+    lead: ' '
+- paths: waf-owasp-crs
+  block: 8
+  fingerprint: 99807b63490c7cc2
+  lang: sh
+  lines: 2b808a0e 5e9148af
+  preview: kubectl delete wafpolicy -n httpbin httpbin-waf
+  form:
+    attr: paths="waf-owasp-crs"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 6ce6292787307d04
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c9abe331 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa c9abe331 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-owasp-crs" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-waf traffic policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the httpbin-waf WAFPolicy is ready"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 4e84dcdef2af0e1f
+    lang: sh
+    lines: 4e84dcde
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="waf-owasp-crs" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request to httpbin is allowed with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 2fe47803ec09cab6
+    lang: sh
+    lines: eafbe2f3 93236379
+    preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/.htaccess" \
+  content: |-
+    {{< doc-test paths="waf-owasp-crs" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request for /.htaccess matches CRS rule 930130 and is denied with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/.htaccess"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}

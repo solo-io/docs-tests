@@ -1,0 +1,296 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/waf/custom-rules.md
+blocks:
+- f3c4a3078dae0ecf yaml
+- e974032e1d9a1b8e yaml
+- 4e84dcdef2af0e1f sh
+- 241dd920965f4bc6 sh
+- 4259049d37c460ce console
+- 4b9f176d6177a0c9 sh
+- cf9921fa50acf1d1 sh
+- d438d9deee2968af console
+- 051c2abc99fbc7b7 yaml
+- 17f067873e00126c yaml
+- 6ce6292787307d04 yaml
+- 4e84dcdef2af0e1f sh
+- 241dd920965f4bc6 sh
+- 4259049d37c460ce console
+- 4b9f176d6177a0c9 sh
+- cf9921fa50acf1d1 sh
+- 7a137888e17fb3d5 console
+- cea66bd5b2c3b432 sh
+- 2248480c6bcd94c8 yaml
+- dc8f5bff01eac5a5 yaml
+- f098ea5d4dbbd8d0 yaml
+- 0abea1d97d2d97a1 yaml
+- 955a42083d3b9ef7 yaml
+tags:
+- paths: waf-custom-rules
+  block: 0
+  fingerprint: f3c4a3078dae0ecf
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 142b1d35 385a2eb3 1851f975 139e0649 7c77bc8f 060b94e5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-custom-rules"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules
+  block: 1
+  fingerprint: e974032e1d9a1b8e
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c9abe331 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa c9abe331 0f10c5bc abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-custom-rules"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules
+  block: 2
+  fingerprint: 4e84dcdef2af0e1f
+  lang: sh
+  lines: 4e84dcde
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  form:
+    attr: paths="waf-custom-rules"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules
+  block: 5
+  fingerprint: 4b9f176d6177a0c9
+  lang: sh
+  lines: f8c1fa40 dbe1f38d
+  preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:8'
+  form:
+    attr: paths="waf-custom-rules"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules-configmap
+  block: 8
+  fingerprint: 051c2abc99fbc7b7
+  lang: yaml
+  lines: 16c71da1 f1540154 033792b5 8c8c4228 7e36fe29 0f10c5bc ff72caa3 a03dccf6 1851f975 b29a38fc 060b94e5 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules-configmap
+  block: 9
+  fingerprint: 17f067873e00126c
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 142b1d35 889016e3 7e36fe29 0f10c5bc 1fe7fd13 a04a3597 139e0649 985337c0 7e36fe29 0f10c5bc 1fe7fd13 911347d9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules-configmap
+  block: 10
+  fingerprint: 6ce6292787307d04
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c9abe331 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa c9abe331 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules-configmap
+  block: 11
+  fingerprint: 4e84dcdef2af0e1f
+  lang: sh
+  lines: 4e84dcde
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  form:
+    attr: paths="waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules-configmap
+  block: 14
+  fingerprint: 4b9f176d6177a0c9
+  lang: sh
+  lines: f8c1fa40 dbe1f38d
+  preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:8'
+  form:
+    attr: paths="waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+- paths: waf-custom-rules,waf-custom-rules-configmap
+  block: 17
+  fingerprint: cea66bd5b2c3b432
+  lang: sh
+  lines: 2b808a0e 5e9148af 41ba6194
+  preview: kubectl delete wafpolicy -n httpbin httpbin-waf
+  form:
+    attr: paths="waf-custom-rules,waf-custom-rules-configmap"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: e974032e1d9a1b8e
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c9abe331 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa c9abe331 0f10c5bc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-custom-rules" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-waf traffic policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the httpbin-waf WAFPolicy is ready"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 4e84dcdef2af0e1f
+    lang: sh
+    lines: 4e84dcde
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="waf-custom-rules" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request without the blocked User-Agent is allowed with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 4b9f176d6177a0c9
+    lang: sh
+    lines: f8c1fa40 dbe1f38d
+    preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:8'
+  content: |-
+    {{< doc-test paths="waf-custom-rules" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request with User-Agent scammer is denied by rule 107 with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          User-Agent: "scammer"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 6ce6292787307d04
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 c9abe331 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 cbd111cf f02322aa c9abe331 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-custom-rules-configmap" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-waf traffic policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the httpbin-waf WAFPolicy is ready"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 4e84dcdef2af0e1f
+    lang: sh
+    lines: 4e84dcde
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="waf-custom-rules-configmap" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request without the blocked User-Agent is allowed with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 4b9f176d6177a0c9
+    lang: sh
+    lines: f8c1fa40 dbe1f38d
+    preview: 'curl -vik http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:8'
+  content: |-
+    {{< doc-test paths="waf-custom-rules-configmap" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request with User-Agent scammer is denied by rule 107 with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          User-Agent: "scammer"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}

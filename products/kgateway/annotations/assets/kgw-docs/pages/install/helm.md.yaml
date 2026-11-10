@@ -179,7 +179,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.status.availableReplicas"
         jsonPathExpectation:
           comparator: greaterThan
@@ -205,7 +205,7 @@ hidden:
         target:
           kind: GatewayClass
           metadata:
-            name: kgateway
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
         jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
         jsonPathExpectation:
           comparator: equals

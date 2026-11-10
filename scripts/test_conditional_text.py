@@ -43,6 +43,25 @@ class ConditionalTextTests(unittest.TestCase):
     def test_no_product_and_no_condition_drops_include_blocks(self):
         self.assertEqual(extractor(product=None)._resolve_conditional_text_blocks(TEXT), "k8s")
 
+    def test_nested_gates_resolve_inside_out(self):
+        # An inline gate inside a gated section, as in a table row. The section
+        # and the text after the inline gate stay; only the inline text goes.
+        text = (
+            '{{% conditional-text include-if="kubernetes" %}}\n'
+            '| {{% conditional-text exclude-if="kubernetes" %}}gloo-{{% /conditional-text %}}ext-cache |\n'
+            'after\n'
+            '{{% /conditional-text %}}tail'
+        )
+        self.assertEqual(extractor()._resolve_conditional_text_blocks(text), "\n| ext-cache |\nafter\ntail")
+
+    def test_nested_gate_inside_an_excluded_section(self):
+        text = (
+            '{{% conditional-text include-if="gm" %}}a'
+            '{{% conditional-text exclude-if="gm" %}}b{{% /conditional-text %}}c'
+            '{{% /conditional-text %}}d'
+        )
+        self.assertEqual(extractor()._resolve_conditional_text_blocks(text), "d")
+
 
 if __name__ == "__main__":
     unittest.main()

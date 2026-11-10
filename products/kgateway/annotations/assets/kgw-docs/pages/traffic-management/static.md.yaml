@@ -220,7 +220,7 @@ hidden:
       name: https
       namespace: kgateway-system
     spec:
-      gatewayClassName: kgateway
+      gatewayClassName: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
       listeners:
       - protocol: HTTPS
         port: 443

@@ -1,0 +1,161 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/operations/advanced/memory-limit.md
+blocks:
+- 5c3b70d002467d6a sh
+- 7d6b6b675a19568e sh
+- 26210f2c9712b1bb console
+- aec7637ace203307 sh
+- c44732eeda6bdda8 sh
+- 9c0dd3484ac7c81d console
+- 679e278e1e9d2534 sh
+- 0b14fd8803a611f1 sh
+- a9876437654fa410 console
+tags:
+- paths: portal-memory-limit
+  block: 0
+  fingerprint: 5c3b70d002467d6a
+  lang: sh
+  lines: 5965c2dc d3c0046a d167ef22 7ed222a2 96064311 bfad3c57 a818149f
+  preview: helm upgrade -i portal \
+  form:
+    attr: paths="portal-memory-limit"
+    only: true
+    lead: ' '
+- paths: portal-memory-limit
+  block: 1
+  fingerprint: 7d6b6b675a19568e
+  lang: sh
+  lines: 1b721167 3a1ec9e4
+  preview: kubectl get deployment portal-controller -n {{< reuse "kgw-docs/snippets/portal-
+  form:
+    attr: paths="portal-memory-limit"
+    only: true
+    lead: ' '
+- paths: portal-memory-limit
+  block: 3
+  fingerprint: aec7637ace203307
+  lang: sh
+  lines: 68a5ac68 36184fa5 d10802a2 a1f4619b cab2be2b 2629ac0e 9f71b027 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-memory-limit"
+    only: true
+    lead: ' '
+- paths: portal-memory-limit
+  block: 4
+  fingerprint: c44732eeda6bdda8
+  lang: sh
+  lines: 11335ab8 afbc4118
+  preview: kubectl get deployment portal-my-portal -n default -o json \
+  form:
+    attr: paths="portal-memory-limit"
+    only: true
+    lead: ' '
+- paths: portal-memory-limit
+  block: 6
+  fingerprint: 679e278e1e9d2534
+  lang: sh
+  lines: 68a5ac68 36184fa5 fd5b82ff 577d77a8 cab2be2b 2629ac0e 47796adf 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-memory-limit"
+    only: true
+    lead: ' '
+- paths: portal-memory-limit
+  block: 7
+  fingerprint: 0b14fd8803a611f1
+  lang: sh
+  lines: f8f7b01c afbc4118
+  preview: kubectl get deployment portal-auth-my-portal -n default -o json \
+  form:
+    attr: paths="portal-memory-limit"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 5c3b70d002467d6a
+    lang: sh
+    lines: 5965c2dc d3c0046a d167ef22 7ed222a2 96064311 bfad3c57 a818149f
+    preview: helm upgrade -i portal \
+  content: |-
+    {{< doc-test paths="portal-memory-limit" >}}
+    kubectl rollout status deployment/portal-controller -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 7d6b6b675a19568e
+    lang: sh
+    lines: 1b721167 3a1ec9e4
+    preview: kubectl get deployment portal-controller -n {{< reuse "kgw-docs/snippets/portal-
+  content: |-
+    {{< doc-test paths="portal-memory-limit" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal controller Deployment sets AUTOMEMLIMIT to 0.90"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+            name: portal-controller
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='AUTOMEMLIMIT')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "0.90"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: aec7637ace203307
+    lang: sh
+    lines: 68a5ac68 36184fa5 d10802a2 a1f4619b cab2be2b 2629ac0e 9f71b027 265fda17
+    preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  content: |-
+    {{< doc-test paths="portal-memory-limit" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the web server Deployment sets GOMEMLIMIT to 90% of 1Gi"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='GOMEMLIMIT')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "966367641"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deployment/portal-my-portal -n default --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 679e278e1e9d2534
+    lang: sh
+    lines: 68a5ac68 36184fa5 fd5b82ff 577d77a8 cab2be2b 2629ac0e 47796adf 265fda17
+    preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  content: |-
+    {{< doc-test paths="portal-memory-limit" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the auth server Deployment sets GOMEMLIMIT to 80% of 2Gi"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-auth-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='GOMEMLIMIT')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "1717986918"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    kubectl rollout status deployment/portal-auth-my-portal -n default --timeout=300s
+    {{< /doc-test >}}

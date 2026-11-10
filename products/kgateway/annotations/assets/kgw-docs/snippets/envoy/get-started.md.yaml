@@ -74,7 +74,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.status.availableReplicas"
         jsonPathExpectation:
           comparator: greaterThan
@@ -94,8 +94,8 @@ hidden:
     {{< doc-test paths="quickstart" >}}
     # Step 4: the kgateway control plane pod is Running and Ready, and the
     # controller accepted the kgateway GatewayClass.
-    kubectl wait pod -n kgateway-system -l app.kubernetes.io/name=kgateway --for=condition=Ready --timeout=300s
-    phase=$(kubectl get pods -n kgateway-system -l app.kubernetes.io/name=kgateway -o jsonpath='{.items[0].status.phase}')
+    kubectl wait pod -n kgateway-system -l app.kubernetes.io/name={{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --for=condition=Ready --timeout=300s
+    phase=$(kubectl get pods -n kgateway-system -l app.kubernetes.io/name={{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -o jsonpath='{.items[0].status.phase}')
     [ "$phase" = "Running" ] || { echo "FAIL: the kgateway control plane pod is '$phase', not Running"; exit 1; }
     YAMLTest -f - <<'EOF'
     - name: the kgateway GatewayClass from the quick start install is accepted
@@ -103,7 +103,7 @@ hidden:
         target:
           kind: GatewayClass
           metadata:
-            name: kgateway
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
         jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
         jsonPathExpectation:
           comparator: equals

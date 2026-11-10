@@ -1,0 +1,452 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/ratelimit/global/envoy.md
+blocks:
+- 17e21428aaf95c05 yaml
+- 4739a3c7c0bae4b4 yaml
+- 17d7a0542e4bc3de yaml
+- 796e9b061b619c9a yaml
+- 75f0ac5a09d30329 yaml
+- 778b116d9a8fadcf yaml
+- 30044c98cedf08af yaml
+- b169db36a99c0aab yaml
+- 13a144430b94b3fb yaml
+- 1937c82dde446904 yaml
+- bf91499b583b59af yaml
+- f79d8e2ca533e575 sh
+- c79f4845d4fc11e4 sh
+- c472ded8b470e1b4 sh
+- 821e35495fc5ce53 sh
+- 8d8070af71d3b921 sh
+- f32f6215508a1466 sh
+- aaf16220eb7706a4 sh
+- 8f226425c1da1f44 sh
+- 027ec2df9ee90fb7 sh
+- 770308f895087581 sh
+- 916133901aec165b
+- 06ada5fe74ac02bd
+- ffacbfdc2b766fcc sh
+tags:
+- paths: ratelimit-envoy-generic
+  block: 0
+  fingerprint: 17e21428aaf95c05
+  lang: yaml
+  lines: abbd1bdc 797d7e5f 6c3c22a6 8c8c4228 981457e9 0bebd850 36184fa5 aeeb33bd b7b5f484 c53abb73 334a1b95 a50da420 58b39bf8 6a642fca a19560f5 e50b9463 0f7744e8 628e69e1 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="ratelimit-envoy-generic"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-headers
+  block: 1
+  fingerprint: 4739a3c7c0bae4b4
+  lang: yaml
+  lines: abbd1bdc 797d7e5f 6c3c22a6 8c8c4228 981457e9 0bebd850 36184fa5 aeeb33bd b7b5f484 d4ca2b67 03a5afea a50da420 58b39bf8 6a642fca a19560f5 e50b9463 1b9c27b5 67fe6e1c 4563aaff abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="ratelimit-envoy-headers"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-remote
+  block: 2
+  fingerprint: 17d7a0542e4bc3de
+  lang: yaml
+  lines: abbd1bdc 797d7e5f 6c3c22a6 8c8c4228 981457e9 0bebd850 36184fa5 aeeb33bd b7b5f484 d1d87427 03a5afea a50da420 58b39bf8 6a642fca a19560f5 e50b9463 2f98aabf abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="ratelimit-envoy-remote"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-nested
+  block: 5
+  fingerprint: 778b116d9a8fadcf
+  lang: yaml
+  lines: abbd1bdc 797d7e5f 6c3c22a6 8c8c4228 981457e9 0bebd850 36184fa5 aeeb33bd b7b5f484 d4ca2b67 a50da420 c7bd68b9 6a642fca b7b5f484 5062e0ad a50da420 58b39bf8 6a642fca a19560f5 e50b9463 1b9c27b5 67fe6e1c 4563aaff e50b9463 1b9c27b5 67fe6e1c 4563aaff 1b9c27b5 ab2f0b93 aca84a4c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="ratelimit-envoy-nested"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-method
+  block: 8
+  fingerprint: 13a144430b94b3fb
+  lang: yaml
+  lines: abbd1bdc 797d7e5f 6c3c22a6 8c8c4228 981457e9 0bebd850 36184fa5 aeeb33bd b7b5f484 7366fd62 d1d87427 a50da420 a1caaaa3 6a642fca 7bfbf1d4 6914e3e6 e04b66b4 b7b5f484 d1d87427 a50da420 62bcae83 6a642fca a19560f5 e50b9463 2f98aabf e50b9463 1b9c27b5 ca63296b 6b3c0dc2 2f98aabf abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="ratelimit-envoy-method"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-generic,ratelimit-envoy-headers,ratelimit-envoy-remote,ratelimit-envoy-nested,ratelimit-envoy-method
+  block: 9
+  fingerprint: 1937c82dde446904
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 02bf0210 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 065d53f7 c14c1813 2ed67d95 7961b944 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="ratelimit-envoy-generic,ratelimit-envoy-headers,ratelimit-envoy-remote,ratelimit-envoy-nested,ratelimit-envoy-method"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-generic,ratelimit-envoy-headers,ratelimit-envoy-remote,ratelimit-envoy-nested,ratelimit-envoy-method
+  block: 10
+  fingerprint: bf91499b583b59af
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 9d5d75c1 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4f32fcf5 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="ratelimit-envoy-generic,ratelimit-envoy-headers,ratelimit-envoy-remote,ratelimit-envoy-nested,ratelimit-envoy-method"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-generic
+  block: 11
+  fingerprint: f79d8e2ca533e575
+  lang: sh
+  lines: f79d8e2c
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  form:
+    attr: paths="ratelimit-envoy-generic"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-headers
+  block: 13
+  fingerprint: c472ded8b470e1b4
+  lang: sh
+  lines: c472ded8
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  form:
+    attr: paths="ratelimit-envoy-headers"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-remote
+  block: 15
+  fingerprint: 8d8070af71d3b921
+  lang: sh
+  lines: 8d8070af
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  form:
+    attr: paths="ratelimit-envoy-remote"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-nested
+  block: 17
+  fingerprint: aaf16220eb7706a4
+  lang: sh
+  lines: aaf16220
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  form:
+    attr: paths="ratelimit-envoy-nested"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-method
+  block: 19
+  fingerprint: 027ec2df9ee90fb7
+  lang: sh
+  lines: 027ec2df
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  form:
+    attr: paths="ratelimit-envoy-method"
+    only: true
+    lead: ' '
+- paths: ratelimit-envoy-generic,ratelimit-envoy-headers,ratelimit-envoy-remote,ratelimit-envoy-nested,ratelimit-envoy-method
+  block: 23
+  fingerprint: ffacbfdc2b766fcc
+  lang: sh
+  lines: a3afa263 ad1726fb 0fe08962
+  preview: kubectl delete RateLimitConfig ratelimit-config -n {{< reuse "kgw-docs/snippets/
+  form:
+    attr: paths="ratelimit-envoy-generic,ratelimit-envoy-headers,ratelimit-envoy-remote,ratelimit-envoy-nested,ratelimit-envoy-method"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 9
+    fingerprint: 1937c82dde446904
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 02bf0210 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 065d53f7 c14c1813 2ed67d95 7961b944 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="ratelimit-envoy-generic,ratelimit-envoy-headers,ratelimit-envoy-remote,ratelimit-envoy-nested,ratelimit-envoy-method" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "wait for the ratelimit policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: ratelimit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: bf91499b583b59af
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 9d5d75c1 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 4f32fcf5 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="ratelimit-envoy-generic,ratelimit-envoy-headers,ratelimit-envoy-remote,ratelimit-envoy-nested,ratelimit-envoy-method" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "wait for the httpbin-ratelimit HTTPRoute to be accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-ratelimit
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: f79d8e2ca533e575
+    lang: sh
+    lines: f79d8e2c
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  content: |-
+    {{< doc-test paths="ratelimit-envoy-generic" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "after the first request, more requests in the same window are rate limited with 429"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    - name: "after the rate limit window resets, the first request succeeds with 200"
+      retries: 150
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "the next request in the same window is rate limited with 429"
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: c472ded8b470e1b4
+    lang: sh
+    lines: c472ded8
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  content: |-
+    {{< doc-test paths="ratelimit-envoy-headers" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "after the first request, more requests in the same window are rate limited with 429"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+          x-type: "mytype"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    - name: "after the rate limit window resets, the first request succeeds with 200"
+      retries: 150
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+          x-type: "mytype"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "the next request in the same window is rate limited with 429"
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+          x-type: "mytype"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 8d8070af71d3b921
+    lang: sh
+    lines: 8d8070af
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  content: |-
+    {{< doc-test paths="ratelimit-envoy-remote" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "after the first request, more requests in the same window are rate limited with 429"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+          x-forwarded-for: "my-remote-address.com"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    - name: "after the rate limit window resets, the first request succeeds with 200"
+      retries: 150
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+          x-forwarded-for: "my-remote-address.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "the next request in the same window is rate limited with 429"
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+          x-forwarded-for: "my-remote-address.com"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: aaf16220eb7706a4
+    lang: sh
+    lines: aaf16220
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  content: |-
+    {{< doc-test paths="ratelimit-envoy-nested" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "after the first request, more requests in the same window are rate limited with 429"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+          x-type: "mytype"
+          x-number: "123"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    - name: "after the rate limit window resets, the first request succeeds with 200"
+      retries: 150
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+          x-type: "mytype"
+          x-number: "123"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "the next request in the same window is rate limited with 429"
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+          x-type: "mytype"
+          x-number: "123"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 027ec2df9ee90fb7
+    lang: sh
+    lines: 027ec2df
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: ratelimit.example:8'
+  content: |-
+    {{< doc-test paths="ratelimit-envoy-method" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "after the first request, more requests in the same window are rate limited with 429"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    - name: "after the rate limit window resets, the first request succeeds with 200"
+      retries: 150
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "the second GET request in the window also succeeds with 200 (limit is 2 per minute)"
+      retries: 0
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "the next request in the same window is rate limited with 429"
+      retries: 10
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "ratelimit.example:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    EOF
+    {{< /doc-test >}}

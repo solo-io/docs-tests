@@ -1,0 +1,405 @@
+format: 1
+source: assets/kgw-docs/pages/security/extauth/chaining.md
+blocks:
+- b3565fef697863ab yaml
+- 21f458fd913c04c3 sh
+- 91abd4480295202b sh
+- bb56a6e63a5a4b5b yaml
+- 32887930014f690a yaml
+- 533cbf5f7fbd34be sh
+- 1b90a4502563e699 sh
+- 0a0c4c6404a883f5 sh
+- b34fe21beac954cb
+- 9b8b0bba98c0b9b8 sh
+- 94bc841b4cd142db sh
+- 3a8c340fe29f7bbe
+- d62621a57bf89ad3 sh
+- e38998123a4d510a sh
+- 2d3f7dc0afa2ed68
+- 3122d257ca3ac694 yaml
+- d398e62e6e1a2bdc yaml
+- ff6b3fdfa3ab6a31 shell
+tags:
+- paths: extauth-chaining,extauth-chaining-fallback
+  block: 0
+  fingerprint: b3565fef697863ab
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 26995afc 0f10c5bc fa1e8330 f7bbc71c be2a10d0 2f7c298d 0a1a98f4 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-chaining,extauth-chaining-fallback"
+    only: true
+    lead: ' '
+- paths: extauth-chaining
+  block: 1
+  fingerprint: 21f458fd913c04c3
+  lang: sh
+  lines: 68ddfab2 c4ec0d8f 68c14ff3 839339c1 7167f46e 94f64eab 13b69e17 d10b36aa 7167f46e cfb1de82 13b69e17 d10b36aa abc56510
+  preview: cat <<EOF > policy.rego
+  form:
+    attr: paths="extauth-chaining"
+    only: true
+    lead: ' '
+- paths: extauth-chaining
+  block: 2
+  fingerprint: 91abd4480295202b
+  lang: sh
+  lines: 91abd448
+  preview: kubectl -n httpbin create configmap httpbin-rego --from-file=policy.rego
+  form:
+    attr: paths="extauth-chaining"
+    only: true
+    lead: ' '
+- paths: extauth-chaining
+  block: 3
+  fingerprint: bb56a6e63a5a4b5b
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 5655fded 0f10c5bc 36184fa5 13bf3cfe d5ec3fae 38380135 e1281fca 27466baf 8647a760 f7bbc71c a4254ae0 a31eeaeb b79ab3f2 b7bbf71c 0f10c5bc 95a386bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-chaining"
+    only: true
+    lead: ' '
+- paths: extauth-chaining
+  block: 4
+  fingerprint: 32887930014f690a
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 82676ed8 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 5655fded 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-chaining"
+    only: true
+    lead: ' '
+- paths: extauth-chaining
+  block: 5
+  fingerprint: 533cbf5f7fbd34be
+  lang: sh
+  lines: 533cbf5f
+  preview: kubectl get authconfig apikey-opa-auth -n httpbin -o yaml
+  form:
+    attr: paths="extauth-chaining"
+    only: true
+    lead: ' '
+- paths: extauth-chaining
+  block: 6
+  fingerprint: 1b90a4502563e699
+  lang: sh
+  lines: 1b90a450
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080"'
+  form:
+    attr: paths="extauth-chaining"
+    only: true
+    lead: ' '
+- paths: extauth-chaining
+  block: 9
+  fingerprint: 9b8b0bba98c0b9b8
+  lang: sh
+  lines: d3ea06fb 843f97c0
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/headers -H "host: www.example.com:8080" '
+  form:
+    attr: paths="extauth-chaining"
+    only: true
+    lead: ' '
+- paths: extauth-chaining
+  block: 12
+  fingerprint: d62621a57bf89ad3
+  lang: sh
+  lines: 1cf2c117 843f97c0
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080" \'
+  form:
+    attr: paths="extauth-chaining"
+    only: true
+    lead: ' '
+- paths: extauth-chaining
+  block: 17
+  fingerprint: ff6b3fdfa3ab6a31
+  lang: shell
+  lines: 6252c4e9 87087c9d f26c806e 7fb99b9a 7a556e16
+  preview: kubectl delete authconfig apikey-opa-auth -n httpbin
+  form:
+    attr: paths="extauth-chaining"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: bb56a6e63a5a4b5b
+    lang: yaml
+    lines: abbd1bdc 98875768 efd325e8 8c8c4228 5655fded 0f10c5bc 36184fa5 13bf3cfe d5ec3fae 38380135 e1281fca 27466baf 8647a760 f7bbc71c a4254ae0 a31eeaeb b79ab3f2 b7bbf71c 0f10c5bc 95a386bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-chaining" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-chaining - the apikey-opa-auth AuthConfig reaches the Accepted state"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: apikey-opa-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 32887930014f690a
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 82676ed8 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 5655fded 0f10c5bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-chaining" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-chaining - the apikey-opa-policy policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: apikey-opa-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: b34fe21beac954cb
+    lang: ''
+    lines: 983e7192 8cdb8317 3ca1ea63
+    preview: < HTTP/1.1 401 Unauthorized
+  content: |-
+    {{< doc-test paths="extauth-chaining" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-chaining - a request without credentials is denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 3a8c340fe29f7bbe
+    lang: ''
+    lines: f4d99b6a 8cdb8317 3ca1ea63
+    preview: < HTTP/1.1 403 Forbidden
+  content: |-
+    {{< doc-test paths="extauth-chaining" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-chaining - a valid API key to a path that the OPA policy does not allow is denied with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          api-key: "my-test-api-key"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 2d3f7dc0afa2ed68
+    lang: ''
+    lines: 6364ab47 32cf5997 b8fcb227 5ea21550 3ca1ea63
+    preview: < HTTP/1.1 200 OK
+  content: |-
+    {{< doc-test paths="extauth-chaining" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-chaining - a valid API key to an allowed path succeeds with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          api-key: "my-test-api-key"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: content-type
+            comparator: contains
+            value: "application/json"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 3122d257ca3ac694
+    lang: yaml
+    lines: 98875768 efd325e8 8c8c4228 80f22f99 0f10c5bc 36184fa5 36f4fc9a d5ec3fae 38380135 e1281fca 27466baf 8647a760 f7bbc71c 1286b5b3 de77b3a7 e11ff142 c9888a7d 0a478cd0 93454560 aa2f82ea
+    preview: 'apiVersion: extauth.solo.io/v1'
+  content: |-
+    {{< doc-test paths="extauth-chaining-fallback" >}}
+    # Test-only: the page shows the fallback AuthConfig without kubectl apply and with a
+    # <password> placeholder. Apply it with the APR1 hash of "password" for the salt TYiryv0/
+    # (the same user as the basic auth AuthConfig guide), and attach it to the Gateway the way
+    # Step 4 attaches the API key and OPA AuthConfig.
+    kubectl apply -f- <<EOF
+    apiVersion: extauth.solo.io/v1
+    kind: AuthConfig
+    metadata:
+      name: fallback-auth
+      namespace: httpbin
+    spec:
+      booleanExpr: "apikey || basic"
+      configs:
+      - name: apikey
+        apiKeyAuth:
+          headerName: api-key
+          labelSelector:
+            team: infrastructure
+      - name: basic
+        basicAuth:
+          apr:
+            users:
+              user:
+                hashedPassword: 8BvzLUO9IfGPGGsPnAgSu1
+                salt: TYiryv0/
+    EOF
+    kubectl apply -f - <<EOF
+    apiVersion: {{< reuse "kgw-docs/snippets/trafficpolicy-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+    metadata:
+      name: fallback-policy
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      targetRefs:
+        - name: http
+          group: gateway.networking.k8s.io
+          kind: Gateway
+      entExtAuth:
+        authConfigRef:
+          name: fallback-auth
+          namespace: httpbin
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 3122d257ca3ac694
+    lang: yaml
+    lines: 98875768 efd325e8 8c8c4228 80f22f99 0f10c5bc 36184fa5 36f4fc9a d5ec3fae 38380135 e1281fca 27466baf 8647a760 f7bbc71c 1286b5b3 de77b3a7 e11ff142 c9888a7d 0a478cd0 93454560 aa2f82ea
+    preview: 'apiVersion: extauth.solo.io/v1'
+  content: |-
+    {{< doc-test paths="extauth-chaining-fallback" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-chaining-fallback - the fallback-auth AuthConfig reaches the Accepted state"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: fallback-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-chaining-fallback - the fallback-policy policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: fallback-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-chaining-fallback - a valid API key is allowed with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          api-key: "my-test-api-key"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "extauth-chaining-fallback - no API key and valid basic auth credentials are allowed with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Basic dXNlcjpwYXNzd29yZA=="
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "extauth-chaining-fallback - no API key and invalid basic auth credentials are denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Basic dXNlcjp3cm9uZy1wYXNzd29yZA=="
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: "extauth-chaining-fallback - an invalid API key and no basic auth credentials are denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          api-key: "not-a-valid-key"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: ff6b3fdfa3ab6a31
+    lang: shell
+    lines: 6252c4e9 87087c9d f26c806e 7fb99b9a 7a556e16
+    preview: kubectl delete authconfig apikey-opa-auth -n httpbin
+  content: |-
+    {{< doc-test paths="extauth-chaining" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-chaining - after cleanup, a request without credentials succeeds again"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

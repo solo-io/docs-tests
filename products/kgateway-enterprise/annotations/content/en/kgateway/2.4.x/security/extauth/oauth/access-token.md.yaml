@@ -1,0 +1,184 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/extauth/oauth/access-token.md
+blocks:
+- 7fe30773839d2957 yaml
+- 80206a9f7409b6a1 sh
+- b9809e7a456e9ce9 yaml
+- 579b19038cf955c8 sh
+- 241dd920965f4bc6 sh
+- 8310b5e00816dd33
+- 645e129217fb9985 sh
+- 2f766d5c2d095136 sh
+- 69d0286685ea2d98 console
+- a7933de4a49da4ca sh
+- 7274a55501641c77 sh
+- 92413e9787e7d079
+- 2ff56a93d65e6460 sh
+tags:
+- paths: oauth-access-token
+  block: 0
+  fingerprint: 7fe30773839d2957
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 81c3599f 0f10c5bc 36184fa5 d5ec3fae afba47a2 971c8e86 9b9d0530 8b782833 ad87b24c ef60f61f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 1
+  fingerprint: 80206a9f7409b6a1
+  lang: sh
+  lines: 80206a9f
+  preview: kubectl get authconfig oauth-jwt-validation -n httpbin -o yaml
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 2
+  fingerprint: b9809e7a456e9ce9
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 81c3599f 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 81c3599f 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 3
+  fingerprint: 579b19038cf955c8
+  lang: sh
+  lines: 579b1903
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com"'
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 6
+  fingerprint: 645e129217fb9985
+  lang: sh
+  lines: bd37e137 9348e6ef 15ae54eb bd09ef43 4536b685 64825780 0096af31 54d1cb67
+  preview: export USER1_TOKEN=$(curl -Ssm 10 --fail-with-body \
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 7
+  fingerprint: 2f766d5c2d095136
+  lang: sh
+  lines: 2f766d5c
+  preview: echo $USER1_TOKEN
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+- paths: oauth-access-token
+  block: 9
+  fingerprint: a7933de4a49da4ca
+  lang: sh
+  lines: 800245fb ae264c1a
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  form:
+    attr: paths="oauth-access-token"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 7fe30773839d2957
+    lang: yaml
+    lines: 16c71da1 98875768 efd325e8 8c8c4228 81c3599f 0f10c5bc 36184fa5 d5ec3fae afba47a2 971c8e86 9b9d0530 8b782833 ad87b24c ef60f61f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="oauth-access-token" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "oauth-access-token - the oauth-jwt-validation AuthConfig is accepted"
+         wait:
+           target:
+             kind: AuthConfig
+             metadata:
+               namespace: httpbin
+               name: oauth-jwt-validation
+           jsonPath: "$.status.state"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: b9809e7a456e9ce9
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 81c3599f 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 81c3599f 0f10c5bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="oauth-access-token" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "oauth-access-token - the oauth-jwt-validation policy is accepted"
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: oauth-jwt-validation
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 579b19038cf955c8
+    lang: sh
+    lines: 579b1903
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com"'
+  content: |2-
+       {{< doc-test paths="oauth-access-token" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "oauth-access-token - a request without an access token is denied with 403"
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+           method: GET
+           headers:
+             host: "www.example.com"
+         source:
+           type: local
+         expect:
+           statusCode: 403
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: a7933de4a49da4ca
+    lang: sh
+    lines: 800245fb ae264c1a
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com" \'
+  content: |2-
+       {{< doc-test paths="oauth-access-token" >}}
+       test -n "$USER1_TOKEN" && [ "$USER1_TOKEN" != "null" ] || { echo "Keycloak returned no access token for user1"; exit 1; }
+       YAMLTest -f - <<EOF
+       - name: "oauth-access-token - a request with user1's access token succeeds"
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+           method: GET
+           headers:
+             host: "www.example.com"
+             Authorization: "Bearer ${USER1_TOKEN}"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

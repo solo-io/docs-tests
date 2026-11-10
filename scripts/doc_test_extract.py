@@ -539,8 +539,16 @@ class Extractor:
         return extractor._expand_text(upstream_file, body, depth + 1)
 
     def _resolve_conditional_text_blocks(self, text: str) -> str:
+        # Gates nest, such as an inline gate in a table row inside a gated
+        # section. The body may not contain another opening tag, so each pass
+        # resolves the innermost gates; repeat until none are left. Pairing an
+        # outer opening tag with the first closing tag instead leaves the inner
+        # opening tag unpaired, and a later pass pairs it with the outer
+        # closing tag and drops everything in between.
         pattern = re.compile(
-            r"\{\{[<%]\s*conditional-text\s*([^%>]*)[ \t]*[>%]\}\}(.*?)\{\{[<%]\s*/conditional-text\s*[>%]\}\}",
+            r"\{\{[<%]\s*conditional-text\s*([^%>]*)[ \t]*[>%]\}\}"
+            r"((?:(?!\{\{[<%]\s*conditional-text[\s%>]).)*?)"
+            r"\{\{[<%]\s*/conditional-text\s*[>%]\}\}",
             re.DOTALL,
         )
 
@@ -559,7 +567,11 @@ class Extractor:
 
             return body
 
-        return pattern.sub(repl, text)
+        while True:
+            resolved = pattern.sub(repl, text)
+            if resolved == text:
+                return resolved
+            text = resolved
 
     def _extract_links(self, text: str) -> List[str]:
         found = []

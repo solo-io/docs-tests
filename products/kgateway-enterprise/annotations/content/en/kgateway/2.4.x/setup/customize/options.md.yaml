@@ -1,0 +1,273 @@
+format: 1
+source: content/en/kgateway/2.4.x/setup/customize/options.md
+blocks:
+- 4f2871ce91645209 yaml
+- b8036b3c4bc55e5a yaml
+- f201e68ebca644bd yaml
+- 23dbd90b30a4c687 yaml
+- 2b83286569f9465d yaml
+- a6f4ec3b456689f1 yaml
+- be0b038f8fb184a9 sh
+- 9cefab49d92e5a31 console
+- 2d08234d9fba8722 sh
+- 55efddb1ead7852c json
+tags:
+- paths: customize-options
+  block: 6
+  fingerprint: be0b038f8fb184a9
+  lang: sh
+  lines: be0b038f
+  preview: kubectl get ekgpar -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="customize-options"
+    only: true
+    lead: ' '
+- paths: customize-options
+  block: 8
+  fingerprint: 2d08234d9fba8722
+  lang: sh
+  lines: 78484e27 c5c5077d
+  preview: kubectl get ekgpar my-gw-params -n {{< reuse "kgw-docs/snippets/namespace.md" >}
+  form:
+    attr: paths="customize-options"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 5
+    fingerprint: a6f4ec3b456689f1
+    lang: yaml
+    lines: 8c8c4228 fa1e8330 5398816a 162165f4 7d249ee8
+    preview: 'metadata:'
+  content: |-
+    {{< doc-test paths="customize-options" >}}
+    # Apply the GatewayClass and Gateway overlay examples from this section as
+    # full resources: the GatewayClass parameters (gc-params) carry the GatewayClass
+    # labels, and the Gateway parameters (my-gw-params) carry the Gateway labels.
+    kubectl apply -f- <<EOF
+    apiVersion: {{< reuse "kgw-docs/snippets/gatewayparam-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+    metadata:
+      name: gc-params
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      kube:
+        deploymentOverlay:
+          metadata:
+            labels:
+              level: gc
+              gc-only-label: from-gc
+    ---
+    apiVersion: {{< reuse "kgw-docs/snippets/gatewayparam-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+    metadata:
+      name: my-gw-params
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      kube:
+        deploymentOverlay:
+          metadata:
+            labels:
+              level: gw
+              gw-only-label: from-gw
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: GatewayClass
+    metadata:
+      name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+    spec:
+      controllerName: solo.io/{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+      parametersRef:
+        group: {{< reuse "kgw-docs/snippets/gatewayparam-group.md" >}}
+        kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+        name: gc-params
+        namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: Gateway
+    metadata:
+      name: options-gw
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      gatewayClassName: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+      infrastructure:
+        parametersRef:
+          group: {{< reuse "kgw-docs/snippets/gatewayparam-group.md" >}}
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          name: my-gw-params
+      listeners:
+      - name: http
+        protocol: HTTP
+        port: 8080
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: "customize-options - the options-gw proxy Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: options-gw
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-options - the Gateway value wins for the conflicting level label"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: options-gw
+        jsonPath: "$.metadata.labels.level"
+        jsonPathExpectation:
+          comparator: equals
+          value: gw
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-options - the GatewayClass-only label is preserved"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: options-gw
+        jsonPath: "$.metadata.labels['gc-only-label']"
+        jsonPathExpectation:
+          comparator: equals
+          value: from-gc
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "customize-options - the Gateway-only label is added"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: options-gw
+        jsonPath: "$.metadata.labels['gw-only-label']"
+        jsonPathExpectation:
+          comparator: equals
+          value: from-gw
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 9cefab49d92e5a31
+    lang: console
+    lines: 018cd656 07ff818a
+    preview: NAME           ACCEPTED
+  content: |-
+    {{< doc-test paths="customize-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-options - kubectl get ekgpar lists my-gw-params with ACCEPTED True"
+      retries: 30
+      command:
+        command: "kubectl get ekgpar -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --no-headers"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: '(^|\n)my-gw-params\s+True'
+    - name: "customize-options - kubectl get ekgpar lists gc-params with ACCEPTED True"
+      retries: 30
+      command:
+        command: "kubectl get ekgpar -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --no-headers"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          matches: '(^|\n)gc-params\s+True'
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 55efddb1ead7852c
+    lang: json
+    lines: 245843ab 021fb596 c2235cd7 4a804380 f044db74 229bd3a6 d5f9ca52 7f52214b d10b36aa cfae0d42
+    preview: '['
+  content: |-
+    {{< doc-test paths="customize-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "customize-options - the Accepted condition status is True"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: my-gw-params
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: "customize-options - the Accepted condition reason is Accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: my-gw-params
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].reason"
+        jsonPathExpectation:
+          comparator: equals
+          value: Accepted
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: "customize-options - the Accepted condition message is parameters accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: my-gw-params
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].message"
+        jsonPathExpectation:
+          comparator: equals
+          value: "parameters accepted"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: "customize-options - Accepted is the only condition type"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: my-gw-params
+        jsonPath: "$.status.conditions.length"
+        jsonPathExpectation:
+          comparator: equals
+          value: 1
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: "customize-options - observedGeneration matches metadata.generation"
+      retries: 30
+      command:
+        command: |
+          gen=$(kubectl get ekgpar my-gw-params -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.metadata.generation}')
+          obs=$(kubectl get ekgpar my-gw-params -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.status.conditions[?(@.type=="Accepted")].observedGeneration}')
+          echo "generation=$gen observedGeneration=$obs"
+          [ -n "$gen" ] && [ "$gen" = "$obs" ]
+      source:
+        type: local
+      expect:
+        exitCode: 0
+    EOF
+    {{< /doc-test >}}

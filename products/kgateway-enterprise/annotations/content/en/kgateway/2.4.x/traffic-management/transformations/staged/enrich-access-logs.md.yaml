@@ -1,0 +1,118 @@
+format: 1
+source: content/en/kgateway/2.4.x/traffic-management/transformations/staged/enrich-access-logs.md
+blocks:
+- 87fab6d3ae8615c4 yaml
+- 6c1885ac23bbc6de yaml
+- 4e84dcdef2af0e1f sh
+- da01ae4777a4103d sh
+- 9ede003a3048bfcb
+- baf560ccbd73e1a0 sh
+- 29a34cba58c44b40 console
+- 8664dbb254403c99 sh
+tags:
+- paths: staged-enrich-access-logs
+  block: 0
+  fingerprint: 87fab6d3ae8615c4
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 77f1ea54 baf1ffd3 a58565b2 112a1357 e14784b3 b9728215 c3659748 488c7a25 baf1ffd3 a58565b2 38dc0152 4f63f19d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="staged-enrich-access-logs"
+    only: true
+    lead: ' '
+- paths: staged-enrich-access-logs
+  block: 1
+  fingerprint: 6c1885ac23bbc6de
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 6c59761f 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 7acce2c5 54ccadac 92046d69 542b651c a99fad3a de1589be 1170ae18 ba0b9b83 4a6e079a a532a3cf 0b3361a3 4b3ddcf2 190df8ce 9fdf0bf6 f5806206 81914dc6 39e63020 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="staged-enrich-access-logs"
+    only: true
+    lead: ' '
+    tail: ' '
+- paths: staged-enrich-access-logs
+  block: 2
+  fingerprint: 4e84dcdef2af0e1f
+  lang: sh
+  lines: 4e84dcde
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  form:
+    attr: paths="staged-enrich-access-logs"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 87fab6d3ae8615c4
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 24079439 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 42f46962 77f1ea54 baf1ffd3 a58565b2 112a1357 e14784b3 b9728215 c3659748 488c7a25 baf1ffd3 a58565b2 38dc0152 4f63f19d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="staged-enrich-access-logs" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-enrich-access-logs - wait for the transformation policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: transformation
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 4e84dcdef2af0e1f
+    lang: sh
+    lines: 4e84dcde
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="staged-enrich-access-logs" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "staged-enrich-access-logs - the x-pod-name response header holds the gateway proxy pod name"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-pod-name
+            comparator: matches
+            value: "^http-"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 4e84dcdef2af0e1f
+    lang: sh
+    lines: 4e84dcde
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="staged-enrich-access-logs" >}}
+    # Step 5: the access log entry for that request carries the same pod name. The
+    # page pipes the last log line to jq, which fails under pipefail when the last
+    # line is not JSON, so this finds the newest JSON entry for /status/200 instead.
+    pod=""
+    for i in $(seq 1 30); do
+      pod=$(kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} logs deployments/http --since=10m 2>/dev/null \
+        | grep '^{' | jq -r 'select(.path == "/status/200") | .pod_name' 2>/dev/null | tail -1) || true
+      case "$pod" in http-*) break ;; esac
+      echo "attempt $i: no access log entry with pod_name for /status/200 yet, retrying"; sleep 2
+    done
+    case "$pod" in
+      http-*) echo "access log pod_name: $pod" ;;
+      *) echo "FAIL: the access log entry for /status/200 has pod_name '$pod', want the http proxy pod name"; exit 1 ;;
+    esac
+    {{< /doc-test >}}

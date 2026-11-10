@@ -1,0 +1,777 @@
+format: 1
+source: assets/kgw-docs/pages/security/waf/observability.md
+blocks:
+- 3ec73311b9884e0d yaml
+- 2fe47803ec09cab6 sh
+- 0a2a4aa2377d69ff sh
+- 659b4cd0058a181d sh
+- 431efb6f699a7cfa console
+- 6e1278c349e0dee8 sh
+- af66d41f59b97297 console
+- f08c7784493eaf94 yaml
+- 4e84dcdef2af0e1f sh
+- 241dd920965f4bc6 sh
+- 659b4cd0058a181d sh
+- 39866ec985c9337a console
+- 17c7a621fba08b56 console
+- 2fe47803ec09cab6 sh
+- 0a2a4aa2377d69ff sh
+- 659b4cd0058a181d sh
+- c5d569e2458f024c console
+- ce5308950f1a3f52 console
+- 3672bb8052a099ca yaml
+- 349e476b9cfc8479 bash
+- c3b2d49197090fea sh
+- c4ccc9c86c2902b5 sh
+- 29f8c7a66addc1c7 yaml
+- efa3275d9dd9fd71 sh
+- fcf84b3b42e83978 sh
+- 7f2c30d21dba4107 sh
+- 8ca58bdb5af13600 sh
+tags:
+- paths: waf-observability
+  block: 0
+  fingerprint: 3ec73311b9884e0d
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 c54cd66d 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 190df8ce 54ccadac 92046d69 a99fad3a 90145c69 4b3ddcf2 57ebb84e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 1
+  fingerprint: 2fe47803ec09cab6
+  lang: sh
+  lines: eafbe2f3 93236379
+  preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/.htaccess" \
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 3
+  fingerprint: 659b4cd0058a181d
+  lang: sh
+  lines: 659b4cd0
+  preview: kubectl logs deploy/http -n kgateway-system --tail=1
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 5
+  fingerprint: 6e1278c349e0dee8
+  lang: sh
+  lines: c08df217 9b71fccc f43a82f5 5fb312fa 242bd60e
+  preview: kubectl -n kgateway-system port-forward deployment/http 19000 > /dev/null &
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 7
+  fingerprint: f08c7784493eaf94
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 c54cd66d 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b a99fad3a 90145c69 bbed7f4b 8e418e5a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 8
+  fingerprint: 4e84dcdef2af0e1f
+  lang: sh
+  lines: 4e84dcde
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 10
+  fingerprint: 659b4cd0058a181d
+  lang: sh
+  lines: 659b4cd0
+  preview: kubectl logs deploy/http -n kgateway-system --tail=1
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 13
+  fingerprint: 2fe47803ec09cab6
+  lang: sh
+  lines: eafbe2f3 93236379
+  preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/.htaccess" \
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 15
+  fingerprint: 659b4cd0058a181d
+  lang: sh
+  lines: 659b4cd0
+  preview: kubectl logs deploy/http -n kgateway-system --tail=1
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 18
+  fingerprint: 3672bb8052a099ca
+  lang: yaml
+  lines: 16c71da1 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 931824dd 4048f30b 385a2eb3 2d2f62ea db554749 c4c2ea69 142b1d35 385a2eb3 1851f975 456ae8a0 42d84aba c71ecc2a 1b6cccd3 139e0649 7c77bc8f 5feaf48d eadb1433 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 19
+  fingerprint: 349e476b9cfc8479
+  lang: bash
+  lines: 349e476b
+  preview: kubectl logs deploy/waf-server-enterprise-kgateway -n kgateway-system
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 21
+  fingerprint: c4ccc9c86c2902b5
+  lang: sh
+  lines: c4ccc9c8
+  preview: curl -s http://127.0.0.1:9091/metrics
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 22
+  fingerprint: 29f8c7a66addc1c7
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 1288d06d 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf 540f5e28 e4bc2178 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 24
+  fingerprint: fcf84b3b42e83978
+  lang: sh
+  lines: 62c645ae 8511f83a
+  preview: curl -s http://127.0.0.1:19000/stats | grep 'ext_proc'
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+- paths: waf-observability
+  block: 26
+  fingerprint: 8ca58bdb5af13600
+  lang: sh
+  lines: 943b5a4b cb84a3fd 3eaf8b22 76e5819b
+  preview: curl -s http://127.0.0.1:9092/metrics | grep 'enterprise_kgateway_controller_'
+  form:
+    attr: paths="waf-observability"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    start: true
+  blank_before: []
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: enterprisekgateway.solo.io/v1alpha1
+    kind: EnterpriseKgatewayParameters
+    metadata:
+      name: enterprise-kgateway-params
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      kube:
+        sharedExtensions:
+          waf:
+            enabled: true
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: GatewayClass
+    metadata:
+      name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+    spec:
+      controllerName: solo.io/enterprise-kgateway
+      parametersRef:
+        group: enterprisekgateway.solo.io
+        kind: EnterpriseKgatewayParameters
+        name: enterprise-kgateway-params
+        namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    EOF
+    {{< /doc-test >}}
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - wait for the waf-server deployment to be available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-enterprise-kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: waf.solo.io/v1alpha1
+    kind: WAFPolicy
+    metadata:
+      name: httpbin-waf
+      namespace: httpbin
+    spec:
+      coreRuleSet:
+        settings:
+          inline: |
+            SecDefaultAction "phase:1,log,auditlog,deny,status:403"
+            SecDefaultAction "phase:2,log,auditlog,deny,status:403"
+            SecAction "id:900990,phase:1,pass,t:none,nolog,tag:'OWASP_CRS',ver:'OWASP_CRS/4.23.0',setvar:tx.crs_setup_version=4230"
+      ruleEngineSettings:
+        inline: |
+          SecRuleEngine On
+      customDirectives:
+        - inline: |
+            SecRuleRemoveById 913100
+            SecRuleRemoveById 920430
+    EOF
+    kubectl apply -f- <<EOF
+    apiVersion: enterprisekgateway.solo.io/v1alpha1
+    kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+    metadata:
+      name: httpbin-waf
+      namespace: httpbin
+    spec:
+      targetRefs:
+        - group: gateway.networking.k8s.io
+          kind: HTTPRoute
+          name: httpbin
+      entWAF:
+        wafPolicyRef:
+          name: httpbin-waf
+    EOF
+    {{< /doc-test >}}
+- after:
+    start: true
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - wait for the httpbin-waf WAFPolicy to be ready"
+      wait:
+        target:
+          kind: WAFPolicy
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-observability - wait for the httpbin-waf policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: httpbin-waf
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-observability - the WAF blocks a request for .htaccess with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/.htaccess"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    - name: "waf-observability - the WAF allows a regular request"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 0
+    fingerprint: 3ec73311b9884e0d
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 c54cd66d 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 190df8ce 54ccadac 92046d69 a99fad3a 90145c69 4b3ddcf2 57ebb84e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - wait for the waf-access-logs ListenerPolicy to be accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-access-logs
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 2fe47803ec09cab6
+    lang: sh
+    lines: eafbe2f3 93236379
+    preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/.htaccess" \
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - the WAF blocks .htaccess with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/.htaccess"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 659b4cd0058a181d
+    lang: sh
+    lines: 659b4cd0
+    preview: kubectl logs deploy/http -n kgateway-system --tail=1
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    for i in $(seq 1 30); do
+      curl -s -o /dev/null "http://$INGRESS_GW_ADDRESS:8080/.htaccess" -H "host: www.example.com:8080" || true
+      sleep 2
+      line=$(kubectl logs deploy/http -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --tail=1)
+      if [[ "$line" == *'"response_code":403'* ]] && [[ "$line" == *'"response_code_details":"waf_rule_930130"'* ]]; then
+        echo "$line"
+        break
+      fi
+      if [ "$i" -eq 30 ]; then
+        echo "the access log does not show the WAF rule ID: $line"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 6e1278c349e0dee8
+    lang: sh
+    lines: c08df217 9b71fccc f43a82f5 5fb312fa 242bd60e
+    preview: kubectl -n kgateway-system port-forward deployment/http 19000 > /dev/null &
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} port-forward deployment/http 19000 >/dev/null 2>&1 &
+    WAF_PF_PID=$!
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 6e1278c349e0dee8
+    lang: sh
+    lines: c08df217 9b71fccc f43a82f5 5fb312fa 242bd60e
+    preview: kubectl -n kgateway-system port-forward deployment/http 19000 > /dev/null &
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - the gateway proxy config has the WAF filter key"
+      retries: 60
+      http:
+        url: "http://127.0.0.1:19000/config_dump"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "waf/kgateway-system/waf-server/8084"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 6e1278c349e0dee8
+    lang: sh
+    lines: c08df217 9b71fccc f43a82f5 5fb312fa 242bd60e
+    preview: kubectl -n kgateway-system port-forward deployment/http 19000 > /dev/null &
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kill $WAF_PF_PID || true
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: f08c7784493eaf94
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 c54cd66d 1288d06d 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b a99fad3a 90145c69 bbed7f4b 8e418e5a abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - the updated waf-access-logs ListenerPolicy is accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-access-logs
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 4e84dcdef2af0e1f
+    lang: sh
+    lines: 4e84dcde
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - the WAF allows /status/200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 659b4cd0058a181d
+    lang: sh
+    lines: 659b4cd0
+    preview: kubectl logs deploy/http -n kgateway-system --tail=1
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    for i in $(seq 1 30); do
+      curl -s -o /dev/null "http://$INGRESS_GW_ADDRESS:8080/status/200" -H "host: www.example.com:8080" || true
+      sleep 2
+      line=$(kubectl logs deploy/http -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --tail=1)
+      if [[ "$line" == *'"response_code":200'* ]] && [[ "$line" == *'"response_code_details":"via_upstream"'* ]] && [[ "$line" == *'"waf_ext_proc":{'* ]] && [[ "$line" == *'"received_immediate_response":false'* ]] && [[ "$line" == *'"waf_request_header_latency_us":"'* ]]; then
+        echo "$line"
+        break
+      fi
+      if [ "$i" -eq 30 ]; then
+        echo "the access log does not show the WAF ext_proc filter state for an allowed request: $line"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 2fe47803ec09cab6
+    lang: sh
+    lines: eafbe2f3 93236379
+    preview: curl -vik "http://$INGRESS_GW_ADDRESS:8080/.htaccess" \
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - the WAF blocks .htaccess with 403 again"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/.htaccess"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 659b4cd0058a181d
+    lang: sh
+    lines: 659b4cd0
+    preview: kubectl logs deploy/http -n kgateway-system --tail=1
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    for i in $(seq 1 30); do
+      curl -s -o /dev/null "http://$INGRESS_GW_ADDRESS:8080/.htaccess" -H "host: www.example.com:8080" || true
+      sleep 2
+      line=$(kubectl logs deploy/http -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --tail=1)
+      if [[ "$line" == *'"response_code":403'* ]] && [[ "$line" == *'"response_code_details":"waf_rule_930130"'* ]] && [[ "$line" == *'"received_immediate_response":true'* ]]; then
+        echo "$line"
+        break
+      fi
+      if [ "$i" -eq 30 ]; then
+        echo "the access log does not show the WAF ext_proc filter state for a blocked request: $line"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 3672bb8052a099ca
+    lang: yaml
+    lines: 16c71da1 2701c996 d1c189e3 8c8c4228 c9abe331 0f10c5bc 36184fa5 931824dd 4048f30b 385a2eb3 2d2f62ea db554749 c4c2ea69 142b1d35 385a2eb3 1851f975 456ae8a0 42d84aba c71ecc2a 1b6cccd3 139e0649 7c77bc8f 5feaf48d eadb1433 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    # The audit settings reach the waf-server through a policy update; give it time,
+    # then send a request that the CRS rules block so that an audit entry is written.
+    sleep 10
+    curl -s -o /dev/null "http://$INGRESS_GW_ADDRESS:8080/.htaccess" -H "host: www.example.com:8080" || true
+    {{< /doc-test >}}
+- after:
+    block: 19
+    fingerprint: 349e476b9cfc8479
+    lang: bash
+    lines: 349e476b
+    preview: kubectl logs deploy/waf-server-enterprise-kgateway -n kgateway-system
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    # The waf-server logs a JSON audit entry for the blocked /.htaccess request.
+    found=""
+    for i in $(seq 1 30); do
+      logs=$(kubectl logs deploy/waf-server-enterprise-kgateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --since=5m 2>/dev/null) || true
+      if grep '"transaction"' <<<"$logs" | grep '"uri":"/.htaccess"' >/dev/null; then found=1; break; fi
+      curl -s -o /dev/null "http://$INGRESS_GW_ADDRESS:8080/.htaccess" -H "host: www.example.com:8080" || true
+      echo "attempt $i: no audit log entry for /.htaccess yet, retrying"; sleep 3
+    done
+    if [ -z "$found" ]; then
+      echo "FAIL: the waf-server logs have no JSON audit entry for the blocked /.htaccess request"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 20
+    fingerprint: c3b2d49197090fea
+    lang: sh
+    lines: c3b2d491
+    preview: kubectl -n kgateway-system port-forward deployment/waf-server-enterprise-kgatewa
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} port-forward deployment/waf-server-enterprise-kgateway 9091 >/dev/null 2>&1 &
+    WAF_METRICS_PF_PID=$!
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: c4ccc9c86c2902b5
+    lang: sh
+    lines: c4ccc9c8
+    preview: curl -s http://127.0.0.1:9091/metrics
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - the waf-server metrics endpoint reports waf_server_requests_total"
+      retries: 60
+      http:
+        url: "http://127.0.0.1:9091/metrics"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "waf_server_requests_total"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: c4ccc9c86c2902b5
+    lang: sh
+    lines: c4ccc9c8
+    preview: curl -s http://127.0.0.1:9091/metrics
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kill $WAF_METRICS_PF_PID || true
+    {{< /doc-test >}}
+- after:
+    block: 22
+    fingerprint: 29f8c7a66addc1c7
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 1288d06d 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf 540f5e28 e4bc2178 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    for i in $(seq 1 60); do
+      args=$(kubectl get deployment waf-server-enterprise-kgateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[0].args}')
+      if [[ "$args" == *'--metrics-enabled=false'* ]]; then
+        break
+      fi
+      if [ "$i" -eq 60 ]; then
+        echo "the waf-server deployment did not get --metrics-enabled=false: $args"
+        exit 1
+      fi
+      sleep 5
+    done
+    kubectl rollout status deployment/waf-server-enterprise-kgateway -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 22
+    fingerprint: 29f8c7a66addc1c7
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 24bf663e 8c8c4228 9048f7b8 1288d06d 36184fa5 9cc14d83 356067ee 9eb3a28d ff7360cf 540f5e28 e4bc2178 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - the waf-server deployment is available with metrics disabled"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-enterprise-kgateway
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "waf-observability - the WAF still blocks .htaccess with metrics disabled"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/.htaccess"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: efa3275d9dd9fd71
+    lang: sh
+    lines: efa3275d
+    preview: kubectl -n kgateway-system port-forward deployment/http 19000
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} port-forward deployment/http 19000 >/dev/null 2>&1 &
+    PROXY_PF_PID=$!
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: fcf84b3b42e83978
+    lang: sh
+    lines: 62c645ae 8511f83a
+    preview: curl -s http://127.0.0.1:19000/stats | grep 'ext_proc'
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - the gateway proxy reports ext_proc stats"
+      retries: 60
+      http:
+        url: "http://127.0.0.1:19000/stats"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "ext_proc"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: fcf84b3b42e83978
+    lang: sh
+    lines: 62c645ae 8511f83a
+    preview: curl -s http://127.0.0.1:19000/stats | grep 'ext_proc'
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kill $PROXY_PF_PID || true
+    {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: 7f2c30d21dba4107
+    lang: sh
+    lines: 7f2c30d2
+    preview: kubectl -n kgateway-system port-forward deployment/enterprise-kgateway 9092
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} port-forward deployment/enterprise-kgateway 9092 >/dev/null 2>&1 &
+    CTRL_PF_PID=$!
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    block: 26
+    fingerprint: 8ca58bdb5af13600
+    lang: sh
+    lines: 943b5a4b cb84a3fd 3eaf8b22 76e5819b
+    preview: curl -s http://127.0.0.1:9092/metrics | grep 'enterprise_kgateway_controller_'
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "waf-observability - the controller reports enterprise_kgateway_controller_ metrics"
+      retries: 60
+      http:
+        url: "http://127.0.0.1:9092/metrics"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "enterprise_kgateway_controller_"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 26
+    fingerprint: 8ca58bdb5af13600
+    lang: sh
+    lines: 943b5a4b cb84a3fd 3eaf8b22 76e5819b
+    preview: curl -s http://127.0.0.1:9092/metrics | grep 'enterprise_kgateway_controller_'
+  content: |-
+    {{< doc-test paths="waf-observability" >}}
+    kill $CTRL_PF_PID || true
+    {{< /doc-test >}}

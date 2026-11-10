@@ -1,0 +1,230 @@
+format: 1
+source: assets/kgw-docs/pages/security/extauth/opa/byo.md
+blocks:
+- 3e3308baf0258616 mermaid
+- b07b9dac60bf0ae1 yaml
+- e0dcad36ca694487 yaml
+- bb987e926c8d5398 sh
+- be63e2ddac556d77
+- 33a6aa15fb5d2c16 yaml
+- 471f50efeefc606d yaml
+- f2c9efe0299032ed sh
+- 1b90a4502563e699 sh
+- 0a0c4c6404a883f5 sh
+- b1507579a0174257
+- 58ff4b04153e69d8 sh
+- 1a167b4987f20846 sh
+- 086c029851f96df5
+- 6db41ef67c6057df shell
+tags:
+- paths: extauth-opa-byo
+  block: 1
+  fingerprint: b07b9dac60bf0ae1
+  lang: yaml
+  lines: abbd1bdc f1540154 033792b5 8c8c4228 7366f20e 0f10c5bc ff72caa3 cbccf868 c4ec0d8f 68c14ff3 839339c1 0950f3e9 e1e3d461 daa1bb33 4c4a47e2 bc04c78d abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-byo"
+    only: true
+    lead: ' '
+- paths: extauth-opa-byo
+  block: 2
+  fingerprint: e0dcad36ca694487
+  lang: yaml
+  lines: abbd1bdc 58584366 ab78925c 8c8c4228 5d1a78f4 0f10c5bc fa1e8330 7bff7879 36184fa5 97bcd5e0 8432e015 839a5cac 7bff7879 a58565b2 8c8c4228 fa1e8330 7bff7879 36184fa5 04968f51 a4254ae0 755e7c76 7c9dace4 7f6e72e4 6736a57c 00c611e6 87b6961d 7a26cd5a bb6a3d01 0ff65a1a 82601aaa d7db8aa2 fcd8c64a 430c055c cdfbc697 4fb8b4ed c5d7714b 430c055c 889016e3 7366f20e cb3f91d5 f1540154 0d6480f0 8c8c4228 5d1a78f4 0f10c5bc fa1e8330 7bff7879 36184fa5 8432e015 7bff7879 0ff65a1a 82601aaa e32882e8 cb9dfe4c abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-byo"
+    only: true
+    lead: ' '
+- paths: extauth-opa-byo
+  block: 3
+  fingerprint: bb987e926c8d5398
+  lang: sh
+  lines: bb987e92
+  preview: kubectl get pods -n httpbin -l app=opa
+  form:
+    attr: paths="extauth-opa-byo"
+    only: true
+    lead: ' '
+- paths: extauth-opa-byo
+  block: 5
+  fingerprint: 33a6aa15fb5d2c16
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 f740d875 0f10c5bc 36184fa5 d5ec3fae a4254ae0 93cbb6a8 21ece143 7a6b0372 20c754c3 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-byo"
+    only: true
+    lead: ' '
+- paths: extauth-opa-byo
+  block: 6
+  fingerprint: 471f50efeefc606d
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 f740d875 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 f740d875 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-byo"
+    only: true
+    lead: ' '
+- paths: extauth-opa-byo
+  block: 7
+  fingerprint: f2c9efe0299032ed
+  lang: sh
+  lines: f2c9efe0
+  preview: kubectl get authconfig opa-server -n httpbin -o yaml
+  form:
+    attr: paths="extauth-opa-byo"
+    only: true
+    lead: ' '
+- paths: extauth-opa-byo
+  block: 8
+  fingerprint: 1b90a4502563e699
+  lang: sh
+  lines: 1b90a450
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080"'
+  form:
+    attr: paths="extauth-opa-byo"
+    only: true
+    lead: ' '
+- paths: extauth-opa-byo
+  block: 11
+  fingerprint: 58ff4b04153e69d8
+  lang: sh
+  lines: 58ff4b04
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080" -H "'
+  form:
+    attr: paths="extauth-opa-byo"
+    only: true
+    lead: ' '
+- paths: extauth-opa-byo
+  block: 14
+  fingerprint: 6db41ef67c6057df
+  lang: shell
+  lines: 5ce64cf7 aab39bf3 815bd271 1623ce56 50ad2333
+  preview: kubectl delete authconfig opa-server -n httpbin
+  form:
+    attr: paths="extauth-opa-byo"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: bb987e926c8d5398
+    lang: sh
+    lines: bb987e92
+    preview: kubectl get pods -n httpbin -l app=opa
+  content: |-
+    {{< doc-test paths="extauth-opa-byo" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-byo - wait for the opa deployment to be available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: httpbin
+            name: opa
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 471f50efeefc606d
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 f740d875 0bebd850 36184fa5 588a5d84 82601aaa 350955ef cd44d8cd 2c3ea4d6 75674f79 f740d875 0f10c5bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-opa-byo" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-byo - wait for the opa-server policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: opa-server
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: f2c9efe0299032ed
+    lang: sh
+    lines: f2c9efe0
+    preview: kubectl get authconfig opa-server -n httpbin -o yaml
+  content: |-
+    {{< doc-test paths="extauth-opa-byo" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-byo - wait for the opa-server AuthConfig to be accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: opa-server
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 1b90a4502563e699
+    lang: sh
+    lines: 1b90a450
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080"'
+  content: |-
+    {{< doc-test paths="extauth-opa-byo" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-byo - a request without the allow header is denied with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 58ff4b04153e69d8
+    lang: sh
+    lines: 58ff4b04
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080" -H "'
+  content: |-
+    {{< doc-test paths="extauth-opa-byo" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-opa-byo - a request with the allow: true header is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          allow: "true"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}

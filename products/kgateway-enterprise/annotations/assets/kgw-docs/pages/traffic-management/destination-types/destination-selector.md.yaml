@@ -1,0 +1,355 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/destination-types/destination-selector.md
+blocks:
+- 7c77a206daa3c933 sh
+- 3de0a1622a564d3a yaml
+- debe5d9dff1a49d9 yaml
+- a22069e33355ba07 sh
+- 5256313510cabe48 console
+- d62497f1e62f115c yaml
+- 6f96d446c322a372 yaml
+- 541ee98dba887fb5 sh
+- 3cbc87c7681f34db console
+- 1f001d8b13b2baa1 sh
+- 3cbc87c7681f34db console
+- 915f858338a39a6b sh
+- 4369ceb59cc6b146 sh
+- 0fef3a4d6d0a4264 console
+- 12cc73f975f3b450 sh
+- 002e8d633385f162 sh
+- 5751247b62cbcf69 console
+- a3f0b7d1a398904f sh
+- 0a8aacfb3a3ac325 sh
+- 6b3c238ebcf1f3c0 console
+- 792c9b831866928a yaml
+- a3f0b7d1a398904f sh
+- 0a8aacfb3a3ac325 sh
+- 27badc983df1780b console
+- 2a6c9cfe5c49d415 sh
+tags:
+- paths: destination-selector
+  block: 0
+  fingerprint: 7c77a206daa3c933
+  lang: sh
+  lines: 7c77a206
+  preview: kubectl create namespace tenants
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 1
+  fingerprint: 3de0a1622a564d3a
+  lang: yaml
+  lines: 1f1bcb48 58584366 ab78925c 8c8c4228 d438fe78 36184fa5 8432e015 839a5cac 6bbbda36 a58565b2 8c8c4228 fa1e8330 6bbbda36 36184fa5 04968f51 6b6c602b c852a0cb 0ff65a1a a46d7c6d cb3f91d5 f1540154 0d6480f0 8c8c4228 d438fe78 36184fa5 8432e015 6bbbda36 0ff65a1a 4fc11012 b1d5c800 cb3f91d5 58584366 ab78925c 8c8c4228 df36b537 36184fa5 8432e015 839a5cac 3ce31686 a58565b2 8c8c4228 fa1e8330 3ce31686 36184fa5 04968f51 6b6c602b c852a0cb 0ff65a1a a46d7c6d cb3f91d5 f1540154 0d6480f0 8c8c4228 df36b537 36184fa5 8432e015 3ce31686 0ff65a1a 4fc11012 b1d5c800 abc56510
+  preview: kubectl apply -n tenants -f- <<EOF
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 2
+  fingerprint: debe5d9dff1a49d9
+  lang: yaml
+  lines: 1f1bcb48 d664f32c ad65deb7 8c8c4228 d438fe78 36184fa5 c582fe46 2efcbf93 bfce7f60 e4e4c457 c095a45d cb3f91d5 d664f32c ad65deb7 8c8c4228 df36b537 36184fa5 c582fe46 2efcbf93 bfce7f60 4b5be9c8 c095a45d abc56510
+  preview: kubectl apply -n tenants -f- <<EOF
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 3
+  fingerprint: a22069e33355ba07
+  lang: sh
+  lines: a22069e3
+  preview: kubectl get pods -n tenants
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 5
+  fingerprint: d62497f1e62f115c
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 042b0e2b 8c8c4228 53d71161 8d4efd40 36184fa5 30ff4d98 374a87c0 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 6
+  fingerprint: 6f96d446c322a372
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 53d71161 8d4efd40 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa b3bc3569 3de9d845 a3b86ab6 7ae7d755 042b0e2b 53d71161 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 7
+  fingerprint: 541ee98dba887fb5
+  lang: sh
+  lines: 541ee98d
+  preview: kubectl get enterprisekgatewaydestinationselector by-tenant -n tenants -o jsonpa
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 9
+  fingerprint: 1f001d8b13b2baa1
+  lang: sh
+  lines: 1f001d8b
+  preview: kubectl get httproute by-tenant -n tenants -o jsonpath='{.status.parents[0].cond
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 11
+  fingerprint: 915f858338a39a6b
+  lang: sh
+  lines: 915f8583
+  preview: 'curl -s http://$INGRESS_GW_ADDRESS:8080/ -H "host: tenants.example" -H "x-tenant'
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 14
+  fingerprint: 12cc73f975f3b450
+  lang: sh
+  lines: 12cc73f9
+  preview: 'curl -s http://$INGRESS_GW_ADDRESS:8080/ -H "host: tenants.example" -H "x-tenant'
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 17
+  fingerprint: a3f0b7d1a398904f
+  lang: sh
+  lines: a3f0b7d1
+  preview: curl -s -o /dev/null -w "%{http_code}\n" http://$INGRESS_GW_ADDRESS:8080/ -H "ho
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 20
+  fingerprint: 792c9b831866928a
+  lang: yaml
+  lines: 1f1bcb48 d664f32c ad65deb7 8c8c4228 713091e2 36184fa5 c582fe46 2efcbf93 bfce7f60 e4e4c457 c095a45d abc56510
+  preview: kubectl apply -n tenants -f- <<EOF
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+- paths: destination-selector
+  block: 21
+  fingerprint: a3f0b7d1a398904f
+  lang: sh
+  lines: a3f0b7d1
+  preview: curl -s -o /dev/null -w "%{http_code}\n" http://$INGRESS_GW_ADDRESS:8080/ -H "ho
+  form:
+    attr: paths="destination-selector"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 3de0a1622a564d3a
+    lang: yaml
+    lines: 1f1bcb48 58584366 ab78925c 8c8c4228 d438fe78 36184fa5 8432e015 839a5cac 6bbbda36 a58565b2 8c8c4228 fa1e8330 6bbbda36 36184fa5 04968f51 6b6c602b c852a0cb 0ff65a1a a46d7c6d cb3f91d5 f1540154 0d6480f0 8c8c4228 d438fe78 36184fa5 8432e015 6bbbda36 0ff65a1a 4fc11012 b1d5c800 cb3f91d5 58584366 ab78925c 8c8c4228 df36b537 36184fa5 8432e015 839a5cac 3ce31686 a58565b2 8c8c4228 fa1e8330 3ce31686 36184fa5 04968f51 6b6c602b c852a0cb 0ff65a1a a46d7c6d cb3f91d5 f1540154 0d6480f0 8c8c4228 df36b537 36184fa5 8432e015 3ce31686 0ff65a1a 4fc11012 b1d5c800 abc56510
+    preview: kubectl apply -n tenants -f- <<EOF
+  content: |-
+    {{< doc-test paths="destination-selector" >}}
+    YAMLTest -f - <<'EOF'
+    - name: wait for the tenant-a Deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: tenants
+            name: tenant-a
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: wait for the tenant-b Deployment to be available
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: tenants
+            name: tenant-b
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: d62497f1e62f115c
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 042b0e2b 8c8c4228 53d71161 8d4efd40 36184fa5 30ff4d98 374a87c0 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="destination-selector" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the by-tenant destination selector is Accepted
+      wait:
+        target:
+          kind: EnterpriseKgatewayDestinationSelector
+          metadata:
+            namespace: tenants
+            name: by-tenant
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 6f96d446c322a372
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 53d71161 8d4efd40 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa b3bc3569 3de9d845 a3b86ab6 7ae7d755 042b0e2b 53d71161 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="destination-selector" >}}
+    YAMLTest -f - <<'EOF'
+    - name: the by-tenant HTTPRoute resolved its references
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: tenants
+            name: by-tenant
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 915f858338a39a6b
+    lang: sh
+    lines: 915f8583
+    preview: 'curl -s http://$INGRESS_GW_ADDRESS:8080/ -H "host: tenants.example" -H "x-tenant'
+  content: |-
+    {{< doc-test paths="destination-selector" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "destination-selector - x-tenant tenant-a is served by the tenant-a app"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "tenants.example"
+          x-tenant: "tenant-a"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "Request served by tenant-a"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 12cc73f975f3b450
+    lang: sh
+    lines: 12cc73f9
+    preview: 'curl -s http://$INGRESS_GW_ADDRESS:8080/ -H "host: tenants.example" -H "x-tenant'
+  content: |-
+    {{< doc-test paths="destination-selector" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "destination-selector - x-tenant tenant-b is served by the tenant-b app"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "tenants.example"
+          x-tenant: "tenant-b"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "Request served by tenant-b"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 17
+    fingerprint: a3f0b7d1a398904f
+    lang: sh
+    lines: a3f0b7d1
+    preview: curl -s -o /dev/null -w "%{http_code}\n" http://$INGRESS_GW_ADDRESS:8080/ -H "ho
+  content: |-
+    {{< doc-test paths="destination-selector" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "destination-selector - x-tenant tenant-c without a Backend returns 404"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "tenants.example"
+          x-tenant: "tenant-c"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    - name: "destination-selector - a request without the x-tenant header returns 404"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "tenants.example"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: a3f0b7d1a398904f
+    lang: sh
+    lines: a3f0b7d1
+    preview: curl -s -o /dev/null -w "%{http_code}\n" http://$INGRESS_GW_ADDRESS:8080/ -H "ho
+  content: |-
+    {{< doc-test paths="destination-selector" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "destination-selector - x-tenant tenant-c succeeds after the tenant-c Backend is added"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/"
+        method: GET
+        headers:
+          host: "tenants.example"
+          x-tenant: "tenant-c"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "Request served by tenant-a"
+    EOF
+    {{< /doc-test >}}

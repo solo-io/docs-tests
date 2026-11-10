@@ -1,0 +1,600 @@
+format: 1
+source: content/en/kgateway/2.4.x/operations/go-client.md
+blocks:
+- d51d1e26ee6a1028 go
+- 388ef5417954d950 go
+- 4579617c0c2a18a7 sh
+- 2517e8a045953753 console
+- aa6195bb19dde3b1 sh
+- 18dbcbb474ff1745 sh
+- e0a6276238e91d4b sh
+- 3816a8ce9c3b70ec console
+- e1d44414e89a22ea go
+- 9773fbce2e611e70 sh
+- 2c2aba4ac52331e6 console
+- 6049b079a70757b0 go
+- 44bef2c12d721f4d go
+- 7d937932247d4d46 go
+- 9773fbce2e611e70 sh
+- 624bb241c0a64e08 console
+- 63575702f7bbf90d sh
+- 3a28322b40665285 console
+- 42e026ffd28644bf sh
+- 05d151ff7a6384a5 sh
+- 972ef6cf94030317 sh
+- 798fd54c1bb5cf6f sh
+- e07d43a00069b9e0
+- bc3e09343370490b go
+- 8c2ae287ee18aebd go
+- 9773fbce2e611e70 sh
+- 2eecee73c526c053 console
+- a38db82477ec56ca sh
+- 972ef6cf94030317 sh
+- 798fd54c1bb5cf6f sh
+- f613e1f43d2c68cc
+- ca14a08fc2fd6b09 sh
+- 42a6279d7c5bd7ae sh
+- 77c3102f62a54853
+- c83d9aa9e5f0847d go
+- d6c2967e8b6a83ec go
+- 9773fbce2e611e70 sh
+- 7e1c8474816e689c console
+- da8bb53632e16e98 sh
+- 961869cb30402d79 sh
+- acffe06e1e4fa69b sh
+- 42abea175f37f8e7
+- 3a485902bdaaed30 go
+- 919a3583ce1ad6f8 sh
+- 458b24112022e7d7 console
+- e2b7b6794abd9955 console
+- be6e446a5fd4b291 sh
+tags:
+- paths: operations-go-client
+  block: 2
+  fingerprint: 4579617c0c2a18a7
+  lang: sh
+  lines: 79473dbd c86120da
+  preview: mkdir kgateway-go && cd kgateway-go
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 4
+  fingerprint: aa6195bb19dde3b1
+  lang: sh
+  lines: aa6195bb
+  preview: go get github.com/solo-io/kgateway-client/v2@latest
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 5
+  fingerprint: 18dbcbb474ff1745
+  lang: sh
+  lines: c007da14 56ae9af9 59cb4c86
+  preview: go get github.com/kgateway-dev/kgateway/v2@latest
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 6
+  fingerprint: e0a6276238e91d4b
+  lang: sh
+  lines: e0a62762
+  preview: grep -E "kgateway|gateway-api|client-go" go.mod
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 9
+  fingerprint: 9773fbce2e611e70
+  lang: sh
+  lines: 5aebdf74 840a6543
+  preview: go mod tidy
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 14
+  fingerprint: 9773fbce2e611e70
+  lang: sh
+  lines: 5aebdf74 840a6543
+  preview: go mod tidy
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 16
+  fingerprint: 63575702f7bbf90d
+  lang: sh
+  lines: '63575702'
+  preview: kubectl get gateway -n kgateway-system && kubectl get httproute -n httpbin
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 18
+  fingerprint: 42e026ffd28644bf
+  lang: sh
+  lines: 327fddc8 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n kgateway-system http-go -o jsonpa
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 20
+  fingerprint: 972ef6cf94030317
+  lang: sh
+  lines: 972ef6cf
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/anything -H "host: api.example.com"'
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 25
+  fingerprint: 9773fbce2e611e70
+  lang: sh
+  lines: 5aebdf74 840a6543
+  preview: go mod tidy
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 27
+  fingerprint: a38db82477ec56ca
+  lang: sh
+  lines: a38db824
+  preview: kubectl get enterprisekgatewaytrafficpolicy extauth-policy -n kgateway-system -o
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 28
+  fingerprint: 972ef6cf94030317
+  lang: sh
+  lines: 972ef6cf
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/anything -H "host: api.example.com"'
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 31
+  fingerprint: ca14a08fc2fd6b09
+  lang: sh
+  lines: 5c00bf80 f9b0fd29
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/anything -H "host: api.example.com" \'
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 36
+  fingerprint: 9773fbce2e611e70
+  lang: sh
+  lines: 5aebdf74 840a6543
+  preview: go mod tidy
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 38
+  fingerprint: da8bb53632e16e98
+  lang: sh
+  lines: da8bb536
+  preview: kubectl get enterprisekgatewaytrafficpolicy local-ratelimit -n kgateway-system -
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 39
+  fingerprint: 961869cb30402d79
+  lang: sh
+  lines: ad38eeb8 287ec2c5 663f7696 f9b0fd29 a4c3ed04
+  preview: for i in $(seq 1 3); do
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 43
+  fingerprint: 919a3583ce1ad6f8
+  lang: sh
+  lines: 5aebdf74 1bb497e3
+  preview: go mod tidy
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+- paths: operations-go-client
+  block: 46
+  fingerprint: be6e446a5fd4b291
+  lang: sh
+  lines: 284dc0a5 e70037bb 09dce262 670e66a1 6b3d43b9 9757f47a ecc78bda 52483377
+  preview: kubectl delete enterprisekgatewaytrafficpolicy --all -n kgateway-system
+  form:
+    attr: paths="operations-go-client"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: 2410cca1db5d3551
+    occurrence: 0
+    words: 4b227777 1e142e62 4cd0e21a 1de7df6e 7175517a 1d9283d8 3e194352 a2e0cac7 2ca69efd b9776d7d 97b05602 4612828a 28391d3b b9776d7d 4cd0e21a 948fe603 6201111b ea103d6c 1581e27d 2188dfc2 c4d0cf24 1eb79602 5ca4f385
+    block_before:
+      block: 1
+      fingerprint: 388ef5417954d950
+      lang: go
+      lines: 022fb2e2 b46d5019 c17d0469 d10b36aa 41ee1305
+      preview: _, err = client.ExtauthV1().AuthConfigs("kgateway-system").Create(ctx, authConfi
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    GO_WANT=1.27.3
+    GO_HAVE=$(go version 2>/dev/null | awk '{print $3}' | sed 's/^go//' || true)
+    if [ -z "$GO_HAVE" ] || [ "$(printf '%s\n' "$GO_WANT" "$GO_HAVE" | sort -V | head -n1)" != "$GO_WANT" ]; then
+      GO_ARCH=$(dpkg --print-architecture)
+      rm -rf "$HOME/go-sdk" && mkdir -p "$HOME/go-sdk"
+      curl -sSfL "https://go.dev/dl/go${GO_WANT}.linux-${GO_ARCH}.tar.gz" | tar -xz -C "$HOME/go-sdk" --strip-components=1
+      export PATH="$HOME/go-sdk/bin:$PATH"
+    fi
+    go version
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: e1d44414e89a22ea
+    lang: go
+    lines: 49350803 51284385 d0daecb5 28b8c501 262330f9 4a829123 2f3d2073 6ab9ac7c 21611e3d aae250ad 2d966cfb ba5ec51d e3bed7b2 e3690f0e 7f2c83a2 5a7603a3 985045f1 af7bbbab d10b36aa 9a4f22a9 3ce0efcc 04bbeda4 3538d3e3 d10b36aa 7b537ca1 04bbeda4 3538d3e3 d10b36aa 3cb26d7e c0e6bca8 8f78f42a 3302c7b6 04bbeda4 3538d3e3 d10b36aa 4a573b9c d10b36aa abc56510
+    preview: cat <<'EOF' > main.go
+  content: "{{< doc-test paths=\"operations-go-client\" >}}\ncat <<'EOF' > main.go\npackage main\n\nimport (\n\t\"context\"\n\t\"flag\"\n\t\"fmt\"\n\t\"path/filepath\"\n\n\tenterpriseclientset \"github.com/solo-io/kgateway-client/v2/clientset/versioned\"\n\tmetav1 \"k8s.io/apimachinery/pkg/apis/meta/v1\"\n\t\"k8s.io/client-go/tools/clientcmd\"\n\t\"k8s.io/client-go/util/homedir\"\n)\n\nfunc main() {\n\tvar kubeconfig *string\n\tif home := homedir.HomeDir(); home != \"\" {\n\t\tkubeconfig = flag.String(\"kubeconfig\", filepath.Join(home, \".kube\", \"config\"), \"path to kubeconfig\")\n\t} else {\n\t\tkubeconfig = flag.String(\"kubeconfig\", \"\", \"path to kubeconfig\")\n\t}\n\tflag.Parse()\n\n\tconfig, err := clientcmd.BuildConfigFromFlags(\"\", *kubeconfig)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tclient, err := enterpriseclientset.NewForConfig(config)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tctx := context.Background()\n\tlist, err := client.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"\").\n\t\tList(ctx, metav1.ListOptions{})\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Printf(\"Found %d EnterpriseKgatewayTrafficPolicies\\n\", len(list.Items))\n}\nEOF\n{{< /doc-test >}}"
+- after:
+    block: 11
+    fingerprint: 6049b079a70757b0
+    lang: go
+    lines: 98378ff7 51284385 d0daecb5 28b8c501 bef899b6 21611e3d 91e56d2d 14795ea4 33cf993c ba5ec51d 463a8c65 fbd6eb2c 04bbeda4 41ee1305 d10b36aa 1c773322 b0e4b7c5 dc2c3fce 612f1862 e52a1813 727fea29 5f7a4567 113bf9f4 e52a1813 bf9dbb2b 1a082b39 8f0ebbd5 021fb596 1f1663c9 074476a6 0d48e419 7d330422 2521cc1f 08c0585e e52a1813 e52a1813 e52a1813 e52a1813 e52a1813 d10b36aa 59b7d4cf b46d5019 c17d0469 d10b36aa 41ee1305 d10b36aa e3fca6da abc56510
+    preview: cat <<'EOF' > gateway.go
+  content: "{{< doc-test paths=\"operations-go-client\" >}}\ncat <<'EOF' > gateway.go\npackage main\n\nimport (\n\t\"context\"\n\n\tk8serrors \"k8s.io/apimachinery/pkg/api/errors\"\n\tmetav1 \"k8s.io/apimachinery/pkg/apis/meta/v1\"\n\t\"k8s.io/client-go/rest\"\n\tgwv1 \"sigs.k8s.io/gateway-api/apis/v1\"\n\tgatewayclientset \"sigs.k8s.io/gateway-api/pkg/client/clientset/versioned\"\n)\n\nfunc createGateway(ctx context.Context, config *rest.Config, namespace string) error {\n\tclient, err := gatewayclientset.NewForConfig(config)\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tgw := &gwv1.Gateway{\n\t\tTypeMeta: metav1.TypeMeta{\n\t\t\tAPIVersion: gwv1.GroupVersion.String(),\n\t\t\tKind:       \"Gateway\",\n\t\t},\n\t\tObjectMeta: metav1.ObjectMeta{\n\t\t\tName:      \"http-go\",\n\t\t\tNamespace: namespace,\n\t\t},\n\t\tSpec: gwv1.GatewaySpec{\n\t\t\tGatewayClassName: \"enterprise-kgateway\",\n\t\t\tListeners: []gwv1.Listener{\n\t\t\t\t{\n\t\t\t\t\tName:     \"http\",\n\t\t\t\t\tProtocol: gwv1.HTTPProtocolType,\n\t\t\t\t\tPort:     8080,\n\t\t\t\t\tAllowedRoutes: &gwv1.AllowedRoutes{\n\t\t\t\t\t\tNamespaces: &gwv1.RouteNamespaces{\n\t\t\t\t\t\t\tFrom: ptr(gwv1.NamespacesFromAll),\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t},\n\t}\n\n\t_, err = client.GatewayV1().Gateways(namespace).Create(ctx, gw, metav1.CreateOptions{})\n\tif k8serrors.IsAlreadyExists(err) {\n\t\treturn nil\n\t}\n\treturn err\n}\n\nfunc ptr[T any](v T) *T { return &v }\nEOF\n{{< /doc-test >}}"
+- after:
+    block: 12
+    fingerprint: 44bef2c12d721f4d
+    lang: go
+    lines: af779736 51284385 d0daecb5 28b8c501 bef899b6 21611e3d 91e56d2d 14795ea4 33cf993c ba5ec51d 4ab8ce90 fbd6eb2c 04bbeda4 41ee1305 d10b36aa 034c417a f2f5ce57 e89786cb cf1d0e26 b0e4b7c5 dc2c3fce 90ec5b5e e52a1813 727fea29 94d061f6 113bf9f4 e52a1813 d109c061 93274ce6 8ee0a47b 021fb596 5f7a4567 5af7f264 e52a1813 e52a1813 e52a1813 d9ab0580 32f6c388 021fb596 1d67872e 021fb596 b6bbe490 91dceb43 373df87a e52a1813 e52a1813 e52a1813 68dd3e8a 021fb596 f95095ff 2c63130a 6cc1f3c2 2aee0d0e e52a1813 e52a1813 e52a1813 e52a1813 e52a1813 e52a1813 e52a1813 d10b36aa b8beb48f b46d5019 c17d0469 d10b36aa 41ee1305 d10b36aa abc56510
+    preview: cat <<'EOF' > httproute.go
+  content: "{{< doc-test paths=\"operations-go-client\" >}}\ncat <<'EOF' > httproute.go\npackage main\n\nimport (\n\t\"context\"\n\n\tk8serrors \"k8s.io/apimachinery/pkg/api/errors\"\n\tmetav1 \"k8s.io/apimachinery/pkg/apis/meta/v1\"\n\t\"k8s.io/client-go/rest\"\n\tgwv1 \"sigs.k8s.io/gateway-api/apis/v1\"\n\tgatewayclientset \"sigs.k8s.io/gateway-api/pkg/client/clientset/versioned\"\n)\n\nfunc createHTTPRoute(ctx context.Context, config *rest.Config, namespace string) error {\n\tclient, err := gatewayclientset.NewForConfig(config)\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tpathPrefix := gwv1.PathMatchPathPrefix\n\tpathValue := \"/anything\"\n\tport := gwv1.PortNumber(8000)\n\n\troute := &gwv1.HTTPRoute{\n\t\tTypeMeta: metav1.TypeMeta{\n\t\t\tAPIVersion: gwv1.GroupVersion.String(),\n\t\t\tKind:       \"HTTPRoute\",\n\t\t},\n\t\tObjectMeta: metav1.ObjectMeta{\n\t\t\tName:      \"httpbin-go\",\n\t\t\tNamespace: namespace,\n\t\t},\n\t\tSpec: gwv1.HTTPRouteSpec{\n\t\t\tCommonRouteSpec: gwv1.CommonRouteSpec{\n\t\t\t\tParentRefs: []gwv1.ParentReference{\n\t\t\t\t\t{\n\t\t\t\t\t\tName:      \"http-go\",\n\t\t\t\t\t\tNamespace: ptr(gwv1.Namespace(\"kgateway-system\")),\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t\tHostnames: []gwv1.Hostname{\"api.example.com\"},\n\t\t\tRules: []gwv1.HTTPRouteRule{\n\t\t\t\t{\n\t\t\t\t\tMatches: []gwv1.HTTPRouteMatch{\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\tPath: &gwv1.HTTPPathMatch{\n\t\t\t\t\t\t\t\tType:  &pathPrefix,\n\t\t\t\t\t\t\t\tValue: &pathValue,\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t\tBackendRefs: []gwv1.HTTPBackendRef{\n\t\t\t\t\t\t{\n\t\t\t\t\t\t\tBackendRef: gwv1.BackendRef{\n\t\t\t\t\t\t\t\tBackendObjectReference: gwv1.BackendObjectReference{\n\t\t\t\t\t\t\t\t\tName: \"httpbin\",\n\t\t\t\t\t\t\t\t\tPort: &port,\n\t\t\t\t\t\t\t\t},\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t},\n\t}\n\n\t_, err = client.GatewayV1().HTTPRoutes(namespace).Create(ctx, route, metav1.CreateOptions{})\n\tif k8serrors.IsAlreadyExists(err) {\n\t\treturn nil\n\t}\n\treturn err\n}\nEOF\n{{< /doc-test >}}"
+- after:
+    block: 13
+    fingerprint: 7d937932247d4d46
+    lang: go
+    lines: 49350803 51284385 d0daecb5 28b8c501 262330f9 4a829123 2f3d2073 21611e3d aae250ad 2d966cfb 6ab9ac7c ba5ec51d e3bed7b2 e3690f0e 7f2c83a2 5a7603a3 985045f1 af7bbbab d10b36aa 9a4f22a9 3ce0efcc 04bbeda4 3538d3e3 d10b36aa 7b537ca1 04bbeda4 3538d3e3 d10b36aa 3cb26d7e 442fdc2b 3538d3e3 d10b36aa 2c984e57 3538d3e3 d10b36aa a194c39b c0e6bca8 8f78f42a 3302c7b6 04bbeda4 3538d3e3 d10b36aa 4a573b9c d10b36aa abc56510
+    preview: cat <<'EOF' > main.go
+  content: "{{< doc-test paths=\"operations-go-client\" >}}\ncat <<'EOF' > main.go\npackage main\n\nimport (\n\t\"context\"\n\t\"flag\"\n\t\"fmt\"\n\t\"path/filepath\"\n\n\tmetav1 \"k8s.io/apimachinery/pkg/apis/meta/v1\"\n\t\"k8s.io/client-go/tools/clientcmd\"\n\t\"k8s.io/client-go/util/homedir\"\n\n\tenterpriseclientset \"github.com/solo-io/kgateway-client/v2/clientset/versioned\"\n)\n\nfunc main() {\n\tvar kubeconfig *string\n\tif home := homedir.HomeDir(); home != \"\" {\n\t\tkubeconfig = flag.String(\"kubeconfig\", filepath.Join(home, \".kube\", \"config\"), \"path to kubeconfig\")\n\t} else {\n\t\tkubeconfig = flag.String(\"kubeconfig\", \"\", \"path to kubeconfig\")\n\t}\n\tflag.Parse()\n\n\tconfig, err := clientcmd.BuildConfigFromFlags(\"\", *kubeconfig)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tclient, err := enterpriseclientset.NewForConfig(config)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tctx := context.Background()\n\n\tif err := createGateway(ctx, config, \"kgateway-system\"); err != nil {\n\t\tpanic(err)\n\t}\n\tif err := createHTTPRoute(ctx, config, \"httpbin\"); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Gateway and HTTPRoute created successfully\")\n\n\tlist, err := client.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"\").\n\t\tList(ctx, metav1.ListOptions{})\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Printf(\"Found %d EnterpriseKgatewayTrafficPolicies\\n\", len(list.Items))\n}\nEOF\n{{< /doc-test >}}"
+- after:
+    block: 14
+    fingerprint: 9773fbce2e611e70
+    lang: sh
+    lines: 5aebdf74 840a6543
+    preview: go mod tidy
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    go mod tidy && go run .  # create the http-go Gateway and the httpbin-go HTTPRoute
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 63575702f7bbf90d
+    lang: sh
+    lines: '63575702'
+    preview: kubectl get gateway -n kgateway-system && kubectl get httproute -n httpbin
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "Gateway http-go is programmed"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: kgateway-system
+            name: http-go
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "HTTPRoute httpbin-go is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-go
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "HTTPRoute httpbin-go resolves its backend refs"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: httpbin-go
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='ResolvedRefs')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "deployment http-go has an available replica"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: http-go
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "service http-go has a load balancer address"
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: kgateway-system
+            name: http-go
+        jsonPath: "$.status.loadBalancer.ingress[0]"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 42e026ffd28644bf
+    lang: sh
+    lines: 327fddc8 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n kgateway-system http-go -o jsonpa
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "httpbin-go routes /anything for api.example.com with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "api.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: content-type
+            comparator: contains
+            value: "application/json"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: bc3e09343370490b
+    lang: go
+    lines: 510aec6b 51284385 d0daecb5 28b8c501 0a356568 d3a96884 2d50c25a 0bd10d17 6ab9ac7c 2e8bb795 bef899b6 21611e3d d693dcef 2019661a e29fb161 540a556c 91e56d2d 14795ea4 ba5ec51d 781adeef 2ecaae31 04bbeda4 41ee1305 d10b36aa b6f6e8a8 727fea29 3bd80d54 4116bd7e 2f4dae82 e52a1813 983cd587 59854ed2 17049035 e52a1813 d10b36aa 973e430e b46d5019 c17d0469 d10b36aa 41ee1305 d10b36aa dc86743d dad3c11e 04bbeda4 41ee1305 d10b36aa f0607bbb ed5cd9f8 c2afd24c 415463b0 d10b36aa 4d40a844 bc709f4b 0bedce2e 7dd36898 d1aa1f0d e06c9688 dc2d6ac9 e52a1813 6607296c 6b4c3001 5ba06fe5 f4709204 6d77751d 06873d30 0af318d4 e52a1813 e52a1813 e52a1813 e52a1813 e52a1813 e52a1813 d10b36aa 23f56d86 b46d5019 c17d0469 d10b36aa 41ee1305 d10b36aa 661f367f 7b537ca1 04bbeda4 41ee1305 d10b36aa b298dcb0 32e8159b b0e4b7c5 7173ee33 3d953373 e52a1813 727fea29 2089fd70 4116bd7e e52a1813 7d42f3bb 8ba080a5 0374847e 021fb596 5d27489d af0bffe7 5497c890 ea519d3a e52a1813 e52a1813 e52a1813 e52a1813 6af4decf f2499327 57f46322 0782ce13 e52a1813 e52a1813 e52a1813 d10b36aa 22acfc25 ba0f648f 0f642fc3 b46d5019 c17d0469 d10b36aa 41ee1305 d10b36aa abc56510
+    preview: cat <<'EOF' > extauth.go
+  content: "{{< doc-test paths=\"operations-go-client\" >}}\ncat <<'EOF' > extauth.go\npackage main\n\nimport (\n\t\"context\"\n\n\tupstreamkgateway \"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway\"\n\tupstreamshared \"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/shared\"\n\tenterprisev1alpha1 \"github.com/solo-io/kgateway-client/v2/api/v1alpha1/enterprisekgateway\"\n\tenterpriseshared \"github.com/solo-io/kgateway-client/v2/api/v1alpha1/shared\"\n\tenterpriseclientset \"github.com/solo-io/kgateway-client/v2/clientset/versioned\"\n\tcorev1 \"k8s.io/api/core/v1\"\n\tk8serrors \"k8s.io/apimachinery/pkg/api/errors\"\n\tmetav1 \"k8s.io/apimachinery/pkg/apis/meta/v1\"\n\t\"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured\"\n\t\"k8s.io/apimachinery/pkg/runtime/schema\"\n\t\"k8s.io/client-go/dynamic\"\n\t\"k8s.io/client-go/kubernetes\"\n\t\"k8s.io/client-go/rest\"\n\tgwv1 \"sigs.k8s.io/gateway-api/apis/v1\"\n)\n\nfunc createAPIKeySecret(ctx context.Context, config *rest.Config) error {\n\tclient, err := kubernetes.NewForConfig(config)\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tsecret := &corev1.Secret{\n\t\tObjectMeta: metav1.ObjectMeta{\n\t\t\tName:      \"my-apikey\",\n\t\t\tNamespace: \"kgateway-system\",\n\t\t\tLabels:    map[string]string{\"team\": \"infrastructure\"},\n\t\t},\n\t\tType: \"extauth.solo.io/apikey\",\n\t\tStringData: map[string]string{\n\t\t\t\"api-key\": \"N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy\",\n\t\t},\n\t}\n\n\t_, err = client.CoreV1().Secrets(\"kgateway-system\").Create(ctx, secret, metav1.CreateOptions{})\n\tif k8serrors.IsAlreadyExists(err) {\n\t\treturn nil\n\t}\n\treturn err\n}\n\nfunc createAuthConfig(ctx context.Context, config *rest.Config) error {\n\tclient, err := dynamic.NewForConfig(config)\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tgvr := schema.GroupVersionResource{\n\t\tGroup:    \"extauth.solo.io\",\n\t\tVersion:  \"v1\",\n\t\tResource: \"authconfigs\",\n\t}\n\n\tauthConfig := &unstructured.Unstructured{\n\t\tObject: map[string]interface{}{\n\t\t\t\"apiVersion\": \"extauth.solo.io/v1\",\n\t\t\t\"kind\":       \"AuthConfig\",\n\t\t\t\"metadata\": map[string]interface{}{\n\t\t\t\t\"name\":      \"apikey-auth\",\n\t\t\t\t\"namespace\": \"kgateway-system\",\n\t\t\t},\n\t\t\t\"spec\": map[string]interface{}{\n\t\t\t\t\"configs\": []interface{}{\n\t\t\t\t\tmap[string]interface{}{\n\t\t\t\t\t\t\"apiKeyAuth\": map[string]interface{}{\n\t\t\t\t\t\t\t\"headerName\": \"api-key\",\n\t\t\t\t\t\t\t\"labelSelector\": map[string]interface{}{\n\t\t\t\t\t\t\t\t\"team\": \"infrastructure\",\n\t\t\t\t\t\t\t},\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t},\n\t}\n\n\t_, err = client.Resource(gvr).Namespace(\"kgateway-system\").Create(ctx, authConfig, metav1.CreateOptions{})\n\tif k8serrors.IsAlreadyExists(err) {\n\t\treturn nil\n\t}\n\treturn err\n}\n\nfunc createExtAuthPolicy(ctx context.Context, config *rest.Config) error {\n\tclient, err := enterpriseclientset.NewForConfig(config)\n\tif err != nil {\n\t\treturn err\n\t}\n\n\tns := gwv1.Namespace(\"kgateway-system\")\n\n\tpolicy := &enterprisev1alpha1.EnterpriseKgatewayTrafficPolicy{\n\t\tTypeMeta: metav1.TypeMeta{\n\t\t\tAPIVersion: enterprisev1alpha1.SchemeGroupVersion.String(),\n\t\t\tKind:       \"EnterpriseKgatewayTrafficPolicy\",\n\t\t},\n\t\tObjectMeta: metav1.ObjectMeta{\n\t\t\tName:      \"extauth-policy\",\n\t\t\tNamespace: \"kgateway-system\",\n\t\t},\n\t\tSpec: enterprisev1alpha1.EnterpriseKgatewayTrafficPolicySpec{\n\t\t\tTrafficPolicySpec: upstreamkgateway.TrafficPolicySpec{\n\t\t\t\tTargetRefs: []upstreamshared.LocalPolicyTargetReferenceWithSectionName{\n\t\t\t\t\t{\n\t\t\t\t\t\tLocalPolicyTargetReference: upstreamshared.LocalPolicyTargetReference{\n\t\t\t\t\t\t\tGroup: \"gateway.networking.k8s.io\",\n\t\t\t\t\t\t\tKind:  \"Gateway\",\n\t\t\t\t\t\t\tName:  \"http-go\",\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t\tEntExtAuth: &enterprisev1alpha1.EntExtAuth{\n\t\t\t\tAuthConfigRef: &enterpriseshared.AuthConfigRef{\n\t\t\t\t\tName:      \"apikey-auth\",\n\t\t\t\t\tNamespace: &ns,\n\t\t\t\t},\n\t\t\t},\n\t\t},\n\t}\n\n\t_, err = client.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"kgateway-system\").\n\t\tCreate(ctx, policy, metav1.CreateOptions{})\n\tif k8serrors.IsAlreadyExists(err) {\n\t\treturn nil\n\t}\n\treturn err\n}\nEOF\n{{< /doc-test >}}"
+- after:
+    block: 24
+    fingerprint: 8c2ae287ee18aebd
+    lang: go
+    lines: 49350803 51284385 d0daecb5 28b8c501 262330f9 4a829123 2f3d2073 6ab9ac7c 21611e3d aae250ad 2d966cfb ba5ec51d e3bed7b2 e3690f0e 7f2c83a2 5a7603a3 985045f1 af7bbbab d10b36aa 9a4f22a9 3ce0efcc 04bbeda4 3538d3e3 d10b36aa 7b537ca1 04bbeda4 3538d3e3 d10b36aa 3cb26d7e 442fdc2b 3538d3e3 d10b36aa 2c984e57 3538d3e3 d10b36aa a194c39b c0e6bca8 8f78f42a 3302c7b6 04bbeda4 3538d3e3 d10b36aa 4a573b9c be857687 3538d3e3 d10b36aa d9312cc0 78887158 3538d3e3 d10b36aa 1236d5c6 3589d19d 3538d3e3 d10b36aa f0fe0872 d10b36aa abc56510
+    preview: cat <<'EOF' > main.go
+  content: "{{< doc-test paths=\"operations-go-client\" >}}\ncat <<'EOF' > main.go\npackage main\n\nimport (\n\t\"context\"\n\t\"flag\"\n\t\"fmt\"\n\t\"path/filepath\"\n\n\tenterpriseclientset \"github.com/solo-io/kgateway-client/v2/clientset/versioned\"\n\tmetav1 \"k8s.io/apimachinery/pkg/apis/meta/v1\"\n\t\"k8s.io/client-go/tools/clientcmd\"\n\t\"k8s.io/client-go/util/homedir\"\n)\n\nfunc main() {\n\tvar kubeconfig *string\n\tif home := homedir.HomeDir(); home != \"\" {\n\t\tkubeconfig = flag.String(\"kubeconfig\", filepath.Join(home, \".kube\", \"config\"), \"path to kubeconfig\")\n\t} else {\n\t\tkubeconfig = flag.String(\"kubeconfig\", \"\", \"path to kubeconfig\")\n\t}\n\tflag.Parse()\n\n\tconfig, err := clientcmd.BuildConfigFromFlags(\"\", *kubeconfig)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tclient, err := enterpriseclientset.NewForConfig(config)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tctx := context.Background()\n\n\tif err := createGateway(ctx, config, \"kgateway-system\"); err != nil {\n\t\tpanic(err)\n\t}\n\tif err := createHTTPRoute(ctx, config, \"httpbin\"); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Gateway and HTTPRoute created successfully\")\n\n\tlist, err := client.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"\").\n\t\tList(ctx, metav1.ListOptions{})\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Printf(\"Found %d EnterpriseKgatewayTrafficPolicies\\n\", len(list.Items))\n\n\tif err := createAPIKeySecret(ctx, config); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"API key secret created\")\n\n\tif err := createAuthConfig(ctx, config); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"AuthConfig created\")\n\n\tif err := createExtAuthPolicy(ctx, config); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"ExtAuth policy created\")\n}\nEOF\n{{< /doc-test >}}"
+- after:
+    block: 25
+    fingerprint: 9773fbce2e611e70
+    lang: sh
+    lines: 5aebdf74 840a6543
+    preview: go mod tidy
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    go mod tidy && go run .  # add the API key Secret, the AuthConfig, and the ext auth policy
+    {{< /doc-test >}}
+- after:
+    block: 27
+    fingerprint: a38db82477ec56ca
+    lang: sh
+    lines: a38db824
+    preview: kubectl get enterprisekgatewaytrafficpolicy extauth-policy -n kgateway-system -o
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "secret my-apikey has type extauth.solo.io/apikey"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: kgateway-system
+            name: my-apikey
+        jsonPath: "$.type"
+        jsonPathExpectation:
+          comparator: equals
+          value: "extauth.solo.io/apikey"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    - name: "AuthConfig apikey-auth is accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: kgateway-system
+            name: apikey-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: kgateway-system
+            name: extauth-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 28
+    fingerprint: 972ef6cf94030317
+    lang: sh
+    lines: 972ef6cf
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/anything -H "host: api.example.com"'
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request without an API key is denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "api.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 31
+    fingerprint: ca14a08fc2fd6b09
+    lang: sh
+    lines: 5c00bf80 f9b0fd29
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/anything -H "host: api.example.com" \'
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "a request with the valid API key succeeds with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "api.example.com"
+          api-key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 34
+    fingerprint: c83d9aa9e5f0847d
+    lang: go
+    lines: 4b632e9a 51284385 d0daecb5 28b8c501 c894b672 0a356568 d3a96884 2d50c25a 6ab9ac7c bef899b6 21611e3d 91e56d2d ba5ec51d 54bbd63c 4de728d3 95c77d7a ef36cd7c 0277a02e 32e8159b b0e4b7c5 7173ee33 3d953373 e52a1813 727fea29 3908302b 4116bd7e e52a1813 7d42f3bb 8ba080a5 0374847e 021fb596 5d27489d af0bffe7 5497c890 ea519d3a e52a1813 e52a1813 e52a1813 95ed2b37 a81e77e9 924aace4 ff3dd121 aaf2ff0e ac748305 e52a1813 e52a1813 e52a1813 e52a1813 e52a1813 d10b36aa 38b1c4e8 ba0f648f 0f642fc3 b46d5019 c17d0469 d10b36aa 41ee1305 d10b36aa abc56510
+    preview: cat <<'EOF' > ratelimit.go
+  content: "{{< doc-test paths=\"operations-go-client\" >}}\ncat <<'EOF' > ratelimit.go\npackage main\n\nimport (\n\t\"context\"\n\t\"time\"\n\n\tupstreamkgateway \"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway\"\n\tupstreamshared \"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/shared\"\n\tenterprisev1alpha1 \"github.com/solo-io/kgateway-client/v2/api/v1alpha1/enterprisekgateway\"\n\tenterpriseclientset \"github.com/solo-io/kgateway-client/v2/clientset/versioned\"\n\tk8serrors \"k8s.io/apimachinery/pkg/api/errors\"\n\tmetav1 \"k8s.io/apimachinery/pkg/apis/meta/v1\"\n\t\"k8s.io/client-go/rest\"\n)\n\nfunc createLocalRateLimitPolicy(ctx context.Context, config *rest.Config) error {\n\tclient, _ := enterpriseclientset.NewForConfig(config)\n\n\tmaxTokens := int32(1)\n\ttokensPerFill := int32(1)\n\tfillInterval := metav1.Duration{Duration: 1 * time.Minute}\n\n\tpolicy := &enterprisev1alpha1.EnterpriseKgatewayTrafficPolicy{\n\t\tTypeMeta: metav1.TypeMeta{\n\t\t\tAPIVersion: enterprisev1alpha1.SchemeGroupVersion.String(),\n\t\t\tKind:       \"EnterpriseKgatewayTrafficPolicy\",\n\t\t},\n\t\tObjectMeta: metav1.ObjectMeta{\n\t\t\tName:      \"local-ratelimit\",\n\t\t\tNamespace: \"kgateway-system\",\n\t\t},\n\t\tSpec: enterprisev1alpha1.EnterpriseKgatewayTrafficPolicySpec{\n\t\t\tTrafficPolicySpec: upstreamkgateway.TrafficPolicySpec{\n\t\t\t\tTargetRefs: []upstreamshared.LocalPolicyTargetReferenceWithSectionName{\n\t\t\t\t\t{\n\t\t\t\t\t\tLocalPolicyTargetReference: upstreamshared.LocalPolicyTargetReference{\n\t\t\t\t\t\t\tGroup: \"gateway.networking.k8s.io\",\n\t\t\t\t\t\t\tKind:  \"Gateway\",\n\t\t\t\t\t\t\tName:  \"http-go\",\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t\tRateLimit: &upstreamkgateway.RateLimit{\n\t\t\t\t\tLocal: &upstreamkgateway.LocalRateLimitPolicy{\n\t\t\t\t\t\tTokenBucket: &upstreamkgateway.TokenBucket{\n\t\t\t\t\t\t\tMaxTokens:     maxTokens,\n\t\t\t\t\t\t\tTokensPerFill: &tokensPerFill,\n\t\t\t\t\t\t\tFillInterval:  fillInterval,\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t},\n\t}\n\n\t_, err := client.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"kgateway-system\").\n\t\tCreate(ctx, policy, metav1.CreateOptions{})\n\tif k8serrors.IsAlreadyExists(err) {\n\t\treturn nil\n\t}\n\treturn err\n}\nEOF\n{{< /doc-test >}}"
+- after:
+    block: 35
+    fingerprint: d6c2967e8b6a83ec
+    lang: go
+    lines: 49350803 51284385 d0daecb5 28b8c501 262330f9 4a829123 2f3d2073 6ab9ac7c 21611e3d aae250ad 2d966cfb ba5ec51d e3bed7b2 e3690f0e 7f2c83a2 5a7603a3 985045f1 af7bbbab d10b36aa 9a4f22a9 3ce0efcc 04bbeda4 3538d3e3 d10b36aa 7b537ca1 04bbeda4 3538d3e3 d10b36aa 3cb26d7e 442fdc2b 3538d3e3 d10b36aa 2c984e57 3538d3e3 d10b36aa a194c39b c0e6bca8 8f78f42a 3302c7b6 04bbeda4 3538d3e3 d10b36aa 4a573b9c be857687 3538d3e3 d10b36aa d9312cc0 78887158 3538d3e3 d10b36aa 1236d5c6 3589d19d 3538d3e3 d10b36aa f0fe0872 427dc3e9 3538d3e3 d10b36aa d413cfaa d10b36aa abc56510
+    preview: cat <<'EOF' > main.go
+  content: "{{< doc-test paths=\"operations-go-client\" >}}\ncat <<'EOF' > main.go\npackage main\n\nimport (\n\t\"context\"\n\t\"flag\"\n\t\"fmt\"\n\t\"path/filepath\"\n\n\tenterpriseclientset \"github.com/solo-io/kgateway-client/v2/clientset/versioned\"\n\tmetav1 \"k8s.io/apimachinery/pkg/apis/meta/v1\"\n\t\"k8s.io/client-go/tools/clientcmd\"\n\t\"k8s.io/client-go/util/homedir\"\n)\n\nfunc main() {\n\tvar kubeconfig *string\n\tif home := homedir.HomeDir(); home != \"\" {\n\t\tkubeconfig = flag.String(\"kubeconfig\", filepath.Join(home, \".kube\", \"config\"), \"path to kubeconfig\")\n\t} else {\n\t\tkubeconfig = flag.String(\"kubeconfig\", \"\", \"path to kubeconfig\")\n\t}\n\tflag.Parse()\n\n\tconfig, err := clientcmd.BuildConfigFromFlags(\"\", *kubeconfig)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tclient, err := enterpriseclientset.NewForConfig(config)\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\n\tctx := context.Background()\n\n\tif err := createGateway(ctx, config, \"kgateway-system\"); err != nil {\n\t\tpanic(err)\n\t}\n\tif err := createHTTPRoute(ctx, config, \"httpbin\"); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Gateway and HTTPRoute created successfully\")\n\n\tlist, err := client.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"\").\n\t\tList(ctx, metav1.ListOptions{})\n\tif err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Printf(\"Found %d EnterpriseKgatewayTrafficPolicies\\n\", len(list.Items))\n\n\tif err := createAPIKeySecret(ctx, config); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"API key secret created\")\n\n\tif err := createAuthConfig(ctx, config); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"AuthConfig created\")\n\n\tif err := createExtAuthPolicy(ctx, config); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"ExtAuth policy created\")\n\n\tif err := createLocalRateLimitPolicy(ctx, config); err != nil {\n\t\tpanic(err)\n\t}\n\tfmt.Println(\"Rate limit policy created\")\n}\nEOF\n{{< /doc-test >}}"
+- after:
+    block: 36
+    fingerprint: 9773fbce2e611e70
+    lang: sh
+    lines: 5aebdf74 840a6543
+    preview: go mod tidy
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    go mod tidy && go run .  # add the local rate limit policy
+    {{< /doc-test >}}
+- after:
+    block: 38
+    fingerprint: da8bb53632e16e98
+    lang: sh
+    lines: da8bb536
+    preview: kubectl get enterprisekgatewaytrafficpolicy local-ratelimit -n kgateway-system -
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "local-ratelimit is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: kgateway-system
+            name: local-ratelimit
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 39
+    fingerprint: 961869cb30402d79
+    lang: sh
+    lines: ad38eeb8 287ec2c5 663f7696 f9b0fd29 a4c3ed04
+    preview: for i in $(seq 1 3); do
+  content: |-
+    {{< doc-test paths="operations-go-client" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "requests beyond the single token are rate limited with 429"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "api.example.com"
+          api-key: "N2YwMDIxZTEtNGUzNS1jNzgzLTRkYjAtYjE2YzRkZGVmNjcy"
+      source:
+        type: local
+      expect:
+        statusCode: 429
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 42
+    fingerprint: 3a485902bdaaed30
+    lang: go
+    lines: 82aed4a5 2a3519c7 d0daecb5 28b8c501 c8b61ec0 c894b672 0a356568 d3a96884 2d50c25a 0bd10d17 d5923f96 21611e3d 14795ea4 ba5ec51d d196bf27 9f27d321 3cb26d7e 95c77d7a ef36cd7c 0277a02e 32e8159b 727fea29 3908302b 4116bd7e e52a1813 7d42f3bb 8ba080a5 0374847e 021fb596 5d27489d af0bffe7 5497c890 ea519d3a e52a1813 e52a1813 e52a1813 95ed2b37 a81e77e9 924aace4 ff3dd121 aaf2ff0e ac748305 e52a1813 e52a1813 e52a1813 e52a1813 e52a1813 d10b36aa e35701f9 ba0f648f 0f642fc3 04bbeda4 784bcd6f d10b36aa fcf35318 ba0f648f f876daa5 04bbeda4 15090a83 d10b36aa 70c4e6b9 314e7bc4 81a6658c d10b36aa 50b8d549 7983afa6 d10b36aa 94f04400 feb53aa2 d10b36aa efce28d4 e1c9a2fc 463562b9 d10b36aa d10b36aa 23a91f6e 9f27d321 3cb26d7e b298dcb0 32e8159b 727fea29 2089fd70 4116bd7e e52a1813 7d42f3bb 8ba080a5 0374847e 021fb596 5d27489d af0bffe7 5497c890 ea519d3a e52a1813 e52a1813 e52a1813 e52a1813 6af4decf f2499327 57f46322 0782ce13 e52a1813 e52a1813 e52a1813 d10b36aa e35701f9 ba0f648f 0f642fc3 04bbeda4 784bcd6f d10b36aa fcf35318 ba0f648f 121dd24d 04bbeda4 15090a83 d10b36aa efce28d4 e1c9a2fc 463562b9 d10b36aa 177f6c8b ee78599d 45121d63 d10b36aa 00ef49de 331bd802 d10b36aa d10b36aa abc56510
+    preview: cat <<'EOF' > policy_test.go
+  content: "{{< doc-test paths=\"operations-go-client\" >}}\ncat <<'EOF' > policy_test.go\npackage main_test\n\nimport (\n\t\"context\"\n\t\"testing\"\n\t\"time\"\n\n\tupstreamkgateway \"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/kgateway\"\n\tupstreamshared \"github.com/kgateway-dev/kgateway/v2/api/v1alpha1/shared\"\n\tenterprisev1alpha1 \"github.com/solo-io/kgateway-client/v2/api/v1alpha1/enterprisekgateway\"\n\tenterpriseshared \"github.com/solo-io/kgateway-client/v2/api/v1alpha1/shared\"\n\tfakeclientset \"github.com/solo-io/kgateway-client/v2/clientset/versioned/fake\"\n\tmetav1 \"k8s.io/apimachinery/pkg/apis/meta/v1\"\n\tgwv1 \"sigs.k8s.io/gateway-api/apis/v1\"\n)\n\nfunc TestLocalRateLimitPolicy(t *testing.T) {\n\tfakeClient := fakeclientset.NewSimpleClientset()\n\tctx := context.Background()\n\n\tmaxTokens := int32(1)\n\ttokensPerFill := int32(1)\n\tfillInterval := metav1.Duration{Duration: 1 * time.Minute}\n\n\tpolicy := &enterprisev1alpha1.EnterpriseKgatewayTrafficPolicy{\n\t\tObjectMeta: metav1.ObjectMeta{\n\t\t\tName:      \"local-ratelimit\",\n\t\t\tNamespace: \"kgateway-system\",\n\t\t},\n\t\tSpec: enterprisev1alpha1.EnterpriseKgatewayTrafficPolicySpec{\n\t\t\tTrafficPolicySpec: upstreamkgateway.TrafficPolicySpec{\n\t\t\t\tTargetRefs: []upstreamshared.LocalPolicyTargetReferenceWithSectionName{\n\t\t\t\t\t{\n\t\t\t\t\t\tLocalPolicyTargetReference: upstreamshared.LocalPolicyTargetReference{\n\t\t\t\t\t\t\tGroup: \"gateway.networking.k8s.io\",\n\t\t\t\t\t\t\tKind:  \"Gateway\",\n\t\t\t\t\t\t\tName:  \"http-go\",\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t\tRateLimit: &upstreamkgateway.RateLimit{\n\t\t\t\t\tLocal: &upstreamkgateway.LocalRateLimitPolicy{\n\t\t\t\t\t\tTokenBucket: &upstreamkgateway.TokenBucket{\n\t\t\t\t\t\t\tMaxTokens:     maxTokens,\n\t\t\t\t\t\t\tTokensPerFill: &tokensPerFill,\n\t\t\t\t\t\t\tFillInterval:  fillInterval,\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t},\n\t}\n\n\t_, err := fakeClient.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"kgateway-system\").\n\t\tCreate(ctx, policy, metav1.CreateOptions{})\n\tif err != nil {\n\t\tt.Fatalf(\"Create() error = %v\", err)\n\t}\n\n\tgot, err := fakeClient.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"kgateway-system\").\n\t\tGet(ctx, \"local-ratelimit\", metav1.GetOptions{})\n\tif err != nil {\n\t\tt.Fatalf(\"Get() error = %v\", err)\n\t}\n\n\ttb := got.Spec.TrafficPolicySpec.RateLimit.Local.TokenBucket\n\tif tb.MaxTokens != 1 {\n\t\tt.Errorf(\"expected MaxTokens 1, got %d\", tb.MaxTokens)\n\t}\n\tif *tb.TokensPerFill != 1 {\n\t\tt.Errorf(\"expected TokensPerFill 1, got %d\", *tb.TokensPerFill)\n\t}\n\tif tb.FillInterval.Duration != time.Minute {\n\t\tt.Errorf(\"expected FillInterval 1m, got %s\", tb.FillInterval.Duration)\n\t}\n\n\trefs := got.Spec.TrafficPolicySpec.TargetRefs\n\tif len(refs) != 1 || string(refs[0].Name) != \"http-go\" || string(refs[0].Kind) != \"Gateway\" {\n\t\tt.Errorf(\"unexpected targetRef: %+v\", refs)\n\t}\n}\n\nfunc TestExtAuthPolicy(t *testing.T) {\n\tfakeClient := fakeclientset.NewSimpleClientset()\n\tctx := context.Background()\n\n\tns := gwv1.Namespace(\"kgateway-system\")\n\n\tpolicy := &enterprisev1alpha1.EnterpriseKgatewayTrafficPolicy{\n\t\tObjectMeta: metav1.ObjectMeta{\n\t\t\tName:      \"extauth-policy\",\n\t\t\tNamespace: \"kgateway-system\",\n\t\t},\n\t\tSpec: enterprisev1alpha1.EnterpriseKgatewayTrafficPolicySpec{\n\t\t\tTrafficPolicySpec: upstreamkgateway.TrafficPolicySpec{\n\t\t\t\tTargetRefs: []upstreamshared.LocalPolicyTargetReferenceWithSectionName{\n\t\t\t\t\t{\n\t\t\t\t\t\tLocalPolicyTargetReference: upstreamshared.LocalPolicyTargetReference{\n\t\t\t\t\t\t\tGroup: \"gateway.networking.k8s.io\",\n\t\t\t\t\t\t\tKind:  \"Gateway\",\n\t\t\t\t\t\t\tName:  \"http-go\",\n\t\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t\tEntExtAuth: &enterprisev1alpha1.EntExtAuth{\n\t\t\t\tAuthConfigRef: &enterpriseshared.AuthConfigRef{\n\t\t\t\t\tName:      \"apikey-auth\",\n\t\t\t\t\tNamespace: &ns,\n\t\t\t\t},\n\t\t\t},\n\t\t},\n\t}\n\n\t_, err := fakeClient.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"kgateway-system\").\n\t\tCreate(ctx, policy, metav1.CreateOptions{})\n\tif err != nil {\n\t\tt.Fatalf(\"Create() error = %v\", err)\n\t}\n\n\tgot, err := fakeClient.EnterprisekgatewayEnterprisekgateway().\n\t\tEnterpriseKgatewayTrafficPolicies(\"kgateway-system\").\n\t\tGet(ctx, \"extauth-policy\", metav1.GetOptions{})\n\tif err != nil {\n\t\tt.Fatalf(\"Get() error = %v\", err)\n\t}\n\n\trefs := got.Spec.TrafficPolicySpec.TargetRefs\n\tif len(refs) != 1 || string(refs[0].Name) != \"http-go\" || string(refs[0].Kind) != \"Gateway\" {\n\t\tt.Errorf(\"unexpected targetRef: %+v\", refs)\n\t}\n\n\tauthRef := got.Spec.EntExtAuth.AuthConfigRef\n\tif authRef.Name != \"apikey-auth\" {\n\t\tt.Errorf(\"expected AuthConfigRef.Name apikey-auth, got %s\", authRef.Name)\n\t}\n\tif authRef.Namespace == nil || string(*authRef.Namespace) != \"kgateway-system\" {\n\t\tt.Errorf(\"expected AuthConfigRef.Namespace kgateway-system, got %v\", authRef.Namespace)\n\t}\n}\nEOF\n{{< /doc-test >}}"

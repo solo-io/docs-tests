@@ -1,0 +1,412 @@
+format: 1
+source: assets/conrefs/pages/gateway/licensing.md
+blocks:
+- e7ec31289e349cd3 sh
+- d6b60841a75f90f9 sh
+- 94947d75279727a9 yaml
+- 2200cce69b6f359b yaml
+- fe3eda094a7ecca3 sh
+- ec1a4d57ca19073c console
+- 12f398d993156eaf sh
+- 35bd3ef804e81bc9
+- 1b5f8b27730c708c sh
+- 4460a322d3025cee bash
+- 274079499b6408e7 sh
+- f108eba057e499c0 bash
+- 68ee6fcd2cb53df1 bash
+- 12f398d993156eaf sh
+tags:
+- paths: licensing
+  block: 0
+  fingerprint: e7ec31289e349cd3
+  lang: sh
+  lines: 8a3b9e28 1bd2e2c1 7fe1d0d2 f3b85382
+  preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
+  form:
+    attr: paths="licensing"
+    only: true
+    lead: ' '
+- paths: licensing-secret
+  block: 2
+  fingerprint: 94947d75279727a9
+  lang: yaml
+  lines: 4f9a49d2 f1540154 a67acb0a 1426decf 8c8c4228 91e75609 0bebd850 2f7c298d ce1a9758 abc56510
+  preview: cat << EOF | kubectl apply -f -
+  form:
+    attr: paths="licensing-secret"
+    only: true
+    lead: ' '
+- paths: licensing,licensing-secret
+  block: 4
+  fingerprint: fe3eda094a7ecca3
+  lang: sh
+  lines: a23bf984 1bd2e2c1 0c975bff
+  preview: kubectl get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license   \
+  form:
+    attr: paths="licensing,licensing-secret"
+    only: true
+    lead: ' '
+- paths: licensing
+  block: 6
+  fingerprint: 12f398d993156eaf
+  lang: sh
+  lines: 12f398d9
+  preview: kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "
+  form:
+    attr: paths="licensing"
+    only: true
+    lead: ' '
+- paths: licensing
+  block: 10
+  fingerprint: 274079499b6408e7
+  lang: sh
+  lines: 87fb9ffa bb33f2e0 d2f34d1e bc73c86d
+  preview: kubectl create secret generic --save-config \
+  form:
+    attr: paths="licensing"
+    only: true
+    lead: ' '
+- paths: licensing
+  block: 11
+  fingerprint: f108eba057e499c0
+  lang: bash
+  lines: f108eba0
+  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout restart deploy
+  form:
+    attr: paths="licensing"
+    only: true
+    lead: ' '
+- paths: licensing
+  block: 13
+  fingerprint: 12f398d993156eaf
+  lang: sh
+  lines: 12f398d9
+  preview: kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "
+  form:
+    attr: paths="licensing"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: e7ec31289e349cd3
+    lang: sh
+    lines: 8a3b9e28 1bd2e2c1 7fe1d0d2 f3b85382
+    preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
+  content: |-
+    {{< doc-test paths="licensing" >}}
+    kubectl rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: "licensing - the control plane Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    - name: "licensing - the {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license secret holds the {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key key"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license
+        jsonPath: "$.data['{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key']"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: Provide key in a secret
+    line: f2a06328ba58d187
+    occurrence: 0
+    words: bb0347a4 9f584196 a0aa99c8 4d040d3f cc1d3b02 2c70e12b a7e2d26e 7f9c40c9 ca978112 2bb80d53 6db7d803 bb0347a4 1e142e62 d9c0d341 eb4e3800 21a355f1 5e82ea9e
+    block_before:
+      block: 1
+      fingerprint: d6b60841a75f90f9
+      lang: sh
+      lines: 8a3b9e28 1bd2e2c1 7fe1d0d2 1c1a4bdb
+      preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< re
+  content: |-
+    {{< doc-test paths="licensing-secret" >}}
+    # Start from a cluster without the control plane: install the Gateway API
+    # CRDs and the {{< reuse "/kgw-docs/snippets/helm-kgateway-crds.md" >}} chart (which creates the {{< reuse "kgw-docs/snippets/namespace.md" >}} namespace), so that the
+    # secret exists before the control plane is installed.
+    kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< reuse "kgw-docs/versions/k8s-gw-version.md" >}}/standard-install.yaml
+    helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway-crds.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway-crds.md" >}} \
+      --create-namespace \
+      --namespace {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 94947d75279727a9
+    lang: yaml
+    lines: 4f9a49d2 f1540154 a67acb0a 1426decf 8c8c4228 91e75609 0bebd850 2f7c298d ce1a9758 abc56510
+    preview: cat << EOF | kubectl apply -f -
+  content: |-
+    {{< doc-test paths="licensing-secret" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "licensing-secret - the {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license secret holds the {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key key"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license
+        jsonPath: "$.data['{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key']"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 2200cce69b6f359b
+    lang: yaml
+    lines: 46ab7fcc b8109578 241af637
+    preview: 'licensing:'
+  content: |-
+    {{< doc-test paths="licensing-secret" >}}
+    # Install the control plane with the Helm values from the previous step.
+    # The values on the page set secretName to license-key, but the secret that
+    # step 1 creates, and the chart default, is {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license; use that name so
+    # that the control plane reads the key from the secret in step 1.
+    cat > licensing-values.yaml <<EOF
+    licensing:
+      secretName: {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license
+      createSecret: false
+    EOF
+    helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      -f licensing-values.yaml
+    # Create a Gateway so that the control plane reconciles Gateway API resources,
+    # which is when it logs a license validation error for a missing key.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: Gateway
+    metadata:
+      name: license-check
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      gatewayClassName: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+      listeners:
+      - name: http
+        protocol: HTTP
+        port: 8080
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: "licensing-secret - the control plane Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    - name: "licensing-secret - the control plane reads the license key from the secret that you created"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='ENTERPRISE_KGATEWAY_LICENSE_KEY')].valueFrom.secretKeyRef.name"
+        jsonPathExpectation:
+          comparator: equals
+          value: {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 5
+    - name: "licensing-secret - the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} GatewayClass is accepted by the control plane"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "licensing-secret - the license-check Gateway is programmed"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: license-check
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "licensing-secret - the control plane logs no license validation error"
+      retries: 10
+      command:
+        command: "kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}}"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: "license validation failed"
+          negate: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: ec1a4d57ca19073c
+    lang: console
+    lines: 021fb596 7ea306e4 021fb596 75137d41 950ea065 4253f574 d10b36aa 39d4b54e b9c85eff 7b50fa85 37d8d093 225659c4 f17e85d2 d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="licensing,licensing-secret" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "licensing - the license key in the secret is an unexpired kgateway license"
+      retries: 10
+      command:
+        command: |
+          kubectl get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key}' | base64 --decode | python3 -c 'import sys, json, base64, time; p = sys.stdin.read().strip().split(".")[1]; p += "=" * (-len(p) % 4); d = json.loads(base64.urlsafe_b64decode(p)); print("product=%s lt=%s %s" % (d.get("product"), d.get("lt"), "unexpired" if d.get("exp", 0) > time.time() else "expired"))'
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          - contains: "product=kgateway"
+          - contains: "unexpired"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 35bd3ef804e81bc9
+    lang: ''
+    lines: c29db69a 385ed6bf
+    preview: '{"level":"warn","ts":"2024-03-23T18:36:16.282Z","caller":"setup/setup.go:85",'
+  content: |-
+    {{< doc-test paths="licensing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "licensing - the control plane with a valid license logs no license validation error"
+      retries: 10
+      command:
+        command: "kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}}"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: "license validation failed"
+          negate: true
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: f108eba057e499c0
+    lang: bash
+    lines: f108eba0
+    preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout restart deploy
+  content: |-
+    {{< doc-test paths="licensing" >}}
+    kubectl rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: "licensing - the control plane Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 12f398d993156eaf
+    lang: sh
+    lines: 12f398d9
+    preview: kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "
+  content: |-
+    {{< doc-test paths="licensing" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "licensing - the control plane Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    - name: "licensing - the {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license secret holds the {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key key"
+      wait:
+        target:
+          kind: Secret
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license
+        jsonPath: "$.data['{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key']"
+        jsonPathExpectation:
+          comparator: exists
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: "licensing - the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}} GatewayClass is accepted by the control plane"
+      wait:
+        target:
+          kind: GatewayClass
+          metadata:
+            name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "licensing - after the restart, the control plane logs no license validation error"
+      retries: 10
+      command:
+        command: "kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}}"
+      source:
+        type: local
+      expect:
+        exitCode: 0
+        stdout:
+          contains: "license validation failed"
+          negate: true
+    EOF
+    {{< /doc-test >}}

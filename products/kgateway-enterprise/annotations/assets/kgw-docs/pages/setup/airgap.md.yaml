@@ -1,0 +1,422 @@
+format: 1
+source: assets/kgw-docs/pages/setup/airgap.md
+blocks:
+- 5536542269424815 sh
+- a0091553d0bc5502 sh
+- 91959620ac4f4bde sh
+- 3fa5e3ad5ff0fbda sh
+- 8a88afd7dbb99ec6 sh
+- 5d346ae46d07ba19 sh
+- fcf8a98cc188050b sh
+- b32f929496569a65 sh
+- 25973efb1abc272c sh
+- cfa31b61454dd306 sh
+- 3427dd8a478a68b7 sh
+- c04379abe4e9d1b0 yaml
+- 107d743b8d136456 sh
+- 3162e8d5118a2cb2 sh
+- c1e1531a1c9b7609 sh
+- 4fee989c3b3d150c yaml
+- b4d7e76ad1eefdb0 sh
+- 5d23a76002646909 sh
+- 942bfd22e310fe30 sh
+- a88f244044de2664 sh
+- 57f6d8e3a3d2a7b6 sh
+- d95c6e77e9079bf5 sh
+- 5883f3f1d0b04615 sh
+- c2e9fed2d2b7c50e sh
+- c91c96016b05a816 sh
+- ab959a3a3b2b96a5 yaml
+- 459ef5b82adf29b6 sh
+- 131390393a43fb68 sh
+- 3162e8d5118a2cb2 sh
+- 12e825766f023dfa yaml
+- b16e6f401babfd1e sh
+- f2445f29d72b7943
+tags:
+- paths: install-airgap
+  block: 0
+  fingerprint: '5536542269424815'
+  lang: sh
+  lines: '55365422'
+  preview: export IMAGE_SUFFIX=""
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 2
+  fingerprint: 91959620ac4f4bde
+  lang: sh
+  lines: 01091e85 45b4269a 51e08593 65fb6266
+  preview: export KGATEWAY_VERSION={{< reuse "kgw-docs/versions/n-patch.md" >}}
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 3
+  fingerprint: 3fa5e3ad5ff0fbda
+  lang: sh
+  lines: 67086ac3 2621054b 3892eac4 dd6b28f6 38c49893 3b5e3f71 6c223d45 6274f646
+  preview: export KGATEWAY_CONTROLLER_IMG=us-docker.pkg.dev/solo-public/{{< reuse "kgw-docs
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 5
+  fingerprint: 5d346ae46d07ba19
+  lang: sh
+  lines: 08771fc5 3af690b4 1784bad7 261bc773 3f87acac 52482e1d d6cde73b 8fe34dac
+  preview: export KGATEWAY_CONTROLLER_PRIVATE=$PRIVATE_REGISTRY/$PRIVATE_REPOSITORY/{{< reu
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 7
+  fingerprint: b32f929496569a65
+  lang: sh
+  lines: d0e0484a cf6d5da8 489e11ad 79c57e48 a60cc6ad aa6abb32 6a416213 ae702a45
+  preview: crane copy $KGATEWAY_CONTROLLER_IMG $KGATEWAY_CONTROLLER_PRIVATE
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 12
+  fingerprint: 107d743b8d136456
+  lang: sh
+  lines: 107d743b
+  preview: kubectl create namespace {{< reuse "kgw-docs/snippets/namespace.md" >}}
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 15
+  fingerprint: 4fee989c3b3d150c
+  lang: yaml
+  lines: 660fb332 a08a3033 a7ae9f33 faffb811 2bbad05f adc43cf7 a08a3033 22b45a2d 2d0a637c e409bdd9 46ab7fcc 76d1a2de 820e0e8e 30b1d8ef 125e7322 2ee1c717 2dd92b07 0bebd850 abc56510
+  preview: cat > values.yaml <<EOF
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 16
+  fingerprint: b4d7e76ad1eefdb0
+  lang: sh
+  lines: f1131c46 aac80e46
+  preview: 'helm pull oci://{{< reuse "kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse '
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 17
+  fingerprint: 5d23a76002646909
+  lang: sh
+  lines: 82e1786d 5ac36590
+  preview: helm push {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}}-$KGATEWAY_VERSION.t
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 18
+  fingerprint: 942bfd22e310fe30
+  lang: sh
+  lines: 4d411d80 6a5e7b1f 81d7cf7a e479313a 6a5e7b1f 1bd2e2c1 0e1a9b32
+  preview: helm upgrade -i {{< reuse "kgw-docs/snippets/helm-kgateway-crds.md" >}} oci://$P
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 19
+  fingerprint: a88f244044de2664
+  lang: sh
+  lines: 6c223d45 a0a847b1 d6cde73b fc7e66ac
+  preview: export PORTAL_CONTROLLER_IMG=us-docker.pkg.dev/solo-public/{{< reuse "kgw-docs/s
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 21
+  fingerprint: d95c6e77e9079bf5
+  lang: sh
+  lines: 6a416213 d5fc38db
+  preview: crane copy $PORTAL_CONTROLLER_IMG $PORTAL_CONTROLLER_PRIVATE
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 22
+  fingerprint: 5883f3f1d0b04615
+  lang: sh
+  lines: 3c0a8f65 3514b9f1 cdbb08ef 603cbf9b
+  preview: helm pull oci://{{< reuse "kgw-docs/snippets/helm-path.md" >}}/charts/portal-crd
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 25
+  fingerprint: ab959a3a3b2b96a5
+  lang: yaml
+  lines: 16c71da1 4f6d8314 dc5b5dd8 8c8c4228 fa4a9675 0ccc8edc 36184fa5 d10802a2 dfa91c8f a08a3033 fa491143 75abfc25 39754f16 112b8443 be80440e 36184fa5 a58565b2 36184fa5 2d0a637c e409bdd9 147ec90d 398ce3a8 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 26
+  fingerprint: 459ef5b82adf29b6
+  lang: sh
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 2dd92b07 0bebd850 36184fa5 9cc14d83 9287e3e4 a08a3033 fa491143 75abfc25 e2db7d87 112b8443 e8215d3e 2d0a637c e409bdd9 356067ee ab89fa94 ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 2728dad4 b500bc0d 3e196ba7 ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 ecd84c9c 6c20ea04 ba62cf2b ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 08ed05cb ca164524 9eb3a28d ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 7fb2dd35 5682962a abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 27
+  fingerprint: 131390393a43fb68
+  lang: sh
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 2dd92b07 0bebd850 36184fa5 9cc14d83 9287e3e4 a08a3033 fa491143 75abfc25 e2db7d87 112b8443 e8215d3e 2d0a637c e409bdd9 356067ee ab89fa94 ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 2728dad4 b500bc0d cab2be2b 77f1ea54 cde43a03 14551a55 2629ac0e 983d6140 0217db29 3e196ba7 ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 ecd84c9c 6c20ea04 cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ba62cf2b ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 08ed05cb f6734d9c cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 d5b7afcc 9eb3a28d ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 7fb2dd35 112b8443 cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 c0dfc4f9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+- paths: install-airgap
+  block: 30
+  fingerprint: b16e6f401babfd1e
+  lang: sh
+  lines: a5809f9d 13d9d91c 662ce3bd
+  preview: kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath
+  form:
+    attr: paths="install-airgap"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 4
+    fingerprint: 8a88afd7dbb99ec6
+    lang: sh
+    lines: c13d7aa3 a4c03bca
+    preview: export PRIVATE_REGISTRY=<registry.example.com>
+  content: |2-
+       {{< doc-test paths="install-airgap" >}}
+       # ============================================================================
+       # Doc test coverage for "Install in air-gapped environments" (not rendered)
+       # ============================================================================
+       # WHAT THIS TEST VALIDATES:
+       #   * Step 1: the standard images, including WAF and Portal, are copied with
+       #     crane from the public registries to a private registry.
+       #   * Step 2: the namespace and an image pull secret.
+       #   * Step 3: the values file with the license key, "Mirror Helm charts": both
+       #     charts are pulled, pushed to the private registry, and installed from it.
+       #   * "Install Portal from the private registry": the Portal images and charts
+       #     are mirrored, the portal controller is installed from the private
+       #     registry, and the PortalParameters resource is created.
+       #   * Step 4: the gateway parameters resource, also with resource settings.
+       #   * Step 5: the controller, the proxy, ext-auth-service, ext-cache,
+       #     rate-limiter, waf-server, and portal-controller run images from the
+       #     private registry, and their pods are ready.
+       # HOW THE PRIVATE REGISTRY WORKS HERE:
+       #   * A registry:2 container on the runner (127.0.0.1:PORT) takes the pushes,
+       #     and a second registry:2 container in the kind node's network namespace
+       #     serves the same storage on localhost:PORT, so that the node's containerd
+       #     pulls from "localhost:PORT" over plain HTTP. PRIVATE_REGISTRY is the same
+       #     string for the push side and the pull side.
+       # WHAT THIS TEST DOES NOT VALIDATE (and why):
+       #   * A disconnected network: the cluster can still reach public registries; the
+       #     image checks prove that the pods use the private registry instead.
+       #   * Registry authentication: the test registry has none, so the pull secrets
+       #     have placeholder credentials.
+       #   * skopeo (the crane commands copy the same images), the FIPS tab, the
+       #     optional SDS image (Istio only), and a Portal resource.
+       NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}')
+       REG_PORT=$(( 20000 + RANDOM % 20000 ))
+       REG_NAME="${NODE}-airgap-registry"
+       docker volume create "${REG_NAME}"
+       docker run -d --name "${REG_NAME}-push" -p "127.0.0.1:${REG_PORT}:5000" -v "${REG_NAME}:/var/lib/registry" registry:2
+       docker run -d --name "${REG_NAME}-pull" --network "container:${NODE}" -e REGISTRY_HTTP_ADDR=":${REG_PORT}" -v "${REG_NAME}:/var/lib/registry" registry:2
+       for i in $(seq 1 30); do curl -fsS "http://127.0.0.1:${REG_PORT}/v2/" && break; sleep 1; done
+       for i in $(seq 1 30); do docker exec "${NODE}" curl -fsS "http://localhost:${REG_PORT}/v2/" && break; sleep 1; done
+       # The visible exports are placeholders; use the test registry.
+       export PRIVATE_REGISTRY="localhost:${REG_PORT}"
+       export PRIVATE_REPOSITORY={{< reuse "kgw-docs/snippets/helm-kgateway.md" >}}
+       # The test registry serves plain HTTP. crane allows that for localhost, but
+       # Helm does not, so add --plain-http to Helm OCI calls that use it.
+       helm() {
+         case " $* " in
+           *" oci://localhost:"*) command helm "$@" --plain-http ;;
+           *) command helm "$@" ;;
+         esac
+       }
+       # The page offers crane or skopeo; the test uses crane.
+       if ! command -v crane >/dev/null 2>&1; then
+         os=$(uname -s); arch=$(uname -m); [ "$arch" = aarch64 ] && arch=arm64
+         mkdir -p "$HOME/.local/bin"
+         curl -fsSL "https://github.com/google/go-containerregistry/releases/download/v0.20.2/go-containerregistry_${os}_${arch}.tar.gz" | tar -xz -C "$HOME/.local/bin" crane
+         export PATH="$HOME/.local/bin:$PATH"
+       fi
+       crane version
+       {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: b32f929496569a65
+    lang: sh
+    lines: d0e0484a cf6d5da8 489e11ad 79c57e48 a60cc6ad aa6abb32 6a416213 ae702a45
+    preview: crane copy $KGATEWAY_CONTROLLER_IMG $KGATEWAY_CONTROLLER_PRIVATE
+  content: |2-
+       {{< doc-test paths="install-airgap" >}}
+       for img in "$KGATEWAY_CONTROLLER_PRIVATE" "$ENVOY_WRAPPER_PRIVATE" "$EXTAUTH_PRIVATE" "$EXTCACHE_PRIVATE" "$RATELIMITER_PRIVATE" "$WAF_PRIVATE" "$PORTAL_CONTROLLER_PRIVATE" "$PORTAL_WEBSERVER_PRIVATE"; do
+         crane manifest "$img" >/dev/null || { echo "FAIL: $img is not in the private registry"; exit 1; }
+         echo "mirrored: $img"
+       done
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 3162e8d5118a2cb2
+    lang: sh
+    lines: 656f64a9 e87b6717 1231af6f c234339c 2708ed4f 81d7cf7a
+    preview: kubectl create secret docker-registry private-registry-credentials \
+  content: |2-
+       {{< doc-test paths="install-airgap" >}}
+       kubectl create secret docker-registry private-registry-credentials \
+         --docker-server=$PRIVATE_REGISTRY \
+         --docker-username=doc-test \
+         --docker-password=doc-test \
+         --docker-email=doc-test@example.com \
+         -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
+       {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 4fee989c3b3d150c
+    lang: yaml
+    lines: 660fb332 a08a3033 a7ae9f33 faffb811 2bbad05f adc43cf7 a08a3033 22b45a2d 2d0a637c e409bdd9 46ab7fcc 76d1a2de 820e0e8e 30b1d8ef 125e7322 2ee1c717 2dd92b07 0bebd850 abc56510
+    preview: cat > values.yaml <<EOF
+  content: |2-
+       {{< doc-test paths="install-airgap" >}}
+       # "Follow the Helm installation guide": that guide installs the Gateway API
+       # CRDs before the charts.
+       kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v{{< reuse "kgw-docs/versions/k8s-gw-version.md" >}}/standard-install.yaml
+       {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 942bfd22e310fe30
+    lang: sh
+    lines: 4d411d80 6a5e7b1f 81d7cf7a e479313a 6a5e7b1f 1bd2e2c1 0e1a9b32
+    preview: helm upgrade -i {{< reuse "kgw-docs/snippets/helm-kgateway-crds.md" >}} oci://$P
+  content: |2-
+       {{< doc-test paths="install-airgap" >}}
+       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 23
+    fingerprint: c2e9fed2d2b7c50e
+    lang: sh
+    lines: bdff3683 91b43de0 6a5e7b1f 7ed222a2 7718c0b6 7aaeda0b 6a5e7b1f 7ed222a2 612ae560 ede6098a ffc5c371 e5f703fc cc068ed0
+    preview: export PORTAL_LICENSE_KEY=<portal-license-key>
+  content: |2-
+       {{< doc-test paths="install-airgap" >}}
+       # The visible block starts with a placeholder license. CI has one license key,
+       # which the portal setup tests also use for the portal.
+       export PORTAL_LICENSE_KEY="${PORTAL_LICENSE_KEY:-$LICENSE_KEY}"
+       helm upgrade -i portal-crds oci://$PRIVATE_REGISTRY/$PRIVATE_REPOSITORY/helm/portal-crds \
+         --version $KGATEWAY_VERSION \
+         --namespace {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} \
+         --create-namespace
+       helm upgrade -i portal oci://$PRIVATE_REGISTRY/$PRIVATE_REPOSITORY/helm/portal \
+         --version $KGATEWAY_VERSION \
+         --namespace {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} \
+         --set licensing.licenseKey=$PORTAL_LICENSE_KEY \
+         --set image.registry=$PRIVATE_REGISTRY/$PRIVATE_REPOSITORY \
+         --set image.tag=$KGATEWAY_VERSION \
+         --set portal.image.repository=portal-controller${IMAGE_SUFFIX} \
+         --set imagePullSecrets[0].name=private-registry-credentials
+       kubectl -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} rollout status deploy/portal-controller --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: c91c96016b05a816
+    lang: sh
+    lines: 656f64a9 e87b6717 1231af6f c234339c 2708ed4f e10d64ea
+    preview: kubectl create secret docker-registry private-registry-credentials \
+  content: |2-
+          {{< doc-test paths="install-airgap" >}}
+          kubectl create secret docker-registry private-registry-credentials \
+            --docker-server=$PRIVATE_REGISTRY \
+            --docker-username=doc-test \
+            --docker-password=doc-test \
+            --docker-email=doc-test@example.com \
+            -n default
+          {{< /doc-test >}}
+- after:
+    block: 27
+    fingerprint: 131390393a43fb68
+    lang: sh
+    lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 2dd92b07 0bebd850 36184fa5 9cc14d83 9287e3e4 a08a3033 fa491143 75abfc25 e2db7d87 112b8443 e8215d3e 2d0a637c e409bdd9 356067ee ab89fa94 ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 2728dad4 b500bc0d cab2be2b 77f1ea54 cde43a03 14551a55 2629ac0e 983d6140 0217db29 3e196ba7 ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 ecd84c9c 6c20ea04 cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 14551a55 ba62cf2b ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 08ed05cb f6734d9c cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 d5b7afcc 9eb3a28d ff7360cf 1dc43f54 2d0a637c e409bdd9 dfa91c8f a08a3033 fa491143 75abfc25 7fb2dd35 112b8443 cab2be2b 77f1ea54 0123dda7 fba8a78b 2629ac0e 4a0d84c8 c0dfc4f9 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="install-airgap" >}}
+    # The note in Step 5: the data plane pods exist only after you deploy a
+    # Gateway. This is the http Gateway from the Sample app guide.
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: Gateway
+    metadata:
+      name: http
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      gatewayClassName: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+      listeners:
+      - protocol: HTTP
+        port: 8080
+        name: http
+        allowedRoutes:
+          namespaces:
+            from: All
+    EOF
+    kubectl wait --for=condition=Programmed gateway/http -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=300s
+    for d in http ext-auth-service-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}} ext-cache-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}} rate-limiter-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}} waf-server-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}; do
+      for i in $(seq 1 60); do kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deploy "$d" >/dev/null 2>&1 && break; sleep 5; done
+      kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/"$d" --timeout=300s
+    done
+    {{< /doc-test >}}
+- after:
+    block: 30
+    fingerprint: b16e6f401babfd1e
+    lang: sh
+    lines: a5809f9d 13d9d91c 662ce3bd
+    preview: kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath
+  content: |-
+    {{< doc-test paths="install-airgap" >}}
+    want="$PRIVATE_REGISTRY/$PRIVATE_REPOSITORY/"
+    check() { # namespace deployment
+      img=$(kubectl -n "$1" get deploy "$2" -o jsonpath='{.spec.template.spec.containers[0].image}')
+      echo "$2: $img"
+      case "$img" in "$want"*) ;; *) echo "FAIL: $2 does not run an image from the private registry"; exit 1 ;; esac
+      kubectl -n "$1" rollout status deploy/"$2" --timeout=120s
+    }
+    check {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}}
+    check {{< reuse "kgw-docs/snippets/namespace.md" >}} http
+    check {{< reuse "kgw-docs/snippets/namespace.md" >}} ext-auth-service-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+    check {{< reuse "kgw-docs/snippets/namespace.md" >}} ext-cache-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+    check {{< reuse "kgw-docs/snippets/namespace.md" >}} rate-limiter-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+    check {{< reuse "kgw-docs/snippets/namespace.md" >}} waf-server-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+    check {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} portal-controller
+    # Running pods prove that the node pulled the images from the private registry.
+    failed=$(kubectl get events -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --field-selector reason=Failed -o name | wc -l)
+    test "$failed" -eq 0 || { kubectl get events -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --field-selector reason=Failed; echo "FAIL: image pull or start failures"; exit 1; }
+    docker rm -f "${REG_NAME}-push" "${REG_NAME}-pull" || true
+    docker volume rm "${REG_NAME}" || true
+    {{< /doc-test >}}

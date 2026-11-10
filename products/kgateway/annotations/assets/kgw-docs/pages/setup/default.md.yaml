@@ -19,8 +19,8 @@ hidden:
             name: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
         jsonPath: "$.spec.controllerName"
         jsonPathExpectation:
-          comparator: equals
-          value: "kgateway.dev/kgateway"
+          comparator: matches
+          value: '^(kgateway\.dev/kgateway|solo\.io/enterprise-kgateway)$'
         polling:
           timeoutSeconds: 120
           intervalSeconds: 5
@@ -207,7 +207,7 @@ hidden:
     found=""
     for i in $(seq 1 30); do
       # Capture the logs first: under pipefail, `| grep -q` can fail on a match (SIGPIPE).
-      logs=$(kubectl logs deploy/kgateway -n kgateway-system --since=10m 2>/dev/null) || true
+      logs=$(kubectl logs deploy/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --since=10m 2>/dev/null) || true
       if grep -i error <<<"$logs" | grep 9091 >/dev/null; then found=1; break; fi
       echo "no error about port 9091 in the kgateway logs yet, retrying ($i/30)"; sleep 5
     done

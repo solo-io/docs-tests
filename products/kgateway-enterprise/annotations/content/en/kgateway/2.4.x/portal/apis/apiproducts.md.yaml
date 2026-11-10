@@ -1,0 +1,273 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/apis/apiproducts.md
+blocks:
+- 5c26f6139554b3f1 mermaid
+- a79e81ba668c9e5c yaml
+- 61c60f8f80a5f09b yaml
+- acf824a3920400c3 yaml
+- 4d15dfe013920d62 sh
+- 278d693a09122150
+- 01294fed228128cb yaml
+- 54b37a366d509e82 yaml
+- 87da39590a110fd3 yaml
+- ee228fbd7fa1e06b yaml
+- 722f109aa2b46139 yaml
+- 2a2d415d2c393338 yaml
+- a2a54b3568de98bc sh
+- 555948702bd7e297 yaml
+- a2a54b3568de98bc sh
+- ca09cc5b2874cef8 sh
+- b4d903e09cb7f9ea
+- ba194088fe79ffdd sh
+- 58aa07b5c4a054de sh
+- ea4993e7527652bc
+tags:
+- paths: portal-apiproducts
+  block: 1
+  fingerprint: a79e81ba668c9e5c
+  lang: yaml
+  lines: 16c71da1 4f6d8314 29bd527d 8c8c4228 ccee8b11 0ccc8edc 36184fa5 b975deaa a5927e93 b56f67ce 7050d641 2ed8b772 9f872445 09628e22 49616b64 588a5d84 b5a028c9 56bf9360 c7d41ffc 8aa17117 e2c21ed3 596b33c2 607a9830 eed777fc 3827f529 2ed8b772 5b69dacb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-apiproducts"
+    only: true
+    lead: ' '
+- paths: portal-apiproducts
+  block: 2
+  fingerprint: 61c60f8f80a5f09b
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 76837935 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa a3d4a9b9 3de9d845 b733d726 aeca2b3d bf068a96 ae7dfacf ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 67f91a16 c095a45d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-apiproducts"
+    only: true
+    lead: ' '
+- paths: portal-apiproducts
+  block: 3
+  fingerprint: acf824a3920400c3
+  lang: yaml
+  lines: 16c71da1 4f6d8314 29bd527d 8c8c4228 ccee8b11 0ccc8edc 36184fa5 b975deaa a5927e93 09628e22 49616b64 588a5d84 b5a028c9 56bf9360 c7d41ffc 8aa17117 a2e972e1 596b33c2 7ab02744 588a5d84 b5a028c9 56bf9360 76837935 8aa17117 9a384663 d0475b7d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-apiproducts"
+    only: true
+    lead: ' '
+- paths: portal-apiproducts
+  block: 4
+  fingerprint: 4d15dfe013920d62
+  lang: sh
+  lines: 4d15dfe0
+  preview: kubectl get apidocs -A
+  form:
+    attr: paths="portal-apiproducts"
+    only: true
+    lead: ' '
+- paths: portal-apiproducts
+  block: 6
+  fingerprint: 01294fed228128cb
+  lang: yaml
+  lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 233590fd cf3e75ee 6b0b7748 aa80d960 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-apiproducts"
+    only: true
+    lead: ' '
+- paths: portal-apiproducts
+  block: 15
+  fingerprint: ca09cc5b2874cef8
+  lang: sh
+  lines: ca09cc5b
+  preview: kubectl get apiproduct,apidoc -n default
+  form:
+    attr: paths="portal-apiproducts"
+    only: true
+    lead: ' '
+- paths: portal-apiproducts
+  block: 17
+  fingerprint: ba194088fe79ffdd
+  lang: sh
+  lines: ba194088
+  preview: kubectl describe apiproduct petstore-api -n default
+  form:
+    attr: paths="portal-apiproducts"
+    only: true
+    lead: ' '
+- paths: portal-apiproducts
+  block: 18
+  fingerprint: 58aa07b5c4a054de
+  lang: sh
+  lines: 58aa07b5
+  preview: kubectl get portalconfig my-portal -n default -o yaml
+  form:
+    attr: paths="portal-apiproducts"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: a79e81ba668c9e5c
+    lang: yaml
+    lines: 16c71da1 4f6d8314 29bd527d 8c8c4228 ccee8b11 0ccc8edc 36184fa5 b975deaa a5927e93 b56f67ce 7050d641 2ed8b772 9f872445 09628e22 49616b64 588a5d84 b5a028c9 56bf9360 c7d41ffc 8aa17117 e2c21ed3 596b33c2 607a9830 eed777fc 3827f529 2ed8b772 5b69dacb abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-apiproducts" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the petstore-api ApiProduct reports Ready=True"
+      wait:
+        target:
+          kind: ApiProduct
+          metadata:
+            namespace: default
+            name: petstore-api
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the petstore-api-v1 ApiDoc reports Ready=True"
+      wait:
+        target:
+          kind: ApiDoc
+          metadata:
+            namespace: default
+            name: petstore-api-v1
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 61c60f8f80a5f09b
+    lang: yaml
+    lines: 16c71da1 8c67597e 56bf9360 8c8c4228 76837935 0ccc8edc 36184fa5 d3d416e7 0ef5334f 0ccc8edc 301e1bfa a3d4a9b9 3de9d845 b733d726 aeca2b3d bf068a96 ae7dfacf ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 2d5ef846 94ae491e 67f91a16 c095a45d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-apiproducts" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the petstore-v2-route HTTPRoute is accepted"
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: default
+            name: petstore-v2-route
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: acf824a3920400c3
+    lang: yaml
+    lines: 16c71da1 4f6d8314 29bd527d 8c8c4228 ccee8b11 0ccc8edc 36184fa5 b975deaa a5927e93 09628e22 49616b64 588a5d84 b5a028c9 56bf9360 c7d41ffc 8aa17117 a2e972e1 596b33c2 7ab02744 588a5d84 b5a028c9 56bf9360 76837935 8aa17117 9a384663 d0475b7d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-apiproducts" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the petstore-api ApiProduct reports Ready=True"
+      wait:
+        target:
+          kind: ApiProduct
+          metadata:
+            namespace: default
+            name: petstore-api
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the petstore-api-v2 ApiDoc reports Ready=True"
+      wait:
+        target:
+          kind: ApiDoc
+          metadata:
+            namespace: default
+            name: petstore-api-v2
+        jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 58aa07b5c4a054de
+    lang: sh
+    lines: 58aa07b5
+    preview: kubectl get portalconfig my-portal -n default -o yaml
+  content: |-
+    {{< doc-test paths="portal-apiproducts" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the PortalConfig lists the v1 version of the petstore ApiProduct"
+      wait:
+        target:
+          kind: PortalConfig
+          metadata:
+            namespace: default
+            name: my-portal
+        jsonPath: "$.spec.apis[?(@.apiDocRef.name=='petstore-api-v1')].title"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Petstore API v1"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the PortalConfig lists the v2 version of the petstore ApiProduct"
+      wait:
+        target:
+          kind: PortalConfig
+          metadata:
+            namespace: default
+            name: my-portal
+        jsonPath: "$.spec.apis[?(@.apiDocRef.name=='petstore-api-v2')].title"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Petstore API v2"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the PortalConfig still lists the httpbin ApiProduct"
+      wait:
+        target:
+          kind: PortalConfig
+          metadata:
+            namespace: default
+            name: my-portal
+        jsonPath: "$.spec.apis[?(@.apiDocRef.name=='httpbin-api-v1')].apiProductId"
+        jsonPathExpectation:
+          comparator: equals
+          value: "httpbin"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the API catalog lists the petstore ApiProduct"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products"
+        method: GET
+        headers:
+          host: "portal.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "petstore"
+    EOF
+    {{< /doc-test >}}

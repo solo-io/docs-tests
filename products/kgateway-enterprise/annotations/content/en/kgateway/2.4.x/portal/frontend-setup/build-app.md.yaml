@@ -1,0 +1,150 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/frontend-setup/build-app.md
+blocks:
+- c2dce4d842f9633e shell
+- 9f0bdba7a04dde3b
+- aaa2f01ffeab00b9 sh
+- c2dce4d842f9633e shell
+- ab66dc98e1ac2c88 shell
+- 0baa67b27c2f74a5 shell
+- c2dce4d842f9633e shell
+- c26d70f331f8231f sh
+- 039d21447d790097 shell
+- 904e84dbe639dc98 shell
+- 2c00cdff2c0fe266 shell
+tags:
+- paths: portal-build-app
+  block: 0
+  fingerprint: c2dce4d842f9633e
+  lang: shell
+  lines: c2dce4d8
+  preview: git clone https://github.com/solo-io/dev-portal-starter.git
+  form:
+    attr: paths="portal-build-app"
+    only: true
+    lead: ' '
+- paths: portal-build-app
+  block: 2
+  fingerprint: aaa2f01ffeab00b9
+  lang: sh
+  lines: aaa2f01f
+  preview: 'VITE_CUSTOM_PAGES=''[{"title": "Getting Started", "path": "/pages/getting-started'
+  form:
+    attr: paths="portal-build-app"
+    only: true
+    lead: ' '
+- paths: portal-build-app
+  block: 7
+  fingerprint: c26d70f331f8231f
+  lang: sh
+  lines: c26d70f3
+  preview: docker run -d -p 5000:5000 --restart always --name registry registry:2
+  form:
+    attr: paths="portal-build-app"
+    only: true
+    lead: ' '
+- paths: portal-build-app
+  block: 8
+  fingerprint: 039d21447d790097
+  lang: shell
+  lines: 13e2c9d2 fd26773c
+  preview: cd dev-portal-starter
+  form:
+    attr: paths="portal-build-app"
+    only: true
+    lead: ' '
+- paths: portal-build-app
+  block: 9
+  fingerprint: 904e84dbe639dc98
+  lang: shell
+  lines: 904e84db
+  preview: docker push localhost:5000/portal-frontend:latest
+  form:
+    attr: paths="portal-build-app"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 9f0bdba7a04dde3b
+    lang: ''
+    lines: a79a7a72 f554caf0
+    preview: projects/ui/public/pages/getting-started.md
+  content: |-
+    {{< doc-test paths="portal-build-app" >}}
+    # Step 1 done in the clone: add the two example pages to projects/ui/public/pages.
+    mkdir -p dev-portal-starter/projects/ui/public/pages
+    cat > dev-portal-starter/projects/ui/public/pages/getting-started.md <<'PAGEEOF'
+    # Getting started
+
+    doc-test custom page: getting-started
+    PAGEEOF
+    cat > dev-portal-starter/projects/ui/public/pages/faq.html <<'PAGEEOF'
+    <h1>FAQ</h1>
+    <p>doc-test custom page: faq</p>
+    PAGEEOF
+    {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 2c00cdff2c0fe266
+    lang: shell
+    lines: 2c00cdff
+    preview: kind load docker-image localhost:5000/portal-frontend:latest --name <cluster-nam
+  content: |-
+    {{< doc-test paths="portal-build-app" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the local registry has the portal-frontend:latest image"
+      retries: 10
+      http:
+        url: "http://localhost:5000/v2/portal-frontend/tags/list"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+          - path: "$.tags[0]"
+            comparator: equals
+            value: "latest"
+    EOF
+    # Run the pushed image the way the cluster would, with the custom pages variable,
+    # and check that the UI and both custom pages are served.
+    docker rm -f portal-frontend-doctest >/dev/null 2>&1 || true
+    docker run -d --name portal-frontend-doctest -p 14000:4000 \
+      -e VITE_PORTAL_SERVER_URL="http://portal.example.com:8080/v1" \
+      -e VITE_CUSTOM_PAGES="$VITE_CUSTOM_PAGES" \
+      localhost:5000/portal-frontend:latest
+    YAMLTest -f - <<'EOF'
+    - name: "the custom frontend serves index.html with the VITE_CUSTOM_PAGES setting"
+      retries: 60
+      http:
+        url: "http://localhost:14000/"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "Getting Started"
+    - name: "the custom frontend serves the getting-started.md custom page"
+      retries: 10
+      http:
+        url: "http://localhost:14000/pages/getting-started.md"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "doc-test custom page: getting-started"
+    - name: "the custom frontend serves the faq.html custom page"
+      retries: 10
+      http:
+        url: "http://localhost:14000/pages/faq.html"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "doc-test custom page: faq"
+    EOF
+    docker rm -f portal-frontend-doctest registry >/dev/null 2>&1 || true
+    {{< /doc-test >}}

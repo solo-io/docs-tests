@@ -1,0 +1,199 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/operations/advanced/rbac.md
+blocks:
+- 98eaf7cff9eee3ce sh
+- 5dc81ca75b8f3e22 sh
+- 87096f25b17fde84 sh
+- 0346e9301082fe6e sh
+- c02fc0b113b5d66f yaml
+- 0f47c9f6dbcb1426 sh
+- 079c4a9cc94ccc82 yaml
+- 5b8eda82518d0685 sh
+tags:
+- paths: portal-rbac
+  block: 0
+  fingerprint: 98eaf7cff9eee3ce
+  lang: sh
+  lines: 92918db2 d3c0046a d167ef22 7ed222a2 612ae560 be7eb1c9 28854750
+  preview: helm template portal \
+  form:
+    attr: paths="portal-rbac"
+    only: true
+    lead: ' '
+- paths: portal-rbac
+  block: 1
+  fingerprint: 5dc81ca75b8f3e22
+  lang: sh
+  lines: 5dc81ca7
+  preview: kubectl apply -f portal-controller-rbac.yaml
+  form:
+    attr: paths="portal-rbac"
+    only: true
+    lead: ' '
+- paths: portal-rbac
+  block: 2
+  fingerprint: 87096f25b17fde84
+  lang: sh
+  lines: 5965c2dc d3c0046a d167ef22 7ed222a2 96064311 612ae560 6fa5fbc0
+  preview: helm upgrade -i portal \
+  form:
+    attr: paths="portal-rbac"
+    only: true
+    lead: ' '
+- paths: portal-rbac
+  block: 4
+  fingerprint: c02fc0b113b5d66f
+  lang: yaml
+  lines: 16c71da1 ace8dc5a b3a13f23 8c8c4228 633a5d62 3de9d845 8d75c79f cc2d831e 4ae0a3df a8977433 2dccd051 4ae0a3df abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-rbac"
+    only: true
+    lead: ' '
+- paths: portal-rbac
+  block: 5
+  fingerprint: 0f47c9f6dbcb1426
+  lang: sh
+  lines: a43e03fa 72b3b763
+  preview: kubectl get deployment portal-my-portal -n default \
+  form:
+    attr: paths="portal-rbac"
+    only: true
+    lead: ' '
+- paths: portal-rbac
+  block: 7
+  fingerprint: 5b8eda82518d0685
+  lang: sh
+  lines: 5b8eda82
+  preview: kubectl get pods -n default
+  form:
+    attr: paths="portal-rbac"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 98eaf7cff9eee3ce
+    lang: sh
+    lines: 92918db2 d3c0046a d167ef22 7ed222a2 612ae560 be7eb1c9 28854750
+    preview: helm template portal \
+  content: |-
+    {{< doc-test paths="portal-rbac" >}}
+    # Steps 2 and 3: remove the ServiceAccount, and rename the ClusterRole and
+    # ClusterRoleBinding because this upgrades an existing installation.
+    python3 - <<'PYEOF'
+    import yaml
+    with open("portal-controller-rbac.yaml") as f:
+        docs = [d for d in yaml.safe_load_all(f) if d and d.get("kind") != "ServiceAccount"]
+    for d in docs:
+        if d["kind"] in ("ClusterRole", "ClusterRoleBinding"):
+            d["metadata"]["name"] += "-custom"
+        if d["kind"] == "ClusterRoleBinding":
+            d["roleRef"]["name"] += "-custom"
+    with open("portal-controller-rbac.yaml", "w") as f:
+        yaml.safe_dump_all(docs, f)
+    PYEOF
+    grep -E '^kind:|^  name:' portal-controller-rbac.yaml
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 87096f25b17fde84
+    lang: sh
+    lines: 5965c2dc d3c0046a d167ef22 7ed222a2 96064311 612ae560 6fa5fbc0
+    preview: helm upgrade -i portal \
+  content: |-
+    {{< doc-test paths="portal-rbac" >}}
+    kubectl rollout status deployment/portal-controller -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 0346e9301082fe6e
+    lang: sh
+    lines: 0346e930
+    preview: helm get manifest portal -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}
+  content: |-
+    {{< doc-test paths="portal-rbac" >}}
+    # Same check as the step above: grep finds nothing, so it exits 1.
+    if helm get manifest portal -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} | grep -E "^kind: (ClusterRole|ClusterRoleBinding)$"; then
+      echo "the portal release still renders a ClusterRole or ClusterRoleBinding"
+      exit 1
+    fi
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 079c4a9cc94ccc82
+    lang: yaml
+    lines: 16c71da1 ace8dc5a 9a334d21 8c8c4228 633a5d62 d6554051 297d81c1 b3a13f23 633a5d62 46687890 31f3614a 2fa50a2b 0ccc8edc abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-rbac" >}}
+    SA=$(kubectl get deployment portal-my-portal -n default -o jsonpath='{.spec.template.spec.serviceAccountName}')
+    kubectl apply -f- <<EOF
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: portal-web-server
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: portal-web-server
+    subjects:
+    - kind: ServiceAccount
+      name: $SA
+      namespace: default
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 5b8eda82518d0685
+    lang: sh
+    lines: 5b8eda82
+    preview: kubectl get pods -n default
+  content: |-
+    {{< doc-test paths="portal-rbac" >}}
+    # Restart the web server so that it starts with only the permissions you created.
+    kubectl rollout restart deployment/portal-my-portal -n default
+    kubectl rollout status deployment/portal-my-portal -n default --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-controller Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+            name: portal-controller
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-my-portal Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the web server reads its PortalConfig with the custom RBAC"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products"
+        method: GET
+        headers:
+          host: "portal.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "httpbin"
+    EOF
+    {{< /doc-test >}}

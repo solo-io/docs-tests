@@ -1,0 +1,210 @@
+format: 1
+source: assets/kgw-docs/pages/security/jwt/staged/staged-auth.md
+blocks:
+- 6c552f5ab61b4ed0 sh
+- 79dcc7ab7a0dbc14 yaml
+- 4e93bbceec3c2ec3 yaml
+- b06f1401a8fd197f yaml
+- 46683193ebddd335 yaml
+- d02bc2ebec3bdd64 shell
+- 8811571254a5dee7 sh
+- 8898f14323122af2 console
+- 84488f079ab340fc sh
+- 96187846111b2ec4 shell
+- 430f1b7b1b3ea020 shell
+- 0db89d52fef20299 sh
+- dd8bb997ac0cfef7 console
+- 7af7e92870144f0a yaml
+- c8a4e5ae8ab2dfaf yaml
+- 63af9771f59785c6 yaml
+- 05778105130c9dae yaml
+- ae4480fe7b6d4731 yaml
+- 955e8351d0bde360 yaml
+- 27a0f86bd7649614 yaml
+- 01a5ba264a0d48f3 yaml
+- dfed1140fd8c82a6 yaml
+- 81a38fea64579584 yaml
+- 5702d9e1e164a8e9 sh
+tags:
+- paths: jwt-staged-auth
+  block: 0
+  fingerprint: 6c552f5ab61b4ed0
+  lang: sh
+  lines: 947a9e17 13baa4d3 41752bd2 ddce3fc8 ea3a0ca8
+  preview: echo $HOST_KEYCLOAK
+  form:
+    attr: paths="jwt-staged-auth"
+    only: true
+    lead: ' '
+- paths: jwt-staged-auth
+  block: 1
+  fingerprint: 79dcc7ab7a0dbc14
+  lang: yaml
+  lines: 16c71da1 d664f32c ad65deb7 8c8c4228 28101486 5e1d80db 36184fa5 c582fe46 2efcbf93 bfce7f60 ea54bab8 86ff3252 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-staged-auth"
+    only: true
+    lead: ' '
+- paths: jwt-staged-auth
+  block: 2
+  fingerprint: 4e93bbceec3c2ec3
+  lang: yaml
+  lines: 16c71da1 979905a0 e47a48f5 8c8c4228 d6619784 5e1d80db 36184fa5 0e20b496 c338dc17 c548623c 0f10c5bc c338dc17 c548623c 0bebd850 55708cb7 71ab14c2 ad65deb7 28101486 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-staged-auth"
+    only: true
+    lead: ' '
+- paths: jwt-staged-auth
+  block: 3
+  fingerprint: b06f1401a8fd197f
+  lang: yaml
+  lines: 16c71da1 88b9492f c548623c 8c8c4228 e370c88b 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3fd65bfa 4fdc82d0 a1343bf6 5805bce3 1e8d7f59 045e942a 38dc0152 ac15238d 44ec9b74 b93c9907 c705d06f 70c97555 28101486 5e1d80db ad65deb7 69f54740 15b03c81 75c5ea11 4025922f abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-staged-auth"
+    only: true
+    lead: ' '
+- paths: jwt-staged-auth
+  block: 4
+  fingerprint: 46683193ebddd335
+  lang: yaml
+  lines: 16c71da1 8c67597e 56bf9360 8c8c4228 4472af69 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 1b7835b0 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-staged-auth"
+    only: true
+    lead: ' '
+- paths: jwt-staged-auth
+  block: 5
+  fingerprint: d02bc2ebec3bdd64
+  lang: shell
+  lines: e26cfbfb 8d6de7fd
+  preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/get \
+  form:
+    attr: paths="jwt-staged-auth"
+    only: true
+    lead: ' '
+- paths: jwt-staged-auth
+  block: 8
+  fingerprint: 84488f079ab340fc
+  lang: sh
+  lines: 9b897c23 9348e6ef 15ae54eb bd09ef43 4536b685 64825780 0096af31 54d1cb67 0eae32aa
+  preview: export TOKEN=$(curl -Ssm 10 --fail-with-body \
+  form:
+    attr: paths="jwt-staged-auth"
+    only: true
+    lead: ' '
+- paths: jwt-staged-auth
+  block: 9
+  fingerprint: 96187846111b2ec4
+  lang: shell
+  lines: 4420e0cf 4ee84aa4 8670e633 5a7be6ca d99f9b99 7faee15e 8a331fdd
+  preview: echo $TOKEN | python3 -c "
+  form:
+    attr: paths="jwt-staged-auth"
+    only: true
+    lead: ' '
+- paths: jwt-staged-auth
+  block: 10
+  fingerprint: 430f1b7b1b3ea020
+  lang: shell
+  lines: e26cfbfb 5b85b819 5f9f15f0
+  preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/get \
+  form:
+    attr: paths="jwt-staged-auth"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: b06f1401a8fd197f
+    lang: yaml
+    lines: 16c71da1 88b9492f c548623c 8c8c4228 e370c88b 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 3fd65bfa 4fdc82d0 a1343bf6 5805bce3 1e8d7f59 045e942a 38dc0152 ac15238d 44ec9b74 b93c9907 c705d06f 70c97555 28101486 5e1d80db ad65deb7 69f54740 15b03c81 75c5ea11 4025922f abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="jwt-staged-auth" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "jwt-staged-auth - the jwt-gw-policy policy is accepted"
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: jwt-gw-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: d02bc2ebec3bdd64
+    lang: shell
+    lines: e26cfbfb 8d6de7fd
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/get \
+  content: |2-
+       {{< doc-test paths="jwt-staged-auth" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "jwt-staged-auth - a request without a JWT is denied with 401 Jwt is missing"
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+           method: GET
+           headers:
+             host: "jwt.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 401
+           bodyContains: "Jwt is missing"
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 96187846111b2ec4
+    lang: shell
+    lines: 4420e0cf 4ee84aa4 8670e633 5a7be6ca d99f9b99 7faee15e 8a331fdd
+    preview: echo $TOKEN | python3 -c "
+  content: |2-
+       {{< doc-test paths="jwt-staged-auth" >}}
+       echo "$TOKEN" | python3 -c "
+       import sys, base64, json
+       p = sys.stdin.read().strip().split('.')[1]
+       c = json.loads(base64.urlsafe_b64decode(p + '=' * (-len(p) % 4)))
+       assert c.get('email') == 'user1@example.com', c
+       print('email claim:', c['email'])
+       "
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: 430f1b7b1b3ea020
+    lang: shell
+    lines: e26cfbfb 5b85b819 5f9f15f0
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/get \
+  content: |2-
+       {{< doc-test paths="jwt-staged-auth" >}}
+       YAMLTest -f - <<EOF
+       - name: "jwt-staged-auth - a request with user1's JWT in the jwt header succeeds and carries the email claim header"
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+           method: GET
+           headers:
+             host: "jwt.example.com:8080"
+             jwt: "${TOKEN}"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+           bodyJsonPath:
+             - path: "$.headers['X-Solo-Claim-Email'][0]"
+               comparator: equals
+               value: "user1@example.com"
+       EOF
+       {{< /doc-test >}}

@@ -1,0 +1,252 @@
+format: 1
+source: assets/conrefs/pages/gateway/reference/versions.md
+blocks:
+- 756b26403c2cf918 sh
+- 67799a454778b595 yaml
+- ada9a7d948eda5f4 sh
+- 9e6b52fc57289e40 yaml
+- 75f988c12c4a9cfe yaml
+- 97b4339cebcb04e3 yaml
+- b8758b3a77992be9 sh
+tags:
+- paths: versions-fips
+  block: 2
+  fingerprint: ada9a7d948eda5f4
+  lang: sh
+  lines: 87ff5769 f82702aa ae68e32a
+  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  form:
+    attr: paths="versions-fips"
+    only: true
+    lead: ' '
+- paths: versions-fips
+  block: 3
+  fingerprint: 9e6b52fc57289e40
+  lang: yaml
+  lines: 16c71da1 5a05cd6c 2ee1c717 8c8c4228 8c64e446 0bebd850 36184fa5 9cc14d83 ec006d2f 9287e3e4 a08a3033 b0ea167a 9544415d f4db7d24 fa491143 ea7feff7 356067ee 3e196ba7 dfa91c8f a08a3033 47b732c0 30552439 42ce5e77 7232ed69 b450c3f7 ba62cf2b dfa91c8f a08a3033 47b732c0 b9cf9b33 06db052f e7536cfc b450c3f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="versions-fips"
+    only: true
+    lead: ' '
+- paths: versions-fips
+  block: 4
+  fingerprint: 75f988c12c4a9cfe
+  lang: yaml
+  lines: 16c71da1 8c67597e 9730d414 8c8c4228 fa1fe301 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 8c64e446 0bebd850 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="versions-fips"
+    only: true
+    lead: ' '
+- paths: versions-fips
+  block: 5
+  fingerprint: 97b4339cebcb04e3
+  lang: yaml
+  lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 8c64e446 0bebd850 36184fa5 6af426c0 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="versions-fips"
+    only: true
+    lead: ' '
+- paths: versions-fips
+  block: 6
+  fingerprint: b8758b3a77992be9
+  lang: sh
+  lines: 3ea3a3d4 ce13b50a c44723a3 6902294c
+  preview: kubectl get deploy/fips -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yam
+  form:
+    attr: paths="versions-fips"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 756b26403c2cf918
+    lang: sh
+    lines: 0075ed3e db51caed
+    preview: helm get values {{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-
+  content: |-
+    {{< doc-test paths="versions-fips" >}}
+    # The step on the page opens the values file in an editor; save it only.
+    helm get values {{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yaml > values.yaml
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 67799a454778b595
+    lang: yaml
+    lines: adc43cf7 a08a3033 e3eef387 d977c5a0 f4db7d24
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="versions-fips" >}}
+    # Add the snippet from this step to the values file.
+    python3 - <<'PYEOF'
+    import yaml
+    with open("values.yaml") as f:
+        values = yaml.safe_load(f) or {}
+    values.setdefault("controller", {})["image"] = {
+        "registry": "{{< reuse "kgw-docs/snippets/helm-path.md" >}}",
+        "repository": "{{< reuse "kgw-docs/snippets/pod-name.md" >}}-controller-fips",
+        "tag": "{{< reuse "kgw-docs/versions/n-patch.md" >}}",
+    }
+    with open("values.yaml", "w") as f:
+        yaml.safe_dump(values, f)
+    PYEOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: ada9a7d948eda5f4
+    lang: sh
+    lines: 87ff5769 f82702aa ae68e32a
+    preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  content: |-
+    {{< doc-test paths="versions-fips" >}}
+    kubectl rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=400s
+    YAMLTest -f - <<'EOF'
+    - name: "versions-fips - the control plane runs the FIPS controller image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}
+        jsonPath: "$.spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/{{< reuse "kgw-docs/snippets/pod-name.md" >}}-controller-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "versions-fips - the FIPS control plane is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: b8758b3a77992be9
+    lang: sh
+    lines: 3ea3a3d4 ce13b50a c44723a3 6902294c
+    preview: kubectl get deploy/fips -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yam
+  content: |-
+    {{< doc-test paths="versions-fips" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "versions-fips - the fips Gateway is programmed"
+      wait:
+        target:
+          kind: Gateway
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: fips
+        jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "versions-fips - the fips proxy runs the envoy-wrapper-fips image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: fips
+        jsonPath: "$.spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/envoy-wrapper-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "versions-fips - the fips proxy Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: fips
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "versions-fips - the external auth server for the custom GatewayClass runs the ext-auth-service-fips image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: custom-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/ext-auth-service-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "versions-fips - the rate limiter for the custom GatewayClass runs the rate-limiter-fips image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: custom-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/rate-limiter-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "versions-fips - the external auth server for the custom GatewayClass is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: custom-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "versions-fips - the rate limiter for the custom GatewayClass is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: custom-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}

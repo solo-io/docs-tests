@@ -1,0 +1,377 @@
+format: 1
+source: assets/kgw-docs/pages/security/jwt/staged/claim-based-access.md
+blocks:
+- a211921761201841 yaml
+- 461601013cd73c0d sh
+- fc7bf5dcb037b697 sh
+- 59e34ef7a7fa5956 yaml
+- afadaf8003a59b84 sh
+- 2fa1831b27cc7d75 sh
+- 16c138bf270ad1c7
+- 94d556bb577bf28f sh
+- dbc54c1c9f2417e6 sh
+- 9d0765d28fbf996a
+- 24d4ff202ae5dcff sh
+- 8fe7e1f7215db509 yaml
+- 3828ec602caa53b2 yaml
+- ec70f7cda5be090e yaml
+- a0736483fb42736b yaml
+- 97de88ddcc051710 sh
+tags:
+- paths: jwt-staged-claims
+  block: 1
+  fingerprint: 461601013cd73c0d
+  lang: sh
+  lines: '46160101'
+  preview: export ALICE_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNvbG8tcHVibGljL
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 2
+  fingerprint: fc7bf5dcb037b697
+  lang: sh
+  lines: fc7bf5dc
+  preview: export BOB_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNvbG8tcHVibGljLWt
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 3
+  fingerprint: 59e34ef7a7fa5956
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 63c47443 f017303a b36fa061 be536e21 3a5eb4be b430e67f 4f3c932b cc7b1e58 99076796 bf95e01d abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 4
+  fingerprint: afadaf8003a59b84
+  lang: sh
+  lines: 37d5409c 34ced9d9 facdb639
+  preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/anything \
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 7
+  fingerprint: 94d556bb577bf28f
+  lang: sh
+  lines: 37d5409c 34ced9d9 1e41cb01
+  preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/anything \
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 10
+  fingerprint: 24d4ff202ae5dcff
+  lang: sh
+  lines: 24d4ff20
+  preview: kubectl delete EnterpriseKgatewayTrafficPolicy jwt-claims-policy -n httpbin
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 11
+  fingerprint: 8fe7e1f7215db509
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 2c398228 b430e67f 4f3c932b cc7b1e58 99076796 4f3c932b cc7b1e58 3081a8c7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 12
+  fingerprint: 3828ec602caa53b2
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 658f6e20 b430e67f 4f3c932b cc7b1e58 9fbfb591 59058faa abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 13
+  fingerprint: ec70f7cda5be090e
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 6d85900e b430e67f 4f3c932b cc7b1e58 db93f219 d9cacd59 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 14
+  fingerprint: a0736483fb42736b
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 5d141882 b430e67f 4f3c932b cc7b1e58 3c630694 ab1e1fa7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+- paths: jwt-staged-claims
+  block: 15
+  fingerprint: 97de88ddcc051710
+  lang: sh
+  lines: 97de88dd
+  preview: kubectl delete EnterpriseKgatewayTrafficPolicy jwt-claims-policy -n httpbin 2>/d
+  form:
+    attr: paths="jwt-staged-claims"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 3
+    fingerprint: 59e34ef7a7fa5956
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 63c47443 f017303a b36fa061 be536e21 3a5eb4be b430e67f 4f3c932b cc7b1e58 99076796 bf95e01d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jwt-staged-claims" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "wait for jwt-claims-policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: jwt-claims-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: afadaf8003a59b84
+    lang: sh
+    lines: 37d5409c 34ced9d9 facdb639
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/anything \
+  content: |-
+    {{< doc-test paths="jwt-staged-claims" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "Alice's token (team: dev, org: solo.io) is allowed to GET /anything with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Bearer ${ALICE_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 94d556bb577bf28f
+    lang: sh
+    lines: 37d5409c 34ced9d9 1e41cb01
+    preview: curl -vik http://$INGRESS_GW_ADDRESS:8080/anything \
+  content: |-
+    {{< doc-test paths="jwt-staged-claims" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "Bob's token (team: ops) is denied with 403 RBAC: access denied"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Bearer ${BOB_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains: "RBAC: access denied"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 8fe7e1f7215db509
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 2c398228 b430e67f 4f3c932b cc7b1e58 99076796 4f3c932b cc7b1e58 3081a8c7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jwt-staged-claims" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "wait for the OR jwt-claims-policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: jwt-claims-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the OR policy still requires a JWT: a request without a token gets 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    - name: "the OR policy allows Alice (team: dev) with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Bearer ${ALICE_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "the OR policy allows Bob (team: ops) with 200"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Bearer ${BOB_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 3828ec602caa53b2
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 658f6e20 b430e67f 4f3c932b cc7b1e58 9fbfb591 59058faa abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jwt-staged-claims" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "wait for the Boolean policy (generation 2) to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: jwt-claims-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].observedGeneration"
+        jsonPathExpectation:
+          comparator: contains
+          value: "2"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "Alice's token has no active claim, so the Boolean policy denies it with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Bearer ${ALICE_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains: "RBAC: access denied"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: ec70f7cda5be090e
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 6d85900e b430e67f 4f3c932b cc7b1e58 db93f219 d9cacd59 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jwt-staged-claims" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "wait for the ListContains policy (generation 3) to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: jwt-claims-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].observedGeneration"
+        jsonPathExpectation:
+          comparator: contains
+          value: "3"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "Alice's token has no roles claim, so the ListContains policy denies it with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Bearer ${ALICE_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains: "RBAC: access denied"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: a0736483fb42736b
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 f69d43ae 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 3fd65bfa 4fdc82d0 a1343bf6 6927c723 9465a8cf 44ec9b74 f971795d a3f5652b ba970908 c8f3f59a 5d141882 b430e67f 4f3c932b cc7b1e58 3c630694 ab1e1fa7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="jwt-staged-claims" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "wait for the scope policy (generation 4) to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: jwt-claims-policy
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].observedGeneration"
+        jsonPathExpectation:
+          comparator: contains
+          value: "4"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "Alice's token has no scope claim, so the scope policy denies it with 403"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/anything"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          Authorization: "Bearer ${ALICE_TOKEN}"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+        bodyContains: "RBAC: access denied"
+    EOF
+    {{< /doc-test >}}

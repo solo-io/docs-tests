@@ -264,7 +264,7 @@ hidden:
           kind: Deployment
           metadata:
             namespace: kgateway-system
-            name: kgateway
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
         jsonPath: "$.status.availableReplicas"
         jsonPathExpectation:
           comparator: greaterThan

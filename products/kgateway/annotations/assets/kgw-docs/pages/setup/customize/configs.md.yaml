@@ -309,12 +309,12 @@ hidden:
       name: custom
       namespace: kgateway-system
     spec:
-      gatewayClassName: kgateway
+      gatewayClassName: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
       infrastructure:
         parametersRef:
           name: gw-params
-          group: gateway.kgateway.dev
-          kind: GatewayParameters
+          group: {{< reuse "kgw-docs/snippets/gatewayparam-group.md" >}}
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
       listeners:
       - protocol: HTTP
         port: 80
@@ -678,12 +678,12 @@ hidden:
       name: custom
       namespace: kgateway-system
     spec:
-      gatewayClassName: kgateway
+      gatewayClassName: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
       infrastructure:
         parametersRef:
           name: gw-params
-          group: gateway.kgateway.dev
-          kind: GatewayParameters
+          group: {{< reuse "kgw-docs/snippets/gatewayparam-group.md" >}}
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
       listeners:
       - protocol: HTTP
         port: 8080
@@ -879,12 +879,12 @@ hidden:
       name: custom
       namespace: kgateway-system
     spec:
-      gatewayClassName: kgateway
+      gatewayClassName: {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
       infrastructure:
         parametersRef:
           name: gw-params
-          group: gateway.kgateway.dev
-          kind: GatewayParameters
+          group: {{< reuse "kgw-docs/snippets/gatewayparam-group.md" >}}
+          kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
       listeners:
       - protocol: HTTP
         port: 80

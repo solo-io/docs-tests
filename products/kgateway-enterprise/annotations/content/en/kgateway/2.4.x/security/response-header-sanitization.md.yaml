@@ -1,0 +1,568 @@
+format: 1
+source: content/en/kgateway/2.4.x/security/response-header-sanitization.md
+blocks:
+- 6db7088c165be857 yaml
+- 00e3d70c0dc52212 sh
+- f0503f77a40d23a6 sh
+- 8eab48d3da2eb4fc console
+- 07fbbf7549bb1218 yaml
+- 00e3d70c0dc52212 sh
+- f0503f77a40d23a6 sh
+- 3128d307e26951a8 console
+- 7c33dc80dc7881f4 sh
+- c7f2518ee35e5188 sh
+- 6bfe25a7069e3598 sh
+- 1bbc8bcae6055bed console
+- e49205c41bb6f653 yaml
+- 9a3f2386605afb3e sh
+- 655da34a07a2b30c sh
+- 6c694d46602867c0 sh
+- 37f3e8c8a16dd98f console
+- 27c3c27c7a9a4027 sh
+- 655da34a07a2b30c sh
+- 6c694d46602867c0 sh
+- d33db3fdbbb34a6d console
+- bdb1e3fbb4b5b4e2 sh
+- 9f8b59a972caa07b sh
+- d1ad608ecaf2cdcd console
+- 38638a93fe0a527a yaml
+- 3dcec12fc862b63b sh
+- d28c64075f6bc6d7 sh
+- 37772f549f447e03 sh
+- dd922900d4cb4619 console
+- d17a3a47e44ae909 sh
+tags:
+- paths: response-header-sanitization
+  block: 1
+  fingerprint: 00e3d70c0dc52212
+  lang: sh
+  lines: 68288b92 93236379
+  preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-ve
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 4
+  fingerprint: 07fbbf7549bb1218
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 dfde501a 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e1cf95e0 99c83b01 07a72d41 73fc54cd abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 5
+  fingerprint: 00e3d70c0dc52212
+  lang: sh
+  lines: 68288b92 93236379
+  preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-ve
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 8
+  fingerprint: 7c33dc80dc7881f4
+  lang: sh
+  lines: c1b6d816 80dd0db3
+  preview: kubectl patch enterprisekgatewaytrafficpolicy header-sanitization -n httpbin --t
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 9
+  fingerprint: c7f2518ee35e5188
+  lang: sh
+  lines: dbb86952 93236379
+  preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-ve
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 12
+  fingerprint: e49205c41bb6f653
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 ebb6ff3c 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 035daa9f 488c7a25 baf1ffd3 a58565b2 38dc0152 eb284336 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 13
+  fingerprint: 9a3f2386605afb3e
+  lang: sh
+  lines: c1b6d816 fd681236
+  preview: kubectl patch enterprisekgatewaytrafficpolicy header-sanitization -n httpbin --t
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 14
+  fingerprint: 655da34a07a2b30c
+  lang: sh
+  lines: a8777ce7 93236379
+  preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-app-version=1.2.3" \
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 17
+  fingerprint: 27c3c27c7a9a4027
+  lang: sh
+  lines: c1b6d816 ed7d2cbd
+  preview: kubectl patch enterprisekgatewaytrafficpolicy header-sanitization -n httpbin --t
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 18
+  fingerprint: 655da34a07a2b30c
+  lang: sh
+  lines: a8777ce7 93236379
+  preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-app-version=1.2.3" \
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 22
+  fingerprint: 9f8b59a972caa07b
+  lang: sh
+  lines: 9f8b59a9
+  preview: curl -s "localhost:19000/stats?filter=header_sanitization"
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 24
+  fingerprint: 38638a93fe0a527a
+  lang: yaml
+  lines: 16c71da1 d664f32c 9144003f 8c8c4228 fa99ff35 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 92046d69 a99fad3a 0175abec abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 25
+  fingerprint: 3dcec12fc862b63b
+  lang: sh
+  lines: e9f864bb 93236379
+  preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-backen
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 27
+  fingerprint: 37772f549f447e03
+  lang: sh
+  lines: 37772f54
+  preview: kubectl logs -n {{< reuse "kgw-docs/snippets/namespace.md" >}} deployment/http |
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+- paths: response-header-sanitization
+  block: 29
+  fingerprint: d17a3a47e44ae909
+  lang: sh
+  lines: 0a299acd 8b272ebf 10228061
+  preview: 'kubectl delete listenerpolicy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} '
+  form:
+    attr: paths="response-header-sanitization"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 00e3d70c0dc52212
+    lang: sh
+    lines: 68288b92 93236379
+    preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-ve
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - without sanitization the backend headers reach the client"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?x-secret=leak&x-app-version=1.2.3&x-backend-host=internal-svc-7"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-app-version
+            comparator: equals
+            value: "1.2.3"
+          - name: x-backend-host
+            comparator: equals
+            value: "internal-svc-7"
+          - name: x-secret
+            comparator: equals
+            value: "leak"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 07fbbf7549bb1218
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 dfde501a 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e1cf95e0 99c83b01 07a72d41 73fc54cd abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - wait for the header-sanitization policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: header-sanitization
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 00e3d70c0dc52212
+    lang: sh
+    lines: 68288b92 93236379
+    preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-ve
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    for i in $(seq 1 30); do
+      hdrs=$(curl -s -o /dev/null -D - "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-version=1.2.3&x-backend-host=internal-svc-7" -H "host: www.example.com:8080" || true)
+      if ! grep -qi '^x-secret:' <<<"$hdrs" && ! grep -qi '^x-backend-host:' <<<"$hdrs" && ! grep -qi '^access-control-allow-origin:' <<<"$hdrs" && ! grep -qi '^access-control-allow-credentials:' <<<"$hdrs" && ! grep -qi '^x-envoy-upstream-service-time:' <<<"$hdrs"; then
+        break
+      fi
+      if [ "$i" -eq 30 ]; then
+        echo "headers that the allowlist does not name still reach the client:"
+        echo "$hdrs"
+        exit 1
+      fi
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 00e3d70c0dc52212
+    lang: sh
+    lines: 68288b92 93236379
+    preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-ve
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - the allowlisted x-app-version header still arrives"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?x-secret=leak&x-app-version=1.2.3&x-backend-host=internal-svc-7"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-app-version
+            comparator: equals
+            value: "1.2.3"
+          - name: content-type
+            comparator: contains
+            value: "application/json"
+          - name: server
+            comparator: equals
+            value: "envoy"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 7c33dc80dc7881f4
+    lang: sh
+    lines: c1b6d816 80dd0db3
+    preview: kubectl patch enterprisekgatewaytrafficpolicy header-sanitization -n httpbin --t
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - the patched header-sanitization policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: header-sanitization
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: c7f2518ee35e5188
+    lang: sh
+    lines: dbb86952 93236379
+    preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-ve
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    for i in $(seq 1 30); do
+      hdrs=$(curl -s -o /dev/null -D - "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-version=1.2.3" -H "host: www.example.com:8080" || true)
+      if ! grep -qi '^x-app-version:' <<<"$hdrs" && ! grep -qi '^x-secret:' <<<"$hdrs"; then
+        break
+      fi
+      if [ "$i" -eq 30 ]; then
+        echo "the empty allowlist does not remove x-app-version:"
+        echo "$hdrs"
+        exit 1
+      fi
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: c7f2518ee35e5188
+    lang: sh
+    lines: dbb86952 93236379
+    preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-app-ve
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - critical headers survive the empty allowlist"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?x-secret=leak&x-app-version=1.2.3"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: content-type
+            comparator: contains
+            value: "application/json"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: e49205c41bb6f653
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 ebb6ff3c 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 f23deb5a 8772980e 035daa9f 488c7a25 baf1ffd3 a58565b2 38dc0152 eb284336 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - wait for the header-sanitization-probe policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: httpbin
+            name: header-sanitization-probe
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 655da34a07a2b30c
+    lang: sh
+    lines: a8777ce7 93236379
+    preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-app-version=1.2.3" \
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - x-app-version is allowlisted again"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?x-app-version=1.2.3"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-app-version
+            comparator: equals
+            value: "1.2.3"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 655da34a07a2b30c
+    lang: sh
+    lines: a8777ce7 93236379
+    preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-app-version=1.2.3" \
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    for i in $(seq 1 30); do
+      hdrs=$(curl -s -o /dev/null -D - "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-app-version=1.2.3" -H "host: www.example.com:8080" || true)
+      if ! grep -qi '^x-probe:' <<<"$hdrs"; then
+        break
+      fi
+      if [ "$i" -eq 30 ]; then
+        echo "x-probe reaches the client although sanitization runs at the default stage:"
+        echo "$hdrs"
+        exit 1
+      fi
+      sleep 2
+    done
+    {{< /doc-test >}}
+- after:
+    block: 18
+    fingerprint: 655da34a07a2b30c
+    lang: sh
+    lines: a8777ce7 93236379
+    preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-app-version=1.2.3" \
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - with Route/After sanitization, x-probe reaches the client"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/response-headers?x-app-version=1.2.3"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        headers:
+          - name: x-app-version
+            comparator: equals
+            value: "1.2.3"
+          - name: x-probe
+            comparator: equals
+            value: "set-by-transformation"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 21
+    fingerprint: bdb1e3fbb4b5b4e2
+    lang: sh
+    lines: bdb1e3fb
+    preview: kubectl port-forward deployment/http -n {{< reuse "kgw-docs/snippets/namespace.m
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} port-forward deployment/http 19000:19000 >/dev/null 2>&1 &
+    SANITIZE_PF_PID=$!
+    sleep 3
+    {{< /doc-test >}}
+- after:
+    block: 22
+    fingerprint: 9f8b59a972caa07b
+    lang: sh
+    lines: 9f8b59a9
+    preview: curl -s "localhost:19000/stats?filter=header_sanitization"
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - the sanitization counters are reported"
+      retries: 60
+      http:
+        url: "http://localhost:19000/stats?filter=header_sanitization"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "dynamicmodulescustom.solo.io.http.header_sanitization.removed"
+    - name: "response-header-sanitization - the responses_sanitized counter is reported"
+      retries: 60
+      http:
+        url: "http://localhost:19000/stats?filter=header_sanitization"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "dynamicmodulescustom.solo.io.http.header_sanitization.responses_sanitized"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 22
+    fingerprint: 9f8b59a972caa07b
+    lang: sh
+    lines: 9f8b59a9
+    preview: curl -s "localhost:19000/stats?filter=header_sanitization"
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    kill $SANITIZE_PF_PID || true
+    {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: 38638a93fe0a527a
+    lang: yaml
+    lines: 16c71da1 d664f32c 9144003f 8c8c4228 fa99ff35 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 0b02fb9c 74de47a5 52e214e3 bc3def4a b3ad8f4f 32b3817b 92046d69 a99fad3a 0175abec abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "response-header-sanitization - wait for the header-sanitization-access-logs ListenerPolicy to be accepted"
+      wait:
+        target:
+          kind: ListenerPolicy
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: header-sanitization-access-logs
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 25
+    fingerprint: 3dcec12fc862b63b
+    lang: sh
+    lines: e9f864bb 93236379
+    preview: curl -i "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-backen
+  content: |-
+    {{< doc-test paths="response-header-sanitization" >}}
+    for i in $(seq 1 30); do
+      curl -s -o /dev/null "http://$INGRESS_GW_ADDRESS:8080/response-headers?x-secret=leak&x-backend-host=internal-svc-7&x-app-version=1.2.3" -H "host: www.example.com:8080" || true
+      sleep 2
+      line=$(kubectl logs -n {{< reuse "kgw-docs/snippets/namespace.md" >}} deployment/http --tail=1)
+      if [[ "$line" == *'"removed_response_headers":['* && "$line" == *'"x-secret"'* && "$line" == *'"x-backend-host"'* && "$line" != *'"x-app-version"'* ]]; then
+        echo "$line"
+        break
+      fi
+      if [ "$i" -eq 30 ]; then
+        echo "the access log does not record the removed header names: $line"
+        exit 1
+      fi
+    done
+    {{< /doc-test >}}

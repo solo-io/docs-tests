@@ -1,0 +1,59 @@
+format: 1
+source: assets/kgw-docs/pages/traffic-management/destination-types/kube-services/http-services.md
+blocks:
+- e01c187d0e79484a yaml
+hidden:
+- after:
+    block: 0
+    fingerprint: e01c187d0e79484a
+    lang: yaml
+    lines: 8c67597e 56bf9360 8c8c4228 b262b6d0 0f10c5bc 36184fa5 d3d416e7 82601aaa 0bebd850 301e1bfa 94b78279 3de9d845 a3b86ab6 80e9487c bca8e5f7
+    preview: 'apiVersion: gateway.networking.k8s.io/v1'
+  content: |-
+    {{< doc-test paths="http-services" >}}
+    kubectl apply -f- <<EOF
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: kube-backend
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+      hostnames:
+        - httpbin.example.com
+      rules:
+        - backendRefs:
+          - name: httpbin
+            port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: the kube-backend HTTPRoute is accepted
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: kube-backend
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 2
+    - name: "http-services - httpbin.example.com is routed to the httpbin Service"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/headers"
+        method: GET
+        headers:
+          host: "httpbin.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "httpbin.example.com"
+    EOF
+    {{< /doc-test >}}

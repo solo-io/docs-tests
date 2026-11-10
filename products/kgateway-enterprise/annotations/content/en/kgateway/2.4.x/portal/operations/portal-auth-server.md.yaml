@@ -1,0 +1,119 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/operations/portal-auth-server.md
+blocks:
+- 632786decbf1824c sh
+- 5674b8d8b97f9ae0 sh
+- 61316f02f3119f1c console
+- ac26ae844b05b9ae yaml
+- a2c9271b05571ec5 yaml
+- 6e0498b0c11fee7c yaml
+- 0607d42895b3fe0f sh
+- de91f4e5ba8f2ee2 sh
+- 28fe4d59c8fe8408 sh
+- ab698a9e0cf6b227 console
+- 7753516e0cfc1f53 sh
+- 7f3a9c8b64feaf96 sh
+- 470d4108486c6b08 sh
+- 28fe4d59c8fe8408 sh
+- 86d2a9c4cc36d2a4 console
+- 7753516e0cfc1f53 sh
+- f20efb45c0d44b7c sh
+- 692b28d095fbe9b1 sh
+- f5b052680e5bc3b7 sh
+- 28fe4d59c8fe8408 sh
+- 0063e9e350eac669 console
+- 7753516e0cfc1f53 sh
+- 95e157de528886cb yaml
+- 3d043bfa01b7d6cd sh
+tags:
+- paths: portal-auth-server
+  block: 0
+  fingerprint: 632786decbf1824c
+  lang: sh
+  lines: 68a5ac68 36184fa5 fd5b82ff 97bcd5e0 5ceb8ec3 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-auth-server"
+    only: true
+    lead: ' '
+- paths: portal-auth-server
+  block: 1
+  fingerprint: 5674b8d8b97f9ae0
+  lang: sh
+  lines: f9282b87 5ab08345
+  preview: kubectl get deployment -n default | grep portal-auth
+  form:
+    attr: paths="portal-auth-server"
+    only: true
+    lead: ' '
+- paths: portal-auth-server
+  block: 3
+  fingerprint: ac26ae844b05b9ae
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 ad8c8665 0ccc8edc 36184fa5 d5ec3fae ecdd0e5c 52b1ec1d 2f1d375a 73cc3296 e5522222 bd36837e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-auth-server"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 632786decbf1824c
+    lang: sh
+    lines: 68a5ac68 36184fa5 fd5b82ff 97bcd5e0 5ceb8ec3 265fda17
+    preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  content: |-
+    {{< doc-test paths="portal-auth-server" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-auth-my-portal Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-auth-my-portal
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal-auth-my-portal Service listens on port 8080"
+      wait:
+        target:
+          kind: Service
+          metadata:
+            namespace: default
+            name: portal-auth-my-portal
+        jsonPath: "$.spec.ports[0].port"
+        jsonPathExpectation:
+          comparator: equals
+          value: 8080
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: 5674b8d8b97f9ae0
+    lang: sh
+    lines: f9282b87 5ab08345
+    preview: kubectl get deployment -n default | grep portal-auth
+  content: |-
+    {{< doc-test paths="portal-auth-server" >}}
+    # The auth server runs in restricted mode: routes other than /healthz,
+    # /readyz, and GET /v1/metadata return 404.
+    CODE=""
+    for i in $(seq 1 20); do
+      CODE=$(kubectl run portal-auth-probe-$i -n default --rm -i --restart=Never --quiet \
+        --image=curlimages/curl:8.11.1 --command -- \
+        curl -s -o /dev/null -w '%{http_code}' http://portal-auth-my-portal.default.svc.cluster.local:8080/v1/api-products 2>/dev/null | tail -c 3)
+      [ "$CODE" = "404" ] && break
+      sleep 5
+    done
+    echo "GET /v1/api-products on the auth server returned $CODE"
+    [ "$CODE" = "404" ]
+    {{< /doc-test >}}

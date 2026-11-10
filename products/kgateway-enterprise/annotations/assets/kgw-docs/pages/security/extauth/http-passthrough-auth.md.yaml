@@ -1,0 +1,459 @@
+format: 1
+source: assets/kgw-docs/pages/security/extauth/http-passthrough-auth.md
+blocks:
+- 91a83b7a35515694 mermaid
+- 9394cce87c094d80 yaml
+- a144cc4025d3d4ab sh
+- f35ec530adc91605 yaml
+- e7405ebf412e5552 yaml
+- 4e84dcdef2af0e1f sh
+- 241dd920965f4bc6 sh
+- 10b7a4f6f5d03b3f console
+- 43d148ae2c03dc63 sh
+- ec370fc2b803c0e1 sh
+- 1dd8b19a386ac64d console
+- 83176ca2e00ab5c2 sh
+- dff84f2042b5967e yaml
+- 48afff93ba8ba068 yaml
+- 7a08002a3c1c42dc yaml
+- 5ce11b5732967b73 yaml
+- 60aabaa267a671d5 yaml
+- 4855b5ccf5e608b5 yaml
+tags:
+- paths: extauth-passthrough-http,extauth-passthrough-http-options
+  block: 1
+  fingerprint: 9394cce87c094d80
+  lang: yaml
+  lines: abbd1bdc 58584366 ab78925c 8c8c4228 d8328d72 0f10c5bc 36184fa5 97bcd5e0 8432e015 839a5cac 0b724434 a58565b2 8c8c4228 fa1e8330 0b724434 36184fa5 04968f51 a76d9a15 bbf42b94 ff42c2c6 0ff65a1a 67553224 cb3f91d5 f1540154 0d6480f0 8c8c4228 5a5b6f59 0f10c5bc fa1e8330 0b724434 36184fa5 0ff65a1a a8ef8a5c 9693ecf1 8432e015 0b724434 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-http,extauth-passthrough-http-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http,extauth-passthrough-http-options
+  block: 2
+  fingerprint: a144cc4025d3d4ab
+  lang: sh
+  lines: a144cc40
+  preview: kubectl get pods -n httpbin -l app=example-http-auth-server
+  form:
+    attr: paths="extauth-passthrough-http,extauth-passthrough-http-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http,extauth-passthrough-http-options
+  block: 3
+  fingerprint: f35ec530adc91605
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 14ddcd05 c5f451f6 7cce3599 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-http,extauth-passthrough-http-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http,extauth-passthrough-http-options
+  block: 4
+  fingerprint: e7405ebf412e5552
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 becc3642 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 2c3ea4d6 75674f79 becc3642 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-http,extauth-passthrough-http-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http
+  block: 5
+  fingerprint: 4e84dcdef2af0e1f
+  lang: sh
+  lines: 4e84dcde
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  form:
+    attr: paths="extauth-passthrough-http"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http
+  block: 8
+  fingerprint: 43d148ae2c03dc63
+  lang: sh
+  lines: 43d148ae
+  preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  form:
+    attr: paths="extauth-passthrough-http"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http
+  block: 11
+  fingerprint: 83176ca2e00ab5c2
+  lang: sh
+  lines: a390296d e65be540 f32f114d
+  preview: kubectl delete {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}} http-passthrou
+  form:
+    attr: paths="extauth-passthrough-http"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http-options
+  block: 12
+  fingerprint: dff84f2042b5967e
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 14ddcd05 c5f451f6 7cce3599 59a17ab7 b9b012fe 51080423 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-http-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http-options
+  block: 13
+  fingerprint: 48afff93ba8ba068
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 cfd45970 14ddcd05 c5f451f6 7cce3599 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-http-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http-options
+  block: 14
+  fingerprint: 7a08002a3c1c42dc
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 14ddcd05 c5f451f6 7cce3599 c2ce63e3 cb7fe960 2554dba4 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-http-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http-options
+  block: 15
+  fingerprint: 5ce11b5732967b73
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 14ddcd05 c5f451f6 7cce3599 99c83b01 78ef3745 9cfbba79 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-http-options"
+    only: true
+    lead: ' '
+- paths: extauth-passthrough-http-options
+  block: 16
+  fingerprint: 60aabaa267a671d5
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 14ddcd05 c5f451f6 7cce3599 99c83b01 50e45d95 eed137f5 822dc6a4 e1c806c4 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-passthrough-http-options"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 2
+    fingerprint: a144cc4025d3d4ab
+    lang: sh
+    lines: a144cc40
+    preview: kubectl get pods -n httpbin -l app=example-http-auth-server
+  content: |-
+    {{< doc-test paths="extauth-passthrough-http,extauth-passthrough-http-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-http - wait for the example-http-auth-server deployment to be available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: httpbin
+            name: example-http-auth-server
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: e7405ebf412e5552
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 becc3642 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 9278ed91 2c3ea4d6 75674f79 becc3642 0f10c5bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-http,extauth-passthrough-http-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-http - wait for the http-passthrough-auth AuthConfig to be accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: http-passthrough-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-http - wait for the http-passthrough-auth policy to be accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: http-passthrough-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 4e84dcdef2af0e1f
+    lang: sh
+    lines: 4e84dcde
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="extauth-passthrough-http" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-http - a request without the authorization header is denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 43d148ae2c03dc63
+    lang: sh
+    lines: 43d148ae
+    preview: 'curl -i http://$INGRESS_GW_ADDRESS:8080/status/200 -H "host: www.example.com:808'
+  content: |-
+    {{< doc-test paths="extauth-passthrough-http" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-http - a request with authorization: authorize me is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          authorization: "authorize me"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: dff84f2042b5967e
+    lang: yaml
+    lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 14ddcd05 c5f451f6 7cce3599 59a17ab7 b9b012fe 51080423 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-http-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-http-options - wait for the http-passthrough-auth AuthConfig to be accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: http-passthrough-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-http-options - connection pool: a request with authorization: authorize me is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          authorization: "authorize me"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "extauth-passthrough-http-options - connection pool: a request without the authorization header is denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 48afff93ba8ba068
+    lang: yaml
+    lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 cfd45970 14ddcd05 c5f451f6 7cce3599 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-http-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-http-options - wait for the http-passthrough-auth AuthConfig to be accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: http-passthrough-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-http-options - response header timeout: a request with authorization: authorize me is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          authorization: "authorize me"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: 7a08002a3c1c42dc
+    lang: yaml
+    lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 14ddcd05 c5f451f6 7cce3599 c2ce63e3 cb7fe960 2554dba4 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-http-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-http-options - wait for the http-passthrough-auth AuthConfig to be accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: http-passthrough-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-http-options - extra request headers: a request with authorization: authorize me is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          authorization: "authorize me"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 15
+    fingerprint: 5ce11b5732967b73
+    lang: yaml
+    lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 14ddcd05 c5f451f6 7cce3599 99c83b01 78ef3745 9cfbba79 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-http-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-http-options - wait for the http-passthrough-auth AuthConfig to be accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: http-passthrough-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-http-options - allowed upstream headers: a request with authorization: authorize me is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          authorization: "authorize me"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 60aabaa267a671d5
+    lang: yaml
+    lines: abbd1bdc 98875768 efd325e8 8c8c4228 becc3642 0f10c5bc 36184fa5 d5ec3fae b6a6a530 1c31dda0 c7d47745 b024cc94 14ddcd05 c5f451f6 7cce3599 99c83b01 50e45d95 eed137f5 822dc6a4 e1c806c4 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="extauth-passthrough-http-options" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "extauth-passthrough-http-options - wait for the http-passthrough-auth AuthConfig to be accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: httpbin
+            name: http-passthrough-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "extauth-passthrough-http-options - client headers: a request with authorization: authorize me is allowed"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+          authorization: "authorize me"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: "extauth-passthrough-http-options - client headers: a request without the authorization header is denied with 401"
+      retries: 60
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080/status/200"
+        method: GET
+        headers:
+          host: "www.example.com:8080"
+      source:
+        type: local
+      expect:
+        statusCode: 401
+    EOF
+    {{< /doc-test >}}

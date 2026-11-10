@@ -1,0 +1,506 @@
+format: 1
+source: assets/kgw-docs/pages/install/fips.md
+blocks:
+- 3b66dcbd79248bc7 sh
+- 189bf76bb4d0140a sh
+- 1378ff42ee7f4bd6 sh
+- d9671e0921c61c40 sh
+- d7c7acab5f11c56b yaml
+- b14a4f189a946a0b sh
+- ce02733c2cf45298 sh
+- a5809f9da2788eaf sh
+- 1906c21135330187 console
+- 97ae03ea81adbf94 sh
+- 75374ed6c8574afb console
+tags:
+- paths: install-fips
+  block: 1
+  fingerprint: 189bf76bb4d0140a
+  lang: sh
+  lines: 189bf76b
+  preview: kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/downloa
+  form:
+    attr: paths="install-fips"
+    only: true
+    lead: ' '
+- paths: install-fips
+  block: 2
+  fingerprint: 1378ff42ee7f4bd6
+  lang: sh
+  lines: 5799835c 2a24ff0e 9d671c51 ad052e17
+  preview: helm upgrade -i {{< reuse "/kgw-docs/snippets/helm-kgateway-crds.md" >}} oci://{
+  form:
+    attr: paths="install-fips"
+    only: true
+    lead: ' '
+- paths: install-fips
+  block: 3
+  fingerprint: d9671e0921c61c40
+  lang: sh
+  lines: 4d05910d 6a5e7b1f 1bd2e2c1 4a0d02fe bf68116e
+  preview: helm upgrade -i {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reu
+  form:
+    attr: paths="install-fips"
+    only: true
+    lead: ' '
+- paths: install-fips
+  block: 5
+  fingerprint: b14a4f189a946a0b
+  lang: sh
+  lines: 5965c2dc d3c0046a 6a5e7b1f 7ed222a2 0e1a9b32
+  preview: helm upgrade -i portal \
+  form:
+    attr: paths="install-fips"
+    only: true
+    lead: ' '
+- paths: install-fips
+  block: 6
+  fingerprint: ce02733c2cf45298
+  lang: sh
+  lines: 181acedd 480a88ad
+  preview: kubectl get deployments -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+  form:
+    attr: paths="install-fips"
+    only: true
+    lead: ' '
+- paths: install-fips
+  block: 7
+  fingerprint: a5809f9da2788eaf
+  lang: sh
+  lines: a5809f9d
+  preview: kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath
+  form:
+    attr: paths="install-fips"
+    only: true
+    lead: ' '
+- paths: install-fips
+  block: 9
+  fingerprint: 97ae03ea81adbf94
+  lang: sh
+  lines: e2c282db f9b85459
+  preview: 'kubectl exec -n {{< reuse "kgw-docs/snippets/namespace.md" >}} deploy/{{< reuse '
+  form:
+    attr: paths="install-fips"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 3b66dcbd79248bc7
+    lang: sh
+    lines: c1e1531a 01091e85
+    preview: export LICENSE_KEY=<license-key>
+  content: |-
+    {{< doc-test paths="install-fips" >}}
+    # The step on the page has a license-key placeholder; CI sets LICENSE_KEY.
+    # Set only the version.
+    export KGATEWAY_VERSION={{< reuse "kgw-docs/versions/n-patch.md" >}}
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: d9671e0921c61c40
+    lang: sh
+    lines: 4d05910d 6a5e7b1f 1bd2e2c1 4a0d02fe bf68116e
+    preview: helm upgrade -i {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reu
+  content: |-
+    {{< doc-test paths="install-fips" >}}
+    # The scenario starts from the standard install, so this step upgrades the
+    # standard control plane to the FIPS image. Wait for the new controller pod.
+    kubectl rollout status deploy/{{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --timeout=400s
+    image=$(kubectl get deploy/{{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.spec.template.spec.containers[*].image}')
+    case "$image" in
+      */enterprise-kgateway-controller-fips:*) echo "control plane runs $image" ;;
+      *) echo "FAIL: the control plane does not run the enterprise-kgateway-controller-fips image: $image"; exit 1 ;;
+    esac
+    YAMLTest -f - <<'EOF'
+    - name: "install-fips - the control plane runs the FIPS controller image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/enterprise-kgateway-controller-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the FIPS control plane is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 400
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: d9671e0921c61c40
+    lang: sh
+    lines: 4d05910d 6a5e7b1f 1bd2e2c1 4a0d02fe bf68116e
+    preview: helm upgrade -i {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reu
+  content: |-
+    {{< doc-test paths="install-fips" >}}
+    # The page says that a FIPS control plane selects the -fips repository for the
+    # workloads that it manages. Create a Gateway on a GatewayClass that also
+    # enables the WAF server, then check the image of the proxy, the external auth,
+    # rate limit, and WAF servers, and that ext-cache keeps its standard image.
+    kubectl apply -f- <<'EOF'
+    apiVersion: {{< reuse "kgw-docs/snippets/gatewayparam-apiversion.md" >}}
+    kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+    metadata:
+      name: fips-check
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      kube:
+        sharedExtensions:
+          waf:
+            enabled: true
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: GatewayClass
+    metadata:
+      name: fips-check
+    spec:
+      controllerName: solo.io/{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}
+      parametersRef:
+        group: {{< reuse "kgw-docs/snippets/gatewayparam-group.md" >}}
+        kind: {{< reuse "kgw-docs/snippets/gatewayparameters.md" >}}
+        name: fips-check
+        namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    ---
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: Gateway
+    metadata:
+      name: fips-check
+      namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+    spec:
+      gatewayClassName: fips-check
+      listeners:
+      - protocol: HTTP
+        port: 8080
+        name: http
+        allowedRoutes:
+          namespaces:
+            from: All
+    EOF
+    check_image() {
+      # $1 kubectl selector flag, $2 selector, $3 what, $4 expected repository
+      for i in $(seq 1 60); do
+        images=$(kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} "$1" "$2" -o jsonpath='{.items[*].spec.template.spec.containers[*].image}' 2>/dev/null)
+        [ -n "$images" ] && break
+        sleep 5
+      done
+      case " $images" in
+        *"/$4:"*) echo "the $3 runs $images" ;;
+        *) echo "FAIL: the $3 does not run the $4 image (deployments matching $2 run: '${images:-none}')"; exit 1 ;;
+      esac
+    }
+    check_image --field-selector metadata.name=fips-check "fips-check gateway proxy" envoy-wrapper-fips
+    check_image -l app=ext-auth-service,gateway.solo.io/gatewayclass=fips-check "external auth server" ext-auth-service-fips
+    check_image -l app=rate-limiter,gateway.solo.io/gatewayclass=fips-check "rate limit server" rate-limiter-fips
+    check_image --field-selector metadata.name=waf-server-fips-check "WAF server" waf-server-fips
+    cache=$(kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l "app=ext-cache,gateway.solo.io/gatewayclass=fips-check" -o jsonpath='{.items[*].spec.template.spec.containers[*].image}')
+    case "$cache" in
+      *-fips*) echo "FAIL: the page says ext-cache has no FIPS variant, but it runs: $cache"; exit 1 ;;
+      *) echo "ext-cache runs ${cache:-no deployment}" ;;
+    esac
+    YAMLTest -f - <<'EOF'
+    - name: "install-fips - the fips-check proxy runs the envoy-wrapper-fips image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: fips-check
+        jsonPath: "$.spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/envoy-wrapper-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the fips-check proxy is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: fips-check
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the external auth server runs the ext-auth-service-fips image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: fips-check
+        jsonPath: "$.items[0].spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/ext-auth-service-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the external auth server is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: ext-auth-service
+              gateway.solo.io/gatewayclass: fips-check
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the rate limit server runs the rate-limiter-fips image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: fips-check
+        jsonPath: "$.items[0].spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/rate-limiter-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the rate limit server is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            labels:
+              app: rate-limiter
+              gateway.solo.io/gatewayclass: fips-check
+        jsonPath: "$.items[0].status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the WAF server runs the waf-server-fips image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-fips-check
+        jsonPath: "$.spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/waf-server-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the WAF server is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+            name: waf-server-fips-check
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: d7c7acab5f11c56b
+    lang: yaml
+    lines: d2c64b77 a08a3033 2f2c0603
+    preview: 'portal:'
+  content: |-
+    {{< doc-test paths="install-fips" >}}
+    # Write the values file from this step. The page sends you to the portal setup
+    # guide for the license key and the portal CRDs, so add both here. CI sets only
+    # the Solo Enterprise for kgateway license; the portal controller only logs
+    # license problems, so reuse that key when no portal license key is set.
+    export PORTAL_LICENSE_KEY="${PORTAL_LICENSE_KEY:-$LICENSE_KEY}"
+    cat > values.yaml <<VALEOF
+    portal:
+      image:
+        repository: portal-controller-fips
+    licensing:
+      licenseKey: "${PORTAL_LICENSE_KEY}"
+    VALEOF
+    helm upgrade -i portal-crds \
+      oci://{{< reuse "kgw-docs/snippets/helm-path.md" >}}/charts/portal-crds \
+      --version $KGATEWAY_VERSION \
+      --namespace {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} \
+      --create-namespace
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: b14a4f189a946a0b
+    lang: sh
+    lines: 5965c2dc d3c0046a 6a5e7b1f 7ed222a2 0e1a9b32
+    preview: helm upgrade -i portal \
+  content: |-
+    {{< doc-test paths="install-fips" >}}
+    # The page says that the FIPS portal controller selects the FIPS web server
+    # image for each Portal that it deploys. Create a Portal as in the portal setup
+    # guide, then check both images.
+    kubectl rollout status deploy/portal-controller -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} --timeout=300s
+    kubectl apply -f- <<'EOF'
+    apiVersion: portal.solo.io/v1alpha1
+    kind: PortalParameters
+    metadata:
+      name: portal-params
+      namespace: default
+    spec:
+      store:
+        memory: {}
+    ---
+    apiVersion: portal.solo.io/v1alpha1
+    kind: Portal
+    metadata:
+      name: my-portal
+      namespace: default
+    spec:
+      parametersRef:
+        name: portal-params
+      visibility:
+        public: true
+      apiProductRefs: []
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: "install-fips - the portal controller runs the portal-controller-fips image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+            name: portal-controller
+        jsonPath: "$.spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/portal-controller-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the portal controller is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+            name: portal-controller
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the portal web server runs the portal-web-server-fips image"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.spec.template.spec.containers[0].image"
+        jsonPathExpectation:
+          comparator: equals
+          value: "{{< reuse "kgw-docs/snippets/helm-path.md" >}}/portal-web-server-fips:{{< reuse "kgw-docs/versions/n-patch.md" >}}"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "install-fips - the portal web server is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: ce02733c2cf45298
+    lang: sh
+    lines: 181acedd 480a88ad
+    preview: kubectl get deployments -n {{< reuse "kgw-docs/snippets/portal-namespace.md" >}}
+  content: "{{< doc-test paths=\"install-fips\" >}}\nout=$(kubectl get deployments -n {{< reuse \"kgw-docs/snippets/portal-namespace.md\" >}} -o jsonpath='{range .items[*]}{.metadata.name}{\"\\t\"}{.spec.template.spec.containers[*].image}{\"\\n\"}{end}')\necho \"$out\"\ngrep -q \"^portal-controller\t.*/portal-controller-fips:\" <<<\"$out\" || { echo \"FAIL: the portal controller in {{< reuse \"kgw-docs/snippets/portal-namespace.md\" >}} does not run the portal-controller-fips image\"; exit 1; }\n{{< /doc-test >}}"
+- after:
+    block: 7
+    fingerprint: a5809f9da2788eaf
+    lang: sh
+    lines: a5809f9d
+    preview: kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath
+  content: "{{< doc-test paths=\"install-fips\" >}}\nout=$(kubectl get deploy -n {{< reuse \"kgw-docs/snippets/namespace.md\" >}} -o jsonpath='{range .items[*]}{.metadata.name}{\"\\t\"}{range .spec.template.spec.containers[*]}{.image}{\" \"}{end}{\"\\n\"}{end}')\necho \"$out\"\ngrep -q \"^{{< reuse \"kgw-docs/snippets/helm-kgateway.md\" >}}\t{{< reuse \"kgw-docs/snippets/helm-path.md\" >}}/enterprise-kgateway-controller-fips:{{< reuse \"kgw-docs/versions/n-patch.md\" >}} *$\" <<<\"$out\" || { echo \"FAIL: the expected line for the {{< reuse \"kgw-docs/snippets/helm-kgateway.md\" >}} Deployment is missing from the output\"; exit 1; }\n{{< /doc-test >}}"
+- after:
+    block: 9
+    fingerprint: 97ae03ea81adbf94
+    lang: sh
+    lines: e2c282db f9b85459
+    preview: 'kubectl exec -n {{< reuse "kgw-docs/snippets/namespace.md" >}} deploy/{{< reuse '
+  content: |-
+    {{< doc-test paths="install-fips" >}}
+    # Compare with the expected output on the page; the build hash after
+    # gofips140=v1.0.0- can differ.
+    out=$(kubectl exec -n {{< reuse "kgw-docs/snippets/namespace.md" >}} deploy/{{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} -- /gloo-gateway fips-check)
+    echo "$out"
+    grep -Eq '^fips140 ok: enabled=true enforced=false version=v1\.0\.0 gofips140=v1\.0\.0(-[0-9a-f]+)?$' <<<"$out" || { echo "FAIL: fips-check output does not match the expected output on the page"; exit 1; }
+
+    # The page's table lists the fips-check command for each image. Run it in
+    # each FIPS workload that this scenario created.
+    fips_check() {
+      # $1 deployment, $2 namespace, $3 expected pattern, then the command
+      dep=$1; ns=$2; pat=$3; shift 3
+      out=$(kubectl exec -n "$ns" "deploy/$dep" -- "$@" 2>&1) || { echo "FAIL: '$*' failed in deploy/$dep: $out"; exit 1; }
+      echo "$dep: $out"
+      grep -Eq "$pat" <<<"$out" || { echo "FAIL: '$*' in deploy/$dep did not report the validated module: $out"; exit 1; }
+    }
+    ok='fips140 ok: enabled=true( enforced=false)? version=v1\.0\.0'
+    extauth=$(kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=ext-auth-service,gateway.solo.io/gatewayclass=fips-check -o jsonpath='{.items[0].metadata.name}')
+    ratelimit=$(kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=rate-limiter,gateway.solo.io/gatewayclass=fips-check -o jsonpath='{.items[0].metadata.name}')
+    fips_check fips-check {{< reuse "kgw-docs/snippets/namespace.md" >}} "$ok" /usr/local/bin/envoyinit fips-check
+    fips_check "$extauth" {{< reuse "kgw-docs/snippets/namespace.md" >}} 'fips140 ok: enabled=true version=v1\.0\.0' /usr/local/bin/fips-check
+    fips_check "$ratelimit" {{< reuse "kgw-docs/snippets/namespace.md" >}} "$ok" /usr/local/bin/executable fips-check
+    fips_check waf-server-fips-check {{< reuse "kgw-docs/snippets/namespace.md" >}} "$ok" /usr/local/bin/waf-server --fips-check
+    fips_check portal-controller {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} "$ok" /usr/local/bin/portal-controller fips-check
+    fips_check portal-my-portal default "$ok" /usr/local/bin/portal-web-server fips-check
+    {{< /doc-test >}}

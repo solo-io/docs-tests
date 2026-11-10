@@ -1,0 +1,336 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/frontend-setup/credential-management/oauth.md
+blocks:
+- 562e5773e2e9156a mermaid
+- 146f0d8417f9b3d5 sh
+- 1b75a17ffb51eb1e sh
+- a8cd143265d0b537 sh
+- 7dfd57e9cd4c4e5f sh
+- 71df043d63d9c9ff sh
+- a505da1ca4c54167 yaml
+- 3ac88b1ffe567a1b yaml
+- 95ef7af4ee3695a9 shell
+- e1f5ee027b264d3c sh
+- d9a226987929c474
+tags:
+- paths: portal-cm-oauth
+  block: 1
+  fingerprint: 146f0d8417f9b3d5
+  lang: sh
+  lines: 146f0d84
+  preview: helm repo add gloo-portal-idp-connect https://storage.googleapis.com/gloo-mesh-e
+  form:
+    attr: paths="portal-cm-oauth"
+    only: true
+    lead: ' '
+- paths: portal-cm-oauth
+  block: 2
+  fingerprint: 1b75a17ffb51eb1e
+  lang: sh
+  lines: d1ccbc1f 26401f75 9ef61127 0748bda0 5a21fdfe 5805bce3 492e79bf b4d11cb3 a9134d93 abc56510
+  preview: helm upgrade -i -n kgateway-system \
+  form:
+    attr: paths="portal-cm-oauth"
+    only: true
+    lead: ' '
+- paths: portal-cm-oauth
+  block: 3
+  fingerprint: a8cd143265d0b537
+  lang: sh
+  lines: a8cd1432
+  preview: kubectl -n kgateway-system rollout status deploy gloo-portal-idp-connect
+  form:
+    attr: paths="portal-cm-oauth"
+    only: true
+    lead: ' '
+- paths: portal-cm-oauth
+  block: 4
+  fingerprint: 7dfd57e9cd4c4e5f
+  lang: sh
+  lines: 68a5ac68 36184fa5 cc6671f5 265fda17
+  preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  form:
+    attr: paths="portal-cm-oauth"
+    only: true
+    lead: ' '
+- paths: portal-cm-oauth
+  block: 5
+  fingerprint: 71df043d63d9c9ff
+  lang: sh
+  lines: 71df043d
+  preview: kubectl get pods | grep my-portal
+  form:
+    attr: paths="portal-cm-oauth"
+    only: true
+    lead: ' '
+- paths: portal-cm-oauth
+  block: 6
+  fingerprint: a505da1ca4c54167
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 ad8c8665 0ccc8edc 36184fa5 d5ec3fae 907c2035 2ef15a78 971c8e86 9b9d0530 9d64c542 2b7bc43a ecdd0e5c 52b1ec1d 1109ed2c 574265f7 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-cm-oauth"
+    only: true
+    lead: ' '
+- paths: portal-cm-oauth
+  block: 7
+  fingerprint: 3ac88b1ffe567a1b
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 ad8c8665 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 7237d9e7 2c3ea4d6 75674f79 ad8c8665 0ccc8edc 19c2fa74 6def2dca fd12af70 9d7e2b17 afd95d43 be536e21 ead663af 9d7e2b17 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-cm-oauth"
+    only: true
+    lead: ' '
+- paths: portal-cm-oauth
+  block: 8
+  fingerprint: 95ef7af4ee3695a9
+  lang: shell
+  lines: 468d57ff 1fad50b2
+  preview: export PORTAL_GW_ADDRESS=$(kubectl get svc -n default portal-gateway -o jsonpath
+  form:
+    attr: paths="portal-cm-oauth"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: 701306f85710dc53
+    occurrence: 0
+    words: 4e074085 ec91fdd9 6ee0eb49 75a288c0 ca978112 bc3347de 3549b002 b1b1bdb4 a0af9f86 d0960501 74de07c4 3549b002 10c22bcf 4d040d3f d0960501 1eb79602 3549b002 fa51fd49 f8391613 663ea1bf 824d80d7 b9776d7d 6e306c51 948fe603 631aada4 8e7fc023 4d040d3f 7dfb4cf6 fa8847b0 58296753 b9776d7d d0960501 1cf387c0 a172cedc
+    block_before:
+      block: 0
+      fingerprint: 562e5773e2e9156a
+      lang: mermaid
+      lines: 6d03c241 536f52ac e7bf4edf 2ddf7cb3 22648aff e70156c2 7fb159fc def0ea51 9c66bcfa 7cb4d23b 5a75fbf8 f06de058 e31d1737 511ef6c4 b2d3b76b 7113c366 2b8b53f4 18974331 8fb172fc 54ba5483 d9bef936 65f085ba 7cd21c63 6fce72d9 fe5614fa
+      preview: '%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#cce5ff", "primar'
+  content: |-
+    {{< doc-test paths="portal-cm-oauth" >}}
+    # portal/setup.md exports the address of the portal gateway, which serves
+    # api.example.com and portal.example.com. Look it up again if it is not set.
+    export PORTAL_GW_ADDRESS="${PORTAL_GW_ADDRESS:-$(kubectl get svc -n default portal-gateway -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")}"
+    echo "PORTAL_GW_ADDRESS=$PORTAL_GW_ADDRESS"
+    # frontend-setup/login.md exports the Keycloak address and the portal-frontend
+    # client credentials. Look them up again if they are not set.
+    if [ -z "${KEYCLOAK_URL:-}" ]; then
+      export KEYCLOAK_URL="http://$(kubectl -n keycloak get service keycloak -o jsonpath='{.status.loadBalancer.ingress[0].ip}{.status.loadBalancer.ingress[0].hostname}'):8080"
+    fi
+    export KEYCLOAK_CLIENT="${KEYCLOAK_CLIENT:-portal-frontend}"
+    if [ -z "${KEYCLOAK_SECRET:-}" ]; then
+      KC_ADMIN_TOKEN=$(curl -s -d "client_id=admin-cli" -d "username=admin" -d "password=admin" -d "grant_type=password" \
+        "${KEYCLOAK_URL}/realms/master/protocol/openid-connect/token" | jq -r '.access_token')
+      KC_CLIENT_UUID=$(curl -s -H "Authorization: Bearer ${KC_ADMIN_TOKEN}" \
+        "${KEYCLOAK_URL}/admin/realms/portal/clients?clientId=${KEYCLOAK_CLIENT}" | jq -r '.[0].id')
+      export KEYCLOAK_SECRET=$(curl -s -H "Authorization: Bearer ${KC_ADMIN_TOKEN}" \
+        "${KEYCLOAK_URL}/admin/realms/portal/clients/${KC_CLIENT_UUID}/client-secret" | jq -r '.value')
+    fi
+    if [ -z "$KEYCLOAK_SECRET" ] || [ "$KEYCLOAK_SECRET" = "null" ]; then
+      echo "FAIL: could not get the client secret of the ${KEYCLOAK_CLIENT} Keycloak client"; exit 1
+    fi
+    echo "KEYCLOAK_URL=$KEYCLOAK_URL KEYCLOAK_CLIENT=$KEYCLOAK_CLIENT"
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 1b75a17ffb51eb1e
+    lang: sh
+    lines: d1ccbc1f 26401f75 9ef61127 0748bda0 5a21fdfe 5805bce3 492e79bf b4d11cb3 a9134d93 abc56510
+    preview: helm upgrade -i -n kgateway-system \
+  content: |-
+    {{< doc-test paths="portal-cm-oauth" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the gloo-portal-idp-connect Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: gloo-portal-idp-connect
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 4
+    fingerprint: 7dfd57e9cd4c4e5f
+    lang: sh
+    lines: 68a5ac68 36184fa5 cc6671f5 265fda17
+    preview: kubectl patch portalparameters portal-params -n default --type merge -p '
+  content: |-
+    {{< doc-test paths="portal-cm-oauth" >}}
+    # Wait until the portal controller re-renders the web server with the IdP
+    # Connect URL and the new pod is rolled out.
+    for i in $(seq 1 60); do
+      ARGS=$(kubectl get deployment portal-my-portal -n default -o jsonpath='{.spec.template.spec.containers[0].args}')
+      case "$ARGS" in *--idp-server-url=http://idp-connect.kgateway-system.svc.cluster.local:80*) break ;; esac
+      sleep 5
+    done
+    case "$ARGS" in
+      *--idp-server-url=http://idp-connect.kgateway-system.svc.cluster.local:80*) ;;
+      *) echo "FAIL: the portal web server was not re-rendered with --idp-server-url"; exit 1 ;;
+    esac
+    kubectl rollout status deployment/portal-my-portal -n default --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 5
+    fingerprint: 71df043d63d9c9ff
+    lang: sh
+    lines: 71df043d
+    preview: kubectl get pods | grep my-portal
+  content: |-
+    {{< doc-test paths="portal-cm-oauth" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the portal-my-portal Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: portal-my-portal
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: "the portal web server serves the API catalog after the restart"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products"
+        method: GET
+        headers:
+          host: "portal.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "httpbin"
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Create an OAuth policy'
+    line: 6b8e4b8fc8bd36fa
+    occurrence: 0
+    words: 6b86b273 58296753 4d040d3f 0c1eeccc 043a7187 d91ec1b4 a94db13c b6bf7bc8 2998b323 b9776d7d 559df7bb b6bf7bc8 58296753 d63f4a0c 1eb79602 b6bf7bc8 fa51fd49 516e0d85 12468118 7d4e02d3 2ea88c7a 8bd1b1b7 254090ae
+    block_before:
+      block: 5
+      fingerprint: 71df043d63d9c9ff
+      lang: sh
+      lines: 71df043d
+      preview: kubectl get pods | grep my-portal
+  content: |-
+    {{< doc-test paths="portal-cm-oauth" >}}
+    # Stands in for looking up jwks_uri in the discovery document.
+    YAMLTest -f - <<EOF
+    - name: "the portal realm publishes its JWKS endpoint at the expected URL"
+      retries: 60
+      http:
+        url: "${KEYCLOAK_URL}/realms/portal/.well-known/openid-configuration"
+        method: GET
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyJsonPath:
+        - path: "$.jwks_uri"
+          comparator: equals
+          value: "${KEYCLOAK_URL}/realms/portal/protocol/openid-connect/certs"
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: a505da1ca4c54167
+    lang: yaml
+    lines: 16c71da1 98875768 efd325e8 8c8c4228 ad8c8665 0ccc8edc 36184fa5 d5ec3fae 907c2035 2ef15a78 971c8e86 9b9d0530 9d64c542 2b7bc43a ecdd0e5c 52b1ec1d 1109ed2c 574265f7 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-cm-oauth" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-auth AuthConfig is accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: default
+            name: httpbin-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 7
+    fingerprint: 3ac88b1ffe567a1b
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 ad8c8665 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 7237d9e7 2c3ea4d6 75674f79 ad8c8665 0ccc8edc 19c2fa74 6def2dca fd12af70 9d7e2b17 afd95d43 be536e21 ead663af 9d7e2b17 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-cm-oauth" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-auth policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: default
+            name: httpbin-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    section: 'Step 2: Create an OAuth policy'
+    line: 600fe1bb59e46b50
+    occurrence: 0
+    words: 32d3feda
+    block_before:
+      block: 9
+      fingerprint: e1f5ee027b264d3c
+      lang: sh
+      lines: e1f5ee02
+      preview: 'curl -vik localhost:8080/httpbin/headers -H "host: api.example.com"'
+  content: |-
+    {{< doc-test paths="portal-cm-oauth" >}}
+    # The httpbin-route HTTPRoute is attached to the portal gateway, so check the
+    # request through that gateway.
+    YAMLTest -f - <<'EOF'
+    - name: "a request to the httpbin API without an access token is denied with 403"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/httpbin/headers"
+        method: GET
+        headers:
+          host: "api.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    - name: "a request with a Basic Authorization header is denied with 403"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/httpbin/headers"
+        method: GET
+        headers:
+          host: "api.example.com"
+          Authorization: "Basic dXNlcjE6cGFzc3dvcmQ="
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}

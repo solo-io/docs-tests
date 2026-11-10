@@ -1,0 +1,193 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/operations/database.md
+blocks:
+- 09722a634e453b0d yaml
+- 883efd1980781674 shell
+- aaf01033ddf4b27c
+- 92f0b2fa0e2f7284 yaml
+- 2de5ae376f4e0384 shell
+- 12895a101b39db73
+- 583b4842ee6470ab yaml
+- c149740fad48e18e yaml
+- 025f485d2738fe54 yaml
+- 71df043d63d9c9ff sh
+- 92d438d4f90e7e52 shell
+- c2991e5921dbc713 shell
+tags:
+- paths: portal-database
+  block: 0
+  fingerprint: 09722a634e453b0d
+  lang: yaml
+  lines: abbd1bdc 58584366 ab78925c 8c8c4228 aeebe8f5 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac 541bae78 a58565b2 8c8c4228 fa1e8330 541bae78 36184fa5 04968f51 ff3502b9 dcdcb4e8 0ff65a1a dedf5d54 8db70061 2674ca4e 51473d3b 451a4587 275a3a2e 79c439db 4b281c25 fcd8c64a 830b4c2d 35f5d48c c5d7714b 830b4c2d 4e907963 cb3f91d5 f1540154 0d6480f0 8c8c4228 aeebe8f5 0ccc8edc 36184fa5 0ff65a1a bbb2484f 47211d6b 8432e015 541bae78 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="portal-database"
+    only: true
+    lead: ' '
+- paths: portal-database
+  block: 1
+  fingerprint: 883efd1980781674
+  lang: shell
+  lines: 883efd19
+  preview: kubectl rollout status deploy/postgres
+  form:
+    attr: paths="portal-database"
+    only: true
+    lead: ' '
+- paths: portal-database
+  block: 3
+  fingerprint: 92f0b2fa0e2f7284
+  lang: yaml
+  lines: abbd1bdc 58584366 ab78925c 8c8c4228 473e4142 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac cf9db903 a58565b2 8c8c4228 fa1e8330 cf9db903 36184fa5 04968f51 c97ac6db 56d97ce4 0ff65a1a 76dc1fa3 8db70061 064fdb5f b43315a4 bae468a5 4b281c25 fcd8c64a c0d2fc4e 729f6c4e 28f810bb c5d7714b c0d2fc4e 889016e3 8497440a cb3f91d5 f1540154 0d6480f0 8c8c4228 473e4142 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 9128eb50 5374623b 8432e015 cf9db903 cb3f91d5 f1540154 033792b5 8c8c4228 8497440a 0ccc8edc ff72caa3 57b89e68 021fb596 e8a4a6a0 97a2ad52 e8dd5880 73573eaf bd0c3b7c bee383c9 ed48c14f 9b3ada7a 797cb05a 30d5d65e c5ccca0c d10b36aa d10b36aa d10b36aa abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="portal-database"
+    only: true
+    lead: ' '
+- paths: portal-database
+  block: 4
+  fingerprint: 2de5ae376f4e0384
+  lang: shell
+  lines: 2de5ae37
+  preview: kubectl rollout status deploy/pgadmin
+  form:
+    attr: paths="portal-database"
+    only: true
+    lead: ' '
+- paths: portal-database
+  block: 6
+  fingerprint: 583b4842ee6470ab
+  lang: yaml
+  lines: abbd1bdc f1540154 a67acb0a 8c8c4228 d20f9db9 0ccc8edc 1426decf 2f7c298d c84358fe 42cea577 10cd2469 6550a092 22f18590 aba00a14 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="portal-database"
+    only: true
+    lead: ' '
+- paths: portal-database
+  block: 7
+  fingerprint: c149740fad48e18e
+  lang: yaml
+  lines: 16c71da1 4f6d8314 dc5b5dd8 8c8c4228 fa4a9675 0ccc8edc 36184fa5 147ec90d c62b8fcf 9ebc4789 d20f9db9 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-database"
+    only: true
+    lead: ' '
+- paths: portal-database
+  block: 8
+  fingerprint: 025f485d2738fe54
+  lang: yaml
+  lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 233590fd 6c730259 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-database"
+    only: true
+    lead: ' '
+- paths: portal-database
+  block: 9
+  fingerprint: 71df043d63d9c9ff
+  lang: sh
+  lines: 71df043d
+  preview: kubectl get pods | grep my-portal
+  form:
+    attr: paths="portal-database"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 0
+    fingerprint: 09722a634e453b0d
+    lang: yaml
+    lines: abbd1bdc 58584366 ab78925c 8c8c4228 aeebe8f5 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac 541bae78 a58565b2 8c8c4228 fa1e8330 541bae78 36184fa5 04968f51 ff3502b9 dcdcb4e8 0ff65a1a dedf5d54 8db70061 2674ca4e 51473d3b 451a4587 275a3a2e 79c439db 4b281c25 fcd8c64a 830b4c2d 35f5d48c c5d7714b 830b4c2d 4e907963 cb3f91d5 f1540154 0d6480f0 8c8c4228 aeebe8f5 0ccc8edc 36184fa5 0ff65a1a bbb2484f 47211d6b 8432e015 541bae78 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="portal-database" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the postgres Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: postgres
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: 92f0b2fa0e2f7284
+    lang: yaml
+    lines: abbd1bdc 58584366 ab78925c 8c8c4228 473e4142 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac cf9db903 a58565b2 8c8c4228 fa1e8330 cf9db903 36184fa5 04968f51 c97ac6db 56d97ce4 0ff65a1a 76dc1fa3 8db70061 064fdb5f b43315a4 bae468a5 4b281c25 fcd8c64a c0d2fc4e 729f6c4e 28f810bb c5d7714b c0d2fc4e 889016e3 8497440a cb3f91d5 f1540154 0d6480f0 8c8c4228 473e4142 0ccc8edc 36184fa5 08a3b86e 0ff65a1a 9128eb50 5374623b 8432e015 cf9db903 cb3f91d5 f1540154 033792b5 8c8c4228 8497440a 0ccc8edc ff72caa3 57b89e68 021fb596 e8a4a6a0 97a2ad52 e8dd5880 73573eaf bd0c3b7c bee383c9 ed48c14f 9b3ada7a 797cb05a 30d5d65e c5ccca0c d10b36aa d10b36aa d10b36aa abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |-
+    {{< doc-test paths="portal-database" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the pgadmin Deployment is available"
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: default
+            name: pgadmin
+        jsonPath: "$.status.availableReplicas"
+        jsonPathExpectation:
+          comparator: greaterThan
+          value: 0
+        polling:
+          timeoutSeconds: 600
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: 025f485d2738fe54
+    lang: yaml
+    lines: 16c71da1 4f6d8314 9a244d69 8c8c4228 270cb07c 0ccc8edc 36184fa5 3f04fdd7 fa4a9675 2a2190cb 233590fd 6c730259 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-database" >}}
+    # Wait until the controller re-renders the web server for the Postgres store
+    # and the new pod is rolled out.
+    for i in $(seq 1 60); do
+      ARGS=$(kubectl get deployment portal-my-portal -n default -o jsonpath='{.spec.template.spec.containers[0].args}')
+      case "$ARGS" in *--store-type=postgres*) break ;; esac
+      sleep 5
+    done
+    kubectl get deployment portal-my-portal -n default -o jsonpath='{.spec.template.spec.containers[0].args}' | grep -- '--store-type=postgres'
+    kubectl rollout status deployment/portal-my-portal -n default --timeout=300s
+    {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 71df043d63d9c9ff
+    lang: sh
+    lines: 71df043d
+    preview: kubectl get pods | grep my-portal
+  content: |-
+    {{< doc-test paths="portal-database" >}}
+    # Stands in for the pgAdmin UI steps: the web server ran its schema
+    # migrations, so the portal tables exist in the db database.
+    TABLES=$(kubectl exec deployment/postgres -n default -- psql -U user -d db -tAc "select count(*) from information_schema.tables where table_schema='public'")
+    echo "portal tables in Postgres: $TABLES"
+    [ "$TABLES" -gt 0 ]
+    YAMLTest -f - <<'EOF'
+    - name: "the portal web server serves the API catalog from the Postgres store"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/v1/api-products"
+        method: GET
+        headers:
+          host: "portal.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+        bodyContains: "httpbin"
+    EOF
+    {{< /doc-test >}}

@@ -1,0 +1,305 @@
+format: 1
+source: assets/kgw-docs/pages/security/extauth/opa/sidecar.md
+blocks:
+- ae7dc01ddac91984 mermaid
+- f04f14c614708e68 yaml
+- f951a1591a949ebf sh
+- 1b32fcdd5bf3bdfd yaml
+- 8b30d55dee04d21b yaml
+- 0827d8251db598e6 yaml
+- 1341040a25e6fa9e sh
+- 44cd7cb781d8140a
+- c879ebb77cacb38e yaml
+- 5ce2c1f935ee251e yaml
+- d53fbb174ad7c382 sh
+- 761791a374f2fbb9 sh
+- 2b4d429cfa57a1dd sh
+- 1b90a4502563e699 sh
+- 0a0c4c6404a883f5 sh
+- b1507579a0174257
+- 58ff4b04153e69d8 sh
+- 1a167b4987f20846 sh
+- 086c029851f96df5
+- e53d1a7a231e158a sh
+tags:
+- paths: extauth-opa-sidecar
+  block: 1
+  fingerprint: f04f14c614708e68
+  lang: yaml
+  lines: 68ddfab2 c4ec0d8f 68c14ff3 839339c1 0950f3e9 e1e3d461 daa1bb33 4c4a47e2 bc04c78d abc56510
+  preview: cat <<EOF > policy.rego
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 2
+  fingerprint: f951a1591a949ebf
+  lang: sh
+  lines: f951a159
+  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} create configmap opa-p
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 3
+  fingerprint: 1b32fcdd5bf3bdfd
+  lang: yaml
+  lines: abbd1bdc 5a05cd6c 2ee1c717 8c8c4228 97318778 0bebd850 36184fa5 9cc14d83 356067ee 3e196ba7 ff7360cf be80440e 36184fa5 a58565b2 36184fa5 c5d7714b 430c055c 889016e3 04498e8c 04968f51 1457c381 755e7c76 7c9dace4 7f6e72e4 6736a57c 00c611e6 87b6961d 7a26cd5a bb6a3d01 0ff65a1a 2534e205 fcd8c64a 430c055c cdfbc697 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 4
+  fingerprint: 8b30d55dee04d21b
+  lang: yaml
+  lines: abbd1bdc 8c67597e 9730d414 8c8c4228 4142311a 36184fa5 ba8e78cf 3f04fdd7 4a23a5a4 2ee1c717 97318778 0bebd850 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 5
+  fingerprint: 0827d8251db598e6
+  lang: yaml
+  lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 5ec76e39 0bebd850 36184fa5 437b1f43 c10d7538 82601aaa 069de162 c095a45d 5f37c61e c3201545 e83d405d cb3f91d5 8c67597e 56bf9360 8c8c4228 942f3236 0f10c5bc 36184fa5 d3d416e7 cead400d 0bebd850 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 6
+  fingerprint: 1341040a25e6fa9e
+  lang: sh
+  lines: 1341040a
+  preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app.kubern
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 8
+  fingerprint: c879ebb77cacb38e
+  lang: yaml
+  lines: abbd1bdc 98875768 efd325e8 8c8c4228 3c0f71ee 0f10c5bc 36184fa5 d5ec3fae a4254ae0 93cbb6a8 59b97674 7a6b0372 20c754c3 abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 9
+  fingerprint: 5ce2c1f935ee251e
+  lang: yaml
+  lines: abbd1bdc 88b9492f c548623c 8c8c4228 3c0f71ee 0bebd850 36184fa5 588a5d84 cead400d 350955ef cd44d8cd 2c3ea4d6 75674f79 3c0f71ee 0f10c5bc abc56510
+  preview: kubectl apply -f - <<EOF
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 10
+  fingerprint: d53fbb174ad7c382
+  lang: sh
+  lines: d53fbb17
+  preview: kubectl get authconfig opa-sidecar -n httpbin -o yaml
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 11
+  fingerprint: 761791a374f2fbb9
+  lang: sh
+  lines: e024dcd2 4059cfa2
+  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 13
+  fingerprint: 1b90a4502563e699
+  lang: sh
+  lines: 1b90a450
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080"'
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+- paths: extauth-opa-sidecar
+  block: 16
+  fingerprint: 58ff4b04153e69d8
+  lang: sh
+  lines: 58ff4b04
+  preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080" -H "'
+  form:
+    attr: paths="extauth-opa-sidecar"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 5
+    fingerprint: 0827d8251db598e6
+    lang: yaml
+    lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 5ec76e39 0bebd850 36184fa5 437b1f43 c10d7538 82601aaa 069de162 c095a45d 5f37c61e c3201545 e83d405d cb3f91d5 8c67597e 56bf9360 8c8c4228 942f3236 0f10c5bc 36184fa5 d3d416e7 cead400d 0bebd850 301e1bfa 8f304d1d 3de9d845 a3b86ab6 80e9487c bca8e5f7 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-opa-sidecar" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "extauth-opa-sidecar - the http-opa Gateway is programmed"
+         wait:
+           target:
+             kind: Gateway
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: http-opa
+           jsonPath: "$.status.conditions[?(@.type=='Programmed')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       - name: "extauth-opa-sidecar - the ext-auth service for the {{< reuse "kgw-docs/snippets/gatewayclass.md" >}}-opa GatewayClass is available"
+         wait:
+           target:
+             kind: Deployment
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: ext-auth-service-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}-opa
+           jsonPath: "$.status.availableReplicas"
+           jsonPathExpectation:
+             comparator: greaterThan
+             value: 0
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 6
+    fingerprint: 1341040a25e6fa9e
+    lang: sh
+    lines: 1341040a
+    preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app.kubern
+  content: |2-
+       {{< doc-test paths="extauth-opa-sidecar" >}}
+       # The step expects 2/2 containers: ext-auth-service and the opa-auth sidecar.
+       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/ext-auth-service-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}-opa --timeout=300s
+       ready=$(kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app.kubernetes.io/instance=ext-auth-service-{{< reuse "kgw-docs/snippets/gatewayclass.md" >}}-opa \
+         -o jsonpath='{range .items[*]}{range .status.containerStatuses[*]}{.name}={.ready} {end}{end}')
+       echo "containers: $ready"
+       case "$ready" in *opa-auth=true*) ;; *) echo "FAIL: the opa-auth sidecar is not ready"; exit 1 ;; esac
+       test "$(echo "$ready" | grep -o '=true' | wc -l)" -ge 2 || { echo "FAIL: fewer than 2 ready containers"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 8
+    fingerprint: c879ebb77cacb38e
+    lang: yaml
+    lines: abbd1bdc 98875768 efd325e8 8c8c4228 3c0f71ee 0f10c5bc 36184fa5 d5ec3fae a4254ae0 93cbb6a8 59b97674 7a6b0372 20c754c3 abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-opa-sidecar" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "extauth-opa-sidecar - the opa-sidecar AuthConfig is accepted"
+         wait:
+           target:
+             kind: AuthConfig
+             metadata:
+               namespace: httpbin
+               name: opa-sidecar
+           jsonPath: "$.status.state"
+           jsonPathExpectation:
+             comparator: equals
+             value: "Accepted"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 9
+    fingerprint: 5ce2c1f935ee251e
+    lang: yaml
+    lines: abbd1bdc 88b9492f c548623c 8c8c4228 3c0f71ee 0bebd850 36184fa5 588a5d84 cead400d 350955ef cd44d8cd 2c3ea4d6 75674f79 3c0f71ee 0f10c5bc abc56510
+    preview: kubectl apply -f - <<EOF
+  content: |2-
+       {{< doc-test paths="extauth-opa-sidecar" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "extauth-opa-sidecar - the opa-sidecar policy is accepted"
+         wait:
+           target:
+             kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+             metadata:
+               namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
+               name: opa-sidecar
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 300
+             intervalSeconds: 5
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 11
+    fingerprint: 761791a374f2fbb9
+    lang: sh
+    lines: e024dcd2 4059cfa2
+    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "kgw-docs/snippets/name
+  content: |2-
+       {{< doc-test paths="extauth-opa-sidecar" >}}
+       test -n "$INGRESS_GW_ADDRESS" || { echo "FAIL: the http-opa Service has no LoadBalancer address yet"; exit 1; }
+       {{< /doc-test >}}
+- after:
+    block: 13
+    fingerprint: 1b90a4502563e699
+    lang: sh
+    lines: 1b90a450
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080"'
+  content: |2-
+       {{< doc-test paths="extauth-opa-sidecar" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "extauth-opa-sidecar - a request without the allow header is denied with 403"
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+         source:
+           type: local
+         expect:
+           statusCode: 403
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 58ff4b04153e69d8
+    lang: sh
+    lines: 58ff4b04
+    preview: 'curl -v http://$INGRESS_GW_ADDRESS:8080/get -H "host: www.example.com:8080" -H "'
+  content: |2-
+       {{< doc-test paths="extauth-opa-sidecar" >}}
+       YAMLTest -f - <<'EOF'
+       - name: "extauth-opa-sidecar - a request with the allow: true header succeeds"
+         retries: 60
+         http:
+           url: "http://${INGRESS_GW_ADDRESS}:8080/get"
+           method: GET
+           headers:
+             host: "www.example.com:8080"
+             allow: "true"
+         source:
+           type: local
+         expect:
+           statusCode: 200
+       EOF
+       {{< /doc-test >}}

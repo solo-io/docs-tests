@@ -1,0 +1,133 @@
+format: 1
+source: content/en/kgateway/2.4.x/portal/frontend-setup/credential-management/apikey.md
+blocks:
+- 55204a01d95ce7ab mermaid
+- aae6225d5d8c0c52 yaml
+- 3ac88b1ffe567a1b yaml
+- e1f5ee027b264d3c sh
+- d9a226987929c474
+tags:
+- paths: portal-cm-apikey
+  block: 1
+  fingerprint: aae6225d5d8c0c52
+  lang: yaml
+  lines: 16c71da1 98875768 efd325e8 8c8c4228 ad8c8665 0ccc8edc 36184fa5 d5ec3fae ecdd0e5c 52b1ec1d 1109ed2c 73cc3296 e5522222 bd36837e abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-cm-apikey"
+    only: true
+    lead: ' '
+- paths: portal-cm-apikey
+  block: 2
+  fingerprint: 3ac88b1ffe567a1b
+  lang: yaml
+  lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 ad8c8665 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 7237d9e7 2c3ea4d6 75674f79 ad8c8665 0ccc8edc 19c2fa74 6def2dca fd12af70 9d7e2b17 afd95d43 be536e21 ead663af 9d7e2b17 abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="portal-cm-apikey"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    section: Before you begin
+    line: d7bdecf1a55e1796
+    occurrence: 0
+    words: 4e074085 ec91fdd9 6ee0eb49 75a288c0 ca978112 bc3347de 3549b002 b1b1bdb4 a0af9f86 d0960501 74de07c4 3549b002 10c22bcf 4d040d3f d0960501 1eb79602 3549b002 fa51fd49 f8391613 663ea1bf 824d80d7 b9776d7d 14c2529e 48a53f07 8e7fc023 4d040d3f 7dfb4cf6 fa8847b0 58296753 b9776d7d d0960501 1cf387c0 a172cedc
+    block_before:
+      block: 0
+      fingerprint: 55204a01d95ce7ab
+      lang: mermaid
+      lines: 6d03c241 536f52ac e7bf4edf 2ddf7cb3 7fb159fc def0ea51 f3f6f030 dba0f184 e1ce7b27 13eac78b e0642352 92dfeaf1 65f085ba 7cd21c63 6fce72d9 fe5614fa
+      preview: '%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#cce5ff", "primar'
+  content: |-
+    {{< doc-test paths="portal-cm-apikey" >}}
+    # portal/setup.md exports the address of the portal gateway, which serves
+    # api.example.com and portal.example.com. Look it up again if it is not set.
+    export PORTAL_GW_ADDRESS="${PORTAL_GW_ADDRESS:-$(kubectl get svc -n default portal-gateway -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")}"
+    echo "PORTAL_GW_ADDRESS=$PORTAL_GW_ADDRESS"
+    {{< /doc-test >}}
+- after:
+    block: 1
+    fingerprint: aae6225d5d8c0c52
+    lang: yaml
+    lines: 16c71da1 98875768 efd325e8 8c8c4228 ad8c8665 0ccc8edc 36184fa5 d5ec3fae ecdd0e5c 52b1ec1d 1109ed2c 73cc3296 e5522222 bd36837e abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-cm-apikey" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-auth AuthConfig is accepted"
+      wait:
+        target:
+          kind: AuthConfig
+          metadata:
+            namespace: default
+            name: httpbin-auth
+        jsonPath: "$.status.state"
+        jsonPathExpectation:
+          comparator: equals
+          value: "Accepted"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 2
+    fingerprint: 3ac88b1ffe567a1b
+    lang: yaml
+    lines: 16c71da1 bd0fb8f4 fefd2fc8 8c8c4228 ad8c8665 0ccc8edc 36184fa5 588a5d84 b5a028c9 56bf9360 7237d9e7 2c3ea4d6 75674f79 ad8c8665 0ccc8edc 19c2fa74 6def2dca fd12af70 9d7e2b17 afd95d43 be536e21 ead663af 9d7e2b17 abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="portal-cm-apikey" >}}
+    YAMLTest -f - <<'EOF'
+    - name: "the httpbin-auth policy is accepted"
+      wait:
+        target:
+          kind: {{< reuse "kgw-docs/snippets/trafficpolicy.md" >}}
+          metadata:
+            namespace: default
+            name: httpbin-auth
+        jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    EOF
+    {{< /doc-test >}}
+- after:
+    block: 3
+    fingerprint: e1f5ee027b264d3c
+    lang: sh
+    lines: e1f5ee02
+    preview: 'curl -vik localhost:8080/httpbin/headers -H "host: api.example.com"'
+  content: |-
+    {{< doc-test paths="portal-cm-apikey" >}}
+    # Stands in for the localhost (port-forward) request above.
+    YAMLTest -f - <<'EOF'
+    - name: "a request to the httpbin API without an API key is denied with 403"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/httpbin/headers"
+        method: GET
+        headers:
+          host: "api.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    - name: "a request with an API key that Portal did not issue is denied with 403"
+      retries: 60
+      http:
+        url: "http://${PORTAL_GW_ADDRESS}:8080/httpbin/headers"
+        method: GET
+        headers:
+          host: "api.example.com"
+          api-key: "not-a-portal-api-key"
+      source:
+        type: local
+      expect:
+        statusCode: 403
+    EOF
+    {{< /doc-test >}}
