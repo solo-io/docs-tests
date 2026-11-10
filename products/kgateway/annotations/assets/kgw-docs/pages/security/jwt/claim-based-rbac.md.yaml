@@ -1,25 +1,26 @@
 format: 1
 source: assets/kgw-docs/pages/security/jwt/claim-based-rbac.md
 blocks:
-- 1342d83536e6b311 sh
+- 93c0e03f3b76e08f sh
 - 05a4db747459fa95 yaml
 - 0cb8123ebc5e6901 sh
 - b41221bb568c5b0a sh
-- fc7bf5dcb037b697 sh
+- e342dcccfb464d0e sh
 - d925d91a5b67ee6e sh
 - 9a41adc75652537c sh
 - 9d0765d28fbf996a
 - ebe9007e51667a6b yaml
 - 4fc0a5f2710e96a8 yaml
 - ccbc7de4b3394a70 yaml
+- 078e42d4402e3faf yaml
 - 6a794673f6521d24 sh
 tags:
 - paths: claim-based-rbac
   block: 0
-  fingerprint: 1342d83536e6b311
+  fingerprint: 93c0e03f3b76e08f
   lang: sh
-  lines: 1342d835
-  preview: export TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNvbG8tcHVibGljLWtleS0
+  lines: 93c0e03f
+  preview: export TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtnYXRld2F5LXB1YmxpYy1
   form:
     attr: paths="claim-based-rbac"
     only: true
@@ -36,16 +37,16 @@ tags:
     lead: ' '
 - paths: claim-based-rbac
   block: 4
-  fingerprint: fc7bf5dcb037b697
+  fingerprint: e342dcccfb464d0e
   lang: sh
-  lines: fc7bf5dc
-  preview: export BOB_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNvbG8tcHVibGljLWt
+  lines: e342dccc
+  preview: export BOB_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtnYXRld2F5LXB1Ymx
   form:
     attr: paths="claim-based-rbac"
     only: true
     lead: ' '
 - paths: claim-based-rbac
-  block: 11
+  block: 12
   fingerprint: 6a794673f6521d24
   lang: sh
   lines: 3dc6e74f 0fbf3ab9
@@ -57,10 +58,10 @@ tags:
 hidden:
 - after:
     block: 0
-    fingerprint: 1342d83536e6b311
+    fingerprint: 93c0e03f3b76e08f
     lang: sh
-    lines: 1342d835
-    preview: export TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InNvbG8tcHVibGljLWtleS0
+    lines: 93c0e03f
+    preview: export TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtnYXRld2F5LXB1YmxpYy1
   content: |-
     {{< doc-test paths="claim-based-rbac" >}}
     # Test-only: the setup from the Basic JWT policy guide that this guide builds on,
@@ -78,7 +79,7 @@ hidden:
             issuer: kgateway.dev
             jwks:
               local:
-                inline: '{"keys":[{"kty":"RSA","kid":"kgateway-public-key-001","use":"sig","alg":"RS256","n":"tNxnW0ZghyIUdfRc97EuZ6Hii0z4AucJrbOCT8MxKznlnV9Z-OrOYMf_hyjiD2Q_qyGrv-sRhinKOjokr-cbLKhHlAlEkEW1ah4wQ-zzO3DT0SdAKX_7RkMkl5Sba443vfDlDmuVSBeyHQr6cKZZGBIe8TlzcKR0xYlop13p1DYAHsIiX8A_q2CmsRlnV4CbneNMGZOmHuBiFG3DJ2lc1ZgvKc8SN1gt3oEujRqxy4yPLHVJ3wQ58ezYtgV2gzbyllzJdi1DSoPtnCFFGvfDqmAcDdmfVtHUHqagCF0ivEQsrxt7PYKqxuCbkaSY1_ef7ub01_5KF1GhlA9y5XSqJQ","e":"AQAB"}]}'
+                inline: '{"keys":[{"kty":"RSA","kid":"kgateway-public-key-001","use":"sig","alg":"RS256","n":"rmNzxClHNlcAjnEsHFgQz9iYmZetZOiNAjAnm1ZW3nf8w6uGx5KMqlMQmmf-_RYdcFpYaRkjMPr5iEOHARH6w_W_gbJufZn0P4zIXhjQVV6bFwmPC4WKFeq4TpU6-uxkIzBbLIZ2tCTE6uFUUb_wPlwc7_Mevjzkckait4-qRc-JX32NVvh1vzgeFAtjRO9qUYOVpQPkQ8hnbhBv3tZPwyz04MPsFrHSXIddYW-gRxrS7esbSAbKpwBobZXCKPyjJ9GZb2O5OZDUIS0Zvwt276IzEPz3ObZLsFQsTgfUrXaGmJVlXapZWM4gyVVPCYYt1gxiN5Lsb6s1-kP_egDyiw","e":"AQAB"}]}'
     EOF
     {{< /doc-test >}}
 - after:
@@ -174,7 +175,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 11
+    block: 12
     fingerprint: 6a794673f6521d24
     lang: sh
     lines: 3dc6e74f 0fbf3ab9

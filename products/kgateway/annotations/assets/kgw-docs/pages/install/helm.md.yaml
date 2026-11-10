@@ -7,8 +7,8 @@ blocks:
 - 2ccaec033f3f4c5c sh
 - 5efca42d766c73b0 sh
 - 25e0fe07ac02572a sh
-- a0f9d3e47bc9a5b0 sh
-- 0e8b49e6c10a2c9c sh
+- d797a93759d65681 sh
+- 7a2208abd447b415 sh
 - 6a24786ed0b25d17 sh
 - 08deff5bad4cdff9 txt
 - 5fba5f3bf561451f sh
@@ -58,20 +58,20 @@ tags:
     lead: ' '
 - paths: helm,helm-experimental
   block: 6
-  fingerprint: a0f9d3e47bc9a5b0
+  fingerprint: d797a93759d65681
   lang: sh
-  lines: 87ff5769 0713159a
-  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  lines: d797a937
+  preview: '{{< reuse "kgw-docs/snippets/helm-install-command.md" >}}'
   form:
     attr: paths="helm,helm-experimental"
     only: true
     lead: ' '
 - paths: helm-custom-values
   block: 7
-  fingerprint: 0e8b49e6c10a2c9c
+  fingerprint: 7a2208abd447b415
   lang: sh
-  lines: 87ff5769 39fd077a 44d44036
-  preview: helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kg
+  lines: 0cbf3071 44d44036
+  preview: '{{< reuse "kgw-docs/snippets/helm-install-command.md" >}} \'
   form:
     attr: paths="helm-custom-values"
     only: true
