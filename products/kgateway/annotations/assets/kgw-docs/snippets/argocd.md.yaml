@@ -146,8 +146,8 @@ hidden:
   content: |-
     {{< doc-test paths="argocd" >}}
     controller=$(kubectl get gatewayclass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} -o jsonpath='{.spec.controllerName}')
-    if [ "$controller" != "kgateway.dev/{{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}" ]; then
-      echo "FAIL: GatewayClass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} has controller '$controller', not kgateway.dev/{{< reuse "/kgw-docs/snippets/gatewayclass.md" >}}"
+    if [ "$controller" != "{{< reuse "kgw-docs/snippets/controller-name.md" >}}" ]; then
+      echo "FAIL: GatewayClass {{< reuse "/kgw-docs/snippets/gatewayclass.md" >}} has controller '$controller', not {{< reuse "kgw-docs/snippets/controller-name.md" >}}"
       exit 1
     fi
     {{< /doc-test >}}
