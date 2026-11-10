@@ -498,7 +498,7 @@ hidden:
     extauth=$(kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=ext-auth-service,gateway.solo.io/gatewayclass=fips-check -o jsonpath='{.items[0].metadata.name}')
     ratelimit=$(kubectl get deploy -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -l app=rate-limiter,gateway.solo.io/gatewayclass=fips-check -o jsonpath='{.items[0].metadata.name}')
     fips_check fips-check {{< reuse "kgw-docs/snippets/namespace.md" >}} "$ok" /usr/local/bin/envoyinit fips-check
-    fips_check "$extauth" {{< reuse "kgw-docs/snippets/namespace.md" >}} 'fips140 ok: enabled=true version=v1\.0\.0' /usr/local/bin/fips-check
+    fips_check "$extauth" {{< reuse "kgw-docs/snippets/namespace.md" >}} "$ok" /usr/local/bin/executable fips-check
     fips_check "$ratelimit" {{< reuse "kgw-docs/snippets/namespace.md" >}} "$ok" /usr/local/bin/executable fips-check
     fips_check waf-server-fips-check {{< reuse "kgw-docs/snippets/namespace.md" >}} "$ok" /usr/local/bin/waf-server --fips-check
     fips_check portal-controller {{< reuse "kgw-docs/snippets/portal-namespace.md" >}} "$ok" /usr/local/bin/portal-controller fips-check

@@ -134,6 +134,22 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
+    block: 5
+    fingerprint: 97b4339cebcb04e3
+    lang: yaml
+    lines: 16c71da1 cd44d8cd 8c67597e 8c8c4228 8c64e446 0bebd850 36184fa5 6af426c0 c10d7538 fe67aa7e c095a45d 9278ed91 5f37c61e c3201545 e83d405d abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |-
+    {{< doc-test paths="versions-fips" >}}
+    # The control plane creates the fips proxy Deployment shortly after the
+    # Gateway, so wait for it before the next step reads it.
+    for _ in $(seq 1 60); do
+      kubectl get deploy/fips -n {{< reuse "kgw-docs/snippets/namespace.md" >}} >/dev/null 2>&1 && break
+      sleep 5
+    done
+    kubectl get deploy/fips -n {{< reuse "kgw-docs/snippets/namespace.md" >}} >/dev/null || { echo "FAIL: the control plane did not create the fips proxy Deployment"; exit 1; }
+    {{< /doc-test >}}
+- after:
     block: 6
     fingerprint: b8758b3a77992be9
     lang: sh
