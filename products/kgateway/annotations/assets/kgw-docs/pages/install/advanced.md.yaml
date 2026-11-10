@@ -76,6 +76,16 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
+  block: 18
+  fingerprint: 38e804862cec9ebd
+  lang: sh
+  lines: effecb89 8f16bc27
+  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment {{< reu
+  form:
+    attr: paths="advanced"
+    only: true
+    lead: ' '
+- paths: advanced
   block: 20
   fingerprint: 9b7754df70ac386d
   lang: yaml
@@ -125,16 +135,6 @@ tags:
     attr: paths="advanced"
     only: true
     lead: ' '
-- paths: advanced
-  fingerprint: 0c4d76c57607f30a
-  lang: sh
-  lines: b4095574 8f16bc27
-  preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment kgatewa
-  form:
-    attr: paths="advanced"
-    only: true
-    lead: ' '
-  status: needs-update
 hidden:
 - after:
     block: 1
@@ -559,6 +559,129 @@ hidden:
     kubectl rollout status deployment/kgateway -n kgateway-system --timeout=300s
     {{< /doc-test >}}
 - after:
+    block: 18
+    fingerprint: 38e804862cec9ebd
+    lang: sh
+    lines: effecb89 8f16bc27
+    preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment {{< reu
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    YAMLTest -f - <<'EOF'
+    - name: advanced - validation.level strict sets KGW_VALIDATION_MODE to strict
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: kgateway
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_VALIDATION_MODE')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "strict"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    # The page's strict-mode example: a route rule with an invalid RE2 regular expression
+    # is dropped and reported as RouteRuleDropped, the other rule of that route and the
+    # other routes on the listener keep serving traffic.
+    kubectl apply -f- <<'EOF'
+    apiVersion: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    metadata:
+      name: strict-check
+      namespace: httpbin
+    spec:
+      parentRefs:
+      - name: http
+        namespace: kgateway-system
+      hostnames:
+      - "strict.example.com"
+      rules:
+      - matches:
+        - path:
+            type: RegularExpression
+            value: "/strict-check/(unclosed"
+        backendRefs:
+        - name: httpbin
+          port: 8000
+      - matches:
+        - path:
+            type: PathPrefix
+            value: /status
+        backendRefs:
+        - name: httpbin
+          port: 8000
+    EOF
+    YAMLTest -f - <<'EOF'
+    - name: advanced - strict mode drops the rule with the invalid regular expression
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: strict-check
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='kgateway.dev/Programmed')].reason"
+        jsonPathExpectation:
+          comparator: equals
+          value: "RouteRuleDropped"
+        polling:
+          timeoutSeconds: 300
+          intervalSeconds: 5
+    - name: advanced - the dropped rule's route reports kgateway.dev/Programmed False
+      wait:
+        target:
+          kind: HTTPRoute
+          metadata:
+            namespace: httpbin
+            name: strict-check
+        jsonPath: "$.status.parents[0].conditions[?(@.type=='kgateway.dev/Programmed')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "False"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    - name: advanced - the valid rule of the same route still serves traffic
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /status/200
+        method: GET
+        headers:
+          host: "strict.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    - name: advanced - a request that only the dropped rule matched gets 404
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /strict-check/x
+        method: GET
+        headers:
+          host: "strict.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 404
+    - name: advanced - the other route on the listener keeps serving traffic
+      retries: 30
+      http:
+        url: "http://${INGRESS_GW_ADDRESS}:8080"
+        path: /headers
+        method: GET
+        headers:
+          host: "www.example.com"
+      source:
+        type: local
+      expect:
+        statusCode: 200
+    EOF
+    kubectl delete httproute strict-check -n httpbin
+    {{< /doc-test >}}
+- after:
     block: 19
     fingerprint: 5cfb737529f1cb56
     lang: yaml
@@ -947,126 +1070,3 @@ hidden:
       exit 1
     fi
     {{< /doc-test >}}
-- after:
-    fingerprint: 0c4d76c57607f30a
-    lang: sh
-    lines: b4095574 8f16bc27
-    preview: kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get deployment kgatewa
-  content: |-
-    {{< doc-test paths="advanced" >}}
-    YAMLTest -f - <<'EOF'
-    - name: advanced - validation.level strict sets KGW_VALIDATION_MODE to strict
-      wait:
-        target:
-          kind: Deployment
-          metadata:
-            namespace: kgateway-system
-            name: kgateway
-        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='KGW_VALIDATION_MODE')].value"
-        jsonPathExpectation:
-          comparator: equals
-          value: "strict"
-        polling:
-          timeoutSeconds: 120
-          intervalSeconds: 5
-    EOF
-    # The page's strict-mode example: a route rule with an invalid RE2 regular expression
-    # is dropped and reported as RouteRuleDropped, the other rule of that route and the
-    # other routes on the listener keep serving traffic.
-    kubectl apply -f- <<'EOF'
-    apiVersion: gateway.networking.k8s.io/v1
-    kind: HTTPRoute
-    metadata:
-      name: strict-check
-      namespace: httpbin
-    spec:
-      parentRefs:
-      - name: http
-        namespace: kgateway-system
-      hostnames:
-      - "strict.example.com"
-      rules:
-      - matches:
-        - path:
-            type: RegularExpression
-            value: "/strict-check/(unclosed"
-        backendRefs:
-        - name: httpbin
-          port: 8000
-      - matches:
-        - path:
-            type: PathPrefix
-            value: /status
-        backendRefs:
-        - name: httpbin
-          port: 8000
-    EOF
-    YAMLTest -f - <<'EOF'
-    - name: advanced - strict mode drops the rule with the invalid regular expression
-      wait:
-        target:
-          kind: HTTPRoute
-          metadata:
-            namespace: httpbin
-            name: strict-check
-        jsonPath: "$.status.parents[0].conditions[?(@.type=='kgateway.dev/Programmed')].reason"
-        jsonPathExpectation:
-          comparator: equals
-          value: "RouteRuleDropped"
-        polling:
-          timeoutSeconds: 300
-          intervalSeconds: 5
-    - name: advanced - the dropped rule's route reports kgateway.dev/Programmed False
-      wait:
-        target:
-          kind: HTTPRoute
-          metadata:
-            namespace: httpbin
-            name: strict-check
-        jsonPath: "$.status.parents[0].conditions[?(@.type=='kgateway.dev/Programmed')].status"
-        jsonPathExpectation:
-          comparator: equals
-          value: "False"
-        polling:
-          timeoutSeconds: 120
-          intervalSeconds: 5
-    - name: advanced - the valid rule of the same route still serves traffic
-      retries: 30
-      http:
-        url: "http://${INGRESS_GW_ADDRESS}:8080"
-        path: /status/200
-        method: GET
-        headers:
-          host: "strict.example.com"
-      source:
-        type: local
-      expect:
-        statusCode: 200
-    - name: advanced - a request that only the dropped rule matched gets 404
-      retries: 30
-      http:
-        url: "http://${INGRESS_GW_ADDRESS}:8080"
-        path: /strict-check/x
-        method: GET
-        headers:
-          host: "strict.example.com"
-      source:
-        type: local
-      expect:
-        statusCode: 404
-    - name: advanced - the other route on the listener keeps serving traffic
-      retries: 30
-      http:
-        url: "http://${INGRESS_GW_ADDRESS}:8080"
-        path: /headers
-        method: GET
-        headers:
-          host: "www.example.com"
-      source:
-        type: local
-      expect:
-        statusCode: 200
-    EOF
-    kubectl delete httproute strict-check -n httpbin
-    {{< /doc-test >}}
-  status: needs-update
