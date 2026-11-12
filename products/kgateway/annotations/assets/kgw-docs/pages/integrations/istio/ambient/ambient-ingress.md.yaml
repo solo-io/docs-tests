@@ -76,7 +76,10 @@ hidden:
       curl -fsSL "https://github.com/istio/istio/releases/download/${ISTIO_VERSION}/istioctl-${ISTIO_VERSION}-${istio_os}-${istio_arch}.tar.gz" \
         | tar -xz -C "$ISTIO_BIN" istioctl
     fi
-    istioctl install --set profile=ambient --skip-confirmation
+    # istiod requests 500m CPU by default. The 2-CPU CI runner has only about 250m
+    # left after the enterprise install (ext-auth, ext-cache, rate limiter, WAF),
+    # so istiod stays Pending. Lower the request; this test is not a load test.
+    istioctl install --set profile=ambient --set values.pilot.resources.requests.cpu=100m --skip-confirmation
     kubectl -n istio-system rollout status deploy/istiod --timeout=300s
     kubectl -n istio-system rollout status ds/ztunnel --timeout=300s
     kubectl -n istio-system rollout status ds/istio-cni-node --timeout=300s
