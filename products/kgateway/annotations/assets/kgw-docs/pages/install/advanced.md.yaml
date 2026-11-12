@@ -520,7 +520,7 @@ hidden:
     # and the http Gateway is scoped (disabled_gateways is 0).
     metrics=""
     for i in $(seq 1 40); do
-      metrics=$(kubectl get --raw "/api/v1/namespaces/kgateway-system/services/kgateway:9092/proxy/metrics" 2>/dev/null) || true
+      metrics=$(kubectl get --raw "/api/v1/namespaces/kgateway-system/services/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}:9092/proxy/metrics" 2>/dev/null) || true
       if grep -Eq '^kgateway_xds_scoping_disabled_gateways\{[^}]*gateway="http"[^}]*\} 0$' <<<"$metrics" \
         && grep -Eq '^kgateway_xds_snapshot_resources\{[^}]*gateway="http"[^}]*resource="Cluster"[^}]*\} [0-9]+' <<<"$metrics"; then
         break
