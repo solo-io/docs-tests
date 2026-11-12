@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/security/backend-authn-aws-chain.md
+previews: false
 blocks:
 - 6ffdfd3410f7bb2f yaml
 - 7c05c0d53e75a48d sh
@@ -11,7 +12,6 @@ tags:
   fingerprint: 6ffdfd3410f7bb2f
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 01fdbf0f 0f10c5bc 36184fa5 588a5d84 e9a46ca1 f84e6062 614bd5fa bb85cefe 321bbcc0 559188c4 f2f05e49 b8eda852 5220e5d4 06b1ea3f 5268acbb d9ea9f84 23384398 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="aws-assume-role-chain"
     only: true
@@ -21,7 +21,6 @@ tags:
   fingerprint: 7c05c0d53e75a48d
   lang: sh
   lines: 7da51396 84a567e4
-  preview: kubectl get enterpriseagentgatewaypolicy aws-assume-role-chain -n httpbin \
   form:
     attr: paths="aws-assume-role-chain"
     only: true
@@ -31,7 +30,6 @@ tags:
   fingerprint: cc8836e94190027f
   lang: sh
   lines: cc8836e9
-  preview: kubectl delete enterpriseagentgatewaypolicy aws-assume-role-chain -n httpbin
   form:
     attr: paths="aws-assume-role-chain"
     only: true
@@ -96,7 +94,6 @@ hidden:
     fingerprint: 12babba332a57a15
     lang: console
     lines: d7fcc72f f9bf8906
-    preview: Accepted=True
   content: |2-
        {{< doc-test paths="aws-assume-role-chain" >}}
        YAMLTest -f - <<'EOF'
@@ -140,7 +137,6 @@ hidden:
       fingerprint: 12babba332a57a15
       lang: console
       lines: d7fcc72f f9bf8906
-      preview: Accepted=True
   content: |-
     {{< doc-test paths="aws-assume-role-chain" >}}
     # Each invalid variant from the table must be rejected with the documented message.
@@ -187,7 +183,7 @@ hidden:
           assumeRole:
             chain:
             - roleArn: arn:aws:iam::222222222222:role/target-role'
-    expect_rejected "at most one of the fields in [auth workloadIdentity tokenExchange entTokenExchange entCrossAppAccess entAws] may be set" '    auth:
+    expect_rejected "at most one of the fields in [auth workloadIdentity tokenExchange entTokenExchange entCrossAppAccess entAws entConnector] may be set" '    auth:
           aws:
             secretRef:
               name: aws-creds
