@@ -546,11 +546,13 @@ hidden:
   content: |-
     {{< doc-test paths="advanced" >}}
     # Any value other than standard or strict (in any case) fails the Helm install.
-    if helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --set validation.level=lenient >/dev/null 2>&1; then
+    # The enterprise chart renders only with a license key. CI sets LICENSE_KEY for
+    # enterprise runs only, so the flag expands to nothing in OSS runs.
+    if helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} ${LICENSE_KEY:+--set-string licensing.licenseKey=$LICENSE_KEY} --set validation.level=lenient >/dev/null 2>&1; then
       echo "FAIL: helm accepted validation.level=lenient, want a failure"
       exit 1
     fi
-    helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --set validation.level=STRICT >/dev/null
+    helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} ${LICENSE_KEY:+--set-string licensing.licenseKey=$LICENSE_KEY} --set validation.level=STRICT >/dev/null
     cat > advanced-validation.yaml <<'EOF'
     validation:
       level: strict
@@ -692,7 +694,7 @@ hidden:
   content: |-
     {{< doc-test paths="advanced" >}}
     # goMemLimitPercent and extraEnv.GOMEMLIMIT together fail the Helm install.
-    if helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+    if helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} ${LICENSE_KEY:+--set-string licensing.licenseKey=$LICENSE_KEY} \
       --set controller.goMemLimitPercent=90 --set-string controller.extraEnv.GOMEMLIMIT=1GiB >/dev/null 2>&1; then
       echo "FAIL: helm accepted controller.goMemLimitPercent together with controller.extraEnv.GOMEMLIMIT"
       exit 1
@@ -1062,8 +1064,8 @@ hidden:
   content: |-
     {{< doc-test paths="advanced" >}}
     # Render the chart instead of upgrading: without the ClusterRole the controller would stop working.
-    default_count=$(helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} | grep -cE '^kind: ClusterRole(Binding)?$' || true)
-    off_count=$(helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} --set rbac.create=false | grep -cE '^kind: ClusterRole(Binding)?$' || true)
+    default_count=$(helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} ${LICENSE_KEY:+--set-string licensing.licenseKey=$LICENSE_KEY} | grep -cE '^kind: ClusterRole(Binding)?$' || true)
+    off_count=$(helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} ${LICENSE_KEY:+--set-string licensing.licenseKey=$LICENSE_KEY} --set rbac.create=false | grep -cE '^kind: ClusterRole(Binding)?$' || true)
     echo "ClusterRole and ClusterRoleBinding objects: default $default_count, rbac.create=false $off_count"
     if [ "$default_count" -lt 2 ]; then
       echo "FAIL: by default the chart does not render a ClusterRole and a ClusterRoleBinding"
