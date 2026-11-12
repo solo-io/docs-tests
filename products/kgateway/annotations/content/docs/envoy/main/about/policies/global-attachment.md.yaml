@@ -205,7 +205,8 @@ hidden:
        # valid YAML, so jq adds the setting without duplicating the `controller` key.
        helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system -o json \
          | jq '.controller.extraEnv.KGW_GLOBAL_POLICY_NAMESPACE = "kgateway-system"' > {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml
-       cat {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml
+       # Print the values with the enterprise license key hidden.
+       sed -E 's/(licenseKey"?: *).*/\1REDACTED/' {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.yaml
        {{< /doc-test >}}
 - after:
     block: 16

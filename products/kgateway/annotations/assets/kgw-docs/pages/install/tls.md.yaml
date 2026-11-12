@@ -239,7 +239,8 @@ hidden:
     # JSON is valid YAML, so helm reads the result as a values file.
     helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o json \
       | jq '(. // {}) | .controller.xds.tls.enabled = true' > values.yaml
-    cat values.yaml
+    # Print the values with the enterprise license key hidden.
+    sed -E 's/(licenseKey"?: *).*/\1REDACTED/' values.yaml
     {{< /doc-test >}}
 - after:
     block: 8

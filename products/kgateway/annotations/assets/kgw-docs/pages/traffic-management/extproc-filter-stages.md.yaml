@@ -130,7 +130,8 @@ hidden:
        # The page's step 1 also runs `open values.yaml`, which has no meaning on a
        # CI runner, so save the current Helm values the same way without opening them.
        helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system -o yaml > values.yaml
-       cat values.yaml
+       # Print the values with the enterprise license key hidden.
+       sed -E 's/(licenseKey"?: *).*/\1REDACTED/' values.yaml
        {{< /doc-test >}}
 - after:
     block: 2

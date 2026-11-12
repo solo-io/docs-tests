@@ -279,7 +279,8 @@ hidden:
     # Test-only: the page's step also opens the file in an editor, which a CI
     # runner cannot do, so only the helm get values part runs here.
     helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yaml > values.yaml
-    cat values.yaml
+    # Print the values with the enterprise license key hidden.
+    sed -E 's/(licenseKey"?: *).*/\1REDACTED/' values.yaml
     if ! grep -q 'pullPolicy: Always' values.yaml; then
       echo "FAIL: values.yaml does not hold the controller.image.pullPolicy=Always value from the install"
       exit 1

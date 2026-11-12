@@ -960,7 +960,8 @@ hidden:
     {{< doc-test paths="advanced" >}}
     # The step above without `open`, which is not available on the test runner.
     helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o yaml > values.yaml
-    cat values.yaml
+    # Print the values with the enterprise license key hidden.
+    sed -E 's/(licenseKey"?: *).*/\1REDACTED/' values.yaml
     {{< /doc-test >}}
 - after:
     block: 23
@@ -979,7 +980,8 @@ hidden:
     with open("values.yaml", "w") as f:
         yaml.safe_dump(values, f)
     PY
-    cat values.yaml
+    # Print the values with the enterprise license key hidden.
+    sed -E 's/(licenseKey"?: *).*/\1REDACTED/' values.yaml
     {{< /doc-test >}}
 - after:
     block: 24
