@@ -460,12 +460,12 @@ hidden:
     preview: 'controller:'
   content: |-
     {{< doc-test paths="advanced" >}}
-    cat > values.yaml <<'EOF'
-    controller:
-      xds:
-        scoping:
-          mode: REFERENCED
-    EOF
+    # The next visible step upgrades with -f values.yaml and no --reuse-values,
+    # which drops every value that is not in the file. Start from the release's
+    # current values so that settings from the install (such as the enterprise
+    # licensing.licenseKey) survive the upgrade. JSON is valid YAML.
+    helm get values {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o json \
+      | jq '.controller.xds.scoping.mode = "REFERENCED"' > values.yaml
     {{< /doc-test >}}
 - after:
     block: 9
