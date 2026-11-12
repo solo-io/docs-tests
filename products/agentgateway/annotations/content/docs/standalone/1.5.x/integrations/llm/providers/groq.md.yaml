@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/1.5.x/integrations/llm/providers/groq.md
 blocks:
-- d8c54d12f5a1bfcb yaml
+- 3e46b807018c0d58 yaml
 - 6222d433a5dc5b5e bash
 hidden:
 - after:
@@ -38,10 +38,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: d8c54d12f5a1bfcb
+    fingerprint: 3e46b807018c0d58
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 3aead552 009395dd 0adb3290
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 3aead552 009395dd 0adb3290
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="groq" >}}
     cat <<'EOF' > config.yaml

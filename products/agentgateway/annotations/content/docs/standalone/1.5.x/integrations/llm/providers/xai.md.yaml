@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/1.5.x/integrations/llm/providers/xai.md
 blocks:
-- aa2e09965985c13c yaml
+- c68147d8f6655259 yaml
 - 9db1e818227da9c4 bash
 hidden:
 - after:
@@ -38,10 +38,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: aa2e09965985c13c
+    fingerprint: c68147d8f6655259
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 74869b29 009395dd 47231736
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 74869b29 009395dd 47231736
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="xai" >}}
     cat <<'EOF' > config.yaml

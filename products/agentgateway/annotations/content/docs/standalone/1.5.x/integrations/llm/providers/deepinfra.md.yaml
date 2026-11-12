@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/1.5.x/integrations/llm/providers/deepinfra.md
 blocks:
-- 6d7a21f8576beffb yaml
+- 519e4fdb26c43525 yaml
 - 2da3574b74d70df1 bash
 hidden:
 - after:
@@ -38,10 +38,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 6d7a21f8576beffb
+    fingerprint: 519e4fdb26c43525
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 da1edff8 009395dd 32dc478e
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 da1edff8 009395dd 32dc478e
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="deepinfra" >}}
     cat <<'EOF' > config.yaml

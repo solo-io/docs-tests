@@ -2,14 +2,14 @@ format: 1
 source: content/docs/standalone/main/documentation/observability/traces/configs/jaeger.md
 blocks:
 - c47db541d53d2a0a sh
-- 5c191b4c93e187f6 yaml
+- 85134592494dac79 yaml
 - 3c793802cfb966ca sh
 - d66bfd6d6d63a4df sh
 - 20734918c312ca8b sh
 - c6c47d6420960fba yaml
 - ca9965c5a7769400 sh
 - ed3982551c77468a yaml
-- 49a6a982a4303cb7 yaml
+- cead50099714d12b yaml
 - 331e4dcccd52bea8 sh
 - 4b5962624777bb21 sh
 tags:
@@ -72,10 +72,10 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: 5c191b4c93e187f6
+    fingerprint: 85134592494dac79
     lang: yaml
-    lines: a7f80a73 1b6c26b3 390f7e12 a97a9e13 9adf3fc1
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 1b6c26b3 390f7e12 a97a9e13 9adf3fc1
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |2-
        {{< doc-test paths="jaeger-standalone" >}}
        # Step 2's tracing settings, on a gateway with one route so there is traffic to trace.

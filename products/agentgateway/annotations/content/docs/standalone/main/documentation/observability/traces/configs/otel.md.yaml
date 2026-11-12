@@ -3,7 +3,7 @@ source: content/docs/standalone/main/documentation/observability/traces/configs/
 blocks:
 - 92645e5012950d56 yaml
 - 1147fcece7470665 sh
-- 5c191b4c93e187f6 yaml
+- 85134592494dac79 yaml
 - f497d9e89bf86e5c sh
 - 6b0984a689c30b6a sh
 - 4dd6d3b68381efc7 yaml
@@ -86,10 +86,10 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 2
-    fingerprint: 5c191b4c93e187f6
+    fingerprint: 85134592494dac79
     lang: yaml
-    lines: a7f80a73 1b6c26b3 390f7e12 a97a9e13 9adf3fc1
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 1b6c26b3 390f7e12 a97a9e13 9adf3fc1
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |2-
        {{< doc-test paths="otel-collector" >}}
        # Test-only backend: echo each request as JSON (method, path, headers). Repeated

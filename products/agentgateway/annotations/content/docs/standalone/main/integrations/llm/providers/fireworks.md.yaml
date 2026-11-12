@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/main/integrations/llm/providers/fireworks.md
 blocks:
 - 8fbf52d01f7f2de7 sh
-- a8c65ae6d3ae13d9 yaml
+- 72fb2de37e210cc5 yaml
 - f22ba7d2e054c3b0 bash
 hidden:
 - after:
@@ -39,10 +39,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: a8c65ae6d3ae13d9
+    fingerprint: 72fb2de37e210cc5
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 8eebbb4b c271712c 009395dd 71c560e9 8905bcef d28c1a3d
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 8eebbb4b c271712c 009395dd 71c560e9 8905bcef d28c1a3d
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="fireworks" >}}
     cat <<'EOF' > config.yaml

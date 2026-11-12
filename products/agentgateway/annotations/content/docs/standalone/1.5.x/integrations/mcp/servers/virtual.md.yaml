@@ -5,9 +5,20 @@ blocks:
 - f72f12f8a13a3ac0 yaml
 - dc0285e321cd7cc4 yaml
 - 4f16505db12973ac
-- 1db5a3163cfb213c yaml
+- 7d58aa6dd5b017cd yaml
 - f6931a7b2e59dbc5 sh
-- ea68401dd39cb672 yaml
+- e3ae362d40c49945 yaml
+tags:
+- paths: mcp-virtual
+  block: 2
+  fingerprint: dc0285e321cd7cc4
+  lang: yaml
+  lines: dc0285e3
+  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.5.0/examp
+  form:
+    attr: paths="mcp-virtual"
+    only: true
+    lead: ' '
 hidden:
 - after:
     section: (top of page)
@@ -120,16 +131,27 @@ hidden:
     trap 'stop_gateway' EXIT
     {{< /doc-test >}}
 - after:
+    block: 2
+    fingerprint: dc0285e321cd7cc4
+    lang: yaml
+    lines: dc0285e3
+    preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.5.0/examp
+  content: |2-
+       {{< doc-test paths="mcp-virtual" >}}
+       # Step 1: the documented multiplex config downloads and is accepted
+       agentgateway -f config.yaml --validate-only
+       {{< /doc-test >}}
+- after:
     section: Next steps
     line: 4b10730f3ec88b5d
     occurrence: 0
     words: 97a5e41b 9d6f965a 5b3a02e5 663ea1bf 9d6f965a 10182ab8 26cafb94 0695b563 10182ab8 34a04005 5b3a02e5 fa42bed0 a0af9f86 caf9f906 10182ab8 d983335a
     block_before:
       block: 6
-      fingerprint: ea68401dd39cb672
+      fingerprint: e3ae362d40c49945
       lang: yaml
-      lines: a7f80a73 82726b6f 2b6bc07a 213048e0 3035507a 20236a9d a68fe535 d1a5f40e 07e21f09 233e460f a68fe535 ca335149 6329244e
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 82726b6f 2b6bc07a 213048e0 3035507a 20236a9d a68fe535 d1a5f40e 07e21f09 233e460f a68fe535 ca335149 6329244e
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="mcp-virtual" >}}
     # Run the downloaded multiplex config and assert the federated tool list and both
@@ -189,10 +211,10 @@ hidden:
     words: 97a5e41b 9d6f965a 5b3a02e5 663ea1bf 9d6f965a 10182ab8 26cafb94 0695b563 10182ab8 34a04005 5b3a02e5 fa42bed0 a0af9f86 caf9f906 10182ab8 d983335a
     block_before:
       block: 6
-      fingerprint: ea68401dd39cb672
+      fingerprint: e3ae362d40c49945
       lang: yaml
-      lines: a7f80a73 82726b6f 2b6bc07a 213048e0 3035507a 20236a9d a68fe535 d1a5f40e 07e21f09 233e460f a68fe535 ca335149 6329244e
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 82726b6f 2b6bc07a 213048e0 3035507a 20236a9d a68fe535 d1a5f40e 07e21f09 233e460f a68fe535 ca335149 6329244e
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="mcp-virtual" >}}
     # "Tool name prefixing": validate the documented prefixMode: never config, then assert
@@ -247,25 +269,3 @@ hidden:
       *) echo "FAIL: prefixMode never did not expose the echo tool"; echo "$NAMES"; exit 1 ;;
     esac
     {{< /doc-test >}}
-- after:
-    block: 2
-    fingerprint: dc0285e321cd7cc4
-    lang: yaml
-    lines: dc0285e3
-    preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.5.0/examp
-  content: |2-
-       {{< doc-test paths="mcp-virtual" >}}
-       # Step 1: the documented multiplex config downloads and is accepted
-       agentgateway -f config.yaml --validate-only
-       {{< /doc-test >}}
-tags:
-- paths: mcp-virtual
-  block: 2
-  fingerprint: dc0285e321cd7cc4
-  lang: yaml
-  lines: dc0285e3
-  preview: curl -L https://raw.githubusercontent.com/agentgateway/agentgateway/v1.5.0/examp
-  form:
-    attr: paths="mcp-virtual"
-    only: true
-    lead: ' '

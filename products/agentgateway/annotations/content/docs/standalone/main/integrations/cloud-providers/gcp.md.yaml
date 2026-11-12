@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/main/integrations/cloud-providers/gcp.md
 blocks:
-- f8f4d55b4b01152c yaml
+- df36afa473cdfbdd yaml
 - 319bf9fbeb0fd766 bash
 - ad8e624fa51a8a3b bash
 - 117d26f689d59ed3 bash
@@ -43,10 +43,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: f8f4d55b4b01152c
+    fingerprint: df36afa473cdfbdd
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 6399dee0 17183da5 009395dd f26ba424 d3c339c9 76fd1b75 146e11c6 9b580383 f7b31405
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 6399dee0 17183da5 009395dd f26ba424 d3c339c9 76fd1b75 146e11c6 9b580383 f7b31405
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="gcp" >}}
     cat <<'EOF' > config.yaml
@@ -73,10 +73,10 @@ hidden:
     words: a411cbb2 b9776d7d 3c469e9d 663ea1bf e7d3799e 9c6725dc 576d1184 a3b142af 2166d474 10c22bcf e1b683e2 32e83e92 a3b142af 1ce3fe50 15eaa752 b9776d7d 1581e27d fa51fd49 ca978112 56681010 acba2551 9df6b026 7175517a ae448ac8 b6bf7bc8 8e7fc023 0f340989 ea325d76 689f6a62 3c469e9d
     block_before:
       block: 0
-      fingerprint: f8f4d55b4b01152c
+      fingerprint: df36afa473cdfbdd
       lang: yaml
-      lines: a7f80a73 3af99526 e01ccf75 6399dee0 17183da5 009395dd f26ba424 d3c339c9 76fd1b75 146e11c6 9b580383 f7b31405
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 3af99526 e01ccf75 6399dee0 17183da5 009395dd f26ba424 d3c339c9 76fd1b75 146e11c6 9b580383 f7b31405
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="gcp" >}}
     # Confirm that agentgateway serves LLM traffic on port 4000, which the Cloud Run

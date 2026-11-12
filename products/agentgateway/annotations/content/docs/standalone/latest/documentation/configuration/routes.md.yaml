@@ -1,9 +1,9 @@
 format: 1
 source: content/docs/standalone/latest/documentation/configuration/routes.md
 blocks:
-- 5b4bdd47c210544d yaml
-- e7802348ff7d75d3 yaml
-- c1657b02f215cfef yaml
+- db56483770dda764 yaml
+- 538bcfab0258f6c0 yaml
+- 6bcc1ee8488607ae yaml
 hidden:
 - after:
     start: true
@@ -37,10 +37,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 5b4bdd47c210544d
+    fingerprint: db56483770dda764
     lang: yaml
-    lines: a7f80a73 943d11d8 7b7d5821 c095a45d 069de162 d67b54bf 8923c6f5 48064336 301e1bfa c4280beb eaaad965 aeca2b3d 9bfd6f12 d72f261d f29bfd3a 368b1051
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 7b7d5821 c095a45d 069de162 d67b54bf 8923c6f5 48064336 301e1bfa c4280beb eaaad965 aeca2b3d 9bfd6f12 d72f261d f29bfd3a 368b1051
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="routes" >}}
     cat <<'EOF' > config-http.yaml
@@ -65,10 +65,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: e7802348ff7d75d3
+    fingerprint: 538bcfab0258f6c0
     lang: yaml
-    lines: a7f80a73 943d11d8 2f556177 c94ad23d 9693ecf1 b9cd7e51 4e7efa69 112fa1b2 d72f261d 0cead947 368b1051
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 2f556177 c94ad23d 9693ecf1 b9cd7e51 4e7efa69 112fa1b2 d72f261d 0cead947 368b1051
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="routes" >}}
     cat <<'EOF' > config-tcp.yaml
@@ -88,10 +88,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 2
-    fingerprint: c1657b02f215cfef
+    fingerprint: 6bcc1ee8488607ae
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 19c2fa74 ead663af 9d7e2b17 fd12af70 ff9fe88b d31d0ec6 3f789485 0f27179b 726c2761 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 19c2fa74 ead663af 9d7e2b17 fd12af70 ff9fe88b d31d0ec6 3f789485 0f27179b 726c2761 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="routes" >}}
     cat <<'EOF' > config-policies.yaml

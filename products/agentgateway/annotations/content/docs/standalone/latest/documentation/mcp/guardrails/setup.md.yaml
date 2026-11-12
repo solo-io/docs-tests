@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/latest/documentation/mcp/guardrails/setup.md
 blocks:
 - 46bac2b6b5af4791 sh
-- f1b47be7844c6d6a yaml
+- 091901a2a909f603 yaml
 - f6931a7b2e59dbc5 sh
 - 1014e2dcc47483bb sh
 - 9c738027f048c7f1 sh
@@ -38,10 +38,10 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: f1b47be7844c6d6a
+    fingerprint: 091901a2a909f603
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 19c2fa74 ead663af 9d7e2b17 fd12af70 ff9fe88b d31d0ec6 622b2ab2 0f27179b 726c2761 a56659ca 3e81ada3 a9754a97 5865dbb9 33334de0 b36fa061 890e4049 a18343a1 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 19c2fa74 ead663af 9d7e2b17 fd12af70 ff9fe88b d31d0ec6 622b2ab2 0f27179b 726c2761 a56659ca 3e81ada3 a9754a97 5865dbb9 33334de0 b36fa061 890e4049 a18343a1 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |2-
        {{< doc-test paths="mcp-guardrails" >}}
        cat <<'EOF' > config.yaml

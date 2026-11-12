@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/1.5.x/integrations/llm/providers/mistral.md
 blocks:
-- 16a50bd663d60f2e yaml
+- 1d91157a0f6fea74 yaml
 - 00a117b5f91a0303 bash
 hidden:
 - after:
@@ -38,10 +38,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 16a50bd663d60f2e
+    fingerprint: 1d91157a0f6fea74
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 bf1e382f 009395dd e00b0679
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 bf1e382f 009395dd e00b0679
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="mistral" >}}
     cat <<'EOF' > config.yaml

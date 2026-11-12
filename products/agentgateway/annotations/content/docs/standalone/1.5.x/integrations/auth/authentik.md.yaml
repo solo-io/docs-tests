@@ -11,7 +11,7 @@ blocks:
 - 82d868f3ffe499fc sh
 - 950e55a76d0cdf69 json
 - ad43347e4ffa1952 sh
-- 82b82009e655622a yaml
+- 33d6532f26c4079c yaml
 - f6931a7b2e59dbc5 sh
 - 0e40004e257a600d sh
 - 9cdc439862bd5a8e
@@ -324,10 +324,10 @@ hidden:
     words: 07a07ff2 961eb436 254bb97b a1860308 7a35a799 05cdf255 3e194352 9ab38fef 7a35a799 9bb7e5cf 5de95319 44089be1 6201111b daf76895 d9082bdc 6201111b 65819e19 2ad8a704 9150c74c 9390298f adf0e099 a8b77192 6390361d 407b9ca1 1eb79602 fa51fd49 2be23c58 4f0da948 4137b01e 46599c5b 6ee0eb49 663ea1bf b9776d7d 948fe603 a5614527 8e7fc023 07a07ff2 1115728d 58296753 b9776d7d 4275d71e dd1b3c31
     block_before:
       block: 10
-      fingerprint: 82b82009e655622a
+      fingerprint: 33d6532f26c4079c
       lang: yaml
-      lines: a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 cf9b6dda 97ae8597 ad20a337 c873f373 b0299c0e 73468966 837dc1fd c370be1e 93a4b62b aab83c8f 5dbcb313 92db8240 6a855af1 2e4ca762 4112252c d8541eca 087d168d ef164a49 3035507a 233e460f a68fe535 ca335149 6329244e
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 82726b6f 2b6bc07a c8f3f59a 19c2fa74 cf9b6dda 97ae8597 ad20a337 c873f373 b0299c0e 73468966 837dc1fd c370be1e 93a4b62b aab83c8f 5dbcb313 92db8240 6a855af1 2e4ca762 4112252c d8541eca 087d168d ef164a49 3035507a 233e460f a68fe535 ca335149 6329244e
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |2-
        {{< doc-test paths="authentik-mcp-authn" >}}
        cat <<EOF > config.yaml

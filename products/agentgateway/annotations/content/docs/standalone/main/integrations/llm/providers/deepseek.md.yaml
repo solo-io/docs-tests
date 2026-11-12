@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/main/integrations/llm/providers/deepseek.md
 blocks:
 - 90f0f7d6044cc9d0 sh
-- e33af7ac5cba3ca4 yaml
+- eec5035e684d8121 yaml
 - e1932f2d7d67c437 bash
 hidden:
 - after:
@@ -39,10 +39,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: e33af7ac5cba3ca4
+    fingerprint: eec5035e684d8121
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 fb1f1769 9d110b03 009395dd 73464744 8905bcef 65869423
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 fb1f1769 9d110b03 009395dd 73464744 8905bcef 65869423
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="deepseek" >}}
     cat <<'EOF' > config.yaml

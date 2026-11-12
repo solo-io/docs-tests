@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/main/integrations/llm/providers/vertex.md
 blocks:
-- 9618350cb2167d7b yaml
+- 1d97c83513fe9ed6 yaml
 - 6c1e9865b4375cf4 json
 hidden:
 - after:
@@ -37,10 +37,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 9618350cb2167d7b
+    fingerprint: 1d97c83513fe9ed6
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 6399dee0 17183da5 009395dd 1e4f0b93 d3c339c9 6f791261
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 6399dee0 17183da5 009395dd 1e4f0b93 d3c339c9 6f791261
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="vertex" >}}
     cat <<'EOF' > config.yaml
@@ -64,10 +64,10 @@ hidden:
     words: 2b980624 bbdefa29 56681010 b9d90628 b7d64a92 f480ffb2 1fe28920 37a8eec1 631aada4 576d1184 a7e2d26e 37a8eec1
     block_before:
       block: 0
-      fingerprint: 9618350cb2167d7b
+      fingerprint: 1d97c83513fe9ed6
       lang: yaml
-      lines: a7f80a73 3af99526 e01ccf75 6399dee0 17183da5 009395dd 1e4f0b93 d3c339c9 6f791261
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 3af99526 e01ccf75 6399dee0 17183da5 009395dd 1e4f0b93 d3c339c9 6f791261
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="vertex" >}}
     # Confirm the client-facing `name` is served and that `params.model`,

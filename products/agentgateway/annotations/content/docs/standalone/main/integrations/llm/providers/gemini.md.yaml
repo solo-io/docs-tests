@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/main/integrations/llm/providers/gemini.md
 blocks:
 - 1ca015309bc7f62c sh
-- 1022b09a30339557 yaml
+- 55317ffb3f7efb36 yaml
 hidden:
 - after:
     section: (top of page)
@@ -37,10 +37,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: 1022b09a30339557
+    fingerprint: 55317ffb3f7efb36
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 8220de23 848625eb 009395dd 8263d052 8905bcef bdb871ce
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 8220de23 848625eb 009395dd 8263d052 8905bcef bdb871ce
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="gemini" >}}
     cat <<'EOF' > config.yaml
@@ -62,10 +62,10 @@ hidden:
     words: 5110c478 b9776d7d 5d724362 14c2529e 2c70e12b 10c22bcf b9d90628 bb0347a4 9f584196 52367a66 ba528516 7af0b3e4 a24e10fd b9776d7d 323f1deb 93b8edb0
     block_before:
       block: 1
-      fingerprint: 1022b09a30339557
+      fingerprint: 55317ffb3f7efb36
       lang: yaml
-      lines: a7f80a73 3af99526 e01ccf75 8220de23 848625eb 009395dd 8263d052 8905bcef bdb871ce
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 3af99526 e01ccf75 8220de23 848625eb 009395dd 8263d052 8905bcef bdb871ce
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="gemini" >}}
     # Confirm the config serves the model named in the example and resolves it to

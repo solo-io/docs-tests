@@ -1,9 +1,9 @@
 format: 1
 source: content/docs/standalone/main/documentation/configuration/resiliency/fault-injection.md
 blocks:
-- b77d093aa8ef980a yaml
-- 44fd9fb0e87667f7 yaml
-- f77bf76423372376 yaml
+- 7476d2f372e0b7e7 yaml
+- d32a099cf6943c6c yaml
+- d02725fb1e0777cf yaml
 hidden:
 - after:
     section: (top of page)
@@ -17,10 +17,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 2
-    fingerprint: f77bf76423372376
+    fingerprint: d02725fb1e0777cf
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 6c474e8d 27bdfadc d72f261d c64a4012
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 6c474e8d 27bdfadc d72f261d c64a4012
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="fault-injection" >}}
     # Test-only backend: echo each request as JSON (method, path, headers). Repeated
@@ -128,10 +128,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 2
-    fingerprint: f77bf76423372376
+    fingerprint: d02725fb1e0777cf
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 6c474e8d 27bdfadc d72f261d c64a4012
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 6c474e8d 27bdfadc d72f261d c64a4012
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="fault-injection" >}}
     # WHAT THIS TEST VALIDATES:

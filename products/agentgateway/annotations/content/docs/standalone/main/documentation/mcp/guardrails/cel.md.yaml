@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/main/documentation/mcp/guardrails/cel.md
 blocks:
-- e51a523f998ab375 yaml
+- b087c4493dbc28a1 yaml
 - f6931a7b2e59dbc5 sh
 - 1014e2dcc47483bb sh
 - 9c738027f048c7f1 sh
@@ -75,10 +75,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: e51a523f998ab375
+    fingerprint: b087c4493dbc28a1
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 19c2fa74 ead663af 9d7e2b17 fd12af70 ff9fe88b d31d0ec6 622b2ab2 0f27179b 726c2761 a56659ca 3e81ada3 63eb0a6d f126d30e b36fa061 890e4049 185c4837 9eda43d2 9f6dd90c be0ed466 f1dc7941 59370bc7 2bddcd5b f126d30e b36fa061 890e4049 185c4837 9eda43d2 9f6dd90c 2f0d254c b248dbe0 d73a7732 a7102666 ad71ae96 fa21a7b5 164867cf ba5ec51d 2c58b0f2 24614450 62c216cc f126d30e b36fa061 4aaf80c5 0e74550e b248dbe0 84819e4d 8fc24fb0 12036054 ce84cf0e 03c7a8a9 25bb328c d9ea4a79 ba5ec51d 24614450 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf 76aea28c 19c2fa74 ead663af 9d7e2b17 fd12af70 ff9fe88b d31d0ec6 622b2ab2 0f27179b 726c2761 a56659ca 3e81ada3 63eb0a6d f126d30e b36fa061 890e4049 185c4837 9eda43d2 9f6dd90c be0ed466 f1dc7941 59370bc7 2bddcd5b f126d30e b36fa061 890e4049 185c4837 9eda43d2 9f6dd90c 2f0d254c b248dbe0 d73a7732 a7102666 ad71ae96 fa21a7b5 164867cf ba5ec51d 2c58b0f2 24614450 62c216cc f126d30e b36fa061 4aaf80c5 0e74550e b248dbe0 84819e4d 8fc24fb0 12036054 ce84cf0e 03c7a8a9 25bb328c d9ea4a79 ba5ec51d 24614450 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |2-
        {{< doc-test paths="mcp-guardrails-cel" >}}
        cat <<'EOF' > config.yaml

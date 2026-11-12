@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/1.5.x/integrations/auth/auth0.md
 blocks:
 - 24f3bc87df48bc14 sh
-- ed144d79d71353b1 yaml
+- 4f0307fd5a569633 yaml
 - f6931a7b2e59dbc5 sh
 - e6057ad7800bac6c
 - 0e40004e257a600d sh
@@ -191,10 +191,10 @@ hidden:
     words: 78236fd5 ec91fdd9 a511aeee cb3083e2 fa51fd49 6ee0eb49 56e57ada a88fe6ec b9776d7d 78236fd5 28e5ebab 75857a45 b9776d7d 535c6f8e 663ea1bf e7d3799e 48a53f07 75857a45 92b6359c 7dd530c4 a5c935d1 f4bf9f7f ca978112 25bf8e1a 3b9c358f 7175517a ea325d76 3bed2cb3 00154761 6ee0eb49 78236fd5 47a54ed4 663ea1bf ce603774 b9776d7d 08f0be88 28e5ebab
     block_before:
       block: 1
-      fingerprint: ed144d79d71353b1
+      fingerprint: 4f0307fd5a569633
       lang: yaml
-      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b df374e41 3035507a 233e460f a68fe535 ca335149 6329244e c8f3f59a c873f373 b0299c0e 7f7e87d9 837dc1fd 396fdb7c 93a4b62b 49d0992e 92db8240 6a855af1 2e4ca762 c2e44ca7 087d168d ef164a49
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b df374e41 3035507a 233e460f a68fe535 ca335149 6329244e c8f3f59a c873f373 b0299c0e 7f7e87d9 837dc1fd 396fdb7c 93a4b62b 49d0992e 92db8240 6a855af1 2e4ca762 c2e44ca7 087d168d ef164a49
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |2-
        {{< doc-test paths="auth0-mcp-authn" >}}
        cat <<'EOF' > config.yaml

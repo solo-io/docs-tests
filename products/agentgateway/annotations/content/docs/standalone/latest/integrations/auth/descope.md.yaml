@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/latest/integrations/auth/descope.md
 blocks:
 - 8b5d87c1d2e617ee sh
-- 7f1a6438ba59ee61 yaml
+- 7f62a15ff8b5295f yaml
 - f6931a7b2e59dbc5 sh
 - e6057ad7800bac6c
 - 0e40004e257a600d sh
@@ -214,10 +214,10 @@ hidden:
     words: 78236fd5 ec91fdd9 a511aeee e0d0aa27 fa51fd49 6ee0eb49 56e57ada 916d269b b9776d7d c247e980 535c6f8e 663ea1bf b9776d7d 9997ae9e 78236fd5 28e5ebab 663ea1bf e7d3799e 48a53f07 75857a45 92b6359c 7dd530c4 6ee0eb49 78236fd5 47a54ed4 663ea1bf ce603774 b9776d7d 08f0be88 28e5ebab
     block_before:
       block: 1
-      fingerprint: 7f1a6438ba59ee61
+      fingerprint: 7f62a15ff8b5295f
       lang: yaml
-      lines: a7f80a73 82726b6f 2b6bc07a c8f3f59a 19c2fa74 cf9b6dda 97ae8597 ad20a337 c873f373 b0299c0e d42bf8cd 837dc1fd 5e4a3c0f 93a4b62b ca7ee274 ef5315ca 92db8240 4a171944 2e4ca762 7cd25e0e 087d168d ef164a49 3035507a 233e460f a68fe535 ca335149 6329244e
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 82726b6f 2b6bc07a c8f3f59a 19c2fa74 cf9b6dda 97ae8597 ad20a337 c873f373 b0299c0e d42bf8cd 837dc1fd 5e4a3c0f 93a4b62b ca7ee274 ef5315ca 92db8240 4a171944 2e4ca762 7cd25e0e 087d168d ef164a49 3035507a 233e460f a68fe535 ca335149 6329244e
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |2-
        {{< doc-test paths="descope-mcp-authn" >}}
        cat <<'EOF' > config.yaml

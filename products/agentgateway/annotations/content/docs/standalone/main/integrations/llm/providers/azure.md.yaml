@@ -2,20 +2,20 @@ format: 1
 source: content/docs/standalone/main/integrations/llm/providers/azure.md
 blocks:
 - 0de9aeeab085e34b sh
-- b2a47d3a12fed327 yaml
-- 5c8cacfbe89cb825 yaml
-- 1973578cd0ad630a yaml
-- 7910c80a31a93e21 yaml
-- a0b1ace26557d97e yaml
-- 6d100124d1fece87 yaml
-- 314f1a1b982c2947 yaml
-- 29fdf95b7c93bb92 yaml
+- e81ef65896201041 yaml
+- e3eee56be34b38e2 yaml
+- a12352fe838c7c73 yaml
+- 2d8a06f8b2a9a6d8 yaml
+- 6465e681c2e18988 yaml
+- 68dd9aa98ad4baa1 yaml
+- e02caba7bca93042 yaml
+- 0614cca427b55a9e yaml
 - 4b5498a323b6074b txt
 - 150c2177aa9ea6b7 yaml
-- 6eaa10af7025e8ea yaml
-- 205f7a4605c0fc9b yaml
+- dbab9e60554a60d5 yaml
+- aaa9e2d8cdf01db4 yaml
 - d4077c467b2b78b2 sh
-- 6ef74f20c9eef109 yaml
+- c74335385d3f3a2d yaml
 - f696da57bd3e9c04 sh
 - 4cbbe2778b0517aa sh
 - 66ff4f3bb555fee5 sh
@@ -62,10 +62,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: b2a47d3a12fed327
+    fingerprint: e81ef65896201041
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 5192013c 009395dd 2e04d362 10ce3d78 9008fb4e
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 5192013c 009395dd 2e04d362 10ce3d78 9008fb4e
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-foundry-implicit.yaml
@@ -83,10 +83,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 2
-    fingerprint: 5c8cacfbe89cb825
+    fingerprint: e3eee56be34b38e2
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 96c38897 5192013c 146e11c6 71338152 e42a8f5e aa85f165 30ff4d98 8e34e431 009395dd 2e04d362 10ce3d78 9008fb4e
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 96c38897 5192013c 146e11c6 71338152 e42a8f5e aa85f165 30ff4d98 8e34e431 009395dd 2e04d362 10ce3d78 9008fb4e
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-foundry-apikey.yaml
@@ -110,10 +110,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 3
-    fingerprint: 1973578cd0ad630a
+    fingerprint: a12352fe838c7c73
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 96c38897 5192013c 009395dd 2e04d362 a909e7a8
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 96c38897 5192013c 009395dd 2e04d362 a909e7a8
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-azure-openai.yaml
@@ -130,10 +130,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 4
-    fingerprint: 7910c80a31a93e21
+    fingerprint: 2d8a06f8b2a9a6d8
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 28fedf40 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 1d0d0f2e a8d4bb10 13379516
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 28fedf40 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 1d0d0f2e a8d4bb10 13379516
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-adv-foundry-implicit.yaml
@@ -159,10 +159,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 5
-    fingerprint: a0b1ace26557d97e
+    fingerprint: 6465e681c2e18988
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 28fedf40 c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 4f5e86ac 22f5fa44 e93f45a3 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 1d0d0f2e a8d4bb10 13379516
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf b733d726 aeca2b3d 28fedf40 c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 4f5e86ac 22f5fa44 e93f45a3 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 1d0d0f2e a8d4bb10 13379516
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-adv-foundry-client-secret.yaml
@@ -196,10 +196,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 6
-    fingerprint: 6d100124d1fece87
+    fingerprint: 68dd9aa98ad4baa1
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 4f5e86ac 22f5fa44 e93f45a3
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 1b38ba0a 4f5e86ac 22f5fa44 e93f45a3
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-adv-client-secret.yaml
@@ -229,10 +229,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 7
-    fingerprint: 314f1a1b982c2947
+    fingerprint: e02caba7bca93042
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b ac4d1e30
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b ac4d1e30
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-adv-system-managed-identity.yaml
@@ -259,10 +259,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 8
-    fingerprint: 29fdf95b7c93bb92
+    fingerprint: 0614cca427b55a9e
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 582f9f5f c39d492f 831e2131 5adcff7a 682f9a67 e9b4453a
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 582f9f5f c39d492f 831e2131 5adcff7a 682f9a67 e9b4453a
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-adv-user-managed-identity.yaml
@@ -294,10 +294,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 11
-    fingerprint: 6eaa10af7025e8ea
+    fingerprint: dbab9e60554a60d5
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 435024e5 48924e65
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b 4c6bd846 fe5a74c9 93a4b62b 10f3150d ae328c33 687a4ddf 13379516 c8f3f59a 81b74571 10f3150d aade440b 435024e5 48924e65
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-adv-workload-identity.yaml
@@ -325,10 +325,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 12
-    fingerprint: 205f7a4605c0fc9b
+    fingerprint: aaa9e2d8cdf01db4
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf 193598f2 eaaad965 aeca2b3d 871f11e1 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d 267b78eb 8ae971a3 a8d4bb10 8b2f24b2 c8f3f59a 81b74571 71338152 71bbd638
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf 193598f2 eaaad965 aeca2b3d 871f11e1 d72f261d 4c6bd846 fe5a74c9 93a4b62b 10f3150d 267b78eb 8ae971a3 a8d4bb10 8b2f24b2 c8f3f59a 81b74571 71338152 71bbd638
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="azure" >}}
     cat <<'EOF' > config-claude-foundry.yaml

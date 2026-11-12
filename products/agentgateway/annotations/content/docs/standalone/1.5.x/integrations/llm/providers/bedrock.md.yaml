@@ -1,8 +1,8 @@
 format: 1
 source: content/docs/standalone/1.5.x/integrations/llm/providers/bedrock.md
 blocks:
-- 7014ce54655ad187 yaml
-- ede7fa55b69cab42 yaml
+- c1abee3d74844a71 yaml
+- 2b10f985d99f64b0 yaml
 - 682f16a9e2dbc603 python
 - 206af87cd38ed81c python
 - aeac243dbb0d8a1e bash
@@ -44,10 +44,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 7014ce54655ad187
+    fingerprint: c1abee3d74844a71
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd 9b4ed50d
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd 9b4ed50d
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="bedrock" >}}
     cat <<'EOF' > config.yaml
@@ -64,10 +64,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: ede7fa55b69cab42
+    fingerprint: 2b10f985d99f64b0
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 81a0c220 2e2b598b 009395dd 9b4ed50d 6150d164
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 81a0c220 2e2b598b 009395dd 9b4ed50d 6150d164
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="bedrock" >}}
     cat <<'EOF' > config-passthrough.yaml

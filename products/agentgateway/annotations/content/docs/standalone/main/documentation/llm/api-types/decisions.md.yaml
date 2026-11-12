@@ -2,9 +2,9 @@ format: 1
 source: content/docs/standalone/main/documentation/llm/api-types/decisions.md
 blocks:
 - 1a77e625e291247c console
-- 267da2880781ad1d yaml
-- a4c78415ed5f2936 yaml
-- b547724c9100c9c2 yaml
+- d667d15d017113eb yaml
+- cd5235351b252041 yaml
+- 037e50ae477c0e87 yaml
 - 6bc22470a403f4a5 sh
 - 9573c063ef0363cb json
 - 7ab488df94dad468 sh
@@ -151,10 +151,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: 267da2880781ad1d
+    fingerprint: d667d15d017113eb
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="api-types-decisions-run" >}}
     cat <<'EOF' > config.yaml
@@ -171,10 +171,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 2
-    fingerprint: a4c78415ed5f2936
+    fingerprint: cd5235351b252041
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e2ed4f51 93a4b62b b6fb1fd3 c7c93cfb 5c1fab26 009395dd a5daba86 e84d2a13
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e2ed4f51 93a4b62b b6fb1fd3 c7c93cfb 5c1fab26 009395dd a5daba86 e84d2a13
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="api-types-decisions-run" >}}
     cat <<'EOF' > config-custom.yaml
@@ -211,10 +211,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 3
-    fingerprint: b547724c9100c9c2
+    fingerprint: 037e50ae477c0e87
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 06267a46 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b bcea16b5 c8f3f59a ad3afdb1 d67b54bf f9567f0c 992616e0 4715c39d 22900b42 81b74571 7217bcc4
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 06267a46 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b bcea16b5 c8f3f59a ad3afdb1 d67b54bf f9567f0c 992616e0 4715c39d 22900b42 81b74571 7217bcc4
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="api-types-decisions-run" >}}
     cat <<'EOF' > config-routes.yaml

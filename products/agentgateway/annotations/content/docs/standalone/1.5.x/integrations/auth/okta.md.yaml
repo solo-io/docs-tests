@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/1.5.x/integrations/auth/okta.md
 blocks:
 - 804265947a921885 sh
-- 5b5b7c204d176ad4 yaml
+- b66b93097a56ce9a yaml
 - f6931a7b2e59dbc5 sh
 - e6057ad7800bac6c
 - 0e40004e257a600d sh
@@ -204,10 +204,10 @@ hidden:
     words: 36736864 b9776d7d 9b2bbce6 5de95319 45447b7a 8e7fc023 56e57ada 0e9a0002 663ea1bf 10182ab8 8f4d9088 77bc06c5 bb0347a4 14a60637 58296753 3e64cc41 4e074085 a12dd3a7
     block_before:
       block: 1
-      fingerprint: 5b5b7c204d176ad4
+      fingerprint: b66b93097a56ce9a
       lang: yaml
-      lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b df374e41 3035507a 233e460f a68fe535 ca335149 6329244e c8f3f59a c873f373 b0299c0e 93789e13 837dc1fd c4993513 93a4b62b fc431178 44ec9b74 d9208fd1 92db8240 6a855af1 2e4ca762 7eda89d6 087d168d ef164a49
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b df374e41 3035507a 233e460f a68fe535 ca335149 6329244e c8f3f59a c873f373 b0299c0e 93789e13 837dc1fd c4993513 93a4b62b fc431178 44ec9b74 d9208fd1 92db8240 6a855af1 2e4ca762 7eda89d6 087d168d ef164a49
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |2-
        {{< doc-test paths="okta-mcp-authn" >}}
        cat <<'EOF' > config.yaml

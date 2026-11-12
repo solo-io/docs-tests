@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/1.5.x/integrations/llm/providers/baseten.md
 blocks:
-- 1d72c32dd915a7e5 yaml
+- b885d1e8cf102480 yaml
 - 6b6f1b2fc03e9708 bash
 hidden:
 - after:
@@ -38,10 +38,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 1d72c32dd915a7e5
+    fingerprint: b885d1e8cf102480
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 43a74344 009395dd 5403edb6
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 43a74344 009395dd 5403edb6
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="baseten" >}}
     cat <<'EOF' > config.yaml

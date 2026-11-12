@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/1.5.x/integrations/llm/providers/openai.md
 blocks:
-- 438cc883e676d6b5 yaml
+- 1adb54c3cefd6bc4 yaml
 hidden:
 - after:
     section: (top of page)
@@ -36,10 +36,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 438cc883e676d6b5
+    fingerprint: 1adb54c3cefd6bc4
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="openai" >}}
     cat <<'EOF' > config.yaml
@@ -61,10 +61,10 @@ hidden:
     words: 663ea1bf 5a638a12 57de4cf4 663ea1bf 56e57ada aa9e9b5c b9776d7d 57de4cf4 eb92cc52 3660315a fa42bed0 a0af9f86 7955c819 487b9104 8f4d9088 57de4cf4
     block_before:
       block: 0
-      fingerprint: 438cc883e676d6b5
+      fingerprint: 1adb54c3cefd6bc4
       lang: yaml
-      lines: a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="openai" >}}
     # Confirm the config serves the model named in the example and resolves it to

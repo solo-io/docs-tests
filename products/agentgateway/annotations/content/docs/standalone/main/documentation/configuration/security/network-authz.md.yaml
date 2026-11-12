@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/main/documentation/configuration/security/network-authz.md
 blocks:
-- 25bcd6e5e8818226 yaml
+- cffc18a9f1e43fec yaml
 - 8c484f3a85bbd247 yaml
 - 2de671b1cac48dbd yaml
 - 52d2a170c7be7579 yaml
@@ -64,10 +64,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 25bcd6e5e8818226
+    fingerprint: cffc18a9f1e43fec
     lang: yaml
-    lines: a7f80a73 1b6c26b3 f9685371 3de9d845 a7097106 2c6d79d7 1dfaa0ed 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b c64a4012
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 1b6c26b3 f9685371 3de9d845 a7097106 2c6d79d7 1dfaa0ed 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b c64a4012
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="network-authz" >}}
     cat <<'EOF' > config.yaml
@@ -90,10 +90,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 25bcd6e5e8818226
+    fingerprint: cffc18a9f1e43fec
     lang: yaml
-    lines: a7f80a73 1b6c26b3 f9685371 3de9d845 a7097106 2c6d79d7 1dfaa0ed 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b c64a4012
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 1b6c26b3 f9685371 3de9d845 a7097106 2c6d79d7 1dfaa0ed 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b c64a4012
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="network-authz" >}}
     # Load the Configuration example and confirm allowlist semantics (evaluation
@@ -117,10 +117,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 25bcd6e5e8818226
+    fingerprint: cffc18a9f1e43fec
     lang: yaml
-    lines: a7f80a73 1b6c26b3 f9685371 3de9d845 a7097106 2c6d79d7 1dfaa0ed 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b c64a4012
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 1b6c26b3 f9685371 3de9d845 a7097106 2c6d79d7 1dfaa0ed 943d11d8 0b02fb9c 2b6bc07a d67b54bf d897654b c64a4012
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="network-authz" >}}
     # Evaluation order rule 4 (allow match): the same shape as the Configuration

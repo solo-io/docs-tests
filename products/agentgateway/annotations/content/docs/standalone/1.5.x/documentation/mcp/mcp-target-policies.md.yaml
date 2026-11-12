@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/1.5.x/documentation/mcp/mcp-target-policies.md
 blocks:
-- 352b0f5a8c947161 yaml
+- c3c9df8126a227e0 yaml
 hidden:
 - after:
     section: (top of page)
@@ -46,10 +46,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 352b0f5a8c947161
+    fingerprint: c3c9df8126a227e0
     lang: yaml
-    lines: a7f80a73 82726b6f 2b6bc07a 3035507a 4a9a3a3b 82726b6f 29df2b6d c8f3f59a 81b74571 08955a1a 3a37e8db 2a74c0ff 116b7dd5 82726b6f 3a8191e5 c8f3f59a 81b74571 5f0cfb16 3a37e8db 7f2129bf
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 82726b6f 2b6bc07a 3035507a 4a9a3a3b 82726b6f 29df2b6d c8f3f59a 81b74571 08955a1a 3a37e8db 2a74c0ff 116b7dd5 82726b6f 3a8191e5 c8f3f59a 81b74571 5f0cfb16 3a37e8db 7f2129bf
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: "{{< doc-test paths=\"mcp-target-policies\" >}}\ncat <<'EOF' > config.yaml\n# yaml-language-server: $schema=https://agentgateway.dev/schema/config\nmcp:\n  port: 3000\n  targets:\n  - name: service-a\n    mcp:\n      host: https://service-a.example.com/mcp\n    policies:\n      backendAuth:\n        key: \"$SERVICE_A_API_KEY\"\n      backendTLS:\n        hostname: service-a.example.com\n  \n  - name: service-b\n    mcp:\n      host: https://service-b.example.com/mcp\n    policies:\n      backendAuth:\n        key: \"$SERVICE_B_API_KEY\"\n      backendTLS:\n        hostname: service-b.example.com\nEOF\nagentgateway -f config.yaml --validate-only\n{{< /doc-test >}}"
 - after:
     section: Learn more
@@ -58,10 +58,10 @@ hidden:
     words: b7d64a92 52367a66 fa42bed0 a0af9f86 52367a66 b7d64a92 df0ad6e4
     block_before:
       block: 0
-      fingerprint: 352b0f5a8c947161
+      fingerprint: c3c9df8126a227e0
       lang: yaml
-      lines: a7f80a73 82726b6f 2b6bc07a 3035507a 4a9a3a3b 82726b6f 29df2b6d c8f3f59a 81b74571 08955a1a 3a37e8db 2a74c0ff 116b7dd5 82726b6f 3a8191e5 c8f3f59a 81b74571 5f0cfb16 3a37e8db 7f2129bf
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 82726b6f 2b6bc07a 3035507a 4a9a3a3b 82726b6f 29df2b6d c8f3f59a 81b74571 08955a1a 3a37e8db 2a74c0ff 116b7dd5 82726b6f 3a8191e5 c8f3f59a 81b74571 5f0cfb16 3a37e8db 7f2129bf
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="mcp-target-policies" >}}
     # "Supported policy types": the two header-modifier policies the table lists are also

@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/main/integrations/cloud-providers/aws.md
 blocks:
-- 6fbcc17177dd1dd0 yaml
+- 3be8cceb888d9875 yaml
 - ad7b63b133c0e53d json
 - efc66e43cb3c6171 json
 hidden:
@@ -40,10 +40,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 6fbcc17177dd1dd0
+    fingerprint: 3be8cceb888d9875
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd eced998e 146e11c6 d1db16e5
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd eced998e 146e11c6 d1db16e5
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="aws" >}}
     cat <<'EOF' > config.yaml
@@ -67,10 +67,10 @@ hidden:
     words: f0f731e8 7d150728 b9d90628 ea325d76 2e1cfa82 2958d416 f480ffb2 b9776d7d 631aada4 8e7fc023 b9776d7d ba528516 ea53396c b0268fa7 a5c935d1 f4bf9f7f ea325d76 d940b564 0ebb429f 4b168d88 ea325d76 7cba8243 5e8c03a9 1900eab6 7175517a 86725c17 ba528516 7af0b3e4
     block_before:
       block: 0
-      fingerprint: 6fbcc17177dd1dd0
+      fingerprint: 3be8cceb888d9875
       lang: yaml
-      lines: a7f80a73 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd eced998e 146e11c6 d1db16e5
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 3af99526 e01ccf75 e4f1a385 2e2b598b 009395dd eced998e 146e11c6 d1db16e5
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="aws" >}}
     # Confirm that agentgateway serves LLM traffic on port 4000, which the ECS task

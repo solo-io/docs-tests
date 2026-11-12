@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/latest/integrations/llm/providers/xai.md
 blocks:
 - 7e4331fe9df2b4ba sh
-- e0f2414caf236ba7 yaml
+- 7a0221f061693f09 yaml
 - 88adc004536b3465 bash
 hidden:
 - after:
@@ -39,10 +39,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: e0f2414caf236ba7
+    fingerprint: 7a0221f061693f09
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 74fd6c1e 74869b29 009395dd 47231736 8905bcef 9e5cef73
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 74fd6c1e 74869b29 009395dd 47231736 8905bcef 9e5cef73
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="xai" >}}
     cat <<'EOF' > config.yaml

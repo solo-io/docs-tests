@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/1.5.x/integrations/llm/providers/cerebras.md
 blocks:
-- 83b5097d09a251d5 yaml
+- 7e2dc5d6ddbb96cb yaml
 - 4a93e072fdb3d6e9 bash
 hidden:
 - after:
@@ -38,10 +38,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 83b5097d09a251d5
+    fingerprint: 7e2dc5d6ddbb96cb
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 89544659 009395dd b81969cc
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 89544659 009395dd b81969cc
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="cerebras" >}}
     cat <<'EOF' > config.yaml

@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/latest/integrations/llm/providers/cohere.md
 blocks:
 - c8c0c1e86150419f sh
-- 26d607c263af5213 yaml
+- 426e1449a75b4092 yaml
 - dbe306983dae0ffb bash
 hidden:
 - after:
@@ -39,10 +39,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: 26d607c263af5213
+    fingerprint: 426e1449a75b4092
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 d29982b5 9e4715dd 009395dd 7d8c20d5 8905bcef a4280cba
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 d29982b5 9e4715dd 009395dd 7d8c20d5 8905bcef a4280cba
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="cohere" >}}
     cat <<'EOF' > config.yaml

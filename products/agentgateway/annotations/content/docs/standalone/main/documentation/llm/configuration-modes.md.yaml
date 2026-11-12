@@ -1,11 +1,11 @@
 format: 1
 source: content/docs/standalone/main/documentation/llm/configuration-modes.md
 blocks:
-- 438cc883e676d6b5 yaml
-- 8f99450714efcfd6 yaml
-- e492e93ce786d3c7 yaml
-- a41deb9e17970c54 yaml
-- b5f66af574b9b32f yaml
+- 1adb54c3cefd6bc4 yaml
+- fd01efca4b3be433 yaml
+- 6c9ce5de5acc2c1a yaml
+- 5d4cd72c7f8b3187 yaml
+- 500043f26c341e03 yaml
 hidden:
 - after:
     section: (top of page)
@@ -81,10 +81,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: 438cc883e676d6b5
+    fingerprint: 1adb54c3cefd6bc4
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="llm-configuration-modes" >}}
     cat <<'EOF' > modes-basic.yaml
@@ -124,10 +124,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 1
-    fingerprint: 8f99450714efcfd6
+    fingerprint: fd01efca4b3be433
     lang: yaml
-    lines: a7f80a73 3af99526 c8f3f59a e34dc3a0 153f9913 143c90e6 44ec9b74 fd8c676c d48a6346 3de9d845 2ecd8155 e01ccf75 84869aea 84d960d4 009395dd a595786b 6c59a531 eaaad965 d0672ddc e2a51e95 03a5afea 092e5673 6f43a33f 6472803d 009395dd d887603d 4208ae28
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 c8f3f59a e34dc3a0 153f9913 143c90e6 44ec9b74 fd8c676c d48a6346 3de9d845 2ecd8155 e01ccf75 84869aea 84d960d4 009395dd a595786b 6c59a531 eaaad965 d0672ddc e2a51e95 03a5afea 092e5673 6f43a33f 6472803d 009395dd d887603d 4208ae28
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="llm-configuration-modes" >}}
     cat <<'EOF' > modes-advanced.yaml
@@ -164,10 +164,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 2
-    fingerprint: e492e93ce786d3c7
+    fingerprint: 6c9ce5de5acc2c1a
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c f51d9754 3195c5f5 87af5e91 269b59df 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 82726b6f 3035507a 9f87593f a68fe535 ca335149 6329244e
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c f51d9754 3195c5f5 87af5e91 269b59df 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 4208ae28 82726b6f 3035507a 9f87593f a68fe535 ca335149 6329244e
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="llm-configuration-modes" >}}
     cat <<'EOF' > modes-tls.yaml
@@ -220,10 +220,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 3
-    fingerprint: a41deb9e17970c54
+    fingerprint: 5d4cd72c7f8b3187
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 e050b084 c8f3f59a 81b74571 7217bcc4
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf d897654b 4c6bd846 6666820d 93a4b62b 6ea70ff2 e050b084 c8f3f59a 81b74571 7217bcc4
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="llm-configuration-modes" >}}
     cat <<'EOF' > modes-routing.yaml
@@ -248,10 +248,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 4
-    fingerprint: b5f66af574b9b32f
+    fingerprint: 500043f26c341e03
     lang: yaml
-    lines: a7f80a73 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf 40131044 0a75b229 eaaad965 aeca2b3d dca727ff d72f261d 4c6bd846 6666820d 93a4b62b 6ea70ff2 d887603d c8f3f59a 81b74571 7217bcc4 c0dc1081 fe912145 eaaad965 aeca2b3d 16fe4b8d d72f261d 4c6bd846 eae4f7ec 93a4b62b 12456441 a595786b c8f3f59a 81b74571 03f0b4b2 37c1a9a2 5a4f1593 eaaad965 aeca2b3d b66c6592 d72f261d 4c1e7539
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf 40131044 0a75b229 eaaad965 aeca2b3d dca727ff d72f261d 4c6bd846 6666820d 93a4b62b 6ea70ff2 d887603d c8f3f59a 81b74571 7217bcc4 c0dc1081 fe912145 eaaad965 aeca2b3d 16fe4b8d d72f261d 4c6bd846 eae4f7ec 93a4b62b 12456441 a595786b c8f3f59a 81b74571 03f0b4b2 37c1a9a2 5a4f1593 eaaad965 aeca2b3d b66c6592 d72f261d 4c1e7539
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="llm-configuration-modes" >}}
     cat <<'EOF' > modes-routing-advanced.yaml

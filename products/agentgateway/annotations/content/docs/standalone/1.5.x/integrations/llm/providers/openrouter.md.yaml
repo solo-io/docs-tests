@@ -1,7 +1,7 @@
 format: 1
 source: content/docs/standalone/1.5.x/integrations/llm/providers/openrouter.md
 blocks:
-- b99e3cff0ddc8db1 yaml
+- 3697e22f0bdc3f7e yaml
 - f0682ddf67c73cee bash
 hidden:
 - after:
@@ -38,10 +38,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: b99e3cff0ddc8db1
+    fingerprint: 3697e22f0bdc3f7e
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 e3c8b29f 009395dd 7b0d5b13
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 e3c8b29f 009395dd 7b0d5b13
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="openrouter" >}}
     cat <<'EOF' > config.yaml

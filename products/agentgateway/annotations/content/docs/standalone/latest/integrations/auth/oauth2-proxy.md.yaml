@@ -7,7 +7,7 @@ blocks:
 - 7624cce6a7ef11df bash
 - 5bee394b00aa7fb9 bash
 - 90542a79c62bcd9b
-- d31f20a3d977fbbd yaml
+- ecb51b7139ad9f9f yaml
 - f6931a7b2e59dbc5 bash
 - e0cbc66f3840b0d0 bash
 - 6a29fc34cc957106
@@ -185,10 +185,10 @@ hidden:
        {{< /doc-test >}}
 - after:
     block: 6
-    fingerprint: d31f20a3d977fbbd
+    fingerprint: ecb51b7139ad9f9f
     lang: yaml
-    lines: a7f80a73 1b6c26b3 52e214e3 274fdf3f 44907521 0c23e83a aef6ebee 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf a7759098 18ef6e3b eaaad965 aeca2b3d f7c7664e c8f3f59a 7471bbd1 8c531c01 d72f261d 8a9b767b a7f6abdf eaacf5e5 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e c8f3f59a 19c2fa74 cf9b6dda 97ae8597 ad20a337 0fddf35e e14eb2dc a296d4ab 1a531442 ab1c637b 1c31dda0 7383e57c 530e2fc4 3c8687ef 6d76b5d0 5688ea18 8c8c4228 0807a2af 27f1d391 4642ed51 973f2925 67b069eb 1849a902
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 1b6c26b3 52e214e3 274fdf3f 44907521 0c23e83a aef6ebee 943d11d8 0b02fb9c 2b6bc07a 069de162 d67b54bf a7759098 18ef6e3b eaaad965 aeca2b3d f7c7664e c8f3f59a 7471bbd1 8c531c01 d72f261d 8a9b767b a7f6abdf eaacf5e5 d72f261d df374e41 3035507a 233e460f a68fe535 ca335149 6329244e c8f3f59a 19c2fa74 cf9b6dda 97ae8597 ad20a337 0fddf35e e14eb2dc a296d4ab 1a531442 ab1c637b 1c31dda0 7383e57c 530e2fc4 3c8687ef 6d76b5d0 5688ea18 8c8c4228 0807a2af 27f1d391 4642ed51 973f2925 67b069eb 1849a902
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |2-
        {{< doc-test paths="oauth2-proxy" >}}
        cat <<'EOF' > config.yaml

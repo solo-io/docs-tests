@@ -1,16 +1,27 @@
 format: 1
 source: assets/agw-docs/pages/agentgateway/integrations/llm-clients-k8s/openai-sdk.md
 blocks:
+- 452e2e34d9956db4 sh
 - 7ab6bdbc8b08546a sh
-- ccbeca5af56a5af1 python
+- 401a61d5f7073fea python
 - f1ff8bc6bceed2c1 sh
-- c687080a20770890 javascript
+- 2ca5d756c4be88d8 javascript
+- 753f2dbd51cfa220 sh
+- 797640c46e2476f4 go
+- 12f49506459e395e yaml
+- ce724c2a4772aab4 sh
+- 88d1f12699e9cbcf yaml
+- d4338e4786938c34 python
+- 8f122d8ee9e38dd0 python
+- bd2904e684dd90d1 python
+- bd35096ff5a8eb72 python
+- 1e7d5682f7eaada2 python
 hidden:
 - after:
-    block: 1
-    fingerprint: ccbeca5af56a5af1
+    block: 2
+    fingerprint: 401a61d5f7073fea
     lang: python
-    lines: de2abade e729d651 e69e79eb da1f808e 88e3a346 96470125 ba5ec51d 71e2a5c0 205d2ceb ff87353b ba5ec51d 1046017e
+    lines: de2abade e729d651 e69e79eb da1f808e 1f6093f6 96470125 ba5ec51d 71e2a5c0 205d2ceb ff87353b ba5ec51d 1046017e
     preview: import os
   content: |2-
        {{< doc-test paths="llm-client-openai-sdk" >}}
@@ -56,10 +67,10 @@ hidden:
        echo "ok: the Python SDK script got a completion through the gateway: $out"
        {{< /doc-test >}}
 - after:
-    block: 3
-    fingerprint: c687080a20770890
+    block: 4
+    fingerprint: 2ca5d756c4be88d8
     lang: javascript
-    lines: 4db7290b 243b3dad ccd6eca5 9017652b 8d056fcd 29576b54 6128c9ad 04a1fe9c 200c14f3 29576b54 3a4c3a1f
+    lines: 4db7290b 243b3dad ccd6eca5 db821ae2 8d056fcd 29576b54 6128c9ad 04a1fe9c 200c14f3 29576b54 3a4c3a1f
     preview: import OpenAI from "openai";
   content: |2-
        {{< doc-test paths="llm-client-openai-sdk" >}}

@@ -1,8 +1,8 @@
 format: 1
 source: content/docs/standalone/latest/documentation/llm/api-types/gemini.md
 blocks:
-- ec042e10ea791b67 yaml
-- 921ec015af9d7a6a yaml
+- cda43a7d1da89d62 yaml
+- e0cad06767d61c23 yaml
 - 3c25691d2a8be7dd shell
 - 4d9ae23b936fd18c shell
 - 9de40d7682a97d43 shell
@@ -46,10 +46,10 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 0
-    fingerprint: ec042e10ea791b67
+    fingerprint: cda43a7d1da89d62
     lang: yaml
-    lines: a7f80a73 3af99526 e01ccf75 e4f1a385 848625eb 009395dd 8263d052
-    preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+    lines: 91a049e6 3af99526 e01ccf75 e4f1a385 848625eb 009395dd 8263d052
+    preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="gemini-inbound-standalone" >}}
     cat <<'EOF' > config.yaml
@@ -70,10 +70,10 @@ hidden:
     words: b9776d7d 48a53f07 ba78973d eadc688c f4bf9f7f a0af9f86 905022ca a1d98908 ca978112 30adc606 70bdae49 a5408438 b9776d7d 5d724362 5b7e6bf2 a1b7c6f1 85738f8f 5ca4f385 e7a2e8b2 b9776d7d 948fe603 c626da0c
     block_before:
       block: 1
-      fingerprint: 921ec015af9d7a6a
+      fingerprint: e0cad06767d61c23
       lang: yaml
-      lines: a7f80a73 943d11d8 0b02fb9c 06267a46 d67b54bf d897654b 4c6bd846 2f00b828 93a4b62b c053df6d c8f3f59a ad3afdb1 d67b54bf 10f6f49f f7ebeccc f1b6deba 81b74571 69118c8e
-      preview: '# yaml-language-server: $schema=https://agentgateway.dev/schema/config'
+      lines: 91a049e6 943d11d8 0b02fb9c 06267a46 d67b54bf d897654b 4c6bd846 2f00b828 93a4b62b c053df6d c8f3f59a ad3afdb1 d67b54bf 10f6f49f f7ebeccc f1b6deba 81b74571 69118c8e
+      preview: '# yaml-language-server: $schema={{< reuse "agw-docs/snippets/schema.md" >}}'
   content: |-
     {{< doc-test paths="gemini-inbound-standalone" >}}
     cat <<'EOF' > config-explicit.yaml
