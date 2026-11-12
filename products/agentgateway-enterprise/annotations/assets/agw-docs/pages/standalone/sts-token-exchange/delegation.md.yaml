@@ -164,7 +164,7 @@ hidden:
          -d "grant_type=urn:ietf:params:oauth:grant-type:token-exchange" \
          -d "subject_token=${USER_TOKEN}" -d "subject_token_type=urn:ietf:params:oauth:token-type:jwt" \
          -d "actor_token=${AGENT_TOKEN}" -d "actor_token_type=urn:ietf:params:oauth:token-type:jwt")
-       echo "$DELEGATED" | jq -e '.issued_token_type == "urn:ietf:params:oauth:token-type:jwt" and .token_type == "N_A"' >/dev/null \
+       echo "$DELEGATED" | jq -e '.issued_token_type == "urn:ietf:params:oauth:token-type:jwt" and .token_type == "Bearer"' >/dev/null \
          || { echo "unexpected delegation response: $DELEGATED"; exit 1; }
        {{< /doc-test >}}
 - after:
