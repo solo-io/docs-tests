@@ -110,16 +110,16 @@ hidden:
     preview: kubectl get pods -n {{< reuse "kgw-docs/snippets/namespace.md" >}}
   content: |-
     {{< doc-test paths="argocd" >}}
-    # The release is {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}-helm, which contains the chart name, so the control
-    # plane Deployment takes the release name.
+    # The Argo CD release is {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}-helm, but the enterprise chart names the
+    # control plane Deployment {{< reuse "kgw-docs/snippets/pod-name.md" >}}, whatever the release name.
     YAMLTest -f - <<'EOF'
-    - name: wait for the {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}-helm control plane deployment that Argo CD installed to be available
+    - name: wait for the {{< reuse "kgw-docs/snippets/pod-name.md" >}} control plane deployment that Argo CD installed to be available
       wait:
         target:
           kind: Deployment
           metadata:
             namespace: {{< reuse "kgw-docs/snippets/namespace.md" >}}
-            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}-helm
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}
         jsonPath: "$.status.availableReplicas"
         jsonPathExpectation:
           comparator: greaterThan

@@ -212,15 +212,18 @@ hidden:
     preview: 'controller:'
   content: |-
     {{< doc-test paths="advanced" >}}
-    # Leader election is on by default: the controller holds the kgateway-envoy Lease.
+    # Leader election is on by default: the controller holds its leader-election Lease.
+    # The OSS controller's Lease is kgateway-envoy; the enterprise controller's is
+    # enterprise-kgateway (wellknown.LeaderElectionID in gloo-gateway).
+    if [ "{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}" = "enterprise-kgateway" ]; then LEASE=enterprise-kgateway; else LEASE=kgateway-envoy; fi
     holder=""
     for i in $(seq 1 30); do
-      holder=$(kubectl get lease kgateway-envoy -n kgateway-system -o jsonpath='{.spec.holderIdentity}' 2>/dev/null) || true
+      holder=$(kubectl get lease "$LEASE" -n kgateway-system -o jsonpath='{.spec.holderIdentity}' 2>/dev/null) || true
       [ -n "$holder" ] && break
-      echo "no holder on the kgateway-envoy Lease yet ($i/30)"; sleep 5
+      echo "no holder on the $LEASE Lease yet ($i/30)"; sleep 5
     done
     if [ -z "$holder" ]; then
-      echo "FAIL: leader election is not active by default: the kgateway-envoy Lease has no holder"
+      echo "FAIL: leader election is not active by default: the $LEASE Lease has no holder"
       exit 1
     fi
     cat > advanced-leader-election.yaml <<'EOF'
@@ -327,21 +330,20 @@ hidden:
         polling:
           timeoutSeconds: 120
           intervalSeconds: 5
-    - name: advanced - the new leader writes the 30s lease duration to the kgateway-envoy Lease
-      wait:
-        target:
-          kind: Lease
-          metadata:
-            namespace: kgateway-system
-            name: kgateway-envoy
-        jsonPath: "$.spec.leaseDurationSeconds"
-        jsonPathExpectation:
-          comparator: equals
-          value: 30
-        polling:
-          timeoutSeconds: 180
-          intervalSeconds: 5
     EOF
+    # The new leader writes the 30s lease duration to its Lease (kgateway-envoy in
+    # OSS, enterprise-kgateway in enterprise).
+    if [ "{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}" = "enterprise-kgateway" ]; then LEASE=enterprise-kgateway; else LEASE=kgateway-envoy; fi
+    duration=""
+    for i in $(seq 1 36); do
+      duration=$(kubectl get lease "$LEASE" -n kgateway-system -o jsonpath='{.spec.leaseDurationSeconds}' 2>/dev/null) || true
+      [ "$duration" = "30" ] && break
+      echo "the $LEASE Lease has leaseDurationSeconds '$duration', want 30, retrying ($i/36)"; sleep 5
+    done
+    if [ "$duration" != "30" ]; then
+      echo "FAIL: the new leader did not write the 30s lease duration to the $LEASE Lease (found '$duration')"
+      exit 1
+    fi
     {{< /doc-test >}}
 - after:
     block: 7
