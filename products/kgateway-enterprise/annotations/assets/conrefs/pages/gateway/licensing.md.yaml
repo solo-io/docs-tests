@@ -286,17 +286,36 @@ hidden:
   content: |-
     {{< doc-test paths="licensing,licensing-secret" >}}
     YAMLTest -f - <<'EOF'
-    - name: "licensing - the license key in the secret is an unexpired kgateway license"
+    # The payload is part 0 of current keys (payload.signature) and part 1 of
+    # older JWT-style keys, so decode whichever part is a JSON object with "exp".
+    # The product is not checked: valid kgateway enterprise keys can report
+    # "gloo" (the controller logs "VALID LICENSE: gloo Enterprise").
+    - name: "licensing - the license key in the secret is an unexpired enterprise license"
       retries: 10
       command:
         command: |
-          kubectl get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key}' | base64 --decode | python3 -c 'import sys, json, base64, time; p = sys.stdin.read().strip().split(".")[1]; p += "=" * (-len(p) % 4); d = json.loads(base64.urlsafe_b64decode(p)); print("product=%s lt=%s %s" % (d.get("product"), d.get("lt"), "unexpired" if d.get("exp", 0) > time.time() else "expired"))'
+          kubectl get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -n {{< reuse "kgw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key}' | base64 --decode | python3 -c '
+          import sys, json, base64, time
+          d = None
+          for p in sys.stdin.read().strip().split("."):
+              try:
+                  c = json.loads(base64.urlsafe_b64decode(p + "=" * (-len(p) % 4)))
+              except Exception:
+                  continue
+              if isinstance(c, dict) and "exp" in c:
+                  d = c
+                  break
+          if d is None:
+              sys.exit("no license payload found in the key")
+          print("decoded product=%s lt=%s %s" % (d.get("product"), d.get("lt"), "unexpired" if d["exp"] > time.time() else "expired"))
+          '
       source:
         type: local
       expect:
         exitCode: 0
         stdout:
-          - contains: "product=kgateway"
+          - contains: "decoded product="
+          - contains: "lt=ent"
           - contains: "unexpired"
     EOF
     {{< /doc-test >}}
