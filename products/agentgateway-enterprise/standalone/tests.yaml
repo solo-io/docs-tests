@@ -175,6 +175,11 @@ scenarios:
     - functional
     page: documentation/configuration/security/apikey-authn.md
     path: apikey-authn
+  apikey-authn-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/apikey-authn.md
+    path: all
+    scaffolded: "2026-11-13"
   apikey-budgets:
     type:
     - schema
@@ -312,6 +317,11 @@ scenarios:
     - functional
     page: documentation/configuration/security/basic-authn.md
     path: basic-authn
+  basic-authn-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/basic-authn.md
+    path: all
+    scaffolded: "2026-11-13"
   batch-about-schema:
     type: schema
     page: documentation/llm/batch/about.md
@@ -539,6 +549,11 @@ scenarios:
     - functional
     page: documentation/configuration/security/external-authz.md
     path: external-authz
+  external-authz-schema:
+    type: schema
+    page: documentation/configuration/security/authorization/external-authz.md
+    path: all
+    scaffolded: "2026-11-13"
   external-dns-schema:
     type: schema
     page: integrations/networking/external-dns.md
@@ -630,6 +645,11 @@ scenarios:
     - functional
     page: documentation/configuration/security/http-authz.md
     path: http-authz
+  http-authz-schema:
+    type: schema
+    page: documentation/configuration/security/authorization/http-authz.md
+    path: all
+    scaffolded: "2026-11-13"
   huggingface:
     type:
     - schema
@@ -659,12 +679,22 @@ scenarios:
     - functional
     page: documentation/configuration/security/jwt-authn.md
     path: jwt-authn
+  jwt-authn-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/jwt-authn.md
+    path: all
+    scaffolded: "2026-11-13"
   keycloak-mcp-authn:
     type:
     - schema
     - functional
     page: integrations/auth/keycloak.md
     path: keycloak-mcp-authn
+  keycloak-schema:
+    type: schema
+    page: documentation/configuration/security/backend-authn/token-exchange/idps/keycloak.md
+    path: all
+    scaffolded: "2026-11-13"
   langfuse-validate:
     type:
     - schema
@@ -781,6 +811,11 @@ scenarios:
     name: transformations
     page: documentation/llm/transformations.md
     path: transformations
+  management-api-about-schema:
+    type: schema
+    page: reference/management-api/about.md
+    path: all
+    scaffolded: "2026-11-13"
   manipulation:
     type:
     - schema
@@ -799,12 +834,22 @@ scenarios:
     - functional
     page: documentation/configuration/security/mcp-authn.md
     path: mcp-authn
+  mcp-authn-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/mcp-authn.md
+    path: all
+    scaffolded: "2026-11-13"
   mcp-authz-config:
     type:
     - schema
     - functional
     page: documentation/configuration/security/mcp-authz.md
     path: mcp-authz-config
+  mcp-authz-schema:
+    type: schema
+    page: documentation/configuration/security/authorization/mcp-authz.md
+    path: all
+    scaffolded: "2026-11-13"
   mcp-elicitation-brokered-agent:
     type:
     - schema
@@ -954,6 +999,11 @@ scenarios:
     - functional
     page: documentation/configuration/security/network-authz.md
     path: network-authz
+  network-authz-schema:
+    type: schema
+    page: documentation/configuration/security/authorization/network-authz.md
+    path: all
+    scaffolded: "2026-11-13"
   non-agentic-http:
     type:
     - schema
@@ -976,12 +1026,22 @@ scenarios:
     - functional
     page: documentation/configuration/security/oidc.md
     path: oidc-browser
+  oidc-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/oidc.md
+    path: all
+    scaffolded: "2026-11-13"
   okta-mcp-authn:
     type:
     - schema
     - functional
     page: integrations/auth/okta.md
     path: okta-mcp-authn
+  okta-schema:
+    type: schema
+    page: documentation/configuration/security/backend-authn/token-exchange/idps/okta.md
+    path: all
+    scaffolded: "2026-11-13"
   ollama-standalone-validate:
     type:
     - schema
