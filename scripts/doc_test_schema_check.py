@@ -37,11 +37,14 @@ default branch. Pass `--crd-dir latest=DIR --crd-dir main=DIR` (and the same for
 """
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import multiprocessing
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -647,6 +650,49 @@ def start_apiservers(versions: Set[Optional[str]], crd_paths: Dict[Optional[str]
     return servers
 
 
+def scaffold_into_copy(docs_tests_root: Path, pages: List[str], repo_root: Path,
+                       config_schemas: Dict[Optional[str], List[Path]], args) -> Path:
+    """Copy docs-tests to a temp dir and add the nightly scaffold's schema tests
+    for any of `pages` that has none, so a PR checks a new page before its test
+    exists. The caller's checkout is never changed. Returns the copy's root."""
+    import atexit
+    import scaffold_schema_tests  # imports this module; deferred to avoid a cycle at load time
+
+    tmp = Path(tempfile.mkdtemp(prefix="docs-tests-scaffold-"))
+    atexit.register(shutil.rmtree, tmp, True)
+    copy = tmp / "docs-tests"
+    shutil.copytree(docs_tests_root, copy, ignore=shutil.ignore_patterns(".git", "__pycache__", "out"))
+    common = []
+    for page in pages:
+        common += ["--page", page]
+    # Only used to recognize a whole standalone config file; latest is what PRs check.
+    config = (config_schemas.get("latest") or config_schemas.get(None) or [None])[0]
+    if config:
+        common += ["--config-schema", str(config)]
+    if args.upstream_root:
+        common += ["--upstream-root", args.upstream_root, "--upstream-versions", args.upstream_versions]
+    for condition in args.condition:
+        common += ["--condition", condition]
+    # The products' content roots do not overlap in any consuming repo, so try
+    # each product whose root holds one of the pages.
+    for product_dir in sorted((copy / "products").iterdir()):
+        roots = set()
+        for manifest in product_dir.glob("*/tests.yaml"):
+            data = yaml.safe_load(manifest.read_text(encoding="utf-8")) or {}
+            roots.add(str(data.get("content_root") or "content/docs").split("{")[0].strip("/") + "/")
+        if not any(page.startswith(root) for page in pages for root in roots):
+            continue
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            code = scaffold_schema_tests.main(
+                ["--repo", str(repo_root), "--product", product_dir.name, "--docs-tests-root", str(copy), *common])
+        for line in out.getvalue().splitlines():
+            logger.info("scaffold (%s): %s", product_dir.name, line)
+        if code:
+            raise RuntimeError(f"scaffold_schema_tests.py exited {code} for {product_dir.name}")
+    return copy
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="'schema'-type doc test: validate documented resources and config against "
@@ -771,6 +817,14 @@ def main() -> int:
              "check fewer manifests than it claims, or fail for finding none.",
     )
     parser.add_argument(
+        "--scaffold",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="With --file: a listed page with no test yet, such as one a pull request adds, is checked "
+             "with the schema test the nightly scaffold would add (scaffold_schema_tests.py), written to "
+             "a temp copy of docs-tests only. --no-scaffold checks only existing tests.",
+    )
+    parser.add_argument(
         "--jobs",
         type=int,
         default=os.cpu_count() or 1,
@@ -822,6 +876,16 @@ def main() -> int:
                 logger.warning("--helm-overlay: %s has no checked value '%s' (%s); remove the entry",
                                chart.name, path, version or "every version")
     kubeconform = Kubeconform(args.kubeconform, args.kubernetes_version) if args.kubeconform else None
+
+    if args.file and args.scaffold:
+        pages = [(Path(f) if Path(f).is_absolute() else repo_root / f).resolve() for f in args.file]
+        pages = [p.relative_to(repo_root).as_posix() for p in pages if p.is_relative_to(repo_root)]
+        try:
+            docs_tests_root = scaffold_into_copy(docs_tests_root, pages, repo_root,
+                                                 parse_versioned(args.config_schema), args)
+        except (RuntimeError, OSError, ValueError) as exc:
+            logger.error("scaffolding tests for new pages: %s", exc)
+            return 1
 
     test_cases, _, _, _ = build_test_cases(
         repo_root, args.docs_glob, generated_dir=repo_root / "out/tests/generated",

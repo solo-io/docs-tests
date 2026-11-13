@@ -161,5 +161,56 @@ class ScaffoldTest(unittest.TestCase):
         self.assertEqual(out, "scenarios:\n  a:\n    page: a.md\n  b-schema:\n    type: schema\n\nskip:\n- page: x.md\n")
 
 
+@unittest.skipUnless(importlib.util.find_spec("jsonschema"), "jsonschema is not installed")
+class SchemaCheckScaffoldPageTest(unittest.TestCase):
+    """doc_test_schema_check.py --file: a PR checks a new page before the nightly
+    scaffold adds its test, without changing the docs-tests checkout."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = pathlib.Path(self.tmp.name)
+        self.repo, self.dt, self.crds = root / "site", root / "docs-tests", root / "crds"
+        self.crds.mkdir()
+        self.manifest = self.dt / "products/demo/standalone/tests.yaml"
+        self.manifest.parent.mkdir(parents=True)
+        self.manifest.write_text("version: 1\nmode: standalone\nscenarios:\n  old-schema:\n    type: schema\n"
+                                 "    page: old.md\n    path: all\n", encoding="utf-8")
+        self.schema = root / "config.json"
+        self.schema.write_text(json.dumps(dict(CONFIG_SCHEMA, required=["binds", "routes"])))
+        self.page = "content/docs/standalone/latest/new-feature.md"
+        p = self.repo / self.page
+        p.parent.mkdir(parents=True)
+        p.write_text(page("New", CONFIG), encoding="utf-8")   # no `routes`: fails the schema
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def check(self, *extra) -> "subprocess.CompletedProcess":
+        import subprocess
+        script = pathlib.Path(__file__).resolve().parent / "doc_test_schema_check.py"
+        return subprocess.run(
+            [sys.executable, str(script), "--repo-root", str(self.repo), "--crd-dir", str(self.crds),
+             "--config-schema", str(self.schema), "--no-apiserver", "--docs-tests-root", str(self.dt),
+             "--docs-glob", "content/docs/**/*.md", "--jobs", "1", *extra],
+            capture_output=True, text=True)
+
+    def test_new_page_is_untested_without_file(self):
+        r = self.check()
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("No 'schema'-type scenarios found", r.stderr)
+
+    def test_file_checks_the_new_page_and_leaves_docs_tests_alone(self):
+        before = self.manifest.read_text()
+        r = self.check("--file", self.page)
+        self.assertEqual(r.returncode, 1, r.stderr)
+        self.assertIn(f"FAILED: {self.page}::new-feature-schema", r.stderr)
+        self.assertIn("'routes' is a required property", r.stderr)
+        self.assertEqual(self.manifest.read_text(), before)
+
+    def test_no_scaffold_checks_only_existing_tests(self):
+        r = self.check("--file", self.page, "--no-scaffold")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("No 'schema'-type scenarios found", r.stderr)
+
 if __name__ == "__main__":
     unittest.main()
