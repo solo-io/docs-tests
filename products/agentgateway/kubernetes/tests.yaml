@@ -307,6 +307,16 @@ scenarios:
     type: schema
     source: agw-docs/pages/agentgateway/integrations/llm-clients-k8s/claude-desktop.md
     path: clients-claude-desktop
+  compression:
+    type:
+    - schema
+    - functional
+    needs:
+    - install-experimental
+    - gateway
+    - httpbin
+    page: documentation/traffic-management/compression.md
+    path: compression
   conditional-policies-schema:
     type: schema
     source: agw-docs/pages/conditional-policies.md

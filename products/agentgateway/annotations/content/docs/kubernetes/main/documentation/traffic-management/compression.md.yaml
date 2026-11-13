@@ -1,0 +1,156 @@
+format: 1
+source: content/docs/kubernetes/main/documentation/traffic-management/compression.md
+blocks:
+- 4449ddf68ae42fe5 yaml
+- 0d716c305cc23c6f yaml
+- 0c0b9e47b7a07c62 sh
+- 6f0c5b90588fe1da sh
+- a8b2923301ab6054 console
+- 0a2d4b9f5657781f sh
+- c4b3a2ef60067101 sh
+- d7e838e1dd7b1809 console
+- c96a2f4ffe7cc858 sh
+- 916e07ab3615f31e sh
+- da4fe4889ccad658 console
+- 30094bbeec0791eb sh
+tags:
+- paths: compression
+  block: 1
+  fingerprint: 0d716c305cc23c6f
+  lang: yaml
+  lines: 16c71da1 fbc30693 7f57603a 8c8c4228 530a9388 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 933a226c 99c83b01 a4a31d48 c1da6df0 934c9340 26a3cba1 7abd9f2a 14ddcd05 2d89dccb abc56510
+  preview: kubectl apply -f- <<EOF
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+hidden:
+- after:
+    block: 1
+    fingerprint: 0d716c305cc23c6f
+    lang: yaml
+    lines: 16c71da1 fbc30693 7f57603a 8c8c4228 530a9388 0f10c5bc 36184fa5 588a5d84 b5a028c9 56bf9360 d217c891 e4f6a86d 933a226c 99c83b01 a4a31d48 c1da6df0 934c9340 26a3cba1 7abd9f2a 14ddcd05 2d89dccb abc56510
+    preview: kubectl apply -f- <<EOF
+  content: |2-
+       {{< doc-test paths="compression" >}}
+       YAMLTest -f - <<'EOF'
+       - name: wait for the compression policy to be accepted
+         wait:
+           target:
+             kind: AgentgatewayPolicy
+             metadata:
+               namespace: httpbin
+               name: compression
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       {{< /doc-test >}}
+- after:
+    block: 10
+    fingerprint: da4fe4889ccad658
+    lang: console
+    lines: 021fb596 ab5df625 a1c46201 ab5df625 731195c0 46720155 d10b36aa d10b36aa
+    preview: '{'
+  content: |-
+    {{< doc-test paths="compression" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * Step 1: the AgentgatewayPolicy with `traffic.compression.response.compress`
+    #     and `traffic.compression.request.decompress` is accepted.
+    #   * Step 2: with `Accept-Encoding: gzip`, the response has
+    #     `content-encoding: gzip` and `vary: accept-encoding`, and the body really
+    #     is gzip (it decompresses to JSON).
+    #   * Step 3: without `Accept-Encoding`, the response has no `content-encoding`,
+    #     has a `content-length`, and still has `vary: accept-encoding`.
+    #   * Step 4: a gzip-encoded request body reaches httpbin decoded, so the
+    #     `/anything` echo shows `json.hello == "world"`.
+    #   * Extra: `Accept-Encoding: br` and `Accept-Encoding: zstd` get `br` and
+    #     `zstd`, which confirms the policy's `Brotli` and `Zstd` entries apply.
+    #
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The eligibility rules in "Response compression" (32-byte minimum, media
+    #     types, `Cache-Control: no-transform`, `Content-Range`, 204/304) - httpbin
+    #     on this page has no example for them, so they are described, not shown.
+    #   * Quality-value (`q`) tie-breaking and `identity` - the page shows no
+    #     example request for them.
+    #   * The `PreRouting` restriction and the 1-4 unique `algorithms` CEL rules -
+    #     the page shows no invalid example.
+    #   * The port-forward tab - CI reaches the gateway through INGRESS_GW_ADDRESS.
+
+    # Response headers for one request. Retries until the policy is programmed in
+    # the proxy, which can lag the Accepted status by a few seconds.
+    compression_headers() {
+      local want="$1"; shift
+      local headers=""
+      for i in $(seq 1 30); do
+        headers=$(curl -s -m 10 -o /dev/null -D - "http://${INGRESS_GW_ADDRESS}:80/json" \
+          -H "host: www.example.com:80" "$@" | tr -d '\r') || true
+        if [ -z "$want" ] || grep -qi "^content-encoding: ${want}$" <<<"$headers"; then
+          break
+        fi
+        sleep 2
+      done
+      echo "$headers"
+    }
+
+    expect_header() {
+      local desc="$1" headers="$2" pattern="$3"
+      if grep -qi "$pattern" <<<"$headers"; then
+        echo "✓ $desc"
+      else
+        echo "FAIL: $desc -- no header matching '$pattern' in:"
+        echo "$headers"
+        exit 1
+      fi
+    }
+
+    expect_no_header() {
+      local desc="$1" headers="$2" pattern="$3"
+      if grep -qi "$pattern" <<<"$headers"; then
+        echo "FAIL: $desc -- unexpected header matching '$pattern' in:"
+        echo "$headers"
+        exit 1
+      fi
+      echo "✓ $desc"
+    }
+
+    # Step 2: gzip
+    H=$(compression_headers gzip -H "Accept-Encoding: gzip")
+    expect_header "Accept-Encoding: gzip gets content-encoding: gzip" "$H" '^content-encoding: gzip$'
+    expect_header "compressed response has vary: accept-encoding" "$H" '^vary: .*accept-encoding'
+    expect_no_header "compressed response drops content-length" "$H" '^content-length:'
+    # The body really is gzip, not just labeled as gzip.
+    curl -s -m 10 "http://${INGRESS_GW_ADDRESS}:80/json" -H "host: www.example.com:80" \
+      -H "Accept-Encoding: gzip" | gunzip | python3 -c 'import json,sys; json.load(sys.stdin)' \
+      || { echo "FAIL: gzip response body does not decompress to JSON"; exit 1; }
+    echo "✓ gzip response body decompresses to JSON"
+
+    # Brotli and Zstd from the policy's algorithms list.
+    H=$(compression_headers br -H "Accept-Encoding: br")
+    expect_header "Accept-Encoding: br gets content-encoding: br" "$H" '^content-encoding: br$'
+    H=$(compression_headers zstd -H "Accept-Encoding: zstd")
+    expect_header "Accept-Encoding: zstd gets content-encoding: zstd" "$H" '^content-encoding: zstd$'
+
+    # Step 3: no Accept-Encoding. curl sends none unless --compressed is set.
+    H=$(compression_headers "")
+    expect_no_header "no Accept-Encoding gets no content-encoding" "$H" '^content-encoding:'
+    expect_header "uncompressed response keeps content-length" "$H" '^content-length:'
+    expect_header "uncompressed response still has vary: accept-encoding" "$H" '^vary: .*accept-encoding'
+
+    # Step 4: gzip request body is decoded before it reaches httpbin.
+    BODY=$(echo '{"hello":"world"}' | gzip | curl -s -m 10 "http://${INGRESS_GW_ADDRESS}:80/anything" \
+      -H "host: www.example.com:80" \
+      -H "Content-Type: application/json" \
+      -H "Content-Encoding: gzip" \
+      --data-binary @-)
+    echo "$BODY" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d.get("json") == {"hello": "world"}, d' \
+      || { echo "FAIL: httpbin did not receive the decoded body: $BODY"; exit 1; }
+    echo "✓ gzip request body reaches httpbin decoded"
+    {{< /doc-test >}}
