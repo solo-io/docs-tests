@@ -113,6 +113,11 @@ scenarios:
     - functional
     page: documentation/llm/api-types/decisions.md
     path: api-types-decisions-run
+  apikey-authn-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/apikey-authn.md
+    path: all
+    scaffolded: "2026-11-13"
   arize-schema:
     type: schema
     page: integrations/llm/observability/arize.md
@@ -148,6 +153,11 @@ scenarios:
     - functional
     source: agw-docs/pages/security/backend-authn-te-google-standalone.md
     path: te-google
+  basic-authn-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/basic-authn.md
+    path: all
+    scaffolded: "2026-11-13"
   bedrock-guardrails:
     type:
     - schema
@@ -264,6 +274,11 @@ scenarios:
     type: schema
     page: documentation/setup/ui/expose-ui.md
     path: all
+  external-authz-schema:
+    type: schema
+    page: documentation/configuration/security/authorization/external-authz.md
+    path: all
+    scaffolded: "2026-11-13"
   external-dns-schema:
     type: schema
     page: integrations/networking/external-dns.md
@@ -316,6 +331,11 @@ scenarios:
     type: schema
     page: documentation/observability/traces/configs/honeycomb.md
     path: all
+  http-authz-schema:
+    type: schema
+    page: documentation/configuration/security/authorization/http-authz.md
+    path: all
+    scaffolded: "2026-11-13"
   import-schema:
     type: schema
     page: documentation/configuration/import.md
@@ -330,6 +350,16 @@ scenarios:
     - functional
     page: documentation/observability/traces/configs/jaeger.md
     path: jaeger-standalone
+  jwt-authn-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/jwt-authn.md
+    path: all
+    scaffolded: "2026-11-13"
+  keycloak-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-te-keycloak-standalone.md
+    path: all
+    scaffolded: "2026-11-13"
   langfuse-validate:
     type:
     - schema
@@ -438,6 +468,16 @@ scenarios:
     - functional
     page: documentation/configuration/traffic-management/matching.md
     path: matching
+  mcp-authn-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/mcp-authn.md
+    path: all
+    scaffolded: "2026-11-13"
+  mcp-authz-schema:
+    type: schema
+    page: documentation/configuration/security/authorization/mcp-authz.md
+    path: all
+    scaffolded: "2026-11-13"
   mcp-guardrails-cel:
     type:
     - schema
@@ -478,6 +518,11 @@ scenarios:
     page: integrations/llm/providers/nebius.md
     path: all
     scaffolded: "2026-11-10"
+  network-authz-schema:
+    type: schema
+    page: documentation/configuration/security/authorization/network-authz.md
+    path: all
+    scaffolded: "2026-11-13"
   oauth2-proxy:
     type:
     - schema
@@ -494,6 +539,16 @@ scenarios:
     - functional
     page: documentation/configuration/security/oidc.md
     path: oidc-browser
+  oidc-schema:
+    type: schema
+    page: documentation/configuration/security/authentication/oidc.md
+    path: all
+    scaffolded: "2026-11-13"
+  okta-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-te-okta-standalone.md
+    path: all
+    scaffolded: "2026-11-13"
   open-webui:
     type:
     - schema
