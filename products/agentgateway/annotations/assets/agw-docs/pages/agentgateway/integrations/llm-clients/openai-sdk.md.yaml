@@ -28,6 +28,64 @@ tags:
     lead: ' '
 hidden:
 - after:
+    section: (top of page)
+    line: e5832eae27fbdaf3
+    occurrence: 0
+    words: 56e57ada 54b2db0f ea325d76 7e341752 14c2529e 251fecd5 b9776d7d a9d0df18 043a7187 cae66217 28e5ebab b1d6b91b 56e57ada 6201111b 27ce1d1b 7d3194f7 31e06f7d fba30f84 ec72420d 56e57ada b4a27519 bec16879 1f58b914 663ea1bf b9776d7d 5c4c1964 8e7fc023 a5408438 b9776d7d 9372c470 c0d2856b 6201111b 38419231 2ad8a704 15eaa752 b9776d7d 5c4c1964 f480ffb2 ca978112 9d6f965a 14c2529e a5c935d1 f4bf9f7f c70eca6b cbc62794 2d7f45d7 7175517a e1b683e2 32e83e92 10c22bcf cc1ffdd2 14c2529e a1860308 aa9e9b5c a4262e1c de2187af fa42bed0 a0af9f86 caf9f906 487b9104 a4262e1c
+    block_before: null
+  content: |-
+    {{< doc-test paths="llm-client-openai-sdk" >}}
+    # ============================================================================
+    # Doc test coverage for this guide (these comments are not rendered on the page)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The Config file tab's config serves LLM traffic on port 3000 (against a local
+    #     mock LLM instead of OpenAI).
+    #   * The Python and Node.js scripts from the page, installed into a temporary
+    #     directory, get the mock's completion text back through agentgateway.
+    #   * The environment-variable form: with OPENAI_BASE_URL and OPENAI_API_KEY
+    #     exported as shown, `OpenAI()` with no arguments reaches agentgateway.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * `pip install openai` / `npm install openai` into the reader's project - the
+    #     test installs into a throwaway directory instead of the runner's environment.
+    #   * The UI tab - browser-only steps.
+    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
+    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
+    # Placeholder key: the mock LLM ignores it and no real provider is called.
+    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
+    AGW_PID=""
+    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
+    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
+    # Run agentgateway in the background and wait for its readiness endpoint.
+    start_agw() {
+      agentgateway -f "$1" > /tmp/doc-test-openai-sdk-agw.log 2>&1 &
+      AGW_PID=$!
+      for _ in $(seq 1 30); do
+        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
+        kill -0 "$AGW_PID" 2>/dev/null || break
+        sleep 1
+      done
+      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-openai-sdk-agw.log; return 1
+    }
+    stop_agw() {
+      kill "${AGW_PID:-}" 2>/dev/null || true
+      wait "${AGW_PID:-}" 2>/dev/null || true
+      AGW_PID=""
+    }
+    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
+    # after each apiKey line; works whether or not the heredoc expanded the key.
+    to_mock() {
+      python3 - "$1" "$2" <<'PY'
+    import pathlib, re, sys
+    src = pathlib.Path(sys.argv[1]).read_text()
+    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
+    if not n:
+        sys.exit("no apiKey line in " + sys.argv[1])
+    pathlib.Path(sys.argv[2]).write_text(out)
+    PY
+    }
+    {{< /doc-test >}}
+- after:
     section: Python
     line: a1e59f5ee37b4556
     occurrence: 0
@@ -134,62 +192,3 @@ hidden:
        echo "ok: the Node.js SDK script got a completion through agentgateway"
        stop_agw
        {{< /doc-test >}}
-- after:
-    section: (top of page)
-    line: 3191970edbe5637e
-    occurrence: 0
-    words: a3b142af b9776d7d 7d3194f7 11a4a60b 7175517a 324373d8 a9d0df18 663ea1bf 27ce1d1b ec72420d 9c6725dc 56e57ada
-    block_before: null
-  content: |-
-    {{< doc-test paths="llm-client-openai-sdk" >}}
-    # ============================================================================
-    # Doc test coverage for this guide (these comments are not rendered on the page)
-    # ============================================================================
-    # WHAT THIS TEST VALIDATES:
-    #   * The Config file tab's config serves LLM traffic on port 3000 (against a local
-    #     mock LLM instead of OpenAI).
-    #   * The Python and Node.js scripts from the page, installed into a temporary
-    #     directory, get the mock's completion text back through agentgateway.
-    #   * The environment-variable form: with OPENAI_BASE_URL and OPENAI_API_KEY
-    #     exported as shown, `OpenAI()` with no arguments reaches agentgateway.
-    # WHAT THIS TEST DOES NOT VALIDATE (and why):
-    #   * `pip install openai` / `npm install openai` into the reader's project - the
-    #     test installs into a throwaway directory instead of the runner's environment.
-    #   * The UI tab - browser-only steps.
-    {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
-    {{< reuse "agw-docs/snippets/start-mock-llm.md" >}}
-    # Placeholder key: the mock LLM ignores it and no real provider is called.
-    export OPENAI_API_KEY="${OPENAI_API_KEY:-test}"
-    AGW_PID=""
-    MOCK_LLM_PID="${MOCK_LLM_PID:-}"
-    trap 'kill ${AGW_PID:-} ${MOCK_LLM_PID:-} 2>/dev/null || true' EXIT
-    # Run agentgateway in the background and wait for its readiness endpoint.
-    start_agw() {
-      agentgateway -f "$1" > /tmp/doc-test-openai-sdk-agw.log 2>&1 &
-      AGW_PID=$!
-      for _ in $(seq 1 30); do
-        curl -sf -o /dev/null -m 2 http://localhost:15021/healthz/ready && return 0
-        kill -0 "$AGW_PID" 2>/dev/null || break
-        sleep 1
-      done
-      echo "agentgateway did not become ready on $1"; cat /tmp/doc-test-openai-sdk-agw.log; return 1
-    }
-    stop_agw() {
-      kill "${AGW_PID:-}" 2>/dev/null || true
-      wait "${AGW_PID:-}" 2>/dev/null || true
-      AGW_PID=""
-    }
-    # Point every OpenAI model in a config at the local mock LLM by adding a baseUrl
-    # after each apiKey line; works whether or not the heredoc expanded the key.
-    to_mock() {
-      python3 - "$1" "$2" <<'PY'
-    import pathlib, re, sys
-    src = pathlib.Path(sys.argv[1]).read_text()
-    out, n = re.subn(r'^(\s*)apiKey: .*$', lambda m: m.group(0) + "\n" + m.group(1) + "baseUrl: http://localhost:3091", src, flags=re.M)
-    if not n:
-        sys.exit("no apiKey line in " + sys.argv[1])
-    pathlib.Path(sys.argv[2]).write_text(out)
-    PY
-    }
-    {{< /doc-test >}}
-  status: needs-update

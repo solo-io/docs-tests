@@ -142,9 +142,10 @@ hidden:
        fi
        {{< /doc-test >}}
 - after:
-    fingerprint: 2200cce69b6f359b
+    block: 3
+    fingerprint: 888be0a422cf3291
     lang: yaml
-    lines: 46ab7fcc b8109578 241af637
+    lines: 46ab7fcc 49c99de3 241af637
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-licensing" >}}
@@ -162,11 +163,11 @@ hidden:
        [ -z "$(kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -o jsonpath='{.metadata.labels.app\.kubernetes\.io/managed-by}')" ]
        kubectl wait --for=condition=Accepted gatewayclass/{{< reuse "agw-docs/snippets/gatewayclass.md" >}} --timeout=120s
        {{< /doc-test >}}
-  status: needs-update
 - after:
-    fingerprint: 43a4647c07dd5ce5
+    block: 4
+    fingerprint: fe3eda094a7ecca3
     lang: sh
-    lines: a23bf984 1bd2e2c1 9d0ea9dc a5a5e5b0
+    lines: a23bf984 1bd2e2c1 0c975bff
   blank_before: []
   content: |-
     {{< doc-test paths="enterprise-licensing" >}}
@@ -187,4 +188,3 @@ hidden:
     print("license product:", claims["product"], "exp:", claims["exp"])
     EOF
     {{< /doc-test >}}
-  status: needs-update
