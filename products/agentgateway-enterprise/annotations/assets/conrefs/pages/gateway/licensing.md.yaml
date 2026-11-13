@@ -5,8 +5,8 @@ blocks:
 - e7ec31289e349cd3 sh
 - d6b60841a75f90f9 sh
 - 94947d75279727a9 yaml
-- 2200cce69b6f359b yaml
-- 43a4647c07dd5ce5 sh
+- 888be0a422cf3291 yaml
+- fe3eda094a7ecca3 sh
 - ec1a4d57ca19073c console
 - 12f398d993156eaf sh
 - 35bd3ef804e81bc9
@@ -107,53 +107,6 @@ hidden:
     kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} wait --for=delete secret/{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license --timeout=60s || true
     {{< /doc-test >}}
 - after:
-    block: 3
-    fingerprint: 2200cce69b6f359b
-    lang: yaml
-    lines: 46ab7fcc b8109578 241af637
-  blank_before: []
-  content: |2-
-       {{< doc-test paths="enterprise-licensing" >}}
-       cat > license-values.yaml <<'EOF'
-       licensing:
-         secretName: enterprise-agentgateway-license
-         createSecret: false
-       EOF
-       helm upgrade -i {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} \
-         -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
-         --version {{< reuse "agw-docs/versions/helm-version-flag.md" >}} \
-         -f license-values.yaml
-       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
-       # The release must not own the secret: it was created by hand.
-       [ -z "$(kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -o jsonpath='{.metadata.labels.app\.kubernetes\.io/managed-by}')" ]
-       kubectl wait --for=condition=Accepted gatewayclass/{{< reuse "agw-docs/snippets/gatewayclass.md" >}} --timeout=120s
-       {{< /doc-test >}}
-- after:
-    block: 4
-    fingerprint: 43a4647c07dd5ce5
-    lang: sh
-    lines: a23bf984 1bd2e2c1 9d0ea9dc a5a5e5b0
-  blank_before: []
-  content: |-
-    {{< doc-test paths="enterprise-licensing" >}}
-    kubectl get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
-      -o jsonpath="{.data.{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key}" | base64 --decode > license.jwt
-    python3 - <<'EOF'
-    import base64, json
-    parts = open("license.jwt").read().strip().split(".")
-    claims = None
-    for seg in parts[:2]:
-        try:
-            claims = json.loads(base64.urlsafe_b64decode(seg + "=" * (-len(seg) % 4)))
-        except Exception:
-            continue
-        if isinstance(claims, dict) and "exp" in claims:
-            break
-    assert isinstance(claims, dict) and "exp" in claims and claims.get("product") == "agentgateway", "license claims not found"
-    print("license product:", claims["product"], "exp:", claims["exp"])
-    EOF
-    {{< /doc-test >}}
-- after:
     block: 9
     fingerprint: 4460a322d3025cee
     lang: bash
@@ -188,3 +141,50 @@ hidden:
          echo "controller reports a license validation failure"; exit 1
        fi
        {{< /doc-test >}}
+- after:
+    fingerprint: 2200cce69b6f359b
+    lang: yaml
+    lines: 46ab7fcc b8109578 241af637
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-licensing" >}}
+       cat > license-values.yaml <<'EOF'
+       licensing:
+         secretName: enterprise-agentgateway-license
+         createSecret: false
+       EOF
+       helm upgrade -i {{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "kgw-docs/snippets/helm-kgateway.md" >}} \
+         -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+         --version {{< reuse "agw-docs/versions/helm-version-flag.md" >}} \
+         -f license-values.yaml
+       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
+       # The release must not own the secret: it was created by hand.
+       [ -z "$(kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -o jsonpath='{.metadata.labels.app\.kubernetes\.io/managed-by}')" ]
+       kubectl wait --for=condition=Accepted gatewayclass/{{< reuse "agw-docs/snippets/gatewayclass.md" >}} --timeout=120s
+       {{< /doc-test >}}
+  status: needs-update
+- after:
+    fingerprint: 43a4647c07dd5ce5
+    lang: sh
+    lines: a23bf984 1bd2e2c1 9d0ea9dc a5a5e5b0
+  blank_before: []
+  content: |-
+    {{< doc-test paths="enterprise-licensing" >}}
+    kubectl get secret {{< reuse "kgw-docs/snippets/pod-name.md" >}}-license -n {{< reuse "kgw-docs/snippets/namespace.md" >}} \
+      -o jsonpath="{.data.{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license-key}" | base64 --decode > license.jwt
+    python3 - <<'EOF'
+    import base64, json
+    parts = open("license.jwt").read().strip().split(".")
+    claims = None
+    for seg in parts[:2]:
+        try:
+            claims = json.loads(base64.urlsafe_b64decode(seg + "=" * (-len(seg) % 4)))
+        except Exception:
+            continue
+        if isinstance(claims, dict) and "exp" in claims:
+            break
+    assert isinstance(claims, dict) and "exp" in claims and claims.get("product") == "agentgateway", "license claims not found"
+    print("license product:", claims["product"], "exp:", claims["exp"])
+    EOF
+    {{< /doc-test >}}
+  status: needs-update

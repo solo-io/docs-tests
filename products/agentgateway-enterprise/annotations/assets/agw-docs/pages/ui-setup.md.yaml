@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/ui-setup.md
+previews: false
 blocks:
 - 32352802a372cd3c sh
 - 5fba5f3bf561451f sh
@@ -18,7 +19,6 @@ hidden:
     fingerprint: fc81a130b8fa922f
     lang: sh
     lines: 2d065637 9d671c51 736e1ed1 f7ad5ab4 7ec6de79
-    preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   content: |2-
        {{< doc-test paths="enterprise-ui-setup" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text
@@ -60,7 +60,6 @@ hidden:
     fingerprint: 3241b92b3dbee908
     lang: yaml
     lines: 16c71da1 88b9492f c548623c 8c8c4228 eb97063c 0bebd850 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 390f7e12 70c97555 f9cdd0ae 0bebd850 0d6480f0 5a41b93f 3e371bf8 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="enterprise-ui-setup" >}}
        # Mirror of the visible step above. Its kgw-docs snippets are conditional-text

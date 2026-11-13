@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/install/migrate.md
+previews: false
 blocks:
 - 4df27dbb87f8900d mermaid
 - 1c15c277ff6f0a07 mermaid
@@ -36,7 +37,6 @@ tags:
   fingerprint: 22b49fa1b84ec14e
   lang: sh
   lines: 22b49fa1
-  preview: kubectl get gatewayclass
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -46,7 +46,6 @@ tags:
   fingerprint: 9d5822c7ff9efb47
   lang: sh
   lines: 2050015f 1b7e7fbf 1c930f61 6d57604f 7459a2d7 527b3229 eca33fde 8a63755a 527b3229 a4c3ed04
-  preview: for crd in $(kubectl get crd \
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -56,7 +55,6 @@ tags:
   fingerprint: 7acb200b6bd730ec
   lang: sh
   lines: af1b7b6c 2a24ff0e 0d052d4a f55e216c
-  preview: 'helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway-crds.md" >}} oci:'
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -66,7 +64,6 @@ tags:
   fingerprint: 622a4cd07838f399
   lang: sh
   lines: 2d065637 0d052d4a 736e1ed1 39b68b19
-  preview: helm upgrade -i {{< reuse "agw-docs/snippets/helm-agentgateway.md" >}} oci://{{<
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -76,7 +73,6 @@ tags:
   fingerprint: 7edf1ba8847792d2
   lang: sh
   lines: 7edf1ba8
-  preview: kubectl get pods -n agentgateway-enterprise-system
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -86,7 +82,6 @@ tags:
   fingerprint: 22b49fa1b84ec14e
   lang: sh
   lines: 22b49fa1
-  preview: kubectl get gatewayclass
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -96,7 +91,6 @@ tags:
   fingerprint: 1d804ba1d01a2627
   lang: yaml
   lines: abbd1bdc 8c67597e cd44d8cd 8c8c4228 df11d16c f497f0e2 36184fa5 2fae86d3 c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -106,7 +100,6 @@ tags:
   fingerprint: 48bd8847b82243e1
   lang: yaml
   lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 08f38251 f497f0e2 c825a8bb f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -116,7 +109,6 @@ tags:
   fingerprint: 5594f238eaa7c096
   lang: sh
   lines: ea0c48cd 4059cfa2 02fbd77e
-  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system enterprise-ag
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -126,7 +118,6 @@ tags:
   fingerprint: 9cc9184a5cabd1a2
   lang: yaml
   lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 c2cc3736 f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
-  preview: kubectl apply -f - <<EOF
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -136,7 +127,6 @@ tags:
   fingerprint: e117edd3c976e757
   lang: sh
   lines: e117edd3
-  preview: kubectl delete gateway agentgateway-proxy -n agentgateway-system
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -146,7 +136,6 @@ tags:
   fingerprint: 3161220c0f9701e2
   lang: sh
   lines: 3161220c
-  preview: 'kubectl patch gateway agentgateway-proxy -n agentgateway-system --type=merge -p '
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -156,7 +145,6 @@ tags:
   fingerprint: f3622afb23f05dbc
   lang: sh
   lines: a4b9fbb1 a7d1939f e4c83c51 444d1b8e a4c3ed04
-  preview: kubectl get gateways --all-namespaces -o json \
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -166,7 +154,6 @@ tags:
   fingerprint: 09eb02380e4516c4
   lang: sh
   lines: 09eb0238
-  preview: kubectl get pods -n agentgateway-system
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -176,7 +163,6 @@ tags:
   fingerprint: 799d9b28295f0fa4
   lang: sh
   lines: 799d9b28
-  preview: kubectl get gateway agentgateway-proxy -n agentgateway-system
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -186,7 +172,6 @@ tags:
   fingerprint: efaa3bab6787cea0
   lang: sh
   lines: efaa3bab
-  preview: helm uninstall agentgateway -n agentgateway-system
   form:
     attr: paths="enterprise-migrate"
     only: true
@@ -196,14 +181,13 @@ tags:
   fingerprint: 9af9ebcd5a6f70e9
   lang: sh
   lines: 9af9ebcd
-  preview: kubectl delete gatewayclass agentgateway
   form:
     attr: paths="enterprise-migrate"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: Before you begin
+    section: h:d5bfdd7d989dfc0b
     line: 4cb2860247b4a6e1
     occurrence: 0
     words: a12dd3a7 4d040d3f 59dbf36d 251fecd5 bb0347a4 193c45b5 ea325d76 56e57ada 83b4d270 4ea5ee68 8e7fc023 fa51fd49 7fdfda5f a7e2d26e b9776d7d 8098f357 56e57ada c1472135
@@ -212,7 +196,6 @@ hidden:
       fingerprint: 599e1f4fcff461db
       lang: mermaid
       lines: 35bb4631 95b4397d 22965568 ef3f88ad 26f0acb8 361e48d0 7b847a9a 5a27cb24 e879ba36 0104dff1 361e48d0 b9ebcef8 6459061b 37bf8d74 68d2c1f1
-      preview: flowchart LR
   content: |-
     {{< doc-test paths="enterprise-migrate" >}}
     # ============================================================================
@@ -288,7 +271,6 @@ hidden:
     fingerprint: 7edf1ba8847792d2
     lang: sh
     lines: 7edf1ba8
-    preview: kubectl get pods -n agentgateway-enterprise-system
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-migrate" >}}
@@ -299,7 +281,6 @@ hidden:
     fingerprint: 22b49fa1b84ec14e
     lang: sh
     lines: 22b49fa1
-    preview: kubectl get gatewayclass
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-migrate" >}}
@@ -311,7 +292,6 @@ hidden:
     fingerprint: 48bd8847b82243e1
     lang: yaml
     lines: abbd1bdc 8c67597e 56bf9360 8c8c4228 d217c891 0f10c5bc 36184fa5 d3d416e7 08f38251 f497f0e2 c825a8bb f497f0e2 3de9d845 b733d726 aeca2b3d bf068a96 aecdc9c3 94ae491e 80e9487c bca8e5f7 abc56510
-    preview: kubectl apply -f - <<EOF
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-migrate" >}}
@@ -334,7 +314,6 @@ hidden:
     fingerprint: 5594f238eaa7c096
     lang: sh
     lines: ea0c48cd 4059cfa2 02fbd77e
-    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n agentgateway-system enterprise-ag
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-migrate" >}}
@@ -361,7 +340,6 @@ hidden:
     fingerprint: e117edd3c976e757
     lang: sh
     lines: e117edd3
-    preview: kubectl delete gateway agentgateway-proxy -n agentgateway-system
   content: |2-
        {{< doc-test paths="enterprise-migrate" >}}
        # Option B needs an OSS Gateway, and Option A just deleted it. Re-create one
@@ -390,7 +368,6 @@ hidden:
     fingerprint: 799d9b28295f0fa4
     lang: sh
     lines: 799d9b28
-    preview: kubectl get gateway agentgateway-proxy -n agentgateway-system
   content: |2-
        {{< doc-test paths="enterprise-migrate" >}}
        [ "$(kubectl get gateway agentgateway-proxy -n agentgateway-system -o jsonpath='{.spec.gatewayClassName}')" = "{{< reuse "agw-docs/snippets/gatewayclass.md" >}}" ]
@@ -411,7 +388,6 @@ hidden:
     fingerprint: 9af9ebcd5a6f70e9
     lang: sh
     lines: 9af9ebcd
-    preview: kubectl delete gatewayclass agentgateway
   content: |-
     {{< doc-test paths="enterprise-migrate" >}}
     kubectl -n agentgateway-system rollout status deploy/enterprise-agentgateway-proxy --timeout=120s

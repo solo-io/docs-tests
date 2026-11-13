@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/observability/enterprise-metrics-overview.md
+previews: false
 blocks:
 - 5dd8b801cfba6e69 sh
 - 9d27dfef6a4f189c sh
@@ -18,7 +19,6 @@ tags:
   fingerprint: 67b6a24692cbcf9b
   lang: sh
   lines: 03784a74 26d8a4ad
-  preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
   form:
     attr: paths="enterprise-metrics-overview"
     only: true
@@ -52,7 +52,6 @@ hidden:
     fingerprint: 67b6a24692cbcf9b
     lang: sh
     lines: 03784a74 26d8a4ad
-    preview: export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickho
   content: |2-
           {{< doc-test paths="enterprise-metrics-overview" >}}
           export CH_USER=$(kubectl get secret {{< reuse "agw-docs/snippets/solo-ui/clickhouse-auth-secret.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{.data.username}' | base64 -d)

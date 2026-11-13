@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/install/ui-https.md
+previews: false
 blocks:
 - b7ed2dd487b66608 bash
 - b04c131dd2ecb12b bash
@@ -22,7 +23,6 @@ tags:
   fingerprint: b7ed2dd487b66608
   lang: bash
   lines: b7ed2dd4
-  preview: export UI_HOST=agentgateway.myapp.com
   form:
     attr: paths="enterprise-ui-https"
     only: true
@@ -32,7 +32,6 @@ tags:
   fingerprint: 0ac10d87b07fd5f3
   lang: yaml
   lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c8857053 8af957d1 36184fa5 ddf06799 c10d7538 2407cef5 c6ba4159 e53e933b c8857053 3195c5f5 f7446fcf bc611839 52b5b541 a67acb0a 5f37c61e c3201545 e83d405d abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-ui-https"
     only: true
@@ -42,7 +41,6 @@ tags:
   fingerprint: 48f7133fb5ea07c9
   lang: bash
   lines: 48f7133f
-  preview: kubectl get gateway https -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o y
   form:
     attr: paths="enterprise-ui-https"
     only: true
@@ -52,7 +50,6 @@ tags:
   fingerprint: f691f11056856506
   lang: bash
   lines: f691f110
-  preview: kubectl get service https -n {{< reuse "agw-docs/snippets/namespace.md" >}}
   form:
     attr: paths="enterprise-ui-https"
     only: true
@@ -62,7 +59,6 @@ tags:
   fingerprint: c11b50f1efbc1c3f
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 67938f8f 8af957d1 36184fa5 d3d416e7 52b5b541 8af957d1 301e1bfa 424d76af 3de9d845 a3b86ab6 9e6acc00 8af957d1 da480536 eaaad965 aeca2b3d bf068a96 aecdc9c3 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="enterprise-ui-https"
     only: true
@@ -72,7 +68,6 @@ tags:
   fingerprint: 44793095ea47b4ed
   lang: bash
   lines: '44793095'
-  preview: kubectl get httproutes -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o yaml
   form:
     attr: paths="enterprise-ui-https"
     only: true
@@ -82,7 +77,6 @@ tags:
   fingerprint: 6b27c049901fd5b2
   lang: bash
   lines: 6b27c049
-  preview: kubectl get gateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} https -o y
   form:
     attr: paths="enterprise-ui-https"
     only: true
@@ -92,7 +86,6 @@ tags:
   fingerprint: 5b26eb227a7c0ce6
   lang: bash
   lines: 33d7b1d6 38658983 932da7fc
-  preview: kubectl delete httproute {{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}}
   form:
     attr: paths="enterprise-ui-https"
     only: true
@@ -103,7 +96,6 @@ hidden:
     fingerprint: b7ed2dd487b66608
     lang: bash
     lines: b7ed2dd4
-    preview: export UI_HOST=agentgateway.myapp.com
   content: |2-
        {{< doc-test paths="enterprise-ui-https" >}}
        # ============================================================================
@@ -128,7 +120,6 @@ hidden:
     fingerprint: 0ac10d87b07fd5f3
     lang: yaml
     lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 c8857053 8af957d1 36184fa5 ddf06799 c10d7538 2407cef5 c6ba4159 e53e933b c8857053 3195c5f5 f7446fcf bc611839 52b5b541 a67acb0a 5f37c61e c3201545 e83d405d abc56510
-    preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="enterprise-ui-https" >}}
        YAMLTest -f - <<'EOF'
@@ -153,7 +144,6 @@ hidden:
     fingerprint: 6b27c049901fd5b2
     lang: bash
     lines: 6b27c049
-    preview: kubectl get gateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} https -o y
   content: |2-
        {{< doc-test paths="enterprise-ui-https" >}}
        HTTPS_IP=""

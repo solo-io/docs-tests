@@ -1,7 +1,8 @@
 format: 1
 source: assets/agw-docs/pages/standalone/guardrails-conditional-reversible.md
+previews: false
 blocks:
-- 34a2928bfb57e015 yaml
+- bd165aaea55865c4 yaml
 - 05991aa55ecbe989 sh
 - b6934f81b99b2389 console
 - f6931a7b2e59dbc5 sh
@@ -9,16 +10,15 @@ blocks:
 - 92413e9787e7d079 console
 - 03efc2c9aaea474e sh
 - 8310b5e00816dd33 console
-- 0e4cb888bb3588e1 yaml
+- c1638bf36a29be32 yaml
 - f6931a7b2e59dbc5 sh
 - fa3463cbf602846a sh
 tags:
 - paths: conditional-reversible
   block: 0
-  fingerprint: 34a2928bfb57e015
+  fingerprint: bd165aaea55865c4
   lang: yaml
-  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 6d88d930 4208ae28 e8bd2b8e 14ddcd05 47639ec2 eeb7e2a3 665793a0 3de9d845 bb492b20 abc56510
-  preview: cat <<'EOF' > config.yaml
+  lines: 2a7b4933 91a049e6 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 6d88d930 4208ae28 e8bd2b8e 14ddcd05 47639ec2 eeb7e2a3 665793a0 3de9d845 bb492b20 abc56510
   form:
     attr: paths="conditional-reversible"
     only: true
@@ -28,7 +28,6 @@ tags:
   fingerprint: 05991aa55ecbe989
   lang: sh
   lines: 05991aa5
-  preview: agentgateway -f config.yaml --validate-only
   form:
     attr: paths="conditional-reversible"
     only: true
@@ -38,7 +37,6 @@ tags:
   fingerprint: e0408129f9f6f748
   lang: sh
   lines: 0bfab602 fc68f389 eb2638bc
-  preview: curl -i localhost:4000/v1/chat/completions \
   form:
     attr: paths="conditional-reversible"
     only: true
@@ -48,17 +46,15 @@ tags:
   fingerprint: 03efc2c9aaea474e
   lang: sh
   lines: 0bfab602 fc68f389 e3c45d9b eb2638bc
-  preview: curl -i localhost:4000/v1/chat/completions \
   form:
     attr: paths="conditional-reversible"
     only: true
     lead: ' '
 - paths: conditional-reversible
   block: 8
-  fingerprint: 0e4cb888bb3588e1
+  fingerprint: c1638bf36a29be32
   lang: yaml
-  lines: 2a7b4933 a7f80a73 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 6d88d930 4208ae28 e8bd2b8e 14ddcd05 f47484a5 eeb7e2a3 90afc833 3de9d845 79720b31 abc56510
-  preview: cat <<'EOF' > config.yaml
+  lines: 2a7b4933 91a049e6 3af99526 e01ccf75 e4f1a385 6472803d 009395dd 6d88d930 4208ae28 e8bd2b8e 14ddcd05 f47484a5 eeb7e2a3 90afc833 3de9d845 79720b31 abc56510
   form:
     attr: paths="conditional-reversible"
     only: true
@@ -68,7 +64,6 @@ tags:
   fingerprint: fa3463cbf602846a
   lang: sh
   lines: 5052bef9 fc68f389 8c8fb8e2
-  preview: curl localhost:4000/v1/chat/completions \
   form:
     attr: paths="conditional-reversible"
     only: true
@@ -134,7 +129,6 @@ hidden:
     fingerprint: f6931a7b2e59dbc5
     lang: sh
     lines: f6931a7b
-    preview: agentgateway -f config.yaml
   content: |-
     {{< doc-test paths="conditional-reversible" >}}
     {{< reuse "agw-docs/snippets/point-config-at-mock-llm.md" >}}
@@ -149,7 +143,6 @@ hidden:
     fingerprint: e0408129f9f6f748
     lang: sh
     lines: 0bfab602 fc68f389 eb2638bc
-    preview: curl -i localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="conditional-reversible" >}}
     code=$(curl -s -o /dev/null -w '%{http_code}' localhost:4000/v1/chat/completions \
@@ -162,7 +155,6 @@ hidden:
     fingerprint: 03efc2c9aaea474e
     lang: sh
     lines: 0bfab602 fc68f389 e3c45d9b eb2638bc
-    preview: curl -i localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="conditional-reversible" >}}
     code=$(curl -s -o /dev/null -w '%{http_code}' localhost:4000/v1/chat/completions \
@@ -176,7 +168,6 @@ hidden:
     fingerprint: f6931a7b2e59dbc5
     lang: sh
     lines: f6931a7b
-    preview: agentgateway -f config.yaml
   content: |-
     {{< doc-test paths="conditional-reversible" >}}
     kill $AGW_PID; wait $AGW_PID 2>/dev/null || true
@@ -192,7 +183,6 @@ hidden:
     fingerprint: fa3463cbf602846a
     lang: sh
     lines: 5052bef9 fc68f389 8c8fb8e2
-    preview: curl localhost:4000/v1/chat/completions \
   content: |-
     {{< doc-test paths="conditional-reversible" >}}
     resp=$(curl -s localhost:4000/v1/chat/completions \
