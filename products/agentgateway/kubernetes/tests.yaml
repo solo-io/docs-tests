@@ -506,6 +506,11 @@ scenarios:
     - gateway
     source: agw-docs/pages/agentgateway/llm/providers/gemini.md
     path: gemini
+  global-schema:
+    type: schema
+    page: documentation/security/rate-limit/global.md
+    path: all
+    scaffolded: "2026-11-13"
   grpc:
     type:
     - schema
@@ -714,6 +719,11 @@ scenarios:
     - httpbin
     source: agw-docs/pages/observability/traces/configs/jaeger.md
     path: jaeger-traces
+  keycloak-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-te-keycloak.md
+    path: all
+    scaffolded: "2026-11-13"
   label:
     type:
     - schema
@@ -923,6 +933,11 @@ scenarios:
     type: schema
     source: agw-docs/pages/traffic-management/load-balancing.md
     path: load-balancing
+  local-schema:
+    type: schema
+    page: documentation/security/rate-limit/local.md
+    path: all
+    scaffolded: "2026-11-13"
   locality-aware-routing:
     type:
     - schema
@@ -1073,6 +1088,11 @@ scenarios:
     type: schema
     page: integrations/llm/observability/braintrust.md
     path: observability-braintrust
+  okta-schema:
+    type: schema
+    source: agw-docs/pages/security/backend-authn-te-okta.md
+    path: all
+    scaffolded: "2026-11-13"
   openshell:
     needs:
     - install-standard
