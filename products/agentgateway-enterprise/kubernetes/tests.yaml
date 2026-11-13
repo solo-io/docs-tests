@@ -316,6 +316,11 @@ scenarios:
     - httpbin
     page: documentation/security/apikey.md
     path: apikey-auth
+  apikey-schema:
+    type: schema
+    page: documentation/security/extauth/apikey.md
+    path: all
+    scaffolded: "2026-11-13"
   argo-rollouts:
     type:
     - schema
@@ -904,6 +909,11 @@ scenarios:
     needs: []
     page: documentation/operations/upgrade.md
     path: enterprise-upgrade
+  entra-schema:
+    type: schema
+    page: documentation/install/ui/access-control/identity-providers/entra.md
+    path: all
+    scaffolded: "2026-11-13"
   extauth-basic:
     type:
     - schema
@@ -1019,6 +1029,11 @@ scenarios:
     - gateway
     page: documentation/llm/api-types/gemini.md
     path: gemini-inbound
+  generic-oidc-schema:
+    type: schema
+    page: documentation/install/ui/access-control/identity-providers/generic-oidc.md
+    path: all
+    scaffolded: "2026-11-13"
   global-rate-limit-enterprise:
     type:
     - schema
@@ -1031,6 +1046,11 @@ scenarios:
       path: openai-setup
     page: documentation/security/rate-limit-global.md
     path: global-rate-limit-enterprise
+  global-schema:
+    type: schema
+    page: documentation/security/rate-limit/global.md
+    path: all
+    scaffolded: "2026-11-13"
   grafana-cloud-schema:
     type: schema
     page: documentation/observability/traces/configs/grafana-cloud.md
@@ -1236,6 +1256,11 @@ scenarios:
     type: schema
     page: documentation/security/backend-authn/token-exchange/idps/google.md
     path: idps-google
+  idps-okta-schema:
+    type: schema
+    page: documentation/security/backend-authn/token-exchange/idps/okta.md
+    path: all
+    scaffolded: "2026-11-13"
   inference-routing-schema:
     type: schema
     page: documentation/llm/inference/inference-routing.md
@@ -1348,6 +1373,16 @@ scenarios:
       path: setup-keycloak
     page: documentation/security/jwt/setup.md
     path: jwt-claims
+  jwt-schema:
+    type: schema
+    page: documentation/security/authorization/jwt.md
+    path: all
+    scaffolded: "2026-11-13"
+  jwt-setup-schema:
+    type: schema
+    page: documentation/security/extauth/jwt/setup.md
+    path: all
+    scaffolded: "2026-11-13"
   jwt-sign:
     type:
     - schema
@@ -1358,6 +1393,11 @@ scenarios:
     - httpbin
     page: documentation/security/backend-authn/jwt-sign.md
     path: jwt-sign
+  keycloak-schema:
+    type: schema
+    page: documentation/security/backend-authn/token-exchange/idps/keycloak.md
+    path: all
+    scaffolded: "2026-11-13"
   label:
     needs:
     - install-standard
@@ -1622,6 +1662,11 @@ scenarios:
     - httpbin
     page: documentation/security/rate-limit-http.md
     path: local-rate-limit
+  local-schema:
+    type: schema
+    page: documentation/security/rate-limit/local.md
+    path: all
+    scaffolded: "2026-11-13"
   locality-aware-routing:
     needs:
     - install-standard
@@ -1912,6 +1957,11 @@ scenarios:
     page: integrations/llm/observability/datadog.md
     path: all
     scaffolded: "2026-11-05"
+  okta-schema:
+    type: schema
+    page: documentation/install/ui/access-control/identity-providers/okta.md
+    path: all
+    scaffolded: "2026-11-13"
   ollama-provider-setup:
     type:
     - schema
@@ -2239,6 +2289,16 @@ scenarios:
     - httpbin
     page: documentation/traffic-management/transformations/rewrite.md
     path: rewrite
+  role-based-about-schema:
+    type: schema
+    page: documentation/security/authorization/role-based/about.md
+    path: all
+    scaffolded: "2026-11-13"
+  role-based-jwt-schema:
+    type: schema
+    page: documentation/security/authorization/role-based/jwt.md
+    path: all
+    scaffolded: "2026-11-13"
   routing-kserve-schema:
     type: schema
     page: integrations/llm/routing/kserve.md
@@ -2591,6 +2651,11 @@ scenarios:
       path: virtual-keys-with-ratelimit
     page: documentation/llm/cost-controls/virtual-keys.md
     path: virtual-keys-ratelimit-test
+  virtual-keys-schema:
+    type: schema
+    page: documentation/security/authorization/role-based/virtual-keys.md
+    path: all
+    scaffolded: "2026-11-13"
   virtual-mcp:
     type:
     - schema
