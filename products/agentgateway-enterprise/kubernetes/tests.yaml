@@ -1887,6 +1887,12 @@ scenarios:
     - gateway
     page: documentation/observability/metrics/nacks.md
     path: nacks
+  native-plugins-schema:
+    type: schema
+    page: documentation/traffic-management/native-plugins.md
+    path: all
+    scaffolded: "2026-11-13"
+    functional: "Needs a compiled plugin library. No public plugin image or plugin SDK exists to build one in the test."
   native-policies:
     needs:
     - install-standard
