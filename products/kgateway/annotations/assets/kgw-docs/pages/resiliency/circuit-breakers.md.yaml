@@ -106,9 +106,12 @@ hidden:
 
     # Test-only: the page's limits (1000 connections, 500 pending requests) are too
     # high to reach in a test. Lower them on the same policy, send 20 slow requests
-    # at once, and check that the gateway rejects the overflow with a 503 and counts
-    # it in upstream_rq_pending_overflow. The next section of the page re-applies
-    # the page's limits.
+    # at once, and check that the gateway rejects the overflow with a 503 that
+    # carries x-envoy-overloaded: true (Envoy's marker for a circuit breaker
+    # rejection). No single overflow counter is checked: with maxRequests also at 1,
+    # Envoy splits the rejections between counters depending on timing, and
+    # upstream_rq_pending_overflow alone was sometimes 0. The next section of the
+    # page re-applies the page's limits.
     kubectl patch backendconfigpolicy httpbin-circuit-breakers -n httpbin --type merge \
       -p '{"spec":{"circuitBreakers":{"maxConnections":1,"maxPendingRequests":1,"maxRequests":1}}}'
     for attempt in $(seq 1 60); do
@@ -125,25 +128,25 @@ hidden:
     for round in 1 2 3; do
       cb_pids=""
       for i in $(seq 1 20); do
-        curl -s -o /dev/null -w '%{http_code}\n' --max-time 30 "http://${INGRESS_GW_ADDRESS}:8080/delay/2" \
-          -H "host: www.example.com:8080" > "$cb_dir/$round-$i" 2>/dev/null &
+        curl -s -o /dev/null -D "$cb_dir/$round-$i.headers" -w '%{http_code}\n' --max-time 30 \
+          "http://${INGRESS_GW_ADDRESS}:8080/delay/2" \
+          -H "host: www.example.com:8080" > "$cb_dir/$round-$i.code" 2>/dev/null &
         cb_pids="$cb_pids $!"
       done
       wait $cb_pids || true
-      cb_503=$(cat "$cb_dir"/* | grep -c '^503$' || true)
-      cb_200=$(cat "$cb_dir"/* | grep -c '^200$' || true)
-      [ "$cb_503" -ge 1 ] && [ "$cb_200" -ge 1 ] && break
+      cb_503=$(cat "$cb_dir"/*.code | grep -c '^503$' || true)
+      cb_200=$(cat "$cb_dir"/*.code | grep -c '^200$' || true)
+      # Responses whose headers say the circuit breaker rejected them.
+      cb_overloaded=$(grep -lis '^x-envoy-overloaded: *true' "$cb_dir"/*.headers | wc -l | tr -d ' ')
+      [ "$cb_overloaded" -ge 1 ] && [ "$cb_200" -ge 1 ] && break
     done
-    echo "circuit-breakers: ${cb_200} requests returned 200 and ${cb_503} returned 503"
+    echo "circuit-breakers: ${cb_200} requests returned 200 and ${cb_503} returned 503; ${cb_overloaded} had x-envoy-overloaded: true"
     if [ "$cb_503" -lt 1 ] || [ "$cb_200" -lt 1 ]; then
       echo "circuit-breakers: expected concurrent requests to return both 200 (within the limit) and 503 (circuit breaker overflow)"
       exit 1
     fi
-    cb_overflow=$(kubectl exec -n kgateway-system deploy/http -- wget -qO- "http://127.0.0.1:19000/stats" 2>/dev/null \
-      | grep '^cluster\.kube_httpbin_httpbin_8000\.upstream_rq_pending_overflow:' | awk '{print $2}' || true)
-    echo "circuit-breakers: upstream_rq_pending_overflow is '${cb_overflow}'"
-    if [ -z "$cb_overflow" ] || [ "$cb_overflow" -lt 1 ]; then
-      echo "circuit-breakers: expected cluster.kube_httpbin_httpbin_8000.upstream_rq_pending_overflow to be at least 1"
+    if [ "$cb_overloaded" -lt 1 ]; then
+      echo "circuit-breakers: expected at least one 503 with x-envoy-overloaded: true (circuit breaker rejection)"
       exit 1
     fi
     {{< /doc-test >}}
