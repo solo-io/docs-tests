@@ -178,5 +178,5 @@ hidden:
        kubectl delete httproute codex-openai-v1 -n {{< reuse "agw-docs/snippets/namespace.md" >}} --ignore-not-found
        kubectl patch {{< reuse "agw-docs/snippets/backend.md" >}} openai -n {{< reuse "agw-docs/snippets/namespace.md" >}} --type=merge \
          -p '{"spec":{"ai":{"provider":{"path":"/llm/chat/completions"}}}}'
-       rm -rf "$CODEX_TMP" "$CODEX_PROBE" "$CODEX_LOG"
+       rm -rf "$CODEX_TMP" "$CODEX_PROBE" "$CODEX_LOG" || true
        {{< /doc-test >}}

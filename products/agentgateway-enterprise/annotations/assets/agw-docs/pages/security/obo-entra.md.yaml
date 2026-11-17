@@ -166,6 +166,45 @@ tags:
     lead: ' '
 hidden:
 - after:
+    section: h:d5bfdd7d989dfc0b
+    line: 3ab5c38886a44db0
+    occurrence: 0
+    words: 6ee0eb49 75a288c0 ea325d76 56e57ada 1241936d b1b1bdb4 a0af9f86 caf9f906 8fb6d5f3 4ea5ee68
+    block_before:
+      block: 1
+      fingerprint: 5ba3bf57f210aebe
+      lang: mermaid
+      lines: 536f52ac 78f0367f 131e214d 2318a89e 8add3819 914d073c 2978f2d8 ad4762bd 32b3319d 92e479ef 8b231e1f d2593f88 ac6f6e61 07ad299a e37635ee 675ef301
+  content: |-
+    {{< doc-test paths="te-idps-entra" >}}
+    # ============================================================================
+    # Doc test coverage for "Microsoft Entra ID" OBO (these comments are not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * The client secret, the Helm upgrade that enables the STS with Entra
+    #     validators and binds the GatewayClass to agentgateway-params, and the
+    #     control plane service exposing port 7777.
+    #   * agentgateway-params is picked up by the proxy (STS_URI is set on it).
+    #   * The entra-jwks backend, the Graph /me MCP server, its backend and route
+    #     are accepted, and an MCP client can initialize and list the graph_me tool
+    #     through the gateway before the OBO policy is applied.
+    #   * The entra-obo-policy, with the tenant and client ID formats that the CRD
+    #     enforces, is accepted.
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * Steps 1, 7, and 9 with a real tenant: the app registration, consent,
+    #     `az login`, MCP Inspector, and the Graph call need an Entra tenant, a
+    #     signed-in user, and a browser. So the OBO exchange with Entra and the
+    #     Graph /me response are not checked.
+    #   * The port-forward: CI reaches the gateway through its LoadBalancer.
+    # The tenant and client IDs are placeholder GUIDs (the policy rejects the
+    # `common` alias) and the client secret is a dummy. The STS validators use
+    # Microsoft's public multi-tenant `common` JWKS, so the controller can load real
+    # keys without a tenant.
+    export ENTRA_TENANT_ID="${ENTRA_TENANT_ID:-00000000-0000-4000-8000-000000000000}"
+    export ENTRA_CLIENT_ID="${ENTRA_CLIENT_ID:-aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee}"
+    export ENTRA_CLIENT_SECRET="doc-test-placeholder-secret"
+    {{< /doc-test >}}
+- after:
     block: 7
     fingerprint: 19819c523ee39f47
     lang: yaml
@@ -355,42 +394,3 @@ hidden:
           intervalSeconds: 2
     EOF
     {{< /doc-test >}}
-- after:
-    section: h:ddeae394a203c2fb
-    line: 71c260ac02c2ca01
-    occurrence: 0
-    words: 6b86b273 87780fa5 ea325d76 a172cedc 58296753 7f3a98bc a5614527 6201111b d05aa2a1 c0cafcf0 663ea1bf fa8847b0 ca978112 948fe603 2bb80d53 edb46562 b9776d7d 8d0288f4 89445ea0
-    block_before:
-      fingerprint: 5ba3bf57f210aebe
-      lang: mermaid
-      lines: 536f52ac 78f0367f 131e214d 2318a89e 8add3819 914d073c 2978f2d8 ad4762bd 32b3319d 92e479ef 8b231e1f d2593f88 ac6f6e61 07ad299a e37635ee 675ef301
-  content: |2-
-       {{< doc-test paths="te-idps-entra" >}}
-       # ============================================================================
-       # Doc test coverage for "Microsoft Entra ID" OBO (these comments are not rendered)
-       # ============================================================================
-       # WHAT THIS TEST VALIDATES:
-       #   * The client secret, the Helm upgrade that enables the STS with Entra
-       #     validators and binds the GatewayClass to agentgateway-params, and the
-       #     control plane service exposing port 7777.
-       #   * agentgateway-params is picked up by the proxy (STS_URI is set on it).
-       #   * The entra-jwks backend, the Graph /me MCP server, its backend and route
-       #     are accepted, and an MCP client can initialize and list the graph_me tool
-       #     through the gateway before the OBO policy is applied.
-       #   * The entra-obo-policy, with the tenant and client ID formats that the CRD
-       #     enforces, is accepted.
-       # WHAT THIS TEST DOES NOT VALIDATE (and why):
-       #   * Steps 1, 7, and 9 with a real tenant: the app registration, consent,
-       #     `az login`, MCP Inspector, and the Graph call need an Entra tenant, a
-       #     signed-in user, and a browser. So the OBO exchange with Entra and the
-       #     Graph /me response are not checked.
-       #   * The port-forward: CI reaches the gateway through its LoadBalancer.
-       # The tenant and client IDs are placeholder GUIDs (the policy rejects the
-       # `common` alias) and the client secret is a dummy. The STS validators use
-       # Microsoft's public multi-tenant `common` JWKS, so the controller can load real
-       # keys without a tenant.
-       export ENTRA_TENANT_ID="${ENTRA_TENANT_ID:-00000000-0000-4000-8000-000000000000}"
-       export ENTRA_CLIENT_ID="${ENTRA_CLIENT_ID:-aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee}"
-       export ENTRA_CLIENT_SECRET="${ENTRA_CLIENT_SECRET:-doc-test-placeholder-secret}"
-       {{< /doc-test >}}
-  status: needs-update

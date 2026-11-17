@@ -116,12 +116,22 @@ tags:
     only: true
     lead: ' '
 - paths: providers-azure-2
-  fingerprint: 4b1f323f07037197
+  block: 25
+  fingerprint: 6d04982563df2387
   lang: yaml
-  lines: e10f493b fbc30693 99d7dba1 8c8c4228 e7ea9d6b 8af957d1 36184fa5 ad3afdb1 93a4b62b 10f3150d 2d632970 79fee0dc b7775259 29e136f6 c8f3f59a ad3afdb1 d67b54bf 6e59d67e 5afc0c5f 146e11c6 10f3150d 435024e5 cb3f91d5 8c67597e 56bf9360 8c8c4228 e7ea9d6b 8af957d1 36184fa5 d3d416e7 2d157081 3de9d845 a3b86ab6 453bdfd0 99d7dba1 e7ea9d6b eaaad965 11715573 57af3940 6d88f925 bd825fbb 11715573 57af3940 6d88f925 ee5b3f56 abc56510
+  lines: e10f493b fbc30693 99d7dba1 8c8c4228 e7ea9d6b 8af957d1 36184fa5 ad3afdb1 93a4b62b 10f3150d 2d632970 79fee0dc b7775259 29e136f6 c8f3f59a ad3afdb1 d67b54bf 6e59d67e 5afc0c5f 146e11c6 10f3150d 435024e5 abc56510
   preview: kubectl apply --server-side -f- <<EOF
   form:
     attr: paths="providers-azure-2"
     only: true
     lead: ' '
-  status: needs-update
+- paths: providers-azure-2
+  block: 26
+  fingerprint: e73b8a2a014e9035
+  lang: yaml
+  lines: e10f493b 8c67597e 56bf9360 8c8c4228 e7ea9d6b 8af957d1 36184fa5 d3d416e7 2d157081 3de9d845 a3b86ab6 453bdfd0 99d7dba1 e7ea9d6b eaaad965 11715573 57af3940 6d88f925 bd825fbb 11715573 57af3940 6d88f925 ee5b3f56 abc56510
+  preview: kubectl apply --server-side -f- <<EOF
+  form:
+    attr: paths="providers-azure-2"
+    only: true
+    lead: ' '

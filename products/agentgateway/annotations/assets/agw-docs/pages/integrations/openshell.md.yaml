@@ -75,7 +75,13 @@ hidden:
        # The chart's preflight refuses to install without Agent Sandbox, so install
        # the version the guide was tested with first.
        kubectl apply --server-side -f "https://github.com/kubernetes-sigs/agent-sandbox/releases/download/v{{< reuse "agw-docs/versions/agent-sandbox.md" >}}/sandbox.yaml"
-       kubectl wait --for=condition=Established crd/sandboxes.agents.x-k8s.io --timeout=120s
+       sandbox_crd_established=""
+       for i in $(seq 1 60); do
+         sandbox_crd_established=$(kubectl get crd sandboxes.agents.x-k8s.io -o jsonpath='{.status.conditions[?(@.type=="Established")].status}' 2>/dev/null || true)
+         [ "$sandbox_crd_established" = "True" ] && break
+         sleep 2
+       done
+       [ "$sandbox_crd_established" = "True" ] || { echo "sandboxes.agents.x-k8s.io CRD was not Established"; exit 1; }
        kubectl rollout status deployment/agent-sandbox-controller -n agent-sandbox-system --timeout=300s
        # The reader saves the block above as openshell-values.yaml; write the same file.
        cat > openshell-values.yaml <<'EOF'

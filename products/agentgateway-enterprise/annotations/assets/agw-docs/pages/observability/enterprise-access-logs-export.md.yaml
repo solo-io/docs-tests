@@ -194,6 +194,15 @@ hidden:
        ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE position(toString(LogAttributes), 'www.example.com') > 0"
        {{< /doc-test >}}
 - after:
+    block: 6
+    fingerprint: c3a40297dd4116d4
+    lang: sql
+    lines: 57ca61ba 76945caa 39c46c94
+  content: |2-
+       {{< doc-test paths="access-log-otlp" >}}
+       chq "SELECT Timestamp, LogAttributes FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE JSONExtractInt(LogAttributes, 'http', 'response', 'status_code') >= 400 ORDER BY Timestamp DESC LIMIT 20"
+       {{< /doc-test >}}
+- after:
     block: 8
     fingerprint: 0016bbb9d53118be
     lang: yaml
@@ -281,13 +290,3 @@ hidden:
        # The host (server.address in the OTLP export) is removed from the export only.
        test "$(chq "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE position(toString(LogAttributes), 'abc123') > 0 AND position(toString(LogAttributes), 'www.example.com') > 0")" = "0"
        {{< /doc-test >}}
-- after:
-    fingerprint: e6df1f95df1bac04
-    lang: sql
-    lines: 57ca61ba f9c6652d 39c46c94
-  blank_before: []
-  content: |2-
-       {{< doc-test paths="access-log-otlp" >}}
-       chq "SELECT Timestamp, LogAttributes FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_logs_json WHERE JSONExtractInt(LogAttributes, 'http', 'response', 'status_code') >= 400 ORDER BY Timestamp DESC LIMIT 20"
-       {{< /doc-test >}}
-  status: needs-update
