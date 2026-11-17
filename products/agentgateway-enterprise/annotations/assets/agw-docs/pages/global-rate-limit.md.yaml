@@ -13,8 +13,30 @@ blocks:
 - 6a0b9b9851ab8e20 sh
 - 7f924fdaa91c421f sh
 - a61237b3ca707dd9
+- 35a268c4cf0fb6ae sh
+- 0f2574b3ef4691f0 yaml
+- 9ae1a9f1ad9f98ab yaml
+- 2689f80c97099172 sh
+- 7ca6feb2ab6ac7b4 sh
+- 0674b002de4d250f
+- e46bc2eaa7c0b76e sh
+- 682c8e14307063dc sh
+- b8af861020a9e40c
+- 8f0eed637f6d9e15 sh
+- 35a268c4cf0fb6ae sh
+- 0340cd20cbaf7b46 yaml
+- f1c70760fe8516f9 yaml
+- 0e5304087cee1404 sh
+- c2a7fdaa2480f170 sh
+- 57099217eabc314f
+- 021435b05f697336 sh
+- 734362af0f46d0c8 sh
+- 7a295a23156b3f89
+- 3db88417926630ec sh
 - 94fd48bb7e641eea yaml
 - c2000aa37d574476 yaml
+- b81b9214a60e4b52 yaml
+- 19831e9715829a88 sh
 - ca32cb37a33f927c sh
 tags:
 - paths: global-rate-limit-enterprise
@@ -63,7 +85,7 @@ tags:
     only: true
     lead: ' '
 - paths: global-rate-limit-enterprise
-  block: 11
+  block: 31
   fingerprint: 94fd48bb7e641eea
   lang: yaml
   lines: 16c71da1 797d7e5f 6c3c22a6 8c8c4228 e26d8d3a 0bebd850 36184fa5 aeeb33bd b7b5f484 eef55bb8 a50da420 ca372f46 6a642fca a19560f5 e50b9463 99005bf9 a68324b2 25a46942 abc56510
@@ -72,7 +94,7 @@ tags:
     only: true
     lead: ' '
 - paths: global-rate-limit-enterprise
-  block: 12
+  block: 32
   fingerprint: c2000aa37d574476
   lang: yaml
   lines: 16c71da1 88b9492f c548623c 8c8c4228 e9c383a9 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d a50da420 f971795d bafdf12e 9482fbfc cb3f91d5 88b9492f c548623c 8c8c4228 1a71044f 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 12a458d8 abc56510
@@ -81,7 +103,7 @@ tags:
     only: true
     lead: ' '
 - paths: global-rate-limit-enterprise
-  block: 13
+  block: 35
   fingerprint: ca32cb37a33f927c
   lang: sh
   lines: 06575f84 dc7418a7 4c584f47 0a10bab7 7efd914d a0866e61 c486f184
@@ -204,7 +226,7 @@ hidden:
        check_window 50 -H "x-user-id: alice"
        {{< /doc-test >}}
 - after:
-    block: 12
+    block: 32
     fingerprint: c2000aa37d574476
     lang: yaml
     lines: 16c71da1 88b9492f c548623c 8c8c4228 e9c383a9 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d a50da420 f971795d bafdf12e 9482fbfc cb3f91d5 88b9492f c548623c 8c8c4228 1a71044f 0bebd850 36184fa5 588a5d84 b5a028c9 56bf9360 6666820d e4f6a86d 065d53f7 c14c1813 2ed67d95 12a458d8 abc56510

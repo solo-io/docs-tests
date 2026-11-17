@@ -4,12 +4,22 @@ previews: false
 blocks:
 - 6069bbd51f9db0fa yaml
 - 67492b4197446009 sh
-- 4d4d0aa7b92b47b3 sh
+- 047b63335ec31c12 sh
 - edd720f88a727deb sh
 - 70cb7d061c5974e7 console
 - 4b1ca6f659672af2 yaml
 - e4e1434f1a797da5 yaml
 - 1214acfbaca013fd yaml
+- 2577beccd39f86cc yaml
+- 5cafefeb9e2e8460 sh
+- 3f5519f8864f553a yaml
+- 2c16d83e2c4134e0 sh
+- 07970632512cc203 yaml
+- 3a16d7a7d006211e yaml
+- 1a4a07a864f6d47b sh
+- 05991cccb9d2541a sh
+- 4ea0bb14eb2a8199 promql
+- 1e61dda219404c65 yaml
 - 890b2757f5e937f8 sh
 - a8bd531dad182fba sh
 - 2bad7704867f31ad sh
@@ -25,9 +35,9 @@ tags:
     lead: ' '
 - paths: enterprise-metrics-external
   block: 2
-  fingerprint: 4d4d0aa7b92b47b3
+  fingerprint: 047b63335ec31c12
   lang: sh
-  lines: 2d065637 96064311 736e1ed1 b07f1c94 d9baa781 878ad6e0 3ba69cac
+  lines: 06cacda0 2d065637 96064311 c17bdc47 b07f1c94 d9baa781 878ad6e0 3ba69cac
   form:
     attr: paths="enterprise-metrics-external"
     only: true
@@ -42,7 +52,7 @@ tags:
     only: true
     lead: ' '
 - paths: enterprise-metrics-external
-  block: 9
+  block: 19
   fingerprint: a8bd531dad182fba
   lang: sh
   lines: a8bd531d
@@ -112,9 +122,9 @@ hidden:
     {{< /doc-test >}}
 - after:
     block: 2
-    fingerprint: 4d4d0aa7b92b47b3
+    fingerprint: 047b63335ec31c12
     lang: sh
-    lines: 2d065637 96064311 736e1ed1 b07f1c94 d9baa781 878ad6e0 3ba69cac
+    lines: 06cacda0 2d065637 96064311 c17bdc47 b07f1c94 d9baa781 878ad6e0 3ba69cac
   content: |2-
        {{< doc-test paths="enterprise-metrics-external" >}}
        kubectl rollout status deployment/enterprise-agentgateway -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=300s
@@ -130,7 +140,7 @@ hidden:
        kubectl get podmonitor enterprise-agentgateway-proxy -n {{< reuse "agw-docs/snippets/namespace.md" >}}
        {{< /doc-test >}}
 - after:
-    block: 9
+    block: 19
     fingerprint: a8bd531dad182fba
     lang: sh
     lines: a8bd531d

@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/standalone/ui-access-control/setup.md
+previews: false
 blocks:
 - 9426b9aa0d196592 yaml
 - ac0daf49b20f2004 sh
@@ -20,7 +21,6 @@ tags:
   fingerprint: ac0daf49b20f2004
   lang: sh
   lines: ac0daf49
-  preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config
   form:
     attr: paths="enterprise-ui-access-control-setup"
     only: true
@@ -30,7 +30,6 @@ tags:
   fingerprint: 288c4af02a951261
   lang: sh
   lines: 288c4af0
-  preview: agentgateway --validate-only -f config.yaml
   form:
     attr: paths="enterprise-ui-access-control-setup"
     only: true
@@ -40,7 +39,6 @@ tags:
   fingerprint: c41b24fd181d4658
   lang: sh
   lines: 54e9831d c2a7b015
-  preview: curl -s http://localhost:4001/api/permissions \
   form:
     attr: paths="enterprise-ui-access-control-setup"
     only: true
@@ -50,7 +48,6 @@ tags:
   fingerprint: 03c7b3490eef8365
   lang: sh
   lines: 54e9831d 694915c0
-  preview: curl -s http://localhost:4001/api/permissions \
   form:
     attr: paths="enterprise-ui-access-control-setup"
     only: true
@@ -60,7 +57,6 @@ tags:
   fingerprint: 8776cc91d7dc303e
   lang: sh
   lines: 3c721379 694915c0
-  preview: curl -s -w "\n%{http_code}\n" http://localhost:4001/api/config \
   form:
     attr: paths="enterprise-ui-access-control-setup"
     only: true
@@ -146,7 +142,6 @@ hidden:
     fingerprint: ac0daf49b20f2004
     lang: sh
     lines: ac0daf49
-    preview: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:4001/api/config
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-ui-access-control-setup" >}}
@@ -158,7 +153,6 @@ hidden:
     fingerprint: 69dfde2bf7b35179
     lang: yaml
     lines: 2180b199 14cbb6f6 4f221910 1228b865
-    preview: 'config:'
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-ui-access-control-setup" >}}
@@ -177,7 +171,6 @@ hidden:
     fingerprint: 19a9c2d542ac8455
     lang: yaml
     lines: 84c31baf c8f3f59a 64fd6953 46687890 55062eb7 afb2c7d0 e827fc81 46687890 b6068251 980fb345
-    preview: 'rbac:'
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-ui-access-control-setup" >}}
@@ -198,7 +191,6 @@ hidden:
     fingerprint: 288c4af02a951261
     lang: sh
     lines: 288c4af0
-    preview: agentgateway --validate-only -f config.yaml
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-ui-access-control-setup" >}}
@@ -210,7 +202,6 @@ hidden:
     fingerprint: c41b24fd181d4658
     lang: sh
     lines: 54e9831d c2a7b015
-    preview: curl -s http://localhost:4001/api/permissions \
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-ui-access-control-setup" >}}
@@ -228,7 +219,6 @@ hidden:
     fingerprint: 3c1f3c65f6a7db2b
     lang: yaml
     lines: 84c31baf c719fdf4 c8f3f59a b2724542
-    preview: 'rbac:'
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-ui-access-control-setup" >}}
@@ -248,7 +238,6 @@ hidden:
     fingerprint: 03c7b3490eef8365
     lang: sh
     lines: 54e9831d 694915c0
-    preview: curl -s http://localhost:4001/api/permissions \
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-ui-access-control-setup" >}}
@@ -270,7 +259,6 @@ hidden:
     fingerprint: 8776cc91d7dc303e
     lang: sh
     lines: 3c721379 694915c0
-    preview: curl -s -w "\n%{http_code}\n" http://localhost:4001/api/config \
   blank_before: []
   content: |2-
        {{< doc-test paths="enterprise-ui-access-control-setup" >}}

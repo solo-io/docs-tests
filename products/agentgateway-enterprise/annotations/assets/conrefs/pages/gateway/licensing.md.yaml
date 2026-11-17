@@ -6,6 +6,9 @@ blocks:
 - d6b60841a75f90f9 sh
 - 94947d75279727a9 yaml
 - 888be0a422cf3291 yaml
+- 2f489b5a24945b58 yaml
+- 083018449e662a9c yaml
+- 32974876659cf652 yaml
 - fe3eda094a7ecca3 sh
 - ec1a4d57ca19073c console
 - 12f398d993156eaf sh
@@ -36,7 +39,7 @@ tags:
     only: true
     lead: ' '
 - paths: enterprise-licensing
-  block: 10
+  block: 13
   fingerprint: 274079499b6408e7
   lang: sh
   lines: 87fb9ffa bb33f2e0 d2f34d1e bc73c86d
@@ -45,7 +48,7 @@ tags:
     only: true
     lead: ' '
 - paths: enterprise-licensing
-  block: 11
+  block: 14
   fingerprint: f108eba057e499c0
   lang: bash
   lines: f108eba0
@@ -54,7 +57,7 @@ tags:
     only: true
     lead: ' '
 - paths: enterprise-licensing
-  block: 13
+  block: 16
   fingerprint: 12f398d993156eaf
   lang: sh
   lines: 12f398d9
@@ -107,41 +110,6 @@ hidden:
     kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} wait --for=delete secret/{{< reuse "kgw-docs/snippets/pod-name.md" >}}-license --timeout=60s || true
     {{< /doc-test >}}
 - after:
-    block: 9
-    fingerprint: 4460a322d3025cee
-    lang: bash
-    lines: 4460a322
-  blank_before: []
-  content: |2-
-       {{< doc-test paths="enterprise-licensing" >}}
-       # The visible export is a placeholder; re-use the CI key as the "new" key.
-       export LICENSE_KEY="${AGENTGATEWAY_LICENSE_KEY}" && echo "LICENSE_KEY set for update"
-       {{< /doc-test >}}
-- after:
-    block: 11
-    fingerprint: f108eba057e499c0
-    lang: bash
-    lines: f108eba0
-  blank_before: []
-  content: |2-
-       {{< doc-test paths="enterprise-licensing" >}}
-       # Wait for the restarted pod, so that the next step reads its logs.
-       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
-       {{< /doc-test >}}
-- after:
-    block: 13
-    fingerprint: 12f398d993156eaf
-    lang: sh
-    lines: 12f398d9
-  blank_before: []
-  content: |2-
-       {{< doc-test paths="enterprise-licensing" >}}
-       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
-       if kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} | grep "license validation failed"; then
-         echo "controller reports a license validation failure"; exit 1
-       fi
-       {{< /doc-test >}}
-- after:
     block: 3
     fingerprint: 888be0a422cf3291
     lang: yaml
@@ -164,7 +132,7 @@ hidden:
        kubectl wait --for=condition=Accepted gatewayclass/{{< reuse "agw-docs/snippets/gatewayclass.md" >}} --timeout=120s
        {{< /doc-test >}}
 - after:
-    block: 4
+    block: 7
     fingerprint: fe3eda094a7ecca3
     lang: sh
     lines: a23bf984 1bd2e2c1 0c975bff
@@ -188,3 +156,38 @@ hidden:
     print("license product:", claims["product"], "exp:", claims["exp"])
     EOF
     {{< /doc-test >}}
+- after:
+    block: 12
+    fingerprint: 4460a322d3025cee
+    lang: bash
+    lines: 4460a322
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-licensing" >}}
+       # The visible export is a placeholder; re-use the CI key as the "new" key.
+       export LICENSE_KEY="${AGENTGATEWAY_LICENSE_KEY}" && echo "LICENSE_KEY set for update"
+       {{< /doc-test >}}
+- after:
+    block: 14
+    fingerprint: f108eba057e499c0
+    lang: bash
+    lines: f108eba0
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-licensing" >}}
+       # Wait for the restarted pod, so that the next step reads its logs.
+       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
+       {{< /doc-test >}}
+- after:
+    block: 16
+    fingerprint: 12f398d993156eaf
+    lang: sh
+    lines: 12f398d9
+  blank_before: []
+  content: |2-
+       {{< doc-test paths="enterprise-licensing" >}}
+       kubectl -n {{< reuse "kgw-docs/snippets/namespace.md" >}} rollout status deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} --timeout=300s
+       if kubectl logs deploy/{{< reuse "kgw-docs/snippets/pod-name.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} | grep "license validation failed"; then
+         echo "controller reports a license validation failure"; exit 1
+       fi
+       {{< /doc-test >}}

@@ -25,29 +25,6 @@ tags:
     lead: ' '
 hidden:
 - after:
-    section: (top of page)
-    line: 419fa518af09fa71
-    occurrence: 0
-    words: ff777205 a46c629d 7187f067 177a7ea3 58296753 b9776d7d 5f199a5a 3e194352 8da729b5 e904c9cc 5ef5ef03 56e57ada 177a7ea3 a3b142af b9776d7d e4a514c0 e7a2e8b2 10c22bcf b9776d7d a18b869b a330395c 28391d3b ddd9818a 177a7ea3 aa9e9b5c 0fcd568a fad90028 177a7ea3 b1b1bdb4 a0af9f86 caf9f906 58ee0007 177a7ea3 96826665 6201111b 3a6eb079 fad90028 177a7ea3 b1b1bdb4 a0af9f86 caf9f906 58ee0007 177a7ea3 9d32cad2
-    block_before: null
-  content: |-
-    {{< doc-test paths="enterprise-metrics-overview" >}}
-    # ============================================================================
-    # Doc test coverage for "Metrics overview" (not rendered)
-    # ============================================================================
-    # WHAT THIS TEST VALIDATES:
-    #   * "Access raw metrics": the control plane answers on 9092/metrics and the
-    #     proxy on 15020/metrics with agentgateway_ metrics. CI allows no
-    #     port-forward, so an in-cluster curl pod reads the same endpoints.
-    #   * "View metrics in the management UI": the collector scrapes the proxy, and
-    #     agentgateway_requests_total reaches otel_metrics_sum (the page's query).
-    # WHAT THIS TEST DOES NOT VALIDATE (and why):
-    #   * The UI Dashboard panels (browser) and the interactive clickhouse-client shell.
-    PROXY_IP=$(kubectl get pods -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{range .items[*]}{.metadata.name} {.status.podIP}{"\n"}{end}' | grep '^agentgateway-proxy-' | head -1 | cut -d' ' -f2)
-    kubectl run metrics-check -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --quiet --image=curlimages/curl:8.11.1 -- \
-      sh -c "curl -sf http://enterprise-agentgateway.{{< reuse "agw-docs/snippets/namespace.md" >}}.svc.cluster.local:9092/metrics | grep -c '^agentgateway_' && curl -sf http://$PROXY_IP:15020/metrics | grep -c '^agentgateway_'"
-    {{< /doc-test >}}
-- after:
     block: 5
     fingerprint: 67b6a24692cbcf9b
     lang: sh
@@ -71,3 +48,27 @@ hidden:
           ch_wait_rows "SELECT count() FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_metrics_sum WHERE MetricName = 'agentgateway_requests_total'"
           chq "SELECT DISTINCT MetricName FROM {{< reuse "agw-docs/snippets/solo-ui/clickhouse-db.md" >}}.otel_metrics_histogram ORDER BY MetricName"
           {{< /doc-test >}}
+- after:
+    section: (top of page)
+    line: 419fa518af09fa71
+    occurrence: 0
+    words: ff777205 a46c629d 7187f067 177a7ea3 58296753 b9776d7d 5f199a5a 3e194352 8da729b5 e904c9cc 5ef5ef03 56e57ada 177a7ea3 a3b142af b9776d7d e4a514c0 e7a2e8b2 10c22bcf b9776d7d a18b869b a330395c 28391d3b ddd9818a 177a7ea3 aa9e9b5c 0fcd568a fad90028 177a7ea3 b1b1bdb4 a0af9f86 caf9f906 58ee0007 177a7ea3 96826665 6201111b 3a6eb079 fad90028 177a7ea3 b1b1bdb4 a0af9f86 caf9f906 58ee0007 177a7ea3 9d32cad2
+    block_before: null
+  content: |-
+    {{< doc-test paths="enterprise-metrics-overview" >}}
+    # ============================================================================
+    # Doc test coverage for "Metrics overview" (not rendered)
+    # ============================================================================
+    # WHAT THIS TEST VALIDATES:
+    #   * "Access raw metrics": the control plane answers on 9092/metrics and the
+    #     proxy on 15020/metrics with agentgateway_ metrics. CI allows no
+    #     port-forward, so an in-cluster curl pod reads the same endpoints.
+    #   * "View metrics in the management UI": the collector scrapes the proxy, and
+    #     agentgateway_requests_total reaches otel_metrics_sum (the page's query).
+    # WHAT THIS TEST DOES NOT VALIDATE (and why):
+    #   * The UI Dashboard panels (browser) and the interactive clickhouse-client shell.
+    PROXY_IP=$(kubectl get pods -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o jsonpath='{range .items[*]}{.metadata.name} {.status.podIP}{"\n"}{end}' | grep '^agentgateway-proxy-' | head -1 | cut -d' ' -f2)
+    kubectl run metrics-check -n {{< reuse "agw-docs/snippets/namespace.md" >}} --rm -i --restart=Never --quiet --image=curlimages/curl:8.11.1 -- \
+      sh -c "curl -sf http://enterprise-agentgateway.{{< reuse "agw-docs/snippets/namespace.md" >}}.svc.cluster.local:9092/metrics | grep -c '^agentgateway_' && curl -sf http://$PROXY_IP:15020/metrics | grep -c '^agentgateway_'"
+    {{< /doc-test >}}
+  status: needs-update
