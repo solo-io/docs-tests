@@ -12,6 +12,8 @@ blocks:
 - d8bf030755a43898 console
 - 3c8432802d54c212 sh
 - a871532c55850ab0 console
+- 3c8432802d54c212 sh
+- e5bf367e31641a5a console
 - 6103959b5d73438f yaml
 - 0464a7c30afbff50 sh
 - 83b6675b43262b27 sh
@@ -58,7 +60,7 @@ tags:
     only: true
     lead: ' '
 - paths: access-log-otlp
-  block: 11
+  block: 13
   fingerprint: 6103959b5d73438f
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 a5e38d64 b0c4deaf 5a41b93f e9ef40ee b2a76230 abc56510
@@ -68,7 +70,7 @@ tags:
     only: true
     lead: ' '
 - paths: access-log-otlp
-  block: 22
+  block: 24
   fingerprint: cf3f37e70eb088f4
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 a5e38d64 b0c4deaf 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 521b7d5f abc56510
@@ -78,7 +80,7 @@ tags:
     only: true
     lead: ' '
 - paths: access-log-otlp
-  block: 23
+  block: 25
   fingerprint: 03eb55172ef3d45e
   lang: yaml
   lines: 16c71da1 fbc30693 7f57603a 8c8c4228 6c59761f 8af957d1 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 9560a40c 70c97555 a5e38d64 b0c4deaf 5a41b93f e9ef40ee 73c054bf 274fdf3f 42374f65 feb2e7e4 0a282488 d532a41e abc56510
@@ -88,27 +90,27 @@ tags:
     only: true
     lead: ' '
 - paths: access-log-otlp
-  block: 31
-  fingerprint: 5a85429987ce9aa1
-  lang: sh
-  lines: 5a854299
-  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< re
-  form:
-    attr: paths="access-log-otlp"
-    only: true
-    lead: ' '
-- paths: access-log-otlp
-  block: 32
-  fingerprint: 5a85429987ce9aa1
-  lang: sh
-  lines: 5a854299
-  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< re
-  form:
-    attr: paths="access-log-otlp"
-    only: true
-    lead: ' '
-- paths: access-log-otlp
   block: 33
+  fingerprint: 5a85429987ce9aa1
+  lang: sh
+  lines: 5a854299
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< re
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 34
+  fingerprint: 5a85429987ce9aa1
+  lang: sh
+  lines: 5a854299
+  preview: kubectl delete {{< reuse "agw-docs/snippets/policy.md" >}} access-logs -n {{< re
+  form:
+    attr: paths="access-log-otlp"
+    only: true
+    lead: ' '
+- paths: access-log-otlp
+  block: 35
   fingerprint: a9e65eeb1efe9de2
   lang: sh
   lines: a9e65eeb
@@ -118,7 +120,7 @@ tags:
     only: true
     lead: ' '
 - paths: access-log-otlp
-  block: 34
+  block: 36
   fingerprint: a0aa3f0a626256a6
   lang: sh
   lines: a0aa3f0a

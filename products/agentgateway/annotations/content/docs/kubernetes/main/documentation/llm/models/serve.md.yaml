@@ -1,7 +1,6 @@
 format: 1
 source: content/docs/kubernetes/main/documentation/llm/models/serve.md
 blocks:
-- 408a06244b235e2d sh
 - 12f49506459e395e yaml
 - 7d92cdded1f70633 sh
 - 2b48bb938cfd5a8c json
@@ -21,13 +20,14 @@ blocks:
 - 0a75a3fb6611868f sh
 - 98e0c8316a382d4a json
 - df96cb6391a2f3f8 json
-- 8c723388e128f533 sh
+- 69e2754bb0356358 sh
+- 9e1177c11539c83d text
 - 6a6e4741464b41a3 sh
 - 0a75a3fb6611868f sh
 - df1e178cf660cb6d sh
 tags:
 - paths: serve-model
-  block: 1
+  block: 0
   fingerprint: 12f49506459e395e
   lang: yaml
   lines: 16c71da1 8c67597e cd44d8cd 8c8c4228 89b06424 8af957d1 36184fa5 ddf06799 c10d7538 82601aaa da480536 069de162 5f37c61e c3201545 e83d405d d94df5c7 b5a028c9 56bf9360 e9a46ca1 eef5a849 abc56510
@@ -37,7 +37,7 @@ tags:
     only: true
     lead: ' '
 - paths: serve-model
-  block: 7
+  block: 6
   fingerprint: da9f7a92ca714ff0
   lang: yaml
   lines: 16c71da1 263e4531 eef5a849 8c8c4228 c34c687c 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 0323852a d81dacad abc56510
@@ -47,7 +47,7 @@ tags:
     only: true
     lead: ' '
 - paths: serve-model
-  block: 12
+  block: 11
   fingerprint: 1ea0de40a180fd47
   lang: yaml
   lines: 16c71da1 263e4531 eef5a849 8c8c4228 23f02a5e 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 f0ce727c 75267c09 0323852a d81dacad c8f3f59a f372f1cb 5565245d 5dbf4c01 abc56510
@@ -57,7 +57,7 @@ tags:
     only: true
     lead: ' '
 - paths: serve-model
-  block: 15
+  block: 14
   fingerprint: f64ee25a12a74cd9
   lang: yaml
   lines: 16c71da1 f1540154 a67acb0a 8c8c4228 4df4f75f 8af957d1 1426decf 2f7c298d 73825423 abc56510
@@ -67,7 +67,7 @@ tags:
     only: true
     lead: ' '
 - paths: serve-model
-  block: 16
+  block: 15
   fingerprint: ff88b8ac26908832
   lang: yaml
   lines: 16c71da1 263e4531 eef5a849 8c8c4228 b0dba0c2 8af957d1 36184fa5 d3d416e7 b5a028c9 cd44d8cd 89b06424 e4741808 0323852a c8f3f59a 146e11c6 9ebc4789 4df4f75f abc56510
@@ -88,7 +88,7 @@ tags:
     lead: ' '
 hidden:
 - after:
-    block: 3
+    block: 2
     fingerprint: 2b48bb938cfd5a8c
     lang: json
     lines: 2b48bb93
@@ -101,7 +101,7 @@ hidden:
        # (with their own warmup loops) verify the listener actually serves models.
        {{< /doc-test >}}
 - after:
-    block: 9
+    block: 8
     fingerprint: 3286ef74e04ce1e6
     lang: json
     lines: 3286ef74
@@ -145,7 +145,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 11
+    block: 10
     fingerprint: df96cb6391a2f3f8
     lang: json
     lines: df96cb63
@@ -172,7 +172,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 14
+    block: 13
     fingerprint: 54b6ebb43f8cd1ee
     lang: json
     lines: 54b6ebb4
@@ -216,7 +216,7 @@ hidden:
     occurrence: 0
     words: 6b86b273 fa8847b0 ca978112 2bb80d53 8e7fc023 3b97260d b9776d7d 5c4c1964 14c2529e 2c70e12b a7e2d26e 37a8eec1 56e57ada 3566cf23 b9776d7d cbb82ebe 2c70e12b
     block_before:
-      block: 14
+      block: 13
       fingerprint: 54b6ebb43f8cd1ee
       lang: json
       lines: 54b6ebb4
@@ -227,7 +227,7 @@ hidden:
        export OPENAI_API_KEY=sk-placeholder
        {{< /doc-test >}}
 - after:
-    block: 18
+    block: 17
     fingerprint: 98e0c8316a382d4a
     lang: json
     lines: 021fb596 d90ae9ee 1f67b5ca 021fb596 f7a42d32 c610d27c 39ce5e84 276d3698 90553106 0907353c 508f5eaa 3b65f02e d627eda8 62ea9660 4eba2574 e2729e23 e52a1813 0ec56cf3 ab5df625 39d4b54e 7738d670 d10b36aa
