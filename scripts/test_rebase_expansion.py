@@ -90,6 +90,30 @@ class RebaseExpansionTests(unittest.TestCase):
         with self.assertRaises(FileNotFoundError):
             e.process_file(cp)
 
+    def test_walk_still_raises_for_the_scenario_page_itself(self):
+        consumer, upstream, cp = build(self.REL)
+        (upstream / "content/docs/kubernetes/latest/documentation/buffering.md").unlink()
+        e = self.extractor(consumer, upstream, upstream_root=upstream, upstream_version_for=self.VMAP)
+        with self.assertRaises(FileNotFoundError):
+            e.walk()
+
+    def test_walk_skips_a_linked_page_whose_rebase_is_in_another_repo(self):
+        """An agentgateway page that links to a kagent page in the docs hub.
+
+        The kagent page's rebase resolves against the agentgateway upstream
+        checkout, where it does not exist. That once crashed the whole scenario
+        before its test ran, though the scenario takes no blocks from the page.
+        """
+        consumer, upstream, cp = build(self.REL)
+        other = consumer / "content/en/otherproduct/latest/agents/prompts.md"
+        other.parent.mkdir(parents=True, exist_ok=True)
+        other.write_text('---\ntitle: Prompts\n---\n\n{{< rebase file="other-docs/latest/agents/prompts.md" >}}\n')
+        cp.write_text(SHELL + "\nSee [prompts](/en/otherproduct/latest/agents/prompts/).\n")
+        e = self.extractor(consumer, upstream, upstream_root=upstream, upstream_version_for=self.VMAP)
+        e.walk()
+        self.assertIn(other.resolve(), e.visited)
+        self.assertEqual(len(e.process_file(cp).code_blocks), 2)
+
 
 class VersionInPathShellTests(unittest.TestCase):
     """Shells that write the upstream version directory into file=.

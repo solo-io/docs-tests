@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import re
+import sys
 import textwrap
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -858,12 +859,15 @@ class Extractor:
         return result
 
     def walk(self) -> None:
-        queue: List[Tuple[Path, int]] = [(self.main_file, 0)]
+        # The third field is True for a page that is reached only by following a
+        # link. `select_blocks` never takes blocks from such a page (see
+        # `read_files`), so it is walked only to find more links.
+        queue: List[Tuple[Path, int, bool]] = [(self.main_file, 0, False)]
         for source_file in self.path_selectors_by_file:
-            queue.append((source_file, 0))
+            queue.append((source_file, 0, False))
 
         while queue:
-            file_path, depth = queue.pop(0)
+            file_path, depth, via_link = queue.pop(0)
             file_path = file_path.resolve()
             if file_path in self.visited:
                 continue
@@ -871,7 +875,18 @@ class Extractor:
                 continue
             self.visited.add(file_path)
 
-            result = self.process_file(file_path, depth)
+            try:
+                result = self.process_file(file_path, depth)
+            except FileNotFoundError as exc:
+                if not via_link:
+                    raise
+                # A linked page can belong to another product, such as a kagent
+                # page that an agentgateway page links to. Its `rebase` resolves
+                # against this run's upstream checkout, which is the wrong repo,
+                # so it is not found. The scenario takes no blocks from the page,
+                # so skip it instead of failing the whole scenario.
+                print(f"WARNING: skipped linked page {file_path}: {exc}", file=sys.stderr)
+                continue
             if not self.follow_internal_links:
                 continue
 
@@ -879,7 +894,7 @@ class Extractor:
                 linked = self._find_by_route_like_target(link)
                 if linked and linked.is_file() and linked not in self.visited:
                     self.recursion_edges.append((file_path.as_posix(), linked.as_posix(), "link"))
-                    queue.append((linked, depth + 1))
+                    queue.append((linked, depth + 1, True))
 
     def read_files(self) -> Set[Path]:
         """Every file this scenario's blocks could come from, in either repo.
