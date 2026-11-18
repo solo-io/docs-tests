@@ -57,6 +57,15 @@ tags:
     only: true
     lead: ' '
 - paths: te-idps-entra
+  block: 5
+  fingerprint: 036bde2d930a83bc
+  lang: bash
+  lines: 8db45745 d462dca9 b821e9a6 fe834f88
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
   block: 6
   fingerprint: fc9d195d49419198
   lang: bash
@@ -97,6 +106,15 @@ tags:
   fingerprint: f4462f2cdd1ef38b
   lang: yaml
   lines: 16c71da1 263e4531 f84e6062 8c8c4228 de02dd5c bb604ffa 36184fa5 2efcbf93 ab1a39d7 c6ba4159 c8f3f59a e8eb2c7f abc56510
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 13
+  fingerprint: 90848b043d8a46b6
+  lang: yaml
+  lines: 16c71da1 263e4531 f84e6062 8c8c4228 bcc1fdd4 bb604ffa 36184fa5 2efcbf93 ab1a39d7 c6ba4159 c8f3f59a 3195c5f5 e242ddb9 abc56510
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -147,10 +165,37 @@ tags:
     only: true
     lead: ' '
 - paths: te-idps-entra
+  block: 24
+  fingerprint: 37a03a7b129088e7
+  lang: yaml
+  lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 77596d57 bb604ffa 36184fa5 588a5d84 94ae49d1 450c56e0 7274b181 bb85cefe 79677ded e82d6457 08d19b62 61d9749c a72b786a 6787571b 09f5a495 e73ad6de 73d78483 9a821178 70c97555 22aec9ce f84e6062 bcc1fdd4 abc56510
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 25
+  fingerprint: 7f2a82b26c4c50fe
+  lang: sh
+  lines: cb64bbf2 91c7551a
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
   block: 27
   fingerprint: 737724612c146876
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 77596d57 bb604ffa 36184fa5 588a5d84 94ae49d1 450c56e0 7274b181 bb85cefe 835aaff5 88303c33 e82d6457 08d19b62 09f5a495 a5dc7b76 e73ad6de 73d78483 9a821178 abc56510
+  form:
+    attr: paths="te-idps-entra"
+    only: true
+    lead: ' '
+- paths: te-idps-entra
+  block: 33
+  fingerprint: 067d0bbb90990daf
+  lang: bash
+  lines: ef9a5fcf 01a9aac0 43969357 f24c6aa1 c0e76f50 66f4f01f c0ebad1a 98148333
   form:
     attr: paths="te-idps-entra"
     only: true
@@ -180,22 +225,31 @@ hidden:
     # ============================================================================
     # Doc test coverage for "Microsoft Entra ID" OBO (these comments are not rendered)
     # ============================================================================
+    # The page has two flows. 2026.11 and later use the entTokenExchange.entra
+    # preset (the proxy calls Entra directly). 2.3.x and 2026.7.1 use the STS
+    # (Helm values, gateway parameters, backend.tokenExchange.entra). Version gates
+    # pick one; the markup covers both.
     # WHAT THIS TEST VALIDATES:
-    #   * The client secret, the Helm upgrade that enables the STS with Entra
-    #     validators and binds the GatewayClass to agentgateway-params, and the
-    #     control plane service exposing port 7777.
-    #   * agentgateway-params is picked up by the proxy (STS_URI is set on it).
-    #   * The entra-jwks backend, the Graph /me MCP server, its backend and route
-    #     are accepted, and an MCP client can initialize and list the graph_me tool
-    #     through the gateway before the OBO policy is applied.
-    #   * The entra-obo-policy, with the tenant and client ID formats that the CRD
-    #     enforces, is accepted.
+    #   * The client secret.
+    #   * Preset flow: the certificate TLS secret (from a throwaway self-signed
+    #     pair), the entra-login backend, and the entra-obo-policy are accepted,
+    #     and the policy is attached with no PartiallyValid reason.
+    #   * STS flow: the Helm upgrade that enables the STS with Entra validators and
+    #     binds the GatewayClass to agentgateway-params, the control plane service
+    #     exposing port 7777, STS_URI on the proxy, the entra-jwks backend, and
+    #     the entra-obo-policy are accepted.
+    #   * Both flows: the Graph /me MCP server, its backend and route are accepted,
+    #     and an MCP client can initialize and list the graph_me tool through the
+    #     gateway before the OBO policy is applied.
+    #   * Cleanup runs.
     # WHAT THIS TEST DOES NOT VALIDATE (and why):
     #   * Steps 1, 7, and 9 with a real tenant: the app registration, consent,
     #     `az login`, MCP Inspector, and the Graph call need an Entra tenant, a
     #     signed-in user, and a browser. So the OBO exchange with Entra and the
     #     Graph /me response are not checked.
     #   * The port-forward: CI reaches the gateway through its LoadBalancer.
+    #   * Preset flow: a policy that uses certificateKeyPairRef. The page shows
+    #     only the clientSecretRef policy as a block.
     # The tenant and client IDs are placeholder GUIDs (the policy rejects the
     # `common` alias) and the client secret is a dummy. The STS validators use
     # Microsoft's public multi-tenant `common` JWKS, so the controller can load real
@@ -203,6 +257,23 @@ hidden:
     export ENTRA_TENANT_ID="${ENTRA_TENANT_ID:-00000000-0000-4000-8000-000000000000}"
     export ENTRA_CLIENT_ID="${ENTRA_CLIENT_ID:-aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee}"
     export ENTRA_CLIENT_SECRET="doc-test-placeholder-secret"
+    {{< /doc-test >}}
+- after:
+    section: h:ca37196afdf13b43
+    line: a39b3dbb19027755
+    occurrence: 0
+    words: 663ea1bf 20dc65af 0695b563 ca978112 03d66dd0 99262a02 fa8847b0 ca978112 b7e651cb 2bb80d53 0695b563 b9776d7d 715dc849 2c70e12b 6201111b b9776d7d 03d66dd0 8e7fc023 bb0347a4 3cef1b24 663ea1bf b9776d7d a172cedc 29c9c30e b9776d7d 823412d1 3566cf23 b9776d7d 71aab6b2 6201111b dd573a07 48a53f07 28391d3b b9776d7d 2bb80d53
+    block_before:
+      block: 4
+      fingerprint: 1d31a712eaccf8a3
+      lang: bash
+      lines: db575fc8 d462dca9 48889d58
+  content: |-
+    {{< doc-test paths="te-idps-entra" >}}
+    # A throwaway self-signed RSA pair stands in for the certificate uploaded to
+    # the app registration.
+    openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj "/CN=doc-test-entra-obo" \
+      -keyout entra-obo.key -out entra-obo.crt 2>/dev/null
     {{< /doc-test >}}
 - after:
     block: 7
@@ -301,6 +372,30 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
+    block: 13
+    fingerprint: 90848b043d8a46b6
+    lang: yaml
+    lines: 16c71da1 263e4531 f84e6062 8c8c4228 bcc1fdd4 bb604ffa 36184fa5 2efcbf93 ab1a39d7 c6ba4159 c8f3f59a 3195c5f5 e242ddb9 abc56510
+  content: |-
+    {{< doc-test paths="te-idps-entra" >}}
+    YAMLTest -f - <<'EOF'
+    - name: entra-login backend for the preset is accepted
+      wait:
+        target:
+          kind: AgentgatewayBackend
+          metadata:
+            namespace: {{< reuse "/agw-docs/snippets/namespace.md" >}}
+            name: entra-login
+        jsonPath: "$.status.conditions[?(@.type=='Accepted')].status"
+        jsonPathExpectation:
+          comparator: equals
+          value: "True"
+        polling:
+          timeoutSeconds: 60
+          intervalSeconds: 2
+    EOF
+    {{< /doc-test >}}
+- after:
     block: 16
     fingerprint: 59d0bb4cf1d70440
     lang: yaml
@@ -369,6 +464,41 @@ hidden:
          *'"graph_me"'*) ;;
          *) echo "tools/list through the gateway did not list graph_me: $GRAPH_TOOLS"; exit 1;;
        esac
+       {{< /doc-test >}}
+- after:
+    block: 24
+    fingerprint: 37a03a7b129088e7
+    lang: yaml
+    lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 77596d57 bb604ffa 36184fa5 588a5d84 94ae49d1 450c56e0 7274b181 bb85cefe 79677ded e82d6457 08d19b62 61d9749c a72b786a 6787571b 09f5a495 e73ad6de 73d78483 9a821178 70c97555 22aec9ce f84e6062 bcc1fdd4 abc56510
+  content: |2-
+       {{< doc-test paths="te-idps-entra" >}}
+       YAMLTest -f - <<'EOF'
+       - name: entra-obo-policy with the entra preset is accepted
+         wait:
+           target:
+             kind: {{< reuse "agw-docs/snippets/policy.md" >}}
+             metadata:
+               namespace: {{< reuse "/agw-docs/snippets/namespace.md" >}}
+               name: entra-obo-policy
+           jsonPath: "$.status.ancestors[0].conditions[?(@.type=='Accepted')].status"
+           jsonPathExpectation:
+             comparator: equals
+             value: "True"
+           polling:
+             timeoutSeconds: 120
+             intervalSeconds: 2
+       EOF
+       # Accepted=True alone also covers a PartiallyValid policy, such as one whose
+       # client secret is missing. Require a clean Accepted and Attached=True.
+       POLICY_STATUS=$(kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} entra-obo-policy -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o json)
+       echo "$POLICY_STATUS" | jq -e '[.status.ancestors[0].conditions[] | select(.type == "Accepted" and .reason == "PartiallyValid")] | length == 0' >/dev/null \
+         || { echo "entra-obo-policy is PartiallyValid: $(echo "$POLICY_STATUS" | jq -c '.status.ancestors[0].conditions')"; exit 1; }
+       for i in $(seq 1 30); do
+         kubectl get {{< reuse "agw-docs/snippets/policy.md" >}} entra-obo-policy -n {{< reuse "/agw-docs/snippets/namespace.md" >}} -o json \
+           | jq -e '[.status.ancestors[0].conditions[] | select(.type == "Attached" and .status == "True")] | length == 1' >/dev/null && break
+         [ "$i" = 30 ] && { echo "entra-obo-policy is not Attached"; exit 1; }
+         sleep 2
+       done
        {{< /doc-test >}}
 - after:
     block: 27
