@@ -385,7 +385,18 @@ class Extractor:
         return True
 
     def _strip_version_blocks(self, text: str, source_file: Optional[Path] = None) -> str:
-        pattern = re.compile(r"\{\{[<%]\s*version\s*([^%>]*)[ \t]*[>%]\}\}(.*?)\{\{[<%]\s*/version\s*[>%]\}\}", re.DOTALL)
+        # Gates nest, such as an inline {{% version %}} link inside a gated
+        # section. As in _resolve_conditional_text_blocks, the body may not
+        # contain another opening tag, so each pass resolves the innermost
+        # gates; repeat until none are left. Pairing an outer opening tag with
+        # the first closing tag instead ends the outer gate early, and the rest
+        # of its body leaks into every version.
+        pattern = re.compile(
+            r"\{\{[<%]\s*version\s*([^%>]*)[ \t]*[>%]\}\}"
+            r"((?:(?!\{\{[<%]\s*version[\s%>]).)*?)"
+            r"\{\{[<%]\s*/version\s*[>%]\}\}",
+            re.DOTALL,
+        )
         identifiers = self._identifiers_for(source_file)
 
         def repl(match: re.Match) -> str:
@@ -393,7 +404,11 @@ class Extractor:
             body = match.group(2) or ""
             return body if self._evaluate_version_block(params, identifiers) else ""
 
-        return pattern.sub(repl, text)
+        while True:
+            resolved = pattern.sub(repl, text)
+            if resolved == text:
+                return resolved
+            text = resolved
 
     def _resolve_reuse(self, source_file: Path, asset_path: str, depth: int) -> str:
         if depth > self.max_depth:
