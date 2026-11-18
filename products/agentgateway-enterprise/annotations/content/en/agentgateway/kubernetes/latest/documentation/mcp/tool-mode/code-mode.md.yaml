@@ -1,5 +1,6 @@
 format: 1
 source: content/en/agentgateway/kubernetes/latest/documentation/mcp/tool-mode/code-mode.md
+previews: false
 blocks:
 - 2f40320f9d62eb55 yaml
 - 94c6354d965d585c yaml
@@ -19,7 +20,6 @@ tags:
   fingerprint: 2f40320f9d62eb55
   lang: yaml
   lines: 16c71da1 58584366 ab78925c 8c8c4228 94299a3d 0ccc8edc 36184fa5 97bcd5e0 8432e015 839a5cac 65f7ff6a a58565b2 8c8c4228 fa1e8330 65f7ff6a 36184fa5 04968f51 f7b9d9c2 0f8a659d ff42c2c6 0ff65a1a 11edf656 9278ed91 cb3f91d5 f1540154 0d6480f0 8c8c4228 94299a3d 0ccc8edc fa1e8330 65f7ff6a 36184fa5 8432e015 65f7ff6a 0ff65a1a 82601aaa da480536 ad63f385 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-code-mode"
     only: true
@@ -29,7 +29,6 @@ tags:
   fingerprint: 94c6354d965d585c
   lang: yaml
   lines: 16c71da1 00c69c65 450c56e0 8c8c4228 e5c65a74 0ccc8edc 36184fa5 425ef23b 7dc59e92 4d87344e 2ddd4ce7 c272f9f8 3035507a c3016ad1 2efcbf93 067411b0 da480536 91f2837c abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-code-mode"
     only: true
@@ -39,7 +38,6 @@ tags:
   fingerprint: a609844a0d36b8eb
   lang: yaml
   lines: 16c71da1 8c67597e 56bf9360 8c8c4228 118d3394 0ccc8edc 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 ec09f408 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 0827ed27 94ae491e 0dd01a25 b8ac8874 450c56e0 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="mcp-code-mode"
     only: true
@@ -49,7 +47,6 @@ tags:
   fingerprint: 8f41f6fa3b3aee36
   lang: sh
   lines: 82a16f1c 4059cfa2 d5bbdbb1 8ef31d3c
-  preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
   form:
     attr: paths="mcp-code-mode"
     only: true
@@ -59,7 +56,6 @@ tags:
   fingerprint: 1fef9b2595740d1b
   lang: sh
   lines: 815bec4d 506a4604 d9d77043 25d24546 689f6bc4 9fc5c59c d906e700 506a4604 d9d77043 12994e67
-  preview: curl -sS -D /tmp/hdr -o /tmp/init -X POST "$MCP_URL" \
   form:
     attr: paths="mcp-code-mode"
     only: true
@@ -69,7 +65,6 @@ tags:
   fingerprint: 65b32453edf81bcf
   lang: sh
   lines: 9fc5c59c d906e700 506a4604 d9d77043 23bfaa53
-  preview: curl -sS -X POST "$MCP_URL" \
   form:
     attr: paths="mcp-code-mode"
     only: true
@@ -79,7 +74,6 @@ tags:
   fingerprint: 5640fc7353efffb1
   lang: sh
   lines: 9fc5c59c d906e700 506a4604 d9d77043 588f8714
-  preview: curl -sS -X POST "$MCP_URL" \
   form:
     attr: paths="mcp-code-mode"
     only: true
@@ -89,7 +83,6 @@ tags:
   fingerprint: fa53d5fd785cddf1
   lang: sh
   lines: ea21a9e8 461f46e3 2b76a843 ec6ed4be
-  preview: kubectl delete httproute mcp-code -n default
   form:
     attr: paths="mcp-code-mode"
     only: true
@@ -100,7 +93,6 @@ hidden:
     fingerprint: a609844a0d36b8eb
     lang: yaml
     lines: 16c71da1 8c67597e 56bf9360 8c8c4228 118d3394 0ccc8edc 36184fa5 d3d416e7 2d157081 8af957d1 3de9d845 b733d726 aeca2b3d bf068a96 ec09f408 ae6b70e3 555016a6 7471bbd1 57af3940 9337d19e 0827ed27 94ae491e 0dd01a25 b8ac8874 450c56e0 abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="mcp-code-mode" >}}
     YAMLTest -f - <<'EOF'
@@ -153,7 +145,6 @@ hidden:
     fingerprint: 8f41f6fa3b3aee36
     lang: sh
     lines: 82a16f1c 4059cfa2 d5bbdbb1 8ef31d3c
-    preview: export INGRESS_GW_ADDRESS=$(kubectl get svc -n {{< reuse "agw-docs/snippets/name
   content: |2-
        {{< doc-test paths="mcp-code-mode" >}}
        # Wait until the route answers an MCP initialize with a session ID, so the
@@ -171,7 +162,6 @@ hidden:
     fingerprint: 1fef9b2595740d1b
     lang: sh
     lines: 815bec4d 506a4604 d9d77043 25d24546 689f6bc4 9fc5c59c d906e700 506a4604 d9d77043 12994e67
-    preview: curl -sS -D /tmp/hdr -o /tmp/init -X POST "$MCP_URL" \
   content: |2-
        {{< doc-test paths="mcp-code-mode" >}}
        [ -n "$SID" ] || { echo "no mcp-session-id in the initialize response"; cat /tmp/hdr; exit 1; }
@@ -181,7 +171,6 @@ hidden:
     fingerprint: 65b32453edf81bcf
     lang: sh
     lines: 9fc5c59c d906e700 506a4604 d9d77043 23bfaa53
-    preview: curl -sS -X POST "$MCP_URL" \
   content: |2-
        {{< doc-test paths="mcp-code-mode" >}}
        LIST=$(curl -sS --max-time 60 -X POST "$MCP_URL" -H "Mcp-Session-Id: $SID" \
@@ -199,7 +188,6 @@ hidden:
     fingerprint: 5640fc7353efffb1
     lang: sh
     lines: 9fc5c59c d906e700 506a4604 d9d77043 588f8714
-    preview: curl -sS -X POST "$MCP_URL" \
   content: |2-
        {{< doc-test paths="mcp-code-mode" >}}
        OUT=$(curl -sS --max-time 60 -X POST "$MCP_URL" -H "Mcp-Session-Id: $SID" \

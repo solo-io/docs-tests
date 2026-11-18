@@ -1,5 +1,6 @@
 format: 1
 source: content/en/agentgateway/kubernetes/latest/documentation/operations/debug.md
+previews: false
 blocks:
 - ce9138c3299fb9e4 sh
 - 09eb02380e4516c4 sh
@@ -8,6 +9,9 @@ blocks:
 - d338b9101c91d180 sh
 - 6a9c83afa2745949 sh
 - a6f56e8234aa1d6a sh
+- 96f12a24acb6f79b sh
+- 905fd564880239fb sh
+- e705cbb48c67a095
 - c7bd492372245a34 sh
 - bd504a1f526a5a7b sh
 - f0aee236a854f920 sh
@@ -21,6 +25,18 @@ blocks:
 - 31190f3bab416bd2
 - 2354c83ad1649cc1 sh
 - d6b41353437d3495 sh
+- 7419d8aa8560338b console
+- 87fb94f3f18dd253 console
+- 1e981c8d972b3a60 yaml
+- 6d2829aba30a4211 sh
+- aebde1503910dda9 sh
+- 9b62b2ee4404e47d console
+- bae1a693f3a0c088 sh
+- b3419a227bd9ed71 sh
+- 84aa802993d630f3 sh
+- 5e249ec5732319c4 console
+- 34b2581182a813d6 console
+- d26efe5b67da050b sh
 - 099be4ed76c3b0e0 sh
 - 84222292666c1fb2 sh
 - c5e8c6ca20c726a0 sh
@@ -33,7 +49,6 @@ tags:
   fingerprint: 09eb02380e4516c4
   lang: sh
   lines: 09eb0238
-  preview: kubectl get pods -n agentgateway-system
   form:
     attr: paths="enterprise-debug"
     only: true
@@ -43,7 +58,6 @@ tags:
   fingerprint: 2af330f4e75db088
   lang: sh
   lines: 2af330f4
-  preview: kubectl get gateway agentgateway-proxy -n agentgateway-system -o yaml
   form:
     attr: paths="enterprise-debug"
     only: true
@@ -53,7 +67,6 @@ tags:
   fingerprint: d338b9101c91d180
   lang: sh
   lines: d338b910
-  preview: kubectl get httproute -A
   form:
     attr: paths="enterprise-debug"
     only: true
@@ -63,14 +76,13 @@ tags:
   fingerprint: a6f56e8234aa1d6a
   lang: sh
   lines: a6f56e82
-  preview: kubectl get httproute openai -n agentgateway-system -o yaml
   form:
     attr: paths="enterprise-debug"
     only: true
     lead: ' '
 hidden:
 - after:
-    section: Before you begin
+    section: h:d5bfdd7d989dfc0b
     line: aa338a96168d42cf
     occurrence: 0
     words: 1e142e62 3c698e2e fa42bed0 a0af9f86 caf9f906 74de07c4 3c698e2e
@@ -94,7 +106,6 @@ hidden:
     fingerprint: 2af330f4e75db088
     lang: sh
     lines: 2af330f4
-    preview: kubectl get gateway agentgateway-proxy -n agentgateway-system -o yaml
   content: |2-
        {{< doc-test paths="enterprise-debug" >}}
        test "$(kubectl get gateway agentgateway-proxy -n agentgateway-system -o jsonpath='{.status.conditions[?(@.type=="Programmed")].status}')" = "True"
@@ -104,7 +115,6 @@ hidden:
     fingerprint: a6f56e8234aa1d6a
     lang: sh
     lines: a6f56e82
-    preview: kubectl get httproute openai -n agentgateway-system -o yaml
   content: |2-
        {{< doc-test paths="enterprise-debug" >}}
        test "$(kubectl get httproute openai -n agentgateway-system -o jsonpath='{.status.parents[0].conditions[?(@.type=="Accepted")].status}')" = "True"

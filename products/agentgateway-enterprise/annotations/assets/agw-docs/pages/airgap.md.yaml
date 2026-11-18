@@ -32,7 +32,6 @@ blocks:
 - a8c68715cb3b642c sh
 - c0d6a61ef9e3eccd sh
 - bc2a93ce39e459df sh
-- b1d48fc1d51d6572 sh
 - 4956806f279b5ea3 yaml
 - e2a8e9039ba3db2f yaml
 - 3a286baa41ef5295 yaml
@@ -149,7 +148,7 @@ tags:
     only: true
     lead: ' '
 - paths: enterprise-airgap
-  block: 35
+  block: 34
   fingerprint: 06fb55dde8478d60
   lang: sh
   lines: cca5dc08 20aca5b0 7e00906f
@@ -246,7 +245,7 @@ hidden:
        kubectl -n {{< reuse "agw-docs/snippets/namespace.md" >}} rollout status deploy/agentgateway-proxy --timeout=300s
        {{< /doc-test >}}
 - after:
-    block: 35
+    block: 34
     fingerprint: 06fb55dde8478d60
     lang: sh
     lines: cca5dc08 20aca5b0 7e00906f

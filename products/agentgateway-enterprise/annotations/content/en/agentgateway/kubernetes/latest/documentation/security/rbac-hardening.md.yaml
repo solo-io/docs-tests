@@ -4,11 +4,14 @@ previews: false
 blocks:
 - 12b600cdd5bcbe88 yaml
 - f9d3bab05fea34de bash
+- 3bd9e6144134b78f yaml
+- 0167d3dd0a048e1d sh
+- 7beacd5c9b0c653f sh
 - bbd08ebad3c901e0 yaml
 - abc6ac695f695a08 bash
 - e6c83fd02ccb2807 yaml
 - fec3c62bbd69fdc3 yaml
-- d19500d11a7c200b yaml
+- c252495f1c786dc2 yaml
 hidden:
 - after:
     block: 1
@@ -63,10 +66,10 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 6
-    fingerprint: d19500d11a7c200b
+    block: 9
+    fingerprint: c252495f1c786dc2
     lang: yaml
-    lines: ebb5b2df 6af097a5 e4bc2178 f208494d 835aaff5 e4bc2178 8b65a355 a543e233 e4bc2178
+    lines: ebb5b2df 6af097a5 e4bc2178 15755bd2 3cf48601 835aaff5 e4bc2178 8b65a355 a543e233 e4bc2178
   content: |-
     {{< doc-test paths="rbac-hardening" >}}
     CHART_VERSION=$(helm get metadata {{< reuse "/agw-docs/snippets/helm-agentgateway.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} -o json | jq -r .version)
