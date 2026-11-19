@@ -53,7 +53,7 @@ hidden:
        kubectl rollout status deployment/{{< reuse "agw-docs/snippets/solo-ui/ui-service.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
        kubectl rollout status deployment/enterprise-agentgateway-ui-k8sobjects-collector -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
        kubectl rollout status statefulset/{{< reuse "agw-docs/snippets/solo-ui/clickhouse-statefulset.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
-       kubectl rollout status statefulset/{{< reuse "agw-docs/snippets/solo-ui/telemetry-collector.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
+       kubectl rollout status deployment/{{< reuse "agw-docs/snippets/solo-ui/telemetry-collector.md" >}} -n {{< reuse "agw-docs/snippets/namespace.md" >}} --timeout=600s
        {{< /doc-test >}}
 - after:
     block: 6
