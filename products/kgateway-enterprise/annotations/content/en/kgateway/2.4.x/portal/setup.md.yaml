@@ -302,7 +302,13 @@ hidden:
           timeoutSeconds: 300
           intervalSeconds: 5
     EOF
-    export PORTAL_GW_ADDRESS=$(kubectl get svc -n default portal-gateway -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+    # The load balancer can assign its address after the Deployment is available.
+    for i in $(seq 1 60); do
+      export PORTAL_GW_ADDRESS=$(kubectl get svc -n default portal-gateway -o=jsonpath="{.status.loadBalancer.ingress[0]['hostname','ip']}")
+      [ -n "$PORTAL_GW_ADDRESS" ] && break
+      echo "waiting for the portal-gateway load balancer address ($i/60)"; sleep 2
+    done
+    [ -n "$PORTAL_GW_ADDRESS" ] || { echo "FAIL: the portal-gateway Service has no load balancer address"; exit 1; }
     echo "PORTAL_GW_ADDRESS=$PORTAL_GW_ADDRESS"
     {{< /doc-test >}}
 - after:

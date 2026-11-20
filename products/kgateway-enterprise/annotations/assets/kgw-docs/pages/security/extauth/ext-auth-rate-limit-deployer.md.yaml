@@ -654,7 +654,7 @@ hidden:
         polling:
           timeoutSeconds: 300
           intervalSeconds: 5
-    - name: "extauth-deployer-manage - the ext-cache deployment uses the limits.memory 2048Mi from my-gw-params"
+    - name: "extauth-deployer-manage - the ext-cache deployment uses the limits.memory 2048Mi (stored as 2Gi) from my-gw-params"
       wait:
         target:
           kind: Deployment
@@ -666,7 +666,7 @@ hidden:
         jsonPath: "$.items[0].spec.template.spec.containers[0].resources.limits.memory"
         jsonPathExpectation:
           comparator: equals
-          value: "2048Mi"
+          value: "2Gi"
         polling:
           timeoutSeconds: 300
           intervalSeconds: 5

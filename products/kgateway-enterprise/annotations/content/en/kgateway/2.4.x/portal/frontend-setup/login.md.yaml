@@ -368,6 +368,15 @@ hidden:
       expect:
         statusCode: 200
     EOF
+    # The master realm can answer before the admin user can log in, and then the
+    # page's token command returns an empty token. Wait until a token is issued.
+    for i in $(seq 1 60); do
+      kc_token=$(curl -s -d "client_id=admin-cli" -d "username=admin" -d "password=admin" -d "grant_type=password" \
+        "${KEYCLOAK_URL}/realms/master/protocol/openid-connect/token" | jq -r '.access_token // empty' 2>/dev/null)
+      [ -n "$kc_token" ] && break
+      echo "waiting for the Keycloak admin user to log in ($i/60)"; sleep 2
+    done
+    [ -n "$kc_token" ] || { echo "FAIL: Keycloak did not issue an admin token"; exit 1; }
     {{< /doc-test >}}
 - after:
     block: 7

@@ -118,6 +118,16 @@ hidden:
         portal_expect 201 "create the my-app app as user1"
         PORTAL_APP_ID=$(jq -r '.id' "$PORTAL_BODY")
       fi
+      # An earlier page in the same test chain may already have subscribed my-app,
+      # and a second request returns 409. The steps on this page expect a new,
+      # pending subscription, so delete the old one as admin1 first.
+      portal_api GET "/v1/apps/${PORTAL_APP_ID}/subscriptions" "$USER1_TOKEN"
+      portal_expect 200 "list the subscriptions of my-app as user1"
+      OLD_SUBSCRIPTION_ID=$(jq -r '[.[] | select(.apiProductId=="httpbin")][0].id // empty' "$PORTAL_BODY")
+      if [ -n "$OLD_SUBSCRIPTION_ID" ]; then
+        portal_api DELETE "/v1/subscriptions/${OLD_SUBSCRIPTION_ID}" "$(portal_token admin1)"
+        portal_expect 204 "delete the existing httpbin subscription of my-app as admin1"
+      fi
       portal_api POST "/v1/apps/${PORTAL_APP_ID}/subscriptions" "$USER1_TOKEN" '{"apiProductId":"httpbin"}'
       portal_expect 201 "request a subscription to the httpbin ApiProduct as user1"
       PORTAL_SUBSCRIPTION_ID=$(jq -r '.id' "$PORTAL_BODY")

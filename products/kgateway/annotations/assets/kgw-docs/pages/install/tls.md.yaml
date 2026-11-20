@@ -221,8 +221,8 @@ hidden:
       [ -s "xds-$key" ] || { echo "FAIL: secret kgateway-xds-cert has no $key"; exit 1; }
     done
     openssl verify -CAfile xds-ca.crt xds-tls.crt || { echo "FAIL: tls.crt in kgateway-xds-cert does not chain to its ca.crt"; exit 1; }
-    if ! openssl x509 -in xds-tls.crt -noout -ext subjectAltName | grep -q "DNS:kgateway.kgateway-system.svc.cluster.local"; then
-      echo "FAIL: the server certificate does not cover kgateway.kgateway-system.svc.cluster.local"
+    if ! openssl x509 -in xds-tls.crt -noout -ext subjectAltName | grep -q "DNS:{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.kgateway-system.svc.cluster.local"; then
+      echo "FAIL: the server certificate does not cover {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}.kgateway-system.svc.cluster.local"
       exit 1
     fi
     {{< /doc-test >}}

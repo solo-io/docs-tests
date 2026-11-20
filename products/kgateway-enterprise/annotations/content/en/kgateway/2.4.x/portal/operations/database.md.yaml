@@ -173,7 +173,7 @@ hidden:
     {{< doc-test paths="portal-database" >}}
     # Stands in for the pgAdmin UI steps: the web server ran its schema
     # migrations, so the portal tables exist in the db database.
-    TABLES=$(kubectl exec deployment/postgres -n default -- psql -U user -d db -tAc "select count(*) from information_schema.tables where table_schema='public'")
+    TABLES=$(kubectl exec deployment/postgres -n default -- psql -U user -d db -tAc "select count(*) from information_schema.tables where table_schema='portal'")
     echo "portal tables in Postgres: $TABLES"
     [ "$TABLES" -gt 0 ]
     YAMLTest -f - <<'EOF'

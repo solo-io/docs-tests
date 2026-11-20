@@ -104,6 +104,15 @@ tags:
     lead: ' '
 hidden:
 - after:
+    start: true
+  content: |-
+    {{< doc-test paths="portal-apiproducts" >}}
+    # Test-only: apidocs.md runs every tab, so both petstore-apidoc (inline) and
+    # petstore-url-apidoc (URL) exist. Two ApiDocs that match the same backend
+    # leave the ApiProduct at Ready=False, so keep only the inline one.
+    kubectl delete apidocs.portal.solo.io petstore-url-apidoc -n default --ignore-not-found
+    {{< /doc-test >}}
+- after:
     block: 1
     fingerprint: a79e81ba668c9e5c
     lang: yaml
