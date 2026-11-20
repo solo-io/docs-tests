@@ -264,6 +264,12 @@ hidden:
           timeoutSeconds: 300
           intervalSeconds: 5
     EOF
+    # The proxy Deployment can appear a few seconds after the Gateway is programmed,
+    # and rollout status fails at once on a Deployment that does not exist yet.
+    for i in $(seq 1 60); do
+      kubectl get deploy/https -n kgateway-system >/dev/null 2>&1 && break
+      sleep 2
+    done
     kubectl rollout status deploy/https -n kgateway-system --timeout=300s
     # The page's HTTPS request sends INGRESS_GW_ADDRESS to the https Gateway, so
     # point the variable at that Gateway's load balancer from here on.

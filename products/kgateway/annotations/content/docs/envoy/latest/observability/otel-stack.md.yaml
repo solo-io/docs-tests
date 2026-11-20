@@ -112,7 +112,7 @@ hidden:
     logs=0; traces=0
     for i in $(seq 1 30); do
       for j in 1 2 3 4 5; do
-        curl -s -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/status/418" -H "host: www.example.com:8080" || true
+        curl -s --max-time 5 -o /dev/null "http://${INGRESS_GW_ADDRESS}:8080/status/418" -H "host: www.example.com:8080" || true
       done
       sleep 5
       out=$(kubectl -n telemetry logs deploy/opentelemetry-collector-logs 2>/dev/null || true)
@@ -137,7 +137,7 @@ hidden:
     # curl pod that the Prometheus check started.
     loki=""
     for i in $(seq 1 36); do
-      loki=$(kubectl -n telemetry exec otel-stack-check -- curl -sfG \
+      loki=$(kubectl -n telemetry exec otel-stack-check -- curl -sfG --max-time 10 \
         http://loki.telemetry.svc.cluster.local:3100/loki/api/v1/query_range \
         --data-urlencode 'query={service_name=~".+"} |= "/status/418"' \
         --data-urlencode 'since=1h' --data-urlencode 'limit=5' 2>/dev/null || true)
@@ -146,10 +146,13 @@ hidden:
       sleep 5
     done
     [[ "$loki" == *'/status/418'* ]] || { echo "Loki did not store the gateway access logs"; exit 1; }
+    # The Tempo chart serves its HTTP API on 3100 up to chart 1.16 and on 3200 from
+    # 1.24 on. Read the port from the Service so the check fits either version.
+    tempo_port=$(kubectl -n telemetry get svc tempo -o jsonpath='{.spec.ports[?(@.name=="tempo-prom-metrics")].port}')
     tempo=""
     for i in $(seq 1 36); do
-      tempo=$(kubectl -n telemetry exec otel-stack-check -- curl -sfG \
-        http://tempo.telemetry.svc.cluster.local:3100/api/search \
+      tempo=$(kubectl -n telemetry exec otel-stack-check -- curl -sfG --max-time 10 \
+        "http://tempo.telemetry.svc.cluster.local:${tempo_port}/api/search" \
         --data-urlencode 'q={ resource.service.name = "http" }' --data-urlencode 'limit=5' 2>/dev/null || true)
       [[ "$tempo" == *'"traceID"'* ]] && break
       echo "attempt $i: Tempo has no traces for service http yet: ${tempo:0:200}"

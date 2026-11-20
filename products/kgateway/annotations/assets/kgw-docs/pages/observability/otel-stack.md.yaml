@@ -189,7 +189,7 @@ hidden:
     # The metrics collector scrapes the gateway proxy (envoy_*) and the control
     # plane (kgateway_*) and remote-writes the series to Prometheus.
     prom_count() {
-      kubectl -n telemetry exec otel-stack-check -- curl -sfG \
+      kubectl -n telemetry exec otel-stack-check -- curl -sfG --max-time 10 \
         http://kube-prometheus-stack-prometheus.telemetry.svc:9090/api/v1/query \
         --data-urlencode "query=count({__name__=~\"$1\"})" 2>/dev/null || true
     }
@@ -208,9 +208,12 @@ hidden:
       fi
     done
     # Grafana is up and has the Prometheus, Tempo, and Loki data sources.
+    # Log in with the password Grafana actually has: the chart sets it from the
+    # page's values (GRAFANA_ADMIN_PASSWORD) or, on older pages, from its default.
+    grafana_password=$(kubectl -n telemetry get secret kube-prometheus-stack-grafana -o jsonpath='{.data.admin-password}' | base64 -d)
     ds=""
     for i in $(seq 1 30); do
-      ds=$(kubectl -n telemetry exec otel-stack-check -- curl -sf -u "admin:$GRAFANA_ADMIN_PASSWORD" \
+      ds=$(kubectl -n telemetry exec otel-stack-check -- curl -sf --max-time 10 -u "admin:$grafana_password" \
         http://kube-prometheus-stack-grafana.telemetry.svc/api/datasources 2>/dev/null || true)
       [[ "$ds" == *'"type":"prometheus"'* && "$ds" == *'"type":"tempo"'* && "$ds" == *'"type":"loki"'* ]] && break
       echo "attempt $i: Grafana data sources not ready: ${ds:0:200}"
