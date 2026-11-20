@@ -21,6 +21,7 @@ blocks:
 - 674d11f5bf55ea75 yaml
 - 38e804862cec9ebd sh
 - 5cfb737529f1cb56 yaml
+- eddf2673807b120f yaml
 - 9b7754df70ac386d yaml
 - 676c185b6579b961 sh
 - 9a5df46d7afe8526 sh
@@ -86,7 +87,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 20
+  block: 21
   fingerprint: 9b7754df70ac386d
   lang: yaml
   lines: 16c71da1 979905a0 e47a48f5 8c8c4228 d0db9645 617053e6 c137289d 36184fa5 0e20b496 47f31603 55024e6a 82f215b9 0f10c5bc 55708cb7 e6365cc1 a67acb0a abc56510
@@ -96,7 +97,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 21
+  block: 22
   fingerprint: 676c185b6579b961
   lang: sh
   lines: 968e6966 459cb237
@@ -106,7 +107,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 24
+  block: 25
   fingerprint: 21e2e4400b01708a
   lang: sh
   lines: fae8c8b8 8e85cac6 39fd077a 0e1a9b32
@@ -116,7 +117,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 25
+  block: 26
   fingerprint: 5fba5f3bf561451f
   lang: sh
   lines: 5fba5f3b
@@ -126,7 +127,7 @@ tags:
     only: true
     lead: ' '
 - paths: advanced
-  block: 26
+  block: 27
   fingerprint: 676c185b6579b961
   lang: sh
   lines: 968e6966 459cb237
@@ -747,10 +748,10 @@ hidden:
     occurrence: 0
     words: b9776d7d 8d0288f4 50d858e0 77f6a166 ca978112 823412d1 58296753 b9776d7d abbea20e 9359f3bb 663ea1bf 3316348d 20e8cdb5 58296753 b9776d7d bcb3caf1 9359f3bb
     block_before:
-      block: 19
-      fingerprint: 5cfb737529f1cb56
+      block: 20
+      fingerprint: eddf2673807b120f
       lang: yaml
-      lines: adc43cf7 a1f4619b
+      lines: adc43cf7 6c077fe9 470f3af1
       preview: 'controller:'
   content: |-
     {{< doc-test paths="advanced" >}}
@@ -810,7 +811,7 @@ hidden:
     fi
     {{< /doc-test >}}
 - after:
-    block: 20
+    block: 21
     fingerprint: 9b7754df70ac386d
     lang: yaml
     lines: 16c71da1 979905a0 e47a48f5 8c8c4228 d0db9645 617053e6 c137289d 36184fa5 0e20b496 47f31603 55024e6a 82f215b9 0f10c5bc 55708cb7 e6365cc1 a67acb0a abc56510
@@ -860,7 +861,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 21
+    block: 22
     fingerprint: 676c185b6579b961
     lang: sh
     lines: 968e6966 459cb237
@@ -953,7 +954,7 @@ hidden:
     EOF
     {{< /doc-test >}}
 - after:
-    block: 22
+    block: 23
     fingerprint: 9a5df46d7afe8526
     lang: sh
     lines: 1a5d2257 db51caed
@@ -966,7 +967,7 @@ hidden:
     sed -E 's/(licenseKey"?: *).*/\1REDACTED/' values.yaml
     {{< /doc-test >}}
 - after:
-    block: 23
+    block: 24
     fingerprint: f02fbeec6958bfa3
     lang: yaml
     lines: adc43cf7 6c077fe9 0ef0dcb8
@@ -986,7 +987,7 @@ hidden:
     sed -E 's/(licenseKey"?: *).*/\1REDACTED/' values.yaml
     {{< /doc-test >}}
 - after:
-    block: 24
+    block: 25
     fingerprint: 21e2e4400b01708a
     lang: sh
     lines: fae8c8b8 8e85cac6 39fd077a 0e1a9b32
@@ -1003,7 +1004,7 @@ hidden:
     kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
     {{< /doc-test >}}
 - after:
-    block: 26
+    block: 27
     fingerprint: 676c185b6579b961
     lang: sh
     lines: 968e6966 459cb237
@@ -1056,7 +1057,7 @@ hidden:
        EOF
        {{< /doc-test >}}
 - after:
-    block: 29
+    block: 30
     fingerprint: 6400e2ef481e8d6e
     lang: yaml
     lines: 84c31baf 524a8194
