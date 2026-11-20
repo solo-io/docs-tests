@@ -36,7 +36,7 @@ hidden:
       echo "FAIL: /metrics has no successful gatewayclass reconciliation in kgateway_controller_reconciliations_total"
       grep '^kgateway_controller_reconciliations_total' <<<"$metrics"; exit 1
     fi
-    for m in kgateway_controller_reconcile_duration_seconds kgateway_translator_translations_total kgateway_xds_snapshot_transforms_total kgateway_resources_managed; do
+    for m in kgateway_translator_translation_duration_seconds kgateway_translator_translations_total kgateway_xds_snapshot_transforms_total kgateway_resources_managed; do
       if ! grep -q "^# TYPE ${m} " <<<"$metrics"; then
         echo "FAIL: /metrics has no ${m} metric from the reference table"
         exit 1
