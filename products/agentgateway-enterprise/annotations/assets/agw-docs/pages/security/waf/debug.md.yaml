@@ -127,13 +127,28 @@ hidden:
     preview: kubectl apply -f- <<EOF
   content: |2-
        {{< doc-test paths="waf-debug" >}}
-       sleep 5
+       # The controller re-renders the waf-server Deployment a few seconds after the
+       # parameters change. Wait for the admin flag in the Deployment, so that the
+       # rollout check below waits for the new pods and not the previous rollout.
+       for i in $(seq 1 60); do
+         kubectl get deploy waf-server-enterprise-agentgateway -n agentgateway-system -o jsonpath='{.spec.template.spec.containers[*].args}' | grep -q -- '--admin-enabled' && break
+         sleep 2
+       done
+       kubectl get deploy waf-server-enterprise-agentgateway -n agentgateway-system -o jsonpath='{.spec.template.spec.containers[*].args}' | grep -q -- '--admin-enabled' || { echo "waf-server Deployment never got --admin-enabled"; exit 1; }
        kubectl rollout status deploy/waf-server-enterprise-agentgateway -n agentgateway-system --timeout=180s
        # The admin server listens on localhost in the pod, which the API server pod
        # proxy cannot reach. The runner does not allow the page's port-forward, so
        # attach an ephemeral curl container, which shares the pod's network namespace.
-       WAF_POD=$(kubectl get pod -n agentgateway-system -o name | grep 'waf-server-enterprise-agentgateway' | head -1 | sed 's#^pod/##')
-       test -n "$WAF_POD" || { echo "no waf-server pod"; exit 1; }
+       # Pick a running pod that has the admin flag and is not terminating. Pods
+       # from the previous rollout can still be listed for a while.
+       WAF_POD=""
+       for i in $(seq 1 30); do
+         WAF_POD=$(kubectl get pod -n agentgateway-system --field-selector=status.phase=Running -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.metadata.deletionTimestamp}{"\t"}{.spec.containers[*].args}{"\n"}{end}' \
+           | awk -F'\t' '$1 ~ /^waf-server-enterprise-agentgateway-/ && $2 == "" && $3 ~ /--admin-enabled/ {print $1; exit}')
+         [ -n "$WAF_POD" ] && break
+         sleep 2
+       done
+       test -n "$WAF_POD" || { echo "no running waf-server pod with the admin server enabled"; exit 1; }
        kubectl debug -n agentgateway-system "pod/$WAF_POD" --image=curlimages/curl:8.10.1 -c pprof-probe -- sleep 600
        : > /tmp/waf-out.txt
        for i in $(seq 1 30); do
