@@ -231,7 +231,7 @@ hidden:
           metadata:
             namespace: default
             name: my-portal
-        jsonPath: "$.spec.apis[?(@.apiDocRef.name=='petstore-api-v1')].title"
+        jsonPath: "$.spec.apis[?(@.apiProductId=='petstore' && @.apiVersion=='v1')].title"
         jsonPathExpectation:
           comparator: equals
           value: "Petstore API v1"
@@ -245,7 +245,7 @@ hidden:
           metadata:
             namespace: default
             name: my-portal
-        jsonPath: "$.spec.apis[?(@.apiDocRef.name=='petstore-api-v2')].title"
+        jsonPath: "$.spec.apis[?(@.apiProductId=='petstore' && @.apiVersion=='v2')].title"
         jsonPathExpectation:
           comparator: equals
           value: "Petstore API v2"
@@ -259,10 +259,10 @@ hidden:
           metadata:
             namespace: default
             name: my-portal
-        jsonPath: "$.spec.apis[?(@.apiDocRef.name=='httpbin-api-v1')].apiProductId"
+        jsonPath: "$.spec.apis[?(@.apiProductId=='httpbin')].title"
         jsonPathExpectation:
           comparator: equals
-          value: "httpbin"
+          value: "HTTPBin API"
         polling:
           timeoutSeconds: 300
           intervalSeconds: 5
