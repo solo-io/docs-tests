@@ -402,8 +402,10 @@ hidden:
     preview: '{'
   content: |-
     {{< doc-test paths="portal-security-context" >}}
-    # The sections are alternatives. Remove the fields that the previous section
-    # set, as the page suggests with kubectl edit, before the next one.
+    # Reset after "Combine omitted defaults": remove omitDefaultSecurityContext and
+    # the explicit fields so that the add-capability section starts from the
+    # defaults. This comment must differ from the earlier reset step, because the
+    # extractor skips a step whose content repeats an earlier one.
     kubectl patch portalparameters portal-params -n default --type merge -p '{"spec":{"omitDefaultSecurityContext":null,"webServer":{"pod":null,"container":null},"authServer":{"pod":null,"container":null}}}'
     {{< /doc-test >}}
 - after:
