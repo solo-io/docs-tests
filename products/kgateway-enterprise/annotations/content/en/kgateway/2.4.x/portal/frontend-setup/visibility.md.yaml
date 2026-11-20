@@ -97,6 +97,7 @@ hidden:
     - name: "the my-portal Portal resolves its VisibilityPolicy refs"
       wait:
         target:
+          apiVersion: portal.solo.io/v1alpha1
           kind: Portal
           metadata:
             namespace: default
@@ -111,6 +112,7 @@ hidden:
     - name: "the my-portal Portal is programmed"
       wait:
         target:
+          apiVersion: portal.solo.io/v1alpha1
           kind: Portal
           metadata:
             namespace: default
@@ -233,6 +235,7 @@ hidden:
     - name: "the my-portal Portal resolves the all-tiers VisibilityPolicy"
       wait:
         target:
+          apiVersion: portal.solo.io/v1alpha1
           kind: Portal
           metadata:
             namespace: default

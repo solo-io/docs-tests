@@ -528,6 +528,7 @@ hidden:
     - name: "the my-portal Portal reports Programmed=True"
       wait:
         target:
+          apiVersion: portal.solo.io/v1alpha1
           kind: Portal
           metadata:
             namespace: default

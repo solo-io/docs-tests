@@ -157,9 +157,18 @@ hidden:
     # kgateway Gateway, http in the kgateway-system namespace. Deleting it removes
     # its gateway proxy deployment.
     kubectl delete -n kgateway-system gateway http
+    # The controller can briefly recreate the proxy deployment while the Gateway
+    # is being deleted, so require three absent checks in a row.
+    gone=0
     for i in $(seq 1 60); do
-      if [ -z "$(kubectl get gateways -A -o name)" ] && ! kubectl get deployment http -n kgateway-system >/dev/null 2>&1; then break; fi
-      echo "waiting for the Gateways and the http proxy deployment to be deleted ($i/60)"; sleep 5
+      if [ -z "$(kubectl get gateways -A -o name)" ] && ! kubectl get deployment http -n kgateway-system >/dev/null 2>&1; then
+        gone=$((gone + 1))
+        [ "$gone" -ge 3 ] && break
+      else
+        gone=0
+        echo "waiting for the Gateways and the http proxy deployment to be deleted ($i/60)"
+      fi
+      sleep 5
     done
     if [ -n "$(kubectl get gateways -A -o name)" ]; then
       echo "FAIL: Gateways are left after step 6: $(kubectl get gateways -A -o name | tr '\n' ' ')"

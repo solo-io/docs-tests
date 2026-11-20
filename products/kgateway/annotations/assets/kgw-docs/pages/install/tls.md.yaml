@@ -171,13 +171,13 @@ hidden:
   content: |-
     {{< doc-test paths="install-tls" >}}
     YAMLTest -f - <<'EOF'
-    - name: wait for the kgateway-xds-ca root CA certificate to be issued
+    - name: wait for the xds-ca root CA certificate to be issued
       wait:
         target:
           kind: Certificate
           metadata:
             namespace: kgateway-system
-            name: kgateway-xds-ca
+            name: {{< reuse "kgw-docs/snippets/pod-name.md" >}}-xds-ca
         jsonPath: "$.status.conditions[?(@.type=='Ready')].status"
         jsonPathExpectation:
           comparator: equals

@@ -638,7 +638,7 @@ hidden:
         polling:
           timeoutSeconds: 300
           intervalSeconds: 5
-    - name: "extauth-deployer-manage - the ext-cache deployment uses the limits.cpu 1000m from my-gw-params"
+    - name: "extauth-deployer-manage - the ext-cache deployment uses the limits.cpu 1000m (stored as 1) from my-gw-params"
       wait:
         target:
           kind: Deployment
@@ -650,7 +650,7 @@ hidden:
         jsonPath: "$.items[0].spec.template.spec.containers[0].resources.limits.cpu"
         jsonPathExpectation:
           comparator: equals
-          value: "1000m"
+          value: "1"
         polling:
           timeoutSeconds: 300
           intervalSeconds: 5
