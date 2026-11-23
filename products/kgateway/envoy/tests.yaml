@@ -211,6 +211,11 @@ scenarios:
     - install-standard
     source: kgw-docs/pages/security/access-logging2.2.md
     path: access-logging-tcp
+  access-token-schema:
+    type: schema
+    source: kgw-docs/pages/security/entra-id/access-token.md
+    path: all
+    scaffolded: "2026-11-23"
   acl:
     type:
     - schema
@@ -386,6 +391,11 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/security/auth0/setup.md
     path: auth0-setup
+  authorization-code-schema:
+    type: schema
+    source: kgw-docs/pages/security/entra-id/authorization-code.md
+    path: all
+    scaffolded: "2026-11-23"
   backend-tls:
     type:
     - schema
@@ -1260,6 +1270,11 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/max-headers-count.md
     path: max-headers-count
+  max-request-headers-size-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/max-request-headers-size.md
+    path: all
+    scaffolded: "2026-11-23"
   migrate-api-key-auth:
     type:
     - schema
@@ -1486,6 +1501,11 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/security/okta/setup.md
     path: okta-setup
+  original-client-ip-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/original-client-ip.md
+    path: all
+    scaffolded: "2026-11-23"
   otel-stack:
     type:
     - schema
@@ -1650,6 +1670,11 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/response-header.md
     path: remove-response-header
+  request-id-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/request-id.md
+    path: all
+    scaffolded: "2026-11-23"
   response-header-from-secret:
     type:
     - schema
@@ -1775,6 +1800,11 @@ scenarios:
     - install-standard
     source: kgw-docs/pages/setup/selfmanaged.md
     path: selfmanaged
+  server-header-schema:
+    type: schema
+    source: kgw-docs/pages/traffic-management/header-control/server-header.md
+    path: all
+    scaffolded: "2026-11-23"
   service-accounts-schema:
     type: schema
     page: traffic-management/destination-types/backends/lambda/service-accounts.md
@@ -1811,6 +1841,11 @@ scenarios:
     - install-standard
     page: setup/gateway.md
     path: setup-gateway-static-ip
+  setup-schema:
+    type: schema
+    source: kgw-docs/pages/security/entra-id/setup.md
+    path: all
+    scaffolded: "2026-11-23"
   simple-basic:
     type:
     - schema
