@@ -384,6 +384,70 @@ class Extractor:
             return False
         return True
 
+    @staticmethod
+    def _strip_html_comments(text: str) -> str:
+        """Blank out HTML comments outside code fences, keeping the line count.
+
+        Hugo publishes nothing inside `<!-- ... -->`, so a code block there is
+        not on the page: kgateway's access-logging page parks two unfinished
+        sections in comments, and their YAML failed the schema check although
+        no reader can see it. Shortcodes inside a comment still run in Hugo, but
+        their output lands in the comment, so blanking the raw text first gives
+        the same result.
+
+        `<!-- doc-test-include ... -->` directives are kept: they are how a page
+        pulls in a test file (see _extract_test_includes). Comments inside a
+        fence are code, such as an HTML sample, and are kept too. Each removed
+        line becomes an empty line, so the line numbers that errors and
+        annotations report do not move.
+        """
+        if "<!--" not in text:
+            return text
+        out: List[str] = []
+        fence: Optional[str] = None
+        in_comment = False
+        for line in text.split("\n"):
+            if in_comment:
+                if "-->" in line:
+                    in_comment = False
+                    out.append(line[line.index("-->") + 3:] if line[line.index("-->") + 3:].strip() else "")
+                else:
+                    out.append("")
+                continue
+            fence_match = re.match(r"^\s*(`{3,})", line)
+            if fence is not None:
+                if fence_match and len(fence_match.group(1)) >= len(fence) and not line.strip().strip("`"):
+                    fence = None
+                out.append(line)
+                continue
+            if fence_match:
+                fence = fence_match.group(1)
+                out.append(line)
+                continue
+            if "<!--" not in line:
+                out.append(line)
+                continue
+            # Inline comments on this line, and a comment that opens here.
+            kept = ""
+            rest = line
+            while "<!--" in rest:
+                before, _, after = rest.partition("<!--")
+                kept += before
+                if re.match(r"\s*doc-test-include\b", after):
+                    end = after.find("-->")
+                    kept += "<!--" + (after[: end + 3] if end >= 0 else after)
+                    rest = after[end + 3:] if end >= 0 else ""
+                    continue
+                end = after.find("-->")
+                if end < 0:
+                    in_comment = True
+                    rest = ""
+                    break
+                rest = after[end + 3:]
+            kept += rest
+            out.append(kept if kept.strip() else "")
+        return "\n".join(out)
+
     def _strip_version_blocks(self, text: str, source_file: Optional[Path] = None) -> str:
         # Gates nest, such as an inline {{% version %}} link inside a gated
         # section. As in _resolve_conditional_text_blocks, the body may not
@@ -453,6 +517,7 @@ class Extractor:
         if depth > self.max_depth:
             return text
 
+        text = self._strip_html_comments(text)
         text = self._strip_version_blocks(text, source_file)
 
         def replace_reuse(match: re.Match) -> str:

@@ -174,6 +174,34 @@ class SchemaCheckTests(Base):
         code, tests = self.run_check(f"latest={self.old}", str(self.new))
         self.assertEqual(code, 0, tests)
 
+    def test_frozen_tree_is_left_out_by_default(self):
+        """Functional runs never test a frozen release tree, and neither does a plain schema run."""
+        key = self.write("1.6.x", page(policy_block("timeout: 10s")))
+        code, tests = self.run_check(str(self.old))
+        self.assertNotIn(key, tests or {})
+
+    def test_versions_checks_a_frozen_tree_against_its_own_crds(self):
+        ok = self.write("1.6.x", page(policy_block("timeout: 10s")))
+        code, tests = self.run_check("--versions=1.6.x", f"1.6.x={self.old}")
+        self.assertEqual(code, 0, tests)
+        self.assertEqual(tests[ok]["status"], "passed")
+        bad = self.write("1.6.x", page(policy_block("retries: 3")))
+        code, tests = self.run_check("--versions=1.6.x", f"1.6.x={self.old}")
+        self.assertEqual(code, 1)
+        self.assertIn("retries", tests[bad]["error"])
+
+    def test_frozen_page_gated_empty_is_not_applicable(self):
+        """Both gates name newer releases, so the 1.6.x page shows nothing: not a failure there."""
+        key = self.write("1.6.x", GATED)
+        code, tests = self.run_check("--versions=1.6.x", f"1.6.x={self.old}")
+        self.assertEqual(code, 0, tests)
+        self.assertNotIn(key, tests or {})
+
+    def test_apiserver_versions_per_tree(self):
+        import doc_test_schema_check as sc
+        self.assertEqual(sc.parse_apiserver_versions(["1.36", "2.1.x=1.31"]), {None: "1.36", "2.1.x": "1.31"})
+        self.assertEqual(sc.parse_apiserver_versions([]), {})
+
     def test_version_with_no_crds_fails(self):
         latest = self.write("latest", GATED)
         code, tests = self.run_check(f"main={self.new}")
@@ -295,6 +323,15 @@ class MoreKindsTests(Base):
         key = self.write("main", route("gateway.networking.k8s.io/v1alpha1", "hostnames: [a]"))
         code, tests = self.run_check(str(self.gw))
         self.assertIn("is not served by its CRD (serves gateway.networking.k8s.io/v1)", tests[key]["error"])
+
+    def test_unknown_kind_in_a_known_group_fails(self):
+        # The tree has example.dev CRDs (Policy), so a kind it lacks in that
+        # group is one kubectl rejects, such as a kind a later release added.
+        key = self.write("main", page(policy_block("timeout: 10s").replace("kind: Policy", "kind: ListenerPolicy")))
+        code, tests = self.run_check(str(self.new))
+        self.assertEqual(code, 1)
+        self.assertIn("kind ListenerPolicy does not exist in example.dev for this version (known: Policy)",
+                      tests[key]["error"])
 
     def test_same_kind_in_another_group_is_not_matched(self):
         key = self.write("main", route("networking.istio.io/v1", "anything: 1"))

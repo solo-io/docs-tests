@@ -335,7 +335,10 @@ per version tree. The binaries are downloaded once and cached under `~/.cache/do
 from `--envtest-dir` or `$KUBEBUILDER_ASSETS`. The server is the newest envtest release unless
 `--apiserver-version` says otherwise. It does not follow `--kubernetes-version`, because a CRD
 can use CEL functions that only a newer API server compiles: an API server for Kubernetes 1.31
-refuses to install the Gateway API v1.7.0 CRDs.
+refuses to install the Gateway API v1.7.0 CRDs. The opposite also happens: a newer server can
+refuse an old release's CRDs because their CEL rules exceed its cost budget. A tree with no
+version of its own (`--apiserver-version TREE=VERSION`) whose CRDs are refused that way is
+retried once on a Kubernetes 1.31 server.
 The run also needs `openssl` and `curl`. A rejection on a value the reader fills in, a shell
 variable (`${HOST}`) or a `<placeholder>`, isn't reported. Neither is a rule on an object that
 holds one, since the rule may compare that value. See [#19](https://github.com/solo-io/docs-tests/issues/19).
@@ -353,6 +356,39 @@ checked. Helm values don't count toward a pass on their own, because the Verifie
 doesn't mention them. If a valid key is flagged, open its parent value in
 `products/<product>/helm-values.yaml` (passed with `--helm-overlay`). If a valid value of
 another type is flagged, open the value itself.
+
+A kind that the version tree does not have in an API group that it does have, such as a
+kgateway `ListenerPolicy` on a 2.1.x page, fails the scenario. `kubectl` rejects it with
+"no matches for kind". A kind in a group the tree has no CRDs for stays unchecked.
+
+### Checking the released version trees
+
+Functional tests run only in `latest` and `main` (or a manifest's `versions:`), because a frozen
+release tree pins charts that no longer install. Readers still copy YAML from those trees, so
+the schema check can check them too. Pass `--versions` with the trees, and one
+`--crd-dir TREE=PATH` for each, with the CRDs of that release:
+
+```sh
+python3 scripts/doc_test_schema_check.py --repo-root ../kgateway.dev \
+  --versions 2.4.x 2.3.x 2.2.x 2.1.x \
+  --crd-dir 2.4.x=crds/2.4.x --crd-dir 2.3.x=crds/2.3.x \
+  --crd-dir 2.2.x=crds/2.2.x --crd-dir 2.1.x=crds/2.1.x
+```
+
+The existing scenarios apply to each tree: a `source:` scenario covers every tree that reuses
+that asset, and a `page:` scenario covers every tree that has that page. Two things differ from
+a run of the live trees:
+
+- A scenario whose page shows no object in that tree, because its objects are all
+  version-gated to newer releases, is not applicable there. It is logged and left out of the
+  report, not failed.
+- A page that exists only in an old tree, such as one a later release renamed, has no
+  scenario yet. `scaffold_schema_tests.py --versions <trees>` adds one. Such a scenario never
+  runs in a functional run, because the page is not in `latest` or `main`.
+
+Run the released trees as a second pass, apart from `latest` and `main`, so the live trees
+keep failing when nothing on a page is validated. kgateway.dev and the docs hub merge both
+passes into one report with `merge_test_results.py`.
 
 ### Running a scenario on macOS or Windows
 
@@ -642,6 +678,7 @@ The `version` context (used to resolve `{{< version include-if="..." >}}` blocks
 
 `doc_test_extract.py` processes source files before emitting the script:
 
+- **HTML comments** — removed, outside code fences, because Hugo publishes nothing inside `<!-- ... -->`. A `<!-- doc-test-include ... -->` directive is kept.
 - **`{{< reuse "..." >}}`** — inlined recursively from `assets/`.
 - **`{{< version include-if="..." >}}`** — resolved against the inferred version token; non-matching blocks are dropped.
 - **`{{< conditional-text include-if="..." >}}`** — resolved against the `product` context; non-matching blocks are dropped.

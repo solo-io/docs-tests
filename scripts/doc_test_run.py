@@ -13,7 +13,7 @@ import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Sequence, Set, Tuple
 
 try:
     import yaml  # type: ignore[import-not-found]
@@ -304,8 +304,14 @@ def _version_key(doc_path: str) -> str:
 TESTED_VERSIONS = ("latest", "main")
 
 
-def tested_versions(manifest: Dict[str, Any], repo_root: Optional[Path] = None) -> Tuple[str, ...]:
+def tested_versions(manifest: Dict[str, Any], repo_root: Optional[Path] = None,
+                    override: Optional[Sequence[str]] = None) -> Tuple[str, ...]:
     """The version trees one manifest's scenarios run in.
+
+    `override` replaces both defaults below. Only the schema check passes it
+    (`--versions`), to check frozen release trees too: a schema test needs no
+    cluster, so the CEL cost problem that keeps frozen trees out of functional
+    runs does not apply. Functional runs never pass it.
 
     TESTED_VERSIONS unless the manifest names its own with `versions:`. A site
     whose trees are named by release (the enterprise kgateway hub: 2.4.x, 2.5.x)
@@ -317,6 +323,8 @@ def tested_versions(manifest: Dict[str, Any], repo_root: Optional[Path] = None) 
     go stale when the site's current release moves on. The site's doc-test
     workflow picks the version under test from the same field.
     """
+    if override:
+        return tuple(str(v) for v in override)
     versions = manifest.get("versions")
     if not versions:
         return TESTED_VERSIONS
@@ -467,6 +475,7 @@ def build_test_cases_from_manifests(
     docs_tests_root: Optional[Path],
     generated_dir: Path,
     filter_test_name: Optional[str] = None,
+    versions: Optional[Sequence[str]] = None,
 ) -> Tuple[List[TestCase], Set[Tuple[str, str]], List[str]]:
     """Test cases declared in docs-tests manifests.
 
@@ -550,7 +559,7 @@ def build_test_cases_from_manifests(
                     f"{mpath}: scenario '{name}' has `type: {', '.join(unknown)}`; use {' or '.join(TEST_TYPES)}."
                 )
 
-            for version in tested_versions(data, repo_root):
+            for version in tested_versions(data, repo_root, versions):
                 if not (repo_root / version_root(content_root, mode, version)).is_dir():
                     continue
                 sources: List[Dict[str, Any]] = []
@@ -602,7 +611,7 @@ def build_test_cases_from_manifests(
         for ref in data.get("skip") or []:
             if not isinstance(ref, dict):
                 raise RuntimeError(f"{mpath}: each `skip:` entry needs `page:`, `source:` or `dir:`.")
-            for version in tested_versions(data, repo_root):
+            for version in tested_versions(data, repo_root, versions):
                 if not (repo_root / version_root(content_root, mode, version)).is_dir():
                     continue
                 if "dir" in ref:
@@ -623,14 +632,16 @@ def build_test_cases(
     docs_glob: str,
     generated_dir: Path,
     docs_tests_root: Optional[Path] = None,
+    versions: Optional[Sequence[str]] = None,
 ) -> Tuple[List[TestCase], List[str], Dict[str, int], int]:
+    """`versions` widens discovery past TESTED_VERSIONS; see tested_versions()."""
     test_cases: List[TestCase] = []
     tested_documents: List[str] = []
     total_by_version: Dict[str, int] = {}
     total_documents = 0
 
     manifest_cases, claimed, manifest_docs = build_test_cases_from_manifests(
-        repo_root, docs_tests_root, generated_dir
+        repo_root, docs_tests_root, generated_dir, versions=versions
     )
     # Every manifest whose tree exists in this repo resolves, and one repo can
     # host several products (the docs hub has enterprise agentgateway AND
@@ -643,7 +654,7 @@ def build_test_cases(
 
     for md_file in sorted(repo_root.glob(docs_glob)):
         rel = md_file.relative_to(repo_root).as_posix()
-        if _version_segment(rel) not in TESTED_VERSIONS:
+        if _version_segment(rel) not in (tuple(versions) if versions else TESTED_VERSIONS):
             continue
         vk = _version_key(rel)
         total_by_version[vk] = total_by_version.get(vk, 0) + 1

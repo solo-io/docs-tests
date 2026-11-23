@@ -171,12 +171,12 @@ skip:
 - page: traffic-management/transformations/simple/_index.md
 - page: traffic-management/transformations/simple/overview.md
 - page: traffic-management/transformations/staged/_index.md
+# Concept: its one YAML block is a field outline with empty values
+# (`clearRouteCache: bool`, empty `matcher:`), not a manifest, so a schema
+# test fails on it by design.
 - page: traffic-management/transformations/staged/overview.md
 # Reference: template fragments only, no runnable steps.
 - page: traffic-management/transformations/staged/templating-language.md
-# Reference: partial AuthConfig snippets with placeholders for options of the
-# authorization code flow that oauth-authorization-code tests end to end.
-- page: security/extauth/oauth/examples.md
 scenarios:
   about-schema:
     type: schema
@@ -311,6 +311,11 @@ scenarios:
     type: schema
     page: integrations/aws-elb/alb.md
     path: alb
+  ambient-ingress-schema:
+    type: schema
+    page: integrations/istio/ambient/ingress.md
+    path: all
+    scaffolded: "2026-11-23"
   apidocs-schema:
     type: schema
     page: portal/apis/apidocs.md
@@ -367,6 +372,11 @@ scenarios:
     type: schema
     page: about/policies/backendconfigpolicy.md
     path: backendconfigpolicy
+  basic-schema:
+    type: schema
+    page: security/extauth/basic.md
+    path: all
+    scaffolded: "2026-11-23"
   buffering:
     type:
     - schema
@@ -413,6 +423,11 @@ scenarios:
     type: schema
     page: security/extauth/chaining.md
     path: all
+  changelog-migrate-schema:
+    type: schema
+    page: reference/changelog/migrate.md
+    path: all
+    scaffolded: "2026-11-23"
   circuit-breakers:
     type:
     - schema
@@ -571,6 +586,11 @@ scenarios:
     - install-standard
     page: setup/customize/options.md
     path: customize-options
+  customize-schema:
+    type: schema
+    page: setup/customize.md
+    path: all
+    scaffolded: "2026-11-23"
   database-schema:
     type: schema
     page: portal/operations/database.md
@@ -769,6 +789,11 @@ scenarios:
     type: schema
     page: security/ratelimit/global/envoy.md
     path: all
+  examples-schema:
+    type: schema
+    page: security/extauth/oauth/examples.md
+    path: all
+    scaffolded: "2026-11-23"
   extauth-apikey-hmac:
     type: functional
     needs:
@@ -935,6 +960,11 @@ scenarios:
     type: schema
     page: integrations/external-dns-cert-manager.md
     path: external-dns-cert-manager
+  extproc-schema:
+    type: schema
+    page: traffic-management/extproc.md
+    path: all
+    scaffolded: "2026-11-23"
   extract-header-schema:
     type: schema
     page: traffic-management/transformations/staged/extract-header.md
@@ -1156,6 +1186,11 @@ scenarios:
     type: functional
     page: install/helm.md
     path: helm-experimental
+  hpa-schema:
+    type: schema
+    page: setup/hpa.md
+    path: all
+    scaffolded: "2026-11-23"
   http-connect-tunnels:
     type:
     - schema
@@ -1216,6 +1251,11 @@ scenarios:
     - httpbin
     page: traffic-management/http2-downstream.md
     path: http2-downstream
+  httplistenerpolicy-schema:
+    type: schema
+    page: about/policies/httplistenerpolicy.md
+    path: all
+    scaffolded: "2026-11-23"
   ingress-multi-schema:
     type: schema
     page: integrations/istio/ambient/ingress-multi.md
@@ -1464,6 +1504,11 @@ scenarios:
     - httpbin
     page: traffic-management/header-control/max-headers-count.md
     path: max-headers-count
+  max-request-headers-size-schema:
+    type: schema
+    page: traffic-management/header-control/max-request-headers-size.md
+    path: all
+    scaffolded: "2026-11-23"
   migrate:
     type: functional
     page: install/migrate.md
@@ -1536,6 +1581,11 @@ scenarios:
     - httpbin
     page: operations/go-client.md
     path: operations-go-client
+  original-client-ip-schema:
+    type: schema
+    page: traffic-management/header-control/original-client-ip.md
+    path: all
+    scaffolded: "2026-11-23"
   otel-stack:
     type:
     - schema
@@ -1562,6 +1612,11 @@ scenarios:
     type: schema
     page: security/waf/owasp-crs.md
     path: all
+  passthrough-schema:
+    type: schema
+    page: security/extauth/passthrough.md
+    path: all
+    scaffolded: "2026-11-23"
   per-try-timeout:
     type:
     - schema
@@ -2065,6 +2120,11 @@ scenarios:
     - httpbin
     page: traffic-management/header-control/response-header.md
     path: remove-response-header
+  request-id-schema:
+    type: schema
+    page: traffic-management/header-control/request-id.md
+    path: all
+    scaffolded: "2026-11-23"
   require-auth:
     type: functional
     needs:
@@ -2204,6 +2264,11 @@ scenarios:
     - install-standard
     page: install/sample-app.md
     path: sample-app
+  server-header-schema:
+    type: schema
+    page: traffic-management/header-control/server-header.md
+    path: all
+    scaffolded: "2026-11-23"
   service-accounts-schema:
     type: schema
     page: traffic-management/destination-types/backends/lambda/service-accounts.md
@@ -2374,6 +2439,11 @@ scenarios:
     - httpbin
     page: traffic-management/header-control/strip-trailing-host-dot.md
     path: strip-trailing-host-dot
+  tcp-keepalive-schema:
+    type: schema
+    page: resiliency/tcp-keepalive.md
+    path: all
+    scaffolded: "2026-11-23"
   templating-language-schema:
     type: schema
     page: traffic-management/transformations/simple/templating-language.md

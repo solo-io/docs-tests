@@ -166,14 +166,15 @@ def insert_scenarios(text: str, entries: List[Tuple[str, str]]) -> str:
 
 
 def scaffold_manifest(repo: Path, manifest: Path, covered: set, reverse_index: Dict[str, set],
-                      config, only: Optional[set]) -> Tuple[List[dict], List[dict]]:
+                      config, only: Optional[set],
+                      versions: Optional[List[str]] = None) -> Tuple[List[dict], List[dict]]:
     """(entries to add, pages skipped) for one product/mode manifest."""
     data = yaml.safe_load(manifest.read_text(encoding="utf-8")) or {}
     mode = manifest.parent.name
     content_root = str(data.get("content_root") or "content/docs").strip("/")
     scenarios = data.get("scenarios") or {}
     by_source = any(isinstance(s, dict) and "source" in s for s in scenarios.values())
-    roots = [(v, version_root(content_root, mode, v) + "/") for v in tested_versions(data, repo)
+    roots = [(v, version_root(content_root, mode, v) + "/") for v in tested_versions(data, repo, versions)
              if (repo / version_root(content_root, mode, v)).is_dir()]
     taken = set(scenarios)
     added: Dict[Tuple[str, str], dict] = {}
@@ -229,6 +230,12 @@ def main(argv=None) -> int:
     ap.add_argument("--upstream-root", help="checkout a {{< rebase >}} shell expands from, as in the schema check")
     ap.add_argument("--upstream-versions", help="JSON version map, required with --upstream-root")
     ap.add_argument("--condition", action="append", default=[], help="conditional-text gate to match (repeatable)")
+    ap.add_argument("--versions", nargs="+", default=None, metavar="VERSION",
+                    help="version trees to scaffold, in place of the tested ones (latest and main, or a "
+                         "manifest's `versions:`), as in doc_test_schema_check.py --versions. Pass the frozen "
+                         "release trees to cover pages that exist only there, such as a page that a later "
+                         "release renamed. Functional runs never test those trees, so a scaffolded scenario "
+                         "for such a page only ever runs as a schema check.")
     ap.add_argument("--limit", type=int, default=0, help="add at most this many scenarios (0: no limit)")
     ap.add_argument("--report", help="write the added and skipped pages here as JSON")
     ap.add_argument("--dry-run", action="store_true", help="report only; leave the manifests unchanged")
@@ -259,14 +266,14 @@ def main(argv=None) -> int:
         SC._UPSTREAM["versions"] = json.loads(args.upstream_versions)
     config = SC.load_config_schema(Path(args.config_schema)) if args.config_schema else None
 
-    _, _, tested = build_test_cases_from_manifests(repo, DOCS_TESTS_ROOT, repo / "out")
+    _, _, tested = build_test_cases_from_manifests(repo, DOCS_TESTS_ROOT, repo / "out", versions=args.versions)
     covered = {(repo / d).resolve() for d in tested}
     reverse_index = build_reverse_index(repo)
     only = set(args.page) or None
 
     report = {"added": [], "skipped": []}
     for manifest in manifests:
-        added, skipped = scaffold_manifest(repo, manifest, covered, reverse_index, config, only)
+        added, skipped = scaffold_manifest(repo, manifest, covered, reverse_index, config, only, args.versions)
         if args.limit:
             added = added[: max(0, args.limit - len(report["added"]))]
         report["added"].extend(added)

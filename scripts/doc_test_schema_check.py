@@ -446,6 +446,15 @@ def check_step(repo_root: Path, file: str, path: str, schemas: Schemas, docs_tes
                         err = f"{doc['kind']}{f' {name}' if name else ''} {rejected}"
                 if err:
                     res.errors.append(f"{loc}: {err}")
+            elif group and any(g == group for g, _ in schemas.crds):
+                # The tree has CRDs in this group, but not this kind: a kind
+                # that a later release added (kgateway's ListenerPolicy on a
+                # 2.1.x page) or a typo. kubectl rejects it with "no matches for
+                # kind", so it is a finding, not an unchecked kind.
+                res.checked += 1
+                known = sorted(str(k) for g, k in schemas.crds if g == group)
+                res.errors.append(f"{loc}: kind {doc['kind']} does not exist in {group} "
+                                  f"for this version (known: {', '.join(known)})")
             elif kubeconform is not None:
                 core.append((loc, doc))
             else:
@@ -630,19 +639,62 @@ def log_helm_summary(cache: Dict[Any, Any]) -> None:
         logger.info("API server: %d custom resource(s) created as a dry run", dry_runs)
 
 
+def parse_apiserver_versions(values: List[str]) -> Dict[Optional[str], Optional[str]]:
+    """--apiserver-version values -> {tree or None: Kubernetes version}. None is the default."""
+    out: Dict[Optional[str], Optional[str]] = {}
+    for value in values:
+        tree, sep, kube = value.partition("=")
+        if sep:
+            out[tree] = kube
+        else:
+            out[None] = value
+    return out
+
+
+# The API server an old release's CRDs fall back to when a newer server
+# refuses them for CEL cost (see start_apiservers). kgateway 2.1 and 2.2 CRDs
+# install on it; Gateway API v1.7 CRDs need a newer one, which is why it is
+# only a fallback.
+CEL_COST_FALLBACK_APISERVER = "1.31"
+
+
 def start_apiservers(versions: Set[Optional[str]], crd_paths: Dict[Optional[str], List[Path]],
-                     schemas_by_version: Dict[Optional[str], Schemas], apiserver_version: Optional[str],
+                     schemas_by_version: Dict[Optional[str], Schemas],
+                     apiserver_versions: Dict[Optional[str], Optional[str]],
                      envtest_dir: Optional[str]) -> List[ApiServer]:
     """One API server per version tree in `versions`, with that tree's CRDs
-    (the bare --crd-dir paths, then its own, as load_schemas merges them)."""
-    binaries = ensure_binaries(apiserver_version, envtest_dir)
+    (the bare --crd-dir paths, then its own, as load_schemas merges them), at
+    that tree's --apiserver-version or the default one.
+
+    Newer API servers estimate CEL rule cost more strictly, so an old
+    release's CRDs can be refused ("estimated rule cost exceeds budget") by
+    the default server. No edit to the docs can fix that, so a tree with no
+    version of its own is retried once on CEL_COST_FALLBACK_APISERVER. A tree
+    pinned with TREE=VERSION is never retried."""
+    binaries_for: Dict[Optional[str], Any] = {}
     servers: List[ApiServer] = []
+
+    def start(version: Optional[str], kube: Optional[str]) -> None:
+        if kube not in binaries_for:
+            binaries_for[kube] = ensure_binaries(kube, envtest_dir)
+        crds = load_crds(crd_paths.get(None, []) + (crd_paths.get(version, []) if version else []))
+        server = ApiServer(binaries_for[kube], crds, version or "every version")
+        servers.append(server)
+        schemas_by_version[version].apiserver = server.start()
+
     try:
         for version in sorted(versions, key=lambda v: v or ""):
-            crds = load_crds(crd_paths.get(None, []) + (crd_paths.get(version, []) if version else []))
-            server = ApiServer(binaries, crds, version or "every version")
-            servers.append(server)
-            schemas_by_version[version].apiserver = server.start()
+            pinned = version in apiserver_versions
+            kube = apiserver_versions.get(version, apiserver_versions.get(None))
+            try:
+                start(version, kube)
+            except RuntimeError as exc:
+                if pinned or kube == CEL_COST_FALLBACK_APISERVER or "rule cost exceeds budget" not in str(exc):
+                    raise
+                servers.pop().stop()
+                logger.info("API server for %s: its CRDs exceed the CEL cost budget of the %s server; "
+                            "retrying on %s", version, kube or "default", CEL_COST_FALLBACK_APISERVER)
+                start(version, CEL_COST_FALLBACK_APISERVER)
     except Exception:
         for s in servers:
             s.stop()
@@ -760,12 +812,16 @@ def main() -> int:
     )
     parser.add_argument(
         "--apiserver-version",
-        default=None,
-        metavar="VERSION",
+        action="append",
+        default=[],
+        metavar="[TREE=]VERSION",
         help="Kubernetes version of the --apiserver server, e.g. 1.36 (its newest patch). Default: the "
         "newest envtest release. It is not --kubernetes-version on purpose: CRDs can use CEL functions "
         "that only newer API servers compile, such as Gateway API v1.7's format library, which an "
-        "older server refuses to install.",
+        "older server refuses to install. Repeatable: TREE=VERSION sets it for one version tree, for "
+        "example 2.1.x=1.31, because an old release's CRDs can exceed the CEL cost budget of a newer "
+        "server while a newer tree's CRDs need one. A bare VERSION applies to every other tree. A tree "
+        "with no version of its own whose CRDs the server refuses for CEL cost is retried once on 1.31.",
     )
     parser.add_argument(
         "--envtest-dir",
@@ -798,6 +854,15 @@ def main() -> int:
         default=[],
         metavar="NAME",
         help="Also match conditional-text gates that name NAME, as in doc_test_run.py. Repeatable.",
+    )
+    parser.add_argument(
+        "--versions",
+        nargs="+",
+        default=None,
+        metavar="VERSION",
+        help="Version trees to check, in place of the ones the functional tests run in (latest and "
+             "main, or a manifest's `versions:`). Use it to check frozen release trees, such as "
+             "2.3.x, which functional runs leave out. Give each one its own --crd-dir VERSION=PATH.",
     )
     parser.add_argument("--docs-glob", default="content/docs/**/*.md", help="Glob to discover markdown docs")
     parser.add_argument("--file", nargs="+", default=None, metavar="FILE", help="Only check test scenarios declared on these file(s)")
@@ -889,7 +954,7 @@ def main() -> int:
 
     test_cases, _, _, _ = build_test_cases(
         repo_root, args.docs_glob, generated_dir=repo_root / "out/tests/generated",
-        docs_tests_root=docs_tests_root,
+        docs_tests_root=docs_tests_root, versions=args.versions,
     )
     if args.file:
         # Filter the full discovery rather than reading each file's front
@@ -918,7 +983,7 @@ def main() -> int:
     servers: List[ApiServer] = []
     if args.apiserver:
         try:
-            servers = start_apiservers(used, crd_paths, schemas_by_version, args.apiserver_version,
+            servers = start_apiservers(used, crd_paths, schemas_by_version, parse_apiserver_versions(args.apiserver_version),
                                        args.envtest_dir)
         except (RuntimeError, OSError, subprocess.CalledProcessError) as exc:
             logger.error("--apiserver: %s", exc)
@@ -959,6 +1024,13 @@ def main() -> int:
                 for m in missing
             ]}
             logger.warning("SKIPPED: %s: %d piece(s) of its test markup did not attach (needs update)", key, len(missing))
+            continue
+        # With --versions (frozen release trees), a page whose objects are all
+        # version-gated out of this tree has nothing to check: the feature is not
+        # in that release. In the live trees the same result means the scenario's
+        # type no longer fits its page, so there it stays a failure.
+        if args.versions and schemas is not None and checked == 0 and len(errors) == 1:
+            logger.info("NOT APPLICABLE: %s: nothing to check in %s", key, version)
             continue
         if errors:
             exit_code = 1
