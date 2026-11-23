@@ -405,6 +405,9 @@ class KubeconformTests(Base):
     """Needs kubeconform and network access to its schema registry."""
 
     def service(self, port):
+        # `Unknown` is in a group the tree has no CRDs for, so it stays
+        # unchecked. In example.dev, whose Policy CRD the tree has, it would be
+        # a kind that does not exist there: a finding.
         return self.write("main", page(f"""```yaml {{paths="policy"}}
 apiVersion: v1
 kind: Service
@@ -414,7 +417,7 @@ spec:
   ports:
   - port: {port}
 ---
-apiVersion: example.dev/v1
+apiVersion: other.example/v1
 kind: Unknown
 metadata:
   name: u
