@@ -387,8 +387,9 @@ a run of the live trees:
   runs in a functional run, because the page is not in `latest` or `main`.
 
 Run the released trees as a second pass, apart from `latest` and `main`, so the live trees
-keep failing when nothing on a page is validated. kgateway.dev and the docs hub merge both
-passes into one report with `merge_test_results.py`.
+keep failing when nothing on a page is validated. `merge_test_results.py` merges the two
+reports into one. No site's workflow runs this pass today, because it adds several minutes
+to every run. Use it for a one-off local check.
 
 ### Running a scenario on macOS or Windows
 

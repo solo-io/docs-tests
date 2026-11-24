@@ -198,11 +198,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/security/access-logging2.2.md
     path: access-logging-route-source
-  access-logging-schema:
-    type: schema
-    source: kgw-docs/pages/security/access-logging.md
-    path: all
-    scaffolded: "2026-11-23"
   access-logging-string-format:
     type: functional
     needs:
@@ -298,11 +293,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/session-affinity/session-persistence-backend.md
     path: affinity-session-persistence-policy
-  ai-setup-schema:
-    type: schema
-    page: ai/setup.md
-    path: all
-    scaffolded: "2026-11-23"
   alb-schema:
     type: schema
     source: kgw-docs/pages/integrations/aws-elb/alb.md
@@ -366,11 +356,6 @@ scenarios:
     type: functional
     source: kgw-docs/pages/install/argocd.md
     path: argocd
-  auth-schema:
-    type: schema
-    page: ai/auth.md
-    path: all
-    scaffolded: "2026-11-23"
   auth0-access-token:
     type:
     - schema
@@ -451,11 +436,6 @@ scenarios:
     - httpbin
     source: kgw-docs/snippets/buffering-filter-stage.md
     path: buffering-filter-stage
-  buffering-schema:
-    type: schema
-    source: kgw-docs/pages/traffic-management/buffering2.2.md
-    path: all
-    scaffolded: "2026-11-23"
   byo-ext-auth-service-grpc:
     type:
     - schema
@@ -487,11 +467,6 @@ scenarios:
     type: schema
     source: kgw-docs/pages/security/jwt/claim-based-rbac.md
     path: claim-based-rbac
-  cloud-providers-schema:
-    type: schema
-    page: ai/cloud-providers.md
-    path: all
-    scaffolded: "2026-11-23"
   compression:
     type:
     - schema
@@ -591,11 +566,6 @@ scenarios:
     - install-standard
     source: kgw-docs/pages/setup/customize/gateway.md
     path: customize-gateway
-  customize-schema:
-    type: schema
-    source: kgw-docs/pages/setup/customize.md
-    path: all
-    scaffolded: "2026-11-23"
   debug:
     type:
     - schema
@@ -798,11 +768,6 @@ scenarios:
     type: schema
     source: kgw-docs/pages/integrations/external-dns-cert-manager.md
     path: external-dns-cert-manager
-  failover-schema:
-    type: schema
-    page: ai/failover.md
-    path: all
-    scaffolded: "2026-11-23"
   fault-injection:
     type:
     - schema
@@ -860,11 +825,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/observability/gateway-metrics.md
     path: gateway-metrics-inclusion
-  gateway-schema:
-    type: schema
-    page: traffic-management/health-checks/gateway.md
-    path: all
-    scaffolded: "2026-11-23"
   global:
     type:
     - schema
@@ -1002,11 +962,6 @@ scenarios:
     type: functional
     source: kgw-docs/pages/install/helm.md
     path: helm-experimental
-  hpa-schema:
-    type: schema
-    source: kgw-docs/pages/setup/hpa.md
-    path: all
-    scaffolded: "2026-11-23"
   http-connect-tunnels:
     type:
     - schema
@@ -1045,11 +1000,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/setup/http10.md
     path: http10
-  http10-schema:
-    type: schema
-    page: setup/http10.md
-    path: all
-    scaffolded: "2026-11-23"
   http2:
     type:
     - schema
@@ -1068,21 +1018,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/http2-downstream.md
     path: http2-downstream
-  http2-schema:
-    type: schema
-    page: traffic-management/http2.md
-    path: all
-    scaffolded: "2026-11-23"
-  httplistenerpolicy-schema:
-    type: schema
-    source: kgw-docs/pages/about/httplistenerpolicy.md
-    path: all
-    scaffolded: "2026-11-23"
-  idle-schema:
-    type: schema
-    page: resiliency/timeouts/idle.md
-    path: all
-    scaffolded: "2026-11-23"
   ingress-schema:
     type: schema
     source: kgw-docs/pages/integrations/istio/sidecar/ingress.md
@@ -1527,11 +1462,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/setup/listeners/mtls.md
     path: mtls-per-listener
-  mtls-schema:
-    type: schema
-    source: kgw-docs/pages/setup/listener-mtls.md
-    path: all
-    scaffolded: "2026-11-23"
   nlb-schema:
     type: schema
     source: kgw-docs/pages/integrations/aws-elb/nlb.md
@@ -1571,11 +1501,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/security/okta/setup.md
     path: okta-setup
-  ollama-schema:
-    type: schema
-    page: ai/ollama.md
-    path: all
-    scaffolded: "2026-11-23"
   original-client-ip-schema:
     type: schema
     source: kgw-docs/pages/traffic-management/header-control/original-client-ip.md
@@ -1603,11 +1528,6 @@ scenarios:
     type: schema
     page: setup/listeners/overview.md
     path: all
-  path-schema:
-    type: schema
-    page: traffic-management/rewrite/path.md
-    path: all
-    scaffolded: "2026-11-23"
   per-try-timeout:
     type:
     - schema
@@ -1654,16 +1574,6 @@ scenarios:
     source: kgw-docs/pages/traffic-management/extproc-processing-modes.md
     path: all
     scaffolded: "2026-11-24"
-  prompt-enrichment-schema:
-    type: schema
-    page: ai/prompt-enrichment.md
-    path: all
-    scaffolded: "2026-11-23"
-  prompt-guards-schema:
-    type: schema
-    page: ai/prompt-guards.md
-    path: all
-    scaffolded: "2026-11-23"
   proxy-100-continue:
     type:
     - schema
@@ -1795,11 +1705,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/resiliency/retry/retry.md
     path: retry-gateway-listener
-  retry-schema:
-    type: schema
-    page: resiliency/retry/retry.md
-    path: all
-    scaffolded: "2026-11-23"
   retry-trafficpolicy:
     type: functional
     needs:
@@ -2012,11 +1917,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/traffic-management/header-control/strip-trailing-host-dot.md
     path: strip-trailing-host-dot
-  tcp-keepalive-schema:
-    type: schema
-    source: kgw-docs/pages/resiliency/tcp-keepalive.md
-    path: all
-    scaffolded: "2026-11-23"
   templating-language-schema:
     type: schema
     page: traffic-management/transformations/templating-language.md
@@ -2141,11 +2041,6 @@ scenarios:
     - httpbin
     source: kgw-docs/pages/observability/tracing.md
     path: tracing-disable
-  traffic-management-buffering-schema:
-    type: schema
-    page: traffic-management/buffering.md
-    path: all
-    scaffolded: "2026-11-23"
   traffic-split:
     type:
     - schema
@@ -2246,11 +2141,6 @@ scenarios:
     type: functional
     source: kgw-docs/pages/operations/upgrade.md
     path: upgrade-experimental
-  waypoint-schema:
-    type: schema
-    source: kgw-docs/pages/integrations/istio/ambient/waypoint.md
-    path: all
-    scaffolded: "2026-11-23"
   weighted-routes:
     type:
     - schema
