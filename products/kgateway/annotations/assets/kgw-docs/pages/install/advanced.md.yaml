@@ -20,7 +20,7 @@ blocks:
 - fb30b8d69c095ee1 console
 - 674d11f5bf55ea75 yaml
 - 38e804862cec9ebd sh
-- 5cfb737529f1cb56 yaml
+- 9ddd7a2ecfe9e4a9 yaml
 - eddf2673807b120f yaml
 - 9b7754df70ac386d yaml
 - 676c185b6579b961 sh
@@ -687,62 +687,6 @@ hidden:
     kubectl delete httproute strict-check -n httpbin
     {{< /doc-test >}}
 - after:
-    block: 19
-    fingerprint: 5cfb737529f1cb56
-    lang: yaml
-    lines: adc43cf7 a1f4619b
-    preview: 'controller:'
-  content: |-
-    {{< doc-test paths="advanced" >}}
-    # goMemLimitPercent and extraEnv.GOMEMLIMIT together fail the Helm install.
-    if helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} ${LICENSE_KEY:+--set-string licensing.licenseKey=$LICENSE_KEY} \
-      --set controller.goMemLimitPercent=90 --set-string controller.extraEnv.GOMEMLIMIT=1GiB >/dev/null 2>&1; then
-      echo "FAIL: helm accepted controller.goMemLimitPercent together with controller.extraEnv.GOMEMLIMIT"
-      exit 1
-    fi
-    cat > advanced-gomemlimit.yaml <<'EOF'
-    controller:
-      goMemLimitPercent: 90
-    EOF
-    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
-      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
-      --reuse-values -f advanced-gomemlimit.yaml
-    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
-    YAMLTest -f - <<'EOF'
-    - name: advanced - goMemLimitPercent 90 sets the live memory limit ratio to 0.90
-      wait:
-        target:
-          kind: Deployment
-          metadata:
-            namespace: kgateway-system
-            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
-        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='AUTOMEMLIMIT')].value"
-        jsonPathExpectation:
-          comparator: equals
-          value: "0.90"
-        polling:
-          timeoutSeconds: 120
-          intervalSeconds: 5
-    EOF
-    gml=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system \
-      -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="GOMEMLIMIT")].name}')
-    if [ -n "$gml" ]; then
-      echo "FAIL: with goMemLimitPercent set, the chart still sets the fixed GOMEMLIMIT variable"
-      exit 1
-    fi
-    # The test cluster sets no memory limit on the controller, so the controller logs a warning.
-    found=""
-    for i in $(seq 1 30); do
-      logs=$(kubectl logs deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system 2>/dev/null) || true
-      if grep -q 'no finite memory limit' <<<"$logs"; then found=1; break; fi
-      echo "no 'no finite memory limit' warning in the controller logs yet ($i/30)"; sleep 5
-    done
-    if [ -z "$found" ]; then
-      echo "FAIL: the controller has no memory limit but did not log a warning about it"
-      exit 1
-    fi
-    {{< /doc-test >}}
-- after:
     section: ReferenceGrant example
     line: f7c52c001fe045ef
     occurrence: 0
@@ -1077,3 +1021,59 @@ hidden:
       exit 1
     fi
     {{< /doc-test >}}
+- after:
+    fingerprint: 5cfb737529f1cb56
+    lang: yaml
+    lines: adc43cf7 a1f4619b
+    preview: 'controller:'
+  content: |-
+    {{< doc-test paths="advanced" >}}
+    # goMemLimitPercent and extraEnv.GOMEMLIMIT together fail the Helm install.
+    if helm template {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} -n {{< reuse "kgw-docs/snippets/namespace.md" >}} ${LICENSE_KEY:+--set-string licensing.licenseKey=$LICENSE_KEY} \
+      --set controller.goMemLimitPercent=90 --set-string controller.extraEnv.GOMEMLIMIT=1GiB >/dev/null 2>&1; then
+      echo "FAIL: helm accepted controller.goMemLimitPercent together with controller.extraEnv.GOMEMLIMIT"
+      exit 1
+    fi
+    cat > advanced-gomemlimit.yaml <<'EOF'
+    controller:
+      goMemLimitPercent: 90
+    EOF
+    helm upgrade -i -n {{< reuse "kgw-docs/snippets/namespace.md" >}} {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} oci://{{< reuse "/kgw-docs/snippets/helm-path.md" >}}/charts/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} \
+      --version {{< reuse "kgw-docs/versions/helm-version-flag.md" >}} \
+      --reuse-values -f advanced-gomemlimit.yaml
+    kubectl rollout status deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system --timeout=300s
+    YAMLTest -f - <<'EOF'
+    - name: advanced - goMemLimitPercent 90 sets the live memory limit ratio to 0.90
+      wait:
+        target:
+          kind: Deployment
+          metadata:
+            namespace: kgateway-system
+            name: {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}}
+        jsonPath: "$.spec.template.spec.containers[0].env[?(@.name=='AUTOMEMLIMIT')].value"
+        jsonPathExpectation:
+          comparator: equals
+          value: "0.90"
+        polling:
+          timeoutSeconds: 120
+          intervalSeconds: 5
+    EOF
+    gml=$(kubectl get deployment {{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system \
+      -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="GOMEMLIMIT")].name}')
+    if [ -n "$gml" ]; then
+      echo "FAIL: with goMemLimitPercent set, the chart still sets the fixed GOMEMLIMIT variable"
+      exit 1
+    fi
+    # The test cluster sets no memory limit on the controller, so the controller logs a warning.
+    found=""
+    for i in $(seq 1 30); do
+      logs=$(kubectl logs deployment/{{< reuse "/kgw-docs/snippets/helm-kgateway.md" >}} -n kgateway-system 2>/dev/null) || true
+      if grep -q 'no finite memory limit' <<<"$logs"; then found=1; break; fi
+      echo "no 'no finite memory limit' warning in the controller logs yet ($i/30)"; sleep 5
+    done
+    if [ -z "$found" ]; then
+      echo "FAIL: the controller has no memory limit but did not log a warning about it"
+      exit 1
+    fi
+    {{< /doc-test >}}
+  status: needs-update
