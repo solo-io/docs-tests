@@ -2,7 +2,7 @@ format: 1
 source: content/docs/standalone/main/documentation/configuration/traffic-management/compression.md
 blocks:
 - 9091a70c58b4afcd yaml
-- 29e05ee51b2c8ea4 sh
+- 65d308439540a642 sh
 - e2d7a74d77ef1c44 yaml
 - f6931a7b2e59dbc5 sh
 - f1de58d981f699a8 sh
@@ -15,16 +15,6 @@ blocks:
 - da4fe4889ccad658 console
 - 4aff7e1f4b83fe57 sh
 tags:
-- paths: compression
-  block: 1
-  fingerprint: 29e05ee51b2c8ea4
-  lang: sh
-  lines: 29e05ee5
-  preview: docker run -d --name httpbin -p 8000:8080 mccutchen/go-httpbin:v2.15.0
-  form:
-    attr: paths="compression"
-    only: true
-    lead: ' '
 - paths: compression
   block: 2
   fingerprint: e2d7a74d77ef1c44
@@ -45,6 +35,16 @@ tags:
     attr: paths="compression"
     only: true
     lead: ' '
+- paths: compression
+  fingerprint: 29e05ee51b2c8ea4
+  lang: sh
+  lines: 29e05ee5
+  preview: docker run -d --name httpbin -p 8000:8080 mccutchen/go-httpbin:v2.15.0
+  form:
+    attr: paths="compression"
+    only: true
+    lead: ' '
+  status: needs-update
 hidden:
 - after:
     section: Compress responses and decompress requests
@@ -90,21 +90,6 @@ hidden:
     docker rm -f httpbin >/dev/null 2>&1 || true
     trap '[ -n "${AGW_PID:-}" ] && kill "$AGW_PID" 2>/dev/null; docker rm -f httpbin >/dev/null 2>&1 || true' EXIT
     {{< /doc-test >}}
-- after:
-    block: 1
-    fingerprint: 29e05ee51b2c8ea4
-    lang: sh
-    lines: 29e05ee5
-    preview: docker run -d --name httpbin -p 8000:8080 mccutchen/go-httpbin:v2.15.0
-  content: |2-
-       {{< doc-test paths="compression" >}}
-       for i in $(seq 1 60); do
-         curl -sf -m 5 -o /dev/null http://localhost:8000/json && break
-         sleep 1
-       done
-       curl -sf -m 5 -o /dev/null http://localhost:8000/json \
-         || { echo "FAIL: httpbin did not come up on localhost:8000"; exit 1; }
-       {{< /doc-test >}}
 - after:
     block: 2
     fingerprint: e2d7a74d77ef1c44
@@ -196,3 +181,18 @@ hidden:
       || { echo "FAIL: httpbin did not receive the decoded body: $BODY"; exit 1; }
     echo "✓ gzip request body reaches httpbin decoded"
     {{< /doc-test >}}
+- after:
+    fingerprint: 29e05ee51b2c8ea4
+    lang: sh
+    lines: 29e05ee5
+    preview: docker run -d --name httpbin -p 8000:8080 mccutchen/go-httpbin:v2.15.0
+  content: |2-
+       {{< doc-test paths="compression" >}}
+       for i in $(seq 1 60); do
+         curl -sf -m 5 -o /dev/null http://localhost:8000/json && break
+         sleep 1
+       done
+       curl -sf -m 5 -o /dev/null http://localhost:8000/json \
+         || { echo "FAIL: httpbin did not come up on localhost:8000"; exit 1; }
+       {{< /doc-test >}}
+  status: needs-update
