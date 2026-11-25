@@ -20,7 +20,7 @@ hidden:
     #     config and the `everything` MCP server.
     #   * Steps 4-5, through the MCP API and the Jaeger API rather than the UIs: an `echo`
     #     tool call produces a trace with a `call_tool` operation in Jaeger.
-    #   * "View MCP metrics": `mcp_requests_total` on http://localhost:15020/metrics has a
+    #   * "View MCP metrics": `agentgateway_mcp_requests_total` on http://localhost:15020/metrics has a
     #     series for the tool call with the documented labels (`server`, `method`,
     #     `resource`, `resource_type`).
     #   * "View logs": the stdout log line for the tool call has `mcp.method.name=tools/call`,
@@ -36,9 +36,10 @@ hidden:
     {{< reuse "agw-docs/snippets/install-agentgateway-binary.md" >}}
     {{< /doc-test >}}
 - after:
-    fingerprint: be8fbf7552a441e4
+    block: 0
+    fingerprint: 93ec8c65d98d9a87
     lang: yaml
-    lines: 358c4c15 c4df755f 1b6c26b3 390f7e12 a97a9e13 8def7c01 9adf3fc1 82726b6f 2b6bc07a 3035507a 233e460f a68fe535 ca335149 6329244e abc56510
+    lines: 358c4c15 c4df755f 1b6c26b3 390f7e12 a97a9e13 8def7c01 9adf3fc1 82726b6f 2b6bc07a c8f3f59a 19c2fa74 ead663af f8880451 afd95d43 be536e21 25d8505d fd12af70 9d7e2b17 0f27179b e7c3d778 3035507a 233e460f a68fe535 ca335149 6329244e abc56510
     preview: cat <<EOF > config.yaml
   content: |2-
        {{< doc-test paths="mcp-observability" >}}
@@ -142,9 +143,9 @@ hidden:
 
        # "View MCP metrics"
        curl -s http://localhost:15020/metrics > /tmp/doc-test-metrics.txt
-       grep -E 'mcp_requests_total\{' /tmp/doc-test-metrics.txt | grep 'method="tools/call"' | grep 'resource="echo"' \
+       grep -E 'agentgateway_mcp_requests_total\{' /tmp/doc-test-metrics.txt | grep 'method="tools/call"' | grep 'resource="echo"' \
          | grep 'resource_type="tool"' | grep -q 'server="everything"' \
-         || { echo "no mcp_requests_total series for the echo tool call"; grep mcp_requests_total /tmp/doc-test-metrics.txt; exit 1; }
+         || { echo "no agentgateway_mcp_requests_total series for the echo tool call"; grep agentgateway_mcp_requests_total /tmp/doc-test-metrics.txt; exit 1; }
 
        # "View traces" step 5: Jaeger has the tool call's operation. Spans are named
        # `<method> <target>_<tool>`, so the echo call is `tools/call everything_echo`.
@@ -210,4 +211,3 @@ hidden:
        EOF
        agentgateway -f config-toolslist.yaml --validate-only
        {{< /doc-test >}}
-  status: needs-update

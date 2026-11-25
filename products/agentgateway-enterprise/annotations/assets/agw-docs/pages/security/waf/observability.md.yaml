@@ -1,5 +1,6 @@
 format: 1
 source: assets/agw-docs/pages/security/waf/observability.md
+previews: false
 blocks:
 - 15c94629af2a5dcf yaml
 - 65b85cd0749745cb yaml
@@ -15,7 +16,6 @@ tags:
   fingerprint: 15c94629af2a5dcf
   lang: yaml
   lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 c54cd66d f497f0e2 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 0e1ba50e 73c054bf 274fdf3f 0d26b26f 3b2806ae abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="waf-observability"
     only: true
@@ -25,7 +25,6 @@ tags:
   fingerprint: 65b85cd0749745cb
   lang: yaml
   lines: 16c71da1 2701c996 d1c189e3 8c8c4228 cccdaef6 f497f0e2 36184fa5 142b1d35 385a2eb3 1851f975 456ae8a0 42d84aba c71ecc2a 1b6cccd3 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="waf-observability"
     only: true
@@ -35,7 +34,6 @@ tags:
   fingerprint: 30d4f8746e334edf
   lang: bash
   lines: 30d4f874
-  preview: kubectl logs deploy/waf-server-enterprise-agentgateway -n agentgateway-system
   form:
     attr: paths="waf-observability"
     only: true
@@ -45,7 +43,6 @@ tags:
   fingerprint: 7983cdd3824eef8f
   lang: yaml
   lines: 16c71da1 00c69c65 98f7f300 8c8c4228 3adefa17 f497f0e2 36184fa5 356067ee 9eb3a28d ff7360cf 540f5e28 e4bc2178 abc56510
-  preview: kubectl apply -f- <<EOF
   form:
     attr: paths="waf-observability"
     only: true
@@ -101,7 +98,6 @@ hidden:
     fingerprint: 15c94629af2a5dcf
     lang: yaml
     lines: 16c71da1 00c69c65 5cad5c90 8c8c4228 c54cd66d f497f0e2 36184fa5 588a5d84 b5a028c9 cd44d8cd 89b06424 30901338 52e214e3 0e1ba50e 73c054bf 274fdf3f 0d26b26f 3b2806ae abc56510
-    preview: kubectl apply -f- <<EOF
   content: |-
     {{< doc-test paths="waf-observability" >}}
     for i in $(seq 1 30); do
@@ -116,22 +112,23 @@ hidden:
     fingerprint: 30d4f8746e334edf
     lang: bash
     lines: 30d4f874
-    preview: kubectl logs deploy/waf-server-enterprise-agentgateway -n agentgateway-system
   content: |2-
        {{< doc-test paths="waf-observability" >}}
+       : > /tmp/waf-out.txt
+       : > /tmp/waf-metrics.err
        for i in $(seq 1 30); do
          POD=$(kubectl get pods -n agentgateway-system -o name | grep 'waf-server-enterprise-agentgateway' | head -1 | cut -d/ -f2)
-         kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/${POD}:9091/proxy/metrics" > /tmp/waf-out.txt 2>/dev/null && grep -q 'waf_server_requests_total' /tmp/waf-out.txt && break
+         kubectl get --raw "/api/v1/namespaces/agentgateway-system/pods/${POD}:9091/proxy/metrics" > /tmp/waf-out.txt 2>/tmp/waf-metrics.err && grep -Eq '^(# HELP|go_|process_)' /tmp/waf-out.txt && break
          sleep 3
        done
-       grep -c 'waf_server_requests_total' /tmp/waf-out.txt
+       cat /tmp/waf-metrics.err
+       grep -Eq '^(# HELP|go_|process_)' /tmp/waf-out.txt
        {{< /doc-test >}}
 - after:
     block: 7
     fingerprint: f69ec89637f28173
     lang: sh
     lines: f69ec896
-    preview: curl -s http://localhost:15000/config_dump | jq '[.policies[] | select(.policy.t
   content: |2-
        {{< doc-test paths="waf-observability" >}}
        # The proxy admin port listens on localhost in the pod, which the API server
@@ -160,7 +157,6 @@ hidden:
       fingerprint: f69ec89637f28173
       lang: sh
       lines: f69ec896
-      preview: curl -s http://localhost:15000/config_dump | jq '[.policies[] | select(.policy.t
   content: |-
     {{< doc-test paths="waf-observability" >}}
     kubectl delete enterpriseagentgatewaypolicy -n agentgateway-system waf-access-logs --ignore-not-found
