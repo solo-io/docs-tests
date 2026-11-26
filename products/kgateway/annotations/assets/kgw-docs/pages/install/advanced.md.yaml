@@ -1022,10 +1022,16 @@ hidden:
     fi
     {{< /doc-test >}}
 - after:
-    fingerprint: 5cfb737529f1cb56
-    lang: yaml
-    lines: adc43cf7 a1f4619b
-    preview: 'controller:'
+    section: Tune the controller Go memory limit
+    line: 9ffa3c22a15a6cd3
+    occurrence: 0
+    words: 83378532 3bfc2695 b9776d7d 8975c9b4 1754dbdd 663ea1bf b9776d7d 9a79a5b2 c064fbca 55ea09e5 10c22bcf 5ef5ef03 049c287e 6201111b b9776d7d c1472135 961eb436 254bb97b 836ff184 ca978112 4bd9354b
+    block_before:
+      block: 19
+      fingerprint: 9ddd7a2ecfe9e4a9
+      lang: yaml
+      lines: adc43cf7 a1f4619b cab2be2b 2629ac0e 9f71b027
+      preview: 'controller:'
   content: |-
     {{< doc-test paths="advanced" >}}
     # goMemLimitPercent and extraEnv.GOMEMLIMIT together fail the Helm install.
@@ -1076,4 +1082,3 @@ hidden:
       exit 1
     fi
     {{< /doc-test >}}
-  status: needs-update
